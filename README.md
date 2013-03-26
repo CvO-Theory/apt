@@ -211,7 +211,7 @@ at some of the sample files to get started!
 Of course there are also formal definitions of the properties analyzed in our
 tool. Many of these can be found here:
 
-http://www.uni-oldenburg.de/fk2/informatik/abteilungen/parsys/publikationen/
+http://www.uni-oldenburg.de/department-fuer-informatik/parsys/publikationen/
 
 Providing feedback
 ------------------
