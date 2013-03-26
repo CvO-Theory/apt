@@ -1,0 +1,25 @@
+// Netz Folie 45 April-24
+// author = Manuel Gieseking
+.name "cc4.net"
+.type LPN
+.description "Crashkurs Netz cc4"
+
+.places
+s1
+s2
+s3
+s4
+
+.transitions
+t1
+t2
+t3
+t4
+
+.flows
+t1: {2*s1} -> {s3, s2}
+t2: {s1,s2} -> {4*s2}
+t3: {4*s2} -> {3*s1}
+t4: {4*s2} -> {3*s1,s4}
+
+.initial_marking {3*s1}

@@ -1,0 +1,17 @@
+// 2a und 2b sind bisimilar, haben aber
+// keine isomorphen Erreichbarkeitsgraphen
+
+.name "2a-net"
+.type LPN
+
+.places
+s1 s2 s
+
+.transitions
+a1 [label="a"] a2 [label="a"]
+
+.flows
+a1: {s1,s} -> {}
+a2: {s2,s} -> {}
+
+.initial_marking {s1,s2,s}

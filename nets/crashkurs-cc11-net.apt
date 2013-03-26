@@ -1,0 +1,23 @@
+// Netz Folie 53 May-8
+// author = Manuel Gieseking
+.name "cc11.net"
+.type LPN
+.description "Crashkurs Netz cc11"
+
+.places
+s1
+s2
+s3
+s4
+
+.transitions
+t1
+t2
+t3
+
+.flows
+t1: {s1,s2} -> {s3,s4}
+t2: {s1,s3} -> {s2,s4}
+t3: {s4} -> {s1}
+
+.initial_marking {s1,s2}

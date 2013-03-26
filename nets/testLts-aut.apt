@@ -1,0 +1,33 @@
+// author = Manuel Gieseking
+.states
+s2[bla="hund", initial, blub="kater"]
+s3
+
+.labels
+a[location="A"]
+b
+.type LTS
+.arcs
+s2 d s0
+s1 b s3
+s3 d s1
+s2 a s3
+s3 c s2
+
+
+.description "test"
+
+.labels
+c
+d
+
+.arcs
+s0 a s1
+s1 c s0
+s0 b s2
+
+.states
+s0
+s1
+
+.name "testnet"

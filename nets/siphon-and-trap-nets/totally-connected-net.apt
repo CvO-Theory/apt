@@ -1,0 +1,13 @@
+.name "totally-connected-net.apt"
+.type PN
+
+.places
+s0 s1 s2
+
+.transitions
+a b c
+
+.flows
+a: {s0, s1, s2} -> {s0, s1, s2}
+b: {s0, s1, s2} -> {s0, s1, s2}
+c: {s0, s1, s2} -> {s0, s1, s2}

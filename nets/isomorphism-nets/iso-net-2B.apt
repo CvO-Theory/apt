@@ -1,0 +1,14 @@
+.name "iso-net-2B.apt"
+.type PN
+
+.places
+s0 s1 s2 s3
+
+.transitions
+a b c d
+
+.flows
+a: {s0} -> {s2}
+b: {s0} -> {s1}
+c: {s1} -> {s3}
+d: {s3} -> {s0}

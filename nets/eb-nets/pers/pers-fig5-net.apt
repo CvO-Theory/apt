@@ -1,0 +1,48 @@
+// Figur 5 aus [BD11c]
+// This net is plain, reversible, bounded, and persistent,
+// and it has an initial 2-marking.
+// According to a theorem, smallest cycles in its reachability graph have Parikh vector 1.
+// The net is a counterexample to the conjecture that you can then just omit
+// redundant places in order to get a t-net; the net has no redundant places.
+// However: synet can produce a differently shaped but language-equivalent t-net!
+// It is an open question whether this is always the case.
+// (I.e.: the conjecture is: let a plain, reversible, bounded, and persistent net
+// with an initial k-marking, k>=2, be given; then there exists a language-equivalent t-net.)
+
+// Dieses Netz ist dasjenige, welches in E1 (Arbeitspakete 2) standardmaessig
+// genommen werden sollte (wir wissen das Ergebnis zwar schon, aber um obige
+// conjecture zu testen, koennte man es variieren - und wenn synet klappt,
+// kann man sich evtl. einige T-System-Serien sparen und stattdessen solche
+// Netze durchvariieren).
+
+.name "pers-fig5-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4 s5
+s
+ss1 ss2 ss3 ss4 ss5
+
+.transitions
+x y u t xx yy uu tt
+
+.flows
+x: {s1,s2} -> {s3,s4,ss4}
+xx: {ss1,ss2} -> {ss3,ss4,s4}
+y: {s3,s4} -> {s,ss2}
+yy: {ss3,ss4} -> {s,s2}
+u: {s5} -> {s1}
+uu: {ss5} -> {ss1}
+t: {s2,s4,s} -> {s2,s5}
+tt: {ss2,ss4,s} -> {ss2,ss5}
+
+.initial_marking {2*s1,2*s2}
+
+// \diredge{s1}{x}\diredge{s2}{x}\diredge{x}{s3}\diredge{x}{s4}\diredge{x}{s4'}
+// \diredge{s3}{y}\diredge{s4}{y}\diredge{y}{s}\diredge{y}{s2'}
+// \diredge{s1'}{x'}\diredge{s2'}{x'}\diredge{x'}{s3'}\diredge{x'}{s4'}\diredge{x'}{s4}
+// \diredge{s3'}{y'}\diredge{s4'}{y'}\diredge{y'}{s}\diredge{y'}{s2}
+// \dirbow{s2}{t}{-.1}\dirbow{t}{s2}{-.1}\diredge{s4}{t}\diredge{s}{t}\diredge{t}{s5}
+// \dirbow{s2'}{t'}{.1}\dirbow{t'}{s2'}{.1}\diredge{s4'}{t'}\diredge{s}{t'}\diredge{t'}{s5'}
+// \dirbow{s5}{u}{.2}\dirbow{u}{s1}{.15}
+// \dirbow{s5'}{u'}{-.2}\dirbow{u'}{s1'}{-.15}

@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Single Method Suite">
+	<test name="Single Method TestNG Test">
+		<classes>
+			<class name="@CLASS@">
+				<methods>
+					<exclude name=".*" />
+					<include name="@TEST@" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+</suite>

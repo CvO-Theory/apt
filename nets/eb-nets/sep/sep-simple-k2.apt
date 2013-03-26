@@ -1,0 +1,16 @@
+// 2-Anfangsmarkierung, T-System
+
+.name "sep-simple-k2.apt"
+.type LPN
+
+.places
+s1 s2 s3
+
+.transitions
+a b
+
+.flows
+a: {s1} -> {s2}
+b: {s2,s3} -> {}
+
+.initial_marking {4*s1,2*s3}

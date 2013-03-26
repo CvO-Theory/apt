@@ -1,0 +1,17 @@
+// 4a und 4b sind nicht bisimilar
+
+.name "4b-net"
+.type LPN
+
+.places
+s0 s1
+
+.transitions
+a1 [label="a"] a2 [label="a"] b
+
+.flows
+a1: {s0} -> {}
+a2: {s0} -> {s1}
+b: {s1} -> {s0}
+
+.initial_marking {s0}

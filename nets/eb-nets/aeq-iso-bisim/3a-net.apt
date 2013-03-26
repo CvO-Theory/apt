@@ -1,0 +1,19 @@
+// 3a und 3b haben isomorphe Erreichbarkeitsgraphen
+// sind aber (als Netze) verschieden
+// Siehe auch ../distr/distr-fig19a-net.apt und ../distr/distr-fig19b-net.apt
+// fuer Beispiele ohne (bzw. mit injektiver) Beschriftung
+
+.name "3a-net"
+.type LPN
+
+.places
+s1 s2
+
+.transitions
+a1 [label="a"] a2 [label="a"]
+
+.flows
+a1: {s1} -> {s2}
+a2: {s2} -> {}
+
+.initial_marking {s1}

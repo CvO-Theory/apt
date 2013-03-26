@@ -1,0 +1,11 @@
+.type LPN
+.description "One minimal T-invariant"
+
+.places
+s
+
+.transitions
+t
+
+.flows
+t : {s} -> {s}

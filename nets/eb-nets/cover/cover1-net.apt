@@ -1,0 +1,26 @@
+// Figur (links) aus [BD11b]
+// Sollte zusammen mit cover2-net.apt gelesen werden.
+// Die beiden Netze
+// -- sind T-Systeme
+// -- sind nicht-injektiv beschriftet
+// -- haben verschiedene Sprachen
+// ---- (z.B. ist das Wort bad in einer Sprache, aber nicht in der anderen)
+// -- haben die gleichen Parikh-Vektoren (von Woertern aus den Sprachen)
+
+.name "cover1-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4 s5 s6
+
+.transitions
+a b1 [label="b"] b2 [label="b"] c d
+
+.flows
+a: {s1} -> {s2,s4}
+b1: {s2} -> {s3}
+b2: {s5} -> {s6}
+c: {s3} -> {}
+d: {s4,s6} -> {}
+
+.initial_marking {s1,s5}

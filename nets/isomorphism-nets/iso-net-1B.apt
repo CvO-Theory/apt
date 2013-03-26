@@ -1,0 +1,17 @@
+// The nets 1A and 1B are identically, except that
+// the labels are exchanged.
+.name "iso-net-1B.apt"
+.type PN
+
+.places
+s1 s2 s3 s7 s8 s9
+
+.transitions
+4 5 6 10 11
+
+.flows
+4: {s1} -> {s7}
+6: {s3} -> {s9}
+5: {s2} -> {s8}
+11: {s9} -> {s2, s3}
+10: {s7, s8} -> {s1}

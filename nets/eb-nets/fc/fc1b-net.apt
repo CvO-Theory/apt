@@ -1,0 +1,31 @@
+// Figur 14 aus [BW10] mit einer nicht-lebendigen Anfangsmarkierung.
+// Das Netz ist nicht sicher, aber beschraenkt.
+// Das Netz ist FC und fc.
+// fc1a und fc1b sind dual zueinander
+
+.name "fc1b-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4 s5 s6 s7
+
+.transitions
+t1 t2 t3 t4 t5 t6 t7
+
+.flows
+t1: {s7} -> {s1,s2}
+t2: {s1} -> {s3}
+t3: {s1} -> {s4}
+t4: {s2} -> {s5}
+t5: {s2} -> {s6}
+t6: {s3,s5} -> {s7}
+t7: {s4,s6} -> {s7}
+
+.initial_marking {s1,s2,s3,s4,s5,s6,s7}
+
+// \diredge{t1}{s1}\diredge{t1}{s2}
+// \diredge{s1}{t2}\diredge{s1}{t3}\diredge{s2}{t4}\diredge{s2}{t5}
+// \diredge{t2}{s3}\diredge{t3}{s4}\diredge{t4}{s5}\diredge{t5}{s6}
+// \diredge{s3}{t6}\diredge{s4}{t7}\diredge{s5}{t6}\diredge{s6}{t7}
+// \diredge{t6}{s7}\diredge{t7}{s7}
+// \dirbow{s7}{t1}{.6}%[\graphlinewidth{.07}]

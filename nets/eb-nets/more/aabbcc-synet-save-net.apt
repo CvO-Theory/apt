@@ -1,0 +1,21 @@
+// von synet2apt produziert
+
+.name ""
+.type LPN
+
+.places
+x_0
+x_1
+x_2
+
+.transitions
+a [label="a"]
+b [label="b"]
+c [label="c"]
+
+.flows
+a: {0*x_1, 2*x_2} -> {2*x_2, 0*x_0}
+b: {2*x_0, 0*x_2} -> {2*x_0, 0*x_1}
+c: {0*x_0, 2*x_1} -> {0*x_2, 2*x_1}
+
+.initial_marking {2*x_1, 2*x_2}

@@ -1,0 +1,18 @@
+transition a
+transition b
+transition c
+place x_0
+place x_1 := 2
+place x_2 := 2
+flow x_0 --2-> b
+flow x_0 ---> c
+flow x_1 ---> a
+flow x_1 --2-> c
+flow x_2 --2-> a
+flow x_2 ---> b
+flow x_0 <--- a
+flow x_0 <-2-- b
+flow x_1 <--- b
+flow x_1 <-2-- c
+flow x_2 <-2-- a
+flow x_2 <--- c

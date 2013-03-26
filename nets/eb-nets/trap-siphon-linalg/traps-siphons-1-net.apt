@@ -1,0 +1,26 @@
+// Ein nicht-lebendiges FC-Netz (aus den Uebungen zum PN-Modul)
+// Geben Sie zwei minimale semi-positive S-Invarianten an.
+// Wird das Netz von einer positiven S-Invariante ueberdeckt?
+// Wie viele Siphons gibt es?
+// Wie viele minimale, nicht leere Siphons gibt es?
+// Dito fuer Fallen.
+
+.name "traps-siphons-1-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4 s5 s6 s7 s8
+
+.transitions
+t1 t2 t3 t4 t5 t6 t7
+
+.flows
+t1: {s1,s4} -> {s2}
+t2: {s3} -> {s2}
+t3: {s6} -> {s1}
+t4: {s2,s5} -> {s7}
+t5: {s8} -> {s3,s5}
+t6: {s7} -> {s4,s6}
+t7: {s7} -> {s8}
+
+.initial_marking {2*s2,2*s4,2*s5,2*s7}

@@ -1,0 +1,29 @@
+// Figur 26 aus [BW10], ein beschraenktes und lebendiges Netz,
+// dessen Anfangsmarkierung kein Home State ist.
+
+.name "no-homestate-1-net.apt"
+.type LPN
+
+.places
+x 0 1 2 3 4 5 6
+// Das hier kann der Parser anscheinend (noch?) nicht - Stand 4.11.2012
+
+.transitions
+a b c d e f
+
+.flows
+a: {1,x,0} -> {2}
+b: {4,x} -> {5,0}
+c: {2,4} -> {3,x,4}
+d: {5,1} -> {6,x,1}
+e: {3,5} -> {1,5}
+f: {6,2} -> {4,2}
+
+.initial_marking {x,0,1,4}
+
+// \diredge{1}{a}\diredge{a}{2}\diredge{2}{c}\diredge{c}{3}\diredge{3}{e}\dirbow{e}{1}{.2}
+// \diredge{4}{b}\diredge{b}{5}\diredge{5}{d}\diredge{d}{6}\diredge{6}{f}\dirbow{f}{4}{-.2}
+// \diredge{x}{a}\diredge{x}{b}\diredge{c}{x}\diredge{d}{x}
+// \diredge{b}{0}\diredge{0}{a}
+// \dirbow{1}{d}{-.05}\dirbow{d}{1}{-.05}\dirbow{4}{c}{.05}\dirbow{c}{4}{.05}
+// \dirbow{2}{f}{-.05}\dirbow{f}{2}{-.05}\dirbow{5}{e}{.05}\dirbow{e}{5}{.05}

@@ -1,0 +1,15 @@
+// K-Anfangsmarkierung, fuer jedes K>=0
+// Nur Umkehrung der Eintragsreihenfolge
+
+.name "sep-a-net.apt"
+.type LPN
+
+.transitions
+a
+
+.places
+
+.flows
+a: {} -> {}
+
+.initial_marking {}

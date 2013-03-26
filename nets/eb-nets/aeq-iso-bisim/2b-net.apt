@@ -1,0 +1,18 @@
+// 2a und 2b sind bisimilar, haben aber
+// keine isomorphen Erreichbarkeitsgraphen
+
+.name "2b-net"
+.type LPN
+
+.places
+s
+
+.transitions
+a [label="a"]
+// Ich hoffe, dass diese eckige Klammer standardmaessig drin ist
+// hier ist sie nur testweise angegeben
+
+.flows
+a: {s} -> {}
+
+.initial_marking {s}

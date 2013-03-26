@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="apt" default="javac.tests" basedir=".">
+	<path id="project.class.path">
+		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
+		<pathelement location="lib/antlr-3.4/antlr-3.4-complete-no-antlrv2-modified.jar" />
+		<pathelement location="lib/sat4j-2.3.2/org.sat4j.core.jar"/>
+		<pathelement location="classes" />
+	</path>
+
+	<path id="test.class.path">
+		<pathelement location="lib/mockito-1.9.5-rc1/mockito-core-1.9.5-rc1.jar" />
+		<pathelement location="lib/objenesis-1.2/objenesis-1.2.jar" />
+		<pathelement location="lib/testng-6.8/testng-6.8.jar" />
+		<pathelement location="lib/testng-6.8/jcommander-1.18.jar" />
+		<pathelement location="lib/hamcrest-1.3/hamcrest-core-1.3.jar" />
+		<pathelement location="lib/hamcrest-1.3/hamcrest-library-1.3.jar" />
+		<pathelement location="test-classes" />
+	</path>
+
+	<path id="ant.class.path">
+		<pathelement location="lib/asm-4.1/asm-4.1.jar" />
+		<pathelement location="ant-classes" />
+	</path>
+
+	<taskdef name="testng" classname="org.testng.TestNGAntTask" classpathref="test.class.path" />
+	<taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
+		classpath="lib/checkstyle-5.6/checkstyle-5.6-all.jar" />
+
+	<!-- Antlr3 is called here -->
+	<!-- java org.antlr.Tool -verbose -make -o src/uniol/apt/io/parser/impl/apt/ src/uniol/apt/io/parser/impl/apt/Apt.g -->
+	<target name="antlr">
+
+		<java classpathref="project.class.path" classname="org.antlr.Tool" fork="true" failonerror="true">
+			<arg value="-verbose"/>
+			<arg value="-make"/>
+			<arg value="-o"/>
+			<arg path="generated-src/uniol/apt/io/parser/impl/apt/"/>
+			<arg path="src/uniol/apt/io/parser/impl/apt/AptPNFormat.g"/>
+		</java>
+		<java classpathref="project.class.path" classname="org.antlr.Tool" fork="true" failonerror="true">
+			<arg value="-verbose"/>
+			<arg value="-make"/>
+			<arg value="-o"/>
+			<arg path="generated-src/uniol/apt/io/parser/impl/apt/"/>
+			<arg path="src/uniol/apt/io/parser/impl/apt/AptLTSFormat.g"/>
+		</java>
+		<java classpathref="project.class.path" classname="org.antlr.Tool" fork="true" failonerror="true">
+			<arg value="-verbose"/>
+			<arg value="-make"/>
+			<arg value="-o"/>
+			<arg path="generated-src/uniol/apt/io/parser/impl/synet/"/>
+			<arg path="src/uniol/apt/io/parser/impl/synet/SynetLTSFormat.g"/>
+		</java>
+		<java classpathref="project.class.path" classname="org.antlr.Tool" fork="true" failonerror="true">
+			<arg value="-verbose"/>
+			<arg value="-make"/>
+			<arg value="-o"/>
+			<arg path="generated-src/uniol/apt/io/parser/impl/synet/"/>
+			<arg path="src/uniol/apt/io/parser/impl/synet/SynetPNFormat.g"/>
+		</java>
+	</target>
+
+	<target name="javac" description="Compile java source to bytecode" depends="antlr">
+		<mkdir dir="classes"/>
+		<depend srcdir="src:generated-src" destdir="classes" />
+		<javac includes="**" encoding="utf-8"
+				destdir="classes" source="1.7" target="1.7"
+				debug="true" debuglevel="lines,vars,source"
+				includeantruntime="false">
+			<src path="src" />
+			<src path="generated-src" />
+			<classpath refid="project.class.path"/>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+		<copy todir="classes">
+			<fileset dir="src">
+				<include name="**/*.stg" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="javac.ant" depends="javac" description="Compile ant task">
+		<mkdir dir="ant-classes"/>
+		<depend srcdir="ant-src" destdir="ant-classes" classpath="classes" />
+		<javac srcdir="ant-src" includes="**" encoding="utf-8"
+				destdir="ant-classes" source="1.7" target="1.7"
+				debug="true" debuglevel="lines,vars,source"
+				includeantruntime="true">
+			<classpath>
+				<path refid="project.class.path" />
+				<path refid="ant.class.path" />
+			</classpath>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="javac.tests" depends="javac" description="Compile test code">
+		<mkdir dir="test-classes"/>
+		<depend srcdir="test" destdir="test-classes" classpath="classes" />
+		<javac srcdir="test" includes="**" encoding="utf-8"
+				destdir="test-classes" source="1.7" target="1.7"
+				debug="true" debuglevel="lines,vars,source"
+				includeantruntime="false">
+			<classpath>
+				<path refid="test.class.path" />
+				<path refid="project.class.path" />
+			</classpath>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
+	</target>
+
+	<target name="verify-parsers" depends="javac.ant" description="Verify all of the net collection is parsable.">
+		<taskdef name="parsers-verify" classname="uniol.apt.tasks.ParsableTask">
+			<classpath>
+				<path refid="project.class.path" />
+				<path refid="ant.class.path" />
+			</classpath>
+		</taskdef>
+
+		<parsers-verify outputdir="reports/parsers">
+			<fileset dir="nets" >
+				<include name="**/*" />
+			</fileset>
+			<exclude dir="nets" >
+				<include name="**/*.pdf" />
+				<include name="**/*.png" />
+				<include name="**/*.dot" />
+			</exclude>
+		</parsers-verify>
+	</target>
+
+	<target name="verify-modules" depends="javac.ant" description="Verify the use of parameters in modules.">
+		<taskdef name="module-verify" classname="uniol.apt.tasks.ModuleParameterVerifyTask">
+			<classpath>
+				<path refid="project.class.path" />
+				<path refid="ant.class.path" />
+			</classpath>
+		</taskdef>
+
+		<module-verify>
+			<fileset dir="classes" >
+				<include name="**/*Module.class" />
+			</fileset>
+		</module-verify>
+	</target>
+
+	<target name="test" depends="javac.tests" description="Run tests">
+		<testng outputdir="reports/testng" verbose="2"
+			listeners="uniol.tests.listener.PackageNameAsTestNameListener">
+			<!-- enable assertions -->
+			<jvmarg value="-ea" />
+			<classpath>
+				<path refid="test.class.path" />
+				<path refid="project.class.path" />
+			</classpath>
+			<classfileset dir="test-classes" >
+				<include name="**/*Test.class" />
+			</classfileset>
+		</testng>
+	</target>
+
+	<target name="test-class" depends="javac.tests"
+		description="run a specific test class. Requires class.name property set to fully qualified name of test class">
+		<condition property="propsSpecified">
+			<and>
+				<isset property="class.name" />
+			</and>
+		</condition>
+		<tstamp />
+		<fail unless="propsSpecified"
+			message="class.name property not specified; try calling ant with -Dclass.name=uniol.apt...."/>
+		<copy file="testng.single-class.xml" tofile="testng.xml" overwrite="true">
+			<filterset>
+				<filter token="CLASS" value="${class.name}"/>
+			</filterset>
+		</copy>
+		<testng outputDir="reports/testng-single-class-${class.name}"
+			verbose="2" listeners="uniol.tests.listener.PackageNameAsTestNameListener">
+			<!-- enable assertions -->
+			<jvmarg value="-ea" />
+			<classpath>
+				<path refid="test.class.path" />
+				<path refid="project.class.path" />
+			</classpath>
+			<xmlfileset file="testng.xml" />
+		</testng>
+	</target>
+
+	<target name="test-method" depends="javac.tests"
+		description="run a specific test method. Requires class.name property set to fully qualified name of test class and test.name property set to method name">
+		<condition property="propsSpecified">
+			<and>
+				<isset property="class.name" />
+				<isset property="test.name" />
+			</and>
+		</condition>
+		<tstamp />
+		<fail unless="propsSpecified"
+			message="class.name and/or test.name property not specified; try calling ant with -Dclass.name=uniol.apt... -Dtest.name=myTestMethod"/>
+		<copy file="testng.single-method.xml" tofile="testng.xml" overwrite="true">
+			<filterset>
+				<filter token="CLASS" value="${class.name}"/>
+				<filter token="TEST" value="${test.name}"/>
+			</filterset>
+		</copy>
+		<testng outputDir="reports/testng-single-method-${class.name}-${test.name}"
+			verbose="2" listeners="uniol.tests.listener.PackageNameAsTestNameListener">
+			<!-- enable assertions -->
+			<jvmarg value="-ea" />
+			<classpath>
+				<path refid="test.class.path" />
+				<path refid="project.class.path" />
+			</classpath>
+			<xmlfileset file="testng.xml" />
+		</testng>
+	</target>
+
+	<target name="javadoc" description="Generate documentation from java source">
+		<mkdir dir="doc"/>
+		<javadoc encoding="utf-8" destdir="doc"
+				author="true" version="true" use="true"
+				Encoding="UTF-8" charset="UTF-8"
+				docencoding="UTF-8" access="private">
+			<fileset dir="src" includes="**/*.java"/>
+			<fileset dir="test" includes="**/*.java"/>
+			<classpath>
+				<path refid="test.class.path" />
+				<path refid="project.class.path" />
+			</classpath>
+		</javadoc>
+	</target>
+
+	<target name="checkstyle" depends="javac.tests">
+		<mkdir dir="reports" />
+		<checkstyle config="checkstyle.xml" failOnViolation="false">
+			<formatter type="xml" tofile="reports/checkstyle.xml"/>
+			<formatter type="plain" tofile="reports/checkstyle.txt"/>
+			<fileset dir="src" includes="**/*"/>
+			<fileset dir="test" includes="**/*"/>
+			<classpath>
+				<path refid="test.class.path" />
+				<path refid="project.class.path" />
+			</classpath>
+		</checkstyle>
+	</target>
+
+	<target name="clean" description="Cleans this project">
+		<delete dir="ant-classes" failonerror="false" />
+		<delete dir="classes" failonerror="false" />
+		<delete dir="test-classes" failonerror="false" />
+		<delete dir="reports" failonerror="false" />
+		<delete dir="doc" failonerror="false" />
+		<delete dir="generated-src" failonerror="false" />
+		<delete file="apt.jar" failonerror="false" />
+		<delete file="testng.xml" failonerror="false" />
+	</target>
+
+	<target name="jar" depends="verify-modules"
+		description="Build a jar file containing all the needed stuff to run the apt tool.">
+		<jar destfile="apt.jar">
+			<fileset dir="classes/" />
+			<zipfileset includes="**/*.class" src="lib/commons-io-2.4/commons-io-2.4.jar" />
+			<zipfileset includes="**/*.class" src="lib/antlr-3.4/antlr-3.4-complete-no-antlrv2-modified.jar" />
+			<zipfileset includes="**/*.class" src="lib/sat4j-2.3.2/org.sat4j.core.jar" />
+			<manifest>
+				<attribute name="Main-Class" value="uniol.apt.APT" />
+			</manifest>
+		</jar>
+	</target>
+	<import file="build.local.xml" optional="true"/>
+</project>

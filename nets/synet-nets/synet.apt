@@ -1,0 +1,20 @@
+.name "synet.aut"
+.type LTS
+.description "test"
+
+.states
+s0[initial]
+s1
+s2
+s3
+
+.labels
+a[location="A"]
+b[location="B"]
+c[location="C"]
+
+.arcs
+s0 a s1
+s1 c s2
+s2 b s3
+s3 c s0

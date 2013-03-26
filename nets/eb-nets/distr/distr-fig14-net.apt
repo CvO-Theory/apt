@@ -1,0 +1,18 @@
+// Figur 14 aus [BD11a]
+
+.name "distr-fig14-net.apt"
+.type LPN
+
+.places
+alpha beta gamma delta
+
+.transitions
+a b c d
+
+.flows
+a: {alpha} -> {gamma}
+b: {gamma,delta} -> {}
+c: {beta} -> {delta}
+d: {alpha,delta} -> {alpha,beta}
+
+.initial_marking {alpha,beta}

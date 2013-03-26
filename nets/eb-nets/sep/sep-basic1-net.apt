@@ -1,0 +1,24 @@
+// 6-Anfangsmarkierung
+// 2-separabel und 3-separabel, aber nicht 6-separabel
+// Die letzte Zeile ist falsch (Hinweis von Daniel L. vom 11.11.:
+//  (a1 a1 a1) ist nicht 2-separabel).
+
+// 3-separabel, aber weder 2- noch 6-separabel
+// Es fehlt jetzt ein Netz, das k- und k'-separabel ist,
+//  aber nicht (k*k')-separabel (mit teilerfremden k,k')
+
+.name "sep-basic1-net.apt"
+.type LPN
+
+.places
+s s1
+
+.transitions
+a1 a2 b
+
+.flows
+a1: {2*s} -> {s1}
+a2: {s1} -> {2*s}
+b: {s} -> {s}
+
+.initial_marking {6*s}

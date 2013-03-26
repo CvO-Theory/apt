@@ -1,0 +1,51 @@
+digraph G {
+        node [fontsize=20,shape=rect,height=0.5,width=0.5,fixedsize=true];
+        edge [fontsize=20]
+        
+        t1[label="t1"]
+        t1_label[shape=plaintext,label=""]
+        t1 -> t1_label[penwidth=0,label="t1",arrowhead=none]
+
+        t2[label="t2"]
+        t2_label[shape=plaintext,label=""]
+        t2 -> t2_label[penwidth=0,label="t2",arrowhead=none]
+
+        t3[label="t3"]
+        t3_label[shape=plaintext,label=""]
+        t3 -> t3_label[penwidth=0,label="t3",arrowhead=none]
+
+        t4[label="t4"]
+        t4_label[shape=plaintext,label=""]
+        t4 -> t4_label[penwidth=0,label="t4",arrowhead=none]
+
+        node [fontsize=20,shape=circle,height=0.5,width=0.5];
+        edge [fontsize=20]
+        
+        p1[label="1"]
+        p1_label[shape=plaintext,label="",width=0.1,height=0.1,fixedsize=true]
+        p1 -> p1_label[penwidth=0,label="p1",arrowhead=none]
+
+        p2[label=""]
+        p2_label[shape=plaintext,label=""]
+        p2 -> p2_label[penwidth=0,label="p2",arrowhead=none]
+
+        p3[label="1"]
+        p3_label[shape=plaintext,label=""]
+        p3 -> p3_label[penwidth=0,label="p3",arrowhead=none]
+
+        p4[label=""]
+        p4_label[shape=plaintext,label=""]
+        p4 -> p4_label[penwidth=0,label="p4",arrowhead=none]
+
+        p2 -> t1;
+        t1 -> p1;
+
+        p1 -> t2;
+        t2 -> p2;
+
+        p4 -> t3;
+        t3 -> p3;
+
+        p3 -> t4;
+        t4 -> p4;
+}

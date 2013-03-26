@@ -1,0 +1,16 @@
+// Schleife mit Kantengewicht, beschraenkt, aber nicht lebendig
+// Unterscheidet sich von eb3 nur durch {2*s1} -> {s1}
+.name "eb3a-net"
+.type LPN
+.description "Test-Netz-EB-3"
+
+.places
+s1
+
+.transitions
+t1
+
+.flows
+t1: {2*s1} -> {s1}
+
+.initial_marking {s1,s1,s1,s1}

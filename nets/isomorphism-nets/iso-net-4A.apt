@@ -1,0 +1,27 @@
+// 4A and 4B are "almost isomorphic". There is just a single edge of difference
+// and that edge is not easily reachable, but needs four firings before it
+// appears.
+
+.name "iso-net-4A.apt"
+.type PN
+
+.places
+s0 s1 s2 s3 s4 s5
+
+.transitions
+a [label="a"]
+b [label="a"]
+c [label="a"]
+d [label="a"]
+e [label="a"]
+f [label="a"]
+
+.flows
+a: {s1} -> {s0}
+b: {s2} -> {s0}
+c: {s3} -> {s0}
+d: {s4} -> {s0}
+e: {s5} -> {s0}
+f: {5*s0} -> {5*s0}
+
+.initial_marking {s1, s2, s3, s4, s5}

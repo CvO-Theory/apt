@@ -1,0 +1,15 @@
+// Schleife mit Kantengewicht, lebendig, aber nicht beschraenkt
+.name "eb2-net"
+.type LPN
+.description "Test-Netz-EB-2"
+
+.places
+s1
+
+.transitions
+t1
+
+.flows
+t1: {s1} -> {s1,s1}
+
+.initial_marking {s1}

@@ -1,0 +1,19 @@
+// 2-Anfangsmarkierung
+// schwach 2-separabel, aber nicht stark 2-separabel
+// Z.B. kann die Folge aacbbc schwach, aber nicht stark 2-separiert werden
+
+.name "sep-weak-but-not-strong.apt"
+.type LPN
+
+.places
+s1 s2 s3
+
+.transitions
+a b c
+
+.flows
+a: {s2} -> {s1,s3}
+b: {s1,s3} -> {s3}
+c: {s3} -> {}
+
+.initial_marking {2*s2}

@@ -1,0 +1,15 @@
+// Eine Schleife, lebendig und sicher
+.name "eb3-net"
+.type LPN
+.description "Test-Netz-EB-3"
+
+.places
+s1
+
+.transitions
+t1
+
+.flows
+t1: {s1} -> {s1}
+
+.initial_marking {s1}

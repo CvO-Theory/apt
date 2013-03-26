@@ -1,0 +1,28 @@
+// Netz zur Reduktion von einer 2-Markierung auf zwei 1-Markierungen
+
+.name "sep-red-k-1-net.apt"
+.type LPN
+
+.places
+s1 s2 s3
+q1 q2 q3 r1 r2 r3
+p1s p2s pcs pcu pcl
+
+.transitions
+as bs
+// Diese Transitionen sind eigentlich a b beschriftet
+aq bq ar br
+// Diese Transitionen sind eigentlich a b a b beschriftet
+ts l
+
+.flows
+as: {s1,pcs} -> {s2,pcu,p1s}
+bs: {s2,pcs} -> {s3,pcu,p2s}
+aq: {q1,pcu,p1s} -> {q2,pcs}
+bq: {q2,pcu,p2s} -> {q3,pcs}
+ar: {r1,pcu,p1s} -> {r2,pcs}
+br: {r2,pcu,p2s} -> {r3,pcs}
+ts: {pcs} -> {pcl}
+l: {pcl} -> {pcl}
+
+.initial_marking {2*s1,q1,r1,pcs}

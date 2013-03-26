@@ -1,0 +1,37 @@
+// LTS zum Netz auf Folie 33 April-24
+// author = Manuel Gieseking
+.name "cc2.aut"
+.type LTS
+
+.states
+s0[initial]
+s1
+s2
+s3
+s4
+s5
+s6
+s7
+
+
+.labels
+t1
+t2
+t3
+
+.arcs
+s0 t3 s1
+s0 t2 s7
+s1 t3 s2
+s1 t2 s6
+s1 t1 s0
+s2 t2 s3
+s2 t1 s1
+s3 t3 s4
+s3 t1 s6
+s4 t3 s5
+s4 t1 s3
+s5 t1 s4
+s6 t3 s3
+s6 t1 s7
+s7 t3 s6

@@ -1,0 +1,19 @@
+//working...
+//Net found:
+.name ""
+.type LPN
+
+.places
+p1
+p2
+p3
+p4
+
+.transitions
+t1 [label="t1"]
+
+.flows
+t1: {1*p4, 1*p1, 1*p3} -> {1*p2, 1*p4, 1*p3}
+
+.initial_marking {1*p1}
+

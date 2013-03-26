@@ -1,0 +1,12 @@
+diff -Nurp a/org/antlr/codegen/templates/Java/Java.stg b/org/antlr/codegen/templates/Java/Java.stg
+--- a/org/antlr/codegen/templates/Java/Java.stg	2011-07-19 11:35:14.000000000 +0200
++++ b/org/antlr/codegen/templates/Java/Java.stg	2012-10-27 17:48:11.995095942 +0200
+@@ -77,7 +77,7 @@ import java.util.HashMap;
+ <@end>
+ 
+ <docComment>
+-@SuppressWarnings({"all", "warnings", "unchecked"})
++@SuppressWarnings({"all", "warnings", "unchecked", "cast"})
+ <recognizer>
+ >>
+ 

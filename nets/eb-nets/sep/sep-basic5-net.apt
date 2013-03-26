@@ -1,0 +1,13 @@
+// K-Anfangsmarkierung, fuer jedes K>=0
+// k-separabel, fuer jedes k>=1
+
+.name "sep-basic5-net.apt"
+.type LPN
+
+.places
+
+.transitions
+
+.flows
+
+.initial_marking

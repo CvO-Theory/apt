@@ -1,0 +1,22 @@
+// Figur 8(l.h.s.) aus [BD11c], wobei jede Transition dupliziert ist
+// 2-Anfangsmarkierung, die nicht (stark) separabel ist
+.name "sep-fi-fig8a-auseinandergezogen-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4
+
+.transitions
+a1 a2 b1 b2 c1 c2
+
+.flows
+b1: {s1} -> {s2}
+b2: {s1} -> {s2}
+a1: {s4} -> {s2}
+a2: {s4} -> {s2}
+c1: {s2,s3} -> {s4}
+c2: {s2,s3} -> {s4}
+
+.initial_marking {2*s1,2*s3}
+
+// A non-separable $\sigma$: M_0[b1c1a1c1\rangle

@@ -1,0 +1,18 @@
+// Figur 1 aus [BW10] - ein unbeschraenktes Netz
+// Kommt auch ganz vorne in der Petrinetze-Vorlesung vor
+
+.name "pn1a-net.apt"
+.type LPN
+
+.places
+s1 s2 s3
+
+.transitions
+t1 t2 t3
+
+.flows
+t1: {s1} -> {s1,s3}
+t2: {s2} -> {2*s3}
+t3: {s3} -> {s1}
+
+.initial_marking {s2,2*s3}

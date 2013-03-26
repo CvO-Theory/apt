@@ -1,0 +1,18 @@
+// Figur 19a aus [BD11a]
+
+.name "distr-fig19a-net.apt"
+.type LPN
+
+.places
+s0 s1 s2 s3 s4
+
+.transitions
+a b c d
+
+.flows
+a: {s0} -> {s4}
+b: {s3,s4} -> {s2}
+c: {s2,s4} -> {s0,s1,s3}
+d: {s1} -> {s4}
+
+.initial_marking {s0,s3,s4}

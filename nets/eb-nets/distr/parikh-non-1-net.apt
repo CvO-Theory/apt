@@ -1,0 +1,18 @@
+// Figur 6 aus [BD11a]
+// RG ist Kreis mit Parikh-Vektor ungleich 1
+
+.name "parikh-non-1-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4
+
+.transitions
+a b c
+
+.flows
+a: {s1,s2} -> {s3,s4}
+b: {s1,s3} -> {s2,s4}
+c: {s4} -> {s1}
+
+.initial_marking {s1,s2}

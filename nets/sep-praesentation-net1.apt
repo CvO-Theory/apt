@@ -1,0 +1,16 @@
+// example net for the intermediate presentation
+// Author: Daniel
+.name "sep-praesentation-net1.apt"
+.type LPN
+
+.places
+s1 s2 s3
+
+.transitions
+a b
+
+.flows
+a: {s1} -> {s2}
+b: {s1,s2} -> {s3}
+
+.initial_marking {6*s1}

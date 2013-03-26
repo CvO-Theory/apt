@@ -1,0 +1,16 @@
+
+.name "autoLTS0"
+.type LTS
+
+.states
+autoNode1
+autoNode0[initial]
+autoNode2
+
+.labels
+a
+
+.arcs
+autoNode0 a autoNode2
+autoNode0 a autoNode1
+

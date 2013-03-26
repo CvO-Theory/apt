@@ -1,0 +1,12 @@
+.name "duality-test-net2.apt"
+.type PN
+
+.places
+s0 s1 s2
+
+.transitions
+a b
+
+.flows
+a: {s1} -> {s0}
+b: {s2} -> {s1}

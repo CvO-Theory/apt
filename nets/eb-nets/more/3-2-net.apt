@@ -1,0 +1,15 @@
+// Einfache sidecondition mit verschiedenen weights
+
+.name "3-2-net.apt"
+.type LPN
+
+.places
+x
+
+.transitions
+a
+
+.flows
+a: {22*x} -> {33*x}
+
+.initial_marking {44*x}

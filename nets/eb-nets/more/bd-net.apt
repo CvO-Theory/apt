@@ -1,0 +1,37 @@
+// Aus einem Papier fuer Thiagu
+
+.name "bd-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12 s13 s14 s
+
+.transitions
+t1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11
+
+.flows
+t1: {s1,s2} -> {s3,s5,s7,s9}
+t2: {s1,s3} -> {s4,s5,s8,s12}
+t3: {s1,s4} -> {s2,s6,s}
+t4: {s6} -> {s7,s8,s,s13}
+t5: {s5} -> {s}
+t6: {s7,s} -> {s10}
+t7: {s8,s} -> {s11}
+t8: {s9,s10} -> {s14}
+t9: {s11,s12} -> {s14}
+t10: {s10,s11,s13} -> {s14}
+t11: {s14} -> {s1}
+
+.initial_marking {s1,s2}
+
+// \diredge{s2}{t1}\diredge{t1}{s3}\diredge{s1}{t1}\diredge{t1}{s5}\diredge{t1}{s9}\diredge{t1}{s7}
+// \diredge{s3}{t2}\diredge{t2}{s4}\diredge{s1}{t2}\diredge{t2}{s5}\diredge{t2}{s8}\diredge{t2}{s12}
+// \diredge{s1}{t3}\diredge{s4}{t3}\dirbow{t3}{s2}{-.35}\diredge{t3}{s6}\dirbow{t3}{s}{-.1}
+// \diredge{s6}{t4}\dirbow{t4}{s7}{-.1}\diredge{t4}{s}\dirbow{t4}{s8}{.1}\diredge{t4}{s13}
+// \diredge{s5}{t5}\diredge{t5}{s}
+// \diredge{s7}{t6}\diredge{s}{t6}\diredge{t6}{s10}
+// \diredge{s}{t7}\diredge{s8}{t7}\diredge{t7}{s11}
+// \diredge{s9}{t8}\diredge{s10}{t8}\diredge{t8}{s14}
+// \diredge{s11}{t9}\diredge{s12}{t9}\diredge{t9}{s14}
+// \diredge{s13}{t10}\diredge{s10}{t10}\diredge{s11}{t10}\diredge{t10}{s14}
+// \dirbow{s14}{t11}{-.35}\dirbow{t11}{s1}{-.35}

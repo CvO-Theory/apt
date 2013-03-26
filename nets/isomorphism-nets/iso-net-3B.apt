@@ -1,0 +1,16 @@
+// The transitions "a" and "b" are swapped between 3A and 3B
+
+.name "iso-net-3B.apt"
+.type PN
+
+.places
+s0 s1
+
+.transitions
+a b
+
+.flows
+b: {s0} -> {s1}
+a: {s1} -> {s0}
+
+.initial_marking {s0}

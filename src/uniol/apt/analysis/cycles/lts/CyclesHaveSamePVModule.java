@@ -1,0 +1,112 @@
+/*-
+ * APT - Analysis of Petri Nets and labeled Transition systems
+ * Copyright (C) 2012-2013  Members of the project group APT
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+package uniol.apt.analysis.cycles.lts;
+
+import uniol.apt.adt.PetriNetOrTransitionSystem;
+import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.cycles.CyclesHaveSamePV;
+import uniol.apt.module.AbstractModule;
+import uniol.apt.module.Category;
+import uniol.apt.module.ModuleInput;
+import uniol.apt.module.ModuleInputSpec;
+import uniol.apt.module.ModuleOutput;
+import uniol.apt.module.ModuleOutputSpec;
+import uniol.apt.module.exception.ModuleException;
+
+/**
+ * This module checks whether all smallest cycles of an lts or pn have same Parikh vectors.
+ * <p/>
+ * @author Manuel Gieseking
+ */
+public class CyclesHaveSamePVModule extends AbstractModule {
+
+	private final static String SHORTDESCRIPTION = "Check if the smallest cycles of Petri net or LTS have"
+		+ " the same parikh vector";
+	private final static String LONGDESCRIPTION = SHORTDESCRIPTION;
+	private final static String TITLE = "SmallestCyclesHaveSameParikhVectors";
+	private final static String NAME = "cycles_same_pv";
+
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
+	@Override
+	public void require(ModuleInputSpec inputSpec) {
+		inputSpec.addParameter("graph", PetriNetOrTransitionSystem.class,
+			"The LTS or Petri net that should be examined");
+		inputSpec.addOptionalParameter("algo", Character.class, 'f', "Parameter 'f' for the adapted "
+			+ "Floyd-Warshall algorithm and 'd' for the algorithm using the depth first search.");
+	}
+
+	@Override
+	public void provide(ModuleOutputSpec outputSpec) {
+		outputSpec.addReturnValue("out", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
+		outputSpec.addReturnValue("counterExamples", CycleCounterExample.class);
+	}
+
+	@Override
+	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
+		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
+		Character algo = input.getParameter("algo", Character.class);
+		ComputeSmallestCycles.Algorithm alg = (algo == 'd')
+			? ComputeSmallestCycles.Algorithm.DFS : ComputeSmallestCycles.Algorithm.FloydWarshall;
+		TransitionSystem ts = g.getTs();
+		PetriNet pn = g.getNet();
+		boolean ret = false;
+		CycleCounterExample ex = null;
+		if (ts != null) {
+			ComputeSmallestCycles prog = new ComputeSmallestCycles();
+			ret = prog.checkSamePVs(ts, alg);
+			ex = prog.getCounterExample();
+		} else if (pn != null) {
+			CyclesHaveSamePV prog = new CyclesHaveSamePV(pn);
+			ret = prog.check(alg);
+			ex = prog.getCycleCounterExample();
+		}
+		if (!ret) {
+			output.setReturnValue("counterExamples", CycleCounterExample.class, ex);
+		}
+		output.setReturnValue("out", Boolean.class, ret);
+	}
+
+	@Override
+	public String getTitle() {
+		return TITLE;
+	}
+
+	@Override
+	public String getShortDescription() {
+		return SHORTDESCRIPTION;
+	}
+
+	@Override
+	public String getLongDescription() {
+		return LONGDESCRIPTION;
+	}
+
+	@Override
+	public Category[] getCategories() {
+		return new Category[]{Category.PN, Category.LTS};
+	}
+}
+
+// vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

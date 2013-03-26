@@ -1,0 +1,10 @@
+.name "not-connected-net.apt"
+.type PN
+
+.places
+s0 s1 s2
+
+.transitions
+a b c
+
+.flows

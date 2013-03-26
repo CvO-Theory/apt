@@ -1,0 +1,21 @@
+// Figur 13 aus [BD11a]
+
+.name "distr-fig13-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4 s5
+
+.transitions
+a aa b c cc d f
+
+.flows
+a: {s2} -> {s1}
+aa: {s1,s3} -> {s4,s5}
+b: {s5} -> {s3}
+c: {s4} -> {s1}
+cc: {s1,s3} -> {s2,s5}
+d: {s1} -> {s4}
+f: {s1} -> {s2}
+
+.initial_marking {s1,s5}

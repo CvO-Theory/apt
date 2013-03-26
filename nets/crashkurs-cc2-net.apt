@@ -1,0 +1,22 @@
+// Netz Folie 33 April-24
+// author = Manuel Gieseking
+.name "cc2.net"
+.type LPN
+
+.places
+p1
+p2
+p3
+
+.transitions
+t1
+t2
+t3
+
+.flows
+t1: {p1} -> {p3}
+t2: {p2} -> {2*p3}
+t3: {p3} -> {p1}
+
+
+.initial_marking {p2, 2*p3}

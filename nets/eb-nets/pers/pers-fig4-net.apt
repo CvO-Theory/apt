@@ -1,0 +1,23 @@
+// Aehnlich Figur 4 aus [BD11c]
+// Dieses Netz ist beschraenkt, reversibel und persistent.
+// Ist ein solches Netz schlicht und hat es eine k-Anfangsmarkierung mit k>=2,
+// dann haben alle kleinsten Kreise im Erreichbarkeitsgraphen Parikh-Vektor 1.
+// Dieses Netz zeigt, dass Schlichtheit unbedingt noetig ist.
+
+.name "pers-fig4-net.apt"
+.type LPN
+
+.places
+s1 s2
+
+.transitions
+a b
+
+.flows
+a: {s1,s1} -> {s2,s2}
+b: {s2} -> {s1}
+
+.initial_marking {2*s1}
+
+// As of Nov 4, the system still creates an incorrect reachability graph.
+// It should have exactly 3 states, cycling through them according to (abb)^*.

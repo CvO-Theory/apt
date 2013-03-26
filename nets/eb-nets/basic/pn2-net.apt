@@ -1,0 +1,19 @@
+// Figur 5 aus [BW10] mit einer beschraenkten Markierung
+// Das Netz hat keine lebendige Markierung
+// Alle Markierungen sind beschraenkt
+
+.name "pn2-net.apt"
+.type LPN
+
+.places
+s1 s2 s3
+
+.transitions
+a b c
+
+.flows
+a: {s1} -> {s2}
+b: {s1} -> {s3}
+c: {s2,s3} -> {s1}
+
+.initial_marking {2*s1,2*s2,2*s3}

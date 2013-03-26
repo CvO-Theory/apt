@@ -1,0 +1,36 @@
+// synet generated pn from ksys-T-net-aut.apt
+// @author Manuel
+.name ""
+.type LPN
+
+.places
+x_0
+x_1
+x_2
+x_3
+x_4
+x_5
+x_6
+x_7
+
+.transitions
+t [label="t"]
+tt [label="tt"]
+u [label="u"]
+uu [label="uu"]
+x [label="x"]
+xx [label="xx"]
+y [label="y"]
+yy [label="yy"]
+
+.flows
+t: {1*x_5} -> {1*x_6}
+tt: {1*x_1} -> {1*x_2}
+u: {1*x_6} -> {1*x_7}
+uu: {1*x_2} -> {1*x_3}
+x: {1*x_7} -> {1*x_0}
+xx: {1*x_3} -> {1*x_4}
+y: {1*x_0} -> {1*x_1}
+yy: {1*x_4} -> {1*x_5}
+
+.initial_marking {2*x_7}

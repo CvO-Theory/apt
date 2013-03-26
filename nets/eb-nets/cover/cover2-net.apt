@@ -1,0 +1,19 @@
+// Figur (rechts) aus [BD11b]
+// Sollte zusammen mit cover1-net.apt gelesen werden.
+.name "cover2-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4 s5 s6
+
+.transitions
+a b1 [label="b"] b2 [label="b"] c d
+
+.flows
+a: {s1} -> {s2,s4}
+b1: {s2} -> {s3}
+b2: {s5} -> {s6}
+d: {s3} -> {}
+c: {s4,s6} -> {}
+
+.initial_marking {s1,s5}

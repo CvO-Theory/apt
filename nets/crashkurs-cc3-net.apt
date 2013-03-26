@@ -1,0 +1,22 @@
+// Netz zum LTS von Folie 35 April-24
+// author = Manuel Gieseking
+.name "cc3.net"
+.type LPN
+.description "Crashkurs Netz cc3"
+
+.places
+s1
+s2
+s3
+
+.transitions
+t1
+t2
+t3
+
+.flows
+t1: {s2, 2*s3} -> {2*s3, s1}
+t2: {2*s1,s3} -> {2*s1,s2}
+t3: {s1,2*s2} -> {2*s2,s3}
+
+.initial_marking {2*s2, 2*s3}

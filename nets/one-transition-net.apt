@@ -1,0 +1,6 @@
+.name "One transition"
+.type LPN
+.description "Petri Net with only one transition"
+
+.transitions
+t1

@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Check Test from 2013-14-13_22-34-50</title>
+  </head>
+  <body>
+    <h1>Check Test from 2013-14-13_22-34-50</h1>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance !3-marking !isolated > log/check_test_net_2013-14-13_22-34-50_1.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_1.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!3-marking !isolated</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar k_marking log/check_test_net_2013-14-13_22-34-50_1.apt </h3>
+      <pre>
+Largest k for which M0 is a k-marking: 1
+      </pre>
+      <h3>java-1.7.0 -jar apt.jar isolated log/check_test_net_2013-14-13_22-34-50_1.apt </h3>
+      <pre>
+isolated: No
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance 2-marking bounded > log/check_test_net_2013-14-13_22-34-50_2.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_2.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>2-marking bounded</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar k_marking log/check_test_net_2013-14-13_22-34-50_2.apt </h3>
+      <pre>
+Largest k for which M0 is a k-marking: 2
+      </pre>
+      <h3>java-1.7.0 -jar apt.jar bounded log/check_test_net_2013-14-13_22-34-50_2.apt </h3>
+      <pre>
+bounded: Yes
+witness_place: p2
+witness_firing_sequence: "t1;t1"
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance !tnet > log/check_test_net_2013-14-13_22-34-50_3.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_3.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!tnet</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar tnet log/check_test_net_2013-14-13_22-34-50_3.apt </h3>
+      <pre>
+t_net: No
+information:
+  There is a merge before p3.
+  There is a merge before p2.
+  There is a merge before p1.
+
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance !freeChoice !tnet !stronglyLive > log/check_test_net_2013-14-13_22-34-50_4.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_4.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!freeChoice !tnet !stronglyLive</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar fc log/check_test_net_2013-14-13_22-34-50_4.apt </h3>
+      <pre>
+fc: No
+      </pre>
+      <h3>java-1.7.0 -jar apt.jar tnet log/check_test_net_2013-14-13_22-34-50_4.apt </h3>
+      <pre>
+t_net: No
+information:
+  There is a conflict after p1.
+
+      </pre>
+      <h3>java-1.7.0 -jar apt.jar strongly_live log/check_test_net_2013-14-13_22-34-50_4.apt </h3>
+      <pre>
+strongly_live: No
+sample_witness_transition: t1
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance stronglyLive freeChoice > log/check_test_net_2013-14-13_22-34-50_5.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_5.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>stronglyLive freeChoice</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar strongly_live log/check_test_net_2013-14-13_22-34-50_5.apt </h3>
+      <pre>
+strongly_live: Yes
+      </pre>
+      <h3>java-1.7.0 -jar apt.jar fc log/check_test_net_2013-14-13_22-34-50_5.apt </h3>
+      <pre>
+fc: Yes
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance !freeChoice !isolated > log/check_test_net_2013-14-13_22-34-50_6.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_6.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!freeChoice !isolated</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar fc log/check_test_net_2013-14-13_22-34-50_6.apt </h3>
+      <pre>
+fc: No
+      </pre>
+      <h3>java-1.7.0 -jar apt.jar isolated log/check_test_net_2013-14-13_22-34-50_6.apt </h3>
+      <pre>
+isolated: No
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance freeChoice !stronglyLive > log/check_test_net_2013-14-13_22-34-50_7.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_7.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>freeChoice !stronglyLive</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar fc log/check_test_net_2013-14-13_22-34-50_7.apt </h3>
+      <pre>
+fc: Yes
+      </pre>
+      <h3>java-1.7.0 -jar apt.jar strongly_live log/check_test_net_2013-14-13_22-34-50_7.apt </h3>
+      <pre>
+strongly_live: No
+sample_witness_transition: t1
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance !stronglyLive > log/check_test_net_2013-14-13_22-34-50_8.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_8.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!stronglyLive</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar strongly_live log/check_test_net_2013-14-13_22-34-50_8.apt </h3>
+      <pre>
+strongly_live: No
+sample_witness_transition: t1
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance persistent !freeChoice reversible > log/check_test_net_2013-14-13_22-34-50_9.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_9.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>persistent !freeChoice reversible</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar persistent log/check_test_net_2013-14-13_22-34-50_9.apt </h3>
+      <pre>
+persistent: Yes
+      </pre>
+      <h3>java-1.7.0 -jar apt.jar fc log/check_test_net_2013-14-13_22-34-50_9.apt </h3>
+      <pre>
+fc: No
+      </pre>
+      <h3>java-1.7.0 -jar apt.jar reversible log/check_test_net_2013-14-13_22-34-50_9.apt </h3>
+      <pre>
+reversible: Yes
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance pure > log/check_test_net_2013-14-13_22-34-50_10.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_10.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>pure</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar pure log/check_test_net_2013-14-13_22-34-50_10.apt </h3>
+      <pre>
+pure: Yes
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance stronglyLive > log/check_test_net_2013-14-13_22-34-50_11.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_11.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>stronglyLive</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar strongly_live log/check_test_net_2013-14-13_22-34-50_11.apt </h3>
+      <pre>
+strongly_live: Yes
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance !weakly_3-separable 2-marking !strongly_3-separable > log/check_test_net_2013-14-13_22-34-50_12.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_12.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!weakly_3-separable 2-marking !strongly_3-separable</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar weak_separation_length log/check_test_net_2013-14-13_22-34-50_12.apt 5 3</h3>
+      <pre>
+Result:
+The initial marking is a 6-marking but not an L-marking for any L>6.
+
+The firing sequence "t1;t4;t4" of length 3 is not weakly 3-separable.
+
+      </pre>
+      <h3>java-1.7.0 -jar apt.jar k_marking log/check_test_net_2013-14-13_22-34-50_12.apt </h3>
+      <pre>
+Largest k for which M0 is a k-marking: 6
+      </pre>
+      <h3>java-1.7.0 -jar apt.jar strong_separation_length log/check_test_net_2013-14-13_22-34-50_12.apt 5 3</h3>
+      <pre>
+Result:
+The initial marking is a 6-marking but not an L-marking for any L>6.
+
+The firing sequence "t1;t4;t4" of length 3 is not strongly 3-separable.
+
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance !weakly_3-separable > log/check_test_net_2013-14-13_22-34-50_13.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-14-13_22-34-50_13.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!weakly_3-separable</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java-1.7.0 -jar apt.jar weak_separation_length log/check_test_net_2013-14-13_22-34-50_13.apt 5 3</h3>
+      <pre>
+Result:
+The initial marking is a 3-marking but not an L-marking for any L>3.
+
+The firing sequence "t1;t2" of length 2 is not weakly 3-separable.
+
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance !weakly_2-separable tnet reversible > log/check_test_net_2013-14-13_22-34-50_14.apt</pre>
+      <h2>Unfortunately no net was found -- 5265 nets have been tested.</h2>
+      <h2>Required attributes: <font color="#008000"><i>!weakly_2-separable tnet reversible</i></font></h2>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java-1.7.0 -jar apt.jar check 5 chance !plain freeChoice > log/check_test_net_2013-14-13_22-34-50_15.apt</pre>
+      <h2>Unfortunately no net was found -- 480238 nets have been tested.</h2>
+      <h2>Required attributes: <font color="#008000"><i>!plain freeChoice</i></font></h2>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+.name "siphon-test-net.apt"
+.type PN
+
+.places
+s0
+
+.transitions
+a
+
+.flows
+a: {} -> {s0}

@@ -1,0 +1,15 @@
+//working...
+//Net found:
+.name ""
+.type LPN
+
+.places
+p1
+p2
+
+.transitions
+
+.flows
+
+.initial_marking {1*p1}
+

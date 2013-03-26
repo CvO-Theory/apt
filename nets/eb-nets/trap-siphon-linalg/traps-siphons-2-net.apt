@@ -1,0 +1,33 @@
+// Noch ein Netz aus den Uebungen zum PN-Modul (mit riesigem Erreichbarkeitsgraph)
+// Forderungen aus den Uebungen:
+// Geben Sie drei T-Invarianten zu diesem Netz an:
+// eine positive T-Invariante,
+// eine semi-positive T-Invariante, die nicht positiv ist,
+// und eine T-Invariante, die positive und negative Eintr"age (beides!),
+// aber keine Nullen enth"alt.
+// Geben Sie eine positive S-Invariante zu diesem Netz an.
+// Geben Sie die beiden nicht-leeren Fallen zu diesem Netz an.
+// Geben Sie alle 3 nicht-leeren Siphons zu diesem Netz an.
+// Geben Sie alle in diesem System erreichbaren Deadlockzust"ande an.
+
+.name "traps-siphons-2-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4 s5 s6
+
+.transitions
+t1 t2 t3 t4 t5 t6 t7 t8 t9
+
+.flows
+t1: {s1} -> {s2,s3}
+t2: {s1} -> {s2,s4}
+t3: {s2} -> {s3}
+t4: {s2} -> {s4}
+t5: {s3} -> {s5}
+t6: {s2} -> {s5}
+t7: {s2} -> {s6}
+t8: {s4} -> {s6}
+t9: {s5,s6} -> {s1}
+
+.initial_marking {4*s1}

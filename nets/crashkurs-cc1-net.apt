@@ -1,0 +1,28 @@
+// Netz zum LTS auf Folie 7 April-24
+// author = Manuel Gieseking
+.name "cc1.net"
+.type LPN
+.description "Crashkurs Netz cc1"
+
+.places
+s1[test="asdf"]
+s2
+
+s3
+s4
+
+.transitions
+t1
+t2
+
+t3
+t4
+
+.flows
+t1: {s2} -> {s1}
+t2: {s1} -> {s2}
+
+t3: {s4} -> {s3}
+t4: {s3} -> {s4}
+
+.initial_marking {s1, s3}

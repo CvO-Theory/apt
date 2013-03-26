@@ -1,0 +1,37 @@
+// Noch ein Netz aus den Uebungen zum PN-Modul
+// Forderungen aus den Uebungen:
+// Geben Sie eine minimale, semipositive S-Invariante zu diesem Netz an.
+// Geben Sie eine minimale, semipositive T-Invariante zu diesem Netz an.
+// Geben Sie m"oglichst viele (mengentheoretisch) minimale nicht-leere Fallen zu diesem Netz an.
+// Geben Sie m"oglichst viele (mengentheoretisch) minimale nicht-leere Siphons zu diesem Netz an.
+
+.name "traps-siphons-3-net.apt"
+.type LPN
+
+.places
+s0 s1 s2 s3 s4 s5 s6 s7 s8 s9
+
+.transitions
+t0 t1 t2 t3 t4 t5 t6 t7 t8
+
+.flows
+t0: {s3,s7} -> {s4,s8}
+t1: {s0,s2} -> {s1,s3}
+t2: {s1,s6} -> {s0,s7}
+t3: {s4} -> {s8}
+t4: {s8} -> {s4}
+t5: {s4} -> {s5}
+t6: {s8} -> {s9}
+t7: {s5} -> {s2}
+t8: {s9} -> {s6}
+
+.initial_marking {s2,s0,s6}
+
+//\diredge{s0}{t1}\diredge{t1}{s1}\diredge{s1}{t2}\diredge{t2}{s0}
+//\diredge{s2}{t1}\diredge{t1}{s3}\diredge{s3}{t0}
+//\diredge{t0}{s4}\diredge{s4}{t5}\diredge{t5}{s5}
+//\diredge{s5}{t7}\diredge{t7}{s2}
+//\diredge{s6}{t2}\diredge{t2}{s7}\diredge{s7}{t0}
+//\diredge{t0}{s8}\diredge{s8}{t6}\diredge{t6}{s9}
+//\diredge{s9}{t8}\diredge{t8}{s6}
+//\diredge{s4}{t3}\diredge{t3}{s8}\diredge{s8}{t4}\diredge{t4}{s4}

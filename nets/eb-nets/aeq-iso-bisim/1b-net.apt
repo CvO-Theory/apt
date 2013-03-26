@@ -1,0 +1,18 @@
+// 1a und 1b sind sprachaequivalent, aber nicht bisimilar
+// und haben auch keine isomorphen Erreichbarkeitsgraphen
+
+.name "1b-net"
+.type LPN
+
+.places
+s1 s
+
+.transitions
+a b c
+
+.flows
+a: {s1} -> {s}
+b: {s} -> {}
+c: {s} -> {}
+
+.initial_marking {s1}

@@ -1,0 +1,13 @@
+.name "siphon-and-trap-net.apt"
+.type PN
+
+.places
+s1 s2 s3
+
+.transitions
+a b c
+
+.flows
+a: {s1} -> {s1, s3}
+b: {s2} -> {s3}
+c: {s3} -> {s1}

@@ -1,0 +1,17 @@
+.type LPN
+.description "A net with sixteen S-invariants.
+ You 'should' be able to infer from this sequence (s-inv-4, -8, -16) of
+ nets the general construction of a net with n transitions, 2n places,
+ and 2^n semipositive S-invariants."
+
+.places
+s1 s2 s3 s4 s5 s6 s7 s8
+
+.transitions
+t1 t2 t3 t4
+
+.flows
+t1: {s1,s2} -> {s7,s8}
+t2: {s3,s4} -> {s1,s2}
+t3: {s5,s6} -> {s3,s4}
+t4: {s7,s8} -> {s5,s6}

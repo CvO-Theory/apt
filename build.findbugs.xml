@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- set findbugs.home property in build.local.xml before this -->
+
+<project>
+	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
+		classpath="${findbugs.home}/lib/findbugs-ant.jar" />
+
+	<target name="findbugs" depends="javac,javac.tests">
+		<mkdir dir="reports" />
+		<findbugs home="${findbugs.home}"
+				output="xml:withMessages"
+				outputFile="reports/findbugs.xml" >
+			<auxClasspath>
+				<path refid="test.class.path" />
+				<path refid="project.class.path" />
+			</auxClasspath>
+			<sourcePath>
+				<pathelement location="src" />
+				<pathelement location="test" />
+			</sourcePath>
+			<fileset dir="classes">
+				<include name="**/*.class" />
+				<exclude name="uniol/apt/io/parser/impl/apt/*.class" />
+			</fileset>
+			<fileset dir="test-classes">
+				<include name="**/*.class" />
+			</fileset>
+		</findbugs>
+	</target>
+</project>

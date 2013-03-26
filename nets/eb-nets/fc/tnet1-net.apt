@@ -1,0 +1,23 @@
+// Figur 22 aus [BW10], ein T-Netz
+// Die Anfangsmarkierung ist sicher, das Netz ist aber nur 2-beschraenkt (nicht sicher)
+
+.name "tnet1-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4 s5 s6
+
+.transitions
+t1 t2 t3 t4
+
+.flows
+t1: {s2} -> {s1,s3}
+t2: {s1,s4} -> {s5}
+t3: {s3,s6} -> {s2}
+t4: {s5} -> {s4,s6}
+
+.initial_marking {s2,s5}
+
+//    \diredge{s2}{t1}\diredge{t1}{s3}\diredge{s3}{t3}\diredge{t3}{s2}
+//    \diredge{t1}{s1}\diredge{s1}{t2}\diredge{t4}{s6}\diredge{s6}{t3}
+//    \diredge{t2}{s5}\diredge{s5}{t4}\diredge{t4}{s4}\diredge{s4}{t2}

@@ -1,0 +1,19 @@
+// Figur 8(l.h.s.) aus [BD11c]
+// 2-Anfangsmarkierung, die nicht (stark) separabel ist
+.name "sep-fi-fig8a-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4
+
+.transitions
+a b c
+
+.flows
+b: {s1} -> {s2}
+a: {s4} -> {s2}
+c: {s2,s3} -> {s4}
+
+.initial_marking {2*s1,2*s3}
+
+// A non-separable $\sigma$: M_0[bcac\rangle

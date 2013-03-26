@@ -1,0 +1,13 @@
+.type LPN
+.description "A net with four S-invariants"
+
+.places
+s1 s2 s3 s4
+
+.transitions
+t1 t2
+
+.flows
+t1: {s1,s2} -> {s3,s4}
+t2: {s3,s4} -> {s1,s2}
+

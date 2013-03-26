@@ -1,0 +1,22 @@
+// Netz Folie 32 April-24
+// author = Manuel Gieseking
+.name "cc2inf.net"
+.type LPN
+.description "Crashkurs Netz cc2inf"
+
+.places
+s1
+s2
+s3
+
+.transitions
+t1
+t2
+t3
+
+.flows
+t1: {s1} -> {s1,s3}
+t2: {s2} -> {2*s3}
+t3: {s3} -> {s1}
+
+.initial_marking {s2,2*s3}

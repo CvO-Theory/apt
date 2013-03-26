@@ -1,0 +1,19 @@
+// @author Manuel Gieseking
+.type LTS
+
+.states
+s0[initial]
+s1
+s2
+s3
+
+.labels
+a
+b
+d
+
+.arcs
+s0 b s1
+s1 a s2
+s2 a s3
+s3 d s1

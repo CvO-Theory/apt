@@ -1,0 +1,18 @@
+// simple-k1, disjunkt-parallel mit simple-k1, T-System
+
+.name "sep-simple-k1-shuffle-k1.apt"
+.type LPN
+
+.places
+s11 s21 s31 s12 s22 s32
+
+.transitions
+a1 [label="a"] b1 [label="b"] a2 [label="a"] b2 [label="b"]
+
+.flows
+a1: {s11} -> {s21}
+b1: {s21,s31} -> {}
+a2: {s12} -> {s22}
+b2: {s22,s32} -> {}
+
+.initial_marking {2*s11,s31,2*s12,s32}

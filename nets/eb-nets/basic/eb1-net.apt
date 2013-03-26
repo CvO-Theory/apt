@@ -1,0 +1,12 @@
+// Zwei isolierte Elemente
+.name "eb1-net"
+.type LPN
+.description "Test-Netz-EB-1"
+
+.places
+s1
+
+.transitions
+t1
+
+.initial_marking {s1}

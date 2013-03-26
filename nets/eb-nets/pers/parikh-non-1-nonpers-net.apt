@@ -1,0 +1,20 @@
+// Figur 6 aus [BD11a] und Figur 3 aus [BD11c] rechts
+// Das Gleiche wie parikh-non-1-net.apt,
+// nur dass anfaenglich jeweils 2 Token auf den Stellen liegen.
+// Im Gegensatz zu parikh-non-1-net.apt ist parikh-non-1-nonpers-net.apt nicht persistent.
+
+.name "parikh-non-1-nonpers-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4
+
+.transitions
+a b c
+
+.flows
+a: {s1,s2} -> {s3,s4}
+b: {s1,s3} -> {s2,s4}
+c: {s4} -> {s1}
+
+.initial_marking {2*s1,2*s2}

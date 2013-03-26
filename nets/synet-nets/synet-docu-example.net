@@ -1,0 +1,27 @@
+location B
+location A
+transition t :: A
+transition d :: A
+transition b :: B
+transition c :: B
+transition a :: A
+place x_5 := 1 :: B
+place x_4 :: B
+place x_3 :: A
+place x_2 := 1 :: A
+place x_1 :: A
+place x_0 :: A
+flow x_5 ---> b
+flow x_5 ---> c
+flow x_4 ---> b
+flow x_3 ---> t
+flow x_2 ---> a
+flow x_1 ---> d
+flow x_0 ---> t
+flow x_0 ---> d
+flow x_5 <--- t
+flow x_4 <--- a
+flow x_3 <--- b
+flow x_2 <--- t
+flow x_1 <--- c
+flow x_0 <--- a

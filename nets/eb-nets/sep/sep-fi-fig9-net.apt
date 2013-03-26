@@ -1,0 +1,24 @@
+// Figur 9 aus [BD11c]
+// 3-Anfangsmarkierung, die stark 3-separabel ist
+.name "sep-fi-fig9-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4
+
+.transitions
+a b c d
+
+.flows
+a: {s1} -> {s2}
+b: {s2} -> {s3}
+c: {s3} -> {s4}
+d: {s4} -> {s1}
+
+.initial_marking {6*s1,3*s2}
+
+// \sigma to be separated: abbbbcaaacaadbac
+// \sigma_1: aabc
+// \sigma_2: aabcb
+// \sigma_3: aabcbda
+// (Diese drei Folgen ergeben sich aus der systematischen Konstruktion im Beweis)

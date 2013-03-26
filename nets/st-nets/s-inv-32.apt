@@ -1,0 +1,15 @@
+.type LPN
+.description "guess what"
+
+.places
+s1 s2 s3 s4 s5 s6 s7 s8 s9 s10
+
+.transitions
+t1 t2 t3 t4 t5
+
+.flows
+t1: {s1,s2} -> {s9,s10}
+t2: {s3,s4} -> {s1,s2}
+t3: {s5,s6} -> {s3,s4}
+t4: {s7,s8} -> {s5,s6}
+t5: {s9,s10} -> {s7,s8}

@@ -1,0 +1,19 @@
+.name ""
+.type LPN
+
+.places
+x_0
+x_1
+x_2
+
+.transitions
+a [label="a"]
+b [label="b"]
+c [label="c"]
+
+.flows
+a: {2*x_2, 1*x_1} -> {1*x_0, 2*x_2}
+b: {1*x_2, 2*x_0} -> {2*x_0, 1*x_1}
+c: {2*x_1, 1*x_0} -> {1*x_2, 2*x_1}
+
+.initial_marking {2*x_1, 2*x_2}

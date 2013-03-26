@@ -1,0 +1,24 @@
+// Netz Folie 16 May-8
+// author = Manuel Gieseking
+.name "cc7.net"
+.type LPN
+.description "Crashkurs Netz cc7"
+
+.places
+s1
+s2
+s3
+
+.transitions
+t1
+t2
+t3
+t4
+t5
+
+.flows
+t1: {s1} -> {s2}
+t2: {s1} -> {s3}
+t3: {s2,s3} -> {s1}
+
+.initial_marking {s1,s2,s3}

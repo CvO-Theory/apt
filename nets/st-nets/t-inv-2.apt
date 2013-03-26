@@ -1,0 +1,13 @@
+.type LPN
+.description "A net with two T-invariants"
+
+.places
+s1 s2
+
+.transitions
+t1 t2 t3
+
+.flows
+t1 : {s1} -> {s1}
+t2 : {s1} -> {s2}
+t3 : {s2} -> {s1}

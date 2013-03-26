@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Check Test from 2013-16-13_13-35-37</title>
+  </head>
+  <body>
+    <h1>Check Test from 2013-16-13_13-35-37</h1>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance !3-marking !stronglyLive > log/check_test_net_2013-16-13_13-35-37_1.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_1.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!3-marking !stronglyLive</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar k_marking log/check_test_net_2013-16-13_13-35-37_1.apt </h3>
+      <pre>
+Largest k for which M0 is a k-marking: 1
+      </pre>
+      <h3>java -jar ./apt.jar strongly_live log/check_test_net_2013-16-13_13-35-37_1.apt </h3>
+      <pre>
+strongly_live: No
+sample_witness_transition: t1
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance !pure reversible > log/check_test_net_2013-16-13_13-35-37_2.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_2.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!pure reversible</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar pure log/check_test_net_2013-16-13_13-35-37_2.apt </h3>
+      <pre>
+pure: No
+      </pre>
+      <h3>java -jar ./apt.jar reversible log/check_test_net_2013-16-13_13-35-37_2.apt </h3>
+      <pre>
+reversible: Yes
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance pure !strongly_3-separable > log/check_test_net_2013-16-13_13-35-37_3.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_3.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>pure !strongly_3-separable</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar pure log/check_test_net_2013-16-13_13-35-37_3.apt </h3>
+      <pre>
+pure: Yes
+      </pre>
+      <h3>java -jar ./apt.jar strong_separation_length log/check_test_net_2013-16-13_13-35-37_3.apt 5 3</h3>
+      <pre>
+Result:
+The initial marking is a 3-marking but not an L-marking for any L>3.
+
+The firing sequence "t3" of length 1 is not strongly 3-separable.
+
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance !snet > log/check_test_net_2013-16-13_13-35-37_4.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_4.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!snet</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar snet log/check_test_net_2013-16-13_13-35-37_4.apt </h3>
+      <pre>
+s_net: No
+information:
+  There is a synchronization before t2.
+  There is a synchronization before t1.
+  There is a splitting after t2.
+  There is a splitting after t1.
+
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance !strongly_3-separable > log/check_test_net_2013-16-13_13-35-37_5.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_5.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!strongly_3-separable</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar strong_separation_length log/check_test_net_2013-16-13_13-35-37_5.apt 5 3</h3>
+      <pre>
+Result:
+The initial marking is a 3-marking but not an L-marking for any L>3.
+
+The firing sequence "t1;t3" of length 2 is not strongly 3-separable.
+
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance !weakly_2-separable > log/check_test_net_2013-16-13_13-35-37_6.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_6.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!weakly_2-separable</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar weak_separation_length log/check_test_net_2013-16-13_13-35-37_6.apt 5 2</h3>
+      <pre>
+Result:
+The initial marking is a 2-marking but not an L-marking for any L>2.
+
+The firing sequence "t1;t2" of length 2 is not weakly 2-separable.
+
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance !pure > log/check_test_net_2013-16-13_13-35-37_7.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_7.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!pure</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar pure log/check_test_net_2013-16-13_13-35-37_7.apt </h3>
+      <pre>
+pure: No
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance !weakly_3-separable > log/check_test_net_2013-16-13_13-35-37_8.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_8.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!weakly_3-separable</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar weak_separation_length log/check_test_net_2013-16-13_13-35-37_8.apt 5 3</h3>
+      <pre>
+Result:
+The initial marking is a 3-marking but not an L-marking for any L>3.
+
+The firing sequence "t1;t3" of length 2 is not weakly 3-separable.
+
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance plain > log/check_test_net_2013-16-13_13-35-37_9.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_9.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>plain</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar plain log/check_test_net_2013-16-13_13-35-37_9.apt </h3>
+      <pre>
+plain: Yes
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance !3-marking bounded !pure > log/check_test_net_2013-16-13_13-35-37_10.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_10.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!3-marking bounded !pure</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar k_marking log/check_test_net_2013-16-13_13-35-37_10.apt </h3>
+      <pre>
+Largest k for which M0 is a k-marking: 1
+      </pre>
+      <h3>java -jar ./apt.jar bounded log/check_test_net_2013-16-13_13-35-37_10.apt </h3>
+      <pre>
+bounded: Yes
+witness_place: p1
+witness_firing_sequence: ""
+      </pre>
+      <h3>java -jar ./apt.jar pure log/check_test_net_2013-16-13_13-35-37_10.apt </h3>
+      <pre>
+pure: No
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance isolated 3-marking !reversible > log/check_test_net_2013-16-13_13-35-37_11.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_11.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>isolated 3-marking !reversible</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar isolated log/check_test_net_2013-16-13_13-35-37_11.apt </h3>
+      <pre>
+isolated: Yes
+      </pre>
+      <h3>java -jar ./apt.jar k_marking log/check_test_net_2013-16-13_13-35-37_11.apt </h3>
+      <pre>
+Largest k for which M0 is a k-marking: 3
+      </pre>
+      <h3>java -jar ./apt.jar reversible log/check_test_net_2013-16-13_13-35-37_11.apt </h3>
+      <pre>
+reversible: No
+marking: p1:3 p4:OMEGA
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance isolated !weakly_2-separable !plain > log/check_test_net_2013-16-13_13-35-37_12.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_12.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>isolated !weakly_2-separable !plain</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar isolated log/check_test_net_2013-16-13_13-35-37_12.apt </h3>
+      <pre>
+isolated: Yes
+      </pre>
+      <h3>java -jar ./apt.jar weak_separation_length log/check_test_net_2013-16-13_13-35-37_12.apt 5 2</h3>
+      <pre>
+Result:
+The initial marking is a 2-marking but not an L-marking for any L>2.
+
+The firing sequence "t1;t2" of length 2 is not weakly 2-separable.
+
+      </pre>
+      <h3>java -jar ./apt.jar plain log/check_test_net_2013-16-13_13-35-37_12.apt </h3>
+      <pre>
+plain: No
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance !snet persistent > log/check_test_net_2013-16-13_13-35-37_13.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_13.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>!snet persistent</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar snet log/check_test_net_2013-16-13_13-35-37_13.apt </h3>
+      <pre>
+s_net: No
+information:
+  There is a synchronization before t3.
+  There is a synchronization before t1.
+  There is a splitting after t3.
+  There is a splitting after t1.
+
+      </pre>
+      <h3>java -jar ./apt.jar persistent log/check_test_net_2013-16-13_13-35-37_13.apt </h3>
+      <pre>
+persistent: Yes
+      </pre>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance !plain tnet > log/check_test_net_2013-16-13_13-35-37_14.apt</pre>
+      <h2>Unfortunately no net was found -- 487709 nets have been tested.</h2>
+      <h2>Required attributes: <font color="#008000"><i>!plain tnet</i></font></h2>
+      <hr>
+      <h2>Call to generate net:</h2>
+      <pre>java -jar ./apt.jar check 5 chance 3-marking > log/check_test_net_2013-16-13_13-35-37_15.apt</pre>
+      <h2>New petri-net created. (<a href="check_test_net_2013-16-13_13-35-37_15.apt">Show net...</a>)</h2>
+      <h2>Required attributes: <font color="#008000"><i>3-marking</i></font></h2>
+      <p>Petri-net will be checked...</p>
+      <h3>java -jar ./apt.jar k_marking log/check_test_net_2013-16-13_13-35-37_15.apt </h3>
+      <pre>
+Largest k for which M0 is a k-marking: 3
+      </pre>
+  </body>
+</html>

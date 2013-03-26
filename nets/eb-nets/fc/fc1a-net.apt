@@ -1,0 +1,32 @@
+// Figur 7 aus [BW10] mit einer lebendigen und sicheren Markierung
+// Das Netz ist FC und fc.
+// Die Anfangsmarkierung ist kein Home State.
+// (Eine Markierung ist ein Home State, wenn sie
+// von allen erreichbaren Markierungen aus erreicht werden kann)
+
+.name "fc1a-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4 s5 s6 s7
+
+.transitions
+t1 t2 t3 t4 t5 t6 t7
+
+.flows
+t1: {s1} -> {s2,s3}
+t2: {s1} -> {s4,s5}
+t3: {s2} -> {s6}
+t4: {s3} -> {s7}
+t5: {s4} -> {s6}
+t6: {s5} -> {s7}
+t7: {s6,s7} -> {s1}
+
+.initial_marking {s2,s5}
+
+// \diredge{s1}{t1}\diredge{s1}{t2}
+// \diredge{t1}{s2}\diredge{t1}{s3}\diredge{t2}{s4}\diredge{t2}{s5}
+// \diredge{s2}{t3}\diredge{s3}{t4}\diredge{s4}{t5}\diredge{s5}{t6}
+// \diredge{t3}{s6}\diredge{t4}{s7}\diredge{t5}{s6}\diredge{t6}{s7}
+// \diredge{s6}{t7}\diredge{s7}{t7}
+// \dirbow{t7}{s1}{.6}%[\graphlinewidth{.07}]

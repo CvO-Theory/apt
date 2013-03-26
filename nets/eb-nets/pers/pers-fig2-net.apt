@@ -1,0 +1,24 @@
+// Figur 4 aus [BD11c]
+// Dieses Netz ist beschraenkt, schlicht, reversibel und persistent.
+// Es gilt: hat ein solches Netz eine k-Anfangsmarkierung mit k>=2,
+// dann haben alle kleinsten Kreise im Erreichbarkeitsgraphen Parikh-Vektor 1.
+// Dieses Netz zeigt, dass es nicht genuegt, wenn die Anfangsmarkierung
+// eine k-Markierung mit k>=2 nur ueberdeckt.
+// (Es ist ein Gegenbeispiel gegen die Vermutung, dass es unbedingt eine Stelle
+// mit genau 1 Token geben muss, damit Parikh-Vektoren ungleich 1 moeglich sind.)
+
+.name "pers-fig2-net.apt"
+.type LPN
+
+.places
+s1 s2 s3 s4
+
+.transitions
+a b c
+
+.flows
+a: {s1,s3} -> {s2}
+b: {s2,s3} -> {s4}
+c: {s2,s4} -> {s1,s1,s3,s3,s3}
+
+.initial_marking {2*s1,3*s3}

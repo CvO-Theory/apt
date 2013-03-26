@@ -1,0 +1,20 @@
+// Einfacher Kreis mit Parikh-Vektor 2
+// Von synet aus "aabbcc.aut" produziert und dann per Hand konvertiert
+
+.name "aabbcc-net.apt"
+.type LPN
+
+.places
+x_0
+x_1
+x_2
+
+.transitions
+a b c
+
+.flows
+a: {x_1,2*x_2} -> {x_0,2*x_2}
+b: {x_2,2*x_0} -> {x_1,2*x_0}
+c: {x_0,2*x_1} -> {x_2,2*x_1}
+
+.initial_marking {2*x_1,2*x_2}

@@ -1,0 +1,18 @@
+// author = Chris Schierholz
+.name "isolated-elements-net.net"
+.type LPN
+.description "Isolated elements test net"
+
+.places
+s1
+s2
+s3
+
+.transitions
+t1
+t2
+
+.flows
+t1: {s1} -> {s2}
+
+.initial_marking {s1, s3}

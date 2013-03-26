@@ -1,0 +1,16 @@
+// simple-k2, geteilt durch 2, T-System
+
+.name "sep-simple-k1.apt"
+.type LPN
+
+.places
+s1 s2 s3
+
+.transitions
+a b
+
+.flows
+a: {s1} -> {s2}
+b: {s2,s3} -> {}
+
+.initial_marking {2*s1,s3}

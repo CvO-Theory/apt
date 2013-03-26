@@ -1,0 +1,12 @@
+.name "isolated-element-net.apt"
+.type PN
+
+.places
+s0 s1 s2 s3
+
+.transitions
+a b
+
+.flows
+a: {s0} -> {s1}
+b: {s1} -> {s0, s2}
