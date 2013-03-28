@@ -16,4 +16,4 @@ testng.xml
 /build/
 /nbproject/private/
 xx.pdf
-petrify
+./petrify
