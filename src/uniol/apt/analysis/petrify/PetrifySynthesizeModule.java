@@ -41,7 +41,7 @@ public class PetrifySynthesizeModule extends AbstractModule {
 
 	@Override
 	public String getName() {
-		return "synthesizable";
+		return "use_petrify";
 	}
 
 	@Override
