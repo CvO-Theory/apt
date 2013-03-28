@@ -179,6 +179,11 @@ case is directed to /dev/null/ to hide it from the user) the user
 is presented with the phrase "The Petri net is bounded" if the Petri
 net is indeed bounded or "The Petri net is not bounded" otherwise.
 
+There are two modules which uses external programs. These are "use-synet" and "use-petrify".
+If you want to use these modules, you need to make sure that your PATH-variable contains those programs.
+You can download Synet under: http://www.irisa.fr/s4/tools/synet/
+and Petrify under: http://www.lsi.upc.edu/~jordicf/petrify/ 
+
 The file format
 ---------------
 
