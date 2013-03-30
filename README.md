@@ -24,7 +24,7 @@ Thus it should work on various architectures and operating systems. For building
 the software, [Ant](http://ant.apache.org) is used. The configuration for Ant is
 contained in a file called "build.xml". The way that Ant is called varies
 depending on the operating system and integrated development environment used.
-This guide explains how a JAR file can be built on on Unix-like systems.
+This guide explains how a JAR file can be built on Unix-like systems.
 Please refer to the relevant online documentation for other systems.
 
 Building and using a JAR file on the command line of Unix-like systems:
