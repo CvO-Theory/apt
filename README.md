@@ -24,7 +24,7 @@ Thus it should work on various architectures and operating systems. For building
 the software, [Ant](http://ant.apache.org) is used. The configuration for Ant is
 contained in a file called "build.xml". The way that Ant is called varies
 depending on the operating system and integrated development environment used.
-This guide explains how a JAR file can be built on on Unix-like systems.
+This guide explains how a JAR file can be built on Unix-like systems.
 Please refer to the relevant online documentation for other systems.
 
 Building and using a JAR file on the command line of Unix-like systems:
@@ -179,10 +179,14 @@ case is directed to /dev/null/ to hide it from the user) the user
 is presented with the phrase "The Petri net is bounded" if the Petri
 net is indeed bounded or "The Petri net is not bounded" otherwise.
 
-There are two modules which uses external programs. These are "use-synet" and "use-petrify".
-If you want to use these modules, you need to make sure that your PATH-variable contains those programs.
-You can download Synet under: http://www.irisa.fr/s4/tools/synet/
-and Petrify under: http://www.lsi.upc.edu/~jordicf/petrify/ 
+There are two modules which use external programs. These are the "use-synet" and "use-petrify" modules.
+If you want to use these modules, you need to make sure that your PATH variable contains the directory where those programs are located.
+
+Synet and Petrify can be downloaded here: 
+
+http://www.irisa.fr/s4/tools/synet/
+
+http://www.lsi.upc.edu/~jordicf/petrify/ 
 
 The file format
 ---------------
