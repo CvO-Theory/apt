@@ -119,11 +119,15 @@ public class SynetSynthesizeDistributedLTS {
 
 		Set<Arc> edges = ts_.getEdges();
 		for (Arc e : edges) {
-			if (e.getExtension("location") != null && !labelMem.contains(e.getLabel())) {
-				sb.append("(" + e.getLabel() + "," + e.getExtension("location").toString().replace("\"", "") + ")");
-				sb.append("\n");
-				labelMem.add(e.getLabel());
-				location_ = true;
+			try {	
+				if (e.getExtension("location") != null && !labelMem.contains(e.getLabel())) {
+					sb.append("(" + e.getLabel() + "," + e.getExtension("location").toString().replace("\"", "") + ")");
+					sb.append("\n");
+					labelMem.add(e.getLabel());
+					location_ = true;
+				}
+			} catch (Exception ex) {
+				
 			}
 		}
 		return sb.toString();
