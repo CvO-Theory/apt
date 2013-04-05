@@ -43,7 +43,7 @@ public class SynthesizeDistributedLTSModule extends AbstractModule {
 
     @Override
     public String getName() {
-        return "synthesize_distributed_lts";
+        return "use_synet";
     }
 
     @Override
