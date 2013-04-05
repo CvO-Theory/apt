@@ -119,6 +119,7 @@ import uniol.apt.generator.module.InverseNetGeneratorModule;
 import uniol.apt.generator.module.QuadstatePhilNetGeneratorModule;
 import uniol.apt.generator.module.TNetGeneratorModule;
 import uniol.apt.generator.module.TristatePhilNetGeneratorModule;
+import uniol.apt.io.converter.Apt2SynetModule;
 import uniol.apt.io.converter.Synet2AptModule;
 import uniol.apt.io.renderer.impl.LoLARendererModule;
 import uniol.apt.io.renderer.impl.PNMLRendererModule;
@@ -186,6 +187,7 @@ public class APT {
 	 * All the modules that are used in APT.
 	 */
 	private static Module[] modules = {
+		new Apt2SynetModule(),
 		new BCFModule(),
 		new BiCFModule(),
 		new BisimulationModule(),

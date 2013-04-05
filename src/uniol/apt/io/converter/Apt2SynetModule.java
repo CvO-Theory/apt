@@ -36,7 +36,7 @@ import uniol.apt.module.exception.ModuleException;
  * 
  * @author Sören
  */
-public class Apt2Synet extends AbstractModule {
+public class Apt2SynetModule extends AbstractModule {
 
 	private final static String DESCRIPTION = "Convert APT format to Synet format";
 	private final static String TITLE = "Apt2Synet";
