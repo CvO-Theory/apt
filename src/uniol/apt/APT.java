@@ -42,6 +42,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.ExamineLTSModule;
 import uniol.apt.analysis.ExaminePNModule;
+import uniol.apt.analysis.InfoModule;
 import uniol.apt.analysis.algebra.MatrixFileFormat;
 import uniol.apt.analysis.algebra.MatrixModule;
 import uniol.apt.analysis.bcf.BCFModule;
@@ -212,7 +213,7 @@ public class APT {
 		new ExtendTSExplicitPVModule(),
 		new FCModule(),
 		new FCNetModule(),
-		new InverseNetGeneratorModule(),
+		new InfoModule(),
 		new IsolatedElementsModule(),
 		new IsolatedModule(),
 		new IsomorphismModule(),
