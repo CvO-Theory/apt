@@ -37,7 +37,7 @@ public class SiphonModule extends AbstractModule {
 
 	@Override
 	public String getShortDescription() {
-		return "Compute all minimal siphons in a Petri net";
+		return "Compute all minimal non-empty siphons in a Petri net";
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class SiphonModule extends AbstractModule {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("minimal_siphons", TrapsSiphonsList.class);
+		outputSpec.addReturnValue("minimal_non-empty_siphons", TrapsSiphonsList.class);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class SiphonModule extends AbstractModule {
 
 		//Parameter: pn: Petri Net; 1st boolean: search for siphons; 2nd boolean: search for traps
 		TrapsAndSiphonsLogic logic = new TrapsAndSiphonsLogic(pn, true, false);
-		output.setReturnValue("minimal_siphons", TrapsSiphonsList.class,
+		output.setReturnValue("minimal_non-empty_siphons", TrapsSiphonsList.class,
 			new TrapsSiphonsList(logic.getResult()));
 	}
 
