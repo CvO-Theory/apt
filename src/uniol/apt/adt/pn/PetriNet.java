@@ -1360,6 +1360,17 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 	public Set<Node> getNodes() {
 		return Collections.unmodifiableSet(new LinkedHashSet<>(this.nodes.values()));
 	}
+	
+	@Override
+	public Node getNodeByExtension(String key, Object value) {
+		for(Node n : this.nodes.values()) {
+			Object ext = n.getExtension(key);
+			if(ext != null && ext.equals(value)) {
+				return n;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Calculates the preset nodes of a node with the given id.
