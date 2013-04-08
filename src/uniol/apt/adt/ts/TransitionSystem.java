@@ -38,6 +38,7 @@ import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.extension.Extensible;
+import uniol.apt.adt.pn.Node;
 
 /**
  * Represents a Transitionsystem. With states, arcs and an alphabet. It holds the pre- and postsets with the help of
@@ -762,6 +763,17 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	@Override
 	public Set<State> getNodes() {
 		return Collections.unmodifiableSet(new LinkedHashSet<>(this.states.values()));
+	}
+	
+	@Override
+	public State getNodeByExtension(String key, Object value) {
+		for(State s : this.states.values()) {
+			Object ext = s.getExtension(key);
+			if(ext != null && ext.equals(value)) {
+				return s;
+			}
+		}
+		return null;
 	}
 
 	/**
