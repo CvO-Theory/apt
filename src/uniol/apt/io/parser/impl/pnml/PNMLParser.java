@@ -36,6 +36,7 @@ import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.io.parser.impl.exception.PNMLParserException;
 
 /**
  * Reads P/T nets in PNML format
@@ -44,17 +45,31 @@ import uniol.apt.adt.pn.Transition;
  * in particular those emitted by LoLA and PIPE.
  *
  * It is not very efficient and no efforts towards optimisation have been
- * made so far because the focus of APT lies on using the proprietary file format
- * as well as those of Petrify and Synet.
+ * made so far because the focus of APT lies on using the proprietary file
+ * format and those of Petrify and Synet.
  *
  * @author Thomas Strathmann
  */
 public class PNMLParser {
 
-	public static PetriNet getPetriNet(String path) throws FileNotFoundException, IOException, ParserConfigurationException, SAXException {
+	public static PetriNet getPetriNet(String path) throws FileNotFoundException, IOException,
+	PNMLParserException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document dom = dBuilder.parse(path);
+		DocumentBuilder dBuilder;
+		try {
+			dBuilder = dbFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			throw new PNMLParserException("While trying to create an XML parser" +
+					"object for reading the data you provided," + System.lineSeparator() +
+					"the following exception occurred:" + e.getMessage());
+		}
+		Document dom;
+		try {
+			dom = dBuilder.parse(path);
+		} catch (SAXException e) {
+			throw new PNMLParserException("While trying to parse the XML data you provided," + System.lineSeparator() +
+					"the following exception occurred:" + e.getMessage());
+		}
 		dom.getDocumentElement().normalize();
 		
 		NodeList places = dom.getElementsByTagName("place");

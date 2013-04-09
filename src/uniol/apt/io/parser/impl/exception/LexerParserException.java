@@ -89,8 +89,8 @@ public class LexerParserException extends FormatException {
 	}
 
 	/**
-	 * Returns the combined error message. That means the lexer error and the parser error. Or only one of them if
-	 * the other isn't set.
+	 * Returns the combined error message. That means the lexer error and the parser error. 
+	 * Or only one of them if the other isn't set.
 	 * <p/>
 	 * @return the whole error message.
 	 */
@@ -103,6 +103,11 @@ public class LexerParserException extends FormatException {
 			sb.append("[ERROR] Parser: ").append(parserMsg);
 		}
 		return sb.toString();
+	}
+	
+	@Override
+	public String getMessage() {
+		return this.getLexerParserMessage();
 	}
 }
 
