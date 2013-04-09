@@ -38,7 +38,6 @@ import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.extension.Extensible;
-import uniol.apt.adt.pn.Node;
 
 /**
  * Represents a Transitionsystem. With states, arcs and an alphabet. It holds the pre- and postsets with the help of
