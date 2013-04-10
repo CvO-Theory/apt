@@ -107,7 +107,7 @@ public class SynetSynthesizeDistributedLTS {
 
         String line = "";
         while ((line = br.readLine()) != null) {
-            if(line.contains("failures") || line.contains("separated")) {
+            if(line.contains("failures") || line.contains("not separated")) {
                 if(separationErrorMsg_ == null)
                     separationErrorMsg_ = "";
                 separationErrorMsg_ += line + "\n";
