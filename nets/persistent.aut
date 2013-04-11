@@ -1,0 +1,19 @@
+.name "persistent.aut"
+.type LTS
+.description "persistent"
+
+.states
+s1[initial]
+l
+r
+s2
+
+.labels
+a
+b
+
+.arcs
+s1 a l
+s1 b r
+l b s2
+r a s2
