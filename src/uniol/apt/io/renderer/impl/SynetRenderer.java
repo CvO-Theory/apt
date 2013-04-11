@@ -90,7 +90,7 @@ public class SynetRenderer implements PNTSRenderer {
 	@Override
 	public String render(TransitionSystem ts) {
 		StringBuilder output = new StringBuilder();
-		output.append("des(0,100,100)"); // Don't know what this does, "probably" not perfect this way.
+		StringBuilder head = new StringBuilder();
 		output.append("\n");
 		int id = 0;
 		HashMap<String, Integer> rename = new HashMap<>();
@@ -107,8 +107,11 @@ public class SynetRenderer implements PNTSRenderer {
 			output.append("(").append(rename.get(source)).append(",").append(label).append(",").append(rename.get(target)).append(")");
 			output.append("\n");
 		}
-
-		return output.toString();
+		
+		int initial = rename.get(ts.getInitialState().getId());
+		head.append("des(").append(initial).append(",").append(ts.getEdges().size()).append(",").append(ts.getNodes().size()).append(")");
+		
+		return head.append(output).toString();
 	}
 }
 
