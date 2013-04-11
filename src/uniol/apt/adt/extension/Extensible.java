@@ -77,6 +77,20 @@ public class Extensible implements IExtensible {
 	}
 
 	/**
+	 * Calculates a list of pairs key-value of all extentions. Attention it's a referenzcopy!
+	 * <p/>
+	 * @return A list of key-value-pairs of all extentions.
+	 */
+	public List<Pair<String, Object>> getExtensions() {
+		ArrayList<Pair<String, Object>> ret = new ArrayList<>();
+		for (String key : extensions.keySet()) {
+			Pair<Object, Boolean> pair = extensions.get(key);
+			ret.add(new Pair<>(key, pair.getFirst()));
+		}
+		return ret;
+	}
+
+	/**
 	 * Calculates a list of pairs key-value which should be copied. Attention it's a referenzcopy!
 	 * <p/>
 	 * @return A list of pair key-value-pairs which should be copied.
