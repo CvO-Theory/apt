@@ -70,13 +70,12 @@ public class PetrifySynthesizeModule extends AbstractModule {
 			output.setReturnValue("synthesizable", Boolean.class, b);
 			if (b) {
 				output.setReturnValue("error", String.class, null);
+				output.setReturnValue("pn", PetriNet.class, checkLTS.getPN());
 			} else {
 				output.setReturnValue("error", String.class, checkLTS.getError());
 			}
 		} catch (IOException e) {
 		}
-
-		output.setReturnValue("pn", PetriNet.class, checkLTS.getPN());
 	}
 
 	@Override

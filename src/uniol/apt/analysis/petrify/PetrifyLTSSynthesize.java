@@ -64,7 +64,7 @@ public class PetrifyLTSSynthesize {
 		PetrifyRenderer pf = new PetrifyRenderer();
 		String petrifyLts = pf.render(ts_);
 		petrifyLts += "\n"; // this is necessary for petrify v4.2 on MacOS X
-
+		
 		File tmpAutFile = File.createTempFile("petrifyAut", ".aut");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(tmpAutFile));
 		bw.write(petrifyLts);

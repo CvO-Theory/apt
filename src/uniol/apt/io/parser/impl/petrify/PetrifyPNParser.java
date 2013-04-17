@@ -32,8 +32,9 @@ import uniol.apt.module.exception.NetIsNotParsableException;
 
 /**
  * Parse the petrify string into the APT-data structure.
+ * 
  * @author Sören Dierkes
- *
+ * 
  */
 public class PetrifyPNParser {
 
@@ -43,12 +44,14 @@ public class PetrifyPNParser {
 
 	/**
 	 * Parse the petrify string into the APT-data structure.
-	 *
-	 * @param petrifyFormat Petri net as Petrify string.
+	 * 
+	 * @param petrifyFormat
+	 *            Petri net as Petrify string.
 	 * @throws IOException
 	 * @throws NetIsNotParseableException
 	 */
 	public void parse(String petrifyFormat) throws IOException, NetIsNotParsableException {
+
 		BufferedReader br = new BufferedReader(new StringReader(petrifyFormat));
 
 		int places = 0;
@@ -69,7 +72,7 @@ public class PetrifyPNParser {
 				line = line.replaceAll(" +", " ");
 				line = line.trim();
 				for (String s : line.split(" ")) {
-					if(!s.isEmpty())
+					if (!s.isEmpty())
 						pn_.createTransition(s);
 				}
 			} else if (line.contains(".marking")) {
@@ -110,12 +113,24 @@ public class PetrifyPNParser {
 					throw new NetIsNotParsableException();
 				}
 
-				if (tmpTrans[SOURCE].contains("_")) {
-					Transition t = pn_.createTransition(tmpTrans[SOURCE]);
-					if (tmpTrans[SOURCE].split("_").length == 0) {
-						throw new NetIsNotParsableException();
+				try {
+					if (tmpTrans[SOURCE].contains("_") && !pn_.containsTransition(tmpTrans[SOURCE])) {
+						Transition t = pn_.createTransition(tmpTrans[SOURCE]);
+						if (tmpTrans[SOURCE].split("_").length == 0) {
+							throw new NetIsNotParsableException();
+						}
+						t.setLabel(tmpTrans[SOURCE].split("_")[0]);
 					}
-					t.setLabel(tmpTrans[SOURCE].split("_")[0]);
+
+					if (tmpTrans[TARGET].contains("_") && !pn_.containsTransition(tmpTrans[TARGET])) {
+						Transition t = pn_.createTransition(tmpTrans[TARGET]);
+						if (tmpTrans[TARGET].split("_").length == 0) {
+							throw new NetIsNotParsableException();
+						}
+						t.setLabel(tmpTrans[TARGET].split("_")[0]);
+					}
+				} catch (Exception e) {
+					throw new NetIsNotParsableException();
 				}
 
 				for (int i = 1; i < tmpTrans.length; i++) {
@@ -125,18 +140,13 @@ public class PetrifyPNParser {
 						throw new NetIsNotParsableException();
 					}
 
-					if (tmpTrans[i].contains("_")) {
-						Transition t = pn_.createTransition(tmpTrans[i]);
-						t.setLabel(tmpTrans[i].split("_")[0]);
-					}
-
 					if (tmpTrans[SOURCE].contains("p")) {
-						if(!placeExist(tmpTrans[SOURCE])) {
+						if (!placeExist(tmpTrans[SOURCE])) {
 							pn_.createPlace("" + tmpTrans[SOURCE]);
 						}
 						pn_.createFlow(tmpTrans[SOURCE], tmpTrans[i]);
 					} else if (tmpTrans[i].contains("p")) {
-						if(!placeExist(tmpTrans[i])) {
+						if (!placeExist(tmpTrans[i])) {
 							pn_.createPlace("" + tmpTrans[i]);
 						}
 						pn_.createFlow(tmpTrans[SOURCE], tmpTrans[i]);
