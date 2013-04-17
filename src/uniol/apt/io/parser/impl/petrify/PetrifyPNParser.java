@@ -53,7 +53,7 @@ public class PetrifyPNParser {
 	public void parse(String petrifyFormat) throws IOException, NetIsNotParsableException {
 
 		BufferedReader br = new BufferedReader(new StringReader(petrifyFormat));
-
+		
 		int places = 0;
 		pn_ = new PetriNet();
 
@@ -111,6 +111,14 @@ public class PetrifyPNParser {
 
 				if (tmpTrans.length == 0) {
 					throw new NetIsNotParsableException();
+				}
+				
+				if (tmpTrans[SOURCE].contains("_") && !pn_.containsTransition(tmpTrans[SOURCE])) {
+					Transition t = pn_.createTransition(tmpTrans[SOURCE]);
+					if (tmpTrans[SOURCE].split("_").length == 0) {
+						throw new NetIsNotParsableException();
+					}
+					t.setLabel(tmpTrans[SOURCE].split("_")[0]);
 				}
 
 				for (int i = 1; i < tmpTrans.length; i++) {
