@@ -113,27 +113,15 @@ public class PetrifyPNParser {
 					throw new NetIsNotParsableException();
 				}
 
-				try {
-					if (tmpTrans[SOURCE].contains("_") && !pn_.containsTransition(tmpTrans[SOURCE])) {
-						Transition t = pn_.createTransition(tmpTrans[SOURCE]);
-						if (tmpTrans[SOURCE].split("_").length == 0) {
-							throw new NetIsNotParsableException();
-						}
-						t.setLabel(tmpTrans[SOURCE].split("_")[0]);
-					}
-
-					if (tmpTrans[TARGET].contains("_") && !pn_.containsTransition(tmpTrans[TARGET])) {
-						Transition t = pn_.createTransition(tmpTrans[TARGET]);
-						if (tmpTrans[TARGET].split("_").length == 0) {
-							throw new NetIsNotParsableException();
-						}
-						t.setLabel(tmpTrans[TARGET].split("_")[0]);
-					}
-				} catch (Exception e) {
-					throw new NetIsNotParsableException();
-				}
-
 				for (int i = 1; i < tmpTrans.length; i++) {
+					
+					if (tmpTrans[i].contains("_") && !pn_.containsTransition(tmpTrans[i])) {
+						Transition t = pn_.createTransition(tmpTrans[i]);
+						if (tmpTrans[i].split("_").length == 0) {
+							throw new NetIsNotParsableException();
+						}
+						t.setLabel(tmpTrans[i].split("_")[0]);
+					}
 
 					if ((!transitionExist(tmpTrans[i]) && !tmpTrans[i].contains("p") || !transitionExist(tmpTrans[SOURCE]))
 							&& !tmpTrans[SOURCE].contains("p")) {
@@ -145,6 +133,7 @@ public class PetrifyPNParser {
 							pn_.createPlace("" + tmpTrans[SOURCE]);
 						}
 						pn_.createFlow(tmpTrans[SOURCE], tmpTrans[i]);
+
 					} else if (tmpTrans[i].contains("p")) {
 						if (!placeExist(tmpTrans[i])) {
 							pn_.createPlace("" + tmpTrans[i]);
