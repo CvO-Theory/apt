@@ -35,16 +35,24 @@ pn(name,description,places,marking,transitions) ::= <<
 .type LPN
 
 .places
-<places:{p|<p.id>};separator="\n">
+<places:{p|<p.id><if(first(p.extensions))>[<p.extensions:extension();separator=", ">]<endif>};separator="\n">
 
 .transitions
-<transitions:{t|<t.id><if(t.label)> [label="<t.label>"]<endif>};separator="\n">
+<transitions:{t|<t.id><if(t.label)>[label="<t.label>"<if(first(t.extensions))>, <t.extensions:extension();separator=", "><endif>]<else><if(first(t.extensions))>[<t.extensions:extension();separator=", ">]<endif><endif>};separator="\n">
 
 .flows
 <transitions:transition()>
 
 .initial_marking {<marking:place_weight();separator=", ">}
 
+>>
+
+/**
+ * Template for a extension.
+ * @param ext the extension as a pair of string and object.
+ */
+extension(ext) ::= <<
+<ext.first>="<ext.second>"
 >>
 
 /**
