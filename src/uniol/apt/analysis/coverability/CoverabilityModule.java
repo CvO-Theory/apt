@@ -68,8 +68,9 @@ public class CoverabilityModule extends AbstractModule {
 				(CoverabilityGraphNode) node.getExtension(CoverabilityGraphNode.class.getName());
 			if (coverNode.getMarking().hasOmega()) {
 				isReachability = false;
-				break;
 			}
+			/* Put the node's marking as a comment into the file */
+			node.putExtension("comment", coverNode.getMarking().toString());
 		}
 		output.setReturnValue("lts", TransitionSystem.class, result);
 		output.setReturnValue("reachability_graph", Boolean.class, isReachability);

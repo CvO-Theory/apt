@@ -100,6 +100,15 @@ public class APTRenderer {
 			if (s.equals(ts.getInitialState())) {
 				body.append("[initial]");
 			}
+
+			/* If the "comment" extension is present, escape it properly and append it as a comment */
+			Object comment = s.getExtension("comment");
+			if (comment instanceof String) {
+				String c = (String) comment;
+				body.append(" /* ");
+				body.append(c.replace("*/", "* /"));
+				body.append(" */");
+			}
 			body.append("\n");
 		}
 		body.append("\n");
