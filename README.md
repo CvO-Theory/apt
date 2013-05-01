@@ -21,16 +21,20 @@ Building APT
 
 This software is written in the [Java programming language](http://java.com).
 Thus it should work on various architectures and operating systems. For building
-the software, [Ant](http://ant.apache.org) is used. The configuration for Ant is
-contained in a file called "build.xml". The way that Ant is called varies
-depending on the operating system and integrated development environment used.
-This guide explains how a JAR file can be built on Unix-like systems.
-Please refer to the relevant online documentation for other systems.
+APT, a Java Development Kit (JDK) compatible with Java 7 and [Apache
+Ant](http://ant.apache.org) is required. The configuration for Ant is contained
+in a file called "build.xml". The way that Ant is called varies depending on the
+operating system and integrated development environment used.  This guide
+explains how a JAR file can be built on Unix-like systems.  Please refer to the
+relevant online documentation for other systems.
 
 Building and using a JAR file on the command line of Unix-like systems:
 
 Just call "ant jar" in the directory containing "build.xml". This will build a
 file called "apt.jar". You can run this file via "java -jar apt.jar".
+
+If Ant complains "javac: invalid target release: 1.7", you are not using a
+Java 7 JDK. Please update your Java installation.
 
 
 Short guide for using APT
@@ -141,7 +145,7 @@ Nope, it isn't. What about just some specific transition. Let's check t1.
 Since APT was created with scriptability in mind it can be integrated
 in other programs. For example, APT calls can be connected via pipes
 in most UNIX-like operating systems that provide bash or similar
-shells. 
+shells.
 
 Instead of generating intermediate files like in the following
 example whichs draws the coverability graph of Petri net
@@ -159,7 +163,7 @@ input of the draw module:
 
 The drawn coverability graph is directly written to the file
 "coverability.dot" without creating an intermediate file for the
-coverability graph in the APT file format. 
+coverability graph in the APT file format.
 
 The "-" tells APT to use the standard input or standard output when
 files are either read from or written to a file.
@@ -182,11 +186,11 @@ net is indeed bounded or "The Petri net is not bounded" otherwise.
 There are two modules which use external programs. These are the "use-synet" and "use-petrify" modules.
 If you want to use these modules, you need to make sure that your PATH variable contains the directory where those programs are located.
 
-Synet and Petrify can be downloaded here: 
+Synet and Petrify can be downloaded here:
 
 http://www.irisa.fr/s4/tools/synet/
 
-http://www.lsi.upc.edu/~jordicf/petrify/ 
+http://www.lsi.upc.edu/~jordicf/petrify/
 
 The file format
 ---------------
