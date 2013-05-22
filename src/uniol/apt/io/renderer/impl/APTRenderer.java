@@ -102,12 +102,15 @@ public class APTRenderer {
 			}
 
 			/* If the "comment" extension is present, escape it properly and append it as a comment */
-			Object comment = s.getExtension("comment");
-			if (comment instanceof String) {
-				String c = (String) comment;
-				body.append(" /* ");
-				body.append(c.replace("*/", "* /"));
-				body.append(" */");
+			try {
+				Object comment = s.getExtension("comment");
+				if (comment instanceof String) {
+					String c = (String) comment;
+					body.append(" /* ");
+					body.append(c.replace("*/", "* /"));
+					body.append(" */");
+				}
+			} catch (Exception e) {
 			}
 			body.append("\n");
 		}
