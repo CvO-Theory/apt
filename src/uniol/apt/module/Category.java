@@ -28,7 +28,7 @@ package uniol.apt.module;
 public enum Category {
 	// The order of the members is reflected in the module overview
 
-	MISC("Miscellaneous"), PN("Petri net"), LTS("LTS"), GENERATOR("Generators"), CONVERTER("Converters");
+	MISC("Miscellaneous"), PN("Petri net"), LTS("LTS"), GENERATOR("Generators"), CONVERTER("Converters"), GPU("GPU");
 
 	/**
 	 * Returns the default category of a module.

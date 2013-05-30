@@ -3,6 +3,8 @@
 	<path id="project.class.path">
 		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
 		<pathelement location="lib/antlr-3.4/antlr-3.4-complete-no-antlrv2-modified.jar" />
+		<pathelement location="lib/jocl-0.9-b41-20121101/gluegen-rt.jar" />
+		<pathelement location="lib/jocl-0.9-b41-20121101/jocl.jar" />
 		<pathelement location="lib/sat4j-2.3.2/org.sat4j.core.jar"/>
 		<pathelement location="classes" />
 	</path>
@@ -75,6 +77,7 @@
 		<copy todir="classes">
 			<fileset dir="src">
 				<include name="**/*.stg" />
+				<include name="**/*.cl" />
 			</fileset>
 		</copy>
 	</target>
@@ -264,6 +267,7 @@
 			<zipfileset includes="**/*.class" src="lib/sat4j-2.3.2/org.sat4j.core.jar" />
 			<manifest>
 				<attribute name="Main-Class" value="uniol.apt.APT" />
+				<attribute name="Class-Path" value="lib/jocl-0.9-b41-20121101/gluegen-rt.jar  lib/jocl-0.9-b41-20121101/jocl.jar" />
 			</manifest>
 		</jar>
 	</target>

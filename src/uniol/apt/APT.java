@@ -119,6 +119,8 @@ import uniol.apt.generator.module.InverseNetGeneratorModule;
 import uniol.apt.generator.module.QuadstatePhilNetGeneratorModule;
 import uniol.apt.generator.module.TNetGeneratorModule;
 import uniol.apt.generator.module.TristatePhilNetGeneratorModule;
+import uniol.apt.gpu.clinfo.CLInfoModule;
+import uniol.apt.gpu.plain.CLPlainModule;
 import uniol.apt.io.converter.Apt2SynetModule;
 import uniol.apt.io.converter.Synet2AptModule;
 import uniol.apt.io.renderer.impl.LoLARendererModule;
@@ -254,7 +256,9 @@ public class APT {
 		new WeakSeparationLengthModule(),
 		new WeakSeparationModule(),
 		new WeaklyLiveModule(),
-		new WordInLanguageModule()
+		new WordInLanguageModule(),
+		new CLInfoModule(),
+		new CLPlainModule()
 	};
 
 	/**
