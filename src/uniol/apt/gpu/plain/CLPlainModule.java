@@ -61,6 +61,11 @@ public class CLPlainModule extends AbstractModule {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
+		if(pn.getEdges().isEmpty()) {
+			output.setReturnValue("plain", Boolean.class, Boolean.TRUE);
+			output.setReturnValue("time", Double.class, 0.);
+			return;
+		}
 
 		CLContext context = CLContext.create();
 		try {
