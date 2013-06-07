@@ -17,57 +17,50 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.trapsAndSiphons;
+package uniol.apt.analysis.language;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.module.AbstractModule;
-import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
-/**
- * Provide the list of traps as a module.
- *
- * @author Maike Schwammberger
- */
-public class SiphonModule extends AbstractModule {
-
+public class LanguageModule extends AbstractModule {
 	@Override
 	public String getShortDescription() {
-		return "Compute all minimal non-empty siphons in a Petri net";
+		return "Return the _finite_ prefix language of the Petri net";
 	}
 
 	@Override
 	public String getName() {
-		return "siphons";
+		return "language";
 	}
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
+		inputSpec.addParameter("pn", PetriNet.class,
+				"The Petri net that should be examined");
 	}
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("minimal_non-empty_siphons", TrapsSiphonsList.class);
+		outputSpec.addReturnValue("language", WordList.class);
 	}
 
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
-		PetriNet pn = input.getParameter("pn", PetriNet.class);
-
-		//Parameter: pn: Petri Net; 1st boolean: search for siphons; 2nd boolean: search for traps
-		TrapsAndSiphonsLogic logic = new TrapsAndSiphonsLogic(pn, true, false);
-		output.setReturnValue("minimal_non-empty_siphons", TrapsSiphonsList.class,
-			new TrapsSiphonsList(logic.getResult()));
-	}
-
-	@Override
-	public Category[] getCategories() {
-		return new Category[]{Category.PN};
+		Language lang = new Language(input.getParameter("pn", PetriNet.class));
+		List<Word> words = new LinkedList<Word>();
+		for(Word w : lang.language()) {
+			words.add(w);
+		}
+		// TODO: maybe sort the word list
+		output.setReturnValue("language", WordList.class, new WordList(words));
 	}
 }
 

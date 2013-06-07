@@ -42,6 +42,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.ExamineLTSModule;
 import uniol.apt.analysis.ExaminePNModule;
+import uniol.apt.analysis.InfoModule;
 import uniol.apt.analysis.algebra.MatrixFileFormat;
 import uniol.apt.analysis.algebra.MatrixModule;
 import uniol.apt.analysis.bcf.BCFModule;
@@ -74,6 +75,7 @@ import uniol.apt.analysis.invariants.Vector;
 import uniol.apt.analysis.isolated.IsolatedModule;
 import uniol.apt.analysis.isomorphism.IsomorphismModule;
 import uniol.apt.analysis.language.LanguageEquivalenceModule;
+import uniol.apt.analysis.language.LanguageModule;
 import uniol.apt.analysis.language.Word;
 import uniol.apt.analysis.language.WordInLanguageModule;
 import uniol.apt.analysis.language.WordList;
@@ -115,7 +117,6 @@ import uniol.apt.extension.ExtendTSModule;
 import uniol.apt.generator.module.BistatePhilNetGeneratorModule;
 import uniol.apt.generator.module.BitNetGeneratorModule;
 import uniol.apt.generator.module.CycleNetGeneratorModule;
-import uniol.apt.generator.module.InverseNetGeneratorModule;
 import uniol.apt.generator.module.QuadstatePhilNetGeneratorModule;
 import uniol.apt.generator.module.TNetGeneratorModule;
 import uniol.apt.generator.module.TristatePhilNetGeneratorModule;
@@ -214,11 +215,12 @@ public class APT {
 		new ExtendTSExplicitPVModule(),
 		new FCModule(),
 		new FCNetModule(),
-		new InverseNetGeneratorModule(),
+		new InfoModule(),
 		new IsolatedElementsModule(),
 		new IsolatedModule(),
 		new IsomorphismModule(),
 		new KBoundedModule(),
+		new LanguageModule(),
 		new LanguageEquivalenceModule(),
 		new LargestKModule(),
 		new LoLARendererModule(),

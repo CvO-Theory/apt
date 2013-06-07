@@ -23,10 +23,13 @@ import java.io.IOException;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.io.parser.impl.apt.APTPNParser;
+//import uniol.apt.io.parser.impl.pnml.PNMLParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
+import uniol.apt.io.parser.impl.exception.PNMLParserException;
 import uniol.apt.io.parser.impl.exception.TypeMismatchException;
+import uniol.apt.io.parser.impl.pnml.PNMLParser;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.ParameterTransformation;
 
@@ -45,17 +48,24 @@ public class NetParameterTransformation implements ParameterTransformation<Petri
 				fromStandardInput = true;
 				return APTPNParser.getPetriNet(System.in);
 			}
-
+			
+			// use PNML parser if applicable
+			if (filename.toLowerCase().endsWith(".xml") ||
+			    filename.toLowerCase().endsWith(".pnml")) {
+			    return PNMLParser.getPetriNet(filename);
+			}
+			
+			// otherwise use the APT format parser
 			return APTPNParser.getPetriNet(filename);
 		} catch (IOException e) {
 			throw new ModuleException("Cannot parse file '" + filename + "': File does not exist");
-		} catch (LexerParserException e) {
+		} catch (LexerParserException | PNMLParserException e) {
 			if (fromStandardInput) {
-				throw new ModuleException("Cannot parse data: \n" + e.getLexerParserMessage(), e);
+				throw new ModuleException("Cannot parse data: \n" + e.getMessage(), e);
 			} else {
 				throw new ModuleException("Cannot parse file '" + filename + "': \n"
-					+ e.getLexerParserMessage(), e);
-			}
+						+ e.getMessage(), e);
+			}		
 		} catch (NodeNotExistException | TypeMismatchException ex) {
 			throw new ModuleException("Create data structure: " + ex.getMessage(), ex);
 		} catch (FormatException e) {

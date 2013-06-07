@@ -763,6 +763,17 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	public Set<State> getNodes() {
 		return Collections.unmodifiableSet(new LinkedHashSet<>(this.states.values()));
 	}
+	
+	@Override
+	public State getNodeByExtension(String key, Object value) {
+		for(State s : this.states.values()) {
+			Object ext = s.getExtension(key);
+			if(ext != null && ext.equals(value)) {
+				return s;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Calculates the preset nodes of a node with the given id.

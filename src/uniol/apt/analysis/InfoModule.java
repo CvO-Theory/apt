@@ -17,9 +17,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.trapsAndSiphons;
+package uniol.apt.analysis;
 
-import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -28,21 +27,24 @@ import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
+import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.pn.Place;
+
 /**
- * Provide the list of traps as a module.
- *
- * @author Maike Schwammberger
+ * Report some basic stats of the given PN.
+ * 
+ * @author Thomas Strathmann
  */
-public class SiphonModule extends AbstractModule {
+public class InfoModule extends AbstractModule {
 
 	@Override
 	public String getShortDescription() {
-		return "Compute all minimal non-empty siphons in a Petri net";
+		return "Report some basic stats of the given PN.";
 	}
 
 	@Override
 	public String getName() {
-		return "siphons";
+		return "info";
 	}
 
 	@Override
@@ -52,22 +54,29 @@ public class SiphonModule extends AbstractModule {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("minimal_non-empty_siphons", TrapsSiphonsList.class);
+		outputSpec.addReturnValue("num_places", Integer.class);
+		outputSpec.addReturnValue("num_transitions", Integer.class);
+		outputSpec.addReturnValue("num_arcs", Integer.class);
+		outputSpec.addReturnValue("num_tokens", Integer.class);
 	}
 
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
+		output.setReturnValue("num_places", Integer.class, pn.getPlaces().size());
+		output.setReturnValue("num_transitions", Integer.class, pn.getTransitions().size());
+		output.setReturnValue("num_arcs", Integer.class, pn.getEdges().size());
 
-		//Parameter: pn: Petri Net; 1st boolean: search for siphons; 2nd boolean: search for traps
-		TrapsAndSiphonsLogic logic = new TrapsAndSiphonsLogic(pn, true, false);
-		output.setReturnValue("minimal_non-empty_siphons", TrapsSiphonsList.class,
-			new TrapsSiphonsList(logic.getResult()));
+		int tokens = 0;
+		for (Place p : pn.getPlaces()) {
+			tokens += p.getInitialToken().getValue();
+		}
+		output.setReturnValue("num_tokens", Integer.class, tokens);
 	}
 
 	@Override
 	public Category[] getCategories() {
-		return new Category[]{Category.PN};
+		return new Category[] { Category.PN };
 	}
 }
 

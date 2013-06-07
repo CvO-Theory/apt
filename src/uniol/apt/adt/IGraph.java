@@ -73,6 +73,14 @@ public interface IGraph<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N e
 	public Set<N> getNodes();
 
 	/**
+	 * Retrieves the 'first' node with the given @a extension value.
+	 * @param key The key of the extended attribute.
+	 * @param value The value of the extended attribute.
+	 * @return The node of given type N, or null when not found.
+	 */
+	public N getNodeByExtension(String key, Object value);
+	
+	/**
 	 * Retrieves a view of all nodes which have an outgoing edge to the node with the given id.
 	 * <p/>
 	 * @param id The id of a node.
