@@ -119,7 +119,9 @@ import uniol.apt.generator.module.InverseNetGeneratorModule;
 import uniol.apt.generator.module.QuadstatePhilNetGeneratorModule;
 import uniol.apt.generator.module.TNetGeneratorModule;
 import uniol.apt.generator.module.TristatePhilNetGeneratorModule;
+import uniol.apt.io.converter.Apt2PetrifyModule;
 import uniol.apt.io.converter.Apt2SynetModule;
+import uniol.apt.io.converter.Petrify2AptModule;
 import uniol.apt.io.converter.Synet2AptModule;
 import uniol.apt.io.renderer.impl.LoLARendererModule;
 import uniol.apt.io.renderer.impl.PNMLRendererModule;
@@ -188,6 +190,7 @@ public class APT {
 	 */
 	private static Module[] modules = {
 		new Apt2SynetModule(),
+		new Apt2PetrifyModule(),
 		new BCFModule(),
 		new BiCFModule(),
 		new BisimulationModule(),
@@ -225,6 +228,7 @@ public class APT {
 		new OutputNonBranchingModule(),
 		new PVsOfSmallestCyclesModule(),
 		new PersistentModule(),
+		new Petrify2AptModule(),
 		new PetrifySynthesizeModule(),
 		new PlainModule(),
 		new PnAnalysisModule(),

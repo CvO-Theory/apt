@@ -56,6 +56,18 @@ public abstract class AbstractLTSParserOutput<G> extends AbstractParserOutput<G>
 	public void addArc(String fromNode, String label, String toNode) {
 		arcs.add(new ParserArc(fromNode, label, toNode));
 	}
+
+	@Override
+	public void setInitialState(String id) {
+		ParserNode node = states.get(id);
+		if (node != null) {
+			node.putOption("initial", "true");
+		} else {
+			Map<String, String> map = new HashMap<>();
+			map.put("initial", "true");
+			addState(id, map);
+		}
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

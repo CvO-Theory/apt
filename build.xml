@@ -58,6 +58,13 @@
 			<arg path="generated-src/uniol/apt/io/parser/impl/synet/"/>
 			<arg path="src/uniol/apt/io/parser/impl/synet/SynetPNFormat.g"/>
 		</java>
+		<java classpathref="project.class.path" classname="org.antlr.Tool" fork="true" failonerror="true">
+			<arg value="-verbose"/>
+			<arg value="-make"/>
+			<arg value="-o"/>
+			<arg path="generated-src/uniol/apt/io/parser/impl/petrify/"/>
+			<arg path="src/uniol/apt/io/parser/impl/petrify/PetrifyLTSFormat.g"/>
+		</java>
 	</target>
 
 	<target name="javac" description="Compile java source to bytecode" depends="antlr">
