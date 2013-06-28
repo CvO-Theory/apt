@@ -216,8 +216,8 @@
 	</target>
 
 	<target name="javadoc" description="Generate documentation from java source">
-		<mkdir dir="doc"/>
-		<javadoc encoding="utf-8" destdir="doc"
+		<mkdir dir="./doc/javadoc"/>
+		<javadoc encoding="utf-8" destdir="./doc/javadoc"
 				author="true" version="true" use="true"
 				Encoding="UTF-8" charset="UTF-8"
 				docencoding="UTF-8" access="private">
@@ -249,7 +249,7 @@
 		<delete dir="classes" failonerror="false" />
 		<delete dir="test-classes" failonerror="false" />
 		<delete dir="reports" failonerror="false" />
-		<delete dir="doc" failonerror="false" />
+		<delete dir="./doc/javadoc" failonerror="false" />
 		<delete dir="generated-src" failonerror="false" />
 		<delete file="apt.jar" failonerror="false" />
 		<delete file="testng.xml" failonerror="false" />
