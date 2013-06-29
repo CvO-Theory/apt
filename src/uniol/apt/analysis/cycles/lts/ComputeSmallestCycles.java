@@ -38,6 +38,7 @@ import uniol.apt.analysis.bisimulation.Pair;
 public class ComputeSmallestCycles {
 
 	private CycleCounterExample counterExample; // Stored countercycles
+	private final static Algorithm STANDARD = Algorithm.DFS;
 
 	/**
 	 * Enumeration for choosing which algorithm should be used.
@@ -51,21 +52,21 @@ public class ComputeSmallestCycles {
 	/**
 	 * Computes the parikh vectors of all smallest cycles of an labeled transition system. (Requirement A10)
 	 * <p/>
-	 * Uses the Floyd-Warshall algorithm.
+	 * Uses the standard algorithm (Depth-First-Search).
 	 * <p/>
 	 * @param ts - the transitionsystem to compute the cycles from.
 	 * <p/>
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 */
 	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts) {
-		return computePVsOfSmallestCycles(ts, Algorithm.FloydWarshall);
+		return computePVsOfSmallestCycles(ts, STANDARD);
 	}
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same or mutally disjoint parikh vectors.
 	 * (Requirement A8b)
 	 * <p/>
-	 * Uses the Floyd-Warshall algorithm.
+	 * Uses the standard algorithm (Depth-First-Search).
 	 * <p/>
 	 * @param ts - the transition system to examine.
 	 * <p/>
@@ -73,20 +74,20 @@ public class ComputeSmallestCycles {
 	 *         vectors.
 	 */
 	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts) {
-		return checkSameOrMutallyDisjointPVs(ts, Algorithm.FloydWarshall);
+		return checkSameOrMutallyDisjointPVs(ts, STANDARD);
 	}
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same parikh vector. (Requirement A8a)
 	 * <p/>
-	 * Uses the Floyd-Warshall algorithm.
+	 * Uses the standard algorithm (Depth-First-Search).
 	 * <p/>
 	 * @param ts - the transition system to examine.
 	 * <p/>
 	 * @return true if the smallest cycles of the given transitionsystem have the same parikh vectors.
 	 */
 	public boolean checkSamePVs(TransitionSystem ts) {
-		return checkSamePVs(ts, Algorithm.FloydWarshall);
+		return checkSamePVs(ts, STANDARD);
 	}
 
 	/**
