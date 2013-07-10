@@ -1,6 +1,6 @@
 // checks whether a given petri net is plain.
 // result is initialized true
-kernel void IsPlain(global const int* weights, global int8* result, int count) {
+kernel void IsPlain(global const int* weights, global int* result, int count) {
 	// get index into global data array
 	int gid = get_global_id(0);
 

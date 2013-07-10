@@ -120,6 +120,7 @@ import uniol.apt.generator.module.QuadstatePhilNetGeneratorModule;
 import uniol.apt.generator.module.TNetGeneratorModule;
 import uniol.apt.generator.module.TristatePhilNetGeneratorModule;
 import uniol.apt.gpu.clinfo.CLInfoModule;
+import uniol.apt.gpu.coverbilitygraph.CLCoverabilityGraphModule;
 import uniol.apt.gpu.plain.CLPlainModule;
 import uniol.apt.io.converter.Apt2SynetModule;
 import uniol.apt.io.converter.Synet2AptModule;
@@ -258,7 +259,8 @@ public class APT {
 		new WeaklyLiveModule(),
 		new WordInLanguageModule(),
 		new CLInfoModule(),
-		new CLPlainModule()
+		new CLPlainModule(),
+		new CLCoverabilityGraphModule(),
 	};
 
 	/**
