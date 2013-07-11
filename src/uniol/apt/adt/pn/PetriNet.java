@@ -896,6 +896,47 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 	}
 
 	/**
+	 * Checks if this petri net contains a flow from a node with the given sourceId to a node with the given targetId.
+	 * <p/>
+	 * @param sourceId the id of the source node.
+	 * @param targetId the id of the target node.
+	 * <p/>
+	 * @return true if the flow exists in this petri net.
+	 * <p/>
+	 * @throws IllegalArgumentException thrown if passing a null argument.
+	 */
+	public boolean containsFlow(String sourceId, String targetId) {
+		if (sourceId == null) {
+			throw new IllegalArgumentException("sourceId == null");
+		}
+		if (targetId == null) {
+			throw new IllegalArgumentException("targetId == null");
+		}
+		final EdgeKey key = this.createEdgeKey(sourceId, targetId);
+		return this.flows.containsKey(key);
+	}
+
+	/**
+	 * Checks if this petri net contains a flow from the given source node to the given target node.
+	 * <p/>
+	 * @param source the source node.
+	 * @param target the target node.
+	 * <p/>
+	 * @return true if the flow exists in this petri net.
+	 * <p/>
+	 * @throws IllegalArgumentException thrown if passing a null argument.
+	 */
+	public boolean containsFlow(Node source, Node target) {
+		if (source == null) {
+			throw new IllegalArgumentException("source == null");
+		}
+		if (target == null) {
+			throw new IllegalArgumentException("target == null");
+		}
+		return this.containsFlow(source.getId(), target.getId());
+	}
+
+	/**
 	 * Checks if this petri net contains a node with the given id.
 	 * <p/>
 	 * @param id the id of the node.

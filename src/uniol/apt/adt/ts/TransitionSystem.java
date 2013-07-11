@@ -394,6 +394,38 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 		}
 		return out;
 	}
+	
+	/**
+	 * Checks whether a state with the given id exists in this TransitionSystem.
+	 * <p/>
+	 * @param id The ID of the state to be checked.
+	 * <p/>
+	 * @return true if a state with the ID #id exists.
+	 * <p/>
+	 * @throws IllegalArgumentException thrown if passing a null argument.
+	 */
+	public boolean containsState(String id) {
+		if (id == null) {
+			throw new IllegalArgumentException("id == null");
+		}
+		return states.containsKey(id);
+	}
+
+	/**
+	 * Checks whether a given state exists in this TransitionSystem.
+	 * <p/>
+	 * @param state The state to be checked.
+	 * <p/>
+	 * @return true if the state exists.
+	 * <p/>
+	 * @throws IllegalArgumentException thrown if passing a null argument.
+	 */
+	public boolean containsState(State state) {
+		if (state == null) {
+			throw new IllegalArgumentException("state == null");
+		}
+		return this.containsState(state.getId());
+	}
 
 	/**
 	 * Removes the arc with the sourceId, targetI and label from this TransitionSystem if exists. It also updates
