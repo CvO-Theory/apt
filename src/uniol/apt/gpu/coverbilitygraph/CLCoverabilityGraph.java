@@ -7,6 +7,7 @@ import com.jogamp.opencl.CLKernel;
 import com.jogamp.opencl.CLMemory.Mem;
 import com.jogamp.opencl.CLProgram;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
@@ -14,8 +15,6 @@ import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.invariants.InvariantCalculator;
-import uniol.apt.analysis.invariants.InvariantCalculator.InvariantAlgorithm;
 
 class CLCoverabilityGraph {
 
@@ -24,38 +23,54 @@ class CLCoverabilityGraph {
 	private static Transition[] transitions = null;
 	private static TransitionSystem ts = null;
 
-	private static int numPlaces = 0;
-	private static int numTransitions = 0;
-	private static int numMarkingsDone = 0;
-	private static int numMarkingsToDo = 0;
+	static int numPlaces = 0;
+	static int numTransitions = 0;
+
+	static int sizeInfo = 0;
+	static int sizeEdge = 0;
+	static int sizeVertex = 0;
+	static int sizeFireResult = 0;
+
+	static int capacityInfo = 0;
+	static int capacityEdges = 0;
+	static int capacityVertices = 0;
+	static int capacityFireResults = 0;
+	
+	static int numMarkingsDone = 0;
+	static int numMarkingsToDo = 1;
+	static int numEdges = 0;
+	static int numVertices = 1;
 
 	private static CLContext context = null;
 	private static CLCommandQueue queue = null;
 	private static CLProgram program = null;
+	private static CLKernel kernelUpdate = null;
 	private static CLKernel kernelFire = null;
-	private static CLKernel kernelDedupe = null;
-	private static CLKernel kernelArrange = null;
+	private static CLKernel kernelCheckCover = null; 
+	private static CLKernel kernelDedupeFireResults = null;
+	private static CLKernel kernelDedupeVertices = null;
+	private static CLKernel kernelConvert = null;
 
-	private static CLBuffer<IntBuffer> matForward = null;
-	private static CLBuffer<IntBuffer> matBackward = null;
-	private static CLBuffer<IntBuffer> markings = null;
-	private static CLBuffer<IntBuffer> markingsToDo = null;
-	private static int capacity = 0;
+	private static CLBuffer<ByteBuffer> bufferInfo = null;
+	private static CLBuffer<ByteBuffer> bufferEdges = null;
+	private static CLBuffer<ByteBuffer> bufferVertices = null;
+	private static CLBuffer<ByteBuffer> bufferFireResults = null;
+	private static CLBuffer<IntBuffer> bufferMatForward = null;
+	private static CLBuffer<IntBuffer> bufferMatBackward = null;
 
 
 	public static TransitionSystem compute(PetriNet net) throws IOException {
 		try {
-			if(InvariantCalculator.coveredBySInvariants(net, InvariantAlgorithm.FARKAS) == null)
-				throw new IllegalArgumentException("Petri net ist not structurally bounded, thus the computation may not terminate!");
-			
 			init(net);
 			while(numMarkingsToDo > 0) {
-				fireTransitions();
-				processResult();
-				dedupeMarkings();
-				arrangeMarkings();
+				fire();
+				checkCover();
+				dedupeFireResults();
+				dedupeVertices();
+				convert();
 				updateBuffer();
-			};
+			}
+			readCoverabilityGraph();
 		} finally {
 			if(context != null)
 				context.release();
@@ -72,42 +87,56 @@ class CLCoverabilityGraph {
 
 		numPlaces = pn.getPlaces().size();
 		numTransitions = pn.getTransitions().size();
-		numMarkingsDone = 0;
-		numMarkingsToDo = 1;
 		
 		places = pn.getPlaces().toArray(new Place[numPlaces]);
 		transitions = pn.getTransitions().toArray(new Transition[numTransitions]);
 		
 		queue = context.getMaxFlopsDevice().createCommandQueue();
-		program = context.createProgram(CLCoverabilityGraph.class.getResourceAsStream("CoverabilityGraph_2D.cl"))
+		program = context.createProgram(CLCoverabilityGraph.class.getResourceAsStream("CoverabilityGraph.cl"))
 			.build("-DnumTransitions="+numTransitions, "-DnumPlaces="+numPlaces);
-		kernelFire = program.createCLKernel("Fire");
-		kernelDedupe = program.createCLKernel("Dedupe");
-		kernelArrange = program.createCLKernel("Arrange");
 
-		matForward = context.createIntBuffer(numTransitions * numPlaces, Mem.READ_ONLY);
-		matBackward = context.createIntBuffer(numTransitions * numPlaces, Mem.READ_ONLY);
+		// read structure size information to calculate memory requirements
+		readSizeInfo();
+
+		// create buffer objects
+		calcCapacities();
+		bufferInfo = context.createByteBuffer(capacityInfo, Mem.READ_WRITE);
+		bufferEdges = context.createByteBuffer(2 * capacityEdges, Mem.READ_WRITE);
+		bufferVertices = context.createByteBuffer(2 * capacityVertices, Mem.READ_WRITE);
+		bufferFireResults = context.createByteBuffer(2 * capacityFireResults, Mem.READ_WRITE);
+		bufferMatForward = context.createIntBuffer(numTransitions * numPlaces, Mem.READ_ONLY);
+		bufferMatBackward = context.createIntBuffer(numTransitions * numPlaces, Mem.READ_ONLY);
 		fillMatrices();
-//		dumpMatrices();
 
-		capacity = numMarkingsDone * numPlaces + numMarkingsToDo * numPlaces + numMarkingsToDo * numTransitions * numPlaces;
-		markings = context.createIntBuffer(capacity * 2, Mem.READ_WRITE);
-		markingsToDo = context.createIntBuffer(1, Mem.WRITE_ONLY);
-		fillMarkings();
-//		dumpMarkings();
+		// call Init-Kernel
+		CLBuffer<IntBuffer> bufferInitialMarking = context.createIntBuffer(numPlaces, Mem.READ_ONLY);
+		fillInitialMarking(bufferInitialMarking);
 		
-		queue.putWriteBuffer(matForward, false)
-			.putWriteBuffer(matBackward, false)
-			.putWriteBuffer(markings, false)
-			.putBarrier();
-
-		kernelFire.putArgs(matForward, matBackward);
-		kernelArrange.putArgs(markingsToDo);
+		CLKernel kernelInit = program.createCLKernel("Init");
+		kernelInit.putArgs(bufferInfo, bufferEdges, bufferVertices, bufferFireResults, bufferMatForward, bufferMatBackward, bufferInitialMarking);
+		queue.putTask(kernelInit);
+		
+		kernelInit.release();
+		bufferInitialMarking.release();
+		
+		// create kernel
+		kernelUpdate = program.createCLKernel("Update");
+		kernelUpdate.putArg(bufferInfo);
+		kernelFire = program.createCLKernel("Fire");
+		kernelFire.putArg(bufferInfo);
+		kernelCheckCover = program.createCLKernel("CheckCover");
+		kernelCheckCover.putArg(bufferInfo);
+		kernelDedupeFireResults = program.createCLKernel("DedupeFireResults");
+		kernelDedupeFireResults.putArg(bufferInfo);
+		kernelDedupeVertices = program.createCLKernel("DedupeVertices");
+		kernelDedupeVertices.putArg(bufferInfo);
+		kernelConvert = program.createCLKernel("Convert");
+		kernelConvert.putArg(bufferInfo);
 	}
 
 	private static void fillMatrices() {
-		IntBuffer bufBackward = matBackward.getBuffer();
-		IntBuffer bufForward = matForward.getBuffer();
+		IntBuffer bufBackward = bufferMatBackward.getBuffer();
+		IntBuffer bufForward = bufferMatForward.getBuffer();
 		for (Transition t : transitions) {
 			for (Place p : places) {
 				int wBackward;
@@ -130,148 +159,160 @@ class CLCoverabilityGraph {
 		}
 		bufBackward.rewind();
 		bufForward.rewind();
+		queue.putWriteBuffer(bufferMatBackward, false);
+		queue.putWriteBuffer(bufferMatForward, false);
 	}
 
-	private static void dumpMatrices() {
-		IntBuffer bufBackward = matBackward.getBuffer();
-		IntBuffer bufForward = matForward.getBuffer();
-		bufBackward.rewind();
-		bufForward.rewind();
-		for(int i=0; i<numTransitions; ++i) {
-			System.out.print("[ ");
-			for(int j=0; j<numPlaces; ++j) {
-				System.out.print('-');
-				System.out.print(bufBackward.get());
-				System.out.print("/+");
-				System.out.print(bufForward.get());
-				System.out.print(' ');
-			}
-			System.out.println(']');
-		}
-		bufBackward.rewind();
-		bufForward.rewind();
-	}
-
-	private static void fillMarkings() {
-		IntBuffer bufMarkings = markings.getBuffer();
-		Marking initMarking = pn.getInitialMarkingCopy();
+	private static void fillInitialMarking(CLBuffer<IntBuffer> bufferInitialMarking) {
+		IntBuffer buf = bufferInitialMarking.getBuffer();
+		Marking initialMarking = pn.getInitialMarkingCopy();
 		for (Place p : places) {
-			int token = initMarking.getToken(p).getValue();
-			bufMarkings.put(token);
+			int token = initialMarking.getToken(p).getValue();
+			buf.put(token);
 		}
-		while(bufMarkings.hasRemaining()) {
-			bufMarkings.put(-1);
-		}
-		bufMarkings.rewind();
-		
-		ts.setInitialState(ts.createState(readMarking()));
-		bufMarkings.rewind();
+		buf.rewind();
+		queue.putWriteBuffer(bufferInitialMarking, false);
 	}
 
-	private static void dumpMarkings() {
-		IntBuffer bufMarkings = markings.getBuffer();
-		bufMarkings.rewind();
-		while(bufMarkings.hasRemaining()) {
-			System.out.println(readMarking());
-		}
-		bufMarkings.rewind();
-	}
-	
-	private static String readMarking() {
-		boolean valid = true;
-		IntBuffer bufMarkings = markings.getBuffer();
-		StringBuilder name = new StringBuilder();
-		name.append("[ ");
-		for (int i = 0; i < numPlaces; ++i) {
-			int token = bufMarkings.get();
-			if(valid && (token >= 0)) {
-				name.append(token);
-				name.append(' ');
-			} else {
-				valid = false;
-			}
-		}
-		name.append("]");
-		return valid ? name.toString() : null;
-	}
-	
-	private static void fireTransitions() {
-		kernelFire.setArg(2, markings)
-			.setArg(3, numMarkingsDone)
-			.setArg(4, numMarkingsToDo);
+	private static void fire() {
 		queue.put2DRangeKernel(kernelFire, 0,0, numTransitions,numMarkingsToDo, numTransitions,1);
-//		queue.put3DRangeKernel(kernelFire, 0,0,0, numPlaces,numTransitions,numMarkingsToDo, numPlaces,1,1);
-		// read the result before duplicates are removed
-		queue.putReadBuffer(markings, true);
+		queue.finish();
 	}
 	
-	private static void processResult() {
-//		dumpMarkings();
-
-		State[] from = new State[numMarkingsToDo];
-		
-		markings.getBuffer().position(numMarkingsDone*numPlaces);
-		for(int i=0; i<numMarkingsToDo; ++i) {
-			from[i] = ts.getNode(readMarking());
-		}
-		
-		for(int i=0; i<numMarkingsToDo; ++i) {
-			for(int j=0; j<numTransitions; ++j) {
-				String name = readMarking();
-				if(name == null)
-					continue;
-				
-				State to = null;
-				if(ts.containsState(name)) {
-					to = ts.getNode(name);
-				} else {
-					to = ts.createState(name);
-				}
-				
-				ts.createArc(from[i], to, transitions[j].getLabel());
-			}
-		}
-		
-		markings.getBuffer().rewind();
+	private static void checkCover() {
+		queue.put2DRangeKernel(kernelCheckCover, 0,0, numTransitions,numMarkingsToDo, numTransitions,1);
+		queue.finish();
 	}
-
-	private static void dedupeMarkings() {
-		kernelDedupe.setArg(0, markings)
-			.setArg(1, numMarkingsDone)
-			.setArg(2, numMarkingsToDo);
-		int count = numMarkingsDone+numMarkingsToDo+numMarkingsToDo*numTransitions;
-		int offset = 0;
-		do {
-			int size = Math.min(count, 512);
-			queue.put2DRangeKernel(kernelDedupe, offset,0, size,numMarkingsToDo*numTransitions, 1,numTransitions);
-//			queue.put3DRangeKernel(kernelDedupe, 0,offset,0, numPlaces,size,numMarkingsToDo*numTransitions, numPlaces,1,1);
+	
+	private static void dedupeFireResults() {
+		for(int id=0, count=numMarkingsToDo*numTransitions-1; count>0; ++id,--count) {
+			int localSize = Math.min(count, 128);
+			int globalSize = (int)(Math.ceil((double)count / (double)localSize) * (double)localSize);
+			kernelDedupeFireResults.setArg(1, id);
+			queue.put1DRangeKernel(kernelDedupeFireResults, id+1, globalSize, localSize);
 			queue.finish();
-			count -= size;
-			offset += size;
-		} while(count > 0);
+		}
 	}
 	
-	private static void arrangeMarkings() {
-		kernelArrange.setArg(1, markings)
-			.setArg(2, numMarkingsDone)
-			.setArg(3, numMarkingsToDo);
-		queue.putTask(kernelArrange);
-		// read how many new markings there are
-		queue.putReadBuffer(markingsToDo, true);
+	private static void dedupeVertices() {
+		queue.put2DRangeKernel(kernelDedupeVertices, 0,0, numTransitions*numMarkingsToDo,numVertices, numTransitions,1);
+		queue.finish();
+	}
+	
+	private static void convert() {
+		queue.putTask(kernelConvert);
+		queue.finish();
 	}
 	
 	private static void updateBuffer() {
-		numMarkingsDone += numMarkingsToDo;
-		numMarkingsToDo = markingsToDo.getBuffer().get();
-		markingsToDo.getBuffer().rewind();
-
-		capacity = (numMarkingsDone + numMarkingsToDo + numMarkingsToDo * numTransitions) * numPlaces;
-		if(markings.getCLCapacity() < capacity) {
-			CLBuffer<IntBuffer> oldMarkings = markings;
-			markings = context.createIntBuffer(capacity * 2, Mem.READ_WRITE);
-			queue.putCopyBuffer(oldMarkings, markings)
-				.putBarrier();
-			oldMarkings.release();
+		readStatusInfo();
+		calcCapacities();
+		boolean update = false;
+		if(bufferEdges.getCLCapacity() < capacityEdges) {
+			bufferEdges = reallocByteBuffer(bufferEdges, 2*capacityEdges);
+			update = true;
+		}
+		if(bufferVertices.getCLCapacity() < capacityVertices) {
+			bufferVertices = reallocByteBuffer(bufferVertices, 2*capacityVertices);
+			update = true;
+		}
+		if(bufferFireResults.getCLCapacity() < capacityFireResults) {
+			bufferFireResults = reallocByteBuffer(bufferFireResults, 2*capacityFireResults);
+			update = true;
+		}
+		if(update) {
+			kernelUpdate.setArg(1, bufferEdges);
+			kernelUpdate.setArg(2, bufferVertices);
+			kernelUpdate.setArg(3, bufferFireResults);
+			queue.putTask(kernelUpdate);
 		}
 	}
+	
+	private static void calcCapacities() {
+		capacityInfo = sizeInfo;
+		capacityEdges = (numEdges + numMarkingsToDo*numTransitions) * sizeEdge;
+		capacityVertices = (numVertices + numMarkingsToDo*numTransitions) * sizeVertex;
+		capacityFireResults = numMarkingsToDo*numTransitions * sizeFireResult;
+	}
+	
+	private static CLBuffer<ByteBuffer> reallocByteBuffer(CLBuffer<ByteBuffer> buffer, int capacity) {
+		CLBuffer<ByteBuffer> result = context.createByteBuffer(capacity, Mem.READ_WRITE);
+		queue.putCopyBuffer(buffer, result).finish();
+		buffer.release();
+		return result;
+	}
+
+	private static void readSizeInfo() {
+		CLBuffer<IntBuffer> bufferSizes = context.createIntBuffer(4, Mem.WRITE_ONLY);
+
+		CLKernel kernelGetSizes = program.createCLKernel("GetSizes");
+		kernelGetSizes.putArg(bufferSizes);
+		queue.putTask(kernelGetSizes).putReadBuffer(bufferSizes, true);
+		
+		IntBuffer buf = bufferSizes.getBuffer();
+		sizeInfo = buf.get();
+		sizeEdge = buf.get();
+		sizeVertex = buf.get();
+		sizeFireResult = buf.get();
+		
+		kernelGetSizes.release();
+		bufferSizes.release();
+	}
+	
+	private static void readStatusInfo() {
+		queue.putReadBuffer(bufferInfo, true);
+		ByteBuffer buf = bufferInfo.getBuffer();
+		numMarkingsDone = buf.getInt();
+		numMarkingsToDo = buf.getInt();
+		numEdges = buf.getInt();
+		numVertices = buf.getInt();
+		buf.rewind();
+	}
+	
+	private static void readCoverabilityGraph() {
+		queue.putReadBuffer(bufferVertices, false);
+		queue.putReadBuffer(bufferEdges, false);
+		queue.finish();
+		
+		readVertices();
+		readEdges();
+		ts.setInitialState(ts.getNode("s0"));
+	}
+	
+	private static void readVertices() {
+		ByteBuffer buffer = bufferVertices.getBuffer();
+		for(int id=0; id<numVertices; ++id) {
+			State state = ts.createState("s"+id);
+			// read marking
+			StringBuilder marking = new StringBuilder();
+			marking.append("[ ");
+			for (int i = 0; i < numPlaces; ++i) {
+				int token = buffer.getInt();
+				marking.append((token >= 0) ? token : "ω");
+				marking.append(' ');
+			}
+			marking.append("]");
+			state.putExtension("comment", marking.toString());
+			// skip parent
+			buffer.getInt();
+			// read edges pointer and count
+			state.putExtension("idEdges", buffer.getInt());
+			state.putExtension("numEdges", buffer.getInt());
+		}
+	}
+		
+	private static void readEdges() {
+		ByteBuffer buffer = bufferEdges.getBuffer();
+		for(State src : ts.getNodes()) {
+			// seek edges list
+			buffer.position(((Integer)src.getExtension("idEdges")) * sizeEdge);
+			for(int i=((Integer)src.getExtension("numEdges")); i>0; --i) {
+				// read transition id and target vertex id
+				int idTransition = buffer.getInt();
+				int idTarget = buffer.getInt();
+				// create arc
+				ts.createArc(src, ts.getNode("s"+idTarget), transitions[idTransition].getLabel());
+			}
+		}
+	}		
 }
