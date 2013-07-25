@@ -3,6 +3,7 @@ package uniol.apt.gpu.coverbilitygraph;
 import com.jogamp.opencl.CLBuffer;
 import com.jogamp.opencl.CLCommandQueue;
 import com.jogamp.opencl.CLContext;
+import com.jogamp.opencl.CLDevice;
 import com.jogamp.opencl.CLKernel;
 import com.jogamp.opencl.CLMemory.Mem;
 import com.jogamp.opencl.CLProgram;
@@ -100,7 +101,9 @@ class CLCoverabilityGraph {
 		places = pn.getPlaces().toArray(new Place[numPlaces]);
 		transitions = pn.getTransitions().toArray(new Transition[numTransitions]);
 		
-		queue = context.getMaxFlopsDevice().createCommandQueue();
+		CLDevice device = context.getMaxFlopsDevice();
+		System.err.println("using OpenCL device: " + device.toString());
+		queue = device.createCommandQueue();
 		program = context.createProgram(CLCoverabilityGraph.class.getResourceAsStream("CoverabilityGraph.cl"))
 			.build("-DnumTransitions="+numTransitions, "-DnumPlaces="+numPlaces);
 
