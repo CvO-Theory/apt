@@ -1,0 +1,88 @@
+.name ""
+.type LPN
+
+.places
+bit0_state0
+bit0_state1
+bit10_state0
+bit10_state1
+bit11_state0
+bit11_state1
+bit12_state0
+bit12_state1
+bit1_state0
+bit1_state1
+bit2_state0
+bit2_state1
+bit3_state0
+bit3_state1
+bit4_state0
+bit4_state1
+bit5_state0
+bit5_state1
+bit6_state0
+bit6_state1
+bit7_state0
+bit7_state1
+bit8_state0
+bit8_state1
+bit9_state0
+bit9_state1
+
+.transitions
+set0[label="set0"]
+set1[label="set1"]
+set10[label="set10"]
+set11[label="set11"]
+set12[label="set12"]
+set2[label="set2"]
+set3[label="set3"]
+set4[label="set4"]
+set5[label="set5"]
+set6[label="set6"]
+set7[label="set7"]
+set8[label="set8"]
+set9[label="set9"]
+unset0[label="unset0"]
+unset1[label="unset1"]
+unset10[label="unset10"]
+unset11[label="unset11"]
+unset12[label="unset12"]
+unset2[label="unset2"]
+unset3[label="unset3"]
+unset4[label="unset4"]
+unset5[label="unset5"]
+unset6[label="unset6"]
+unset7[label="unset7"]
+unset8[label="unset8"]
+unset9[label="unset9"]
+
+.flows
+set0: {1*bit0_state0} -> {1*bit0_state1}
+set1: {1*bit1_state0} -> {1*bit1_state1}
+set10: {1*bit10_state0} -> {1*bit10_state1}
+set11: {1*bit11_state0} -> {1*bit11_state1}
+set12: {1*bit12_state0} -> {1*bit12_state1}
+set2: {1*bit2_state0} -> {1*bit2_state1}
+set3: {1*bit3_state0} -> {1*bit3_state1}
+set4: {1*bit4_state0} -> {1*bit4_state1}
+set5: {1*bit5_state0} -> {1*bit5_state1}
+set6: {1*bit6_state0} -> {1*bit6_state1}
+set7: {1*bit7_state0} -> {1*bit7_state1}
+set8: {1*bit8_state0} -> {1*bit8_state1}
+set9: {1*bit9_state0} -> {1*bit9_state1}
+unset0: {1*bit0_state1} -> {1*bit0_state0}
+unset1: {1*bit1_state1} -> {1*bit1_state0}
+unset10: {1*bit10_state1} -> {1*bit10_state0}
+unset11: {1*bit11_state1} -> {1*bit11_state0}
+unset12: {1*bit12_state1} -> {1*bit12_state0}
+unset2: {1*bit2_state1} -> {1*bit2_state0}
+unset3: {1*bit3_state1} -> {1*bit3_state0}
+unset4: {1*bit4_state1} -> {1*bit4_state0}
+unset5: {1*bit5_state1} -> {1*bit5_state0}
+unset6: {1*bit6_state1} -> {1*bit6_state0}
+unset7: {1*bit7_state1} -> {1*bit7_state0}
+unset8: {1*bit8_state1} -> {1*bit8_state0}
+unset9: {1*bit9_state1} -> {1*bit9_state0}
+
+.initial_marking {1*bit0_state0, 1*bit10_state0, 1*bit11_state0, 1*bit12_state0, 1*bit1_state0, 1*bit2_state0, 1*bit3_state0, 1*bit4_state0, 1*bit5_state0, 1*bit6_state0, 1*bit7_state0, 1*bit8_state0, 1*bit9_state0}
