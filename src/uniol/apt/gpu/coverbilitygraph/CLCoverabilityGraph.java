@@ -15,8 +15,11 @@ import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.invariants.InvariantCalculator;
+import uniol.apt.analysis.invariants.InvariantCalculator.InvariantAlgorithm;
 
 class CLCoverabilityGraph {
+	public static enum GraphType { COVERABILITY, REACHABILITY, REACHABILITY_FORCE };
 
 	private static PetriNet pn = null;
 	private static Place[] places = null;
@@ -59,12 +62,18 @@ class CLCoverabilityGraph {
 	private static CLBuffer<IntBuffer> bufferMatBackward = null;
 
 
-	public static TransitionSystem compute(PetriNet net) throws IOException {
+	public static TransitionSystem compute(PetriNet net, GraphType graph) throws IOException {
 		try {
+			if(graph == GraphType.REACHABILITY) {
+				if(InvariantCalculator.coveredBySInvariants(net, InvariantAlgorithm.FARKAS) == null)
+					throw new IllegalArgumentException("The Petri net is not covered by a S-invariant. Thus it may not be structurally bounded such that the computation may not terminate!");
+			}
+			
 			init(net);
 			while(numMarkingsToDo > 0) {
 				fire();
-				checkCover();
+				if(graph == GraphType.COVERABILITY)
+					checkCover();
 				dedupeFireResults();
 				dedupeVertices();
 				convert();
