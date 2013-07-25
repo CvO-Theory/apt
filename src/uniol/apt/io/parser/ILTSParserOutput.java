@@ -54,6 +54,13 @@ public interface ILTSParserOutput<G> extends IParserOutput<G> {
 	 * @param idTo   - the id of the state the arc ends.
 	 */
 	public void addArc(String idFrom, String label, String idTo);
+
+	/**
+	 * Sets the state with the given id as initial state in the internal datastructure.
+	 * <p/>
+	 * @param id - the id of the state which should be initial.
+	 */
+	public void setInitialState(String id);
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

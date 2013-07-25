@@ -19,6 +19,9 @@
 
 package uniol.apt.analysis;
 
+import java.util.List;
+import java.util.Set;
+import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -28,6 +31,7 @@ import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.bisimulation.Pair;
 
 import uniol.apt.analysis.connectivity.Connectivity;
 import uniol.apt.analysis.cycles.lts.ComputeSmallestCycles;
@@ -88,10 +92,11 @@ public class ExamineLTSModule extends AbstractModule {
 			!Connectivity.findIsolatedElements(lts).isEmpty());
 		output.setReturnValue("strongly_connected", Boolean.class, Connectivity.isStronglyConnected(lts));
 		output.setReturnValue("weakly_connected", Boolean.class, Connectivity.isWeaklyConnected(lts));
-		output.setReturnValue("same_parikh_vectors", Boolean.class,
-			new ComputeSmallestCycles().checkSamePVs(lts));
+		ComputeSmallestCycles csc = new ComputeSmallestCycles();
+		Set<Pair<List<String>, ParikhVector>> vecs = csc.computePVsOfSmallestCycles(lts);
+		output.setReturnValue("same_parikh_vectors", Boolean.class, csc.checkSamePVs(vecs));
 		output.setReturnValue("same_or_mutually_disjoint_pv", Boolean.class,
-			new ComputeSmallestCycles().checkSameOrMutallyDisjointPVs(lts));
+			csc.checkSameOrMutallyDisjointPVs(vecs));
 	}
 
 	@Override

@@ -51,7 +51,7 @@ public class CyclesHaveSameOrMutallyDisjointPVModule extends AbstractModule {
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("graph", PetriNetOrTransitionSystem.class,
 			"The Petri net or LTS that should be examined");
-		inputSpec.addOptionalParameter("algo", Character.class, 'f', "Parameter 'f' for the adapted "
+		inputSpec.addOptionalParameter("algo", Character.class, 'd', "Parameter 'f' for the adapted "
 			+ "Floyd-Warshall algorithm and 'd' for the algorithm using the depth first search.");
 	}
 
@@ -65,8 +65,8 @@ public class CyclesHaveSameOrMutallyDisjointPVModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
 		Character algo = input.getParameter("algo", Character.class);
-		ComputeSmallestCycles.Algorithm alg = (algo == 'd')
-			? ComputeSmallestCycles.Algorithm.DFS : ComputeSmallestCycles.Algorithm.FloydWarshall;
+		ComputeSmallestCycles.Algorithm alg = (algo == 'f')
+			? ComputeSmallestCycles.Algorithm.FloydWarshall : ComputeSmallestCycles.Algorithm.DFS;
 		TransitionSystem ts = g.getTs();
 		PetriNet pn = g.getNet();
 		boolean ret = false;
