@@ -7,6 +7,22 @@
 #define OMEGA		(-1)
 #define INVALID		(0xFFFFFFFF)
 
+#ifndef kernel
+#define kernel __kernel
+#endif
+
+#ifndef constant
+#define constant __constant
+#endif
+
+#ifndef local
+#define local __local
+#endif
+
+#ifndef global
+#define global __global
+#endif
+
 typedef struct _Edge Edge;
 typedef struct _Vertex Vertex;
 typedef struct _FireResult FireResult;
@@ -55,14 +71,18 @@ kernel void GetSizes(global unsigned int* sizes) {
 }
 
 kernel void Init(
-	global Info* info,
-	global Edge* edges,
-	global Vertex* vertices,
-	global FireResult* fireResults,
+	global void* bufInfo,
+	global void* bufEdges,
+	global void* bufVertices,
+	global void* bufFireResults,
 	global const int* matForward,
 	global const int* matBackward,
 	global int* initialMarking
 ) {
+	global Info* info = (global Info*)bufInfo;
+	global Edge* edges = (global Edge*)bufEdges;
+	global Vertex* vertices = (global Vertex*)bufVertices;
+	global FireResult* fireResults = (global FireResult*)bufFireResults;
 	// initialize info structure
 	info->numMarkingsDone = 0;
 	info->numMarkingsToDo = 1;
@@ -83,24 +103,23 @@ kernel void Init(
 }
 
 kernel void Update(
-	global Info* info,
-	global Edge* edges,
-	global Vertex* vertices,
-	global FireResult* fireResults
+	global void* bufInfo,
+	global void* bufEdges,
+	global void* bufVertices,
+	global void* bufFireResults
 ) {
+	global Info* info = (global Info*)bufInfo;
+	global Edge* edges = (global Edge*)bufEdges;
+	global Vertex* vertices = (global Vertex*)bufVertices;
+	global FireResult* fireResults = (global FireResult*)bufFireResults;
 	info->edges = edges;
 	info->vertices = vertices;
 	info->fireResults = fireResults;
 }
 
-kernel void Fire(global Info* info) {
-/*
-	// check assertions
-	if(	   (get_global_size(0) != numTransitions)
-		|| (get_global_size(1) != numMarkingsToDo)
-	)
-		return;
-*/
+kernel void Fire(global void* bufInfo) {
+	global Info* info = (global Info*)bufInfo;
+
 	unsigned int idTransition = get_global_id(0);
 	unsigned int idMarking = get_global_id(1);
 
@@ -137,14 +156,9 @@ kernel void Fire(global Info* info) {
 	result->idVertex = INVALID;
 }
 
-kernel void CheckCover(global Info* info) {
-/*
-	// check assertions
-	if(	   (get_global_size(0) != numTransitions)
-		|| (get_global_size(1) != numMarkingsToDo)
-	)
-		return;
-*/
+kernel void CheckCover(global void* bufInfo) {
+	global Info* info = (global Info*)bufInfo;
+
 	unsigned int idTransition = get_global_id(0);
 	unsigned int idMarking = get_global_id(1);
 
@@ -184,7 +198,9 @@ kernel void CheckCover(global Info* info) {
 	}
 }
 
-kernel void DedupeFireResults(global Info* info, unsigned int idResult1) {
+kernel void DedupeFireResults(global void* bufInfo, unsigned int idResult1) {
+	global Info* info = (global Info*)bufInfo;
+
 	unsigned int idResult2 = get_global_id(0);
 	global FireResult* result1 = &info->fireResults[idResult1];
 
@@ -202,7 +218,9 @@ kernel void DedupeFireResults(global Info* info, unsigned int idResult1) {
 	}
 }
 
-kernel void DedupeVertices(global Info* info) {
+kernel void DedupeVertices(global void* bufInfo) {
+	global Info* info = (global Info*)bufInfo;
+
 	unsigned int idResult = get_global_id(0);
 	unsigned int idVertex = get_global_id(1);
 
@@ -230,7 +248,9 @@ bool equals(global int* m1, global int* m2) {
 	return equal;
 }
 
-kernel void Convert(global Info* info) {
+kernel void Convert(global void* bufInfo) {
+	global Info* info = (global Info*)bufInfo;
+
 	unsigned int numMarkingsToDo = 0;
 
 	for(unsigned int idMarking = 0; idMarking < info->numMarkingsToDo; ++idMarking) {

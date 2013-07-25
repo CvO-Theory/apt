@@ -1,0 +1,30 @@
+// Found with pnanalysis-module
+// @author Dennis
+    .name ""
+    .type LPN
+    
+    .places
+    p0
+    p1
+    p2
+    p3
+    p4
+    p5
+    
+    .transitions
+    t0 [label="t0"]
+    t1 [label="t1"]
+    t2 [label="t2"]
+    t3 [label="t3"]
+    t4 [label="t4"]
+    t5 [label="t5"]
+    
+    .flows
+    t0: {1*p5} -> {1*p0}
+    t1: {1*p0} -> {1*p1}
+    t2: {1*p1} -> {1*p2}
+    t3: {1*p2} -> {1*p3}
+    t4: {1*p3} -> {1*p4}
+    t5: {1*p4} -> {1*p5}
+    
+    .initial_marking {1*p0, 1*p1, 1*p2, 1*p3, 1*p4, 1*p5}
