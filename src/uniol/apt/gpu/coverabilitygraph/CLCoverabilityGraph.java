@@ -1,4 +1,4 @@
-package uniol.apt.gpu.coverbilitygraph;
+package uniol.apt.gpu.coverabilitygraph;
 
 import com.jogamp.opencl.CLBuffer;
 import com.jogamp.opencl.CLCommandQueue;
@@ -21,6 +21,9 @@ import uniol.apt.analysis.invariants.InvariantCalculator.InvariantAlgorithm;
 
 class CLCoverabilityGraph {
 	public static enum GraphType { COVERABILITY, REACHABILITY, REACHABILITY_FORCE };
+	
+	private static final int OMEGA = -1; // this must be consistent with CoverabilityGraph.cl
+	private static final int NAN   = -2; // this must be consistent with CoverabilityGraph.cl
 
 	private static PetriNet pn = null;
 	private static Place[] places = null;
@@ -44,13 +47,15 @@ class CLCoverabilityGraph {
 	static int numMarkingsToDo = 1;
 	static int numEdges = 0;
 	static int numVertices = 1;
+	static char skipNextKernelCall = 0;
 
 	private static CLContext context = null;
 	private static CLCommandQueue queue = null;
 	private static CLProgram program = null;
 	private static CLKernel kernelUpdate = null;
 	private static CLKernel kernelFire = null;
-	private static CLKernel kernelCheckCover = null; 
+	private static CLKernel kernelCheckCover = null;
+	private static CLKernel kernelCheckCallDedupeFireResults = null;
 	private static CLKernel kernelDedupeFireResults = null;
 	private static CLKernel kernelDedupeVertices = null;
 	private static CLKernel kernelConvert = null;
@@ -94,6 +99,7 @@ class CLCoverabilityGraph {
 
 		pn = net;
 		ts = new TransitionSystem(pn.getName());
+		ts.putExtension("success", Boolean.TRUE);
 
 		numPlaces = pn.getPlaces().size();
 		numTransitions = pn.getTransitions().size();
@@ -102,7 +108,7 @@ class CLCoverabilityGraph {
 		transitions = pn.getTransitions().toArray(new Transition[numTransitions]);
 		
 		CLDevice device = context.getMaxFlopsDevice();
-		System.err.println("using OpenCL device: " + device.toString());
+		System.err.println("OpenCL device: " + device.getName());
 		queue = device.createCommandQueue();
 		program = context.createProgram(CLCoverabilityGraph.class.getResourceAsStream("CoverabilityGraph.cl"))
 			.build("-DnumTransitions="+numTransitions, "-DnumPlaces="+numPlaces);
@@ -127,6 +133,7 @@ class CLCoverabilityGraph {
 		CLKernel kernelInit = program.createCLKernel("Init");
 		kernelInit.putArgs(bufferInfo, bufferEdges, bufferVertices, bufferFireResults, bufferMatForward, bufferMatBackward, bufferInitialMarking);
 		queue.putTask(kernelInit);
+		queue.finish();
 		
 		kernelInit.release();
 		bufferInitialMarking.release();
@@ -138,6 +145,8 @@ class CLCoverabilityGraph {
 		kernelFire.putArg(bufferInfo);
 		kernelCheckCover = program.createCLKernel("CheckCover");
 		kernelCheckCover.putArg(bufferInfo);
+		kernelCheckCallDedupeFireResults = program.createCLKernel("CheckCallDedupeFireResults");
+		kernelCheckCallDedupeFireResults.putArg(bufferInfo);
 		kernelDedupeFireResults = program.createCLKernel("DedupeFireResults");
 		kernelDedupeFireResults.putArg(bufferInfo);
 		kernelDedupeVertices = program.createCLKernel("DedupeVertices");
@@ -173,6 +182,7 @@ class CLCoverabilityGraph {
 		bufForward.rewind();
 		queue.putWriteBuffer(bufferMatBackward, false);
 		queue.putWriteBuffer(bufferMatForward, false);
+		queue.finish();
 	}
 
 	private static void fillInitialMarking(CLBuffer<IntBuffer> bufferInitialMarking) {
@@ -184,6 +194,7 @@ class CLCoverabilityGraph {
 		}
 		buf.rewind();
 		queue.putWriteBuffer(bufferInitialMarking, false);
+		queue.finish();
 	}
 
 	private static void fire() {
@@ -198,17 +209,41 @@ class CLCoverabilityGraph {
 	
 	private static void dedupeFireResults() {
 		for(int id=0, count=numMarkingsToDo*numTransitions-1; count>0; ++id,--count) {
-			int localSize = Math.min(count, 128);
-			int globalSize = (int)(Math.ceil((double)count / (double)localSize) * (double)localSize);
-			kernelDedupeFireResults.setArg(1, id);
-			queue.put1DRangeKernel(kernelDedupeFireResults, id+1, globalSize, localSize);
+			kernelCheckCallDedupeFireResults.setArg(1, id);
+			queue.putTask(kernelCheckCallDedupeFireResults);
 			queue.finish();
+			readStatusInfo();
+			if(skipNextKernelCall == 0) {
+				kernelDedupeFireResults.setArg(1, id);
+				for(int offset=0, tmpCount = count; tmpCount > 0; ) {
+					int localSize = Math.min(tmpCount, 128);
+					int globalSize = (tmpCount < (1024*1024)) ? (int)(Math.ceil((double)tmpCount/(double)localSize)*(double)localSize) : (1024*1024);
+					queue.put1DRangeKernel(kernelDedupeFireResults, id+1 + offset, globalSize, localSize);
+					queue.finish();
+					offset += globalSize;
+					tmpCount -= globalSize;
+				}
+			}
 		}
 	}
 	
 	private static void dedupeVertices() {
-		queue.put2DRangeKernel(kernelDedupeVertices, 0,0, numTransitions*numMarkingsToDo,numVertices, numTransitions,1);
-		queue.finish();
+		int countResults = numTransitions*numMarkingsToDo;
+		for(int offsetResults = 0; countResults > 0;) {
+			int localSizeResults = Math.min(countResults, 8);
+			int globalSizeResults = (countResults < 1024) ? (int)(Math.ceil((double)countResults/(double)localSizeResults)*(double)localSizeResults) : 1024;
+			int countVertices = numVertices;
+			for(int offsetVertices = 0; countVertices > 0;) {
+				int localSizeVertices = Math.min(countVertices, 8);
+				int globalSizeVertices = (countVertices < 1024) ? (int)(Math.ceil((double)countVertices/(double)localSizeVertices)*(double)localSizeVertices) : 1024;
+				queue.put2DRangeKernel(kernelDedupeVertices, offsetResults,offsetVertices, globalSizeResults,globalSizeVertices, localSizeResults,localSizeVertices);
+				queue.finish();
+				offsetVertices += globalSizeVertices;
+				countVertices -= globalSizeVertices;
+			}
+			offsetResults += globalSizeResults;
+			countResults -= globalSizeResults;
+		}
 	}
 	
 	private static void convert() {
@@ -237,6 +272,7 @@ class CLCoverabilityGraph {
 			kernelUpdate.setArg(2, bufferVertices);
 			kernelUpdate.setArg(3, bufferFireResults);
 			queue.putTask(kernelUpdate);
+			queue.finish();
 		}
 	}
 	
@@ -249,7 +285,8 @@ class CLCoverabilityGraph {
 	
 	private static CLBuffer<ByteBuffer> reallocByteBuffer(CLBuffer<ByteBuffer> buffer, int capacity) {
 		CLBuffer<ByteBuffer> result = context.createByteBuffer(capacity, Mem.READ_WRITE);
-		queue.putCopyBuffer(buffer, result).finish();
+		queue.putCopyBuffer(buffer, result);
+		queue.finish();
 		buffer.release();
 		return result;
 	}
@@ -259,7 +296,8 @@ class CLCoverabilityGraph {
 
 		CLKernel kernelGetSizes = program.createCLKernel("GetSizes");
 		kernelGetSizes.putArg(bufferSizes);
-		queue.putTask(kernelGetSizes).putReadBuffer(bufferSizes, true);
+		queue.putTask(kernelGetSizes).putReadBuffer(bufferSizes, false);
+		queue.finish();
 		
 		IntBuffer buf = bufferSizes.getBuffer();
 		sizeInfo = buf.get();
@@ -272,12 +310,14 @@ class CLCoverabilityGraph {
 	}
 	
 	private static void readStatusInfo() {
-		queue.putReadBuffer(bufferInfo, true);
+		queue.putReadBuffer(bufferInfo, false);
+		queue.finish();
 		ByteBuffer buf = bufferInfo.getBuffer();
 		numMarkingsDone = buf.getInt();
 		numMarkingsToDo = buf.getInt();
 		numEdges = buf.getInt();
 		numVertices = buf.getInt();
+		skipNextKernelCall = buf.getChar();
 		buf.rewind();
 	}
 	
@@ -300,7 +340,18 @@ class CLCoverabilityGraph {
 			marking.append("[ ");
 			for (int i = 0; i < numPlaces; ++i) {
 				int token = buffer.getInt();
-				marking.append((token >= 0) ? token : "ω");
+				switch(token) {
+					case OMEGA:
+						marking.append("ω");
+						break;
+					case NAN:
+						marking.append("NaN");
+						ts.putExtension("success", Boolean.FALSE);
+						break;
+					default:
+						marking.append(token);
+						break;
+				}
 				marking.append(' ');
 			}
 			marking.append("]");

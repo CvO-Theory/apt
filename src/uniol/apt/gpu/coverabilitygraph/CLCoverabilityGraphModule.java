@@ -1,6 +1,5 @@
-package uniol.apt.gpu.coverbilitygraph;
+package uniol.apt.gpu.coverabilitygraph;
 
-import java.util.Formatter;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.Category;
@@ -82,7 +81,7 @@ public class CLCoverabilityGraphModule implements Module {
 			throw new ModuleException(e.getMessage(), e);
 		}
 		
-		output.setReturnValue("success", Boolean.class, lts != null);
+		output.setReturnValue("success", Boolean.class, (lts != null) && ((Boolean)lts.getExtension("success")));
 		output.setReturnValue("lts", TransitionSystem.class, lts);
 	}
 }

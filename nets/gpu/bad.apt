@@ -1,0 +1,14 @@
+.type LPN
+
+.places
+p0 p1
+
+.transitions
+t1 t2
+
+.flows
+t1: {p0} -> {999999999*p1}
+t2: {p1} -> {999999999*p0}
+
+.initial_marking
+{p0}

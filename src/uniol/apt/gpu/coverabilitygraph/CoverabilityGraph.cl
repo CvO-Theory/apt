@@ -5,6 +5,7 @@
 #endif
 
 #define OMEGA		(-1)
+#define NAN		(-2)
 #define INVALID		(0xFFFFFFFF)
 
 #ifndef kernel
@@ -54,6 +55,7 @@ struct _Info {
 	unsigned int numMarkingsToDo;
 	unsigned int writePtrEdge;
 	unsigned int writePtrVertex;
+	unsigned char skipNextKernelCall;
 	global Edge* edges;
 	global Vertex* vertices;
 	global FireResult* fireResults;
@@ -93,6 +95,7 @@ kernel void Init(
 	info->fireResults = fireResults;
 	info->matForward = matForward;
 	info->matBackward = matBackward;
+	info->skipNextKernelCall = 0;
 	// initialize first vertex
 	vertices[0].idParent = INVALID;
 	vertices[0].idEdges = INVALID;
@@ -134,19 +137,22 @@ kernel void Fire(global void* bufInfo) {
 
 	bool fireable = true;
 
-	// if not fireable, the token count will be negative.
 	for(int i=0; i<numPlaces; ++i) {
 		int token = parent->marking[i];
-		if(token != OMEGA) {
-			token -= vecBackward[i];
+		int back = vecBackward[i];
+		int forw = vecForward[i];
+
+		if(token >= back) {
+			token += forw - back;
 			if(token < 0) {
-				fireable = false;
-				break;
+				token = NAN;
 			}
-			result->marking[i] = token + vecForward[i];
-		} else {
-			result->marking[i] = OMEGA;
+		} else if(token != OMEGA) {
+			fireable = false;
+			break;
 		}
+
+		result->marking[i] = token;
 	}
 
 	result->isFireable = fireable;
@@ -157,21 +163,21 @@ kernel void Fire(global void* bufInfo) {
 }
 
 kernel void CheckCover(global void* bufInfo) {
-	global Info* info = (global Info*)bufInfo;
+	Info info = *((global Info*)bufInfo);
 
 	unsigned int idTransition = get_global_id(0);
 	unsigned int idMarking = get_global_id(1);
 
 	unsigned int idResult = idMarking*numTransitions + idTransition;
-	global FireResult* result = &info->fireResults[idResult];
+	global FireResult* result = &info.fireResults[idResult];
 	if(!result->isFireable)
 		return;
 
 	global int* m1 = result->marking;
 	
-	unsigned int idParent = info->numMarkingsDone + idMarking;
+	unsigned int idParent = info.numMarkingsDone + idMarking;
 	while(idParent != INVALID) {
-		global Vertex* parent = &info->vertices[idParent];
+		global Vertex* parent = &info.vertices[idParent];
 		global int* m2 = parent->marking;
 		bool cover = true;
 		bool equal = true;
@@ -198,16 +204,30 @@ kernel void CheckCover(global void* bufInfo) {
 	}
 }
 
+kernel void CheckCallDedupeFireResults(global void* bufInfo, unsigned int idResult1) {
+	global Info* info = (global Info*)bufInfo;
+
+	global FireResult* result1 = &info->fireResults[idResult1];
+	if(!result1->isFireable || result1->isDuplicateFireResult)
+		info->skipNextKernelCall = 1;
+	else
+		info->skipNextKernelCall = 0;
+}	
+
 kernel void DedupeFireResults(global void* bufInfo, unsigned int idResult1) {
 	global Info* info = (global Info*)bufInfo;
 
 	unsigned int idResult2 = get_global_id(0);
-	global FireResult* result1 = &info->fireResults[idResult1];
+	if(idResult2 >= (info->numMarkingsToDo*numTransitions))
+		return;
 
-	if((idResult2 >= (info->numMarkingsToDo*numTransitions)) || !result1->isFireable || result1->isDuplicateFireResult)
+	global FireResult* result1 = &info->fireResults[idResult1];
+	if(!result1->isFireable || result1->isDuplicateFireResult)
 		return;
 
 	global FireResult* result2 = &info->fireResults[idResult2];
+	if(!result2->isFireable)
+		return;
 
 	global int* m1 = result1->marking;
 	global int* m2 = result2->marking;
@@ -223,6 +243,9 @@ kernel void DedupeVertices(global void* bufInfo) {
 
 	unsigned int idResult = get_global_id(0);
 	unsigned int idVertex = get_global_id(1);
+
+	if((idResult >= (info->numMarkingsToDo*numTransitions)) || (idVertex >= info->writePtrVertex))
+		return;
 
 	global FireResult* result = &info->fireResults[idResult];
 	if(!result->isFireable || result->isDuplicateFireResult || result->isDuplicateVertex)
@@ -249,27 +272,27 @@ bool equals(global int* m1, global int* m2) {
 }
 
 kernel void Convert(global void* bufInfo) {
-	global Info* info = (global Info*)bufInfo;
+	Info info = *((global Info*)bufInfo);
 
 	unsigned int numMarkingsToDo = 0;
 
-	for(unsigned int idMarking = 0; idMarking < info->numMarkingsToDo; ++idMarking) {
-		unsigned int idParent = info->numMarkingsDone + idMarking;
-		global Vertex* parent = &info->vertices[idParent];
-		parent->idEdges = info->writePtrEdge;
+	for(unsigned int idMarking = 0; idMarking < info.numMarkingsToDo; ++idMarking) {
+		unsigned int idParent = info.numMarkingsDone + idMarking;
+		global Vertex* parent = &info.vertices[idParent];
+		parent->idEdges = info.writePtrEdge;
 
 		unsigned int numEdges = 0;
 		for(unsigned int idTransition = 0; idTransition < numTransitions; ++idTransition) {
-			global FireResult* result = &info->fireResults[idMarking*numTransitions + idTransition];
+			global FireResult* result = &info.fireResults[idMarking*numTransitions + idTransition];
 			if(result->isFireable) {
 				unsigned int idVertex;
 				if(result->isDuplicateVertex) {
 					idVertex = result->idVertex;
 				} else if(result->isDuplicateFireResult) {
-					idVertex = info->fireResults[result->idFireResult].idVertex; // see below
+					idVertex = info.fireResults[result->idFireResult].idVertex; // see below
 				} else {
-					idVertex = info->writePtrVertex++;
-					global Vertex* vertex = &info->vertices[idVertex];
+					idVertex = info.writePtrVertex++;
+					global Vertex* vertex = &info.vertices[idVertex];
 					for(int i=0; i<numPlaces; ++i)
 						vertex->marking[i] = result->marking[i];
 					vertex->idParent = idParent;
@@ -279,8 +302,8 @@ kernel void Convert(global void* bufInfo) {
 					++numMarkingsToDo;
 				}
 
-				unsigned int idEdge = info->writePtrEdge++;
-				global Edge* edge = &info->edges[idEdge];
+				unsigned int idEdge = info.writePtrEdge++;
+				global Edge* edge = &info.edges[idEdge];
 				edge->idTransition = idTransition;
 				edge->idTarget = idVertex;
 				++numEdges;
@@ -289,6 +312,8 @@ kernel void Convert(global void* bufInfo) {
 		parent->numEdges = numEdges; 
 	}
 
-	info->numMarkingsDone += info->numMarkingsToDo;
-	info->numMarkingsToDo = numMarkingsToDo;
+	info.numMarkingsDone += info.numMarkingsToDo;
+	info.numMarkingsToDo = numMarkingsToDo;
+
+	*((global Info*)bufInfo) = info;
 }

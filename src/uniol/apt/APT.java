@@ -121,7 +121,7 @@ import uniol.apt.generator.module.QuadstatePhilNetGeneratorModule;
 import uniol.apt.generator.module.TNetGeneratorModule;
 import uniol.apt.generator.module.TristatePhilNetGeneratorModule;
 import uniol.apt.gpu.clinfo.CLInfoModule;
-import uniol.apt.gpu.coverbilitygraph.CLCoverabilityGraphModule;
+import uniol.apt.gpu.coverabilitygraph.CLCoverabilityGraphModule;
 import uniol.apt.gpu.plain.CLPlainModule;
 import uniol.apt.io.converter.Apt2PetrifyModule;
 import uniol.apt.io.converter.Apt2SynetModule;

@@ -1,4 +1,4 @@
-package uniol.apt.gpu.coverbilitygraph;
+package uniol.apt.gpu.coverabilitygraph;
 
 import com.jogamp.opencl.CLBuffer;
 import com.jogamp.opencl.CLCommandQueue;

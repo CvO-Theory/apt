@@ -1,0 +1,100 @@
+.name ""
+.type LPN
+
+.places
+bit0_state0[bit="uniol.apt.generator.bitnet.Bit@400ae511"]
+bit0_state1[bit="uniol.apt.generator.bitnet.Bit@400ae511"]
+bit10_state0[bit="uniol.apt.generator.bitnet.Bit@b44dff0"]
+bit10_state1[bit="uniol.apt.generator.bitnet.Bit@b44dff0"]
+bit11_state0[bit="uniol.apt.generator.bitnet.Bit@56ca0b57"]
+bit11_state1[bit="uniol.apt.generator.bitnet.Bit@56ca0b57"]
+bit12_state0[bit="uniol.apt.generator.bitnet.Bit@6aaea944"]
+bit12_state1[bit="uniol.apt.generator.bitnet.Bit@6aaea944"]
+bit13_state0[bit="uniol.apt.generator.bitnet.Bit@25dcbe3d"]
+bit13_state1[bit="uniol.apt.generator.bitnet.Bit@25dcbe3d"]
+bit14_state0[bit="uniol.apt.generator.bitnet.Bit@3f4daa36"]
+bit14_state1[bit="uniol.apt.generator.bitnet.Bit@3f4daa36"]
+bit1_state0[bit="uniol.apt.generator.bitnet.Bit@3e1dfb2"]
+bit1_state1[bit="uniol.apt.generator.bitnet.Bit@3e1dfb2"]
+bit2_state0[bit="uniol.apt.generator.bitnet.Bit@6225211b"]
+bit2_state1[bit="uniol.apt.generator.bitnet.Bit@6225211b"]
+bit3_state0[bit="uniol.apt.generator.bitnet.Bit@33d5e94f"]
+bit3_state1[bit="uniol.apt.generator.bitnet.Bit@33d5e94f"]
+bit4_state0[bit="uniol.apt.generator.bitnet.Bit@20c85c1f"]
+bit4_state1[bit="uniol.apt.generator.bitnet.Bit@20c85c1f"]
+bit5_state0[bit="uniol.apt.generator.bitnet.Bit@42180809"]
+bit5_state1[bit="uniol.apt.generator.bitnet.Bit@42180809"]
+bit6_state0[bit="uniol.apt.generator.bitnet.Bit@37b7a8c5"]
+bit6_state1[bit="uniol.apt.generator.bitnet.Bit@37b7a8c5"]
+bit7_state0[bit="uniol.apt.generator.bitnet.Bit@7aa93a16"]
+bit7_state1[bit="uniol.apt.generator.bitnet.Bit@7aa93a16"]
+bit8_state0[bit="uniol.apt.generator.bitnet.Bit@7c24b943"]
+bit8_state1[bit="uniol.apt.generator.bitnet.Bit@7c24b943"]
+bit9_state0[bit="uniol.apt.generator.bitnet.Bit@4eff1d61"]
+bit9_state1[bit="uniol.apt.generator.bitnet.Bit@4eff1d61"]
+
+.transitions
+set0[label="set0", bit="uniol.apt.generator.bitnet.Bit@400ae511"]
+set1[label="set1", bit="uniol.apt.generator.bitnet.Bit@3e1dfb2"]
+set10[label="set10", bit="uniol.apt.generator.bitnet.Bit@b44dff0"]
+set11[label="set11", bit="uniol.apt.generator.bitnet.Bit@56ca0b57"]
+set12[label="set12", bit="uniol.apt.generator.bitnet.Bit@6aaea944"]
+set13[label="set13", bit="uniol.apt.generator.bitnet.Bit@25dcbe3d"]
+set14[label="set14", bit="uniol.apt.generator.bitnet.Bit@3f4daa36"]
+set2[label="set2", bit="uniol.apt.generator.bitnet.Bit@6225211b"]
+set3[label="set3", bit="uniol.apt.generator.bitnet.Bit@33d5e94f"]
+set4[label="set4", bit="uniol.apt.generator.bitnet.Bit@20c85c1f"]
+set5[label="set5", bit="uniol.apt.generator.bitnet.Bit@42180809"]
+set6[label="set6", bit="uniol.apt.generator.bitnet.Bit@37b7a8c5"]
+set7[label="set7", bit="uniol.apt.generator.bitnet.Bit@7aa93a16"]
+set8[label="set8", bit="uniol.apt.generator.bitnet.Bit@7c24b943"]
+set9[label="set9", bit="uniol.apt.generator.bitnet.Bit@4eff1d61"]
+unset0[label="unset0", bit="uniol.apt.generator.bitnet.Bit@400ae511"]
+unset1[label="unset1", bit="uniol.apt.generator.bitnet.Bit@3e1dfb2"]
+unset10[label="unset10", bit="uniol.apt.generator.bitnet.Bit@b44dff0"]
+unset11[label="unset11", bit="uniol.apt.generator.bitnet.Bit@56ca0b57"]
+unset12[label="unset12", bit="uniol.apt.generator.bitnet.Bit@6aaea944"]
+unset13[label="unset13", bit="uniol.apt.generator.bitnet.Bit@25dcbe3d"]
+unset14[label="unset14", bit="uniol.apt.generator.bitnet.Bit@3f4daa36"]
+unset2[label="unset2", bit="uniol.apt.generator.bitnet.Bit@6225211b"]
+unset3[label="unset3", bit="uniol.apt.generator.bitnet.Bit@33d5e94f"]
+unset4[label="unset4", bit="uniol.apt.generator.bitnet.Bit@20c85c1f"]
+unset5[label="unset5", bit="uniol.apt.generator.bitnet.Bit@42180809"]
+unset6[label="unset6", bit="uniol.apt.generator.bitnet.Bit@37b7a8c5"]
+unset7[label="unset7", bit="uniol.apt.generator.bitnet.Bit@7aa93a16"]
+unset8[label="unset8", bit="uniol.apt.generator.bitnet.Bit@7c24b943"]
+unset9[label="unset9", bit="uniol.apt.generator.bitnet.Bit@4eff1d61"]
+
+.flows
+set0: {1*bit0_state0} -> {1*bit0_state1}
+set1: {1*bit1_state0} -> {1*bit1_state1}
+set10: {1*bit10_state0} -> {1*bit10_state1}
+set11: {1*bit11_state0} -> {1*bit11_state1}
+set12: {1*bit12_state0} -> {1*bit12_state1}
+set13: {1*bit13_state0} -> {1*bit13_state1}
+set14: {1*bit14_state0} -> {1*bit14_state1}
+set2: {1*bit2_state0} -> {1*bit2_state1}
+set3: {1*bit3_state0} -> {1*bit3_state1}
+set4: {1*bit4_state0} -> {1*bit4_state1}
+set5: {1*bit5_state0} -> {1*bit5_state1}
+set6: {1*bit6_state0} -> {1*bit6_state1}
+set7: {1*bit7_state0} -> {1*bit7_state1}
+set8: {1*bit8_state0} -> {1*bit8_state1}
+set9: {1*bit9_state0} -> {1*bit9_state1}
+unset0: {1*bit0_state1} -> {1*bit0_state0}
+unset1: {1*bit1_state1} -> {1*bit1_state0}
+unset10: {1*bit10_state1} -> {1*bit10_state0}
+unset11: {1*bit11_state1} -> {1*bit11_state0}
+unset12: {1*bit12_state1} -> {1*bit12_state0}
+unset13: {1*bit13_state1} -> {1*bit13_state0}
+unset14: {1*bit14_state1} -> {1*bit14_state0}
+unset2: {1*bit2_state1} -> {1*bit2_state0}
+unset3: {1*bit3_state1} -> {1*bit3_state0}
+unset4: {1*bit4_state1} -> {1*bit4_state0}
+unset5: {1*bit5_state1} -> {1*bit5_state0}
+unset6: {1*bit6_state1} -> {1*bit6_state0}
+unset7: {1*bit7_state1} -> {1*bit7_state0}
+unset8: {1*bit8_state1} -> {1*bit8_state0}
+unset9: {1*bit9_state1} -> {1*bit9_state0}
+
+.initial_marking {1*bit0_state0, 1*bit10_state0, 1*bit11_state0, 1*bit12_state0, 1*bit13_state0, 1*bit14_state0, 1*bit1_state0, 1*bit2_state0, 1*bit3_state0, 1*bit4_state0, 1*bit5_state0, 1*bit6_state0, 1*bit7_state0, 1*bit8_state0, 1*bit9_state0}
