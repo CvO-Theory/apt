@@ -48,7 +48,7 @@ public class CLCoverabilityGraph {
 	static int numMarkingsToDo = 1;
 	static int numEdges = 0;
 	static int numVertices = 1;
-	static char skipNextKernelCall = 0;
+	static int skipNextKernelCall = 0;
 
 	private static CLContext context = null;
 	private static CLDevice device = null;
@@ -327,7 +327,7 @@ public class CLCoverabilityGraph {
 		numMarkingsToDo = buf.getInt();
 		numEdges = buf.getInt();
 		numVertices = buf.getInt();
-		skipNextKernelCall = buf.getChar();
+		skipNextKernelCall = buf.getInt();
 		buf.rewind();
 	}
 	

@@ -55,7 +55,7 @@ struct _Info {
 	unsigned int numMarkingsToDo;
 	unsigned int writePtrEdge;
 	unsigned int writePtrVertex;
-	unsigned char skipNextKernelCall;
+	unsigned int skipNextKernelCall;
 	global Edge* edges;
 	global Vertex* vertices;
 	global FireResult* fireResults;
