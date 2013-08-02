@@ -7,4 +7,4 @@ if [ ! -f "$BASEDIR/apt.jar" ] ; then
 	exit 127
 fi
 
-java -jar "$BASEDIR/apt.jar" $@
+java -Xmx2g -jar "$BASEDIR/apt.jar" $@

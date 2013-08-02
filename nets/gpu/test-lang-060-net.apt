@@ -1,0 +1,31 @@
+// Netz um cl_coverability_graph zu strappazieren
+// author = Dennis Borde
+.name "test_cl_coverability_graph"
+.type LPN
+.description "Test Netz, um cl_coverability_graph zu strappazieren"
+
+.places
+sa
+sb
+sc
+qa
+qb
+qc
+q
+
+.transitions
+ta [label="a"]
+tb [label="b"]
+tc [label="c"]
+t1 [label=""]
+t2 [label=""]
+
+.flows
+ta: {qa,sa} -> {qb,sa}
+tb: {qb,sb} -> {qc,sb}
+tc: {qc,sc} -> {q,sc}
+t1: {sa} -> {sb}
+t2: {sb} -> {sc}
+
+.initial_marking {60*qa,sa}
+

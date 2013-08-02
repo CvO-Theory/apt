@@ -5,7 +5,7 @@
 #endif
 
 #define OMEGA		(-1)
-#define NAN		(-2)
+#define NOTANUMBER	(-2)
 #define INVALID		(0xFFFFFFFF)
 
 #ifndef kernel
@@ -145,7 +145,7 @@ kernel void Fire(global void* bufInfo) {
 		if(token >= back) {
 			token += forw - back;
 			if(token < 0) {
-				token = NAN;
+				token = NOTANUMBER;
 			}
 		} else if(token != OMEGA) {
 			fireable = false;

@@ -1,0 +1,37 @@
+.name ""
+.type LPN
+
+.places
+p0
+p1
+p2
+p3
+p4
+p5
+p6
+p7
+p8
+
+.transitions
+t0[label="t0"]
+t1[label="t1"]
+t2[label="t2"]
+t3[label="t3"]
+t4[label="t4"]
+t5[label="t5"]
+t6[label="t6"]
+t7[label="t7"]
+t8[label="t8"]
+
+.flows
+t0: {1*p0} -> {1*p1}
+t1: {1*p1} -> {1*p2}
+t2: {1*p2} -> {1*p3}
+t3: {1*p3} -> {1*p4}
+t4: {1*p4} -> {1*p5}
+t5: {1*p5} -> {1*p6}
+t6: {1*p6} -> {1*p7}
+t7: {1*p7} -> {1*p8}
+t8: {1*p8} -> {1*p0}
+
+.initial_marking {1*p0, 1*p1, 1*p2, 1*p3, 1*p4, 1*p5, 1*p6, 1*p7, 1*p8}
