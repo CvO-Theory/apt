@@ -4,6 +4,7 @@ import com.jogamp.common.JogampRuntimeException;
 import com.jogamp.opencl.CLDevice;
 import com.jogamp.opencl.CLPlatform;
 import com.jogamp.opencl.util.JOCLVersion;
+import java.util.List;
 import java.util.Map;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -31,7 +32,7 @@ public class CLInfoModule extends AbstractModule {
 
 	@Override
 	public Category[] getCategories() {
-		return new Category[] {Category.GPU};
+		return new Category[]{Category.GPU};
 	}
 
 	@Override
@@ -46,7 +47,7 @@ public class CLInfoModule extends AbstractModule {
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addOptionalParameter("what", String.class, "all", "What information should be printed. Possible values are: jogamp, opencl, all");
+		inputSpec.addOptionalParameter("what", String.class, "all", "What information should be printed. Possible values are: jogamp, opencl, devices, all");
 	}
 
 	@Override
@@ -56,55 +57,76 @@ public class CLInfoModule extends AbstractModule {
 
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
-        try {
-            CLPlatform.initialize();
-        } catch(JogampRuntimeException ex) {
+		try {
+			CLPlatform.initialize();
+		} catch (JogampRuntimeException ex) {
 			throw new ModuleException("OpenCL could not be initialized.", ex);
-        }
+		}
 
-		switch(input.getParameter("what", String.class)) {
+		switch (input.getParameter("what", String.class)) {
 			case "all":
-		        output.setReturnValue("out", String.class, System.lineSeparator() + JOCLVersion.getAllVersions() + System.lineSeparator() + createInfoText());
+				output.setReturnValue("out", String.class, System.lineSeparator() + JOCLVersion.getAllVersions() + System.lineSeparator() + createInfoText());
 				break;
 			case "jogamp":
-		        output.setReturnValue("out", String.class, System.lineSeparator() + JOCLVersion.getAllVersions());
+				output.setReturnValue("out", String.class, System.lineSeparator() + JOCLVersion.getAllVersions());
 				break;
 			case "opencl":
-		        output.setReturnValue("out", String.class, System.lineSeparator() + createInfoText());
+				output.setReturnValue("out", String.class, System.lineSeparator() + createInfoText());
+				break;
+			case "devices":
+				output.setReturnValue("out", String.class, System.lineSeparator() + createDeviceList());
 				break;
 		}
 
-    }
+	}
+	
+	private String createDeviceList() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[ID] Device\n===========\n");
+		
+		List<CLDevice> devices = CLInfo.enumCLDevices();
+		for(int i=0; i<devices.size(); ++i) {
+			CLDevice d = devices.get(i);
+			sb.append("[");
+			sb.append(String.format("%2d", i+1));
+			sb.append("] ");
+			sb.append(d.getName());
+			sb.append('\n');
+		}
 
-    private String createInfoText() {
-        StringBuilder sb = new StringBuilder();
+		return sb.toString();
+	}
 
-        CLPlatform[] platforms = CLPlatform.listCLPlatforms();
-        for (CLPlatform p : platforms) {
-            fillTable(sb, p.getProperties(), '=');
-            CLDevice[] devices = p.listCLDevices();
-            for (CLDevice d : devices) {
+	private String createInfoText() {
+		StringBuilder sb = new StringBuilder();
+
+		CLPlatform[] platforms = CLPlatform.listCLPlatforms();
+		for (CLPlatform p : platforms) {
+			fillTable(sb, p.getProperties(), '=');
+			CLDevice[] devices = p.listCLDevices();
+			for (CLDevice d : devices) {
 				fillTable(sb, d.getProperties(), '-');
 			}
-        }
+		}
 
-        return sb.toString();
-    }
+		return sb.toString();
+	}
 
-    private void fillTable(StringBuilder sb, Map<String, String> properties, char underline) {
-        boolean isHeader = true;
-        for (String key : properties.keySet()) {
-			if(isHeader) {
+	private void fillTable(StringBuilder sb, Map<String, String> properties, char underline) {
+		boolean isHeader = true;
+		for (String key : properties.keySet()) {
+			if (isHeader) {
 				String header = properties.get(key);
 				sb.append(System.lineSeparator()).append(header).append(System.lineSeparator());
-				for(int i=0; i<header.length(); ++i)
+				for (int i = 0; i < header.length(); ++i) {
 					sb.append(underline);
+				}
 			} else {
 				sb.append(key).append(" = ");
 				sb.append(properties.get(key));
 			}
 			sb.append(System.lineSeparator());
-            isHeader = false;
-        }
-    }
+			isHeader = false;
+		}
+	}
 }

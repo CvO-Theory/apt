@@ -18,8 +18,9 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.invariants.InvariantCalculator;
 import uniol.apt.analysis.invariants.InvariantCalculator.InvariantAlgorithm;
+import uniol.apt.gpu.clinfo.CLInfo;
 
-class CLCoverabilityGraph {
+public class CLCoverabilityGraph {
 	public static enum GraphType { COVERABILITY, REACHABILITY, REACHABILITY_FORCE };
 	
 	private static final int OMEGA = -1; // this must be consistent with CoverabilityGraph.cl
@@ -50,6 +51,7 @@ class CLCoverabilityGraph {
 	static char skipNextKernelCall = 0;
 
 	private static CLContext context = null;
+	private static CLDevice device = null;
 	private static CLCommandQueue queue = null;
 	private static CLProgram program = null;
 	private static CLKernel kernelUpdate = null;
@@ -68,14 +70,14 @@ class CLCoverabilityGraph {
 	private static CLBuffer<IntBuffer> bufferMatBackward = null;
 
 
-	public static TransitionSystem compute(PetriNet net, GraphType graph) throws IOException {
+	public static TransitionSystem compute(Integer deviceId, PetriNet net, GraphType graph) throws IOException {
 		try {
 			if(graph == GraphType.REACHABILITY) {
 				if(InvariantCalculator.coveredBySInvariants(net, InvariantAlgorithm.FARKAS) == null)
 					throw new IllegalArgumentException("The Petri net is not covered by a S-invariant. Thus it may not be structurally bounded such that the computation may not terminate!");
 			}
 			
-			init(net);
+			init(deviceId, net);
 			while(numMarkingsToDo > 0) {
 				fire();
 				if(graph == GraphType.COVERABILITY)
@@ -94,9 +96,7 @@ class CLCoverabilityGraph {
 		return ts;
 	}
 
-	private static void init(PetriNet net) throws IOException {
-		context = CLContext.create();
-
+	private static void init(Integer deviceId, PetriNet net) throws IOException {
 		pn = net;
 		ts = new TransitionSystem(pn.getName());
 		ts.putExtension("success", Boolean.TRUE);
@@ -107,11 +107,21 @@ class CLCoverabilityGraph {
 		places = pn.getPlaces().toArray(new Place[numPlaces]);
 		transitions = pn.getTransitions().toArray(new Transition[numTransitions]);
 		
-		CLDevice device = context.getMaxFlopsDevice();
+		try {
+			device = CLInfo.enumCLDevices().get(deviceId-1);
+			context = CLContext.create(device);
+		} catch(IndexOutOfBoundsException e) {
+			if(deviceId > 0) { // because 0 := auto
+				System.err.println(String.format("Invalid ID: %d. I will pick one for you.", deviceId));
+			}
+			context = CLContext.create();
+			device = context.getMaxFlopsDevice();
+		}
 		System.err.println("OpenCL device: " + device.getName());
-		queue = device.createCommandQueue();
+				
 		program = context.createProgram(CLCoverabilityGraph.class.getResourceAsStream("CoverabilityGraph.cl"))
 			.build("-DnumTransitions="+numTransitions, "-DnumPlaces="+numPlaces);
+		queue = device.createCommandQueue();
 
 		// read structure size information to calculate memory requirements
 		readSizeInfo();

@@ -42,6 +42,10 @@ public class CLCoverabilityGraphModule implements Module {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
+		inputSpec.addOptionalParameter("cldevice", Integer.class, 0,
+			"The ID of the OpenCL device that should be used (0 := pick automatically).\n" +
+			"             Use \"cl_info devices\" for a list."
+		);
 		inputSpec.addOptionalParameter("graph", String.class, "cover",
 			"Parameter \"cover\" to calculate the coverability graph.\n" +
 			"             Parameter \"reach\" to calculate the reachability graph. Aborts if pn is not covered by a S-invariant.\n" +
@@ -60,18 +64,19 @@ public class CLCoverabilityGraphModule implements Module {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 		String graph = input.getParameter("graph", String.class);
+		Integer device = input.getParameter("cldevice", Integer.class);
 		TransitionSystem lts;
 		
 		try {
 			switch(graph) {
 				case "cover":
-					lts = CLCoverabilityGraph.compute(pn, CLCoverabilityGraph.GraphType.COVERABILITY);
+					lts = CLCoverabilityGraph.compute(device, pn, CLCoverabilityGraph.GraphType.COVERABILITY);
 					break;
 				case "reach":
-					lts = CLCoverabilityGraph.compute(pn, CLCoverabilityGraph.GraphType.REACHABILITY);
+					lts = CLCoverabilityGraph.compute(device, pn, CLCoverabilityGraph.GraphType.REACHABILITY);
 					break;
 				case "reachforce":
-					lts = CLCoverabilityGraph.compute(pn, CLCoverabilityGraph.GraphType.REACHABILITY_FORCE);
+					lts = CLCoverabilityGraph.compute(device, pn, CLCoverabilityGraph.GraphType.REACHABILITY_FORCE);
 					break;
 				default:
 					lts = null;
