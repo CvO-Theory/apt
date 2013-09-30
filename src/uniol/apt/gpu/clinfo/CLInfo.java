@@ -6,9 +6,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class holds information about the OpenCL environment.
+ * @author Dennis-Michael Borde
+ */
 public class CLInfo {
 	private static List<CLDevice> cldevices = null;
 	
+	/**
+	 * Retruns a list with all usable CL-Devices.
+	 * @return An unmodifiable list.
+	 */
 	public static List<CLDevice> enumCLDevices() {
 		if(cldevices == null) {
 			cldevices = new ArrayList<>();

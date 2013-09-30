@@ -9,6 +9,10 @@ import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
+/**
+ * This module checks if a Petri net is plain using OpenCL.
+ * @author Dennis-Michael Borde
+ */
 public class CLPlainModule extends AbstractModule {
 
 	@Override

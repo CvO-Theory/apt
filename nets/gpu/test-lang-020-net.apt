@@ -17,8 +17,8 @@ q
 ta [label="a"]
 tb [label="b"]
 tc [label="c"]
-t1 [label=""]
-t2 [label=""]
+t1 [label="E"]
+t2 [label="E"]
 
 .flows
 ta: {qa,sa} -> {qb,sa}

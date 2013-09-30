@@ -20,8 +20,19 @@ import uniol.apt.analysis.invariants.InvariantCalculator;
 import uniol.apt.analysis.invariants.InvariantCalculator.InvariantAlgorithm;
 import uniol.apt.gpu.clinfo.CLInfo;
 
+/**
+ * This is the logic class used by the CLCoverabilityGraphModule class. It calculates the coverability graph of a Petri net.
+ * @author Dennis-Michael Borde
+ */
 public class CLCoverabilityGraph {
-	public static enum GraphType { COVERABILITY, REACHABILITY, REACHABILITY_FORCE };
+	/**
+	 * Algorithm modes.
+	 */
+	public static enum GraphType {
+		COVERABILITY, // coverability graph
+		REACHABILITY, // reachability graph (checks if net is covered by an S-invariant first).
+		REACHABILITY_FORCE // reachability graph (no check is performed, system may crash).
+	};
 	
 	private static final int OMEGA = -1; // this must be consistent with CoverabilityGraph.cl
 	private static final int NAN   = -2; // this must be consistent with CoverabilityGraph.cl
@@ -34,21 +45,23 @@ public class CLCoverabilityGraph {
 	static int numPlaces = 0;
 	static int numTransitions = 0;
 
+	// size info about the structs in the device program.
 	static int sizeInfo = 0;
 	static int sizeEdge = 0;
 	static int sizeVertex = 0;
 	static int sizeFireResult = 0;
 
+	// how much memory is allicated for each buffer
 	static int capacityInfo = 0;
 	static int capacityEdges = 0;
 	static int capacityVertices = 0;
 	static int capacityFireResults = 0;
 	
-	static int numMarkingsDone = 0;
-	static int numMarkingsToDo = 1;
-	static int numEdges = 0;
-	static int numVertices = 1;
-	static int skipNextKernelCall = 0;
+	static int numMarkingsDone = 0; // count of vertices visited
+	static int numMarkingsToDo = 1; // count of vertices unvisited
+	static int numEdges = 0; // count of edges
+	static int numVertices = 1; // count of vertices
+	static int skipNextKernelCall = 0; // true, if the next call to a kernel may be skiped
 
 	private static CLContext context = null;
 	private static CLDevice device = null;
@@ -69,25 +82,38 @@ public class CLCoverabilityGraph {
 	private static CLBuffer<IntBuffer> bufferMatForward = null;
 	private static CLBuffer<IntBuffer> bufferMatBackward = null;
 
-
+	/**
+	 * The main-function of this module. It calculates the coverability graph on device deviceId for the Petri net
+	 * net using the algorithm mode graph.
+	 * @param deviceId The ID of the device to use (@see CLInfo).
+	 * @param net The Petri net to process.
+	 * @param graph The algoritm mode (@see GraphType).
+	 * @return A TransitionSystem holding the graph.
+	 * @throws IOException If the device program source is not found -- should not happen.
+	 */
 	public static TransitionSystem compute(Integer deviceId, PetriNet net, GraphType graph) throws IOException {
 		try {
 			if(graph == GraphType.REACHABILITY) {
+				// check if net is covered by an S-invariant.
 				if(InvariantCalculator.coveredBySInvariants(net, InvariantAlgorithm.FARKAS) == null)
-					throw new IllegalArgumentException("The Petri net is not covered by a S-invariant. Thus it may not be structurally bounded such that the computation may not terminate!");
+					throw new IllegalArgumentException(
+						"The Petri net is not covered by a S-invariant. " +
+						"Thus it may not be structurally bounded such that " +
+						"the computation may not terminate!"
+					);
 			}
 			
-			init(deviceId, net);
-			while(numMarkingsToDo > 0) {
-				fire();
+			init(deviceId, net); // initializes the device
+			while(numMarkingsToDo > 0) { // as long as there are unvisited vertices
+				fire(); // fire for all unvisited vertices all transitions.
 				if(graph == GraphType.COVERABILITY)
-					checkCover();
-				dedupeFireResults();
-				dedupeVertices();
-				convert();
-				updateBuffer();
+					checkCover(); // check, if the new markings cover another on its path from M0.
+				dedupeFireResults(); // mark duplicates among the fireresults.
+				dedupeVertices(); // mark duplicates among the vertices.
+				convert(); // convert the rest of the markings to vertices.
+				updateBuffer(); // do some memory management.
 			}
-			readCoverabilityGraph();
+			readCoverabilityGraph(); // read the result from the device.
 		} finally {
 			if(context != null)
 				context.release();
@@ -96,6 +122,12 @@ public class CLCoverabilityGraph {
 		return ts;
 	}
 
+	/**
+	 * Initializes the device deviceId for the computation of the coverability graph of Petri net net.
+	 * @param deviceId The ID of the device to use.
+	 * @param net The Petri net to process.
+	 * @throws IOException If the source of the device program is not found -- should not happen.
+	 */
 	private static void init(Integer deviceId, PetriNet net) throws IOException {
 		pn = net;
 		ts = new TransitionSystem(pn.getName());
@@ -107,6 +139,7 @@ public class CLCoverabilityGraph {
 		places = pn.getPlaces().toArray(new Place[numPlaces]);
 		transitions = pn.getTransitions().toArray(new Transition[numTransitions]);
 		
+		// select the device from ID.
 		try {
 			device = CLInfo.enumCLDevices().get(deviceId-1);
 			context = CLContext.create(device);
@@ -119,6 +152,7 @@ public class CLCoverabilityGraph {
 		}
 		System.err.println("OpenCL device: " + device.getName());
 				
+		// compile the device program.
 		program = context.createProgram(CLCoverabilityGraph.class.getResourceAsStream("CoverabilityGraph.cl"))
 			.build("-DnumTransitions="+numTransitions, "-DnumPlaces="+numPlaces);
 		queue = device.createCommandQueue();
@@ -165,6 +199,9 @@ public class CLCoverabilityGraph {
 		kernelConvert.putArg(bufferInfo);
 	}
 
+	/**
+	 * Fills the buffer for forward and backward matrices (column first).
+	 */
 	private static void fillMatrices() {
 		IntBuffer bufBackward = bufferMatBackward.getBuffer();
 		IntBuffer bufForward = bufferMatForward.getBuffer();
@@ -195,6 +232,10 @@ public class CLCoverabilityGraph {
 		queue.finish();
 	}
 
+	/**
+	 * Fills the buffer bufferInitialMarking with the initial marking of the Petri net.
+	 * @param bufferInitialMarking The buffer the initial marking is written to.
+	 */
 	private static void fillInitialMarking(CLBuffer<IntBuffer> bufferInitialMarking) {
 		IntBuffer buf = bufferInitialMarking.getBuffer();
 		Marking initialMarking = pn.getInitialMarkingCopy();
@@ -207,23 +248,38 @@ public class CLCoverabilityGraph {
 		queue.finish();
 	}
 
+	/**
+	 * Runs the Fire-Kernel.
+	 * WARNING: This may crash, if there are 2^31 unvisited markings or more.
+	 */
 	private static void fire() {
 		queue.put2DRangeKernel(kernelFire, 0,0, numTransitions,numMarkingsToDo, numTransitions,1);
 		queue.finish();
 	}
 	
+	/**
+	 * Runs the CheckCover-Kernel.
+	 * WARNING: This may crash, if there are 2^31 unvisited markings or more.
+	 */
 	private static void checkCover() {
 		queue.put2DRangeKernel(kernelCheckCover, 0,0, numTransitions,numMarkingsToDo, numTransitions,1);
 		queue.finish();
 	}
 	
+	/**
+	 * Runs the DedupeFireResults-Kernel.
+	 */
 	private static void dedupeFireResults() {
+		// first, compare result0 with all other, than result1 with all other and so on.
 		for(int id=0, count=numMarkingsToDo*numTransitions-1; count>0; ++id,--count) {
+			// check if a call may be skiped for the current result.
 			kernelCheckCallDedupeFireResults.setArg(1, id);
 			queue.putTask(kernelCheckCallDedupeFireResults);
 			queue.finish();
 			readStatusInfo();
+			// if not ...
 			if(skipNextKernelCall == 0) {
+				// do only 2^20 comparisons at a time.
 				kernelDedupeFireResults.setArg(1, id);
 				for(int offset=0, tmpCount = count; tmpCount > 0; ) {
 					int localSize = Math.min(tmpCount, 128);
@@ -237,7 +293,12 @@ public class CLCoverabilityGraph {
 		}
 	}
 	
+	/**
+	 * Runs the DedupeVertices-Kernel.
+	 */
 	private static void dedupeVertices() {
+		// if there are too much visited vertices, a simple call will crash.
+		// so let's do only 2^20 comparisons at a time.
 		int countResults = numTransitions*numMarkingsToDo;
 		for(int offsetResults = 0; countResults > 0;) {
 			int localSizeResults = Math.min(countResults, 8);
@@ -256,11 +317,18 @@ public class CLCoverabilityGraph {
 		}
 	}
 	
+	/**
+	 * Runs the Convert-Kernel.
+	 */
 	private static void convert() {
 		queue.putTask(kernelConvert);
 		queue.finish();
 	}
 	
+	/**
+	 * Recalculates buffer sizes, reallocates memory and calls Update-Kernel, if nescessary.
+	 * Since this would happen very often, twice the memory needed is allocated.
+	 */
 	private static void updateBuffer() {
 		readStatusInfo();
 		calcCapacities();
@@ -286,6 +354,9 @@ public class CLCoverabilityGraph {
 		}
 	}
 	
+	/**
+	 * Calculate the minimal needed memory on the device.
+	 */
 	private static void calcCapacities() {
 		capacityInfo = sizeInfo;
 		capacityEdges = (numEdges + numMarkingsToDo*numTransitions) * sizeEdge;
@@ -293,6 +364,12 @@ public class CLCoverabilityGraph {
 		capacityFireResults = numMarkingsToDo*numTransitions * sizeFireResult;
 	}
 	
+	/**
+	 * Reallocates a buffer to new given size (data is moved). The old buffer will be released.
+	 * @param buffer The Buffer to reallocate memory for.
+	 * @param capacity The new capacity.
+	 * @return The new buffer.
+	 */
 	private static CLBuffer<ByteBuffer> reallocByteBuffer(CLBuffer<ByteBuffer> buffer, int capacity) {
 		CLBuffer<ByteBuffer> result = context.createByteBuffer(capacity, Mem.READ_WRITE);
 		queue.putCopyBuffer(buffer, result);

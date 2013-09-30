@@ -63,6 +63,7 @@ public class CLInfoModule extends AbstractModule {
 			throw new ModuleException("OpenCL could not be initialized.", ex);
 		}
 
+		// switch on what information to print
 		switch (input.getParameter("what", String.class)) {
 			case "all":
 				output.setReturnValue("out", String.class, System.lineSeparator() + JOCLVersion.getAllVersions() + System.lineSeparator() + createInfoText());
@@ -80,6 +81,10 @@ public class CLInfoModule extends AbstractModule {
 
 	}
 	
+	/**
+	 * Returns a string containing a tabular with all CL-Devices.
+	 * @return A string.
+	 */
 	private String createDeviceList() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[ID] Device\n===========\n");
@@ -97,6 +102,10 @@ public class CLInfoModule extends AbstractModule {
 		return sb.toString();
 	}
 
+	/**
+	 * Returns a string containing a table with all properties of all CL-Devices.
+	 * @retun A string.
+	 */
 	private String createInfoText() {
 		StringBuilder sb = new StringBuilder();
 
