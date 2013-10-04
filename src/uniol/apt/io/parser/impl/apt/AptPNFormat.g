@@ -115,23 +115,22 @@ typ  : 'LPN' { out.setType(Type.LPN);}
 description : '.description' (txt=string | txt=string_multi) { out.setDescription($txt.val);};
 
 /* PLACES */
-places     : '.places' place;
-place      :  | idi { id = $idi.text; options = new HashMap<>();} (opts)? {out.addPlace(id, options); } place;
+places     : '.places' place*;
+place      :  idi { id = $idi.text; options = new HashMap<>();} (opts)? {out.addPlace(id, options); };
 
-opts : '[' option ']';
-option : ID '=' string {options.put($ID.text, $string.val);} (',' option)?;
+opts : '[' option (',' option)* ']';
+option : ID '=' string {options.put($ID.text, $string.val);};
 
 /* TRANSITIONS */
-transitions : '.transitions' transition;
-transition  :  | idi { id = $idi.text; options = new HashMap<>();} (opts)? {out.addTransition(id, options);} transition;
+transitions : '.transitions' transition*;
+transition  : idi { id = $idi.text; options = new HashMap<>();} (opts)? {out.addTransition(id, options);};
 
 /* FLOWS */
-flows : '.flows' flow;
-flow  : | idi {flowTransitionId = $idi.text;} ':' {status = State.FLOW_PRE;} set '->' {status = State.FLOW_POST;} set flow;
+flows : '.flows' flow*;
+flow  : idi {flowTransitionId = $idi.text;} ':' {status = State.FLOW_PRE;} set '->' {status = State.FLOW_POST;} set;
 
 /* Sets of INT*ID */
-set   : '{' (objs)? '}';
-objs  : obj (',' objs)?;
+set   : '{' ( | obj (',' obj)*) '}';
 obj   : INT '*' idi {switch(status) {
 	case INIT: initMarking.put($idi.text, Integer.parseInt($INT.text));
 		   break;
@@ -155,8 +154,8 @@ obj   : INT '*' idi {switch(status) {
 initial_marking : '.initial_marking' { status = State.INIT; } (set)? {out.setInitialMarking(initMarking);} ;
 
 /* FINAL_MARKINGS */
-final_markings : '.final_markings' {status = State.FINAL;} final_marking;
-final_marking  : | {finalMarking = new MarkingHashMap();} set {out.addFinalMarking(finalMarking);} final_marking;
+final_markings : '.final_markings' {status = State.FINAL;} final_marking*;
+final_marking  : {finalMarking = new MarkingHashMap();} set {out.addFinalMarking(finalMarking);};
 
 idi: ID | INT;
 

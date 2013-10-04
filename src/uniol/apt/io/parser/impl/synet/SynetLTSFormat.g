@@ -80,7 +80,7 @@ grammar SynetLTSFormat;
 }
 
 start    : 'des(' INT ',' INT ',' INT ')' translist {out.setType(Type.LTS);};
-translist: | trans translist;
+translist: trans*;
 trans    : '(' from=stateid ',' eventid ',' to=stateid ')' {out.addArc($from.text, $eventid.text, $to.text);};
 
 stateid  : INT {out.addState($INT.text, options);} | STR {out.addState($STR.text, options);}

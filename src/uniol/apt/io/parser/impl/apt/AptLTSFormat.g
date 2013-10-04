@@ -124,40 +124,36 @@ type		: '.type' 'LTS' {out.setType(Type.LTS);};
 description	: '.description' (txt=string | txt=string_multi) { out.setDescription($txt.val);};
 
 /* STATES */
-states		: '.states' state;
-state		:  | idi {
+states		: '.states' state*;
+state		: idi {
 				id = $idi.text; options = new HashMap<>();
 				}
 		(opts)? {
 				out.addState(id, options);
-				 }
-		state;
+				 };
 
-opts		: '[' option ']';
-option		: (ID '=' string {
+opts		: '[' option (',' option)* ']';
+option		: ID '=' string {
 				options.put($ID.text, $string.val);
 				}
 		   | 'initial' {
 						options.put("initial", "true");
-						})
-		 (',' option)?;
+						};
 
 /* LABELS */
-labels		: '.labels' label;
-label		:  | idi {
+labels		: '.labels' label*;
+label		: idi {
 				id =  $idi.text; options = new HashMap<>();
 				}
 		(opts)? {
 				out.addLabel(id, options);
-				}
-		 label;
+				};
 
 /* ARCS */
-arcs		: '.arcs' arc;
-arc		: | id1=idi id2=idi id3=idi {
+arcs		: '.arcs' arc*;
+arc		: id1=idi id2=idi id3=idi {
 						out.addArc($id1.text, $id2.text, $id3.text);
-						}
-		arc;
+						};
 
 idi		: ID | INT;
 string returns [String val]: STR {$val = $STR.text.substring(1,$STR.text.length() -1);};

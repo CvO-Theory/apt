@@ -83,7 +83,7 @@ start    : model inputs state translist marking end {out.setType(Type.LTS);};
 model    : '.model' NAME=(INT|STR|ID)* {out.setName($NAME.text);};
 inputs   : '.inputs' (INT|ID)*;
 state    : '.state graph';
-translist: | trans translist;
+translist: trans*;
 trans    : from=stateid eventid to=stateid {out.addArc($from.text, $eventid.text, $to.text);};
 stateid  : INT {out.addState($INT.text, options);} | STR {out.addState($STR.text, options);}
 		 | ID {out.addState($ID.text, options);};
