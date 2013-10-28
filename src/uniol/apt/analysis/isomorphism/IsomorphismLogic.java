@@ -66,7 +66,8 @@ public class IsomorphismLogic {
 	 * @throws UnboundedException
 	 */
 	public IsomorphismLogic(PetriNet pn1, PetriNet pn2) throws UnboundedException {
-		this(pn1, pn2, false);
+		this(pn1, pn2, true);
+		//             ^-- check for strong isomorphism by default!
 	}
 
 	/**
@@ -89,7 +90,8 @@ public class IsomorphismLogic {
 	 * @param lts2
 	 */
 	public IsomorphismLogic(TransitionSystem lts1, TransitionSystem lts2) {
-		this(lts1, lts2, false);
+		this(lts1, lts2, true);
+		//               ^-- check for strong isomorphism by default!
 	}
 
 	/**
