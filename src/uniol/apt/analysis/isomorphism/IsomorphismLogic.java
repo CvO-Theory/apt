@@ -58,41 +58,6 @@ public class IsomorphismLogic {
 	private final boolean result;
 	private final boolean checkLabels;
 
-	/**
-	 * Constructor
-	 *
-	 * @param pn1
-	 * @param pn2
-	 * @throws UnboundedException
-	 */
-	public IsomorphismLogic(PetriNet pn1, PetriNet pn2) throws UnboundedException {
-		this(pn1, pn2, true);
-		//             ^-- check for strong isomorphism by default!
-	}
-
-	/**
-	 * Constructor for testing if two Petri nets have isomorphic reachability graphs.
-	 *
-	 * @param pn1 The first PN to test.
-	 * @param pn2 The second PN to test.
-	 * @param checkLabels If true, "strong isomorphism" is tested and labels have to be identical between the PN.
-	 *                    Otherwise labels are ignored.
-	 * @throws UnboundedException If one of the input Petri nets is unbounded.
-	 */
-	public IsomorphismLogic(PetriNet pn1, PetriNet pn2, boolean checkLabels) throws UnboundedException {
-		this(new CoverabilityGraph(pn1).toReachabilityLTS(), new CoverabilityGraph(pn2).toReachabilityLTS(),
-				checkLabels);
-	}
-
-	/**
-	 *
-	 * @param lts1
-	 * @param lts2
-	 */
-	public IsomorphismLogic(TransitionSystem lts1, TransitionSystem lts2) {
-		this(lts1, lts2, true);
-		//               ^-- check for strong isomorphism by default!
-	}
 
 	/**
 	 * Constructor for testing if two labelled transition systems are isomorphic.
