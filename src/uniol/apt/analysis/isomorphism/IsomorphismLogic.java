@@ -210,18 +210,18 @@ public class IsomorphismLogic {
 		old = core2.remove(nodeM);
 		assert depth == 0 || old != null;
 		for (State n : nodes1List) {
-			if (in1.containsKey(n) && in1.get(n) <= depth) {
+			if (in1.containsKey(n) && in1.get(n) == depth) {
 				in1.remove(n);
 			}
-			if (out1.containsKey(n) && out1.get(n) <= depth) {
+			if (out1.containsKey(n) && out1.get(n) == depth) {
 				out1.remove(n);
 			}
 		}
 		for (State m : nodes2List) {
-			if (in2.containsKey(m) && in2.get(m) <= depth) {
+			if (in2.containsKey(m) && in2.get(m) == depth) {
 				in2.remove(m);
 			}
-			if (out2.containsKey(m) && out2.get(m) <= depth) {
+			if (out2.containsKey(m) && out2.get(m) == depth) {
 				out2.remove(m);
 			}
 		}
