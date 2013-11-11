@@ -52,6 +52,8 @@ public class IsomorphismModule extends AbstractModule {
 			"The first Petri net or transition system that should be examined");
 		inputSpec.addParameter("pn_or_ts2", PetriNetOrTransitionSystem.class,
 			"The second Petri net or transition system that should be examined");
+		inputSpec.addOptionalParameter("dontCheckLabels", String.class, null,
+					       "do not check arc labels (default is to check labels)");
 	}
 
 	@Override
@@ -74,7 +76,11 @@ public class IsomorphismModule extends AbstractModule {
 			lts2 = new CoverabilityGraph(arg2.getNet()).toReachabilityLTS();
 		}
 
-		boolean result = new IsomorphismLogic(lts1, lts2).isIsomorphic();
+		boolean checkLabels = true;
+		if(input.getParameter("dontCheckLabels", String.class) != null)
+		    checkLabels = false;
+
+		boolean result = new IsomorphismLogic(lts1, lts2, checkLabels).isIsomorphic();
 		output.setReturnValue("isomorphic_reachability_graphs", Boolean.class, result);
 	}
 
