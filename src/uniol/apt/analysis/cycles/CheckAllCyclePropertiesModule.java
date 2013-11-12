@@ -24,7 +24,6 @@ import java.util.Set;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.bisimulation.Pair;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.cycles.lts.ComputeSmallestCycles;
 import uniol.apt.analysis.cycles.lts.CycleCounterExample;
@@ -36,6 +35,7 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.util.Pair;
 
 /**
  * Checks if all smallest cycles have same Parikh vectors, if all smallest

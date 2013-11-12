@@ -22,13 +22,14 @@ package uniol.apt.analysis.cycles;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.bisimulation.Pair;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.cycles.lts.ComputeSmallestCycles;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.analysis.exception.UnboundedException;
+import uniol.apt.util.Pair;
 
 /**
  * Calculates the parikh vectors of the smallest cycles of an Petri Net.

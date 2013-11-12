@@ -35,6 +35,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.deterministic.Deterministic;
 import uniol.apt.analysis.exception.UnboundedException;
+import uniol.apt.util.Pair;
 
 /**
  * Check,

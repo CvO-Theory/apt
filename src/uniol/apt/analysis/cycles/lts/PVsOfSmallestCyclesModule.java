@@ -26,7 +26,6 @@ import java.util.Set;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.bisimulation.Pair;
 import uniol.apt.analysis.cycles.CyclesPVs;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -35,6 +34,7 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.util.Pair;
 
 /**
  * This module computes Parikh vectors of smallest cycles of a lts.

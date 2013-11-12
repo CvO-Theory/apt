@@ -22,8 +22,9 @@ package uniol.apt.adt.extension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import uniol.apt.adt.exception.StructureException;
-import uniol.apt.analysis.bisimulation.Pair;
+import uniol.apt.util.Pair;
 
 /**
  * The Extensible class describes an advanced object consisting of an id and a key \rightarrow value property mapping

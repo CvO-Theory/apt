@@ -30,7 +30,6 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.bisimulation.Pair;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.exception.UnboundedException;
@@ -44,6 +43,7 @@ import uniol.apt.analysis.separation.LargestK;
 import uniol.apt.analysis.snet.SNet;
 import uniol.apt.generator.marking.MarkingNetGenerator;
 import uniol.apt.generator.tnet.TNetGenerator;
+import uniol.apt.util.Pair;
 
 /**
  * Checks for a given Petri net depending on g and k, if there is a T-system, whose reachability graph is isomorph to

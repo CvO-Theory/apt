@@ -19,11 +19,12 @@
 
 package uniol.apt.analysis.cycles.lts;
 
-import uniol.apt.adt.ts.ParikhVector;
 import java.util.List;
 import java.util.Set;
+
+import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.bisimulation.Pair;
+import uniol.apt.util.Pair;
 
 /**
  * This class offers algorithms for computing smallest cycles and parikh vectors, checking if all smallest cycles having

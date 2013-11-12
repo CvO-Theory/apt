@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uniol.apt.adt.ts.State;
+import uniol.apt.util.Pair;
 
 /**
  * This class represents a list of pairs of a non bisimilar path of two labelled transition systems. It is needed for

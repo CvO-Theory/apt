@@ -21,9 +21,9 @@ package uniol.apt.ui.impl.returns;
 
 import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.bisimulation.NonBisimilarPath;
-import uniol.apt.analysis.bisimulation.Pair;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.ReturnValueTransformation;
+import uniol.apt.util.Pair;
 
 /**
  * Transform a non bisimilar path (arraylist of pair of two nodes) into a

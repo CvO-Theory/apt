@@ -22,7 +22,8 @@ package uniol.apt.analysis.invariants;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import uniol.apt.analysis.bisimulation.Pair;
+
+import uniol.apt.util.Pair;
 
 /**
  * A Matrix specified for the invariant module.

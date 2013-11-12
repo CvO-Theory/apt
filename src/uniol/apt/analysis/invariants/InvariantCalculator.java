@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Set;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.analysis.bisimulation.Pair;
 import uniol.apt.util.MathTools;
+import uniol.apt.util.Pair;
 
 /**
  * A calculator for invariants and testing if a net is covered by invariants. Provides two differient algorithms for

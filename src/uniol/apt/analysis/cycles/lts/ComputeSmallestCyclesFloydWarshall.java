@@ -30,7 +30,7 @@ import java.util.Set;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.bisimulation.Pair;
+import uniol.apt.util.Pair;
 
 /**
  * This class offers an adaption of the Floyd-Warshall algorithm for computing smallest cycles and parikh vectors.

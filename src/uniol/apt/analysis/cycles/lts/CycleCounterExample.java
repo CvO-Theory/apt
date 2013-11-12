@@ -19,9 +19,10 @@
 
 package uniol.apt.analysis.cycles.lts;
 
-import uniol.apt.adt.ts.ParikhVector;
 import java.util.List;
-import uniol.apt.analysis.bisimulation.Pair;
+
+import uniol.apt.adt.ts.ParikhVector;
+import uniol.apt.util.Pair;
 
 /**
  * Datastructure for storing two counterexamples for the module.
