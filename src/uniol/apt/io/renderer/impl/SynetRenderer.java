@@ -21,19 +21,23 @@ package uniol.apt.io.renderer.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.renderer.PNTSRenderer;
+import uniol.apt.util.StringComparator;
 
 /**
- * @author Vincent Göbel
+ * @author Vincent Göbel, Thomas Strathmann
  *
  */
 public class SynetRenderer implements PNTSRenderer {
@@ -43,18 +47,15 @@ public class SynetRenderer implements PNTSRenderer {
 		StringBuilder output = new StringBuilder();
 
 		for (Transition t : pn.getTransitions()) {
-			output.append("transition ");
-			output.append(t.getId());
-			output.append("\n");
+			output.append(String.format("transition %s\n", t.getId()));
 		}
 
 		List<Place> places = new ArrayList<>();
 		for (Place p : pn.getPlaces()) {
-			output.append("place ");
-			output.append(p.getId());
+			output.append(String.format("place %s", p.getId()));
 			int initialMarking = pn.getInitialMarkingCopy().getToken(p).getValue();
 			if (initialMarking > 0) {
-				output.append(" := ").append(initialMarking);
+				output.append(String.format(" := %d", initialMarking));
 			}
 			output.append("\n");
 			places.add(p);
@@ -64,25 +65,20 @@ public class SynetRenderer implements PNTSRenderer {
 			Set<Flow> postset = p.getPostsetEdges();
 			Set<Flow> preset = p.getPresetEdges();
 			for (Flow a : postset) {
-				output.append("flow ");
-				output.append(p.getId()).append(" --");
+				output.append(String.format("flow %s --", p.getId()));
 				if (a.getWeight() != 1) {
 					output.append(a.getWeight());
 				}
-				output.append("-> ").append(a.getTarget().getId());
-				output.append("\n");
+				output.append(String.format("-> %s\n", a.getTarget().getId()));
 			}
 			for (Flow a : preset) {
-				output.append("flow ");
-				output.append(p.getId()).append(" <-");
+				output.append(String.format("flow %s <-", p.getId()));
 				if (a.getWeight() != 1) {
 					output.append(a.getWeight());
 				}
-				output.append("-- ").append(a.getSource().getId());
-				output.append("\n");
+				output.append(String.format("-- %s\n", a.getSource().getId()));
 			}
 		}
-
 
 		return output.toString();
 	}
@@ -92,25 +88,38 @@ public class SynetRenderer implements PNTSRenderer {
 		StringBuilder output = new StringBuilder();
 		StringBuilder head = new StringBuilder();
 		output.append("\n");
-		int id = 0;
+		
+		// build a map from APT state _names_ to Synet state _indices_
 		HashMap<String, Integer> rename = new HashMap<>();
+		
+		// to ensure that the initial state is always mapped to 0 insert it first!
+		rename.put(ts.getInitialState().getId(), 0);
+
+		// add the other states (in ascending order)
+		TreeSet<String> stateNames = new TreeSet<String>(new StringComparator());
+		for (State s : ts.getNodes()) {
+			if(s != ts.getInitialState())
+				stateNames.add(s.getId());
+		}
+		int id = 1;
+		for (String s : stateNames) {
+			rename.put(s, id++);
+		}
+
+		// export edges
 		for (Arc e : ts.getEdges()) {
 			String label = e.getLabel();
 			String source = e.getSource().getId();
 			String target = e.getTarget().getId();
-			if (!rename.containsKey(source)) {
-				rename.put(source, id++);
-			}
-			if (!rename.containsKey(target)) {
-				rename.put(target, id++);
-			}
-			output.append("(").append(rename.get(source)).append(",").append(label).append(",").append(rename.get(target)).append(")");
-			output.append("\n");
+			output.append(String.format("(%s, %s, %s)\n",
+				rename.get(source), label, rename.get(target)));
 		}
 		
+		// write file header
 		int initial = rename.get(ts.getInitialState().getId());
-		head.append("des(").append(initial).append(",").append(ts.getEdges().size()).append(",").append(ts.getNodes().size()).append(")");
-		
+		head.append(String.format("des(%d, %d, %d)", initial,
+			ts.getEdges().size(), ts.getNodes().size()));
+
 		return head.append(output).toString();
 	}
 }
