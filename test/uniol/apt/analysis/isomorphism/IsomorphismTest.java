@@ -30,6 +30,8 @@ import java.io.IOException;
 import org.testng.annotations.Test;
 
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.module.exception.ModuleException;
 

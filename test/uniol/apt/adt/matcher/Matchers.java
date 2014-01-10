@@ -31,9 +31,9 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.INode;
 
 import uniol.apt.adt.pn.Node;
-import uniol.apt.analysis.bisimulation.Pair;
 import uniol.apt.analysis.coverability.CoverabilityGraphNode;
 import uniol.apt.analysis.coverability.CoverabilityGraphEdge;
+import uniol.apt.util.Pair;
 
 /**
  * Matchers to verify that adt classes match given conditions

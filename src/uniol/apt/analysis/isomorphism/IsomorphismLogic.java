@@ -101,6 +101,24 @@ public class IsomorphismLogic {
 		result = doMatch(new ExtendedState());
 	}
 
+
+
+	/**
+	 * Constructor that accepts PetriNets and implicitly
+	 * calculates their reachability graphs, or -- if one
+	 * of them is unbounded -- throws an exception.
+	 *
+	 * @param pn1 The first Petri net whose reachability graph is to be tested for isomorphism.
+	 * @param pn2 The second Petri net whose reachability graph is to be tested for isomorphism.
+	 * @param checkLabels see other constructor for information
+	 * @throws UnboundedException If one of the nets is unbounded.
+	 */
+	public IsomorphismLogic(PetriNet pn1, PetriNet pn2, boolean checkLabels) throws UnboundedException {
+		this(new CoverabilityGraph(pn1).toReachabilityLTS(),
+		     new CoverabilityGraph(pn2).toReachabilityLTS(),
+		     checkLabels);
+	}
+
 	/**
 	 * Returns result of algorithm.
 	 *

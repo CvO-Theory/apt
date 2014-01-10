@@ -97,7 +97,7 @@ public class PnAnalysisTest {
 		PnAnalysis ana = new PnAnalysis();
 		PetriNet net = ana.checkAllIsomorphicTSystemsForPetriNet(pn, 20, 10, true);
 		if (net != null) {
-			IsomorphismLogic logic = new IsomorphismLogic(pn, net);
+			IsomorphismLogic logic = new IsomorphismLogic(pn, net, true);
 			assertTrue(logic.isIsomorphic());
 			APTRenderer renderer = new APTRenderer();
 			File file = new File("./nets/tnetIsomorphToEB-PhD-Fundamenta.apt");

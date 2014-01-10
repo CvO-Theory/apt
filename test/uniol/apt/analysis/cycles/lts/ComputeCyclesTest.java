@@ -30,7 +30,7 @@ import static org.testng.Assert.assertFalse;
 import uniol.apt.TestTSCollection;
 
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.bisimulation.Pair;
+import uniol.apt.util.Pair;
 import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
 
 /**

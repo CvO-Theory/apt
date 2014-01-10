@@ -24,7 +24,7 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
-import uniol.apt.analysis.bisimulation.Pair;
+import uniol.apt.util.Pair;
 
 /**
  * Matcher to verify that the fields of a pair match the given matchers.

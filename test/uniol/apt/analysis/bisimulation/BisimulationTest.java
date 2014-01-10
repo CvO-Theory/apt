@@ -41,6 +41,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.impl.returns.NonBisimilarPathReturnValueTransformation;
+import uniol.apt.util.Pair;
 
 import static uniol.apt.BestNetCollection.*;
 import static uniol.apt.TestTSForBisimulation.*;
