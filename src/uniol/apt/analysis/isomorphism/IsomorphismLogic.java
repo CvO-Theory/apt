@@ -64,7 +64,7 @@ public class IsomorphismLogic {
 	 *
 	 * @param lts1 The first LTS to test.
 	 * @param lts2 The second LTS to test.
-	 * @param checkLabels If true, "strong isomorphism" is tested and labels have to be identical between the PN.
+	 * @param checkLabels If true, "strong isomorphism" is tested and labels have to be identical between the LTS.
 	 *                    Otherwise labels are ignored.
 	 */
 	public IsomorphismLogic(TransitionSystem lts1, TransitionSystem lts2, boolean checkLabels) {
@@ -218,8 +218,8 @@ public class IsomorphismLogic {
 	 * Call this method if a state should get discarded.
 	 *
 	 * @param depth depth of state
-	 * @param nodeN current node of pn1
-	 * @param nodeM current node of pn2
+	 * @param nodeN current node of lts1
+	 * @param nodeM current node of lts2
 	 */
 	private void rollback(int depth, State nodeN, State nodeM) {
 		State old;
@@ -248,8 +248,8 @@ public class IsomorphismLogic {
 	/**
 	 * Check if a given pair of nodes m, n is isomorphic.
 	 *
-	 * @param nodeN A node in net pn1
-	 * @param nodeM A node in net pn2
+	 * @param nodeN A node in lts1
+	 * @param nodeM A node in lts2
 	 * @return true if pair (m, n) is part of isomorphism
 	 */
 	private boolean isFeasible(State nodeN, State nodeM) {
