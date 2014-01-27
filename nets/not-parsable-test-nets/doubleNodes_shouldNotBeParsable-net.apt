@@ -1,7 +1,7 @@
 // @author Manuel Gieseking
 .name "doubleNodes"
 .type LPN
-.description "testing double nodes"
+.description "testing double nodes - should not be parsable."
 
 .places
 s1[test="asdf"]

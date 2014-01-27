@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.antlr.runtime.ANTLRInputStream;
 import uniol.apt.io.parser.IParser;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -40,7 +41,7 @@ public class ANTLRParser implements IParser {
 
 	@Override
 	public <G> G parse(InputStream data, ParserContext<G> ctx) throws IOException, StructureException,
-		NodeNotExistException, TypeMismatchException, LexerParserException {
+		NodeNotExistException, TypeMismatchException, LexerParserException, FormatException {
 		try {
 			ctx.getLexer().setCharStream(new ANTLRInputStream(data));
 			ctx.getParser().getClass().getMethod("start").invoke(ctx.getParser());
@@ -65,7 +66,7 @@ public class ANTLRParser implements IParser {
 
 	@Override
 	public <G> G parse(String path, ParserContext<G> ctx) throws IOException, StructureException,
-		NodeNotExistException, TypeMismatchException, LexerParserException {
+		NodeNotExistException, TypeMismatchException, LexerParserException, FormatException {
 		return parse(new FileInputStream(path), ctx);
 	}
 }

@@ -22,6 +22,7 @@ package uniol.apt.io.converter;
 import java.io.IOException;
 
 import uniol.apt.io.parser.IParserOutput.Type;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -34,7 +35,7 @@ import uniol.apt.module.exception.ModuleException;
 /**
  *
  * Converts a file from synet format into the apt format.
- *
+ * <p/>
  * @author Manuel Gieseking
  */
 public class Synet2Apt {
@@ -45,20 +46,24 @@ public class Synet2Apt {
 	/**
 	 *
 	 * Converts a file in synet format given by the filename into the apt format returning it as string. Decides
-	 * wheater the given file is a petrinet or a transitionsystem by examine the extention of the filename.
-	 * .aut leads to lts and .net leads to pn.
-	 *
+	 * wheater the given file is a petrinet or a transitionsystem by examine the extention of the filename. .aut
+	 * leads to lts and .net leads to pn.
+	 * <p/>
 	 * @param filename - the name of the file in synet format which should be parsed.
+	 * <p/>
 	 * @return a string with the graph in apt format.
-	 * @throws IOException thrown if the file do not end with .net or .aut or is not readable.
-	 * @throws ModuleException thrown if the net has a omega marking.
+	 * <p/>
+	 * @throws IOException           thrown if the file do not end with .net or .aut or is not readable.
+	 * @throws ModuleException       thrown if the net has a omega marking.
 	 * @throws NodeNotExistException thrown if it is referenced to a node, which is not defined in the graph.
 	 * @throws TypeMismatchException thrown if the type of the graph do not fit.
-	 * @throws LexerParserException thrown if the file is not parseable.
-	 * @throws StructureException thrown if an error by converting the file to the datastructure occure.
+	 * @throws LexerParserException  thrown if the file is not parseable.
+	 * @throws StructureException    thrown if an error by converting the file to the datastructure occure.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static String convert(String filename) throws IOException, ModuleException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException {
+		TypeMismatchException, LexerParserException, StructureException, FormatException {
 		if (filename.endsWith(".aut")) {
 			return convert(filename, Type.LTS);
 		} else if (filename.endsWith(".net")) {
@@ -69,21 +74,27 @@ public class Synet2Apt {
 	}
 
 	/**
-	 * Converts a file in synet format given by the filename @filename into the apt format returning it as string.
-	 * Decides which parser to use by the type @type.
-	 *
+	 * Converts a file in synet format given by the filename
+	 * <p/>
+	 * @filename into the apt format returning it as string. Decides which parser to use by the type
+	 * @type.
+	 * <p/>
 	 * @param filename - the name of the file in synet format which should be parsed.
-	 * @param type - the type of the graph.
+	 * @param type     - the type of the graph.
+	 * <p/>
 	 * @return a string with the graph in apt format.
-	 * @throws IOException thrown if the file do not end with .net or .aut or is not readable.
-	 * @throws ModuleException thrown if the net has a omega marking.
+	 * <p/>
+	 * @throws IOException           thrown if the file do not end with .net or .aut or is not readable.
+	 * @throws ModuleException       thrown if the net has a omega marking.
 	 * @throws NodeNotExistException thrown if it is referenced to a node, which is not defined in the graph.
 	 * @throws TypeMismatchException thrown if the type of the graph do not fit.
-	 * @throws LexerParserException thrown if the file is not parseable.
-	 * @throws StructureException thrown if an error by converting the file to the datastructure occure.
+	 * @throws LexerParserException  thrown if the file is not parseable.
+	 * @throws StructureException    thrown if an error by converting the file to the datastructure occure.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static String convert(String filename, Type type) throws IOException, ModuleException,
-		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException {
+		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException, FormatException {
 		APTRenderer renderer = new APTRenderer();
 		switch (type) {
 			case LTS:

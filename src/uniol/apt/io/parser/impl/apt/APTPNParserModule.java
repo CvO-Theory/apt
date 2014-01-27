@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -83,6 +84,8 @@ public class APTPNParserModule extends AbstractModule {
 		} catch (NodeNotExistException | TypeMismatchException ex) {
 			throw new ModuleException("Create datastructur: " + ex.getMessage());
 		} catch (StructureException ex) {
+			throw new ModuleException(ex.getMessage(), ex);
+		} catch (FormatException ex) {
 			throw new ModuleException(ex.getMessage(), ex);
 		}
 	}
