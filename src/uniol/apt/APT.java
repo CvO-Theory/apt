@@ -62,6 +62,7 @@ import uniol.apt.analysis.connectivity.WeakComponentsModule;
 import uniol.apt.analysis.connectivity.WeakConnectivityModule;
 import uniol.apt.analysis.coverability.CoverabilityModule;
 import uniol.apt.analysis.cycles.CheckAllCyclePropertiesModule;
+import uniol.apt.analysis.cycles.lts.CycleBasisModule;
 import uniol.apt.analysis.cycles.lts.CycleCounterExample;
 import uniol.apt.analysis.cycles.lts.CyclesHaveSameOrMutallyDisjointPVModule;
 import uniol.apt.analysis.cycles.lts.CyclesHaveSamePVModule;
@@ -205,6 +206,7 @@ public class APT {
 		new ConflictFreeModule(),
 		new CoverabilityModule(),
 		new CoveredByInvariantModule(),
+		new CycleBasisModule(),
 		new CycleNetGeneratorModule(),
 		new CyclesHaveSameOrMutallyDisjointPVModule(),
 		new CyclesHaveSamePVModule(),

@@ -33,7 +33,7 @@ import uniol.apt.util.Pair;
  * calculating the invariants. The first algorithm is descripted in http://de.scribd.com/doc/49919842/Pn-ESTII (slide
  * 88) and the other is also based an the farkas algorithm and is descripted in
  * http://pipe2.sourceforge.net/documents/PIPE-Report.pdf (page 19) which is based on the paper of D'Anna and Trigila
- * "Concurrent system analysis using Petri nets – an optimised algorithm for finding net invariants", Mario D'Anna and
+ * "Concurrent system analysis using Petri nets ��� an optimised algorithm for finding net invariants", Mario D'Anna and
  * Sebastiano Trigila, Computer Communications vol 11, no. 4 august 1988.
  * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
@@ -308,7 +308,7 @@ public class InvariantCalculator {
 	 * <p/>
 	 * @return a generator set of the invariants.
 	 */
-	private static Set<List<Integer>> calcInvariantsFarkas(int[][] mat) {
+	public static Set<List<Integer>> calcInvariantsFarkas(int[][] mat) {
 		int rows = mat.length;
 		if (mat.length == 0 || mat[0].length == 0) {
 			return new HashSet<>();
