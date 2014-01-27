@@ -289,11 +289,11 @@ public class InvariantCalculator {
 
 		// Phase 4: Make them minimal
 		for (List<Integer> invariants : result) {
-			int ggT = MathTools.ggT(invariants);
-			if (ggT > 1) {
+			int gcd = MathTools.gcd(invariants);
+			if (gcd > 1) {
 				result.remove(invariants);
 				for (int i = 0; i < invariants.size(); ++i) {
-					invariants.set(i, invariants.get(i) / ggT);
+					invariants.set(i, invariants.get(i) / gcd);
 				}
 				result.add(invariants);
 			}
@@ -364,7 +364,7 @@ public class InvariantCalculator {
 
 							}
 							// normalize z
-							final int gcd = MathTools.ggT(z);
+							final int gcd = MathTools.gcd(z);
 							if (gcd != 1) {
 								// time: O(cols+rows)
 								// place: O(1)
