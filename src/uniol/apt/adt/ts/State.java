@@ -20,13 +20,14 @@
 package uniol.apt.adt.ts;
 
 import uniol.apt.adt.Node;
+import uniol.apt.util.StringComparator;
 
 /**
  * State is the node class of the TransitionSystem.
  * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
-public class State extends Node<TransitionSystem, Arc, State> {
+public class State extends Node<TransitionSystem, Arc, State> implements Comparable<State> {
 
 	/**
 	 * Constructor.
@@ -47,6 +48,11 @@ public class State extends Node<TransitionSystem, Arc, State> {
 	 */
 	State(TransitionSystem ts, State s) {
 		super(ts, s);
+	}
+
+	@Override
+	public int compareTo(State that) {		
+		return StringComparator.staticCompare(this.getId(), that.getId());
 	}
 }
 

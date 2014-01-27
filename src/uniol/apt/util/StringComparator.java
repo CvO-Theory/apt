@@ -25,19 +25,20 @@ import java.util.regex.Pattern;
 
 /**
  * A comparator on strings that is useful for sorting numbered names.
- *
+ * <p/>
  * If the strings to be compared are not equal
  * and only differ in a numeric suffix, then
  * return the result of comparing the suffixes
  * using Integer.compare. Otherwise, return the
  * result of String.compareTo.
- *
+ * <p/>
  * @author Thomas Strathmann
  */
 public class StringComparator implements Comparator<String> {
 
 	private static final Pattern pattern = 
 		Pattern.compile("(.*?)([0-9]+)");
+	private static StringComparator instance;
 
 	public int compare(String s1, String s2) {
 		if(s1.equals(s2))
@@ -58,6 +59,21 @@ public class StringComparator implements Comparator<String> {
 		}
 		
 		return s1.compareTo(s2);
+	}
+	
+	/**
+	 * A utility method that spares the caller the burden of
+	 * instantiating a StringComparator object.
+	 * <p/>
+	 * @param s1 The first string to be compared.
+	 * @param s2 The second string to be compared.
+	 * @return The result of the comparison as per Java conventions.
+	 */
+	public static int staticCompare(String s1, String s2) {
+		if(instance == null) {
+			instance = new StringComparator();
+		}
+		return instance.compare(s1, s2);
 	}
 
 }

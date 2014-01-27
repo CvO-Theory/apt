@@ -19,6 +19,9 @@
 
 package uniol.apt.analysis.cycles.lts;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
@@ -63,7 +66,44 @@ public class CycleBasisModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		TransitionSystem lts = input.getParameter("lts", TransitionSystem.class);
 		Set<Vector<Arc>> cycleBasis = CycleBasis.cycleBasis(lts);
-		output.setReturnValue("minimalCycleBasis", Set.class, cycleBasis);
+		
+		// sort the cycles so that they conform to the usual notation for paths
+		Set<Vector<Arc>> sortedCycleBasis = new HashSet<Vector<Arc>>();
+		for(Vector<Arc> unsortedCycle : cycleBasis) {
+			Vector<Arc> sortedCycle = new Vector<Arc>();
+			// begin with the initial state (if this cycle contains it) or
+			// the state with the minimal label
+			int min = 0;
+			for(int i=1; i<unsortedCycle.size(); ++i) {
+				Arc amin = unsortedCycle.get(min);
+				if(amin.getSource() == lts.getInitialState())
+					break;
+				Arc ai = unsortedCycle.get(i);
+				if(ai.getSource() == lts.getInitialState()) {
+					min = i;
+					break;
+				}
+				if(amin.getSource().compareTo(ai.getSource()) == 1)
+					min = i;
+			}
+			sortedCycle.add(unsortedCycle.get(min));
+			unsortedCycle.remove(min);
+			// sort cycle in the usual path order
+			while(!unsortedCycle.isEmpty()) {
+				int i;
+				for(i=0; i<unsortedCycle.size(); ++i) {
+					if(unsortedCycle.get(i).getSource() == 
+							sortedCycle.lastElement().getTarget()) {
+						break;
+					}
+				}
+				sortedCycle.add(unsortedCycle.get(i));
+				unsortedCycle.remove(i);
+			}
+			sortedCycleBasis.add(sortedCycle);
+		}
+		
+		output.setReturnValue("minimalCycleBasis", Set.class, sortedCycleBasis);
 	}
 
 	@Override
