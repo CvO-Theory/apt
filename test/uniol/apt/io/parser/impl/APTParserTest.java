@@ -148,7 +148,13 @@ public class APTParserTest {
 	@Test
 	public void testDoubleNodes() throws IOException, FormatException {
 		// test PN
-		PetriNet pn = APTPNParser.getPetriNet("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-net.apt");
+		try {
+			APTPNParser.getPetriNet("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-net.apt");
+			fail("not detected adding two nodes with same id.");
+		} catch (LexerParserException e) {
+			assertEquals(e.getLexerMsg(), "line 12:0 Node s1 already exists.");
+			assertEquals(e.getParserMsg(), "line 12:0 Node s1 already exists.");
+		}
 		// test LTS
 		// double nodes
 		try {
@@ -162,7 +168,7 @@ public class APTParserTest {
 		try {
 			APTLTSParser.getLTS("nets/not-parsable-test-nets/doubleInitialstate_shouldNotBeParsable-aut.apt");
 			fail("not detected StructureException: initial state is set multiple times");
-		} catch (uniol.apt.adt.exception.StructureException se) {
+		} catch (StructureException se) {
 			assertEquals(se.getMessage(), "initial state is set multiple times.");
 		}
 	}

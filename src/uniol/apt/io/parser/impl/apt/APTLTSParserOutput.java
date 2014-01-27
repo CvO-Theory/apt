@@ -21,7 +21,6 @@ package uniol.apt.io.parser.impl.apt;
 
 import java.util.Map;
 import uniol.apt.adt.exception.NoSuchNodeException;
-import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -29,6 +28,7 @@ import uniol.apt.io.parser.impl.AbstractLTSParserOutput;
 import uniol.apt.io.parser.impl.ParserArc;
 import uniol.apt.io.parser.impl.ParserNode;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
+import uniol.apt.io.parser.impl.exception.StructureException;
 import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 
 /**
@@ -39,7 +39,8 @@ import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 public class APTLTSParserOutput extends AbstractLTSParserOutput<TransitionSystem> {
 
 	@Override
-	public TransitionSystem convertToDatastructure() throws NodeNotExistException, TypeMismatchException {
+	public TransitionSystem convertToDatastructure() throws NodeNotExistException, TypeMismatchException,
+		StructureException {
 		if (type != Type.LTS) {
 			throw new TypeMismatchException("LTS", type.name());
 		}
@@ -56,7 +57,8 @@ public class APTLTSParserOutput extends AbstractLTSParserOutput<TransitionSystem
 				switch (opt) {
 					case "initial":
 						if (initCount == 1) {
-							throw new StructureException("initial state is set multiple times.");
+							throw new StructureException("initial state is set "
+								+ "multiple times.");
 						}
 						++initCount;
 						ts.setInitialState(node);

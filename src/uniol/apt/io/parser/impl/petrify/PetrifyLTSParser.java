@@ -123,7 +123,7 @@ public class PetrifyLTSParser {
 	public static TransitionSystem getLTS(InputStream data, boolean suppressWarnings) throws IOException,
 		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException, FormatException {
 		APTParserContext<TransitionSystem> ctx = new APTParserContext<>(PetrifyLTSFormatLexer.class,
-			PetrifyLTSFormatParser.class, APTLTSParserOutput.class, "start");
+			PetrifyLTSFormatParser.class, PetrifyLTSParserOutput.class, "start");
 		((PetrifyLTSFormatLexer) ctx.getLexer()).suppressWarnings(suppressWarnings);
 		((PetrifyLTSFormatParser) ctx.getParser()).suppressWarnings(suppressWarnings);
 		return new ANTLRParser().parse(data, ctx);

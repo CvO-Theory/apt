@@ -20,6 +20,9 @@
 package uniol.apt.io.parser;
 
 import java.util.Map;
+import org.antlr.runtime.IntStream;
+import org.antlr.runtime.RecognitionException;
+import uniol.apt.io.parser.impl.exception.NodeAlreadyExistsException;
 
 /**
  * A interface for a petri net of type G saving the data of the parser and converting it to the petri net.
@@ -31,20 +34,52 @@ import java.util.Map;
 public interface IPNParserOutput<G> extends IParserOutput<G> {
 
 	/**
+	 * Adds a place with the given id and a list of attributes to the internal datastructure of the parser. If a
+	 * place with the same id already exists within the graph, this method automatically recovers a suitable
+	 * exception. Thus, nothing more have to be done and the parser creates a fitting LexerParserException if
+	 * needable.
+	 * <p/>
+	 * @param id         - the id of the place to add.
+	 * @param attributes - a map of the attributes of the added place.
+	 * @param input      - the stream used for parsing.
+	 * <p/>
+	 * @throws RecognitionException thrown if a place with the same id already exists within the graph.
+	 */
+	public void addPlace(String id, Map<String, String> attributes, IntStream input) throws RecognitionException;
+
+	/**
+	 * Adds a transition with the given id and attributes to the internal datastructure of the parser. If a
+	 * transition with the same id already exists within the graph, this method automatically recovers a suitable
+	 * exception. Thus, nothing more have to be done and the parser creates a fitting LexerParserException if
+	 * needable.
+	 * <p/>
+	 * @param id         - the id of the transition to add.
+	 * @param attributes - a map of attributes of the added transition.
+	 * @param input      - the stream used for parsing.
+	 * <p/>
+	 * @throws RecognitionException thrown if a transition with the same id already exists within the graph.
+	 */
+	public void addTransition(String id, Map<String, String> attributes, IntStream input) throws RecognitionException;
+
+	/**
 	 * Adds a place with the given id and a list of attributes to the internal datastructure of the parser.
 	 * <p/>
 	 * @param id         - the id of the place to add.
 	 * @param attributes - a map of the attributes of the added place.
+	 * <p/>
+	 * @throws NodeAlreadyExistsException thrown if a place with the same id already exists within the graph.
 	 */
-	public void addPlace(String id, Map<String, String> attributes);
+	public void addPlace(String id, Map<String, String> attributes) throws NodeAlreadyExistsException;
 
 	/**
 	 * Adds a transition with the given id and attributes to the internal datastructure of the parser.
 	 * <p/>
 	 * @param id         - the id of the transition to add.
 	 * @param attributes - a map of attributes of the added transition.
+	 * <p/>
+	 * @throws NodeAlreadyExistsException thrown if a transition with the same id already exists within the graph.
 	 */
-	public void addTransition(String id, Map<String, String> attributes);
+	public void addTransition(String id, Map<String, String> attributes) throws NodeAlreadyExistsException;
 
 	/**
 	 * Adds a edge from the node with the id fromNode to the node with the id toNode with the given weight to the

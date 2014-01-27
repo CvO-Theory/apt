@@ -116,14 +116,14 @@ description : '.description' (txt=string | txt=string_multi) { out.setDescriptio
 
 /* PLACES */
 places     : '.places' place*;
-place      :  idi { id = $idi.text; options = new HashMap<>();} (opts)? {out.addPlace(id, options); };
+place      :  idi { id = $idi.text; options = new HashMap<>();} (opts)? {out.addPlace(id, options, input); };
 
 opts : '[' option (',' option)* ']';
 option : ID '=' string {options.put($ID.text, $string.val);};
 
 /* TRANSITIONS */
 transitions : '.transitions' transition*;
-transition  : idi { id = $idi.text; options = new HashMap<>();} (opts)? {out.addTransition(id, options);};
+transition  : idi { id = $idi.text; options = new HashMap<>();} (opts)? {out.addTransition(id, options, input);};
 
 /* FLOWS */
 flows : '.flows' flow*;

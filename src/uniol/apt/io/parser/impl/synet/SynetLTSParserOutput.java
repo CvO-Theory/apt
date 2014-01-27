@@ -31,7 +31,7 @@ import uniol.apt.io.parser.impl.exception.StructureException;
 import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 
 /**
- * Holds the data of the APTLTSParser and converts it into the apt datastructure.
+ * Holds the data of the SynetLTSParser and converts it into the apt datastructure.
  * <p/>
  * @author Manuel Gieseking
  */
