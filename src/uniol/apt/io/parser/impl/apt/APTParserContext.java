@@ -28,7 +28,7 @@ import uniol.apt.io.parser.IParserOutput;
 import uniol.apt.io.parser.impl.ParserContext;
 
 /**
- * The context for a parser uses antlr. It provides the possiblity to just give classes and the rest ist generated.
+ * The context for a parser uses antlr. It provides the possiblity to just give classes and the rest is generated.
  * After that it holds a reference to a lexer, a parser, the start symbol of the grammatic and the output with whom the
  * parser converts the internal datastructure.
  * <p/>

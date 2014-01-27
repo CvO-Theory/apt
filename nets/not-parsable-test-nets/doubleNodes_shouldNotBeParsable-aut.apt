@@ -1,0 +1,27 @@
+// author = Manuel Gieseking
+.name "doubleNodes"
+.type LTS
+.description "double nodes - should not be parsable"
+
+.states
+s0[initial]
+s1
+s2
+s1
+s3
+
+.labels
+a
+b
+c
+d
+
+.arcs
+s0 a s1
+s1 c s0
+s0 b s2
+s2 d s0
+s1 b s3
+s3 d s1
+s2 a s3
+s3 c s2

@@ -89,6 +89,25 @@ public class SynetParserTest {
 		assertTrue(x0.getPreset().contains(pn.getTransition("a")));
 		assertFalse(x0.getPreset().contains(pn.getTransition("t")));
 	}
+
+
+	@Test
+	public void testSynetParser() throws IOException, FormatException {
+		TransitionSystem ts = SynetLTSParser.getLTS("nets/synet-nets/synet-apt1-redmine-docs.aut");
+		assertEquals(ts.getNodes().size(), 4);
+		assertNotNull(ts.getNode("0"));
+		assertNotNull(ts.getNode("1"));
+		assertNotNull(ts.getNode("2"));
+		assertNotNull(ts.getNode("3"));
+		try {
+			ts.getNode("4");
+			fail("Don't recognized the missing node with id 4.");
+		} catch (NoSuchNodeException e) {
+			assertEquals("Node '4' does not exist in graph ''", e.getMessage());
+		}
+		assertEquals(ts.getEdges().size(), 4);
+
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

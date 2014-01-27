@@ -56,7 +56,7 @@ public class APTLTSParserOutput extends AbstractLTSParserOutput<TransitionSystem
 				switch (opt) {
 					case "initial":
 						if (initCount == 1) {
-							throw new StructureException("initial state is set multiple.");
+							throw new StructureException("initial state is set multiple times.");
 						}
 						++initCount;
 						ts.setInitialState(node);
