@@ -24,6 +24,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -97,6 +98,8 @@ public class Petrify2AptModule extends AbstractModule {
 			throw new ModuleException("Cannot parse file '" + filename + "': \n"
 				+ e.getLexerParserMessage());
 		} catch (StructureException ex) {
+			throw new ModuleException(ex.getMessage(), ex);
+		} catch (FormatException ex) {
 			throw new ModuleException(ex.getMessage(), ex);
 		}
 	}

@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -52,9 +53,11 @@ public class APTParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public void parse(String path) throws IOException, NodeNotExistException, TypeMismatchException,
-		LexerParserException, StructureException {
+		LexerParserException, StructureException, FormatException {
 		parse(new FileInputStream(path));
 	}
 
@@ -69,9 +72,11 @@ public class APTParser {
 	 *                               type not found.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public void parse(InputStream is) throws IOException, NodeNotExistException, TypeMismatchException,
-		LexerParserException, StructureException {
+		LexerParserException, StructureException, FormatException {
 		pn = null;
 		ts = null;
 

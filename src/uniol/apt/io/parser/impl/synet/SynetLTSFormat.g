@@ -83,8 +83,8 @@ start    : 'des(' INT ',' INT ',' INT ')' translist {out.setType(Type.LTS);};
 translist: trans*;
 trans    : '(' from=stateid ',' eventid ',' to=stateid ')' {out.addArc($from.text, $eventid.text, $to.text);};
 
-stateid  : INT {out.addState($INT.text, options);} | STR {out.addState($STR.text, options);}
-		 | ID {out.addState($ID.text, options);};
+stateid  : INT {out.addState($INT.text, options, input);} | STR {out.addState($STR.text, options, input);}
+		 | ID {out.addState($ID.text, options, input);};
 eventid  : INT {out.addLabel($INT.text, options);} | STR {out.addLabel($STR.text, options);}
 		 | ID {out.addLabel($ID.text, options);};
 

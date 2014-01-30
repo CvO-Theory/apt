@@ -32,7 +32,6 @@ import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 import uniol.apt.CrashCourseNets;
-import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
@@ -47,7 +46,6 @@ import uniol.apt.io.parser.impl.apt.APTParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.StructureException;
-import uniol.apt.io.parser.impl.synet.SynetLTSParser;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.impl.ModuleInvoker;
 
@@ -72,24 +70,6 @@ public class APTParserTest {
 	@Test
 	public void testNotModule() throws IOException, FormatException {
 		assertNotNull(APTPNParser.getPetriNet("nets/crashkurs-cc1-net.apt"));
-	}
-
-	@Test
-	public void testSynetParser() throws IOException, FormatException {
-		TransitionSystem ts = SynetLTSParser.getLTS("nets/synet-nets/synet-apt1-redmine-docs.aut");
-		assertEquals(ts.getNodes().size(), 4);
-		assertNotNull(ts.getNode("0"));
-		assertNotNull(ts.getNode("1"));
-		assertNotNull(ts.getNode("2"));
-		assertNotNull(ts.getNode("3"));
-		try {
-			ts.getNode("4");
-			fail("Don't recognized the missing node with id 4.");
-		} catch (NoSuchNodeException e) {
-			assertEquals("Node '4' does not exist in graph ''", e.getMessage());
-		}
-		assertEquals(ts.getEdges().size(), 4);
-
 	}
 
 	@Test
@@ -166,6 +146,34 @@ public class APTParserTest {
 	}
 
 	@Test
+	public void testDoubleNodes() throws IOException, FormatException {
+		// test PN
+		try {
+			APTPNParser.getPetriNet("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-net.apt");
+			fail("not detected adding two nodes with same id.");
+		} catch (LexerParserException e) {
+			assertEquals(e.getLexerMsg(), "line 12:0 Node s1 already exists.");
+			assertEquals(e.getParserMsg(), "line 12:0 Node s1 already exists.");
+		}
+		// test LTS
+		// double nodes
+		try {
+			APTLTSParser.getLTS("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-aut.apt");
+			fail("not detected adding two nodes with same id.");
+		} catch (LexerParserException e) {
+			assertEquals(e.getLexerMsg(), "line 11:0 Node s1 already exists.");
+			assertEquals(e.getParserMsg(), "line 11:0 Node s1 already exists.");
+		}
+		// double initial states
+		try {
+			APTLTSParser.getLTS("nets/not-parsable-test-nets/doubleInitialstate_shouldNotBeParsable-aut.apt");
+			fail("not detected StructureException: initial state is set multiple times");
+		} catch (StructureException se) {
+			assertEquals(se.getMessage(), "initial state is set multiple times.");
+		}
+	}
+
+	@Test
 	public void testInitalMarking() throws IOException, FormatException {
 		PetriNet pn = APTPNParser.getPetriNet("nets/doubleMarking.apt");
 		Marking im = pn.getInitialMarkingCopy();
@@ -190,7 +198,7 @@ public class APTParserTest {
 	@Test
 	public void testUnknownAttributeNet() throws IOException, FormatException {
 		try {
-			APTPNParser.getPetriNet("nets/unknown-attribute.apt");
+			APTPNParser.getPetriNet("nets/not-parsable-test-nets/unknown-attribute.apt");
 			fail("Didn't detect unknown attribute");
 
 		} catch (LexerParserException ex) {

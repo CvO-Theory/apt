@@ -17,26 +17,33 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.io.parser.impl.apt;
+package uniol.apt.io.parser.impl.synet;
 
 import java.util.Map;
 import uniol.apt.adt.exception.NoSuchNodeException;
-import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.impl.AbstractLTSParserOutput;
 import uniol.apt.io.parser.impl.ParserArc;
-import uniol.apt.io.parser.impl.ParserNode;
+import uniol.apt.io.parser.impl.exception.NodeAlreadyExistsException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
 import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 
 /**
- * Holds the data of the APTLTSParser and converts it into the apt datastructure.
+ * Holds the data of the SynetLTSParser and converts it into the apt datastructure.
  * <p/>
  * @author Manuel Gieseking
  */
-public class APTLTSParserOutput extends AbstractLTSParserOutput<TransitionSystem> {
+public class SynetLTSParserOutput extends AbstractLTSParserOutput<TransitionSystem> {
+
+	@Override
+	public void addState(String id, Map<String, String> attributes) throws NodeAlreadyExistsException {
+		try {
+			super.addState(id, attributes);
+		} catch (NodeAlreadyExistsException e) {
+		}
+	}
 
 	@Override
 	public TransitionSystem convertToDatastructure() throws NodeNotExistException, TypeMismatchException,
@@ -44,30 +51,10 @@ public class APTLTSParserOutput extends AbstractLTSParserOutput<TransitionSystem
 		if (type != Type.LTS) {
 			throw new TypeMismatchException("LTS", type.name());
 		}
-		TransitionSystem ts = new TransitionSystem((name != null) ? name : "");
-		ts.putExtension("description", description);
+		TransitionSystem ts = new TransitionSystem("");
 		// Add states
-		int initCount = 0;
 		for (String stateId : states.keySet()) {
-			State node = ts.createState(stateId);
-			// Add options
-			Map<String, String> options = states.get(stateId).getOptions();
-			for (String opt : options.keySet()) {
-				String value = options.get(opt);
-				switch (opt) {
-					case "initial":
-						if (initCount == 1) {
-							throw new StructureException("initial state is set "
-								+ "multiple times.");
-						}
-						++initCount;
-						ts.setInitialState(node);
-						break;
-					default:
-						node.putExtension(opt, value);
-						break;
-				}
-			}
+			ts.createState(stateId);
 		}
 
 		// Arcs
@@ -79,18 +66,13 @@ public class APTLTSParserOutput extends AbstractLTSParserOutput<TransitionSystem
 			} catch (NoSuchNodeException e) {
 				throw new NodeNotExistException(e.getNodeId());
 			}
-			Arc e = ts.createArc(fromNode.getId(), toNode.getId(), parserArc.getLabel());
-			// Add options
-			ParserNode label = labels.get(parserArc.getLabel());
-			if (label == null) {
-				throw new StructureException("Label '" + parserArc.getLabel()
-					+ "' used but not defined.");
-			}
-			Map<String, String> options = label.getOptions();
-			for (String opt : options.keySet()) {
-				String value = options.get(opt);
-				e.putExtension(opt, value);
-			}
+			ts.createArc(fromNode.getId(), toNode.getId(), parserArc.getLabel());
+		}
+		try {
+			State init = ts.getNode("0");
+			ts.setInitialState(init);
+		} catch (NoSuchNodeException e) {
+			throw new StructureException("No initial state is set in lts: '" + ts.getName() + "'.", e);
 		}
 		return ts;
 	}

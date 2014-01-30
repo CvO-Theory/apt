@@ -19,6 +19,7 @@
 
 package uniol.apt.io.parser.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertEquals;
@@ -32,13 +33,19 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.isomorphism.IsomorphismLogic;
+import uniol.apt.io.converter.Synet2Apt;
+import uniol.apt.io.parser.IParserOutput;
+import uniol.apt.io.parser.impl.apt.APTLTSParser;
+import uniol.apt.io.parser.impl.apt.APTPNParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.synet.SynetLTSParser;
 import uniol.apt.io.parser.impl.synet.SynetPNParser;
+import uniol.apt.module.exception.ModuleException;
 
 /**
  * @author Manuel Gieseking
- *
+ * <p/>
  */
 @Test
 public class SynetParserTest {
@@ -88,6 +95,28 @@ public class SynetParserTest {
 		assertEquals(x0.getPreset().size(), 1);
 		assertTrue(x0.getPreset().contains(pn.getTransition("a")));
 		assertFalse(x0.getPreset().contains(pn.getTransition("t")));
+	}
+
+	@Test
+	public void testSynetParser() throws IOException, FormatException, ModuleException {
+		// LTS
+		TransitionSystem ts_synet = SynetLTSParser.getLTS("nets/synet-nets/mar17-12-groessere-testdatei.aut");
+		String txt_apt = Synet2Apt.convert("nets/synet-nets/mar17-12-groessere-testdatei.aut",
+			IParserOutput.Type.LTS);
+		TransitionSystem ts_apt = APTLTSParser.getLTS(new ByteArrayInputStream(
+			txt_apt.getBytes("UTF-8")));
+		IsomorphismLogic iso = new IsomorphismLogic(ts_synet, ts_apt, true);
+		assertTrue(iso.isIsomorphic());
+
+		// PN
+		PetriNet pn_synet = SynetPNParser.getPetriNet("nets/synet-nets/synet-docu-example.net");
+		txt_apt = Synet2Apt.convert("nets/synet-nets/synet-docu-example.net",
+			IParserOutput.Type.PN);
+		PetriNet pn_apt = APTPNParser.getPetriNet(new ByteArrayInputStream(
+			txt_apt.getBytes("UTF-8")));
+		iso = new IsomorphismLogic(pn_synet, pn_apt, true);
+		assertTrue(iso.isIsomorphic());
+
 	}
 }
 

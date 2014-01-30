@@ -20,6 +20,9 @@
 package uniol.apt.io.parser;
 
 import java.util.Map;
+import org.antlr.runtime.IntStream;
+import org.antlr.runtime.RecognitionException;
+import uniol.apt.io.parser.impl.exception.NodeAlreadyExistsException;
 
 /**
  * A interface for a LTS of type G saving the data of the parser and converting it to the LTS.
@@ -31,12 +34,25 @@ import java.util.Map;
 public interface ILTSParserOutput<G> extends IParserOutput<G> {
 
 	/**
+	 * Adds a state with the given id and attributes to the internal datastructure. If a state with the same id
+	 * already exists within the graph, this method automatically recovers a suitable exception. Thus, nothing more
+	 * have to be done and the parser creates a fitting LexerParserException if needable.
+	 * <p/>
+	 * @param id         - the id of the state.
+	 * @param attributes - a map of attributes.
+	 * @param input      - the stream used for parsing.
+	 * @throws RecognitionException thrown if a state with the same id already exists within the graph.
+	 */
+	public void addState(String id, Map<String, String> attributes, IntStream input) throws RecognitionException;
+
+	/**
 	 * Adds a state with the given id and attributes to the internal datastructure.
 	 * <p/>
 	 * @param id         - the id of the state.
 	 * @param attributes - a map of attributes.
+	 * @throws NodeAlreadyExistsException thrown if a state with the same id already exists within the graph.
 	 */
-	public void addState(String id, Map<String, String> attributes);
+	public void addState(String id, Map<String, String> attributes) throws NodeAlreadyExistsException;
 
 	/**
 	 * Adds a label with the given id and attributes to the internal datastructure.
