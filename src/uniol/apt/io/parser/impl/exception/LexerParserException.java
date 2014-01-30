@@ -46,9 +46,13 @@ public class LexerParserException extends FormatException {
 		exception = e;
 		String hdr = parser.getErrorHeader(e);
 		String msg = parser.getErrorMessage(e, parser.getTokenNames());
+		if (msg == null) {
+			msg = e.getCause().getMessage();
+		}
 		parserMsg = hdr + " " + msg;
 		hdr = lexer.getErrorHeader(e);
-		msg = lexer.getErrorMessage(e, lexer.getTokenNames());
+		String lmsg = lexer.getErrorMessage(e, lexer.getTokenNames());
+		msg = (lmsg == null) ? e.getCause().getMessage() : lmsg;
 		lexerMsg += hdr + " " + msg;
 	}
 

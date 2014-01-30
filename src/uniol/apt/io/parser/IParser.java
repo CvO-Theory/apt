@@ -22,6 +22,7 @@ package uniol.apt.io.parser;
 import java.io.IOException;
 import java.io.InputStream;
 import uniol.apt.io.parser.impl.ParserContext;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -48,9 +49,11 @@ public interface IParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *					all.
 	 */
 	public <G> G parse(InputStream data, ParserContext<G> ctx) throws IOException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException;
+		TypeMismatchException, LexerParserException, StructureException, FormatException;
 
 	/**
 	 * Parses a given file into a graph of type G by using the given parser context.
@@ -66,9 +69,11 @@ public interface IParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *					all.
 	 */
 	public <G> G parse(String path, ParserContext<G> ctx) throws IOException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException;
+		TypeMismatchException, LexerParserException, StructureException, FormatException;
 }
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
 

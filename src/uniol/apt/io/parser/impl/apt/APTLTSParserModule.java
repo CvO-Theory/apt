@@ -24,6 +24,7 @@ import java.io.InputStream;
 
 
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -85,6 +86,8 @@ public class APTLTSParserModule extends AbstractModule {
 		} catch (NodeNotExistException | TypeMismatchException ex) {
 			throw new ModuleException("Create datastructur: " + ex.getMessage());
 		} catch (StructureException ex) {
+			throw new ModuleException(ex.getMessage(), ex);
+		} catch (FormatException ex) {
 			throw new ModuleException(ex.getMessage(), ex);
 		}
 	}

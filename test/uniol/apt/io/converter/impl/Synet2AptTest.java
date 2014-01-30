@@ -19,9 +19,9 @@
 
 package uniol.apt.io.converter.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
@@ -36,62 +36,75 @@ import uniol.apt.io.parser.impl.apt.APTPNParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.impl.ModuleInvoker;
+import org.testng.annotations.Test;
+import uniol.apt.analysis.isomorphism.IsomorphismLogic;
+import uniol.apt.io.parser.impl.synet.SynetLTSParser;
+import uniol.apt.io.renderer.impl.APTRenderer;
 
 /**
- * Could not test anymore cauce of module reading from stdin.
- *
+ * Tests the converter, which parses a synet file and saves the content in the apt format.
+ * <p/>
  * @author Manuel Gieseking
- *
  */
+@Test
 public class Synet2AptTest {
 
-	/**
-	 * Could not test anymore cause of module reading from stdin.
-	 *
-	 * @throws IOException
-	 * @throws FormatException
-	 * @throws ModuleException
-	 */
+	@Test
 	public void testLTS() throws IOException, FormatException, ModuleException {
 		Synet2AptModule mod = new Synet2AptModule();
 		ModuleInvoker m = new ModuleInvoker();
 		List<Object> objs = m.invoke(mod, "nets/synet-nets/synet-apt1-redmine-docs.aut");
-		String fo = (String) objs.get(0);
-		assertEquals(fo, "nets/synet-nets/synet-apt1-redmine-docs-aut.apt");
-		TransitionSystem ts = APTLTSParser.getLTS("nets/synet-nets/synet-apt1-redmine-docs-aut.apt");
-		assertNotNull(ts);
+		String fromSynet2Apt = (String) objs.get(0);
 
+		TransitionSystem ts1 = APTLTSParser.getLTS(new ByteArrayInputStream(fromSynet2Apt.getBytes("UTF-8")));
+		assertNotNull(ts1);
+		assertEquals(ts1.getNodes().size(), 4);
+		assertNotNull(ts1.getNode("0"));
+		assertNotNull(ts1.getNode("1"));
+		assertNotNull(ts1.getNode("2"));
+		assertNotNull(ts1.getNode("3"));
+		assertEquals(ts1.getInitialState(), ts1.getNode("0"));
+		assertEquals(ts1.getEdges().size(), 4);
+
+		TransitionSystem ts = SynetLTSParser.getLTS("nets/synet-nets/synet-apt1-redmine-docs.aut");
+		assertNotNull(ts);
 		assertEquals(ts.getNodes().size(), 4);
 		assertNotNull(ts.getNode("0"));
 		assertNotNull(ts.getNode("1"));
 		assertNotNull(ts.getNode("2"));
 		assertNotNull(ts.getNode("3"));
-		assertNull(ts.getNode("4"));
 		assertEquals(ts.getInitialState(), ts.getNode("0"));
-
 		assertEquals(ts.getEdges().size(), 4);
+
+		IsomorphismLogic iso = new IsomorphismLogic(ts1, ts, true);
+		assertTrue(iso.isIsomorphic());
+
+		APTRenderer renderer = new APTRenderer();
+		String apt = renderer.render(ts);
+		String[] rows = apt.split("\n");
+		for (String string : rows) {
+			assertTrue(fromSynet2Apt.contains(string));
+		}
+		rows = fromSynet2Apt.split("\n");
+		for (String string : rows) {
+			assertTrue(apt.contains(string));
+		}
 	}
 
-	/**
-	 * Could not test anymore cause of module reading from stdin.
-	 *
-	 * @throws IOException
-	 * @throws FormatException
-	 * @throws ModuleException
-	 */
+	@Test
 	public void testPN() throws IOException, FormatException, ModuleException {
 		Synet2AptModule mod = new Synet2AptModule();
 		ModuleInvoker m = new ModuleInvoker();
 		List<Object> objs = m.invoke(mod, "nets/synet-nets/synet-docu-example.net");
-		String fo = (String) objs.get(0);
-		assertEquals(fo, "nets/synet-nets/synet-docu-example-net.apt");
-		PetriNet pn = APTPNParser.getPetriNet(fo);
+		String synet2apt = (String) objs.get(0);
+
+		PetriNet pn = APTPNParser.getPetriNet(new ByteArrayInputStream(synet2apt.getBytes("UTF-8")));
 		assertNotNull(pn);
 		assertEquals(5, pn.getTransitions().size());
 		assertEquals(6, pn.getPlaces().size());
 
-		//assertEquals("A", pn.getTransitionById("t").getExtension("location"));
-		//assertEquals("A", pn.getPlaceById("x_0").getExtension("location"));
+		assertEquals("A", pn.getTransition("t").getExtension("location"));
+		assertEquals("A", pn.getPlace("x_0").getExtension("location"));
 
 		Marking mark = pn.getInitialMarkingCopy();
 		assertEquals(1, mark.getToken("x_5").getValue());
@@ -107,6 +120,44 @@ public class Synet2AptTest {
 		assertEquals(x0.getPreset().size(), 1);
 		assertTrue(x0.getPreset().contains(pn.getTransition("a")));
 		assertFalse(x0.getPreset().contains(pn.getTransition("t")));
+
+		PetriNet pn2 = APTPNParser.getPetriNet(new ByteArrayInputStream(synet2apt.getBytes("UTF-8")));
+		assertNotNull(pn2);
+		assertEquals(5, pn2.getTransitions().size());
+		assertEquals(6, pn2.getPlaces().size());
+
+		assertEquals("A", pn2.getTransition("t").getExtension("location"));
+		assertEquals("A", pn2.getPlace("x_0").getExtension("location"));
+
+		mark = pn2.getInitialMarkingCopy();
+		assertEquals(1, mark.getToken("x_5").getValue());
+		assertEquals(1, mark.getToken("x_2").getValue());
+		assertEquals(0, mark.getToken("x_3").getValue());
+
+		x0 = pn2.getPlace("x_0");
+		assertEquals(x0.getPostset().size(), 2);
+		assertTrue(x0.getPostset().contains(pn2.getTransition("t")));
+		assertTrue(x0.getPostset().contains(pn2.getTransition("d")));
+		assertFalse(x0.getPostset().contains(pn2.getTransition("c")));
+
+		assertEquals(x0.getPreset().size(), 1);
+		assertTrue(x0.getPreset().contains(pn2.getTransition("a")));
+		assertFalse(x0.getPreset().contains(pn2.getTransition("t")));
+
+		IsomorphismLogic iso = new IsomorphismLogic(pn2, pn, true);
+		assertTrue(iso.isIsomorphic());
+
+		// Not possible to test, since not deterministic choice of which place would be named first in a flow
+//		APTRenderer renderer = new APTRenderer();
+//		String apt = renderer.render(pn2);
+//		String[] rows = apt.split("\n");
+//		for (String string : rows) {
+//			assertTrue(synet2apt.contains(string));
+//		}
+//		rows = synet2apt.split("\n");
+//		for (String string : rows) {
+//			assertTrue(apt.contains(string));
+//		}
 	}
 }
 

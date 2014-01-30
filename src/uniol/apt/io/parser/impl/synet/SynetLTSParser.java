@@ -23,12 +23,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import java.io.InputStream;
-import uniol.apt.adt.exception.NoSuchNodeException;
-import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.impl.ANTLRParser;
-import uniol.apt.io.parser.impl.apt.APTLTSParserOutput;
 import uniol.apt.io.parser.impl.apt.APTParserContext;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -56,9 +54,11 @@ public class SynetLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(String path) throws IOException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException {
+		TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getLTS(path, false);
 	}
 
@@ -74,9 +74,11 @@ public class SynetLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(InputStream data) throws IOException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException {
+		TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getLTS(data, false);
 	}
 
@@ -93,9 +95,11 @@ public class SynetLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(String path, boolean suppressWarnings) throws IOException,
-		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException {
+		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getLTS(new FileInputStream(path), suppressWarnings);
 	}
 
@@ -112,21 +116,16 @@ public class SynetLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(InputStream data, boolean suppressWarnings) throws IOException,
-		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException {
+		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException, FormatException {
 		APTParserContext<TransitionSystem> ctx = new APTParserContext<>(SynetLTSFormatLexer.class,
-			SynetLTSFormatParser.class, APTLTSParserOutput.class, "start");
+			SynetLTSFormatParser.class, SynetLTSParserOutput.class, "start");
 		((SynetLTSFormatLexer) ctx.getLexer()).suppressWarnings(suppressWarnings);
 		((SynetLTSFormatParser) ctx.getParser()).suppressWarnings(suppressWarnings);
-		TransitionSystem ts = new ANTLRParser().parse(data, ctx);
-		try {
-			State init = ts.getNode("0");
-			ts.setInitialState(init);
-		} catch (NoSuchNodeException e) {
-			throw new StructureException("No initial state is set in lts: '" + ts.getName() + "'.", e);
-		}
-		return ts;
+		return new ANTLRParser().parse(data, ctx);
 	}
 }
 

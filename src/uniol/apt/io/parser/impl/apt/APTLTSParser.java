@@ -25,6 +25,7 @@ import java.io.InputStream;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.impl.ANTLRParser;
 import uniol.apt.io.parser.impl.ParserContext;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -52,9 +53,11 @@ public class APTLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(InputStream data) throws IOException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException {
+		TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getLTS(data, false);
 	}
 
@@ -70,9 +73,11 @@ public class APTLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(String path) throws IOException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException {
+		TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getLTS(path, false);
 	}
 
@@ -89,9 +94,11 @@ public class APTLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(InputStream data, boolean suppressWarnings) throws IOException,
-		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException {
+		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException, FormatException {
 
 		ParserContext<TransitionSystem> ctx = new APTParserContext<>(AptLTSFormatLexer.class,
 			AptLTSFormatParser.class, APTLTSParserOutput.class, "start");
@@ -121,9 +128,11 @@ public class APTLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(String path, boolean suppressWarnings) throws IOException,
-		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException {
+		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getLTS(new FileInputStream(path), suppressWarnings);
 	}
 }

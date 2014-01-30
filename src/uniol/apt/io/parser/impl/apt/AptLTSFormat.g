@@ -129,7 +129,7 @@ state		: idi {
 				id = $idi.text; options = new HashMap<>();
 				}
 		(opts)? {
-				out.addState(id, options);
+				out.addState(id, options, input);
 				 };
 
 opts		: '[' option (',' option)* ']';

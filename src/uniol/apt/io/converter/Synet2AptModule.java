@@ -21,6 +21,7 @@ package uniol.apt.io.converter;
 
 import java.io.IOException;
 import uniol.apt.io.parser.IParserOutput.Type;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -82,6 +83,8 @@ public class Synet2AptModule extends AbstractModule {
 			throw new ModuleException("Cannot parse file '" + filename + "': \n"
 				+ e.getLexerParserMessage());
 		} catch (StructureException ex) {
+			throw new ModuleException(ex.getMessage(), ex);
+		} catch (FormatException ex) {
 			throw new ModuleException(ex.getMessage(), ex);
 		}
 	}

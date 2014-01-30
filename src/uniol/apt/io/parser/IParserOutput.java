@@ -19,8 +19,7 @@
 
 package uniol.apt.io.parser;
 
-import uniol.apt.io.parser.impl.exception.NodeNotExistException;
-import uniol.apt.io.parser.impl.exception.TypeMismatchException;
+import uniol.apt.io.parser.impl.exception.FormatException;
 
 /**
  * A interface for a graph of type G saving the data of the parser and converting it to the graph.
@@ -65,10 +64,10 @@ public interface IParserOutput<G> {
 	 * <p/>
 	 * @return the graph containing the data of this class.
 	 * <p/>
-	 * @throws NodeNotExistException thrown if a used node do not exists in the graph.
-	 * @throws TypeMismatchException thrown if the type does not match to the graph.
+	 * @throws FormatException thrown if any problem resulting from the input occure by converting to the
+	 *                         datastructures.
 	 */
-	public G convertToDatastructure() throws NodeNotExistException, TypeMismatchException;
+	public G convertToDatastructure() throws FormatException;
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

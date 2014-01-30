@@ -23,8 +23,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.antlr.runtime.IntStream;
+import org.antlr.runtime.RecognitionException;
 
 import uniol.apt.io.parser.IPNParserOutput;
+import uniol.apt.io.parser.impl.exception.NodeAlreadyExistsException;
 
 /**
  * A class for a petri net of type G saving the data of the parser and converting it to the petri net.
@@ -42,14 +45,42 @@ public abstract class AbstractPNParserOutput<G> extends AbstractParserOutput<G> 
 	protected Set<Map<String, Integer>> finalMarkings = new HashSet<>();
 
 	@Override
-	public void addPlace(String id, Map<String, String> attributes) {
+	public void addPlace(String id, Map<String, String> attributes, IntStream input) throws RecognitionException {
+		try {
+			addPlace(id, attributes);
+		} catch (NodeAlreadyExistsException ne) {
+			RecognitionException re = new RecognitionException(input);
+			re.initCause(ne);
+			throw re;
+		}
+	}
+
+	@Override
+	public void addTransition(String id, Map<String, String> attributes, IntStream input) throws RecognitionException {
+		try {
+			addTransition(id, attributes);
+		} catch (NodeAlreadyExistsException ne) {
+			RecognitionException re = new RecognitionException(input);
+			re.initCause(ne);
+			throw re;
+		}
+	}
+
+	@Override
+	public void addPlace(String id, Map<String, String> attributes) throws NodeAlreadyExistsException {
+		if (places.containsKey(id)) {
+			throw new NodeAlreadyExistsException(id);
+		}
 		ParserNode place = new ParserNode(id);
 		place.putAllOptions(attributes);
 		places.put(id, place);
 	}
 
 	@Override
-	public void addTransition(String id, Map<String, String> attributes) {
+	public void addTransition(String id, Map<String, String> attributes) throws NodeAlreadyExistsException {
+		if (transitions.containsKey(id)) {
+			throw new NodeAlreadyExistsException(id);
+		}
 		ParserNode trans = new ParserNode(id);
 		trans.putAllOptions(attributes);
 		transitions.put(id, trans);

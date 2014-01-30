@@ -26,6 +26,7 @@ import java.io.InputStream;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.io.parser.impl.ANTLRParser;
 import uniol.apt.io.parser.impl.ParserContext;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -53,9 +54,11 @@ public class APTPNParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static PetriNet getPetriNet(String path) throws IOException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException {
+		TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getPetriNet(path, false);
 	}
 
@@ -71,9 +74,11 @@ public class APTPNParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static PetriNet getPetriNet(InputStream data) throws IOException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException {
+		TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getPetriNet(data, false);
 	}
 
@@ -90,9 +95,11 @@ public class APTPNParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static PetriNet getPetriNet(String path, boolean suppressWarnings) throws IOException,
-		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException {
+		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getPetriNet(new FileInputStream(path), suppressWarnings);
 	}
 
@@ -109,9 +116,11 @@ public class APTPNParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static PetriNet getPetriNet(InputStream data, boolean suppressWarnings) throws IOException,
-		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException {
+		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException, FormatException {
 		ParserContext<PetriNet> ctx = new APTParserContext<>(
 			AptPNFormatLexer.class, AptPNFormatParser.class, APTPNParserOutput.class, "start");
 		((AptPNFormatLexer) ctx.getLexer()).suppressWarnings(suppressWarnings);

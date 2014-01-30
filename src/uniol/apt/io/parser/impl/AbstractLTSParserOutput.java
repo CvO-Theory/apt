@@ -23,7 +23,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.antlr.runtime.IntStream;
+import org.antlr.runtime.RecognitionException;
 import uniol.apt.io.parser.ILTSParserOutput;
+import uniol.apt.io.parser.impl.exception.NodeAlreadyExistsException;
 
 /**
  * A class for a transitionsystem of type G saving the data of the parser and converting it to the transitionsystem.
@@ -39,7 +42,21 @@ public abstract class AbstractLTSParserOutput<G> extends AbstractParserOutput<G>
 	protected Set<ParserArc> arcs = new HashSet<>();
 
 	@Override
-	public void addState(String id, Map<String, String> attributes) {
+	public void addState(String id, Map<String, String> attributes, IntStream input) throws RecognitionException {
+		try {
+			addState(id, attributes);
+		} catch (NodeAlreadyExistsException ne) {
+			RecognitionException re = new RecognitionException(input);
+			re.initCause(ne);
+			throw re;
+		}
+	}
+
+	@Override
+	public void addState(String id, Map<String, String> attributes) throws NodeAlreadyExistsException {
+		if (states.containsKey(id)) {
+			throw new NodeAlreadyExistsException(id);
+		}
 		ParserNode state = new ParserNode(id);
 		state.putAllOptions(attributes);
 		states.put(id, state);
@@ -65,7 +82,11 @@ public abstract class AbstractLTSParserOutput<G> extends AbstractParserOutput<G>
 		} else {
 			Map<String, String> map = new HashMap<>();
 			map.put("initial", "true");
-			addState(id, map);
+			try {
+				addState(id, map);
+			} catch (NodeAlreadyExistsException ex) {
+				//not possible since node == null
+			}
 		}
 	}
 }

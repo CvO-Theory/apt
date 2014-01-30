@@ -27,6 +27,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.impl.ANTLRParser;
 import uniol.apt.io.parser.impl.apt.APTLTSParserOutput;
 import uniol.apt.io.parser.impl.apt.APTParserContext;
+import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
@@ -54,9 +55,11 @@ public class PetrifyLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(String path) throws IOException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException {
+		TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getLTS(path, false);
 	}
 
@@ -72,9 +75,11 @@ public class PetrifyLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(InputStream data) throws IOException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException {
+		TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getLTS(data, false);
 	}
 
@@ -91,9 +96,11 @@ public class PetrifyLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(String path, boolean suppressWarnings) throws IOException,
-		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException {
+		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException, FormatException {
 		return getLTS(new FileInputStream(path), suppressWarnings);
 	}
 
@@ -110,11 +117,13 @@ public class PetrifyLTSParser {
 	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
 	 * @throws LexerParserException  thrown if the file could not be parsed.
 	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
+	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
+	 *                               all.
 	 */
 	public static TransitionSystem getLTS(InputStream data, boolean suppressWarnings) throws IOException,
-		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException {
+		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException, FormatException {
 		APTParserContext<TransitionSystem> ctx = new APTParserContext<>(PetrifyLTSFormatLexer.class,
-			PetrifyLTSFormatParser.class, APTLTSParserOutput.class, "start");
+			PetrifyLTSFormatParser.class, PetrifyLTSParserOutput.class, "start");
 		((PetrifyLTSFormatLexer) ctx.getLexer()).suppressWarnings(suppressWarnings);
 		((PetrifyLTSFormatParser) ctx.getParser()).suppressWarnings(suppressWarnings);
 		return new ANTLRParser().parse(data, ctx);
