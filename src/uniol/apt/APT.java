@@ -144,6 +144,7 @@ import uniol.apt.module.impl.ReturnValue;
 import uniol.apt.module.impl.SimpleModulePreconditionsChecker;
 import uniol.apt.pnanalysis.PnAnalysisModule;
 import uniol.apt.pnanalysis.RandomTNetGeneratorModule;
+import uniol.apt.synthesis.LtsSpanningTreeModule;
 import uniol.apt.ui.ParametersParser;
 import uniol.apt.ui.ParametersTransformer;
 import uniol.apt.ui.Printer;
@@ -227,6 +228,7 @@ public class APT {
 		new LanguageEquivalenceModule(),
 		new LargestKModule(),
 		new LoLARendererModule(),
+		new LtsSpanningTreeModule(),
 		new MatrixModule(),
 		new NonPureModule(),
 		new OutputNonBranchingModule(),
