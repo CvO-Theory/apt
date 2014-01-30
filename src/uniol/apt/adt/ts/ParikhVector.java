@@ -21,12 +21,14 @@ package uniol.apt.adt.ts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+
 import uniol.apt.adt.exception.StructureException;
 
 /**
@@ -110,6 +112,28 @@ public class ParikhVector {
 	 */
 	public ParikhVector(Map<String, Integer> pv) {
 		this.pv = new TreeMap<>(pv);
+	}
+	
+	/**
+	 * Creates a Parikh vector for a given LTS and set of arcs.
+	 * <p/>
+	 * @param ts the TransitionSystem the pv belongs to
+	 * @param arcs the set of arcs whose Parikh vector is to be computed.
+	 */
+	public ParikhVector(TransitionSystem ts, Collection<Arc> arcs) {
+		this.ts = ts;
+		this.pv = new TreeMap<>();
+		for (String label : ts.getAlphabet()) {
+			Integer count = pv.get(label);
+			if (count == null) {
+				pv.put(label, 0);
+			}
+		}
+		for(Arc a : arcs) {
+			String label = a.getLabel();
+			int count = pv.get(label);
+			pv.put(label, ++count);
+		}
 	}
 
 	/**
