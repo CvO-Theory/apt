@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.invariants.InvariantCalculator;
@@ -71,6 +72,21 @@ public class CycleBasis {
 		}
 		
 		return cycles;
+	}
+	
+	/**
+	 * Compute the set of Parikh vectors for the minimal cycle
+	 * basis of the given LTS
+	 * @param lts the LTS whose minimal cycles' Parikh vectors are to be computed
+	 * @return a set of Parikh vectors
+	 */
+	public static Set<ParikhVector> cycleBasisParikhVectors(TransitionSystem lts) {
+		Set<Vector<Arc>> cycles = cycleBasis(lts);
+		Set<ParikhVector> pvs = new HashSet<ParikhVector>();
+		for(Vector<Arc> c : cycles) {
+			pvs.add(new ParikhVector(lts, c));
+		}
+		return pvs;
 	}
 	
 }

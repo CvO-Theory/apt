@@ -19,13 +19,12 @@
 
 package uniol.apt.analysis.cycles.lts;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
 import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -42,7 +41,7 @@ import uniol.apt.module.exception.ModuleException;
  */
 public class CycleBasisModule extends AbstractModule {
 
-	private final static String SHORTDESCRIPTION = "Compute a minimal cycle basis of the LTS";
+	private final static String SHORTDESCRIPTION = "Compute a minimal directed cycle basis of the LTS";
 	private final static String LONGDESCRIPTION = SHORTDESCRIPTION;
 	private final static String TITLE = "MinimalCycleBasis";
 	private final static String NAME = "minimal_cycle_basis";
@@ -60,17 +59,19 @@ public class CycleBasisModule extends AbstractModule {
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("minimalCycleBasis", Set.class);
+		outputSpec.addReturnValue("minimalCycleBasisParikhVectors", Set.class);
 	}
 
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		TransitionSystem lts = input.getParameter("lts", TransitionSystem.class);
 		Set<Vector<Arc>> cycleBasis = CycleBasis.cycleBasis(lts);
-		
+
 		// sort the cycles so that they conform to the usual notation for paths
 		Set<Vector<Arc>> sortedCycleBasis = new HashSet<Vector<Arc>>();
 		for(Vector<Arc> unsortedCycle : cycleBasis) {
 			Vector<Arc> sortedCycle = new Vector<Arc>();
+			
 			// begin with the initial state (if this cycle contains it) or
 			// the state with the minimal label
 			int min = 0;
@@ -88,6 +89,7 @@ public class CycleBasisModule extends AbstractModule {
 			}
 			sortedCycle.add(unsortedCycle.get(min));
 			unsortedCycle.remove(min);
+			
 			// sort cycle in the usual path order
 			while(!unsortedCycle.isEmpty()) {
 				int i;
@@ -102,8 +104,15 @@ public class CycleBasisModule extends AbstractModule {
 			}
 			sortedCycleBasis.add(sortedCycle);
 		}
+
+		// compute Parikh vectors
+		Set<ParikhVector> pvs = new HashSet<ParikhVector>();
+		for(Vector<Arc> c : sortedCycleBasis) {
+			pvs.add(new ParikhVector(lts, c));
+		}
 		
 		output.setReturnValue("minimalCycleBasis", Set.class, sortedCycleBasis);
+		output.setReturnValue("minimalCycleBasisParikhVectors", Set.class, pvs);
 	}
 
 	@Override
