@@ -34,6 +34,12 @@ import uniol.apt.util.Predicate;
  */
 public class LtsSpanningTree {
 
+	/**
+	 * Computes a spanning tree of the LTS.
+	 * 
+	 * @param lts the LTS whose spanning tree is to be computed
+	 * @return a spanning tree of <code>lts</code>
+	 */
 	public static TransitionSystem spanningTree(TransitionSystem lts) {
 		TransitionSystem span = new TransitionSystem();
 		

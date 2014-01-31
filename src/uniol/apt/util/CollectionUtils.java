@@ -20,29 +20,32 @@
 package uniol.apt.util;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Some auxiliary functions that make working with
  * plain Java collections slightly less clumsy.
+ * <p/>
+ * This implementation in Java is inspired by the 
+ * Apache Commmons Collections library.
  * 
  * @author Thomas Strathmann
  */
 public class CollectionUtils {
 
 	/**
-	 * Check if at least one object in a Collection satisfies
-	 * a given Predicate.
-	 * <p/>
+	 * Check if at least one object in a {@link Collection} satisfies
+	 * a given {@link Predicate}.
+	 *
 	 * @param coll the collection
 	 * @param p the predicate 
-	 * @return true if coll contains an object that satisfies p,
+	 * @return true if coll contains an object that satisfies p
 	 */
-	public static <T> boolean exists(Collection<T> coll, Predicate<T> p) {
-		Iterator<T> it = coll.iterator();
-		while(it.hasNext()) {
-			if(p.eval(it.next()))
-				return true;
+	public static <T> boolean exists(final Collection<T> coll, final Predicate<? super T> p) {
+		if(coll != null && p != null) {
+			for(final T x : coll) {
+				if(p.eval(x))
+					return true;
+			}
 		}
 		return false;
 	}

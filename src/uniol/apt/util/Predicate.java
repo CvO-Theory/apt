@@ -31,7 +31,7 @@ public interface Predicate<T> {
 	/**
 	 * Test whether an object of type T satisfies some property
 	 * that is implemented in the body of this method.
-	 * <p/>
+	 *
 	 * @param x the object to be tested
 	 * @return the result of testing x
 	 */
