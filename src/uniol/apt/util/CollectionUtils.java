@@ -20,6 +20,8 @@
 package uniol.apt.util;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Some auxiliary functions that make working with
@@ -48,6 +50,31 @@ public class CollectionUtils {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns a new set containing only those elements of <code>set1</code>
+	 * for which there is no element in <code>set2</code> such that
+	 * <code>p</code> applied to both returns <code>true</code>.
+	 *  
+	 * @param set1 the set from which elements of set2 shall be removed
+	 * @param set2 the set of elements to be removed from set1
+	 * @param p the binary predicate that is used to decide when two elements
+	 * 			of the different sets are equal
+	 * @return
+	 */
+	public static <T> Set<T> difference(final Set<T> set1, final Set<T> set2, final BinaryPredicate<? super T, ? super T> p) {
+		HashSet<T> result = new HashSet<T>();
+		for(final T x1 : set1) {
+			if(!exists(set2, new Predicate<T>() {
+				public boolean eval(T x2) {
+					return p.eval(x1, x2);
+				}
+			})) {
+				result.add(x1);
+			}
+		}
+		return result;
 	}
 	
 }
