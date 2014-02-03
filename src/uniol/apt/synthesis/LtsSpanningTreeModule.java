@@ -19,6 +19,9 @@
 
 package uniol.apt.synthesis;
 
+import java.util.Set;
+
+import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -61,6 +64,12 @@ public class LtsSpanningTreeModule extends AbstractModule {
 		TransitionSystem lts = input.getParameter("lts", TransitionSystem.class);
 		TransitionSystem span = LtsSpanningTree.spanningTree(lts);
 		output.setReturnValue("spanningTree", TransitionSystem.class, span);
+		
+		Set<Set<Arc>> cycles = LtsSpanningTree.cycleBasis(lts, span);
+				
+		for(Set<Arc> cycle : cycles) {
+			System.err.println(cycle);
+		}
 	}
 
 	@Override

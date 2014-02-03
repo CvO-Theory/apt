@@ -19,11 +19,15 @@
 
 package uniol.apt.synthesis;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.BinaryPredicate;
 import uniol.apt.util.CollectionUtils;
 import uniol.apt.util.Predicate;
 
@@ -67,6 +71,38 @@ public class LtsSpanningTree {
 		}
 		
 		return span;
+	}
+	
+	/**
+	 * Compute a cycle basis for the given LTS using a spanning tree.
+	 * 
+	 * @param lts the LTS whose cycle basis is to be computed
+	 * @param span a spanning tree of the LTS
+	 * @return a set of cycles forming a cycle basis for the LTS
+	 */
+	public static Set<Set<Arc>> cycleBasis(TransitionSystem lts, TransitionSystem span) {
+		HashSet<Set<Arc>> cycles = new HashSet<Set<Arc>>();		
+		
+		// the set of arcs that represent the cycles
+		Set<Arc> cycleArcs = CollectionUtils.difference(lts.getEdges(), span.getEdges(),
+				new BinaryPredicate<Arc, Arc>() {
+					public boolean eval(Arc a1, Arc a2) {
+						return (a1.getSourceId().equals(a2.getSourceId()) &&
+								a1.getTargetId().equals(a2.getTargetId()) &&
+								a1.getLabel().equals(a2.getLabel()));
+					}
+		});
+		
+		// build an explicit representation of the set of cycles
+		// TODO: this is pretty dumb
+		for(Arc t : cycleArcs) {
+			Set<Arc> ct = new HashSet<Arc>();
+			ct.add(t);
+			ct.addAll(span.getEdges());
+			cycles.add(ct);
+		}
+		
+		return Collections.unmodifiableSet(cycles);
 	}
 	
 }
