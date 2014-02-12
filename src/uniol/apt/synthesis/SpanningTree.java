@@ -125,7 +125,7 @@ public class SpanningTree {
 	 * 
 	 * @return the set of Parikh vectors of the LTS's fundamental cycles
 	 */
-	public Set<HashMap<String, Integer>> cycleWeights() {
+	public Set<HashMap<String, Integer>> cyclesParikhVectors() {
 		// the set of arcs that represent the cycles (also known as chords of the spanning tree)
 		Set<Arc> cycleArcs = CollectionUtils.difference(lts.getEdges(), span.getEdges(),
 				new BinaryPredicate<Arc, Arc>() {

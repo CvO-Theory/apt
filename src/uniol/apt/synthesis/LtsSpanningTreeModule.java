@@ -65,9 +65,31 @@ public class LtsSpanningTreeModule extends AbstractModule {
 		SpanningTree span = new SpanningTree(lts);
 		output.setReturnValue("spanningTree", TransitionSystem.class, span.getSpanningTree());
 	
-		Set<HashMap<String, Integer>> rows = span.cycleWeights();
+		System.err.println("Parikh vectors of fundamental cycles:");	
+		Set<HashMap<String, Integer>> rows = span.cyclesParikhVectors();
+		final int n = lts.getAlphabet().size();
+		int[][] A = new int[rows.size()][n];
+		int i = 0;
 		for(HashMap<String, Integer> row : rows) {
+			int j = 0; 
+			for(int c : row.values()) {
+				A[i][j++] = c;
+			}
+			++i;
 			System.err.println(row);
+		}
+		
+		System.err.println("generators:");	
+		Set<int[]> generators = LinearAlgebra.solutionBasis(A);
+		for(String a : lts.getAlphabet()) {
+			System.err.print(String.format("  %3s", a	));
+		}
+		System.err.println();
+		for(int[] g : generators) {
+			for(int l=0; l<g.length; ++l) {
+				System.err.print(String.format("  %3d", g[l]));
+			}
+			System.err.println();
 		}
 
 	}
