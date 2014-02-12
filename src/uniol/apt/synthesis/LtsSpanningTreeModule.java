@@ -19,6 +19,8 @@
 
 package uniol.apt.synthesis;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import uniol.apt.adt.ts.Arc;
@@ -62,14 +64,14 @@ public class LtsSpanningTreeModule extends AbstractModule {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		TransitionSystem lts = input.getParameter("lts", TransitionSystem.class);
-		TransitionSystem span = LtsSpanningTree.spanningTree(lts);
-		output.setReturnValue("spanningTree", TransitionSystem.class, span);
-		
-		Set<Set<Arc>> cycles = LtsSpanningTree.cycleBasis(lts, span);
-				
-		for(Set<Arc> cycle : cycles) {
-			System.err.println(cycle);
+		SpanningTree span = new SpanningTree(lts);
+		output.setReturnValue("spanningTree", TransitionSystem.class, span.getSpanningTree());
+	
+		Set<HashMap<String, Integer>> rows = span.cycleWeights();
+		for(HashMap<String, Integer> row : rows) {
+			System.err.println(row);
 		}
+
 	}
 
 	@Override
