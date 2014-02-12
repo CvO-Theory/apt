@@ -20,10 +20,8 @@
 package uniol.apt.synthesis;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
-import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
