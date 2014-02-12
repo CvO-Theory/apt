@@ -43,13 +43,31 @@ public class CollectionUtils {
 	 * @return true if coll contains an object that satisfies p
 	 */
 	public static <T> boolean exists(final Collection<T> coll, final Predicate<? super T> p) {
-		if(coll != null && p != null) {
+		if(coll != null) {
 			for(final T x : coll) {
 				if(p.eval(x))
 					return true;
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Return the first occurrence of an object that satisfies
+	 * the predicate or null.
+	 * 
+	 * @param coll the collection to be searched
+	 * @param p the predicate to evaluate
+	 * @return some object from coll satisfying p if it exists or null otherwise
+	 */
+	public static <T> T find(final Collection<T> coll, final Predicate<? super T> p) {
+		if(coll != null) {
+			for(T x : coll) {
+				if(p.eval(x))
+					return x;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -61,9 +79,15 @@ public class CollectionUtils {
 	 * @param set2 the set of elements to be removed from set1
 	 * @param p the binary predicate that is used to decide when two elements
 	 * 			of the different sets are equal
-	 * @return
+	 * @return the difference of the two sets with respect to the equality implemented
+	 * 		by the binary predicate
 	 */
 	public static <T> Set<T> difference(final Set<T> set1, final Set<T> set2, final BinaryPredicate<? super T, ? super T> p) {
+		if(set1 == null)
+			return null;
+		if(set2 == null)
+			return new HashSet<T>(set1);
+		
 		HashSet<T> result = new HashSet<T>();
 		for(final T x1 : set1) {
 			if(!exists(set2, new Predicate<T>() {
