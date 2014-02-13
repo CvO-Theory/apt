@@ -21,10 +21,7 @@ package uniol.apt.synthesis;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
@@ -97,10 +94,63 @@ public class SpanningTree {
 	 * @return its Parikh vector
 	 */
 	public ParikhVector parikhVector(State s) {
+		// TODO: should probably use memoization
 		Vector<Arc> path = pathToRoot(s, lts);
 		return new ParikhVector(lts, path);
 	}
 	
+	/**
+	 * Compute the matrix that is subsequently used to compute
+	 * a set of generators for a distribution of tension.
+	 * The rows of this matrix are the Parikh vectors of the
+	 * fundamental cycles (those induced by the chords of a
+	 * spanning tree) of the LTS.
+	 * 
+	 * @return matrix whose rows are the Parikh vectors of the LTS's fundamental cycles
+	 */
+	public int[][] matrix() {
+		// the set of arcs that represent the cycles (also known as chords of the spanning tree)
+		Set<Arc> cycleArcs = CollectionUtils.difference(lts.getEdges(), span.getEdges(),
+				new BinaryPredicate<Arc, Arc>() {
+					public boolean eval(Arc a1, Arc a2) {
+						return (a1.getSourceId().equals(a2.getSourceId()) &&
+								a1.getTargetId().equals(a2.getTargetId()) &&
+								a1.getLabel().equals(a2.getLabel()));
+					}
+				});
+		
+		// build the matrix
+		int[][] A = new int[cycleArcs.size()][alphabet.size()];
+		
+		int i = 0;
+		for(Arc t : cycleArcs) {
+			State source = span.getNode(t.getSource().getId());
+			State target = span.getNode(t.getTarget().getId());
+			
+			// compute the paths from source/target to initial state
+			Vector<Arc> ct0 = pathToRoot(source, span);
+			Vector<Arc> ct1 = pathToRoot(target, span);
+
+			while(!ct0.isEmpty() && !ct1.isEmpty() &&
+					ct0.lastElement() == ct1.lastElement()) {
+				ct0.remove(ct0.size() - 1);
+				ct1.remove(ct1.size() - 1);
+			}
+
+			// compute the Parikh vector of this cycle
+			for(Arc a : ct0) {
+				A[i][alphabet.indexOf(a.getLabel())] += 1;
+			}
+			A[i][alphabet.indexOf(t.getLabel())] += 1;
+			for(Arc a : ct1) {
+				A[i][alphabet.indexOf(a.getLabel())] += -1;
+			}
+
+			++i;
+		}
+		
+		return A;
+	}
 
 	/**
 	 * Computes a spanning tree of the LTS.
@@ -137,69 +187,6 @@ public class SpanningTree {
 		return span;
 	}
 
-	/**
-	 * Compute the rows of the matrix that is subsequently used to
-	 * compute a set of generators for a distribution of tension.
-	 * 
-	 * @return the set of Parikh vectors of the LTS's fundamental cycles
-	 */
-	public Set<HashMap<String, Integer>> cyclesParikhVectors() {
-		// the set of arcs that represent the cycles (also known as chords of the spanning tree)
-		Set<Arc> cycleArcs = CollectionUtils.difference(lts.getEdges(), span.getEdges(),
-				new BinaryPredicate<Arc, Arc>() {
-					public boolean eval(Arc a1, Arc a2) {
-						return (a1.getSourceId().equals(a2.getSourceId()) &&
-								a1.getTargetId().equals(a2.getTargetId()) &&
-								a1.getLabel().equals(a2.getLabel()));
-					}
-				});
-
-		HashSet<HashMap<String, Integer>> rows = new HashSet<HashMap<String, Integer>>();
-		
-		for(Arc t : cycleArcs) {
-			HashMap<String, Integer> vt = new HashMap<String, Integer>();
-			for(String c : alphabet) {
-				vt.put(c, 0);				
-			}
-		
-			State source = span.getNode(t.getSource().getId());
-			State target = span.getNode(t.getTarget().getId());
-			
-			// compute the paths from source/target to initial state
-			Vector<Arc> ct0 = pathToRoot(source, span);
-			Vector<Arc> ct1 = pathToRoot(target, span);
-			
-			while(!ct0.isEmpty() && !ct1.isEmpty() &&
-					ct0.lastElement() == ct1.lastElement()) {
-				ct0.remove(ct0.size() - 1);
-				ct1.remove(ct1.size() - 1);
-			}
-
-			// compute the Parikh vector of this cycle
-			for(Arc a : ct0) {
-				updateWeight(vt, a.getLabel(), 1);
-			}
-			updateWeight(vt, t.getLabel(), 1);
-			for(Arc a : ct1) {
-				updateWeight(vt, a.getLabel(), -1);
-			}
-			
-			// add this row iff it contains at least one non-zero entry
-			for(String label : vt.keySet()) {
-				if(vt.get(label) != 0) {
-					rows.add(vt);
-					break;
-				}
-			}
-		}
-		
-		return Collections.unmodifiableSet(rows);
-	}
-	
-	private static void updateWeight(Map<String, Integer> weights, String label, int offset) {
-		weights.put(label, weights.get(label) + offset);
-	}
-	
 	private static Vector<Arc> pathToRoot(State s, TransitionSystem tree) {
 		Vector<Arc> path = new Vector<Arc>();
 		while(s != tree.getInitialState()) {

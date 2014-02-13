@@ -19,7 +19,6 @@
 
 package uniol.apt.synthesis;
 
-import java.util.HashMap;
 import java.util.Set;
 
 import uniol.apt.adt.ts.TransitionSystem;
@@ -65,19 +64,10 @@ public class LtsSpanningTreeModule extends AbstractModule {
 		SpanningTree span = new SpanningTree(lts);
 		output.setReturnValue("spanningTree", TransitionSystem.class, span.getSpanningTree());
 	
-		System.err.println("Parikh vectors of fundamental cycles:");	
-		Set<HashMap<String, Integer>> rows = span.cyclesParikhVectors();
-		final int n = lts.getAlphabet().size();
-		int[][] A = new int[rows.size()][n];
-		int i = 0;
-		for(HashMap<String, Integer> row : rows) {
-			int j = 0; 
-			for(String a : span.getOrderedAlphabet()) {
-				A[i][j++] = row.get(a);
-			}
-			++i;
-			System.err.println(row);
-		}
+		System.err.println("Parikh vectors of fundamental cycles:");
+		int[][] A = span.matrix();
+		System.err.println("matrix:");
+		LinearAlgebra.printMatrix(A);
 		
 		System.err.println("generators:");	
 		Set<int[]> generators = LinearAlgebra.solutionBasis(A);

@@ -49,8 +49,8 @@ public class LinearAlgebra {
 		int[][] B = linearlyIndependentRows(A);		
 		int[][] U = computeHNF(B)[1];
 	
-		int m = A.length;
-		int n = A[0].length;
+		int m = B.length;
+		int n = B[0].length;
 	
 		Set<int[]> generators = new HashSet<int[]>();
 		for(int k = m; k < n; ++k) {
@@ -294,9 +294,11 @@ public class LinearAlgebra {
 				}
 			}
 
-			double pivot = B[i][j];
-			for(int k=0; k<n; ++k) {
-				B[i][k] /= pivot;
+			double pivot = B[i][j];			
+			if(pivot != 0.0) {
+				for(int k=0; k<n; ++k) {
+					B[i][k] /= pivot;
+				}
 			}
 
 			for(int l=i+1; l<m; ++l) {
@@ -316,7 +318,7 @@ public class LinearAlgebra {
 		Vector<Integer> nonZeroRows = new Vector<Integer>();
 		for(int i=0; i<m; ++i) {
 			for(j=0; j<n; ++j) {
-				if(A[i][j] != 0) {
+				if(B[i][j] != 0.0) {
 					nonZeroRows.add(i);
 					break;
 				}
@@ -389,6 +391,31 @@ public class LinearAlgebra {
 		}
 
 		final String format = "%" + (longest+2) + "d";
+
+		for(int i=0; i<m; ++i) {
+			for(int j=0; j<n; ++j) {
+				System.out.print(String.format(format, A[i][j]));
+			}
+			System.out.println();
+		}
+	}
+	
+	public static void printMatrix(double[][] A) {
+		assert(A != null && A.length > 0);
+		int m = A.length;
+		int n = A[0].length;
+
+		// find the entry with the longest string representation
+		int longest = 0;
+		for(int i=0; i<m; ++i) {
+			for(int j=0; j<n; ++j) {
+				String s = String.format("%3.3f", A[i][j]);
+				if(s.length() > longest)
+					longest = s.length();
+			}
+		}
+
+		final String format = "%" + (longest+2) + ".3f";
 
 		for(int i=0; i<m; ++i) {
 			for(int j=0; j<n; ++j) {
