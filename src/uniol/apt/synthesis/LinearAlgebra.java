@@ -262,6 +262,13 @@ public class LinearAlgebra {
 		// apply Gaussian elimination
 		double[][] B = matrixToDouble(A);
 				
+		/*
+		 * TODO:
+		 *   - use ArrayList<double[]> instead of double[][]?
+		 *     should remove some overhead from the swapRows operation
+		 *   - get rid of the boolean swapped
+		 */
+		
 		// keep a map from row numbers in the resulting matrix
 		// to column numbers in the original matrix
 		int[] rowIdx = new int[m];
@@ -390,5 +397,26 @@ public class LinearAlgebra {
 			System.out.println();
 		}
 	}
-
+	
+	/** 
+	 * Compute the dot product of two integer vectors
+	 * of the same dimension.
+	 * 
+	 * @param a vector of dimension n
+	 * @param b vector of dimension n
+	 * @return the dot product of a and b
+	 */
+	public static int dotProduct(int[] a, int[] b) {
+		assert(a != null && b != null);
+		assert(a.length == b.length);
+		
+		int result = 0;
+		
+		for(int i=0; i<a.length; ++i) {
+			result += a[i] * b[i];
+		}
+		
+		return result;
+	}
+ 
 }
