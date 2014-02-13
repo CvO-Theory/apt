@@ -19,9 +19,11 @@
 
 package uniol.apt.synthesis;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -44,9 +46,10 @@ import uniol.apt.util.Predicate;
  * @author Thomas Strathmann
  */
 public class SpanningTree {
-	
+
 	private final TransitionSystem lts;
 	private TransitionSystem span;
+	private ArrayList<String> alphabet;
 	
 	/**
 	 * Construct a spanning tree of this LTS
@@ -56,8 +59,23 @@ public class SpanningTree {
 	 */
 	public SpanningTree(TransitionSystem lts) {
 		this.lts = lts;
+		
 		// compute the spanning tree eagerly to simplify things later on
 		this.span = computeSpanningTree(lts);
+		
+		// fix a linear order on the alphabet of lts
+		this.alphabet = new ArrayList<String>(lts.getAlphabet());
+	}
+	
+	/**
+	 * Returns the alphabet in the same order that is used
+	 * for all operations inside this class that depend on 
+	 * a linear ordering of the LTS's alphabet.
+	 * 
+	 * @return the alphabet (in a fixed linear order)
+	 */
+	public List<String> getOrderedAlphabet() {
+		return Collections.unmodifiableList(this.alphabet);
 	}
 	
 	/**
@@ -140,7 +158,7 @@ public class SpanningTree {
 		
 		for(Arc t : cycleArcs) {
 			HashMap<String, Integer> vt = new HashMap<String, Integer>();
-			for(String c : lts.getAlphabet()) {
+			for(String c : alphabet) {
 				vt.put(c, 0);				
 			}
 		

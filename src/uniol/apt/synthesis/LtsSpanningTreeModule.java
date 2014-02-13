@@ -72,8 +72,8 @@ public class LtsSpanningTreeModule extends AbstractModule {
 		int i = 0;
 		for(HashMap<String, Integer> row : rows) {
 			int j = 0; 
-			for(int c : row.values()) {
-				A[i][j++] = c;
+			for(String a : span.getOrderedAlphabet()) {
+				A[i][j++] = row.get(a);
 			}
 			++i;
 			System.err.println(row);
@@ -81,8 +81,8 @@ public class LtsSpanningTreeModule extends AbstractModule {
 		
 		System.err.println("generators:");	
 		Set<int[]> generators = LinearAlgebra.solutionBasis(A);
-		for(String a : lts.getAlphabet()) {
-			System.err.print(String.format("  %3s", a	));
+		for(String a : span.getOrderedAlphabet()) {
+			System.err.print(String.format("  %3s", a));
 		}
 		System.err.println();
 		for(int[] g : generators) {
