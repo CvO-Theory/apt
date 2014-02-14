@@ -54,6 +54,20 @@ public class State extends Node<TransitionSystem, Arc, State> implements Compara
 	public int compareTo(State that) {		
 		return StringComparator.staticCompare(this.getId(), that.getId());
 	}
+
+	/**
+	 * Check if the current state activates the event e.
+	 * 
+	 * @param e an alphabet symbol
+	 * @return true iff there is an arc originating at this state with inscription e
+	 */
+	public boolean activates(String e) {
+		for(Arc a : this.getPostsetEdges()) {
+			if(a.getLabel().equals(e))
+				return true;
+		}
+		return false;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

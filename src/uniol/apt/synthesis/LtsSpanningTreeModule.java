@@ -142,6 +142,8 @@ public class LtsSpanningTreeModule extends AbstractModule {
 		
 		synth.checkStateSeparation();
 		
+		synth.checkStateEventSeparation();
+		
 		// ESSA
 		
 	}
