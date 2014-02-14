@@ -21,8 +21,6 @@ package uniol.apt.synthesis;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -49,6 +47,7 @@ public class SpanningTree {
 	private final TransitionSystem lts;
 	private TransitionSystem span;
 	private ArrayList<String> alphabet;
+	private ArrayList<State> states;
 	
 	/**
 	 * Construct a spanning tree of this LTS
@@ -64,10 +63,24 @@ public class SpanningTree {
 		
 		// fix a linear order on the alphabet of lts
 		this.alphabet = new ArrayList<String>(lts.getAlphabet());
+		
+		// fix a linear order on the states of lts
+		this.states = new ArrayList<State>(lts.getNodes());
 	}
 	
 	/**
 	 * Returns the alphabet in the same order that is used
+	 * for all operations inside this class that depend on 
+	 * a linear ordering of the LTS's state set.
+	 * 
+	 * @return the state set (in a fixed linear order)
+	 */
+	public List<State> getOrderedStates() {
+		return Collections.unmodifiableList(this.states);
+	}
+	
+	/**
+	 * Returns the state set in the same order that is used
 	 * for all operations inside this class that depend on 
 	 * a linear ordering of the LTS's alphabet.
 	 * 
@@ -95,10 +108,10 @@ public class SpanningTree {
 	 * @param s the state 
 	 * @return its Parikh vector
 	 */
-	public ParikhVector parikhVector(State s) {
+	public int[] parikhVector(State s) {
 		s = span.getNode(s.getId());
 		Vector<Arc> path = pathToRoot(s, span);
-		return new ParikhVector(lts, path);
+		return new ParikhVector(lts, path).getPVLexicalOrder();
 	}
 	
 	/**

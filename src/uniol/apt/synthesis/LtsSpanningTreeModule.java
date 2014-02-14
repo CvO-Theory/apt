@@ -93,43 +93,59 @@ public class LtsSpanningTreeModule extends AbstractModule {
 			System.err.println();
 		}
 		
-//		System.err.println("some path integrals:");
-//		for(int[] eta : generators) {
-//			for(State s1 : lts.getNodes()) {
-//				for(State s2 : lts.getNodes()) {
-//					System.err.print("(" + s1 + ", " + s2 + ") [ " + eta + " ] = ");
-//					int[] psi = span.pathWeights(s1, s2);
-//					int integral = LinearAlgebra.dotProduct(eta, psi);
-//					System.err.println(integral);
-//				}
-//			}
-//		}
+		/*
+		System.err.println("some path integrals:");
+		for(int[] eta : generators) {
+			for(State s1 : lts.getNodes()) {
+				for(State s2 : lts.getNodes()) {
+					System.err.print("(" + s1 + ", " + s2 + ") [ " + eta + " ] = ");
+					int[] psi = span.pathWeights(s1, s2);
+					int integral = LinearAlgebra.dotProduct(eta, psi);
+					System.err.println(integral);
+				}
+			}
+		}
+		*/
 		
+		/*
+		final int n = lts.getNodes().size();
+		
+		// SSA
 		System.err.println("Checking SSA: ");
 		ArrayList<int[]> columns = new ArrayList<int[]>(lts.getNodes().size()); 
-		//HashSet<int[]> columns = new HashSet<int[]>();//lts.getNodes().size());
-		for(State s : lts.getNodes()) {
+		for(State s : span.getOrderedStates()) {
 			int[] col = new int[generators.size()];
 			int i = 0;
 			System.err.print("  " + s + ": ");
 			for(int[] eta : generators) {
-				int[] psi = span.parikhVector(s).getPVLexicalOrder();
+				int[] psi = span.parikhVector(s);
 				col[i++] = LinearAlgebra.dotProduct(eta, psi);
 				System.err.print(col[i-1] + "  ");
 			}
 			System.err.println();
 			columns.add(col);
 		}
-		out: for(int[] c1 : columns) {
-			for(int[] c2 : columns) {
-				if(c1 == c2) continue;
-				if(Arrays.equals(c1, c2)) {
-					System.err.println("state separation failure.");
-					break out; 
+		
+		for(int i=0; i<n; ++i) {
+			for(int j=i+1; j<n; ++j) {
+				if(Arrays.equals(columns.get(i), columns.get(j))) {
+					State si = span.getOrderedStates().get(i);
+					State sj = span.getOrderedStates().get(j);
+					System.out.println("States " + si.getId() + " and " + sj.getId() + 
+							" not separated pairwise.");
 				}
-			}
+ 			}
 		}
+		*/
+		
+		Synthesis synth = new Synthesis(lts);
+		
+		synth.checkStateSeparation();
+		
+		// ESSA
+		
 	}
+	
 
 	@Override
 	public String getTitle() {
