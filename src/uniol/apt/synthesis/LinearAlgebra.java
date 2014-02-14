@@ -290,7 +290,7 @@ public class LinearAlgebra {
 					}
 				}
 				if(!swapped) {
-					++j;
+					if(++j >= n) break;
 				}
 			}
 
@@ -310,9 +310,7 @@ public class LinearAlgebra {
 				}
 			}
 
-			++j;
-			if(j >= n)
-				break;
+			if(++j >= n) break;
 		}
 	
 		// copy rows in the original matrix corresponding to
