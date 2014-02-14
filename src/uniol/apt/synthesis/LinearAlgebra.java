@@ -311,8 +311,10 @@ public class LinearAlgebra {
 			}
 
 			++j;
+			if(j >= n)
+				break;
 		}
-		
+	
 		// copy rows in the original matrix corresponding to
 		// non-zero rows in the echelon form of the matrix
 		Vector<Integer> nonZeroRows = new Vector<Integer>();
