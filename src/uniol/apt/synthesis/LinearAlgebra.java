@@ -61,7 +61,7 @@ public class LinearAlgebra {
 			generators.add(gk);
 		}
 	
-		return Collections.unmodifiableSet(generators);
+		return generators;
 	}
 
 	/**

@@ -263,9 +263,14 @@ public class ParikhVector {
 	 * <p/>
 	 * @return the parikh vector integers.
 	 */
-	public Integer[] getPVLexicalOrder() {
+	public int[] getPVLexicalOrder() {
 		ensureConsistency();
-		return pv.values().toArray(new Integer[pv.size()]);
+		int[] v = new int[pv.size()];
+		int i = 0;
+		for(int n : pv.values()) {
+			v[i++] = n; 
+		}
+		return v;
 	}
 
 	/**

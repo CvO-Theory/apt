@@ -21,6 +21,8 @@ package uniol.apt.synthesis;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -94,8 +96,8 @@ public class SpanningTree {
 	 * @return its Parikh vector
 	 */
 	public ParikhVector parikhVector(State s) {
-		// TODO: should probably use memoization
-		Vector<Arc> path = pathToRoot(s, lts);
+		s = span.getNode(s.getId());
+		Vector<Arc> path = pathToRoot(s, span);
 		return new ParikhVector(lts, path);
 	}
 	
@@ -151,6 +153,41 @@ public class SpanningTree {
 		
 		return A;
 	}
+	
+	/**
+	 * Compute an undirected elementary path from 
+	 * source to target and return a vector that
+	 * tallies for each forward arc along the path
+	 * the inscription positively and for each backward
+	 * arc its inscription negatively, giving a mapping
+	 * from the alphabet of the LTS into the integers.
+	 * 
+	 * @param source a state
+	 * @param target a state
+	 * @return the vector described above
+	 */
+	public int[] pathWeights(State source, State target) {
+		source = span.getNode(source.getId());
+		target = span.getNode(target.getId());
+		
+		Vector<Arc> ct0 = pathToRoot(source, span);
+		Vector<Arc> ct1 = pathToRoot(target, span);
+
+		while(!ct0.isEmpty() && !ct1.isEmpty() &&
+				ct0.lastElement() == ct1.lastElement()) {
+			ct0.remove(ct0.size() - 1);
+			ct1.remove(ct1.size() - 1);
+		}
+
+		int[] v = new int[alphabet.size()];
+
+		for(Arc a : ct0)
+			v[alphabet.indexOf(a.getLabel())] += 1;
+		for(Arc a : ct1)
+			v[alphabet.indexOf(a.getLabel())] += -1;
+
+		return v;
+	}
 
 	/**
 	 * Computes a spanning tree of the LTS.
@@ -196,5 +233,5 @@ public class SpanningTree {
 		}
 		return path;
 	}
-		
+
 }

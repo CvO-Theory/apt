@@ -19,8 +19,12 @@
 
 package uniol.apt.synthesis;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
+import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -71,6 +75,13 @@ public class LtsSpanningTreeModule extends AbstractModule {
 		
 		System.err.println("generators:");	
 		Set<int[]> generators = LinearAlgebra.solutionBasis(A);
+		// if the generating set is empty, add the zero vector
+		// to ensure that later stages of the algorithm work as expected
+		if(generators.isEmpty()) {
+			int[] zero = new int[lts.getAlphabet().size()];
+			generators.add(zero);
+		}
+		
 		for(String a : span.getOrderedAlphabet()) {
 			System.err.print(String.format("  %3s", a));
 		}
@@ -81,7 +92,43 @@ public class LtsSpanningTreeModule extends AbstractModule {
 			}
 			System.err.println();
 		}
-
+		
+//		System.err.println("some path integrals:");
+//		for(int[] eta : generators) {
+//			for(State s1 : lts.getNodes()) {
+//				for(State s2 : lts.getNodes()) {
+//					System.err.print("(" + s1 + ", " + s2 + ") [ " + eta + " ] = ");
+//					int[] psi = span.pathWeights(s1, s2);
+//					int integral = LinearAlgebra.dotProduct(eta, psi);
+//					System.err.println(integral);
+//				}
+//			}
+//		}
+		
+		System.err.println("Checking SSA: ");
+		ArrayList<int[]> columns = new ArrayList<int[]>(lts.getNodes().size()); 
+		//HashSet<int[]> columns = new HashSet<int[]>();//lts.getNodes().size());
+		for(State s : lts.getNodes()) {
+			int[] col = new int[generators.size()];
+			int i = 0;
+			System.err.print("  " + s + ": ");
+			for(int[] eta : generators) {
+				int[] psi = span.parikhVector(s).getPVLexicalOrder();
+				col[i++] = LinearAlgebra.dotProduct(eta, psi);
+				System.err.print(col[i-1] + "  ");
+			}
+			System.err.println();
+			columns.add(col);
+		}
+		out: for(int[] c1 : columns) {
+			for(int[] c2 : columns) {
+				if(c1 == c2) continue;
+				if(Arrays.equals(c1, c2)) {
+					System.err.println("state separation failure.");
+					break out; 
+				}
+			}
+		}
 	}
 
 	@Override
