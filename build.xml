@@ -68,7 +68,7 @@
 		</java>
 	</target>
 
-	<target name="javac" description="Compile java source to bytecode" depends="antlr">
+	<target name="javac" description="Compile java source to bytecode"> <!--depends="antlr" -->
 		<mkdir dir="classes"/>
 		<depend srcdir="src:generated-src" destdir="classes" />
 		<javac includes="**" encoding="utf-8"
