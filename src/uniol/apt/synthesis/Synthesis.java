@@ -1,9 +1,9 @@
 package uniol.apt.synthesis;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,8 +39,9 @@ public class Synthesis {
 		
 		int[][] A = span.matrix();
 		this.generators = new ArrayList<int[]>(LinearAlgebra.solutionBasis(A));
-		// if the generating set is empty, add the zero vector
-		// to ensure that later stages of the algorithm work as expected
+		
+		// if the generating set is empty, add the zero vector to
+		// ensure that later stages of the algorithm work as expected
 		if(generators.isEmpty()) {
 			int[] zero = new int[lts.getAlphabet().size()];
 			generators.add(zero);
@@ -97,13 +98,19 @@ public class Synthesis {
 				if(s.activates(e)) continue;
 
 				final ExpressionsBasedModel model = buildSystem(s, e);
-				final IntegerSolver solver = IntegerSolver.make(model);
-				Optimisation.Result result = solver.solve();
+				//final IntegerSolver solver = IntegerSolver.make(model);
+				Optimisation.Result result = model.minimise();//solver.solve();
 
 				// if the system has a solution, collect the results
 				if(hasSolution(result)) {
 					IntVector sol = new IntVector(generators.size());
 					for(int i=0; i<generators.size(); ++i) {
+						/*
+						BigDecimal x = result.get(i);
+						BigDecimal rounded = x.round(MathContext.DECIMAL32);
+						System.err.println("****** z_" + i + " = " + x + " rounded to " + rounded);
+						int value = rounded.intValueExact();
+						*/
 						int value = result.get(i).intValueExact();
 						sol.v[i] = value;
 					}
@@ -207,7 +214,7 @@ public class Synthesis {
 			
 			final Expression c = model.addExpression("").upper(minusOne);
 			for(int i=0; i<generators.size(); ++i) {
-				c.setLinearFactor(i /*vars.get(i)*/, beta(i, s, s2));
+				c.setLinearFactor(i, beta(i, s, s2));
 			}
 		}
 		
@@ -240,9 +247,11 @@ public class Synthesis {
 	private int pathIntegral(State s1, State s2, int[] eta) {
 		int[] psi = span.pathWeights(s1, s2);
 		int pi = LinearAlgebra.dotProduct(eta, psi);
+		/*
 		System.err.println(String.format("integral(%s, %s, %s) = %d",
 				s1.getId(), s2.getId(), Arrays.toString(eta), pi));
 		System.err.println("   [with weights: " + Arrays.toString(psi) + "]");
+		*/
 		return pi;
 	}
 	

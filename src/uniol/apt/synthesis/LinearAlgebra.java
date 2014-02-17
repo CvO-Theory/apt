@@ -46,7 +46,12 @@ public class LinearAlgebra {
 	 */
 	public static Set<int[]> solutionBasis(int[][] A) {
 		int[][] B = linearlyIndependentRows(A);		
-		int[][] U = computeHNF(B)[1];
+		int[][] U;
+		try {
+			U = computeHNF(B)[1];
+		} catch(MatrixEmptyException e) {
+			return new HashSet<int[]>();
+		}
 	
 		int m = B.length;
 		int n = B[0].length;
@@ -74,11 +79,12 @@ public class LinearAlgebra {
 	 * @return a pair (H, U) where H is the Hermite normal form of A
 	 * 		and U is a unimodular matrix such that U*A = H 
 	 */
-	private static int[][][] computeHNF(int[][] A) {
+	private static int[][][] computeHNF(int[][] A) throws MatrixEmptyException {
 		assert(A != null);
 		assert(A.length > 0);
 		
 		final int m = A.length;
+		if(m == 0) throw new MatrixEmptyException();
 		final int n = A[0].length;
 		
 		assert(m <= n);
@@ -159,6 +165,9 @@ public class LinearAlgebra {
 				j += 1;
 			} while(j <= i-1);
 		}
+		
+		System.out.println("A = ");
+		printMatrix(A);
 
 		return null;
 	}
