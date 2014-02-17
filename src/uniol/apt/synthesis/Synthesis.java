@@ -3,9 +3,11 @@ package uniol.apt.synthesis;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeSet;
 
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -237,7 +239,11 @@ public class Synthesis {
 	
 	private int pathIntegral(State s1, State s2, int[] eta) {
 		int[] psi = span.pathWeights(s1, s2);
-		return LinearAlgebra.dotProduct(eta, psi);
+		int pi = LinearAlgebra.dotProduct(eta, psi);
+		System.err.println(String.format("integral(%s, %s, %s) = %d",
+				s1.getId(), s2.getId(), Arrays.toString(eta), pi));
+		System.err.println("   [with weights: " + Arrays.toString(psi) + "]");
+		return pi;
 	}
 	
 	
@@ -272,12 +278,12 @@ public class Synthesis {
 			sb.append(Arrays.toString(generator));
 			sb.append(System.lineSeparator());
 			
-			for(State s : sigma.keySet()) {
+			for(State s : new TreeSet<>(sigma.keySet())) {
 				sb.append(String.format("sigma(%s) = %2d", s.getId(), sigma.get(s)));
 				sb.append(System.lineSeparator());
 			}
 			
-			for(String e : pre.keySet()) {
+			for(String e : new TreeSet<>(pre.keySet())) {
 				sb.append(String.format("pre(%s) = %2d\tpost(%s) = %2d",
 						e, pre.get(e), e, post.get(e)));
 				sb.append(System.lineSeparator());

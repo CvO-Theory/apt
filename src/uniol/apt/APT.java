@@ -145,6 +145,7 @@ import uniol.apt.module.impl.SimpleModulePreconditionsChecker;
 import uniol.apt.pnanalysis.PnAnalysisModule;
 import uniol.apt.pnanalysis.RandomTNetGeneratorModule;
 import uniol.apt.synthesis.LtsSpanningTreeModule;
+import uniol.apt.synthesis.SynthesisModule;
 import uniol.apt.ui.ParametersParser;
 import uniol.apt.ui.ParametersTransformer;
 import uniol.apt.ui.Printer;
@@ -254,6 +255,7 @@ public class APT {
 		new StronglyLiveModule(),
 		new Synet2AptModule(),
 		new SynthesizeDistributedLTSModule(),
+		new SynthesisModule(),
 		new TNetGeneratorModule(),
 		new TNetModule(),
 		new TotallyReachableModule(),

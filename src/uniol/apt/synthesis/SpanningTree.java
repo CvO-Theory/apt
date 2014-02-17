@@ -195,9 +195,9 @@ public class SpanningTree {
 		int[] v = new int[alphabet.size()];
 
 		for(Arc a : ct0)
-			v[alphabet.indexOf(a.getLabel())] += 1;
-		for(Arc a : ct1)
 			v[alphabet.indexOf(a.getLabel())] += -1;
+		for(Arc a : ct1)
+			v[alphabet.indexOf(a.getLabel())] +=  1;
 
 		return v;
 	}
