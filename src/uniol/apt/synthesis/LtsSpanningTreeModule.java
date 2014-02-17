@@ -20,11 +20,8 @@
 package uniol.apt.synthesis;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
-import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -142,9 +139,12 @@ public class LtsSpanningTreeModule extends AbstractModule {
 		
 		synth.checkStateSeparation();
 		
-		synth.checkStateEventSeparation();
-		
-		// ESSA
+		synth.checkStateEventSeparation();		
+
+		ArrayList<int[]> gens = synth.computeAdmissibleRegions();
+		for(Synthesis.Region r : synth.computeRegions(gens)) {
+			System.out.println(r.toString());
+		}
 		
 	}
 	
