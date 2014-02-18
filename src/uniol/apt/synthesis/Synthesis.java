@@ -1,7 +1,6 @@
 package uniol.apt.synthesis;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,14 +8,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 
-import uniol.apt.adt.ts.State;
-import uniol.apt.adt.ts.TransitionSystem;
-
 import org.ojalgo.optimisation.Expression;
 import org.ojalgo.optimisation.ExpressionsBasedModel;
 import org.ojalgo.optimisation.Optimisation;
 import org.ojalgo.optimisation.Variable;
-import org.ojalgo.optimisation.integer.IntegerSolver;
+
+import uniol.apt.adt.ts.State;
+import uniol.apt.adt.ts.TransitionSystem;
 
 public class Synthesis {
 
@@ -37,14 +35,14 @@ public class Synthesis {
 		
 		this.span = new SpanningTree(lts);
 		
-		int[][] A = span.matrix();
-		this.generators = new ArrayList<int[]>(LinearAlgebra.solutionBasis(A));
+		int[][] A = span.matrix();		
+		System.err.println("matrix:");
+		LinearAlgebra.printMatrix(A);
 		
-		// if the generating set is empty, add the zero vector to
-		// ensure that later stages of the algorithm work as expected
-		if(generators.isEmpty()) {
-			int[] zero = new int[lts.getAlphabet().size()];
-			generators.add(zero);
+		generators = new ArrayList<int[]>(LinearAlgebra.solutionBasis(A));
+		System.err.println("generators:");
+		for(int[] g : generators) {
+			System.err.println("  " + Arrays.toString(g));
 		}
 	}
 	
@@ -73,7 +71,7 @@ public class Synthesis {
 					State si = span.getOrderedStates().get(i);
 					State sj = span.getOrderedStates().get(j);
 					System.out.println("States " + si.getId() + " and " + sj.getId() + 
-							" not separated pairwise.");
+							" not separated.");
 					separated = false;
 				}
  			}

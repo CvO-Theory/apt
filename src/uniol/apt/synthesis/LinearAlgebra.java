@@ -42,15 +42,34 @@ public class LinearAlgebra {
 	 * system A * x = 0.
 	 * 
 	 * @param A the coefficient matrix
-	 * @return a set of generators
+	 * @return a set of generators (or null if matrix is empty)
 	 */
 	public static Set<int[]> solutionBasis(int[][] A) {
-		int[][] B = linearlyIndependentRows(A);		
-		int[][] U;
-		try {
-			U = computeHNF(B)[1];
-		} catch(MatrixEmptyException e) {
-			return new HashSet<int[]>();
+		
+		// check if A is empty
+		if(A.length == 0 || A[0].length == 0) {
+			return null;
+		}
+		
+		if(allZeroRows(A)) {
+			HashSet<int[]> generators = new HashSet<>();
+			final int n = A[0].length;
+			for(int i=0; i<n; ++i) {
+				int[] g = new int[n];
+				g[i] = 1;
+				generators.add(g);
+			}
+			return generators;
+		}
+		
+		final int[][] B = linearlyIndependentRows(A);
+		int[][] U = computeHNF(B)[1];
+		
+		if(U == null) {
+			HashSet<int[]> generators = new HashSet<>();
+			int[] g = new int[A[0].length];
+			generators.add(g);
+			return generators;
 		}
 	
 		int m = B.length;
@@ -79,12 +98,12 @@ public class LinearAlgebra {
 	 * @return a pair (H, U) where H is the Hermite normal form of A
 	 * 		and U is a unimodular matrix such that U*A = H 
 	 */
-	private static int[][][] computeHNF(int[][] A) throws MatrixEmptyException {
+	private static int[][][] computeHNF(int[][] A) {
 		assert(A != null);
 		assert(A.length > 0);
 		
 		final int m = A.length;
-		if(m == 0) throw new MatrixEmptyException();
+		if(m == 0) return null;
 		final int n = A[0].length;
 		
 		assert(m <= n);
@@ -250,6 +269,20 @@ public class LinearAlgebra {
 		return id;
 	}
 
+	private static boolean allZeroRows(int[][] A) {
+		if(A == null || A.length == 0 || A[0].length == 0)
+			return false;
+		
+		for(int i=0; i<A.length; ++i) {
+			for(int j=0; j<A[0].length; ++j) {
+				if(A[i][j] != 0)
+					return false;
+			}
+		}
+		
+		return true;
+	}
+
 	/**
 	 * Return a matrix of the linearly independent rows
 	 * of a given matrix.
@@ -383,6 +416,27 @@ public class LinearAlgebra {
 		return target;
 	}
 
+	/** 
+	 * Compute the dot product of two integer vectors
+	 * of the same dimension.
+	 * 
+	 * @param a vector of dimension n
+	 * @param b vector of dimension n
+	 * @return the dot product of a and b
+	 */
+	public static int dotProduct(int[] a, int[] b) {
+		assert(a != null && b != null);
+		assert(a.length == b.length);
+		
+		int result = 0;
+		
+		for(int i=0; i<a.length; ++i) {
+			result += a[i] * b[i];
+		}
+		
+		return result;
+	}
+
 	public static void printMatrix(int[][] A) {
 		assert(A != null && A.length > 0);
 		int m = A.length;
@@ -431,27 +485,6 @@ public class LinearAlgebra {
 			}
 			System.out.println();
 		}
-	}
-	
-	/** 
-	 * Compute the dot product of two integer vectors
-	 * of the same dimension.
-	 * 
-	 * @param a vector of dimension n
-	 * @param b vector of dimension n
-	 * @return the dot product of a and b
-	 */
-	public static int dotProduct(int[] a, int[] b) {
-		assert(a != null && b != null);
-		assert(a.length == b.length);
-		
-		int result = 0;
-		
-		for(int i=0; i<a.length; ++i) {
-			result += a[i] * b[i];
-		}
-		
-		return result;
 	}
  
 }
