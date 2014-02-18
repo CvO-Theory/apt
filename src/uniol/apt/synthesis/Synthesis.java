@@ -97,10 +97,10 @@ public class Synthesis {
 
 				final ExpressionsBasedModel model = buildSystem(s, e);
 				//final IntegerSolver solver = IntegerSolver.make(model);
-				Optimisation.Result result = model.minimise();//solver.solve();
+				Optimisation.Result result = model.solve();
 
 				// if the system has a solution, collect the results
-				if(hasSolution(result)) {
+				if(result.getState().isSuccess()) {
 					IntVector sol = new IntVector(generators.size());
 					for(int i=0; i<generators.size(); ++i) {
 						/*
@@ -111,6 +111,7 @@ public class Synthesis {
 						*/
 						int value = result.get(i).intValueExact();
 						sol.v[i] = value;
+						System.err.println(String.format("z%d = %2d", i, value));
 					}
 					solutions.add(sol);
 				} else {
@@ -162,8 +163,7 @@ public class Synthesis {
 		final List<String> alphabet = span.getOrderedAlphabet();
 		
 		for(int[] eta : generators) {
-			Region r = new Region();
-			r.generator = eta;
+			Region r = new Region(eta);
 			
 			int sigma_s0 = 0;
 			for(State s : lts.getNodes()) {
@@ -180,7 +180,7 @@ public class Synthesis {
 			
 			for(int i=0; i<alphabet.size(); ++i) {
 				String e = alphabet.get(i); 
-						
+				
 				int min = Integer.MAX_VALUE;
 				for(State s : lts.getNodes()) {
 					if(s.activates(e)) {
@@ -207,36 +207,37 @@ public class Synthesis {
 			model.addVariable(zi);
 		}
 		
+		System.err.println("system for (" + s.getId() + ", " + e + ")");
+		
 		for(State s2 : lts.getNodes()) {
 			if(!s2.activates(e)) continue;
 			
-			final Expression c = model.addExpression("").upper(minusOne);
+			System.err.print(s2.getId() + ": ");
+			
+			final String id = String.format("c_%s_%s_%s", s.getId(), s2.getId(), e);
+			final Expression c = model.addExpression(id).upper(minusOne);
 			for(int i=0; i<generators.size(); ++i) {
-				c.setLinearFactor(i, beta(i, s, s2));
+				int b = beta(i, s, s2);
+				c.setLinearFactor(i, b);
+				
+				System.err.print(String.format("%s%2d * z%d",
+						i > 0 ? " + " : "",	b, i));	
 			}
+			
+			System.err.println(" < 0");
 		}
 		
 		return model;
-	}
-
-	// TODO: make sure that this is really correct!
-	private static boolean hasSolution(Optimisation.Result result) {
-		switch(result.getState()) {
-		case OPTIMAL:
-		case DISTINCT:
-		case INDISTINCT:
-		case FEASIBLE:
-			return true;
-
-		default:
-			return false;
-		}
 	}
 
 	private int beta(int i, State s1, State s2) {
 		int[] eta = generators.get(i);
 		int[] psi1 = span.parikhVector(s1);
 		int[] psi2 = span.parikhVector(s2);
+		/*
+		System.out.println("## psi(P_" + s1.getId() + ") = " + Arrays.toString(psi1));
+		System.out.println("## psi(P_" + s2.getId() + ") = " + Arrays.toString(psi2));
+		*/
 		int a1 = LinearAlgebra.dotProduct(eta, psi1);
 		int a2 = LinearAlgebra.dotProduct(eta, psi2);
 		return a1 - a2;
@@ -246,9 +247,9 @@ public class Synthesis {
 		int[] psi = span.pathWeights(s1, s2);
 		int pi = LinearAlgebra.dotProduct(eta, psi);
 		/*
-		System.err.println(String.format("integral(%s, %s, %s) = %d",
+		System.err.print(String.format("integral(%s, %s, %s) = %d",
 				s1.getId(), s2.getId(), Arrays.toString(eta), pi));
-		System.err.println("   [with weights: " + Arrays.toString(psi) + "]");
+		System.err.println("  [with weights: " + Arrays.toString(psi) + "]");
 		*/
 		return pi;
 	}
@@ -277,6 +278,10 @@ public class Synthesis {
 		public HashMap<State, Integer> sigma = new HashMap<>();
 		public HashMap<String, Integer> pre = new HashMap<>();
 		public HashMap<String, Integer> post = new HashMap<>();
+		
+		public Region(final int[] generator) {
+			this.generator = generator;
+		}
 		
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
