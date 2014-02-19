@@ -19,9 +19,6 @@
 
 package uniol.apt.synthesis;
 
-import java.util.ArrayList;
-import java.util.Set;
-
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -64,88 +61,6 @@ public class LtsSpanningTreeModule extends AbstractModule {
 		TransitionSystem lts = input.getParameter("lts", TransitionSystem.class);
 		SpanningTree span = new SpanningTree(lts);
 		output.setReturnValue("spanningTree", TransitionSystem.class, span.getSpanningTree());
-	
-		System.err.println("Parikh vectors of fundamental cycles:");
-		int[][] A = span.matrix();
-		System.err.println("matrix:");
-		LinearAlgebra.printMatrix(A);
-		
-		System.err.println("generators:");	
-		Set<int[]> generators = LinearAlgebra.solutionBasis(A);
-		// if the generating set is empty, add the zero vector
-		// to ensure that later stages of the algorithm work as expected
-		if(generators.isEmpty()) {
-			int[] zero = new int[lts.getAlphabet().size()];
-			generators.add(zero);
-		}
-		
-		for(String a : span.getOrderedAlphabet()) {
-			System.err.print(String.format("  %3s", a));
-		}
-		System.err.println();
-		for(int[] g : generators) {
-			for(int l=0; l<g.length; ++l) {
-				System.err.print(String.format("  %3d", g[l]));
-			}
-			System.err.println();
-		}
-		
-		/*
-		System.err.println("some path integrals:");
-		for(int[] eta : generators) {
-			for(State s1 : lts.getNodes()) {
-				for(State s2 : lts.getNodes()) {
-					System.err.print("(" + s1 + ", " + s2 + ") [ " + eta + " ] = ");
-					int[] psi = span.pathWeights(s1, s2);
-					int integral = LinearAlgebra.dotProduct(eta, psi);
-					System.err.println(integral);
-				}
-			}
-		}
-		*/
-		
-		/*
-		final int n = lts.getNodes().size();
-		
-		// SSA
-		System.err.println("Checking SSA: ");
-		ArrayList<int[]> columns = new ArrayList<int[]>(lts.getNodes().size()); 
-		for(State s : span.getOrderedStates()) {
-			int[] col = new int[generators.size()];
-			int i = 0;
-			System.err.print("  " + s + ": ");
-			for(int[] eta : generators) {
-				int[] psi = span.parikhVector(s);
-				col[i++] = LinearAlgebra.dotProduct(eta, psi);
-				System.err.print(col[i-1] + "  ");
-			}
-			System.err.println();
-			columns.add(col);
-		}
-		
-		for(int i=0; i<n; ++i) {
-			for(int j=i+1; j<n; ++j) {
-				if(Arrays.equals(columns.get(i), columns.get(j))) {
-					State si = span.getOrderedStates().get(i);
-					State sj = span.getOrderedStates().get(j);
-					System.out.println("States " + si.getId() + " and " + sj.getId() + 
-							" not separated pairwise.");
-				}
- 			}
-		}
-		*/
-		
-		Synthesis synth = new Synthesis(lts);
-		
-		synth.checkStateSeparation();
-		
-		synth.checkStateEventSeparation();		
-
-		ArrayList<int[]> gens = synth.computeAdmissibleRegions();
-		for(Synthesis.Region r : synth.computeRegions(gens)) {
-			System.out.println(r.toString());
-		}
-		
 	}
 	
 
