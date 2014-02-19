@@ -60,11 +60,15 @@ public class SynthesisModule extends AbstractModule {
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("net", PetriNet.class,
 				ModuleOutputSpec.PROPERTY_FILE, ModuleOutputSpec.PROPERTY_RAW);
+		outputSpec.addReturnValue("synthesizable", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);		
 	}
 
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		TransitionSystem lts = input.getParameter("lts", TransitionSystem.class);
+		
+		// return values
+		boolean synthesizable = true;
 		
 		// handle the special case of the empty LTS
 		if(lts.getEdges().isEmpty()) {
@@ -73,11 +77,11 @@ public class SynthesisModule extends AbstractModule {
 			return;
 		}
 				
+		// synthesise a net if possible
 		Synthesis synth = new Synthesis(lts);
 		
-		synth.checkStateSeparation();
-		
-		synth.checkStateEventSeparation();		
+		synthesizable = synth.checkStateSeparation();			
+		synthesizable = synth.checkStateEventSeparation();		
 		
 		ArrayList<int[]> gens = synth.computeAdmissibleRegions();
 		
@@ -103,8 +107,9 @@ public class SynthesisModule extends AbstractModule {
 			}
 			
 			System.out.println(r.toString());
-		}		
+		}
 		
+		output.setReturnValue("synthesizable", Boolean.class, synthesizable);
 		output.setReturnValue("net", PetriNet.class, net);
 	}
 	
