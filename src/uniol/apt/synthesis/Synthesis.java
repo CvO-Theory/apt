@@ -1,6 +1,7 @@
 package uniol.apt.synthesis;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,52 +27,67 @@ public class Synthesis {
 	
 	private HashSet<IntVector> solutions;
 	
+	private final boolean loggingEnabled;
+	
 	
 	private static final BigDecimal minusOne = new BigDecimal(-1);
 	
 	
 	public Synthesis(TransitionSystem lts) {
+		this(lts, false);
+	}
+	
+	public Synthesis(TransitionSystem lts, boolean loggingEnabled) {
+		this.loggingEnabled = loggingEnabled;
+		
 		this.lts = lts;
 		
 		this.span = new SpanningTree(lts);
 		
-		int[][] A = span.matrix();		
-		System.err.println("matrix:");
-		LinearAlgebra.printMatrix(A);
+		int[][] A = span.matrix();
 		
-		generators = new ArrayList<int[]>(LinearAlgebra.solutionBasis(A));
-		System.err.println("generators:");
-		for(int[] g : generators) {
-			System.err.println("  " + Arrays.toString(g));
+		if(loggingEnabled) {
+			System.err.println("Matrix:");
+			System.err.println(LinearAlgebra.matrixToString(A));
+		}
+		
+		this.generators = new ArrayList<int[]>(LinearAlgebra.solutionBasis(A));
+		
+		if(loggingEnabled) {
+			System.err.println("Generators:");
+			for(int[] g : this.generators) {
+				System.err.println("  " + Arrays.toString(g));
+			}
 		}
 	}
 	
 	public boolean checkStateSeparation() {
 		boolean separated = true;
+		final int n = lts.getNodes().size();
 		
-		System.err.println("Checking SSA: ");
-		ArrayList<int[]> columns = new ArrayList<int[]>(lts.getNodes().size()); 
+		if(loggingEnabled) System.err.println("Checking state/state separation:");
+		
+		ArrayList<int[]> columns = new ArrayList<int[]>(n); 
 		for(State s : span.getOrderedStates()) {
 			int[] col = new int[generators.size()];
 			int i = 0;
-			System.err.print("  " + s.getId() + ": ");
+			if(loggingEnabled) System.err.print("  " + s.getId() + ": ");
 			for(int[] eta : generators) {
 				int[] psi = span.parikhVector(s);
 				col[i++] = LinearAlgebra.dotProduct(eta, psi);
-				System.err.print(String.format("%3d  ", col[i-1]));
+				if(loggingEnabled) System.err.print(String.format("%3d  ", col[i-1]));
 			}
-			System.err.println();
+			if(loggingEnabled) System.err.println();
 			columns.add(col);
 		}
 		
-		final int n = lts.getNodes().size();
 		for(int i=0; i<n; ++i) {
 			for(int j=i+1; j<n; ++j) {
 				if(Arrays.equals(columns.get(i), columns.get(j))) {
 					State si = span.getOrderedStates().get(i);
 					State sj = span.getOrderedStates().get(j);
 					System.out.println("States " + si.getId() + " and " + sj.getId() + 
-							" not separated.");
+							" are not separated.");
 					separated = false;
 				}
  			}
@@ -84,7 +100,7 @@ public class Synthesis {
 	public boolean checkStateEventSeparation() {
 		boolean separated = true;
 		
-		System.err.println("Checking ESSA: ");
+		if(loggingEnabled) System.err.println("Checking ESSA: ");
 		
 		solutions = new HashSet<>();
 		
@@ -96,33 +112,29 @@ public class Synthesis {
 				if(s.activates(e)) continue;
 
 				final ExpressionsBasedModel model = buildSystem(s, e);
-				//final IntegerSolver solver = IntegerSolver.make(model);
 				Optimisation.Result result = model.solve();
 
 				// if the system has a solution, collect the results
 				if(result.getState().isSuccess()) {
+					if(loggingEnabled) System.err.println("with solutions: ");
 					IntVector sol = new IntVector(generators.size());
 					for(int i=0; i<generators.size(); ++i) {
-						/*
 						BigDecimal x = result.get(i);
 						BigDecimal rounded = x.round(MathContext.DECIMAL32);
-						System.err.println("****** z_" + i + " = " + x + " rounded to " + rounded);
 						int value = rounded.intValueExact();
-						*/
-						int value = result.get(i).intValueExact();
 						sol.v[i] = value;
-						System.err.println(String.format("z%d = %2d", i, value));
+						if(loggingEnabled) System.err.println(String.format(" z%d = %2d (rounded from %s)", i, value, x));
 					}
 					solutions.add(sol);
 				} else {
-					System.err.println("Event " + e + " and state " + s.getId() + " not separated.");
+					System.out.println("Event " + e + " and state " + s.getId() + " are not separated.");
 					separated = false;
 				}
 			}
 		}
 		
-		if(separated) {
-			System.err.println("solutions to ESSA linear inequality systems: ");
+		if(loggingEnabled && separated) {
+			System.err.println("unique solutions to ESSA linear inequality systems: ");
 			for(IntVector sol : solutions) {
 				for(int i=0; i<sol.v.length; ++i) {
 					System.err.print(String.format("z%d = %2d%s", i, sol.v[i],
@@ -132,11 +144,10 @@ public class Synthesis {
 			}
 		}
 		
-		
 		return separated;
 	}
 	
-	public ArrayList<int[]> computeAdmissibleRegions() {
+	public ArrayList<int[]> computeAdmissibleRegionsGenerators() {
 		assert(solutions != null);
 		
 		// from the solutions to the ESSA problem calculate a new set of generators
@@ -207,12 +218,12 @@ public class Synthesis {
 			model.addVariable(zi);
 		}
 		
-		System.err.println("system for (" + s.getId() + ", " + e + ")");
+		if(loggingEnabled) System.err.println("inequality system for (" + s.getId() + ", " + e + "):");
 		
 		for(State s2 : lts.getNodes()) {
 			if(!s2.activates(e)) continue;
 			
-			System.err.print(s2.getId() + ": ");
+			if(loggingEnabled) System.err.print(" " + s2.getId() + ": ");
 			
 			final String id = String.format("c_%s_%s_%s", s.getId(), s2.getId(), e);
 			final Expression c = model.addExpression(id).upper(minusOne);
@@ -220,11 +231,11 @@ public class Synthesis {
 				int b = beta(i, s, s2);
 				c.setLinearFactor(i, b);
 				
-				System.err.print(String.format("%s%2d * z%d",
+				if(loggingEnabled) System.err.print(String.format("%s%2d * z%d",
 						i > 0 ? " + " : "",	b, i));	
 			}
 			
-			System.err.println(" < 0");
+			if(loggingEnabled) System.err.println(" < 0");
 		}
 		
 		return model;

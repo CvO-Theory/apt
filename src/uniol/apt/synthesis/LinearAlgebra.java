@@ -184,9 +184,6 @@ public class LinearAlgebra {
 				j += 1;
 			} while(j <= i-1);
 		}
-		
-		System.out.println("A = ");
-		printMatrix(A);
 
 		return null;
 	}
@@ -437,11 +434,15 @@ public class LinearAlgebra {
 		return result;
 	}
 
-	public static void printMatrix(int[][] A) {
-		assert(A != null && A.length > 0);
+	
+	public static String matrixToString(final int[][] A) {
+		if(A == null || A.length == 0) {
+			return "";
+		}
+		
 		int m = A.length;
 		int n = A[0].length;
-
+		
 		// find the entry with the longest string representation
 		int longest = 0;
 		for(int i=0; i<m; ++i) {
@@ -452,16 +453,19 @@ public class LinearAlgebra {
 			}
 		}
 
+		StringBuilder sb = new StringBuilder();
 		final String format = "%" + (longest+2) + "d";
 
 		for(int i=0; i<m; ++i) {
 			for(int j=0; j<n; ++j) {
-				System.out.print(String.format(format, A[i][j]));
+				sb.append(String.format(format, A[i][j]));
 			}
-			System.out.println();
+			sb.append(System.lineSeparator());
 		}
+		
+		return sb.toString();
 	}
-	
+
 	public static void printMatrix(double[][] A) {
 		assert(A != null && A.length > 0);
 		int m = A.length;

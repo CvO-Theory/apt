@@ -54,6 +54,7 @@ public class SynthesisModule extends AbstractModule {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("lts", TransitionSystem.class, "The LTS from which a Petri net should be synthesized.");
+		inputSpec.addOptionalParameter("verbose", String.class, "", "Enable verbose debugging output");
 	}
 
 	@Override
@@ -65,7 +66,8 @@ public class SynthesisModule extends AbstractModule {
 
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
-		TransitionSystem lts = input.getParameter("lts", TransitionSystem.class);
+		TransitionSystem lts = input.getParameter("lts", TransitionSystem.class);		
+		boolean loggingEnabled = input.getParameter("verbose", String.class).equals("verbose");
 		
 		// return values
 		boolean synthesizable = true;
@@ -77,14 +79,16 @@ public class SynthesisModule extends AbstractModule {
 			return;
 		}
 				
-		// synthesise a net if possible
-		Synthesis synth = new Synthesis(lts);
+		// synthesize a net if possible
+		Synthesis synth = new Synthesis(lts, loggingEnabled);
 		
 		synthesizable = synth.checkStateSeparation();			
 		synthesizable = synth.checkStateEventSeparation();		
 		
-		ArrayList<int[]> gens = synth.computeAdmissibleRegions();
+		ArrayList<int[]> gens = synth.computeAdmissibleRegionsGenerators();
+		ArrayList<Region> admissibleRegions = synth.computeRegions(gens);
 		
+		// build the resulting net
 		PetriNet net = new PetriNet();
 		
 		for(String e : lts.getAlphabet()) {
@@ -92,8 +96,7 @@ public class SynthesisModule extends AbstractModule {
 			t.setLabel(e);
 		}
 		
-		ArrayList<Region> admissibleRegions = synth.computeRegions(gens);
-		
+		if(loggingEnabled) System.err.println();
 		for(int i=0; i<admissibleRegions.size(); ++i) {
 			Region r = admissibleRegions.get(i);
 			final String id = "x_" + i; 
@@ -106,7 +109,7 @@ public class SynthesisModule extends AbstractModule {
 				net.createFlow(e, id, r.post.get(e));
 			}
 			
-			System.out.println(r.toString());
+			if(loggingEnabled) System.err.println(r.toString());
 		}
 		
 		output.setReturnValue("synthesizable", Boolean.class, synthesizable);
