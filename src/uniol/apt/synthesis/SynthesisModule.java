@@ -19,11 +19,7 @@
 
 package uniol.apt.synthesis;
 
-import java.util.ArrayList;
-
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Place;
-import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -32,7 +28,6 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
-import uniol.apt.synthesis.Synthesis.Region;
 
 /**
  * This module provides a re-implementation of the synet algorithm.
@@ -42,7 +37,10 @@ import uniol.apt.synthesis.Synthesis.Region;
 public class SynthesisModule extends AbstractModule {
 
 	private final static String SHORTDESCRIPTION = "Synthesize a Petri net from an LTS";
-	private final static String LONGDESCRIPTION = SHORTDESCRIPTION;
+	private final static String LONGDESCRIPTION = 
+			"Given a (1) totally reachable and (2) event-reduced LTS, this module" + System.lineSeparator() +
+			"tries to synthesize a Petri net.  Note that if conditions (1) or (2)" +  System.lineSeparator() +
+			"are violated, this implementation will throw an exception.";
 	private final static String TITLE = "SynthesizeNet";
 	private final static String NAME = "synthesize_net";
 
@@ -68,49 +66,11 @@ public class SynthesisModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		TransitionSystem lts = input.getParameter("lts", TransitionSystem.class);		
 		boolean loggingEnabled = input.getParameter("verbose", String.class).equals("verbose");
-		
-		// return values
-		boolean synthesizable = true;
-		
-		// handle the special case of the empty LTS
-		if(lts.getEdges().isEmpty()) {
-			PetriNet net = new PetriNet();
-			output.setReturnValue("net", PetriNet.class, net);
-			return;
-		}
-				
-		// synthesize a net if possible
+
 		Synthesis synth = new Synthesis(lts, loggingEnabled);
-		
-		synthesizable = synth.checkStateSeparation();			
-		synthesizable = synth.checkStateEventSeparation();		
-		
-		ArrayList<int[]> gens = synth.computeAdmissibleRegionsGenerators();
-		ArrayList<Region> admissibleRegions = synth.computeRegions(gens);
-		
-		// build the resulting net
-		PetriNet net = new PetriNet();
-		
-		for(String e : lts.getAlphabet()) {
-			Transition t = net.createTransition(e);
-			t.setLabel(e);
-		}
-		
-		if(loggingEnabled) System.err.println();
-		for(int i=0; i<admissibleRegions.size(); ++i) {
-			Region r = admissibleRegions.get(i);
-			final String id = "x_" + i; 
-			Place p = net.createPlace(id);
-			
-			p.setInitialToken(r.sigma.get(lts.getInitialState()));
-			
-			for(String e : lts.getAlphabet()) {
-				net.createFlow(id, e, r.pre.get(e));
-				net.createFlow(e, id, r.post.get(e));
-			}
-			
-			if(loggingEnabled) System.err.println(r.toString());
-		}
+
+		boolean synthesizable = synth.isSeparated();
+		PetriNet net = synth.getPetriNet();
 		
 		output.setReturnValue("synthesizable", Boolean.class, synthesizable);
 		output.setReturnValue("net", PetriNet.class, net);

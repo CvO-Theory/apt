@@ -1,3 +1,22 @@
+/*-
+ * APT - Analysis of Petri Nets and labeled Transition systems
+ * Copyright (C) 2012-2014  Members of the project group APT
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package uniol.apt.synthesis;
 
 import java.math.BigDecimal;
@@ -14,9 +33,24 @@ import org.ojalgo.optimisation.ExpressionsBasedModel;
 import org.ojalgo.optimisation.Optimisation;
 import org.ojalgo.optimisation.Variable;
 
+import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.pn.Place;
+import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 
+/**
+ * An implementation of the synet Petri net synthesis
+ * algorithm as described in
+ * 
+ * <p>
+ * Badouel, Éric and Caillaud, Benoît: Distributing Finite Automata Through Petri Net Synthesis.
+ * Formal Aspects of Computing 13(6), pp. 447-470
+ * </p>
+ * 
+ * @author Thomas Strathmann
+ *
+ */
 public class Synthesis {
 
 	private final TransitionSystem lts;
@@ -28,6 +62,10 @@ public class Synthesis {
 	private HashSet<IntVector> solutions;
 	
 	private final boolean loggingEnabled;
+
+	private boolean separated;
+	
+	private boolean separationChecked;
 	
 	
 	private static final BigDecimal minusOne = new BigDecimal(-1);
@@ -61,7 +99,71 @@ public class Synthesis {
 		}
 	}
 	
-	public boolean checkStateSeparation() {
+	/**
+	 * Check if the LTS is separated (i.e. the algorithm can
+	 * synthesize a net with an isomorphic reachability graph).
+	 * 
+	 * @return true iff the LTS satisfies both separation axioms
+	 */
+	public boolean isSeparated() {
+		// do not recompute anything
+		if(this.separationChecked)
+			return this.separated;
+		
+		if(lts.getEdges().isEmpty()) {
+			// if the LTS does not contain any arcs we need not do any work
+			this.separated = true;
+		} else {
+			this.separated = checkStateSeparation();			
+			this.separated = checkStateEventSeparation();		
+		}
+		
+		this.separationChecked = true;
+		
+		return this.separated;
+	}
+	
+	/**
+	 * Synthesize a Petri net from the given LTS.
+	 * 
+	 * @return a Petri net built from the regions of the LTS computed
+	 * 		by the algorithm (regardless of separation)
+	 */
+	public PetriNet getPetriNet() {
+		// check if ...
+		this.isSeparated();
+		
+		ArrayList<int[]> gens = computeAdmissibleRegionsGenerators();
+		ArrayList<Region> admissibleRegions = computeRegions(gens);
+		
+		// build the resulting net
+		PetriNet net = new PetriNet();
+		
+		for(String e : lts.getAlphabet()) {
+			Transition t = net.createTransition(e);
+			t.setLabel(e);
+		}
+		
+		if(loggingEnabled) System.err.println();
+		for(int i=0; i<admissibleRegions.size(); ++i) {
+			Region r = admissibleRegions.get(i);
+			final String id = "x_" + i; 
+			Place p = net.createPlace(id);
+			
+			p.setInitialToken(r.sigma.get(lts.getInitialState()));
+			
+			for(String e : lts.getAlphabet()) {
+				net.createFlow(id, e, r.pre.get(e));
+				net.createFlow(e, id, r.post.get(e));
+			}
+			
+			if(loggingEnabled) System.err.println(r.toString());
+		}
+		
+		return net;
+	}
+	
+	private boolean checkStateSeparation() {
 		boolean separated = true;
 		final int n = lts.getNodes().size();
 		
@@ -97,7 +199,7 @@ public class Synthesis {
 	}
 	
 	
-	public boolean checkStateEventSeparation() {
+	private boolean checkStateEventSeparation() {
 		boolean separated = true;
 		
 		if(loggingEnabled) System.err.println("Checking ESSA: ");
@@ -147,7 +249,7 @@ public class Synthesis {
 		return separated;
 	}
 	
-	public ArrayList<int[]> computeAdmissibleRegionsGenerators() {
+	private ArrayList<int[]> computeAdmissibleRegionsGenerators() {
 		assert(solutions != null);
 		
 		// from the solutions to the ESSA problem calculate a new set of generators
@@ -167,7 +269,7 @@ public class Synthesis {
 	}
 	
 	// Definition 2.10
-	public ArrayList<Region> computeRegions(ArrayList<int[]> generators) {
+	private ArrayList<Region> computeRegions(ArrayList<int[]> generators) {
 		ArrayList<Region> regions = new ArrayList<>();
 		
 		final State s0 = lts.getInitialState();
@@ -284,7 +386,7 @@ public class Synthesis {
 		}	
 	}
 	
-	public class Region {
+	private class Region {
 		public int[] generator;
 		public HashMap<State, Integer> sigma = new HashMap<>();
 		public HashMap<String, Integer> pre = new HashMap<>();
