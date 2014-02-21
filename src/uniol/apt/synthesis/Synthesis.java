@@ -223,7 +223,8 @@ public class Synthesis {
 					for(int i=0; i<generators.size(); ++i) {
 						BigDecimal x = result.get(i);
 						BigDecimal rounded = x.round(MathContext.DECIMAL32);
-						int value = rounded.intValueExact();
+						//int value = rounded.intValueExact();
+						int value = rounded.intValue();
 						sol.v[i] = value;
 						if(loggingEnabled) System.err.println(String.format(" z%d = %2d (rounded from %s)", i, value, x));
 					}
