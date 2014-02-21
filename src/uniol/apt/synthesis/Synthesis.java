@@ -44,7 +44,7 @@ import uniol.apt.adt.ts.TransitionSystem;
  * algorithm as described in
  * 
  * <p>
- * Badouel, Éric and Caillaud, Benoît: Distributing Finite Automata Through Petri Net Synthesis.
+ * Badouel, ��ric and Caillaud, Beno��t: Distributing Finite Automata Through Petri Net Synthesis.
  * Formal Aspects of Computing 13(6), pp. 447-470
  * </p>
  * 
@@ -198,7 +198,6 @@ public class Synthesis {
 		return separated;
 	}
 	
-	
 	private boolean checkStateEventSeparation() {
 		boolean separated = true;
 		
@@ -221,10 +220,8 @@ public class Synthesis {
 					if(loggingEnabled) System.err.println("with solutions: ");
 					IntVector sol = new IntVector(generators.size());
 					for(int i=0; i<generators.size(); ++i) {
-						BigDecimal x = result.get(i);
-						BigDecimal rounded = x.round(MathContext.DECIMAL32);
-						//int value = rounded.intValueExact();
-						int value = rounded.intValue();
+						final BigDecimal x = result.get(i);
+						final int value = roundedToNearestInteger(x); 
 						sol.v[i] = value;
 						if(loggingEnabled) System.err.println(String.format(" z%d = %2d (rounded from %s)", i, value, x));
 					}
@@ -342,6 +339,11 @@ public class Synthesis {
 		}
 		
 		return model;
+	}
+
+	private static int roundedToNearestInteger(final BigDecimal d) {
+		BigDecimal rounded = d.round(MathContext.DECIMAL32);
+		return rounded.intValue();
 	}
 
 	private int beta(int i, State s1, State s2) {

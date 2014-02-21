@@ -19,6 +19,7 @@
 
 package uniol.apt.synthesis;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Vector;
@@ -29,8 +30,8 @@ import java.util.Vector;
  * 
  * Some of the algorithms are taken more or less verbatim from
  * the following document:
- * [1] Kerstin Susewind: "Berechnungsalgorithmen für Hermite-Normalformen und deren Anwendung zur Bestimmung ganzzahliger Lösungen linearer Gleichungssysteme"
- *     Studienarbeit bei Professor Dr. rer. nat. Kurt Lautenbach (Universität Koblenz-Landau) 18. Februar 2008
+ * [1] Kerstin Susewind: "Berechnungsalgorithmen f��r Hermite-Normalformen und deren Anwendung zur Bestimmung ganzzahliger L��sungen linearer Gleichungssysteme"
+ *     Studienarbeit bei Professor Dr. rer. nat. Kurt Lautenbach (Universit��t Koblenz-Landau) 18. Februar 2008
  * 
  * @author Thomas Strathmann
  */
@@ -62,7 +63,7 @@ public class LinearAlgebra {
 			return generators;
 		}
 		
-		final int[][] B = linearlyIndependentRows(A);
+		final int[][] B = linearlyIndependentRows2(A);
 		int[][] U = computeHNF(B)[1];
 		
 		if(U == null) {
@@ -363,6 +364,102 @@ public class LinearAlgebra {
 			}			
 		}
 		
+		int[][] C = new int[nonZeroRows.size()][n];
+		for(int i=0; i<nonZeroRows.size(); ++i) {
+			int k = nonZeroRows.get(i);
+			System.arraycopy(A[rowIdx[k]], 0, C[i], 0, n);
+		}
+		
+		return C;
+	}
+	
+	/**
+	 * Return a matrix of the linearly independent rows
+	 * of a given matrix.
+	 * 
+	 * @param A the matrix to be reduced
+	 * @return a matrix whose rows are the linearly independent rows of A
+	 */
+	private static int[][] linearlyIndependentRows2(int [][] A) {
+		if(A == null || A.length == 0)
+			return A;
+		
+		final int m = A.length;
+		final int n = A[0].length;
+		
+		if(n == 0) 
+			return A;
+		
+		/***** step 1: apply Gaussian elimination *****/		
+		// build an intermediate double matrix
+		ArrayList<double[]> B = new ArrayList<>(m);
+		for(int i=0; i<m; ++i) {
+			double[] row = new double[n];
+			for(int j=0; j<n; ++j) {				
+				row[j] = A[i][j];
+			}
+			B.add(row);
+		}
+		
+		// keep a map from row numbers in the resulting matrix
+		// to column numbers in the original matrix
+		int[] rowIdx = new int[m];
+		for(int i=0; i<m; ++i)
+			rowIdx[i] = i;
+		
+		int j = 0;
+		for(int i=0; i<m; ++i) {
+			if(B.get(i)[j] == 0) {
+				boolean swapped = false;
+				for(int k=i+1; k<m; ++k) {					
+					if(B.get(k)[j] != 0) {
+						// swap rows
+						double[] tmpRow = B.get(i);
+						B.set(i, B.get(k));
+						B.set(k, tmpRow);
+						int tmp = rowIdx[i];
+						rowIdx[i] = rowIdx[k];
+						rowIdx[k] = tmp;
+						swapped = true;
+						break;
+					}
+				}
+				if(!swapped) {
+					if(++j >= n) break;
+				}
+			}
+
+			double pivot = B.get(i)[j];			
+			if(pivot != 0.0) {
+				for(int k=0; k<n; ++k) {
+					B.get(i)[k] /= pivot;
+				}
+			}
+
+			for(int l=i+1; l<m; ++l) {
+				double c = B.get(l)[j];
+				if(c == 0)
+					continue;
+				for(int k=0; k<n; ++k) {
+					B.get(l)[k] -= c * B.get(i)[k];
+				}
+			}
+
+			if(++j >= n) break;
+		}
+	
+		/***** step 2: build reduced matrix *****/
+		// copy rows in the original matrix corresponding to
+		// non-zero rows in the echelon form of the matrix
+		Vector<Integer> nonZeroRows = new Vector<Integer>();
+		for(int i=0; i<m; ++i) {
+			for(j=0; j<n; ++j) {
+				if(B.get(i)[j] != 0.0) {
+					nonZeroRows.add(i);
+					break;
+				}
+			}			
+		}
 		int[][] C = new int[nonZeroRows.size()][n];
 		for(int i=0; i<nonZeroRows.size(); ++i) {
 			int k = nonZeroRows.get(i);
