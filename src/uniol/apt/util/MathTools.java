@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Some methods for mathematical calculations like ggt and modulo.
+ * Some methods for mathematical calculations like gcd and modulo.
  * <p/>
  * @author Manuel Gieseking
  */
@@ -37,47 +37,48 @@ public class MathTools {
 	}
 
 	/**
-	 * Calculates the ggT of a given set of BigIntegers.
+	 * Calculates the gcd of a given set of BigIntegers.
 	 * <p/>
-	 * @param set - the BigIntegers to calculate the ggT from.
+	 * @param set - the BigIntegers to calculate the gcd from.
 	 * <p/>
-	 * @return the ggT of the BigIntegers of the given set.
+	 * @return the gcd of the BigIntegers of the given set.
 	 */
-	public static BigInteger ggTBigInteger(Collection<BigInteger> set) {
+	public static BigInteger gcdBigInteger(Collection<BigInteger> set) {
 		Iterator<BigInteger> iter = set.iterator();
-		BigInteger ggt = iter.next();
+		BigInteger gcd = iter.next();
 		while (iter.hasNext()) {
 			BigInteger b = iter.next();
-			ggt = ggt.compareTo(b) < 0 ? b.gcd(ggt) : ggt.gcd(b);
+			gcd = gcd.compareTo(b) < 0 ? b.gcd(gcd) : gcd.gcd(b);
 		}
-		return ggt;
+		return gcd;
 	}
 
 	/**
-	 * Calculates the ggT of a given set of integers.
+	 * Calculates the gcd of a given set of integers.
 	 * <p/>
-	 * @param set - the integers to calculate the ggT from.
+	 * @param set - the integers to calculate the gcd from.
 	 * <p/>
-	 * @return the ggT of the integers of the given set.
+	 * @return the gcd of the integers of the given set.
 	 */
-	public static int ggT(Collection<Integer> set) {
+	public static int gcd(Collection<Integer> set) {
 		Iterator<Integer> iter = set.iterator();
-		int ggt = iter.next();
+		int gcd = iter.next();
 		while (iter.hasNext()) {
-			ggt = ggT(ggt, iter.next());
+			gcd = gcd(gcd, iter.next());
+			if(gcd == 1) return 1;
 		}
-		return ggt;
+		return gcd;
 	}
 
 	/**
-	 * Calculates the ggT of two integers.
+	 * Calculates the gcd of two integers.
 	 * <p/>
-	 * @param a - first integer for calculating the ggT.
-	 * @param b - second integer for calculating the ggT.
+	 * @param a - first integer for calculating the gcd.
+	 * @param b - second integer for calculating the gcd.
 	 * <p/>
-	 * @return the ggT of the two given integers.
+	 * @return the gcd of the two given integers.
 	 */
-	public static int ggT(int a, int b) {
+	public static int gcd(int a, int b) {
 		if (a < b) {
 			return BigInteger.valueOf(b).gcd(BigInteger.valueOf(a)).intValue();
 		} else {
@@ -86,10 +87,10 @@ public class MathTools {
 	}
 
 	/**
-	 * Calculates the mathematical modulo, so that it's given the positiv value.
+	 * Calculates the mathematical modulo, so that it's given the positive value.
 	 * <p/>
 	 * @param a - divisor.
-	 * @param b - divident.
+	 * @param b - dividend.
 	 * <p/>
 	 * @return a modulo b.
 	 */

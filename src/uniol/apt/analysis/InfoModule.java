@@ -19,6 +19,11 @@
 
 package uniol.apt.analysis;
 
+import java.util.HashSet;
+
+import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.pn.Place;
+import uniol.apt.adt.pn.Transition;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -26,9 +31,6 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
-
-import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Place;
 
 /**
  * Report some basic stats of the given PN.
@@ -39,7 +41,8 @@ public class InfoModule extends AbstractModule {
 
 	@Override
 	public String getShortDescription() {
-		return "Report the number of places, transitions, arcs, and\n tokens in the initial marking of the given Petri net.";
+		return "Report the number of places, transitions, different transition labels," + System.lineSeparator() +
+				"arcs, and tokens in the initial marking of the given Petri net.";
 	}
 
 	@Override
@@ -56,9 +59,9 @@ public class InfoModule extends AbstractModule {
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("num_places", Integer.class);
 		outputSpec.addReturnValue("num_transitions", Integer.class);
+		outputSpec.addReturnValue("num_labels", Integer.class);
 		outputSpec.addReturnValue("num_arcs", Integer.class);
 		outputSpec.addReturnValue("num_tokens", Integer.class);
-		outputSpec.addReturnValue("num_labels", Integer.class);
 	}
 
 	@Override
@@ -73,6 +76,12 @@ public class InfoModule extends AbstractModule {
 			tokens += p.getInitialToken().getValue();
 		}
 		output.setReturnValue("num_tokens", Integer.class, tokens);
+		
+		HashSet<String> labels = new HashSet<>();
+		for(Transition t : pn.getTransitions()) {
+			labels.add(t.getLabel());
+		}		
+		output.setReturnValue("num_labels", Integer.class, labels.size());
 	}
 
 	@Override
