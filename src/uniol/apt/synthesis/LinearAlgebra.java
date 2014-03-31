@@ -30,8 +30,8 @@ import java.util.Vector;
  * 
  * Some of the algorithms are taken more or less verbatim from
  * the following document:
- * [1] Kerstin Susewind: "Berechnungsalgorithmen f��r Hermite-Normalformen und deren Anwendung zur Bestimmung ganzzahliger L��sungen linearer Gleichungssysteme"
- *     Studienarbeit bei Professor Dr. rer. nat. Kurt Lautenbach (Universit��t Koblenz-Landau) 18. Februar 2008
+ * [1] Kerstin Susewind: "Berechnungsalgorithmen für Hermite-Normalformen und deren Anwendung zur Bestimmung ganzzahliger Lösungen linearer Gleichungssysteme"
+ *     Studienarbeit bei Professor Dr. rer. nat. Kurt Lautenbach (Universität Koblenz-Landau) 18. Februar 2008
  * 
  * @author Thomas Strathmann
  */
@@ -267,6 +267,12 @@ public class LinearAlgebra {
 		return id;
 	}
 
+	/**
+	 * Check if a matrix is non-empty and consists only of zero rows.
+	 * 
+	 * @param A the matrix to check
+	 * @return true iff A is non-empty and consists only of zero rows
+	 */
 	private static boolean allZeroRows(int[][] A) {
 		if(A == null || A.length == 0 || A[0].length == 0)
 			return false;
@@ -281,98 +287,6 @@ public class LinearAlgebra {
 		return true;
 	}
 
-	/**
-	 * Return a matrix of the linearly independent rows
-	 * of a given matrix.
-	 * 
-	 * @param A the matrix to be reduced
-	 * @return a matrix whose rows are the linearly independent rows of A
-	 */
-	private static int[][] linearlyIndependentRows(int [][] A) {
-		assert(A != null);
-		
-		// A has no rows (i.e. is empty)
-		if(A.length == 0)
-			return A;
-		
-		final int m = A.length;
-		final int n = A[0].length;
-		
-		// apply Gaussian elimination
-		double[][] B = matrixToDouble(A);
-				
-		/*
-		 * TODO:
-		 *   - use ArrayList<double[]> instead of double[][]?
-		 *     should remove some overhead from the swapRows operation
-		 *   - get rid of the boolean swapped
-		 */
-		
-		// keep a map from row numbers in the resulting matrix
-		// to column numbers in the original matrix
-		int[] rowIdx = new int[m];
-		for(int i=0; i<m; ++i)
-			rowIdx[i] = i;
-		
-		int j = 0;
-		for(int i=0; i<m; ++i) {
-			if(B[i][j] == 0) {
-				boolean swapped = false;
-				for(int k=i+1; k<m; ++k) {		    
-					if(B[k][j] != 0) {
-						swapRows(B, k, i);
-						int tmp = rowIdx[i];
-						rowIdx[i] = rowIdx[k];
-						rowIdx[k] = tmp;
-						swapped = true;
-						break;
-					}
-				}
-				if(!swapped) {
-					if(++j >= n) break;
-				}
-			}
-
-			double pivot = B[i][j];			
-			if(pivot != 0.0) {
-				for(int k=0; k<n; ++k) {
-					B[i][k] /= pivot;
-				}
-			}
-
-			for(int l=i+1; l<m; ++l) {
-				double c = B[l][j];
-				if(c == 0)
-					continue;
-				for(int k=0; k<n; ++k) {
-					B[l][k] -= c * B[i][k];
-				}
-			}
-
-			if(++j >= n) break;
-		}
-	
-		// copy rows in the original matrix corresponding to
-		// non-zero rows in the echelon form of the matrix
-		Vector<Integer> nonZeroRows = new Vector<Integer>();
-		for(int i=0; i<m; ++i) {
-			for(j=0; j<n; ++j) {
-				if(B[i][j] != 0.0) {
-					nonZeroRows.add(i);
-					break;
-				}
-			}			
-		}
-		
-		int[][] C = new int[nonZeroRows.size()][n];
-		for(int i=0; i<nonZeroRows.size(); ++i) {
-			int k = nonZeroRows.get(i);
-			System.arraycopy(A[rowIdx[k]], 0, C[i], 0, n);
-		}
-		
-		return C;
-	}
-	
 	/**
 	 * Return a matrix of the linearly independent rows
 	 * of a given matrix.
@@ -467,38 +381,6 @@ public class LinearAlgebra {
 		}
 		
 		return C;
-	}
-	
-	/**
-	 * Destructively modifies the given matrix by
-	 * exchanging rows i and j.
-	 * 
-	 * @param M the matrix
-	 * @param i index of the first row
-	 * @param j index of the second row
-	 * @return the input matrix after the modification
-	 */
-	private static double[][] swapRows(double[][] M, int i, int j) {
-		final int n = M[0].length;
-
-		double[] Mj = new double[n];
-		System.arraycopy(M[j], 0, Mj, 0, n);
-		System.arraycopy(M[i], 0, M[j], 0, n);
-		M[i] = Mj;
-
-		return M;
-	}
-
-	private static double[][] matrixToDouble(int[][] src) {
-		int m = src.length;
-		int n = src[0].length;
-		double[][] dest = new double[m][n];
-		for(int i=0; i<m; ++i) {
-			for(int j=0; j<n; ++j) {
-				dest[i][j] = src[i][j];
-			}
-		}
-		return dest;
 	}
 
 	private static int[][] cloneMatrix(int[][] src) {
