@@ -110,8 +110,9 @@ public class SpanningTree {
 	 */
 	public int[] parikhVector(State s) {
 		s = span.getNode(s.getId());
-		Vector<Arc> path = pathToRoot(s, span);
-		return new ParikhVector(lts, path).getPVLexicalOrder();
+		final Vector<Arc> path = pathToRoot(s, span);
+		final ParikhVector pv = new ParikhVector(lts, path);
+		return pv.getPVLexicalOrder();
 	}
 	
 	/**
@@ -237,6 +238,15 @@ public class SpanningTree {
 		return span;
 	}
 
+	/**
+	 * Compute the path from the given state to the initial state.
+	 * (NB: Only works for the spanning tree of a totally reachable LTS,
+	 * but these pre-conditions are _NOT_ checked by this function!)
+	 * 
+	 * @param s the state from which to start
+	 * @param tree the tree in which to find the path (see description for important details)
+	 * @return the unique path from the given state to the tree's root node
+	 */
 	private static Vector<Arc> pathToRoot(State s, TransitionSystem tree) {
 		Vector<Arc> path = new Vector<Arc>();
 		while(s != tree.getInitialState()) {
@@ -247,4 +257,14 @@ public class SpanningTree {
 		return path;
 	}
 
+	/**
+	 * Check if the given LTS is totally reachable (i.e. all its states
+	 * are reachable from the initial state)
+	 * 
+	 * @return true iff the LTS is totally reachable
+	 */
+	public boolean isTotallyReachable() {
+		return this.states.size() == this.span.getNodes().size();
+	}
+	
 }
