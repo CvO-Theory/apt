@@ -41,12 +41,12 @@ import uniol.apt.adt.ts.TransitionSystem;
 
 /**
  * An implementation of the synet Petri net synthesis
- * algorithm as described in
+ * algorithm described in
  * 
- * <p>
- * Badouel, ��ric and Caillaud, Beno��t: Distributing Finite Automata Through Petri Net Synthesis.
+ * <p><i>
+ * Badouel, Éric and Caillaud, Benoît: Distributing Finite Automata Through Petri Net Synthesis.
  * Formal Aspects of Computing 13(6), pp. 447-470
- * </p>
+ * </i></p>
  * 
  * @author Thomas Strathmann
  *
@@ -134,8 +134,9 @@ public class Synthesis {
 		this.isSeparated();
 		
 		ArrayList<int[]> gens = computeAdmissibleRegionsGenerators();
-		ArrayList<Region> admissibleRegions = computeRegions(gens);
 		
+		ArrayList<Region> admissibleRegions = computeRegions(gens);	
+
 		// build the resulting net
 		PetriNet net = new PetriNet();
 		
@@ -163,6 +164,11 @@ public class Synthesis {
 		return net;
 	}
 	
+	/**
+	 * Check the state/state separation axiom
+	 * 
+	 * @return true iff LTS is state separated
+	 */
 	private boolean checkStateSeparation() {
 		boolean separated = true;
 		final int n = lts.getNodes().size();
@@ -198,6 +204,12 @@ public class Synthesis {
 		return separated;
 	}
 	
+	/**
+	 * Check state/event separation and calculate the coefficients of
+	 * the generators for the set of admissible regions if it exists.
+	 * 
+	 * @return true iff LTS is state/event separated
+	 */
 	private boolean checkStateEventSeparation() {
 		boolean separated = true;
 		
@@ -213,8 +225,8 @@ public class Synthesis {
 				if(s.activates(e)) continue;
 
 				final ExpressionsBasedModel model = buildSystem(s, e);
-				Optimisation.Result result = model.solve();
-
+				final Optimisation.Result result = model.solve();
+				
 				// if the system has a solution, collect the results
 				if(result.getState().isSuccess()) {
 					if(loggingEnabled) System.err.println("with solutions: ");
@@ -247,6 +259,13 @@ public class Synthesis {
 		return separated;
 	}
 	
+	/**
+	 * Calculate the generators for the set of admissible regions assuming
+	 * that previouly {@link #checkStateEventSeparation()} was run with 
+	 * positive result.
+	 * 
+	 * @return the set of generators of the admissible regions of the LTS
+	 */
 	private ArrayList<int[]> computeAdmissibleRegionsGenerators() {
 		assert(solutions != null);
 		
@@ -310,6 +329,13 @@ public class Synthesis {
 		return regions;
 	}
 	
+	/**
+	 * Build a linear program as used in the {@link #checkStateEventSeparation()}.
+	 * 
+	 * @param s the state ...
+	 * @param e ... and the event that are tested for separation
+	 * @return a linear program
+	 */
 	private ExpressionsBasedModel buildSystem(State s, String e) {
 		final ExpressionsBasedModel model = new ExpressionsBasedModel();
 		
@@ -346,31 +372,49 @@ public class Synthesis {
 		return rounded.intValue();
 	}
 
+
+	/**
+	 * Auxiliary function used in building the linear constraints
+	 * that we need to check state/event separation as described
+	 * in Section 3.2.
+	 * 
+	 * @param i the index of the generator to use
+	 * @param s1 the first state
+	 * @param s2 the second state
+	 * @return
+	 */
 	private int beta(int i, State s1, State s2) {
 		int[] eta = generators.get(i);
 		int[] psi1 = span.parikhVector(s1);
 		int[] psi2 = span.parikhVector(s2);
-		/*
-		System.out.println("## psi(P_" + s1.getId() + ") = " + Arrays.toString(psi1));
-		System.out.println("## psi(P_" + s2.getId() + ") = " + Arrays.toString(psi2));
-		*/
 		int a1 = LinearAlgebra.dotProduct(eta, psi1);
 		int a2 = LinearAlgebra.dotProduct(eta, psi2);
 		return a1 - a2;
 	}
 	
+	/**
+	 * An equivalent way of computing the "integral" along
+	 * a path in the LTS as described in Definition 2.6.
+	 * 
+	 * @param s1 the initial state of the path
+	 * @param s2 the final state of the path
+	 * @param eta the generalized Parikh vector to "integrate"
+	 * @return
+	 */
 	private int pathIntegral(State s1, State s2, int[] eta) {
 		int[] psi = span.pathWeights(s1, s2);
 		int pi = LinearAlgebra.dotProduct(eta, psi);
-		/*
-		System.err.print(String.format("integral(%s, %s, %s) = %d",
-				s1.getId(), s2.getId(), Arrays.toString(eta), pi));
-		System.err.println("  [with weights: " + Arrays.toString(psi) + "]");
-		*/
 		return pi;
 	}
 	
 	
+	/**
+	 * A vector of integer values that supports the usual
+	 * component-wise equality.
+	 * 
+	 * @author Thomas Strathmann
+	 *
+	 */
 	private class IntVector {
 		public int[] v;
 		
@@ -389,6 +433,12 @@ public class Synthesis {
 		}	
 	}
 	
+	/**
+	 * A (non-pure) region of an LTS. Only used as an intermediate data structure.
+	 * 
+	 * @author Thomas Strathmann
+	 *
+	 */
 	private class Region {
 		public int[] generator;
 		public HashMap<State, Integer> sigma = new HashMap<>();

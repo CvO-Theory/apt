@@ -30,8 +30,11 @@ import java.util.Vector;
  * 
  * Some of the algorithms are taken more or less verbatim from
  * the following document:
- * [1] Kerstin Susewind: "Berechnungsalgorithmen für Hermite-Normalformen und deren Anwendung zur Bestimmung ganzzahliger Lösungen linearer Gleichungssysteme"
- *     Studienarbeit bei Professor Dr. rer. nat. Kurt Lautenbach (Universität Koblenz-Landau) 18. Februar 2008
+ * 
+ * <p><i>
+ * Kerstin Susewind: "Berechnungsalgorithmen für Hermite-Normalformen und deren Anwendung zur Bestimmung ganzzahliger Lösungen linearer Gleichungssysteme"
+ *   Studienarbeit bei Professor Dr. rer. nat. Kurt Lautenbach (Universität Koblenz-Landau) 18. Februar 2008
+ * </i></p>
  * 
  * @author Thomas Strathmann
  */
@@ -90,7 +93,7 @@ public class LinearAlgebra {
 
 	/**
 	 * Compute the Hermite normal form of the given matrix using
-	 * the algorithm by Nemhauser/Wolsey as described in [1].
+	 * the algorithm by Nemhauser/Wolsey as described in the cited thesis.
 	 * 
 	 * <b>Caveat: This implementation assumes that the
 	 * coefficient matrix has full row rank!</b> 
