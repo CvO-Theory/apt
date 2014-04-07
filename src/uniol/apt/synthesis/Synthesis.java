@@ -88,8 +88,21 @@ public class Synthesis {
 			System.err.println("Matrix:");
 			System.err.println(LinearAlgebra.matrixToString(A));
 		}
-		
-		this.generators = new ArrayList<int[]>(LinearAlgebra.solutionBasis(A));
+
+		// deal with the case that the matrix is empty because the LTS is acyclic
+		if(A.length == 0) {
+			final int n = span.getOrderedAlphabet().size();
+			this.generators = new ArrayList<int[]>();
+			for(int i=0; i<n; ++i) {
+				int[] g = new int[n];
+				for(int j=0; j<n; ++j) {
+					g[j] = i==j ? 1 : 0;
+				}
+				this.generators.add(g);
+			}
+		} else {
+			this.generators = new ArrayList<int[]>(LinearAlgebra.solutionBasis(A));
+		}
 		
 		if(loggingEnabled) {
 			System.err.println("Generators:");
