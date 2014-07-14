@@ -31,9 +31,9 @@ public class TestMathtools {
 
 	@Test
 	public void testGGT() {
-		assertEquals(MathTools.ggT(17, 5), 1);
-		assertEquals(MathTools.ggT(-17, 5), 1);
-		assertEquals(MathTools.ggT(-17, -5), 1);
+		assertEquals(MathTools.gcd(17, 5), 1);
+		assertEquals(MathTools.gcd(-17, 5), 1);
+		assertEquals(MathTools.gcd(-17, -5), 1);
 		assertEquals(-11 % 5, -1);
 		assertEquals(MathTools.mod(-11, 5), 4);
 	}
