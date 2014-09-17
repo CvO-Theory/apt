@@ -67,6 +67,20 @@ public class Marking implements Comparable<Marking> {
 		this.net = m.net;
 		this.setMarking(m);
 	}
+        
+        
+	/**
+	 * Constructor.
+	 * <p/>
+	 * @param net The net for which the marking instance gets created.
+	 * @param m   A marking from which the mapping from places to token is copied.
+	 * <p/>
+	 * @throws StructureException if the places of the given net and tokenmap do not fit.
+	 */
+	public Marking(PetriNet net, Marking m) {
+		this.net = net;
+		this.setMarking(m);
+	}
 
 	/**
 	 * Constructor.
