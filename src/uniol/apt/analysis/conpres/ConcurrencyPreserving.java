@@ -31,6 +31,7 @@ import uniol.apt.adt.pn.Transition;
 public class ConcurrencyPreserving {
 
     private final PetriNet pn;
+    private Transition witness = null;
 
     /**
      * Constructor.
@@ -49,13 +50,27 @@ public class ConcurrencyPreserving {
      * @return true if the Petri net is concurrency-preserving.
      */
     public boolean check() {
+        witness = null;
         for (Transition t : pn.getTransitions()) {
-            if (t.getPostset().size() == t.getPreset().size()) {
+            if (t.getPostset().size() != t.getPreset().size()) {
+                witness = t;
                 return false;
             }
         }
         return true;
     }
+
+    /**
+     * Returns the transition where the pre- and postsets are not equal
+     * if existent otherwise null.
+     * 
+     * @return null if check is not called or net is concurrency-preserving.
+     * Otherwise it returns a transition where the preset is not equal to the 
+     * postset of this transition. The witness of the last call of check.
+     */
+    public Transition getWitness() {
+        return witness;
+    }    
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
