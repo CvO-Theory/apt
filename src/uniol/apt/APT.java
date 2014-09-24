@@ -60,6 +60,7 @@ import uniol.apt.analysis.connectivity.StrongComponentsModule;
 import uniol.apt.analysis.connectivity.StrongConnectivityModule;
 import uniol.apt.analysis.connectivity.WeakComponentsModule;
 import uniol.apt.analysis.connectivity.WeakConnectivityModule;
+import uniol.apt.analysis.conpres.ConcurrencyPreservingModule;
 import uniol.apt.analysis.coverability.CoverabilityModule;
 import uniol.apt.analysis.cycles.CheckAllCyclePropertiesModule;
 import uniol.apt.analysis.cycles.lts.CycleCounterExample;
@@ -189,7 +190,7 @@ public class APT {
 	/**
 	 * All the modules that are used in APT.
 	 */
-	private static Module[] modules = {
+	private static final Module[] modules = {
 		new Apt2SynetModule(),
 		new Apt2PetrifyModule(),
 		new BCFModule(),
@@ -202,6 +203,7 @@ public class APT {
 		new CheckModule(),
 		new CheckSideConditionsModule(),
 		new ComputeMinSemiPosInvariantsModule(),
+                new ConcurrencyPreservingModule(),
 		new ConflictFreeModule(),
 		new CoverabilityModule(),
 		new CoveredByInvariantModule(),
@@ -266,7 +268,7 @@ public class APT {
 	/**
 	 * All the internal modules that are used in APT. These modules can't be invoked by the user directly.
 	 */
-	private static Module[] internalModules = {
+	private static final Module[] internalModules = {
 		new DrawNetModule(),
 		new DrawTSModule(),
 		new PersistentTSModule(),
@@ -275,10 +277,10 @@ public class APT {
 		new ReversibleNetModule()
 	};
 
-	private static ParametersParser parametersParser = new SimpleParametersParser();
-	private static ParametersTransformer parametersTransformer = new ParametersTransformer();
-	private static ReturnValuesTransformer returnValuesTransformer = new ReturnValuesTransformer();
-	private static ModuleRegistry registry = new ModuleRegistry();
+	private static final ParametersParser parametersParser = new SimpleParametersParser();
+	private static final ParametersTransformer parametersTransformer = new ParametersTransformer();
+	private static final ReturnValuesTransformer returnValuesTransformer = new ReturnValuesTransformer();
+	private static final ModuleRegistry registry = new ModuleRegistry();
 
 	private static final Printer outPrinter = new TrimmedOutputStreamPrinter(System.out);
 	private static final Printer errPrinter = new TrimmedOutputStreamPrinter(System.err);

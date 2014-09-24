@@ -16,47 +16,46 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
-package uniol.apt.analysis.on;
+package uniol.apt.analysis.conpres;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Place;
+import uniol.apt.adt.pn.Transition;
 
 /**
- * This module tests if a Petri net is output-nonbranching. That is:
+ * This module tests if a Petri net is concurrency-preserving. That is:
  * <p/>
- * <code>\forall s \in S: \mid s^\bullet \mid \leq 1</code>
+ * <code>\forall t \in T: \mid t^\bullet \mid = \mid {}^\bullet t \mid </code>
  * <p/>
  * @author Manuel Gieseking
  */
-public class OutputNonBranching {
+public class ConcurrencyPreserving {
 
-	private final PetriNet pn;
+    private final PetriNet pn;
 
-	/**
-	 * Constructor.
-	 * <p/>
-	 * @param pn - the net which should be checked.
-	 */
-	public OutputNonBranching(PetriNet pn) {
-		this.pn = pn;
-	}
+    /**
+     * Constructor.
+     * <p/>
+     * @param pn - the net which should be checked.
+     */
+    public ConcurrencyPreserving(PetriNet pn) {
+        this.pn = pn;
+    }
 
-	/**
-	 * Testing if a Petri net is output-nonbranching. That is:
-	 * <p/>
-	 * \forall s \in S: \mid s^\bullet \mid \leq 1
-	 * <p/>
-	 * @return true if the Petri net is output-nonbranching.
-	 */
-	public boolean check() {
-		for (Place place : pn.getPlaces()) {
-			if (place.getPostset().size() > 1) {
-				return false;
-			}
-		}
-		return true;
-	}
+    /**
+     * Testing if a Petri net is concurrency-preserving. That is:
+     * <p/>
+     * \forall t \in T: \mid t^\bullet \mid = \mid {}^\bullet t \mid
+     * <p/>
+     * @return true if the Petri net is concurrency-preserving.
+     */
+    public boolean check() {
+        for (Transition t : pn.getTransitions()) {
+            if (t.getPostset().size() == t.getPreset().size()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
