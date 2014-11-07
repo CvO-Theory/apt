@@ -39,6 +39,7 @@ import java.util.Set;
 public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>> {
 	private final Map<N, N> predecessorMap;
 	private final Set<N> unreachableNodes;
+	private final Set<E> chords;
 	private final N startNode;
 	private final G graph;
 	private final Map<N, List<N>> pathMap = new HashMap<>();
@@ -57,6 +58,7 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 		Map<N, N> predecessorMap = new HashMap<>();
 		Set<N> unvisitedNodes = new HashSet<>(graph.getNodes());
 		Set<N> stillToVisit = new HashSet<>();
+		Set<E> chords = new HashSet<>();
 
 		// Start by visiting the start node.
 		if (startNode != null) {
@@ -69,19 +71,25 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 			stillToVisit.remove(node);
 
 			// For each child of the current node...
-			for (N child : node.getPostsetNodes()) {
+			for (E edge : node.getPostsetEdges()) {
+				N child = edge.getTarget();
+
 				// ...if it was not yet reached, mark it as reachable and...
 				if (unvisitedNodes.remove(child)) {
 					// ...remember the path to the start node.
 					predecessorMap.put(child, node);
 					// Also, we have to visit this node later.
 					stillToVisit.add(child);
+				} else {
+					// It was already visited, so we found a new chord
+					chords.add(edge);
 				}
 			}
 		}
 
 		this.predecessorMap = Collections.unmodifiableMap(predecessorMap);
 		this.unreachableNodes = Collections.unmodifiableSet(unvisitedNodes);
+		this.chords = Collections.unmodifiableSet(chords);
 		this.startNode = startNode;
 		this.graph = graph;
 	}
@@ -139,6 +147,15 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 		}
 
 		return result;
+	}
+
+	/**
+	 * Get the chords of the spanning tree. A chord is an edge which forms a cycle with respect to the tree. In
+	 * other words, a chord is an edge which is not part of the tree.
+	 * @return A set of chords for the spanning tree.
+	 */
+	public Set<E> getChords() {
+		return chords;
 	}
 
 	/**

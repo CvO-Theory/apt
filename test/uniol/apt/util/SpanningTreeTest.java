@@ -19,6 +19,11 @@
 
 package uniol.apt.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hamcrest.Matcher;
+
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
@@ -26,7 +31,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static uniol.apt.adt.matcher.Matchers.*;
 
 /** @author Uli Schlachter */
 @Test
@@ -39,6 +44,7 @@ public class SpanningTreeTest {
 
 		assertThat(tree.getStartNode(), is(equalTo(null)));
 		assertThat(tree.getUnreachableNodes(), is(empty()));
+		assertThat(tree.getChords(), is(empty()));
 	}
 
 	private void verifySingleStateTS(SpanningTree<TransitionSystem, Arc, State> tree) {
@@ -47,6 +53,7 @@ public class SpanningTreeTest {
 
 		assertThat(tree.getStartNode(), is(equalTo(ts.getInitialState())));
 		assertThat(tree.getUnreachableNodes(), is(empty()));
+		assertThat(tree.getChords(), is(empty()));
 
 		assertThat(tree.getPredecessor(s0), is(equalTo(null)));
 
@@ -78,6 +85,18 @@ public class SpanningTreeTest {
 		assertThat(tree.getStartNode(), is(equalTo(ts.getInitialState())));
 		assertThat(tree.getUnreachableNodes(), is(empty()));
 
+		List<Matcher<? super Arc>> edgeMatchers = new ArrayList<>();
+		edgeMatchers.add(arcThatConnects("s1", "s0"));
+		edgeMatchers.add(arcThatConnects("s2", "s0"));
+		edgeMatchers.add(arcThatConnects("s3", "s1"));
+		edgeMatchers.add(arcThatConnects("s3", "s2"));
+		if (tree.getPredecessor(s3).equals(s1))
+			edgeMatchers.add(arcThatConnects("s2", "s3"));
+		else
+			edgeMatchers.add(arcThatConnects("s1", "s3"));
+
+		assertThat(tree.getChords(), containsInAnyOrder(edgeMatchers));
+
 		assertThat(tree.getPredecessor(s0), is(equalTo(null)));
 		assertThat(tree.getPredecessor(s1), is(equalTo(s0)));
 		assertThat(tree.getPredecessor(s2), is(equalTo(s0)));
@@ -100,6 +119,7 @@ public class SpanningTreeTest {
 
 		assertThat(tree.getStartNode(), is(equalTo(ts.getInitialState())));
 		assertThat(tree.getUnreachableNodes(), is(empty()));
+		assertThat(tree.getChords(), is(empty()));
 
 		assertThat(tree.getPredecessor(s), is(equalTo(null)));
 		assertThat(tree.getPredecessor(t), is(equalTo(s)));
@@ -123,6 +143,11 @@ public class SpanningTreeTest {
 		assertThat(tree.getStartNode(), is(equalTo(ts.getInitialState())));
 		assertThat(tree.getUnreachableNodes(), is(empty()));
 
+		if (tree.getPredecessor(s1).equals(l))
+			assertThat(tree.getChords(), contains(arcThatConnects("r", "s1")));
+		else
+			assertThat(tree.getChords(), contains(arcThatConnects("l", "s1")));
+
 		assertThat(tree.getPredecessor(s0), is(equalTo(null)));
 		assertThat(tree.getPredecessor(l), is(equalTo(s0)));
 		assertThat(tree.getPredecessor(r), is(equalTo(s0)));
@@ -145,6 +170,7 @@ public class SpanningTreeTest {
 
 		assertThat(tree.getStartNode(), is(equalTo(ts.getInitialState())));
 		assertThat(tree.getUnreachableNodes(), contains(fail));
+		assertThat(tree.getChords(), is(empty()));
 
 		assertThat(tree.getPredecessor(s0), is(equalTo(null)));
 		assertThat(tree.getPredecessor(s1), is(equalTo(s0)));
