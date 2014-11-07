@@ -22,6 +22,7 @@ package uniol.apt.synthesize;
 import org.hamcrest.Matcher;
 
 import uniol.apt.TestTSCollection;
+import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 
@@ -65,10 +66,10 @@ public class RegionUtilityTest {
 
 		RegionUtility utility = new RegionUtility(ts);
 
-		int a = utility.getLetterIndex("a");
-		int b = utility.getLetterIndex("b");
-		int c = utility.getLetterIndex("c");
-		int d = utility.getLetterIndex("d");
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+		int d = utility.getEventIndex("d");
 
 		assertThat(utility.getReachingParikhVector(s0), is(parikhVector(a, 0, b, 0, c, 0, d, 0)));
 		assertThat(utility.getReachingParikhVector(s1), is(parikhVector(a, 1, b, 0, c, 0, d, 0)));
@@ -88,8 +89,8 @@ public class RegionUtilityTest {
 
 		RegionUtility utility = new RegionUtility(ts);
 
-		int a = utility.getLetterIndex("a");
-		int b = utility.getLetterIndex("b");
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
 
 		assertThat(utility.getReachingParikhVector(s), is(parikhVector(a, 0, b, 0)));
 		assertThat(utility.getReachingParikhVector(t), is(parikhVector(a, 1, b, 0)));
@@ -106,8 +107,8 @@ public class RegionUtilityTest {
 
 		RegionUtility utility = new RegionUtility(ts);
 
-		int a = utility.getLetterIndex("a");
-		int b = utility.getLetterIndex("b");
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
 
 		assertThat(utility.getReachingParikhVector(s0), is(parikhVector(a, 0, b, 0)));
 		assertThat(utility.getReachingParikhVector(l), is(parikhVector(a, 1, b, 0)));
@@ -124,12 +125,60 @@ public class RegionUtilityTest {
 
 		RegionUtility utility = new RegionUtility(ts);
 
-		int a = utility.getLetterIndex("a");
-		int b = utility.getLetterIndex("b");
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
 
 		assertThat(utility.getReachingParikhVector(s0), is(parikhVector(a, 0, b, 0)));
 		assertThat(utility.getReachingParikhVector(s1), is(parikhVector(a, 1, b, 0)));
 		assertThat(utility.getReachingParikhVector(fail), is(empty()));
+	}
+
+	@Test
+	public void testParikhVectorForNonChords() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s0 = ts.createState("s0");
+		State s1 = ts.createState("s1");
+		State s2 = ts.createState("s2");
+		State s3 = ts.createState("s3");
+
+		ts.setInitialState(s0);
+
+		Arc a0 = ts.createArc(s0, s1, "a");
+		Arc a1 = ts.createArc(s1, s2, "b");
+		Arc a2 = ts.createArc(s2, s3, "a");
+		Arc a3 = ts.createArc(s3, s0, "b");
+
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+
+		// For non chords, the Parikh vector is zero, because both states have the same path
+		assertThat(utility.getParikhVectorForEdge(a0), is(parikhVector(a, 0, b, 0)));
+		assertThat(utility.getParikhVectorForEdge(a1), is(parikhVector(a, 0, b, 0)));
+		assertThat(utility.getParikhVectorForEdge(a2), is(parikhVector(a, 0, b, 0)));
+		// This is the only non-chord in the LTS which visits all arcs
+		assertThat(utility.getParikhVectorForEdge(a3), is(parikhVector(a, 2, b, 2)));
+	}
+
+	@Test
+	public void testParikhVectorForChords() {
+		TransitionSystem ts = TestTSCollection.getPersistentTS();
+		State s0 = ts.getNode("s0");
+		State l = ts.getNode("l");
+		State r = ts.getNode("r");
+		State s1 = ts.getNode("s1");
+
+		RegionUtility utility = new RegionUtility(ts);
+		Arc chord = utility.getSpanningTree().getChords().iterator().next();
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+
+		// All non-chords have vector (0, 0) anyway and the chord one is a+b-a-b, too, thanks to persistency.
+		for (Arc arc : ts.getEdges())
+			assertThat(utility.getParikhVectorForEdge(arc), is(parikhVector(a, 0, b, 0)));
 	}
 }
 

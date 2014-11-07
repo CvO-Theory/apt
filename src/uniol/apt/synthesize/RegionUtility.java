@@ -63,12 +63,12 @@ public class RegionUtility {
 	}
 
 	/**
-	 * Get the index of the given letter.
-	 * @param letter The letter whose index should be returned.
-	 * @return The letter's index or null.
+	 * Get the index of the given event.
+	 * @param event The event whose index should be returned.
+	 * @return The event's index or null.
 	 */
-	public Integer getLetterIndex(String letter) {
-		return alphabet.indexOf(letter);
+	public Integer getEventIndex(String event) {
+		return alphabet.indexOf(event);
 	}
 
 	/**
@@ -98,13 +98,35 @@ public class RegionUtility {
 				result = new ArrayList<>();
 				result.addAll(predVector);
 
-				int idx = getLetterIndex(predecessor.getLabel());
+				int idx = getEventIndex(predecessor.getLabel());
 				result.set(idx, result.get(idx) + 1);
 			}
 			result = Collections.unmodifiableList(result);
 			parikhVectorMap.put(node, result);
 		}
 		return result;
+	}
+
+	/**
+	 * Get the Parikh vector for an edge. This Parikh vector is Psi_t = Psi_s + e_i - Psi_{s'} for an edge
+	 * t = s--[a_i]->s'.
+	 * @return The edge's Parikh vector or an empty list if none exists.
+	 */
+	public List<Integer> getParikhVectorForEdge(Arc edge) {
+		State source = edge.getSource();
+		State target = edge.getTarget();
+		List<Integer> sourcePV = getReachingParikhVector(source);
+		List<Integer> targetPV = getReachingParikhVector(target);
+		int eventIndex = getEventIndex(edge.getLabel());
+
+		if (sourcePV.isEmpty() || targetPV.isEmpty())
+			return Collections.emptyList();
+
+		List<Integer> result = new ArrayList<>(sourcePV.size());
+		for (int i = 0; i < sourcePV.size(); i++)
+			result.add(sourcePV.get(i) - targetPV.get(i) + (i == eventIndex ? 1 : 0));
+
+		return Collections.unmodifiableList(result);
 	}
 }
 
