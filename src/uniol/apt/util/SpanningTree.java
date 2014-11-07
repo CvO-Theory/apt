@@ -37,7 +37,7 @@ import java.util.Set;
  * @author Uli Schlachter
  */
 public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>> {
-	private final Map<N, N> predecessorMap;
+	private final Map<N, E> predecessorMap;
 	private final Set<N> unreachableNodes;
 	private final Set<E> chords;
 	private final N startNode;
@@ -55,7 +55,7 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 		// Calculate the spanning tree: For each node we remember its predecessor in the tree and we keep a set
 		// of unvisited nodes. We visit unvisited nodes in turn, look at all their children which we haven't
 		// visited yet and enlarge the spanning tree by the path from the current node to the children.
-		Map<N, N> predecessorMap = new HashMap<>();
+		Map<N, E> predecessorMap = new HashMap<>();
 		Set<N> unvisitedNodes = new HashSet<>(graph.getNodes());
 		Set<N> stillToVisit = new HashSet<>();
 		Set<E> chords = new HashSet<>();
@@ -77,7 +77,7 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 				// ...if it was not yet reached, mark it as reachable and...
 				if (unvisitedNodes.remove(child)) {
 					// ...remember the path to the start node.
-					predecessorMap.put(child, node);
+					predecessorMap.put(child, edge);
 					// Also, we have to visit this node later.
 					stillToVisit.add(child);
 				} else {
@@ -115,6 +115,18 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	 * @return The predecessor if one exists or null. The start node and unreachable nodes do not have predecessors.
 	 */
 	public N getPredecessor(N node) {
+		E e = getPredecessorEdge(node);
+		if (e != null)
+			return e.getSource();
+		return null;
+	}
+
+	/**
+	 * Get the edge via which the given node is reached in the tree.
+	 * @param node The node whose predecessor edge should be returned.
+	 * @return The predecessor edge if one exists or null. The start node and unreachable nodes do not have predecessors.
+	 */
+	public E getPredecessorEdge(N node) {
 		return predecessorMap.get(node);
 	}
 
