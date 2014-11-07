@@ -146,6 +146,15 @@ public class EquationSystemTest {
 		matchers.add(contains(0, 5, -42));
 		assertThat(basis, containsInAnyOrder(matchers));
 	}
+
+	@Test
+	public void testEmptySystem() {
+		EquationSystem system = new EquationSystem(0);
+		system.addEquation();
+
+		Set<List<Integer>> basis = system.findBasis();
+		assertThat(basis, empty());
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

@@ -21,6 +21,7 @@ package uniol.apt.util.equations;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -241,7 +242,7 @@ public class EquationSystem {
 	 * @param numVariables The number of variables in the equation system.
 	 */
 	public EquationSystem(int numVariables) {
-		assert numVariables > 0;
+		assert numVariables >= 0;
 
 		this.numVariables = numVariables;
 	}
@@ -256,6 +257,17 @@ public class EquationSystem {
 		ArrayList<Integer> row = new ArrayList<>(numVariables);
 		for (int i = 0; i < coefficients.length; i++)
 			row.add(coefficients[i]);
+		equations.add(row);
+	}
+
+	/**
+	 * Add an equation to the equation system.
+	 * @param coefficients List of coefficients for the equation. This must have exactly one entry for each variable
+	 * in the equation system.
+	 */
+	public void addEquation(Collection<Integer> coefficients) {
+		assert coefficients.size() == numVariables;
+		ArrayList<Integer> row = new ArrayList<>(coefficients);
 		equations.add(row);
 	}
 
