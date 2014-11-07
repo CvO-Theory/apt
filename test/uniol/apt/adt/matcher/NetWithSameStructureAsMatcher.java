@@ -35,29 +35,29 @@ import java.util.ArrayList;
 
 /**
  * Matcher to verify that a Petri net has the same structure as another net. This means that there are places and
- * transitions with the same IDs and that the arcs go between nodes with same IDs.
+ * transitions with the same IDs and that the flows go between nodes with same IDs.
  * @author Uli Schlachter
  */
 public class NetWithSameStructureAsMatcher extends TypeSafeMatcher<PetriNet> {
 	private final Matcher<? extends Iterable<? extends Place>> placesMatcher;
 	private final Matcher<? extends Iterable<? extends Transition>> transitionsMatcher;
-	private final Matcher<? extends Iterable<? extends Flow>> arcsMatcher;
+	private final Matcher<? extends Iterable<? extends Flow>> flowsMatcher;
 
 	private NetWithSameStructureAsMatcher(PetriNet pn) {
 		Collection<Matcher<? super Place>> expectedPlaces = new ArrayList<>();
 		Collection<Matcher<? super Transition>> expectedTransitions = new ArrayList<>();
-		Collection<Matcher<? super Flow>> expectedArcs = new ArrayList<>();
+		Collection<Matcher<? super Flow>> expectedFlows = new ArrayList<>();
 
 		for (Place place : pn.getPlaces())
 			expectedPlaces.add(Matchers.nodeWithID(place.getId()));
 		for (Transition transition : pn.getTransitions())
 			expectedTransitions.add(Matchers.nodeWithID(transition.getId()));
-		for (Flow arc : pn.getEdges())
-			expectedArcs.add(Matchers.arcThatConnects(arc.getSource().getId(), arc.getTarget().getId()));
+		for (Flow flow : pn.getEdges())
+			expectedFlows.add(Matchers.flowThatConnects(flow.getSource().getId(), flow.getTarget().getId()));
 
 		placesMatcher = containsInAnyOrder(expectedPlaces);
 		transitionsMatcher = containsInAnyOrder(expectedTransitions);
-		arcsMatcher = containsInAnyOrder(expectedArcs);
+		flowsMatcher = containsInAnyOrder(expectedFlows);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class NetWithSameStructureAsMatcher extends TypeSafeMatcher<PetriNet> {
 			return false;
 		if (!transitionsMatcher.matches(pn.getTransitions()))
 			return false;
-		if (!arcsMatcher.matches(pn.getEdges()))
+		if (!flowsMatcher.matches(pn.getEdges()))
 			return false;
 		return true;
 	}
@@ -75,7 +75,7 @@ public class NetWithSameStructureAsMatcher extends TypeSafeMatcher<PetriNet> {
 	public void describeTo(Description description) {
 		description.appendText("PetriNet with places being ").appendDescriptionOf(placesMatcher);
 		description.appendText(" and transitions being ").appendDescriptionOf(transitionsMatcher);
-		description.appendText(" and arcs being ").appendDescriptionOf(arcsMatcher);
+		description.appendText(" and flows being ").appendDescriptionOf(flowsMatcher);
 	}
 
 	@Factory

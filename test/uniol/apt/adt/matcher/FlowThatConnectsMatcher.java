@@ -24,27 +24,27 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
-import uniol.apt.adt.ts.Arc;
-import uniol.apt.adt.ts.State;
+import uniol.apt.adt.pn.Flow;
+import uniol.apt.adt.pn.Node;
 
 /**
- * Matcher to verify that the nodes of an arc match the given matchers.
+ * Matcher to verify that the nodes of a flow match the given matchers.
  * @author Uli Schlachter, vsp
  */
-public class ArcThatConnectsMatcher extends TypeSafeDiagnosingMatcher<Arc> {
+public class FlowThatConnectsMatcher extends TypeSafeDiagnosingMatcher<Flow> {
 
-	private final Matcher<? super State> sourceMatcher;
-	private final Matcher<? super State> targetMatcher;
+	private final Matcher<? super Node> sourceMatcher;
+	private final Matcher<? super Node> targetMatcher;
 
-	private ArcThatConnectsMatcher(Matcher<? super State> sourceMatcher,
-			Matcher<? super State> targetMatcher) {
+	private FlowThatConnectsMatcher(Matcher<? super Node> sourceMatcher,
+			Matcher<? super Node> targetMatcher) {
 		this.sourceMatcher = sourceMatcher;
 		this.targetMatcher = targetMatcher;
 	}
 
 	@Override
 	public void describeTo(Description description) {
-		description.appendText("Arc with source <");
+		description.appendText("Flow with source <");
 		sourceMatcher.describeTo(description);
 		description.appendText("> and target <");
 		targetMatcher.describeTo(description);
@@ -52,12 +52,12 @@ public class ArcThatConnectsMatcher extends TypeSafeDiagnosingMatcher<Arc> {
 	}
 
 	@Override
-	public boolean matchesSafely(Arc arc, Description description) {
-		State source = arc.getSource();
-		State target = arc.getTarget();
+	public boolean matchesSafely(Flow flow, Description description) {
+		Node source = flow.getSource();
+		Node target = flow.getTarget();
 
 		if (!sourceMatcher.matches(source)) {
-			description.appendText("Arc with source <");
+			description.appendText("Flow with source <");
 			sourceMatcher.describeMismatch(source, description);
 			description.appendText(">");
 
@@ -65,7 +65,7 @@ public class ArcThatConnectsMatcher extends TypeSafeDiagnosingMatcher<Arc> {
 		}
 
 		if (!targetMatcher.matches(target)) {
-			description.appendText("Arc with target <");
+			description.appendText("Flow with target <");
 			targetMatcher.describeMismatch(target, description);
 			description.appendText(">");
 
@@ -76,9 +76,9 @@ public class ArcThatConnectsMatcher extends TypeSafeDiagnosingMatcher<Arc> {
 	}
 
 	@Factory
-	public static <T> Matcher<Arc> arcThatConnects(Matcher<? super State> sourceMatcher,
-			Matcher<? super State> targetMatcher) {
-		return new ArcThatConnectsMatcher(sourceMatcher, targetMatcher);
+	public static <T> Matcher<Flow> flowThatConnects(Matcher<? super Node> sourceMatcher,
+			Matcher<? super Node> targetMatcher) {
+		return new FlowThatConnectsMatcher(sourceMatcher, targetMatcher);
 	}
 }
 

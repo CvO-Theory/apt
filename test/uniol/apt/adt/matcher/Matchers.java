@@ -92,12 +92,21 @@ public class Matchers extends org.hamcrest.Matchers {
 		return NetWithSameStructureAsMatcher.netWithSameStructureAs(pn);
 	}
 
-	public static <T> Matcher<Flow> arcThatConnects(String sourceID, String targetID) {
+	public static <T> Matcher<Flow> flowThatConnects(String sourceID, String targetID) {
+		return flowThatConnects(nodeWithID(sourceID), nodeWithID(targetID));
+	}
+
+	public static <T> Matcher<Arc> arcThatConnects(String sourceID, String targetID) {
 		return arcThatConnects(nodeWithID(sourceID), nodeWithID(targetID));
 	}
 
-	public static <T> Matcher<Flow> arcThatConnects(Matcher<? super Node> sourceMatcher,
+	public static <T> Matcher<Flow> flowThatConnects(Matcher<? super Node> sourceMatcher,
 			Matcher<? super Node> targetMatcher) {
+		return FlowThatConnectsMatcher.flowThatConnects(sourceMatcher, targetMatcher);
+	}
+
+	public static <T> Matcher<Arc> arcThatConnects(Matcher<? super State> sourceMatcher,
+			Matcher<? super State> targetMatcher) {
 		return ArcThatConnectsMatcher.arcThatConnects(sourceMatcher, targetMatcher);
 	}
 

@@ -31,7 +31,7 @@ import static uniol.apt.TestNetCollection.getNonPersistentNet;
 import static uniol.apt.TestNetCollection.getOneTransitionNoPlaceNet;
 import static uniol.apt.TestNetCollection.getPersistentBiCFNet;
 import static uniol.apt.TestNetCollection.getTokenGeneratorNet;
-import static uniol.apt.adt.matcher.Matchers.arcThatConnects;
+import static uniol.apt.adt.matcher.Matchers.flowThatConnects;
 import static uniol.apt.adt.matcher.Matchers.nodeWithID;
 
 import java.util.ArrayList;
@@ -59,18 +59,18 @@ public class InverseNetGeneratorTest {
 
 		Collection<Matcher<? super Place>> expectedPlaces = new ArrayList<>();
 		Collection<Matcher<? super Transition>> expectedTransitions = new ArrayList<>();
-		Collection<Matcher<? super Flow>> expectedArcs = new ArrayList<>();
+		Collection<Matcher<? super Flow>> expectedFlows = new ArrayList<>();
 
 		for (Place place : pn.getPlaces())
 			expectedPlaces.add(nodeWithID(place.getId()));
 		for (Transition transition : pn.getTransitions())
 			expectedTransitions.add(nodeWithID(transition.getId()));
-		for (Flow arc : pn.getEdges())
-			expectedArcs.add(arcThatConnects(arc.getTarget().getId(), arc.getSource().getId()));
+		for (Flow flow : pn.getEdges())
+			expectedFlows.add(flowThatConnects(flow.getTarget().getId(), flow.getSource().getId()));
 
 		assertThat(inverse.getPlaces(), containsInAnyOrder(expectedPlaces));
 		assertThat(inverse.getTransitions(), containsInAnyOrder(expectedTransitions));
-		assertThat(inverse.getEdges(), containsInAnyOrder(expectedArcs));
+		assertThat(inverse.getEdges(), containsInAnyOrder(expectedFlows));
 	}
 
 	@Test(dataProvider = "IntRange", dataProviderClass = IntRangeDataProvider.class)
