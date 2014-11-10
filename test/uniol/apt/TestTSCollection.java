@@ -241,6 +241,32 @@ public class TestTSCollection {
 
 		return ts;
 	}
+
+	/**
+	 * The transitions system:
+	 * <pre>
+	 *      a        b        c        a
+	 * [s] ---> [t] ---> [u] ---> [v] ---> [w] <-b (loop)
+	 * </pre>
+	 */
+	public static TransitionSystem getPathTS() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s = ts.createState("s");
+		State t = ts.createState("t");
+		State u = ts.createState("u");
+		State v = ts.createState("v");
+		State w = ts.createState("w");
+
+		ts.setInitialState(s);
+
+		ts.createArc(s, t, "a");
+		ts.createArc(t, u, "b");
+		ts.createArc(u, v, "c");
+		ts.createArc(v, w, "a");
+		ts.createArc(w, w, "b");
+		return ts;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
