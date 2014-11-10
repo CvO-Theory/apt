@@ -39,19 +39,17 @@ import uniol.apt.util.SpanningTree;
 public class RegionUtility {
 	private final TransitionSystem ts;
 	private final SpanningTree<TransitionSystem, Arc, State> tree;
-	private final List<String> alphabet;
+	private final List<String> eventList;
 	private final Map<State, List<Integer>> parikhVectorMap = new HashMap<>();
 
 	/**
 	 * Construct a new RegionUtility.
-	 * @param ts The TransitionSystem on which regions should be examined.
 	 * @param tree A spanning tree for the given transition system.
 	 */
-	public RegionUtility(TransitionSystem ts, SpanningTree<TransitionSystem, Arc, State> tree) {
-		assert tree.getGraph() == ts;
-		this.ts = ts;
+	public RegionUtility(SpanningTree<TransitionSystem, Arc, State> tree) {
+		this.ts = tree.getGraph();
 		this.tree = tree;
-		this.alphabet = new ArrayList<>(ts.getAlphabet());
+		this.eventList = Collections.unmodifiableList(new ArrayList<>(ts.getAlphabet()));
 	}
 
 	/**
@@ -59,7 +57,7 @@ public class RegionUtility {
 	 * @param ts The TransitionSystem on which regions should be examined.
 	 */
 	public RegionUtility(TransitionSystem ts) {
-		this(ts, new SpanningTree<TransitionSystem, Arc, State>(ts, ts.getInitialState()));
+		this(new SpanningTree<TransitionSystem, Arc, State>(ts, ts.getInitialState()));
 	}
 
 	/**
@@ -68,7 +66,15 @@ public class RegionUtility {
 	 * @return The event's index or null.
 	 */
 	public Integer getEventIndex(String event) {
-		return alphabet.indexOf(event);
+		return eventList.indexOf(event);
+	}
+
+	/**
+	 * Get the list of events of the underlying transition system. This list is ordered to form vectors. So the
+	 * first entry of a vector corresponds to the first event in this list etc.
+	 */
+	public List<String> getEventList() {
+		return eventList;
 	}
 
 	/**
@@ -86,7 +92,7 @@ public class RegionUtility {
 		List<Integer> result = parikhVectorMap.get(node);
 		if (result == null) {
 			if (node.equals(tree.getStartNode())) {
-				Integer[] array = new Integer[alphabet.size()];
+				Integer[] array = new Integer[eventList.size()];
 				Arrays.fill(array, 0);
 				result = Arrays.asList(array);
 			} else {
@@ -122,8 +128,8 @@ public class RegionUtility {
 		if (sourcePV.isEmpty() || targetPV.isEmpty())
 			return Collections.emptyList();
 
-		List<Integer> result = new ArrayList<>(sourcePV.size());
-		for (int i = 0; i < sourcePV.size(); i++)
+		List<Integer> result = new ArrayList<>(eventList.size());
+		for (int i = 0; i < eventList.size(); i++)
 			result.add(sourcePV.get(i) - targetPV.get(i) + (i == eventIndex ? 1 : 0));
 
 		return Collections.unmodifiableList(result);
