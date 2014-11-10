@@ -176,6 +176,23 @@ public class Region {
 		return "{ " + result + " }";
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Region))
+			return false;
+		if (obj == this)
+			return true;
+		Region reg = (Region) obj;
+		return reg.utility.equals(utility) &&
+			reg.forwardWeights.equals(forwardWeights) &&
+			reg.backwardWeights.equals(backwardWeights);
+	}
+
+	@Override
+	public int hashCode() {
+		return forwardWeights.hashCode() + backwardWeights.hashCode();
+	}
+
 	/**
 	 * Create a pure region with the given weight vector.
 	 * @param utility The RegionUtility whose alphabet should be used.

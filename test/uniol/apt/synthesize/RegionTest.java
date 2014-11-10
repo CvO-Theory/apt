@@ -26,6 +26,8 @@ import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.TransitionSystem;
 
 import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.synthesize.Matchers.*;
 
@@ -295,6 +297,41 @@ public class RegionTest {
 				impureParikhVector(a, 2, 1, b, 3, 0, c, 5, 3));
 
 		assertThat(region.getNormalRegionMarking(), is(equalTo(9)));
+	}
+
+	@Test
+	public void testEqualsTrue() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region region1 = Region.createImpureRegionFromVector(utility,
+				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+		Region region2 = Region.createImpureRegionFromVector(utility,
+				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+
+		assertEquals(region1, region2);
+		assertEquals(region1.hashCode(), region2.hashCode());
+	}
+
+	@Test
+	public void testEqualsFalse() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region region1 = Region.createImpureRegionFromVector(utility,
+				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+		Region region2 = Region.createImpureRegionFromVector(utility,
+				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 8));
+
+		assertNotEquals(region1, region2);
 	}
 }
 
