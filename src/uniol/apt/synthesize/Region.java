@@ -19,10 +19,9 @@
 
 package uniol.apt.synthesize;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.Arc;
@@ -34,22 +33,22 @@ import uniol.apt.adt.ts.TransitionSystem;
  */
 public class Region {
 	private final RegionUtility utility;
-	private final Map<String, Integer> backwardMap;
-	private final Map<String, Integer> forwardMap;
+	private final List<Integer> backwardWeights;
+	private final List<Integer> forwardWeights;
 
 	/**
 	 * Create a new region.
 	 * @param utility The RegionUtility instance that supports this region.
-	 * @param backwardMap The map that describes the backward weights for each event.
-	 * @param forwardMap The map that describes the forward weights for each event.
+	 * @param backwardWeights List of weights for the backward weight of each event.
+	 * @param forwardWeights List of weights for the forward weights of each event.
 	 */
-	public Region(RegionUtility utility, Map<String, Integer> backwardMap, Map<String, Integer> forwardMap) {
+	public Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights) {
 		this.utility = utility;
-		this.backwardMap = Collections.unmodifiableMap(backwardMap);
-		this.forwardMap = Collections.unmodifiableMap(forwardMap);
+		this.backwardWeights = Collections.unmodifiableList(new ArrayList<>(backwardWeights));
+		this.forwardWeights = Collections.unmodifiableList(new ArrayList<>(forwardWeights));
 
-		assert backwardMap.keySet().equals(forwardMap.keySet());
-		assert backwardMap.keySet().equals(utility.getSpanningTree().getGraph().getAlphabet());
+		assert backwardWeights.size() == utility.getEventList().size();
+		assert forwardWeights.size() == utility.getEventList().size();
 	}
 
 	/**
@@ -67,24 +66,45 @@ public class Region {
 	}
 
 	/**
+	 * Return the backward weight for the given event index.
+	 */
+	public int getBackwardWeight(int index) {
+		return backwardWeights.get(index);
+	}
+
+	/**
 	 * Return the backward weight for the given event.
 	 */
 	public int getBackwardWeight(String event) {
-		return backwardMap.get(event);
+		return backwardWeights.get(utility.getEventIndex(event));
+	}
+
+	/**
+	 * Return the forward weight for the given event index.
+	 */
+	public int getForwardWeight(int index) {
+		return forwardWeights.get(index);
 	}
 
 	/**
 	 * Return the forward weight for the given event.
 	 */
 	public int getForwardWeight(String event) {
-		return forwardMap.get(event);
+		return forwardWeights.get(utility.getEventIndex(event));
+	}
+
+	/**
+	 * Return the total weight for the given event index.
+	 */
+	public int getWeight(int index) {
+		return getForwardWeight(index) - getBackwardWeight(index);
 	}
 
 	/**
 	 * Return the total weight for the given event.
 	 */
 	public int getWeight(String event) {
-		return forwardMap.get(event) - backwardMap.get(event);
+		return getForwardWeight(event) - getBackwardWeight(event);
 	}
 
 	/**
@@ -136,10 +156,10 @@ public class Region {
 	@Override
 	public String toString() {
 		String result = "";
-		for (String event : backwardMap.keySet()) {
+		for (String event : utility.getEventList()) {
 			if (!result.isEmpty())
 				result += ", ";
-			result += backwardMap.get(event) + ":" + event + ":" + forwardMap.get(event);
+			result += getBackwardWeight(event) + ":" + event + ":" + getForwardWeight(event);
 		}
 		return "{ " + result + " }";
 	}
@@ -151,23 +171,21 @@ public class Region {
 	 * @return The resulting region.
 	 */
 	public static Region createPureRegionFromVector(RegionUtility utility, List<Integer> vector) {
-		Map<String, Integer> backwardMap = new HashMap<>();
-		Map<String, Integer> forwardMap = new HashMap<>();
-		List<String> events = utility.getEventList();
+		List<Integer> backwardList = new ArrayList<>(utility.getEventList().size());
+		List<Integer> forwardList = new ArrayList<>(utility.getEventList().size());
 
-		assert vector.size() == events.size();
-		for (int i = 0; i < events.size(); i++) {
+		for (int i = 0; i < vector.size(); i++) {
 			int value = vector.get(i);
 			if (value > 0) {
-				backwardMap.put(events.get(i), 0);
-				forwardMap.put(events.get(i), value);
+				backwardList.add(0);
+				forwardList.add(value);
 			} else {
-				backwardMap.put(events.get(i), -value);
-				forwardMap.put(events.get(i), 0);
+				backwardList.add(-value);
+				forwardList.add(0);
 			}
 		}
 
-		return new Region(utility, backwardMap, forwardMap);
+		return new Region(utility, backwardList, forwardList);
 	}
 
 	/**
@@ -178,20 +196,7 @@ public class Region {
 	 * @return The resulting region.
 	 */
 	public static Region createImpureRegionFromVector(RegionUtility utility, List<Integer> vector) {
-		Map<String, Integer> backwardMap = new HashMap<>();
-		Map<String, Integer> forwardMap = new HashMap<>();
-		List<String> events = utility.getEventList();
-
-		assert vector.size() == 2 * events.size();
-		for (int i = 0; i < events.size(); i++) {
-			assert vector.get(i) >= 0;
-			assert vector.get(i + events.size()) >= 0;
-
-			backwardMap.put(events.get(i), vector.get(i));
-			forwardMap.put(events.get(i), vector.get(i + events.size()));
-		}
-
-		return new Region(utility, backwardMap, forwardMap);
+		return new Region(utility, vector.subList(0, vector.size() / 2), vector.subList(vector.size() / 2, vector.size()));
 	}
 }
 
