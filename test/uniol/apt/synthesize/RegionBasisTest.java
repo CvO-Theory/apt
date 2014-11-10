@@ -43,7 +43,9 @@ public class RegionBasisTest {
 	public void testcc1LTS() {
 		RegionBasis basis = new RegionBasis(TestTSCollection.getcc1LTS());
 
-		assertThat(basis, contains(pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"), Arrays.asList(1, -1, -1, 1))));
+		assertThat(basis, contains(anyOf(
+						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"), Arrays.asList(1, -1, -1, 1)),
+						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"), Arrays.asList(-1, 1, 1, -1)))));
 	}
 
 	@Test

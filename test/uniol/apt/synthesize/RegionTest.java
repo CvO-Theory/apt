@@ -208,6 +208,66 @@ public class RegionTest {
 	}
 
 	@Test
+	public void testEvaluateParikhVectorEmptyWithEvent() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region region = Region.createImpureRegionFromVector(utility,
+				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+
+		assertThat(region.evaluateParikhVector(pureParikhVector(a, 0, b, 0, c, 0), a), is(equalTo(-1)));
+	}
+
+	@Test
+	public void testEvaluateParikhVectorSingleWithEvent() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region region = Region.createImpureRegionFromVector(utility,
+				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+
+		assertThat(region.evaluateParikhVector(pureParikhVector(a, 1, b, 0, c, 0), a), is(equalTo(0)));
+	}
+
+	@Test
+	public void testEvaluateParikhVectorDoubleWithEvent() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region region = Region.createImpureRegionFromVector(utility,
+				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+
+		assertThat(region.evaluateParikhVector(pureParikhVector(a, 2, b, 0, c, 0), b), is(equalTo(-1)));
+	}
+
+	@Test
+	public void testEvaluateParikhVectorMixedWithEvent() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region region = Region.createImpureRegionFromVector(utility,
+				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+
+		assertThat(region.evaluateParikhVector(pureParikhVector(a, -6, b, 7, c, 9), c), is(equalTo(5)));
+	}
+
+	@Test
 	public void testGetNormalRegionMarking() {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
