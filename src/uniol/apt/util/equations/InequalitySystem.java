@@ -38,8 +38,7 @@ import solver.variables.VariableFactory;
  */
 public class InequalitySystem {
 	private final int numVariables;
-	private final List<int[]> rows = new ArrayList<>();
-	private final List<Integer> rightHandSides = new ArrayList<>();
+	private final List<Inequality> inequalities = new ArrayList<>();
 
 	private static void debug(String message) {
 		//System.err.println("InequalitySystem: " + message);
@@ -53,6 +52,101 @@ public class InequalitySystem {
 		debug(obj.toString());
 	}
 
+	private static int[] toIntArray(Collection<Integer> collection) {
+		int result[] = new int[collection.size()];
+		int i = 0;
+		for (int value : collection)
+			result[i++] = value;
+
+		return result;
+	}
+
+	/**
+	 * An enumeration of comparators on numbers.
+	 */
+	public static enum Comparator {
+		LESS_THAN_OR_EQUAL("<=", ">="), LESS_THAN("<", ">"), EQUAL("=", "="), GREATER_THAN(">", "<"), GREATER_THAN_OR_EQUAL(">=", "<=");
+
+		private final String representation;
+		private final String opposite;
+
+		private Comparator(String representation, String opposite) {
+			this.representation = representation;
+			this.opposite = opposite;
+		}
+
+		public Comparator getOpposite() {
+			return fromString(opposite);
+		}
+
+		@Override
+		public String toString() {
+			return representation;
+		}
+
+		static Comparator fromString(String str) {
+			for (Comparator comp : values())
+				if (comp.toString() == str)
+					return comp;
+			throw new AssertionError("Unknown Comparator '" + str + "'");
+		}
+	}
+
+	/**
+	 * Instances of this class represent a linear inequality in a number of unknowns.
+	 */
+	public static class Inequality {
+		private final int leftHandSide;
+		private final Comparator comparator;
+		private final int[] coefficients;
+
+		// TODO: Document
+		public Inequality(int leftHandSide, Comparator comparator, int[] coefficients) {
+			this.leftHandSide = leftHandSide;
+			this.comparator = comparator;
+			this.coefficients = Arrays.copyOf(coefficients, coefficients.length);
+		}
+
+		// TODO: Document
+		public int getLeftHandSide() {
+			return leftHandSide;
+		}
+
+		// TODO: Document
+		public Comparator getComparator() {
+			return comparator;
+		}
+
+		// TODO: Document
+		public int[] getCoefficients() {
+			// TODO: This is ugly
+			return Arrays.copyOf(coefficients, coefficients.length);
+		}
+
+		@Override
+		public String toString() {
+			StringWriter buffer = new StringWriter();
+			buffer.write("" + leftHandSide);
+			buffer.write(" " + comparator.toString() + " ");
+			boolean first = true;
+			for (int j = 0; j < coefficients.length; j++) {
+				if (coefficients[j] == 0)
+					continue;
+
+				if (!first)
+					buffer.write(" + ");
+				buffer.write("" + coefficients[j]);
+				buffer.write("*x[");
+				buffer.write("" + j);
+				buffer.write("]");
+				first = false;
+			}
+			if (first)
+				buffer.write("0");
+			return buffer.toString();
+		}
+	}
+
 	/**
 	 * Construct a new inequality system.
 	 * @param numVariables The number of variables in the inequality system.
@@ -64,48 +158,69 @@ public class InequalitySystem {
 	}
 
 	/**
-	 * Add an inequality of the form <pre>sum(x[i] * coefficients[i]) &lt;= rhs</pre> to the inequality system.
-	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each variable
-	 * in the inequality system.
-	 * @param rhs The right hand side of the inequality.
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality system.
+	 * @param inequality The inequality to add.
 	 */
-	public void addInequality(int rhs, int... coefficients) {
-		assert coefficients.length == numVariables;
-		int row[] = Arrays.copyOf(coefficients, numVariables);
-		rows.add(row);
-		rightHandSides.add(rhs);
+	public void addInequality(Inequality inequality) {
+		assert inequality.getCoefficients().length == numVariables;
+		inequalities.add(inequality);
 	}
 
 	/**
-	 * Add an inequality of the form <pre>sum(x[i] * coefficients[i]) &lt;= rhs</pre> to the inequality system.
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality system.
+	 * @param lhs The left hand side of the inequality.
+	 * @param comparator Comparator for the inequality,
 	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each variable
 	 * in the inequality system.
-	 * @param rhs The right hand side of the inequality.
 	 */
-	public void addInequality(int rhs, Collection<Integer> coefficients) {
-		assert coefficients.size() == numVariables;
-		int row[] = new int[numVariables];
-		Iterator<Integer> it = coefficients.iterator();
+	public void addInequality(int lhs, Comparator comparator, int... coefficients) {
+		addInequality(new Inequality(lhs, comparator, coefficients));
+	}
 
-		for (int i = 0; i < numVariables; i++)
-			row[i] = it.next();
-		assert !it.hasNext();
+	/**
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality system.
+	 * @param lhs The left hand side of the inequality.
+	 * @param comparator Comparator for the inequality,
+	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each variable
+	 * in the inequality system.
+	 */
+	public void addInequality(int lhs, String comparator, int... coefficients) {
+		addInequality(lhs, Comparator.fromString(comparator), coefficients);
+	}
 
-		rows.add(row);
-		rightHandSides.add(rhs);
+	/**
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality system.
+	 * @param lhs The left hand side of the inequality.
+	 * @param comparator Comparator for the inequality,
+	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each variable
+	 * in the inequality system.
+	 */
+	public void addInequality(int lhs, Comparator comparator, Collection<Integer> coefficients) {
+		addInequality(lhs, comparator, toIntArray(coefficients));
+	}
+
+	/**
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality system.
+	 * @param lhs The left hand side of the inequality.
+	 * @param comparator Comparator for the inequality,
+	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each variable
+	 * in the inequality system.
+	 */
+	public void addInequality(int lhs, String comparator, Collection<Integer> coefficients) {
+		addInequality(lhs, Comparator.fromString(comparator), toIntArray(coefficients));
 	}
 
 	/**
 	 * Calculate a solution of the inequality system.
 	 */
 	public List<Integer> findSolution() {
-		assert rows.size() == rightHandSides.size();
-
 		Solver solver = new Solver();
 		IntVar[] vars = VariableFactory.integerArray("x", numVariables, VariableFactory.MIN_INT_BOUND, VariableFactory.MAX_INT_BOUND, solver);
-		for (int i = 0; i < rows.size(); i++) {
-			IntVar rhsVar = VariableFactory.fixed(rightHandSides.get(i), solver);
-			solver.post(IntConstraintFactory.scalar(vars, rows.get(i), "<=", rhsVar));
+		for (Inequality inequality : inequalities) {
+			IntVar lhsVar = VariableFactory.fixed(inequality.getLeftHandSide(), solver);
+			String comparator = inequality.getComparator().getOpposite().toString();
+			int[] coefficients = inequality.getCoefficients();
+			solver.post(IntConstraintFactory.scalar(vars, coefficients, comparator, lhsVar));
 		}
 
 		if (!solver.findSolution())
@@ -129,25 +244,8 @@ public class InequalitySystem {
 	public String toString() {
 		StringWriter buffer = new StringWriter();
 		buffer.write("[\n");
-		for (int i = 0; i < rows.size(); i++) {
-			int[] row = rows.get(i);
-			boolean first = true;
-			for (int j = 0; j < numVariables; j++) {
-				if (row[j] == 0)
-					continue;
-
-				if (!first)
-					buffer.write(" + ");
-				buffer.write("" + row[j]);
-				buffer.write("*x[");
-				buffer.write("" + j);
-				buffer.write("]");
-				first = false;
-			}
-			if (first)
-				buffer.write("0");
-			buffer.write(" <= ");
-			buffer.write("" + rightHandSides.get(i));
+		for (Inequality inequality : inequalities) {
+			buffer.write(inequality.toString());
 			buffer.write("\n");
 		}
 		buffer.write("]");

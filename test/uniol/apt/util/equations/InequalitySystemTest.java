@@ -32,10 +32,10 @@ public class InequalitySystemTest {
 	@Test
 	public void testSimpleSystem0() {
 		InequalitySystem system = new InequalitySystem(3);
-		system.addInequality(0, 1, 0, 1);
-		system.addInequality(0, -1, 0, -1);
-		system.addInequality(0, 0, 1, 1);
-		system.addInequality(0, 0, -1, -1);
+		system.addInequality(0, ">=", 1, 0, 1);
+		system.addInequality(0, ">=", -1, 0, -1);
+		system.addInequality(0, ">=", 0, 1, 1);
+		system.addInequality(0, ">=", 0, -1, -1);
 
 		List<Integer> solution = system.findSolution();
 		assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
@@ -47,9 +47,9 @@ public class InequalitySystemTest {
 	@Test
 	public void testSimpleSystem1() {
 		InequalitySystem system = new InequalitySystem(3);
-		system.addInequality(0, 2, 1, 3);
-		system.addInequality(0, 1, 1, 2);
-		system.addInequality(0, 1, 2, 3);
+		system.addInequality(0, ">=", 2, 1, 3);
+		system.addInequality(0, ">=", 1, 1, 2);
+		system.addInequality(0, ">=", 1, 2, 3);
 
 		List<Integer> solution = system.findSolution();
 		assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
@@ -62,10 +62,10 @@ public class InequalitySystemTest {
 	@Test
 	public void testSimpleSystem2() {
 		InequalitySystem system = new InequalitySystem(3);
-		system.addInequality(1, 2, 1, 3);
-		system.addInequality(2, 1, 1, 2);
-		system.addInequality(3, 1, 2, 3);
-		system.addInequality(4, 3, 3, 6);
+		system.addInequality(1, ">=", 2, 1, 3);
+		system.addInequality(2, ">=", 1, 1, 2);
+		system.addInequality(3, ">=", 1, 2, 3);
+		system.addInequality(4, ">=", 3, 3, 6);
 
 		List<Integer> solution = system.findSolution();
 		assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
@@ -79,9 +79,9 @@ public class InequalitySystemTest {
 	@Test
 	public void testSimpleSystem3() {
 		InequalitySystem system = new InequalitySystem(3);
-		system.addInequality(0, 1, 2, 0);
-		system.addInequality(0, 0, 1, 1);
-		system.addInequality(0, 1, 0, 1);
+		system.addInequality(0, ">=", 1, 2, 0);
+		system.addInequality(0, ">=", 0, 1, 1);
+		system.addInequality(0, ">=", 1, 0, 1);
 
 		List<Integer> solution = system.findSolution();
 		assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
@@ -94,9 +94,9 @@ public class InequalitySystemTest {
 	@Test
 	public void testSimpleSystem4() {
 		InequalitySystem system = new InequalitySystem(3);
-		system.addInequality(10, 4, 2, 6);
-		system.addInequality(10, 2, 2, 4);
-		system.addInequality(10, 2, 4, 6);
+		system.addInequality(10, ">=", 4, 2, 6);
+		system.addInequality(10, ">=", 2, 2, 4);
+		system.addInequality(10, ">=", 2, 4, 6);
 
 		List<Integer> solution = system.findSolution();
 		assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
@@ -109,8 +109,8 @@ public class InequalitySystemTest {
 	@Test
 	public void testSimpleSystem5() {
 		InequalitySystem system = new InequalitySystem(3);
-		system.addInequality(0, 4, 2, 5);
-		system.addInequality(0, 2, 2, 4);
+		system.addInequality(0, ">=", 4, 2, 5);
+		system.addInequality(0, ">=", 2, 2, 4);
 
 		List<Integer> solution = system.findSolution();
 		assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
@@ -130,7 +130,7 @@ public class InequalitySystemTest {
 	@Test
 	public void testSimpleSystem7() {
 		InequalitySystem system = new InequalitySystem(3);
-		system.addInequality(0, 0, 42, 0);
+		system.addInequality(0, ">=", 0, 42, 0);
 
 		List<Integer> solution = system.findSolution();
 		assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
@@ -139,9 +139,25 @@ public class InequalitySystemTest {
 	}
 
 	@Test
+	public void testSimpleSystem8() {
+		InequalitySystem system = new InequalitySystem(3);
+		system.addInequality(2, ">", 1, 1, 0);
+		system.addInequality(1, "<=", 1, 1, 0);
+		system.addInequality(1, "<", 1, 0, 1);
+		system.addInequality(1, "=", 0, 0, 1);
+
+		List<Integer> solution = system.findSolution();
+		assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
+		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
+		assertThat(x + y, is(1));
+		assertThat(x + z, greaterThan(1));
+		assertThat(z, is(1));
+	}
+
+	@Test
 	public void testEmptySystem1() {
 		InequalitySystem system = new InequalitySystem(0);
-		system.addInequality(0);
+		system.addInequality(0, ">=");
 
 		List<Integer> solution = system.findSolution();
 		assertThat(solution, empty());
@@ -158,9 +174,9 @@ public class InequalitySystemTest {
 	@Test
 	public void testToStringEmptySystem1() {
 		InequalitySystem system = new InequalitySystem(0);
-		system.addInequality(0);
+		system.addInequality(0, "<");
 
-		assertThat(system, hasToString("[\n0 <= 0\n]"));
+		assertThat(system, hasToString("[\n0 < 0\n]"));
 	}
 
 	@Test
@@ -173,16 +189,16 @@ public class InequalitySystemTest {
 	@Test
 	public void testToStringSimpleSystem() {
 		InequalitySystem system = new InequalitySystem(3);
-		system.addInequality(2, 1, 0, 1);
-		system.addInequality(3, 0, 1, 1);
+		system.addInequality(2, ">=", 1, 0, 1);
+		system.addInequality(3, ">=", 0, 1, 1);
 
-		assertThat(system, hasToString("[\n1*x[0] + 1*x[2] <= 2\n1*x[1] + 1*x[2] <= 3\n]"));
+		assertThat(system, hasToString("[\n2 >= 1*x[0] + 1*x[2]\n3 >= 1*x[1] + 1*x[2]\n]"));
 	}
 
 	@Test
 	public void testToStringTrivialSystem() {
 		InequalitySystem system = new InequalitySystem(1);
-		system.addInequality(0, 0);
+		system.addInequality(0, "<=", 0);
 
 		assertThat(system, hasToString("[\n0 <= 0\n]"));
 	}
