@@ -4,6 +4,9 @@
 		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
 		<pathelement location="lib/antlr-3.4/antlr-3.4-complete-no-antlrv2-modified.jar" />
 		<pathelement location="lib/sat4j-2.3.2/org.sat4j.core.jar"/>
+		<pathelement location="lib/choco-solver-3.2.1/choco-solver-3.2.1.jar"/>
+		<pathelement location="lib/slf4j-1.7.7/slf4j-simple-1.7.7.jar"/>
+		<pathelement location="lib/slf4j-1.7.7/slf4j-api-1.7.7.jar"/>
 		<pathelement location="classes" />
 	</path>
 
@@ -278,6 +281,10 @@
 			<zipfileset includes="**/*.class" src="lib/commons-io-2.4/commons-io-2.4.jar" />
 			<zipfileset includes="**/*.class" src="lib/antlr-3.4/antlr-3.4-complete-no-antlrv2-modified.jar" />
 			<zipfileset includes="**/*.class" src="lib/sat4j-2.3.2/org.sat4j.core.jar" />
+			<zipfileset includes="**/*.class" src="lib/choco-solver-3.2.1/choco-solver-3.2.1.jar" />
+			<zipfileset includes="**/*.class" src="lib/slf4j-1.7.7/slf4j-simple-1.7.7.jar" />
+			<zipfileset includes="**/*.class" src="lib/slf4j-1.7.7/slf4j-api-1.7.7.jar" />
+			<zipfileset includes="configuration.properties" src="lib/choco-solver-3.2.1/choco-solver-3.2.1.jar" />
 			<manifest>
 				<attribute name="Main-Class" value="uniol.apt.APT" />
 			</manifest>
