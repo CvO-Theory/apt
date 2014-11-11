@@ -303,14 +303,31 @@ public class EquationSystem {
 		return Collections.unmodifiableSet(result);
 	}
 
+	@Override
 	public String toString() {
 		StringWriter buffer = new StringWriter();
-		buffer.append("[\n");
-		for (List<Integer> row : equations) {
-			buffer.write(row.toString());
-			buffer.write("\n");
+		buffer.write("[\n");
+		for (int i = 0; i < equations.size(); i++) {
+			List<Integer> equation = equations.get(i);
+			boolean first = true;
+			for (int j = 0; j < numVariables; j++) {
+				if (equation.get(j) == 0)
+					continue;
+
+				if (!first)
+					buffer.write(" + ");
+
+				buffer.write("" + equation.get(j));
+				buffer.write("*x[");
+				buffer.write("" + j);
+				buffer.write("]");
+				first = false;
+			}
+			if (first)
+				buffer.write("0");
+			buffer.write(" = 0\n");
 		}
-		buffer.append("]");
+		buffer.write("]");
 		return buffer.toString();
 	}
 }

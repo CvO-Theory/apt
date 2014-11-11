@@ -148,12 +148,52 @@ public class EquationSystemTest {
 	}
 
 	@Test
-	public void testEmptySystem() {
+	public void testEmptySystem1() {
 		EquationSystem system = new EquationSystem(0);
 		system.addEquation();
 
 		Set<List<Integer>> basis = system.findBasis();
 		assertThat(basis, empty());
+	}
+
+	@Test
+	public void testEmptySystem2() {
+		EquationSystem system = new EquationSystem(0);
+
+		Set<List<Integer>> basis = system.findBasis();
+		assertThat(basis, empty());
+	}
+
+	@Test
+	public void testToStringEmptySystem1() {
+		EquationSystem system = new EquationSystem(0);
+		system.addEquation();
+
+		assertThat(system, hasToString("[\n0 = 0\n]"));
+	}
+
+	@Test
+	public void testToStringEmptySystem2() {
+		EquationSystem system = new EquationSystem(0);
+
+		assertThat(system, hasToString("[\n]"));
+	}
+
+	@Test
+	public void testToStringSimpleSystem() {
+		EquationSystem system = new EquationSystem(3);
+		system.addEquation(1, 0, 1);
+		system.addEquation(0, 1, 1);
+
+		assertThat(system, hasToString("[\n1*x[0] + 1*x[2] = 0\n1*x[1] + 1*x[2] = 0\n]"));
+	}
+
+	@Test
+	public void testToStringTrivialSystem() {
+		EquationSystem system = new EquationSystem(1);
+		system.addEquation(0);
+
+		assertThat(system, hasToString("[\n0 = 0\n]"));
 	}
 }
 
