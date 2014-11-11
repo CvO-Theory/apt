@@ -62,7 +62,7 @@ public class Region {
 	 * Return the transitions system on which this region is defined.
 	 */
 	public TransitionSystem getTransitionSystem() {
-		return utility.getSpanningTree().getGraph();
+		return utility.getTransitionSystem();
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class Region {
 		// TODO: This is highly inefficient, would be better to evaluate according to a depth-first search
 		// through reachable markings
 		int marking = 0;
-		for (State state : utility.getSpanningTree().getGraph().getNodes()) {
+		for (State state : getTransitionSystem().getNodes()) {
 			// For reaching that 
 			Arc predecessor = utility.getSpanningTree().getPredecessorEdge(state);
 			if (predecessor != null)

@@ -78,10 +78,17 @@ public class RegionUtility {
 	}
 
 	/**
-	 * @return The spanning tree on which this RegionUtility operates.
+	 * Get the spanning tree on which this RegionUtility operates.
 	 */
 	public SpanningTree<TransitionSystem, Arc, State> getSpanningTree() {
 		return tree;
+	}
+
+	/**
+	 * Get the transition system on which this RegionUtility operatores.
+	 */
+	public TransitionSystem getTransitionSystem() {
+		return tree.getGraph();
 	}
 
 	/**
