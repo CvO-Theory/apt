@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.synthesize;
+package uniol.apt.analysis.synthesize;
 
 import java.util.List;
 import java.util.Collections;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uniol.apt.adt.matcher.Matchers.flowThatConnects;
 import static uniol.apt.adt.matcher.Matchers.nodeWithID;
-import static uniol.apt.synthesize.Matchers.*;
+import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
 @Test

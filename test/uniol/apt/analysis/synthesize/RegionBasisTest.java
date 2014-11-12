@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.synthesize;
+package uniol.apt.analysis.synthesize;
 
 import java.util.Arrays;
 
@@ -25,7 +25,7 @@ import uniol.apt.TestTSCollection;
 
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uniol.apt.synthesize.Matchers.*;
+import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked") // I hate generics
