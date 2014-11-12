@@ -242,6 +242,24 @@ public class TestTSCollection {
 		return ts;
 	}
 
+	public static TransitionSystem getOneCycleLTS() {
+		TransitionSystem ts = new TransitionSystem();
+
+		ts.createState("s0");
+		ts.createState("s1");
+		ts.createState("s2");
+		ts.createState("s3");
+
+		ts.setInitialState(ts.getNode("s0"));
+
+		ts.createArc(ts.getNode("s0"), ts.getNode("s1"), "a");
+		ts.createArc(ts.getNode("s1"), ts.getNode("s2"), "b");
+		ts.createArc(ts.getNode("s2"), ts.getNode("s3"), "c");
+		ts.createArc(ts.getNode("s3"), ts.getNode("s0"), "d");
+
+		return ts;
+	}
+
 	/**
 	 * The transitions system:
 	 * <pre>

@@ -125,7 +125,8 @@ public class SeparationUtility {
 			result = result.addRegionWithFactor(basis.get(i), solution.get(i));
 		}
 
-		return result;
+		// TODO: Ugly hack since we are only doing pure regions right now
+		return result.makePure();
 	}
 }
 

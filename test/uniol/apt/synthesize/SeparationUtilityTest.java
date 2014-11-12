@@ -92,6 +92,20 @@ public class SeparationUtilityTest {
 		assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, s, "c"), is(nullValue()));
 	}
 
+	private static void checkEventSeperation(RegionUtility utility, List<Region> basis, String stateName, String event) {
+		State state = utility.getTransitionSystem().getNode(stateName);
+		Region r = SeparationUtility.calculateSeparatingRegion(utility, basis, state, event);
+
+		// "event" must have a non-zero backwards weight
+		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));
+
+		// State "state" must be reachable
+		assertThat(r.getNormalRegionMarking() + r.evaluateParikhVector(utility.getReachingParikhVector(state)), is(greaterThanOrEqualTo(0)));
+
+		// After reaching state "state", "event" must be disabled
+		assertThat(r.getNormalRegionMarking() + r.evaluateParikhVector(utility.getReachingParikhVector(state)), is(lessThan(r.getBackwardWeight(event))));
+	}
+
 	@Test
 	public void testCalculate1() {
 		State s = utility.getTransitionSystem().getNode("s");
@@ -100,17 +114,20 @@ public class SeparationUtilityTest {
 
 	@Test
 	public void testCalculate2() {
-		State t = utility.getTransitionSystem().getNode("t");
-		Region r = SeparationUtility.calculateSeparatingRegion(utility, regionBasis, t, "b");
+		checkEventSeperation(utility, regionBasis, "t", "b");
+	}
 
-		// "b" must have a non-zero backwards weight
-		assertThat(r, impureRegionWithWeightThat("b", is(greaterThan(0)), anything()));
+	@Test
+	public void testCalculate3() {
+		RegionUtility utility = new RegionUtility(TestTSCollection.getOneCycleLTS());
+		List<Region> basis = new ArrayList<>();
 
-		// State t must be reachable
-		assertThat(r.getNormalRegionMarking() + r.evaluateParikhVector(utility.getReachingParikhVector(t)), is(greaterThanOrEqualTo(0)));
+		// Event order does not matter here, all events behave the same
+		basis.add(Region.createPureRegionFromVector(utility, Arrays.asList(-1, 1, 0, 0)));
+		basis.add(Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0, 1, 0)));
+		basis.add(Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0, 0, 1)));
 
-		// After reaching state t, "b" must be disabled
-		assertThat(r.getNormalRegionMarking() + r.evaluateParikhVector(utility.getReachingParikhVector(t)), is(lessThan(r.getBackwardWeight("b"))));
+		checkEventSeperation(utility, basis, "s1", "c");
 	}
 }
 
