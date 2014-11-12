@@ -114,6 +114,14 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	}
 
 	/**
+	 * Check if the underlying graph is totally reachable.
+	 * @return True if there exists a path to any node, all starting in the specified initial node.
+	 */
+	public boolean isTotallyReachable() {
+		return unreachableNodes.isEmpty();
+	}
+
+	/**
 	 * Get all the nodes in the graph which are not reachable from the start node.
 	 * @return Set of unreachable nodes.
 	 */
