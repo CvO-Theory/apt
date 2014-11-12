@@ -42,7 +42,7 @@ public class RegionTest {
 			assertThat(args[i], is(greaterThanOrEqualTo(0)));
 			assertThat(args[i], is(lessThan(args.length / 2)));
 
-			vector[args[i]] = args[i+1];
+			vector[args[i]] = args[i + 1];
 		}
 
 		return Arrays.asList(vector);
@@ -56,8 +56,8 @@ public class RegionTest {
 			assertThat(args[i], is(greaterThanOrEqualTo(0)));
 			assertThat(args[i], is(lessThan(args.length / 3)));
 
-			vector[args[i]] = args[i+1];
-			vector[args[i] + args.length / 3] = args[i+2];
+			vector[args[i]] = args[i + 1];
+			vector[args[i] + args.length / 3] = args[i + 2];
 		}
 
 		return Arrays.asList(vector);
@@ -361,8 +361,10 @@ public class RegionTest {
 		assertThat(r2.addRegion(r1), equalTo(r2));
 		assertThat(r1.addRegionWithFactor(r2, 0), equalTo(r1));
 		assertThat(r2.addRegionWithFactor(r1, 42), equalTo(r2));
-		assertThat(r3.addRegionWithFactor(r2, 1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(1, 3, 3, 7, 6, 6))));
-		assertThat(r3.addRegionWithFactor(r2, 2), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(1, 4, 3, 10, 7, 6))));
+		assertThat(r3.addRegionWithFactor(r2, 1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						Arrays.asList(1, 3, 3, 7, 6, 6))));
+		assertThat(r3.addRegionWithFactor(r2, 2), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						Arrays.asList(1, 4, 3, 10, 7, 6))));
 	}
 
 	@Test
@@ -397,9 +399,12 @@ public class RegionTest {
 		Region r2 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 1, b, 3, c, -2));
 		Region r3 = Region.createImpureRegionFromVector(utility, impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
 
-		assertThat(r2.addRegionWithFactor(r2, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(1, 1, 3, 3, 2, 2))));
-		assertThat(r3.addRegionWithFactor(r3, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(3, 3, 7, 7, 11, 11))));
-		assertThat(r1.addRegionWithFactor(r3, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(2, 1, 4, 3, 6, 5))));
+		assertThat(r2.addRegionWithFactor(r2, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						Arrays.asList(1, 1, 3, 3, 2, 2))));
+		assertThat(r3.addRegionWithFactor(r3, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						Arrays.asList(3, 3, 7, 7, 11, 11))));
+		assertThat(r1.addRegionWithFactor(r3, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						Arrays.asList(2, 1, 4, 3, 6, 5))));
 	}
 
 	@Test
@@ -415,13 +420,16 @@ public class RegionTest {
 		Region r2 = Region.createImpureRegionFromVector(utility, impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
 
 		Region result = r1.addRegionWithFactor(r1, 4);
-		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(0, 5, 0, 15, 10, 0))));
+		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						Arrays.asList(0, 5, 0, 15, 10, 0))));
 
 		result = result.addRegionWithFactor(r2, 21);
-		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(21, 47, 63, 99, 115, 126))));
+		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						Arrays.asList(21, 47, 63, 99, 115, 126))));
 
 		result = result.addRegionWithFactor(r1, -6);
-		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(27, 47, 81, 99, 115, 138))));
+		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						Arrays.asList(27, 47, 81, 99, 115, 138))));
 	}
 
 	@Test
@@ -446,7 +454,8 @@ public class RegionTest {
 		Region region = Region.createImpureRegionFromVector(utility,
 				impureParikhVector(a, 1, 2, b, 4, 3, c, 5, 6));
 
-		assertThat(region.makePure(), is(pureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(1, -1, 1))));
+		assertThat(region.makePure(), is(pureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						Arrays.asList(1, -1, 1))));
 	}
 }
 

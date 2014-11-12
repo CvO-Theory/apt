@@ -34,7 +34,8 @@ public class ImpureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher
 	private final Matcher<? super Integer> backwardMatcher;
 	private final Matcher<? super Integer> forwardMatcher;
 
-	private ImpureRegionWithWeightThatMatcher(String event, Matcher<? super Integer> backwardMatcher, Matcher<? super Integer> forwardMatcher) {
+	private ImpureRegionWithWeightThatMatcher(String event,
+			Matcher<? super Integer> backwardMatcher, Matcher<? super Integer> forwardMatcher) {
 		this.event = event;
 		this.backwardMatcher = backwardMatcher;
 		this.forwardMatcher = forwardMatcher;
@@ -74,7 +75,8 @@ public class ImpureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher
 	}
 
 	@Factory
-	public static Matcher<Region> impureRegionWithWeightThat(String event, Matcher<? super Integer> backward, Matcher<? super Integer> forward) {
+	public static Matcher<Region> impureRegionWithWeightThat(String event,
+			Matcher<? super Integer> backward, Matcher<? super Integer> forward) {
 		return new ImpureRegionWithWeightThatMatcher(event, backward, forward);
 	}
 }

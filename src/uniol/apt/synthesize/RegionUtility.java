@@ -72,6 +72,7 @@ public class RegionUtility {
 	/**
 	 * Get the list of events of the underlying transition system. This list is ordered to form vectors. So the
 	 * first entry of a vector corresponds to the first event in this list etc.
+	 * @return The event list
 	 */
 	public List<String> getEventList() {
 		return eventList;
@@ -79,6 +80,7 @@ public class RegionUtility {
 
 	/**
 	 * Get the spanning tree on which this RegionUtility operates.
+	 * @return The spanning tree
 	 */
 	public SpanningTree<TransitionSystem, Arc, State> getSpanningTree() {
 		return tree;
@@ -86,6 +88,7 @@ public class RegionUtility {
 
 	/**
 	 * Get the transition system on which this RegionUtility operatores.
+	 * @return The transition system
 	 */
 	public TransitionSystem getTransitionSystem() {
 		return tree.getGraph();
@@ -123,6 +126,7 @@ public class RegionUtility {
 	/**
 	 * Get the Parikh vector for an edge. This Parikh vector is Psi_t = Psi_s + e_i - Psi_{s'} for an edge
 	 * t = s--[a_i]->s'.
+	 * @param edge The edge to examine.
 	 * @return The edge's Parikh vector or an empty list if none exists.
 	 */
 	public List<Integer> getParikhVectorForEdge(Arc edge) {

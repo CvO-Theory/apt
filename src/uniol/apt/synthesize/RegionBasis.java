@@ -55,10 +55,10 @@ public class RegionBasis extends AbstractCollection<Region> {
 		}
 
 		Set<List<Integer>> basis = system.findBasis();
-		Set<Region> regions = new LinkedHashSet<>();
+		Set<Region> result = new LinkedHashSet<>();
 		for (List<Integer> vector : basis)
-			regions.add(Region.createPureRegionFromVector(utility, vector));
-		this.regions = Collections.unmodifiableSet(regions);
+			result.add(Region.createPureRegionFromVector(utility, vector));
+		this.regions = Collections.unmodifiableSet(result);
 	}
 
 	/**
@@ -78,14 +78,8 @@ public class RegionBasis extends AbstractCollection<Region> {
 	}
 
 	/**
-	 * Returns the set of regions in the basis.
-	 */
-	public Set<Region> getRegions() {
-		return regions;
-	}
-
-	/**
 	 * Returns an iterator over the regions in the basis. The order of this iterator is guaranteed to be stable.
+	 * @return an iterator iterating the basis
 	 */
 	@Override
 	public Iterator<Region> iterator() {
@@ -94,6 +88,7 @@ public class RegionBasis extends AbstractCollection<Region> {
 
 	/**
 	 * Returns the number of regions in the basis.
+	 * @return The size of the basis
 	 */
 	@Override
 	public int size() {

@@ -27,13 +27,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * Calculate a spanning tree of a graph
+ * @param <G> The type of the graph itself.
+ * @param <E> The type of the edges.
+ * @param <N> The type of the nodes.
  * @author Uli Schlachter
  */
 public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>> {
@@ -104,6 +106,7 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 
 	/**
 	 * Get all the nodes in the graph which are not reachable from the start node.
+	 * @return Set of unreachable nodes.
 	 */
 	public Set<N> getUnreachableNodes() {
 		return unreachableNodes;
@@ -124,7 +127,8 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	/**
 	 * Get the edge via which the given node is reached in the tree.
 	 * @param node The node whose predecessor edge should be returned.
-	 * @return The predecessor edge if one exists or null. The start node and unreachable nodes do not have predecessors.
+	 * @return The predecessor edge if one exists or null. The start node and unreachable nodes do not have
+	 * predecessors.
 	 */
 	public E getPredecessorEdge(N node) {
 		return predecessorMap.get(node);

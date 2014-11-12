@@ -19,7 +19,6 @@
 
 package uniol.apt.synthesize;
 
-import org.hamcrest.Matcher;
 import java.util.Arrays;
 
 import uniol.apt.TestTSCollection;
@@ -44,8 +43,10 @@ public class RegionBasisTest {
 		RegionBasis basis = new RegionBasis(TestTSCollection.getcc1LTS());
 
 		assertThat(basis, contains(anyOf(
-						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"), Arrays.asList(1, -1, -1, 1)),
-						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"), Arrays.asList(-1, 1, 1, -1)))));
+						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
+							Arrays.asList(1, -1, -1, 1)),
+						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
+							Arrays.asList(-1, 1, 1, -1)))));
 	}
 
 	@Test

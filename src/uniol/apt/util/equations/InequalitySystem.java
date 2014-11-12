@@ -22,7 +22,6 @@ package uniol.apt.util.equations;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Arrays;
@@ -65,7 +64,11 @@ public class InequalitySystem {
 	 * An enumeration of comparators on numbers.
 	 */
 	public static enum Comparator {
-		LESS_THAN_OR_EQUAL("<=", ">="), LESS_THAN("<", ">"), EQUAL("=", "="), GREATER_THAN(">", "<"), GREATER_THAN_OR_EQUAL(">=", "<=");
+		LESS_THAN_OR_EQUAL("<=", ">="),
+		LESS_THAN("<", ">"),
+		EQUAL("=", "="),
+		GREATER_THAN(">", "<"),
+		GREATER_THAN_OR_EQUAL(">=", "<=");
 
 		private final String representation;
 		private final String opposite;
@@ -75,6 +78,10 @@ public class InequalitySystem {
 			this.opposite = opposite;
 		}
 
+		/**
+		 * Return the opposite comparator
+		 * @return The opposite.
+		 */
 		public Comparator getOpposite() {
 			return fromString(opposite);
 		}
@@ -84,7 +91,12 @@ public class InequalitySystem {
 			return representation;
 		}
 
-		static Comparator fromString(String str) {
+		/**
+		 * Return the comparator which is described by the given string. Must be one of "<=", "<", "=", ">",
+		 * ">=".
+		 * @return The matching comparator.
+		 */
+		static public Comparator fromString(String str) {
 			for (Comparator comp : values())
 				if (comp.toString() == str)
 					return comp;
@@ -158,7 +170,8 @@ public class InequalitySystem {
 	}
 
 	/**
-	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality system.
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality
+	 * system.
 	 * @param inequality The inequality to add.
 	 */
 	public void addInequality(Inequality inequality) {
@@ -167,44 +180,48 @@ public class InequalitySystem {
 	}
 
 	/**
-	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality system.
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality
+	 * system.
 	 * @param lhs The left hand side of the inequality.
 	 * @param comparator Comparator for the inequality,
-	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each variable
-	 * in the inequality system.
+	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each
+	 * variable in the inequality system.
 	 */
 	public void addInequality(int lhs, Comparator comparator, int... coefficients) {
 		addInequality(new Inequality(lhs, comparator, coefficients));
 	}
 
 	/**
-	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality system.
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality
+	 * system.
 	 * @param lhs The left hand side of the inequality.
 	 * @param comparator Comparator for the inequality,
-	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each variable
-	 * in the inequality system.
+	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each
+	 * variable in the inequality system.
 	 */
 	public void addInequality(int lhs, String comparator, int... coefficients) {
 		addInequality(lhs, Comparator.fromString(comparator), coefficients);
 	}
 
 	/**
-	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality system.
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality
+	 * system.
 	 * @param lhs The left hand side of the inequality.
 	 * @param comparator Comparator for the inequality,
-	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each variable
-	 * in the inequality system.
+	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each
+	 * variable in the inequality system.
 	 */
 	public void addInequality(int lhs, Comparator comparator, Collection<Integer> coefficients) {
 		addInequality(lhs, comparator, toIntArray(coefficients));
 	}
 
 	/**
-	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality system.
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality
+	 * system.
 	 * @param lhs The left hand side of the inequality.
 	 * @param comparator Comparator for the inequality,
-	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each variable
-	 * in the inequality system.
+	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each
+	 * variable in the inequality system.
 	 */
 	public void addInequality(int lhs, String comparator, Collection<Integer> coefficients) {
 		addInequality(lhs, Comparator.fromString(comparator), toIntArray(coefficients));
@@ -212,10 +229,12 @@ public class InequalitySystem {
 
 	/**
 	 * Calculate a solution of the inequality system.
+	 * @return A solution to the system or an empty list
 	 */
 	public List<Integer> findSolution() {
 		Solver solver = new Solver();
-		IntVar[] vars = VariableFactory.integerArray("x", numVariables, VariableFactory.MIN_INT_BOUND, VariableFactory.MAX_INT_BOUND, solver);
+		IntVar[] vars = VariableFactory.integerArray("x", numVariables,
+				VariableFactory.MIN_INT_BOUND, VariableFactory.MAX_INT_BOUND, solver);
 		for (Inequality inequality : inequalities) {
 			IntVar lhsVar = VariableFactory.fixed(inequality.getLeftHandSide(), solver);
 			String comparator = inequality.getComparator().getOpposite().toString();
@@ -223,8 +242,7 @@ public class InequalitySystem {
 			solver.post(IntConstraintFactory.scalar(vars, coefficients, comparator, lhsVar));
 		}
 
-		if (!solver.findSolution())
-		{
+		if (!solver.findSolution()) {
 			debug("No solution found for:");
 			debug(this);
 			return Collections.emptyList();

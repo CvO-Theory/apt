@@ -42,7 +42,8 @@ public class SeparationUtility {
 	 * @param otherState The second state of the separation problem
 	 * @return A separating region or null.
 	 */
-	static public Region findSeparatingRegion(RegionUtility utility, Collection<Region> regions, State state, State otherState) {
+	static public Region findSeparatingRegion(RegionUtility utility, Collection<Region> regions,
+			State state, State otherState) {
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
 
@@ -65,14 +66,16 @@ public class SeparationUtility {
 	 * @param event The event of the separation problem
 	 * @return A separating region or null.
 	 */
-	static public Region findSeparatingRegion(RegionUtility utility, Collection<Region> regions, State state, String event) {
+	static public Region findSeparatingRegion(RegionUtility utility, Collection<Region> regions,
+			State state, String event) {
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
 
 		for (Region region : regions) {
 			// We need r(state) to be smaller than the event's backward weight in some region.
 			// By definition: r(state) = r(s0) + r(vector-from-s0-to-state).
-			int stateValue = region.getNormalRegionMarking() + region.evaluateParikhVector(stateParikhVector);
+			int stateValue = region.getNormalRegionMarking();
+			stateValue += region.evaluateParikhVector(stateParikhVector);
 			if (stateValue < region.getBackwardWeight(eventIndex))
 				return region;
 		}
@@ -90,7 +93,8 @@ public class SeparationUtility {
 	 * @param event The event of the separation problem
 	 * @return A separating region or null.
 	 */
-	static public Region calculateSeparatingRegion(RegionUtility utility, Collection<Region> basis, State state, String event) {
+	static public Region calculateSeparatingRegion(RegionUtility utility, Collection<Region> basis,
+			State state, String event) {
 		InequalitySystem system = new InequalitySystem(basis.size());
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);

@@ -19,10 +19,8 @@
 
 package uniol.apt.synthesize;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import uniol.apt.adt.exception.NoSuchNodeException;
@@ -109,7 +107,8 @@ public class SynthesizePN {
 				debug("Trying to separate " + state + " from " + otherState);
 				Region r = SeparationUtility.findSeparatingRegion(utility, regions, state, otherState);
 				if (r == null) {
-					r = SeparationUtility.findSeparatingRegion(utility, regionBasis, state, otherState);
+					r = SeparationUtility.findSeparatingRegion(utility, regionBasis,
+							state, otherState);
 					if (r == null) {
 						Set<State> problem = new HashSet<>();
 						problem.add(state);
@@ -137,11 +136,14 @@ public class SynthesizePN {
 				//Passende debug()-Aufrufe beibehalten!
 				if (getFollowingState(state, event) == null) {
 					debug("Trying to separate " + state + " from event '" + event + "'");
-					Region r = SeparationUtility.findSeparatingRegion(utility, regions, state, event);
+					Region r = SeparationUtility.findSeparatingRegion(utility, regions,
+							state, event);
 					if (r == null) {
-						r = SeparationUtility.calculateSeparatingRegion(utility, regionBasis, state, event);
+						r = SeparationUtility.calculateSeparatingRegion(utility, regionBasis,
+								state, event);
 						if (r == null) {
-							failedEventStateSeparationProblems.add(new Pair<>(event, state));
+							failedEventStateSeparationProblems.add(
+									new Pair<>(event, state));
 							debug("Failure!");
 						} else {
 							debug("Found region " + r);
@@ -166,13 +168,15 @@ public class SynthesizePN {
 
 	/**
 	 * Get all separating regions which were calculated
+	 * @return All separating regions found.
 	 */
 	public Set<Region> getSeparatingRegions() {
 		return Collections.unmodifiableSet(regions);
 	}
 
 	/**
-	 * Check if a PetriNet was successfully separated.
+	 * Check if the transition system was successfully separated.
+	 * @return True if the transition was successfully separated.
 	 */
 	public boolean wasSuccessfullySeparated() {
 		return failedStateSeparationProblems.isEmpty() && failedEventStateSeparationProblems.isEmpty();
@@ -196,6 +200,7 @@ public class SynthesizePN {
 
 	/**
 	 * Synthesize a Petri Net from the separating regions that were calculated.
+	 * @return The synthesized PetriNet
 	 */
 	public PetriNet synthesizePetriNet() {
 		if (!wasSuccessfullySeparated())
@@ -206,6 +211,7 @@ public class SynthesizePN {
 	/**
 	 * Synthesize a Petri Net from the given regions.
 	 * @param regions The regions that should be used for synthesis.
+	 * @return The synthesized PetriNet
 	 */
 	public static PetriNet synthesizePetriNet(Set<Region> regions) {
 		PetriNet pn = new PetriNet();

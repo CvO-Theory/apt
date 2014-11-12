@@ -58,6 +58,7 @@ public class Region {
 
 	/**
 	 * Return the region utility which this region uses.
+	 * @return The region utility on which this region is defined.
 	 */
 	public RegionUtility getRegionUtility() {
 		return utility;
@@ -65,6 +66,7 @@ public class Region {
 
 	/**
 	 * Return the transitions system on which this region is defined.
+	 * @return The transition system on which this region is defined.
 	 */
 	public TransitionSystem getTransitionSystem() {
 		return utility.getTransitionSystem();
@@ -72,6 +74,8 @@ public class Region {
 
 	/**
 	 * Return the backward weight for the given event index.
+	 * @param index The event index to query.
+	 * @return the backwards weight of the given event.
 	 */
 	public int getBackwardWeight(int index) {
 		return backwardWeights.get(index);
@@ -79,6 +83,8 @@ public class Region {
 
 	/**
 	 * Return the backward weight for the given event.
+	 * @param event The event to query.
+	 * @return the backwards weight of the given event.
 	 */
 	public int getBackwardWeight(String event) {
 		return backwardWeights.get(utility.getEventIndex(event));
@@ -86,6 +92,8 @@ public class Region {
 
 	/**
 	 * Return the forward weight for the given event index.
+	 * @param index The event index to query.
+	 * @return the forwards weight of the given event.
 	 */
 	public int getForwardWeight(int index) {
 		return forwardWeights.get(index);
@@ -93,6 +101,8 @@ public class Region {
 
 	/**
 	 * Return the forward weight for the given event.
+	 * @param event The event to query.
+	 * @return the forwards weight of the given event.
 	 */
 	public int getForwardWeight(String event) {
 		return forwardWeights.get(utility.getEventIndex(event));
@@ -100,6 +110,8 @@ public class Region {
 
 	/**
 	 * Return the total weight for the given event index.
+	 * @param index The event index to query.
+	 * @return the total weight of the given event.
 	 */
 	public int getWeight(int index) {
 		return getForwardWeight(index) - getBackwardWeight(index);
@@ -107,6 +119,8 @@ public class Region {
 
 	/**
 	 * Return the total weight for the given event.
+	 * @param event The event to query.
+	 * @return the total weight of the given event.
 	 */
 	public int getWeight(String event) {
 		return getForwardWeight(event) - getBackwardWeight(event);
@@ -162,10 +176,11 @@ public class Region {
 		// through reachable markings
 		int marking = 0;
 		for (State state : getTransitionSystem().getNodes()) {
-			// For reaching that 
+			// For reaching this state, we must reach the predecessor and need then to fire the next event.
 			Arc predecessor = utility.getSpanningTree().getPredecessorEdge(state);
 			if (predecessor != null)
-				marking = Math.max(marking, -evaluateParikhVector(utility.getReachingParikhVector(predecessor.getSource()), predecessor));
+				marking = Math.max(marking, -evaluateParikhVector(utility.getReachingParikhVector(
+								predecessor.getSource()), predecessor));
 		}
 		return marking;
 	}
@@ -214,6 +229,7 @@ public class Region {
 	/**
 	 * Turn this region into a pure region by enforcing that for every event, at least one of the forward or
 	 * backward weight must be zero.
+	 * @return The resulting region.
 	 */
 	public Region makePure() {
 		List<Integer> vector = new ArrayList<>(utility.getEventList().size());
@@ -286,9 +302,15 @@ public class Region {
 	 * @return The resulting region.
 	 */
 	public static Region createImpureRegionFromVector(RegionUtility utility, List<Integer> vector) {
-		return new Region(utility, vector.subList(0, vector.size() / 2), vector.subList(vector.size() / 2, vector.size()));
+		return new Region(utility, vector.subList(0, vector.size() / 2),
+				vector.subList(vector.size() / 2, vector.size()));
 	}
 
+	/**
+	 * Create the trivial region which assigns weight 0 to everything.
+	 * @param utility The RegionUtility whose alphabet should be used.
+	 * @return The resulting region.
+	 */
 	public static Region createTrivialRegion(RegionUtility utility) {
 		List<Integer> vector = Collections.nCopies(utility.getEventList().size(), 0);
 		return new Region(utility, vector, vector);

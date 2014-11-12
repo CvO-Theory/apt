@@ -118,7 +118,8 @@ public class EquationSystem {
 							}
 
 							// Substitute y_j -> y_j - floor(lambda_j / lambda_i) * y_i
-							substituteVariable(j, (int) -Math.floor(lambdaj * 1.0 / lambdai), i);
+							substituteVariable(j,
+									(int) -Math.floor(lambdaj * 1.0 / lambdai), i);
 							restart = true;
 							break;
 						}
@@ -219,7 +220,8 @@ public class EquationSystem {
 		 * Substitute variable y_variableIndex with y_variableIndex + factor * y_addendIndex in all equations.
 		 */
 		private void substituteVariable(int variableIndex, int factor, int addendIndex) {
-			debug("Substituting variable y_" + variableIndex + " with y_" + variableIndex + " + " + factor + " * y_" + addendIndex);
+			debug("Substituting variable y_" + variableIndex + " with y_" + variableIndex + " + "
+					+ factor + " * y_" + addendIndex);
 			for (int i = 0; i < equations1.size(); i++)
 				substituteVariable(equations1.get(i), variableIndex, factor, addendIndex);
 			for (int i = 0; i < equations2.size(); i++)
@@ -230,7 +232,8 @@ public class EquationSystem {
 		 * Substitute variable y_variableIndex with y_variableIndex + factor * y_addendIndex in the given
 		 * equation.
 		 */
-		private static void substituteVariable(List<Integer> equation, int variableIndex, int factor, int addendIndex) {
+		private static void substituteVariable(List<Integer> equation, int variableIndex, int factor,
+				int addendIndex) {
 			int addend = equation.get(addendIndex);
 			int variableValue = equation.get(variableIndex);
 			equation.set(variableIndex, variableValue + factor * addend);

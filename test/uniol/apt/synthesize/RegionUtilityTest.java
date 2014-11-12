@@ -40,7 +40,7 @@ public class RegionUtilityTest {
 		for (int i = 0; i < args.length; i += 2) {
 			assertThat(args[i], is(greaterThanOrEqualTo(0)));
 			assertThat(args[i], is(lessThan(args.length / 2)));
-			expected[args[i]] = args[i+1];
+			expected[args[i]] = args[i + 1];
 		}
 
 		return contains(expected);
