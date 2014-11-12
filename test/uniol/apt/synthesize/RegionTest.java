@@ -423,6 +423,31 @@ public class RegionTest {
 		result = result.addRegionWithFactor(r1, -6);
 		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(27, 47, 81, 99, 115, 138))));
 	}
+
+	@Test
+	public void testMakePure1() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		Region region = Region.createTrivialRegion(utility);
+
+		assertThat(region.makePure(), equalTo(region));
+	}
+
+	@Test
+	public void makePure2() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region region = Region.createImpureRegionFromVector(utility,
+				impureParikhVector(a, 1, 2, b, 4, 3, c, 5, 6));
+
+		assertThat(region.makePure(), is(pureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(1, -1, 1))));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

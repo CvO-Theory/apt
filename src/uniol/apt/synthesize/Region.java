@@ -211,6 +211,20 @@ public class Region {
 		return addRegionWithFactor(otherRegion, 1);
 	}
 
+	/**
+	 * Turn this region into a pure region by enforcing that for every event, at least one of the forward or
+	 * backward weight must be zero.
+	 */
+	public Region makePure() {
+		List<Integer> vector = new ArrayList<>(utility.getEventList().size());
+
+		for (int i = 0; i < utility.getEventList().size(); i++) {
+			vector.add(getWeight(i));
+		}
+
+		return createPureRegionFromVector(utility, vector);
+	}
+
 	@Override
 	public String toString() {
 		String result = "";
