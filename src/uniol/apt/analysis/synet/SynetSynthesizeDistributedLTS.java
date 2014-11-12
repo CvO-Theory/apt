@@ -70,16 +70,19 @@ public class SynetSynthesizeDistributedLTS {
         String ltsSynetFormat = synetRen.render(ts_);
 
         File tmpAutFile = File.createTempFile("synetAut", ".aut");
+	tmpAutFile.deleteOnExit();
         BufferedWriter bw = new BufferedWriter(new FileWriter(tmpAutFile));
         bw.write(ltsSynetFormat);
         bw.close();
 
         File tmpDisFile = File.createTempFile("synetDis", ".dis");
+	tmpDisFile.deleteOnExit();
         BufferedWriter bw2 = new BufferedWriter(new FileWriter(tmpDisFile));
         bw2.write(getDisString());
         bw2.close();
 
         File tmpSaveFile = File.createTempFile("synetNet", ".net");
+	tmpSaveFile.deleteOnExit();
 
         Process p;// -r uses a new algorithm -o creates an output file -d is the
                     // option for distributed nets with locations
