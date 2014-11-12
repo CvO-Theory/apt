@@ -28,13 +28,13 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
  * Matcher to verify that a region satisfies some constraints.
  * @author Uli Schlachter, vsp
  */
-public class ImpureRegionWithWeightsThatMatcher extends TypeSafeDiagnosingMatcher<Region> {
+public class ImpureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher<Region> {
 
 	private final String event;
-	private final Matcher<Integer> backwardMatcher;
-	private final Matcher<Integer> forwardMatcher;
+	private final Matcher<? super Integer> backwardMatcher;
+	private final Matcher<? super Integer> forwardMatcher;
 
-	private ImpureRegionWithWeightsThatMatcher(String event, Matcher<Integer> backwardMatcher, Matcher<Integer> forwardMatcher) {
+	private ImpureRegionWithWeightThatMatcher(String event, Matcher<? super Integer> backwardMatcher, Matcher<? super Integer> forwardMatcher) {
 		this.event = event;
 		this.backwardMatcher = backwardMatcher;
 		this.forwardMatcher = forwardMatcher;
@@ -74,8 +74,8 @@ public class ImpureRegionWithWeightsThatMatcher extends TypeSafeDiagnosingMatche
 	}
 
 	@Factory
-	public static Matcher<Region> impureRegionWithWeightsThat(String event, Matcher<Integer> backward, Matcher<Integer> forward) {
-		return new ImpureRegionWithWeightsThatMatcher(event, backward, forward);
+	public static Matcher<Region> impureRegionWithWeightThat(String event, Matcher<? super Integer> backward, Matcher<? super Integer> forward) {
+		return new ImpureRegionWithWeightThatMatcher(event, backward, forward);
 	}
 }
 
