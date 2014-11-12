@@ -19,11 +19,12 @@
 
 package uniol.apt.synthesize;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.AbstractCollection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
@@ -37,7 +38,7 @@ import uniol.apt.util.equations.EquationSystem;
  * Badouel, Bernardinello and Darondeau.
  * @author Uli Schlachter
  */
-public class RegionBasis implements Iterable<Region> {
+public class RegionBasis extends AbstractCollection<Region> {
 	private final Set<Region> regions;
 
 	/**
@@ -54,7 +55,7 @@ public class RegionBasis implements Iterable<Region> {
 		}
 
 		Set<List<Integer>> basis = system.findBasis();
-		Set<Region> regions = new HashSet<>();
+		Set<Region> regions = new LinkedHashSet<>();
 		for (List<Integer> vector : basis)
 			regions.add(Region.createPureRegionFromVector(utility, vector));
 		this.regions = Collections.unmodifiableSet(regions);
@@ -84,10 +85,19 @@ public class RegionBasis implements Iterable<Region> {
 	}
 
 	/**
-	 * Returns an iterator over the regions in the basis.
+	 * Returns an iterator over the regions in the basis. The order of this iterator is guaranteed to be stable.
 	 */
+	@Override
 	public Iterator<Region> iterator() {
 		return regions.iterator();
+	}
+
+	/**
+	 * Returns the number of regions in the basis.
+	 */
+	@Override
+	public int size() {
+		return regions.size();
 	}
 
 	@Override

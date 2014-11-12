@@ -41,7 +41,7 @@ import uniol.apt.util.Pair;
  */
 public class SynthesizePN {
 	private final TransitionSystem ts;
-	private final List<Region> regionBasis = new ArrayList<>();;
+	private final RegionBasis regionBasis;
 	private final RegionUtility utility;
 	private final Set<Region> regions = new HashSet<>();
 	private final Set<Set<State>> failedStateSeparationProblems = new HashSet<>();
@@ -66,9 +66,8 @@ public class SynthesizePN {
 	public SynthesizePN(RegionUtility utility) {
 		this.ts = utility.getTransitionSystem();
 		this.utility = utility;
+		this.regionBasis = new RegionBasis(utility);
 
-		for (Region r : new RegionBasis(utility))
-			regionBasis.add(r);
 		debug("Region basis: " + regionBasis);
 
 		// TODO: Test preconditions on ts (deterministic, totally reachable, reduced)
