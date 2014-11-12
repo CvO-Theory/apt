@@ -150,6 +150,25 @@ public class SeparationUtility {
 		// TODO: Ugly hack since we are only doing pure regions right now
 		return result.makePure();
 	}
+
+	/**
+	 * Try to find a region which separates some state and some event. First the existing regions in the collection
+	 * are checked. If no suitable region is found, an attempt is made to calculate a new one via the given basis.
+	 * @param utility The region utility to use.
+	 * @param regions The regions to choose from.
+	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
+	 * stable iteration order!
+	 * @param state The state of the separation problem
+	 * @param event The event of the separation problem
+	 * @return A separating region or null.
+	 */
+	static public Region findOrCalculateSeparatingRegion(RegionUtility utility, Collection<Region> regions,
+			Collection<Region> basis, State state, String event) {
+		Region r = findSeparatingRegion(utility, regions, state, event);
+		if (r == null)
+			r = calculateSeparatingRegion(utility, basis, state, event);
+		return r;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

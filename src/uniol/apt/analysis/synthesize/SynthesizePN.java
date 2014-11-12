@@ -135,22 +135,16 @@ public class SynthesizePN {
 			for (String event : ts.getAlphabet()) {
 				if (getFollowingState(state, event) == null) {
 					debug("Trying to separate " + state + " from event '" + event + "'");
-					Region r = SeparationUtility.findSeparatingRegion(utility, regions,
-							state, event);
+					Region r = SeparationUtility.findOrCalculateSeparatingRegion(utility,
+							regions, regionBasis, state, event);
 					if (r == null) {
-						r = SeparationUtility.calculateSeparatingRegion(utility, regionBasis,
-								state, event);
-						if (r == null) {
-							failedEventStateSeparationProblems.add(
-									new Pair<>(event, state));
-							debug("Failure!");
-						} else {
-							debug("Found region " + r);
-							regions.add(r);
-						}
-					} else {
+						failedEventStateSeparationProblems.add(
+								new Pair<>(event, state));
+						debug("Failure!");
+					} else if (regions.add(r))
+						debug("Found region " + r);
+					else
 						debug("Found already-existing separating region " + r);
-					}
 				}
 			}
 	}
