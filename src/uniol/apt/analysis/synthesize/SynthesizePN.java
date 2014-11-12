@@ -133,7 +133,6 @@ public class SynthesizePN {
 	private void solveEventStateSeparation() {
 		for (State state : ts.getNodes())
 			for (String event : ts.getAlphabet()) {
-				//Passende debug()-Aufrufe beibehalten!
 				if (getFollowingState(state, event) == null) {
 					debug("Trying to separate " + state + " from event '" + event + "'");
 					Region r = SeparationUtility.findSeparatingRegion(utility, regions,
