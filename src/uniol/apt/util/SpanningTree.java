@@ -105,6 +105,15 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	}
 
 	/**
+	 * Check if the given node is reachable.
+	 * @param node The node to check.
+	 * @return True if the node is reachable in this spanning tree, false otherwise.
+	 */
+	public boolean isReachable(N node) {
+		return !unreachableNodes.contains(node);
+	}
+
+	/**
 	 * Get all the nodes in the graph which are not reachable from the start node.
 	 * @return Set of unreachable nodes.
 	 */

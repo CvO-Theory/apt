@@ -47,6 +47,10 @@ public class SeparationUtility {
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
 
+		// Unreachable states cannot be separated
+		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
+			return null;
+
 		for (Region region : regions) {
 			// We need a region which assigns different values to these two states.
 			int stateValue = region.evaluateParikhVector(stateParikhVector);
@@ -68,6 +72,10 @@ public class SeparationUtility {
 	 */
 	static public Region findSeparatingRegion(RegionUtility utility, Collection<Region> regions,
 			State state, String event) {
+		// Unreachable states cannot be separated
+		if (!utility.getSpanningTree().isReachable(state))
+			return null;
+
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
 
@@ -100,10 +108,18 @@ public class SeparationUtility {
 		int eventIndex = utility.getEventIndex(event);
 		assert stateParikhVector != null;
 
+		// Unreachable states cannot be separated
+		if (!utility.getSpanningTree().isReachable(state))
+			return null;
+
 		// Each state must be reachable in the resulting region, but event 'event' should be disabled in state.
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
 			List<Integer> inequality = new ArrayList<>(basis.size());
 			List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
+
+			// Silently ignore unreachable states
+			if (!utility.getSpanningTree().isReachable(otherState))
+				continue;
 
 			for (Region region : basis) {
 				// We want to evaluate [Psi_s - Psi_{s'} + 1_j] * region where 1_j is the Parikh vector
