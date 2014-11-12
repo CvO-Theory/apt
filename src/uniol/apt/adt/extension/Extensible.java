@@ -59,7 +59,7 @@ public class Extensible implements IExtensible {
     }
 
     /**
-     * Saves the given value using the key as identifier with the the copy flag.
+     * Saves the given value using the key as identifier with the copy flag.
      * <p/>
      * @param key An identifying key as string.
      * @param value Any value.
@@ -67,6 +67,14 @@ public class Extensible implements IExtensible {
      */
     public void putExtension(String key, Object value, boolean copy) {
         this.extensions.put(key, new Pair<>(value, copy));
+    }
+
+    /**
+     * Removes the value associated with the given key.
+     * @param key An identifying key as string.
+     */
+    public void removeExtension(String key) {
+        this.extensions.remove(key);
     }
 
     /**
