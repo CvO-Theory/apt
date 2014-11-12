@@ -333,6 +333,96 @@ public class RegionTest {
 
 		assertNotEquals(region1, region2);
 	}
+
+	@Test
+	public void testCreateTrivialRegion() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		assertThat(Region.createTrivialRegion(utility),
+				pureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(0, 0, 0)));
+	}
+
+	@Test
+	public void testAddRegions1() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region r1 = Region.createTrivialRegion(utility);
+		Region r2 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 1, b, 3, c, -1));
+		Region r3 = Region.createImpureRegionFromVector(utility, impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+
+		assertThat(r1.addRegion(r1), equalTo(r1));
+		assertThat(r1.addRegion(r2), equalTo(r2));
+		assertThat(r2.addRegion(r1), equalTo(r2));
+		assertThat(r1.addRegionWithFactor(r2, 0), equalTo(r1));
+		assertThat(r2.addRegionWithFactor(r1, 42), equalTo(r2));
+		assertThat(r3.addRegionWithFactor(r2, 1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(1, 3, 3, 7, 6, 6))));
+		assertThat(r3.addRegionWithFactor(r2, 2), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(1, 4, 3, 10, 7, 6))));
+	}
+
+	@Test
+	public void testAddRegions2() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region r1 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 1, b, 3, c, -2));
+		Region r2 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 2, b, 6, c, -4));
+		Region r3 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 3, b, 9, c, -6));
+
+		assertThat(r1.addRegion(r1), equalTo(r2));
+		assertThat(r1.addRegionWithFactor(r1, 2), equalTo(r3));
+		assertThat(r1.addRegion(r2), equalTo(r3));
+		assertThat(r2.addRegion(r1), equalTo(r3));
+	}
+
+	@Test
+	public void testAddRegions3() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region r1 = Region.createTrivialRegion(utility);
+		Region r2 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 1, b, 3, c, -2));
+		Region r3 = Region.createImpureRegionFromVector(utility, impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+
+		assertThat(r2.addRegionWithFactor(r2, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(1, 1, 3, 3, 2, 2))));
+		assertThat(r3.addRegionWithFactor(r3, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(3, 3, 7, 7, 11, 11))));
+		assertThat(r1.addRegionWithFactor(r3, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(2, 1, 4, 3, 6, 5))));
+	}
+
+	@Test
+	public void testAddRegions4() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region r1 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 1, b, 3, c, -2));
+		Region r2 = Region.createImpureRegionFromVector(utility, impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+
+		Region result = r1.addRegionWithFactor(r1, 4);
+		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(0, 5, 0, 15, 10, 0))));
+
+		result = result.addRegionWithFactor(r2, 21);
+		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(21, 47, 63, 99, 115, 126))));
+
+		result = result.addRegionWithFactor(r1, -6);
+		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(27, 47, 81, 99, 115, 138))));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
