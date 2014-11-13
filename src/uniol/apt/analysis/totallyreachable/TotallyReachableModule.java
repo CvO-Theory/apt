@@ -58,11 +58,10 @@ public class TotallyReachableModule extends AbstractModule {
 		TransitionSystem ts = input.getParameter("lts", TransitionSystem.class);
 
 		TotallyReachable totallyReachable = new TotallyReachable(ts);
-		totallyReachable.check();
 
 		output.setReturnValue("totally_reachable", Boolean.class, totallyReachable.isTotallyReachable());
 		output.setReturnValue("state", State.class, totallyReachable.getNode());
-		if(!totallyReachable.isReachable()) {
+		if (!totallyReachable.isTotallyReachable()) {
 			output.setReturnValue("label", String.class, totallyReachable.getLabel());
 		}
 	}

@@ -36,15 +36,25 @@ import uniol.apt.adt.ts.TransitionSystem;
 public class TotallyReachableTest {
 
 	@Test
-	public void test() {
+	public void testSearch() {
 		TransitionSystem ts = TestTSCollection.getPersistentTS();
-		TotallyReachable rec = new TotallyReachable(ts);
-		rec.check();
+		TotallyReachable rec = new TotallyReachable(ts, TotallyReachable.Algorithm.SEARCH);
 		assertTrue(rec.isTotallyReachable());
 
 		ts = TestTSCollection.getNotTotallyReachableTS();
-		rec = new TotallyReachable(ts);
-		rec.check();
+		rec = new TotallyReachable(ts, TotallyReachable.Algorithm.SEARCH);
+		assertFalse(rec.isTotallyReachable());
+		assertEquals(rec.getNode().getId(), "fail");
+	}
+
+	@Test
+	public void testTree() {
+		TransitionSystem ts = TestTSCollection.getPersistentTS();
+		TotallyReachable rec = new TotallyReachable(ts, TotallyReachable.Algorithm.SPANNING_TREE);
+		assertTrue(rec.isTotallyReachable());
+
+		ts = TestTSCollection.getNotTotallyReachableTS();
+		rec = new TotallyReachable(ts, TotallyReachable.Algorithm.SPANNING_TREE);
 		assertFalse(rec.isTotallyReachable());
 		assertEquals(rec.getNode().getId(), "fail");
 	}

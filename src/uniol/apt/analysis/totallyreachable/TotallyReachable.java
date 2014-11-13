@@ -19,6 +19,10 @@
 
 package uniol.apt.analysis.totallyreachable;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -33,26 +37,67 @@ public class TotallyReachable {
 	private final State unreachableState;
 
 	/**
+	 * TODO: Document
+	 */
+	public static enum Algorithm {
+		SEARCH,
+		SPANNING_TREE
+	}
+
+	/**
+	 * Gets a transition system and checks if it is totally reachable
+	 * @param ts Transition system
+	 * @param algo The search algorithm to use
+	 */
+	public TotallyReachable(TransitionSystem ts, Algorithm algo) {
+		switch (algo) {
+			case SEARCH:
+				Set<State> stillToVisit = new HashSet<>();
+				Set<State> unreached = new HashSet<>(ts.getNodes());
+				stillToVisit.add(ts.getInitialState());
+				unreached.remove(ts.getInitialState());
+
+				while (!stillToVisit.isEmpty()) {
+					Iterator<State> iter = stillToVisit.iterator();
+					State state = iter.next();
+					iter.remove();
+
+					for (State follower : state.getPostsetNodes())
+						if (unreached.remove(follower))
+							stillToVisit.add(follower);
+				}
+
+				if (unreached.isEmpty())
+					unreachableState = null;
+				else
+					unreachableState = unreached.iterator().next();
+				break;
+			case SPANNING_TREE:
+				SpanningTree<TransitionSystem, Arc, State> tree = new SpanningTree<>(ts, ts.getInitialState());
+				if (tree.isTotallyReachable())
+					unreachableState = null;
+				else
+					unreachableState = tree.getUnreachableNodes().iterator().next();
+				break;
+			default:
+				throw new AssertionError();
+		}
+	}
+
+	/**
 	 * Gets a transition system and checks if it is totally reachable
 	 * @param ts Transition system
 	 */
 	public TotallyReachable(TransitionSystem ts) {
-		SpanningTree<TransitionSystem, Arc, State> tree = new SpanningTree<>(ts, ts.getInitialState());
-		if (tree.isTotallyReachable())
-			unreachableState = null;
-		else
-			unreachableState = tree.getUnreachableNodes().iterator().next();
-	}
-
-	public boolean isTotallyReachable() {
-		return unreachableState == null;
+		this(ts, Algorithm.SEARCH);
 	}
 
 	/**
-	 * Add the postset of each node to the current postset and search for
-	 * current node.
+	 * Returns true if the lts is totally reachable.
+	 * @return - Boolean
 	 */
-	public void check() {
+	public boolean isTotallyReachable() {
+		return unreachableState == null;
 	}
 
 	/**
@@ -60,7 +105,7 @@ public class TotallyReachable {
 	 * @return - Id of the node
 	 */
 	public String getLabel() {
-		return unreachableState.getId();
+		return unreachableState != null ? unreachableState.getId() : null;
 	}
 
 	/**
@@ -69,15 +114,6 @@ public class TotallyReachable {
 	 */
 	public State getNode() {
 		return unreachableState;
-	}
-
-	/**
-	 * Returns true if the lts is reachable.
-	 * @return - Boolean
-	 */
-	public boolean isReachable() {
-		// TODO: Duplicate API?!
-		return isTotallyReachable();
 	}
 }
 

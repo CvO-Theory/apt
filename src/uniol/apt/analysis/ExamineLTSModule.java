@@ -85,7 +85,6 @@ public class ExamineLTSModule extends AbstractModule {
 		PersistentTS per = new PersistentTS(lts);
 		TotallyReachable tot = new TotallyReachable(lts);
 		ReversibleTS rev = new ReversibleTS(lts);
-		tot.check();
 		output.setReturnValue("deterministic", Boolean.class, det.isDeterministic());
 		output.setReturnValue("persistent", Boolean.class, per.isPersistent());
 		output.setReturnValue("totally_reachable", Boolean.class, tot.isTotallyReachable());
