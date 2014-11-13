@@ -56,7 +56,8 @@ public class SynthesizeModule extends AbstractModule {
 		outputSpec.addReturnValue("warning", String.class);
 		outputSpec.addReturnValue("success", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("failedStateSeparationProblems", String.class);
-		outputSpec.addReturnValue("failedStateEventSeparationProblems", String.class);
+		outputSpec.addReturnValue("failedEventStateSeparationProblems", String.class);
+		outputSpec.addReturnValue("separatingRegions", RegionCollection.class);
 		outputSpec.addReturnValue("pn", PetriNet.class,
 			ModuleOutputSpec.PROPERTY_FILE, ModuleOutputSpec.PROPERTY_RAW);
 	}
@@ -77,10 +78,11 @@ public class SynthesizeModule extends AbstractModule {
 
 		output.setReturnValue("success", Boolean.class, synthesize.wasSuccessfullySeparated());
 		output.setReturnValue("pn", PetriNet.class, pn);
+		output.setReturnValue("separatingRegions", RegionCollection.class, new RegionCollection(synthesize.getSeparatingRegions()));
 
 		if (!success) {
 			output.setReturnValue("failedStateSeparationProblems", String.class, synthesize.getFailedStateSeparationProblems().toString());
-			output.setReturnValue("failedStateEventSeparationProblems", String.class, synthesize.getFailedEventStateSeparationProblems().toString());
+			output.setReturnValue("failedEventStateSeparationProblems", String.class, synthesize.getFailedEventStateSeparationProblems().toString());
 		}
 	}
 
