@@ -65,7 +65,7 @@ public class ImpureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher
 			matches = false;
 
 		description.appendText(",  ");
-		backwardMatcher.describeMismatch(region.getForwardWeight(event), description);
+		forwardMatcher.describeMismatch(region.getForwardWeight(event), description);
 		if (!forwardMatcher.matches(region.getForwardWeight(event)))
 			matches = false;
 
