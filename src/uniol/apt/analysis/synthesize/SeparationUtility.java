@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.util.equations.InequalitySystem;
 
@@ -142,8 +143,89 @@ public class SeparationUtility {
 			result = result.addRegionWithFactor(region, solution.get(i++));
 		}
 
-		// TODO: Ugly hack since we are only doing pure regions right now
+		// Because addRegionWithFactor() doesn't work the way that this function would need
 		return result.makePure();
+	}
+
+	/**
+	 * Try to calculate an impure region which separates some state and some event.
+	 * @param utility The region utility to use.
+	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
+	 * stable iteration order!
+	 * @param state The state of the separation problem
+	 * @param event The event of the separation problem
+	 * @return A separating region or null.
+	 */
+	static public Region calculateSeparatingImpureRegion(RegionUtility utility, Collection<Region> basis,
+			State state, String event) {
+		InequalitySystem system = new InequalitySystem(basis.size());
+		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
+		int eventIndex = utility.getEventIndex(event);
+		assert stateParikhVector != null;
+
+		// Unreachable states cannot be separated
+		if (!utility.getSpanningTree().isReachable(state))
+			return null;
+
+		// For each state in which 'event' is enabled...
+		for (State otherState : utility.getTransitionSystem().getNodes()) {
+			if (getFollowingState(otherState, event) == null)
+				continue;
+
+			// Silently ignore unreachable states
+			if (!utility.getSpanningTree().isReachable(otherState))
+				continue;
+
+			List<Integer> inequality = new ArrayList<>(basis.size());
+			List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
+
+			for (Region region : basis) {
+				// We want to evaluate [Psi_s - Psi_{s'}] * region
+				int stateValue = region.evaluateParikhVector(stateParikhVector);
+				int otherStateValue = region.evaluateParikhVector(otherStateParikhVector);
+				inequality.add(stateValue - otherStateValue);
+			}
+
+			system.addInequality(-1, ">=", inequality);
+		}
+
+		// Calculate the resulting linear combination
+		List<Integer> solution = system.findSolution();
+		if (solution.isEmpty())
+			return null;
+
+		assert solution.size() == basis.size();
+		Region result = Region.createTrivialRegion(utility);
+		int i = 0;
+		for (Region region : basis) {
+			result = result.addRegionWithFactor(region, solution.get(i++));
+		}
+		// Because addRegionWithFactor() doesn't work the way that this function would need
+		result = result.makePure();
+
+		// If this already solves ESSP, return it
+		if (result.getNormalRegionMarkingForState(state) < result.getBackwardWeight(eventIndex))
+			return result;
+
+		// Calculate m = min { r_S(s') | delta(s', event) defined }
+		// For each state in which 'event' is enabled...
+		Integer min = null;
+		for (State otherState : utility.getTransitionSystem().getNodes()) {
+			if (getFollowingState(otherState, event) == null)
+				continue;
+
+			// Silently ignore unreachable states
+			if (!utility.getSpanningTree().isReachable(otherState))
+				continue;
+
+			int stateMarking = result.getNormalRegionMarkingForState(otherState);
+			if (min == null || min > stateMarking)
+				min = stateMarking;
+		}
+
+		// TODO: Unreachable states => NullPointerException
+		assert min > 0;
+		return result.addRegionWithFactor(Region.createUnitRegion(utility, eventIndex), min);
 	}
 
 	/**
@@ -163,6 +245,16 @@ public class SeparationUtility {
 		if (r == null)
 			r = calculateSeparatingRegion(utility, basis, state, event);
 		return r;
+	}
+
+	/**
+	 * Get the state which is reached by firing the given event in the given state.
+	 */
+	static public State getFollowingState(State state, String event) {
+		for (Arc arc : state.getPostsetEdges())
+			if (arc.getLabel().equals(event))
+				return arc.getTarget();
+		return null;
 	}
 }
 

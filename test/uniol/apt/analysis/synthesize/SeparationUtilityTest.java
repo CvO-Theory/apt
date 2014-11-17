@@ -28,6 +28,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,77 +37,158 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 /** @author Uli Schlachter */
 @Test
 public class SeparationUtilityTest {
-	private TransitionSystem ts;
-	private RegionUtility utility;
-	private List<Region> regionBasis;
-	private Region region1;
-	private Region region2;
-	private Region region3;
+	public static abstract class Tester {
+		protected TransitionSystem ts;
+		protected RegionUtility utility;
+		protected List<Region> regionBasis;
+		protected Region region1;
+		protected Region region2;
+		protected Region region3;
 
-	@BeforeClass
-	public void setup() {
-		ts = TestTSCollection.getPureSynthesizablePathTS();
+		abstract protected TransitionSystem getTS();
 
-		// Add an unreachable state
-		State unreachable = ts.createState("unreachable");
-		ts.createArc(unreachable, unreachable, "c");
+		@BeforeClass
+		public void setup() {
+			ts = getTS();
 
-		utility = new RegionUtility(ts);
+			// Add an unreachable state
+			State unreachable = ts.createState("unreachable");
+			ts.createArc(unreachable, unreachable, "c");
 
-		// I'm lazy, let's hope that we always end up with this order (which is currently guaranteed because
-		// TransitionSystem.getAlphabet() uses a SortedSet).
-		assertThat(utility.getEventIndex("a"), is(0));
-		assertThat(utility.getEventIndex("b"), is(1));
-		assertThat(utility.getEventIndex("c"), is(2));
+			utility = new RegionUtility(ts);
 
-		region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0, 0));
-		region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1, 0));
-		region3 = Region.createPureRegionFromVector(utility, Arrays.asList(0, 0, -1));
+			// I'm lazy, let's hope that we always end up with this order (which is currently guaranteed because
+			// TransitionSystem.getAlphabet() uses a SortedSet).
+			assertThat(utility.getEventIndex("a"), is(0));
+			assertThat(utility.getEventIndex("b"), is(1));
+			assertThat(utility.getEventIndex("c"), is(2));
 
-		regionBasis = new ArrayList<>();
-		regionBasis.add(region1);
-		regionBasis.add(region2);
-		regionBasis.add(region3);
-	}
+			region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0, 0));
+			region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1, 0));
+			region3 = Region.createPureRegionFromVector(utility, Arrays.asList(0, 0, -1));
 
-	@Test
-	public void testStateSelfSeparation() {
-		// A state cannot be separated from itself
-		for (State state : utility.getTransitionSystem().getNodes()) {
-			assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, state, state), is(nullValue()));
+			regionBasis = new ArrayList<>();
+			regionBasis.add(region1);
+			regionBasis.add(region2);
+			regionBasis.add(region3);
 		}
-	}
 
-	@Test
-	public void testStateSeparation() {
-		for (State s1 : utility.getTransitionSystem().getNodes()) {
-			if (!utility.getSpanningTree().isReachable(s1))
-				continue;
-
-			for (State s2 : utility.getTransitionSystem().getNodes()) {
-				if (s1 == s2 || !utility.getSpanningTree().isReachable(s2))
-					continue;
-				// All pairs of (reachable) states are separable
-				assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, s1, s2), is(not(nullValue())));
+		@Test
+		public void testStateSelfSeparation() {
+			// A state cannot be separated from itself
+			for (State state : utility.getTransitionSystem().getNodes()) {
+				assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, state, state), is(nullValue()));
 			}
 		}
+
+		@Test
+		public void testStateSeparation() {
+			for (State s1 : utility.getTransitionSystem().getNodes()) {
+				if (!utility.getSpanningTree().isReachable(s1))
+					continue;
+
+				for (State s2 : utility.getTransitionSystem().getNodes()) {
+					if (s1 == s2 || !utility.getSpanningTree().isReachable(s2))
+						continue;
+					// All pairs of (reachable) states are separable
+					assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, s1, s2), is(not(nullValue())));
+				}
+			}
+		}
+
+		@Test
+		public void testEventSeparation1() {
+			State w = utility.getTransitionSystem().getNode("w");
+			assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, w, "c"), equalTo(region3));
+		}
+
+		@Test
+		public void testEventSeparation2() {
+			State s = utility.getTransitionSystem().getNode("s");
+			assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, s, "c"), is(nullValue()));
+		}
+
+		@Test
+		public void testCalculate1() {
+			State s = utility.getTransitionSystem().getNode("s");
+			assertThat(SeparationUtility.calculateSeparatingRegion(utility, regionBasis, s, "a"), is(nullValue()));
+		}
+
+		@Test
+		public void testCalculate1Impure() {
+			State s = utility.getTransitionSystem().getNode("s");
+			assertThat(SeparationUtility.calculateSeparatingImpureRegion(utility, regionBasis, s, "a"), is(nullValue()));
+		}
+
+		@Test
+		public void testStateSeparationUnreachable() {
+			assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, ts.getNode("unreachable"), ts.getInitialState()), nullValue());
+		}
+
+		@Test
+		public void testEventSeparationUnreachable() {
+			assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, ts.getNode("unreachable"), "a"), nullValue());
+		}
+
+		@Test
+		public void testCalculateUnreachable() {
+			assertThat(SeparationUtility.calculateSeparatingRegion(utility, regionBasis, ts.getNode("unreachable"), "a"), nullValue());
+			assertThat(SeparationUtility.calculateSeparatingImpureRegion(utility, regionBasis, ts.getNode("unreachable"), "a"), nullValue());
+		}
+
+		@DataProvider(name = "stateEventPairs")
+		public Object[][] createStateEventPairs() {
+			List<Object[]> pairs = new ArrayList<>();
+			for (State state : ts.getNodes())
+				for (String event : ts.getAlphabet())
+					pairs.add(new Object[] { state.getId(), event });
+			return pairs.toArray(new Object[][] {});
+		}
+
+		@Test(dataProvider = "stateEventPairs")
+		public void testEventSeparation(String stateName, String event) {
+			State state = utility.getTransitionSystem().getNode(stateName);
+			if (SeparationUtility.getFollowingState(state, event) != null || stateName.equals("unreachable"))
+				return;
+			checkEventSeparation(utility, regionBasis, stateName, event, true);
+		}
+
+		@Test(dataProvider = "stateEventPairs")
+		public void testEventSeparationImpure(String stateName, String event) {
+			State state = utility.getTransitionSystem().getNode(stateName);
+			if (SeparationUtility.getFollowingState(state, event) != null || stateName.equals("unreachable"))
+				return;
+			checkEventSeparation(utility, regionBasis, stateName, event, false);
+		}
 	}
 
 	@Test
-	public void testEventSeparation1() {
-		State w = utility.getTransitionSystem().getNode("w");
-		assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, w, "c"), equalTo(region3));
+	public static class PureSynthesizablePathTSTest extends Tester {
+		@Override
+		protected TransitionSystem getTS() {
+			return TestTSCollection.getPureSynthesizablePathTS();
+		}
 	}
 
 	@Test
-	public void testEventSeparation2() {
-		State s = utility.getTransitionSystem().getNode("s");
-		assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, s, "c"), is(nullValue()));
+	public static class ImpureSynthesizablePathTSTest extends Tester {
+		@Override
+		protected TransitionSystem getTS() {
+			return TestTSCollection.getImpureSynthesizablePathTS();
+		}
 	}
 
 	private static void checkEventSeparation(RegionUtility utility, List<Region> basis, String stateName, String event) {
+		checkEventSeparation(utility, basis, stateName, event, true);
+	}
+
+	private static void checkEventSeparation(RegionUtility utility, List<Region> basis, String stateName, String event, boolean pure) {
 		State state = utility.getTransitionSystem().getNode(stateName);
-		Region r = SeparationUtility.calculateSeparatingRegion(utility, basis, state, event);
+		Region r;
+		if (pure)
+			r = SeparationUtility.calculateSeparatingRegion(utility, basis, state, event);
+		else
+			r = SeparationUtility.calculateSeparatingImpureRegion(utility, basis, state, event);
 
 		// "event" must have a non-zero backwards weight
 		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));
@@ -116,17 +198,6 @@ public class SeparationUtilityTest {
 
 		// After reaching state "state", "event" must be disabled
 		assertThat(r.getNormalRegionMarkingForState(state), is(lessThan(r.getBackwardWeight(event))));
-	}
-
-	@Test
-	public void testCalculate1() {
-		State s = utility.getTransitionSystem().getNode("s");
-		assertThat(SeparationUtility.calculateSeparatingRegion(utility, regionBasis, s, "a"), is(nullValue()));
-	}
-
-	@Test
-	public void testCalculate2() {
-		checkEventSeparation(utility, regionBasis, "t", "b");
 	}
 
 	@Test
@@ -143,18 +214,16 @@ public class SeparationUtilityTest {
 	}
 
 	@Test
-	public void testStateSeparationUnreachable() {
-		assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, ts.getNode("unreachable"), ts.getInitialState()), nullValue());
-	}
+	public void testCalculate3Impure() {
+		RegionUtility utility = new RegionUtility(TestTSCollection.getOneCycleLTS());
+		List<Region> basis = new ArrayList<>();
 
-	@Test
-	public void testEventSeparationUnreachable() {
-		assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, ts.getNode("unreachable"), "a"), nullValue());
-	}
+		// Event order does not matter here, all events behave the same
+		basis.add(Region.createPureRegionFromVector(utility, Arrays.asList(-1, 1, 0, 0)));
+		basis.add(Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0, 1, 0)));
+		basis.add(Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0, 0, 1)));
 
-	@Test
-	public void testCalculateUnreachable() {
-		assertThat(SeparationUtility.calculateSeparatingRegion(utility, regionBasis, ts.getNode("unreachable"), "a"), nullValue());
+		checkEventSeparation(utility, basis, "s1", "c", false);
 	}
 }
 

@@ -28,7 +28,6 @@ import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.util.Pair;
@@ -133,7 +132,7 @@ public class SynthesizePN {
 	private void solveEventStateSeparation() {
 		for (State state : ts.getNodes())
 			for (String event : ts.getAlphabet()) {
-				if (getFollowingState(state, event) == null) {
+				if (SeparationUtility.getFollowingState(state, event) == null) {
 					debug("Trying to separate " + state + " from event '" + event + "'");
 					Region r = SeparationUtility.findOrCalculateSeparatingRegion(utility,
 							regions, regionBasis, state, event);
@@ -147,16 +146,6 @@ public class SynthesizePN {
 						debug("Found already-existing separating region " + r);
 				}
 			}
-	}
-
-	/**
-	 * Get the state which is reached by firing the given event in the given state.
-	 */
-	private State getFollowingState(State state, String event) {
-		for (Arc arc : state.getPostsetEdges())
-			if (arc.getLabel().equals(event))
-				return arc.getTarget();
-		return null;
 	}
 
 	/**

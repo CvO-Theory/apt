@@ -325,6 +325,39 @@ public class TestTSCollection {
 		ts.createArc(s, z, "b");
 		return ts;
 	}
+
+	/**
+	 * The transitions system:
+	 * <pre>
+	 *      a        c        a        c
+	 * [s] ---> [t] ---> [u] ---> [v] ---> [w] <-b (loop)
+	 *                   /\\
+	 *                    b (loop)
+	 * </pre>
+	 *
+	 * The generating PN has four places. One place limits 'a' to only firing twice, one place makes c fire only
+	 * after a fired, the third places makes a and b fire only after c fired (initially marked) and the last place
+	 * makes b fire only after c fired at least once.
+	 */
+	public static TransitionSystem getImpureSynthesizablePathTS() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s = ts.createState("s");
+		State t = ts.createState("t");
+		State u = ts.createState("u");
+		State v = ts.createState("v");
+		State w = ts.createState("w");
+
+		ts.setInitialState(s);
+
+		ts.createArc(s, t, "a");
+		ts.createArc(t, u, "c");
+		ts.createArc(u, u, "b");
+		ts.createArc(u, v, "a");
+		ts.createArc(v, w, "c");
+		ts.createArc(w, w, "b");
+		return ts;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
