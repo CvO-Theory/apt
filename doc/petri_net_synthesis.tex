@@ -1,0 +1,145 @@
+\documentclass{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[mathcal]{euscript}
+\usepackage{mathrsfs}
+\usepackage{MnSymbol}
+\usepackage[amsmath,amsthm,thmmarks]{ntheorem}
+\usepackage[a4paper,margin=1cm]{geometry}
+
+\newtheorem{definition}{Definition}[section]
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\B}{\mathbb{B}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\1}{\textbf{1}}
+
+\usepackage{color}
+%\newcommand{\todo}[1][TODO]{\textcolor{red}{#1}}
+
+\begin{document}
+The following is heavily based upon the monograph ``Petri Net Synthesis'' by Eric Badouel, Luca Bernardinello and Philippe Darondeau, version March 14, 2014.
+
+\section{Preliminaries}
+We always assume a given initialized LTS \((S,E,\delta,s_0)\) and a fixed spanning tree of this LTS. The LTS is also
+assumed to be fully reachable (there is a path from \(s_0\) to any other state), deterministic
+(\(s\xrightarrow{e}s'\land s\xrightarrow{e}s''\Rightarrow s'=s''\)) and reduced (for every \(e_i\in E\) there exists
+at least one edge \(s\xrightarrow{e_i}s'\)).
+
+The vector \(\1_i\) is defined by \(\1_i(i):=1\) and \(\forall i\neq j\colon \1_i(j):=0\).
+The Parikh vector \(\Psi_s\) of a state \(s\) is the Parikh vector of the path from \(s_0\) to \(s\)
+via the spanning tree.
+
+A \emph{chord} is any edge \(t=s\xrightarrow{e_i}s'\) which is not part of the spanning tree. Each chord is associated
+with a vector \(\Psi_t:=\Psi_s+\1_i-\Psi_{s'}\) which is called its
+\emph{fundamental cycle}. The set of all chords is \(\T\).
+
+\section{Synthesizing Pure Petri Nets}
+A \emph{pure abstract region} \(r_E\) is a function \(r_E\colon E\rightarrow\Z\), so that \(\forall t\in\T\colon
+r_E(\Psi_t)=0\) where \(r\) is extended to vectors in the natural way.
+A \emph{pure concrete region} is a tuple \(r=(r_S, r_E)\) where \(r_E\) is a pure abstract region and \(r_S\colon
+S\rightarrow\N\) is a function so that for every edge \(s\xrightarrow{e_i}s'\) we have \(r_S(s')=r_S(s)+r_E(e_i)\).
+
+Assuming that the LTS is fully reachable, the function \(r_S\) of a concrete region \(r=(r_S,r_E)\) is fully determined by \(r_S(s_0)\),
+because \(r_S(s)=r_S(s_0)+r_E(\Psi_s)\).
+A pure concrete region \(r=(r_S,r_E)\) is called \emph{normal} if it satisfies \(r_S(s)=0\) for some \(s\in S\).
+This is equivalent to \(r_S(s_0)=\max\lbrace -r_E(\Psi_S) \mid s\in S\rbrace\).
+
+\subsection{Finding abstract regions}
+Given two abstract regions \(r_1\) and \(r_2\), the functions \(r_1+r_2\) and \(z\cdot r_1\) for some
+\(z\in\Z\) are also abstract regions (where \(-r_1\) is called the \emph{complement region}).
+Thus, the equations \(\forall t\in\T\colon r_E(\Psi_t)=0\) are a linear system in the unknowns \(r_E(e_i)\) and a basis
+\((r_E^1,\dots, r_E^k)\) for the solution space can be calculated. This describes all abstract regions uniquely which means
+that for any region \(r_E\) there exist unique numbers \(\lambda_1,\dots,\lambda_k\in\Z\) with \(r_E=\sum_{i=1}^k
+\lambda_i r_E^i\).
+
+\subsection{State Separation}
+A region \(r=(r_S,r_E)\) separates states \(s\) and \(s'\) iff \(r_S(s)\neq r_S(s')\).
+Normal regions from a basis of regions are sufficient for state separation. This is because the normalness only
+influences \(r_S\) by a constant amount. If two states aren't separable by the basis, then any linear combination of the
+elements of the basis cannot do so either, so no region can.
+
+\subsection{Event/State Separation}
+A region \(r=(r_S,r_E)\) separates state \(s\) from event \(e_i\) iff \(r_S(s)+r_E(e_i)<0\).
+
+Normal regions are sufficient for event/state separation, but (the normal regions corresponding to) the entries of a
+region basis aren't necessarily sufficient.
+
+Via using the already known (in-)equalities, the following holds iff the \emph{normal} region \(r=(r_S, r_E)\) solves ESSP:
+\begin{eqnarray*}
+0 &>& r_S(s)+r_E(e_i)
+  = r_S(s_0)+r_E(\Psi_s)+r_E(e_i) \\
+  &=& \max\lbrace -r_E(\Psi_{s'})\mid s'\in S\rbrace+r_E(\Psi_s)+r_E(e_i) \\
+  &=& \max\lbrace r_E(\Psi_s-\Psi_{s'}+\1_i)\mid s'\in S\rbrace
+\end{eqnarray*}
+This means that a state and an event are separated by a normal region \(r_E\) iff
+\(0>r_E(\Psi_s-\Psi_{s'}+\1_i)\) for all \(s\in S\). So to solve event/state separation, solving the following
+system in the unknowns \(\lambda_i\in\Z\) is sufficient (where the \(r_E^i\) range over a basis of length \(k\)):
+\begin{eqnarray*}
+0 &>& \sum_{i=1}^k \lambda_i\cdot r_E^i(\Psi_s-\Psi_{s'}+\1_i) \quad\forall s'\in S \\
+\end{eqnarray*}
+Note that this also includes the inequality with \(s=s'\).
+The resulting (abstract) region is
+\(r_E = \sum_{i=1}^k \lambda_i\cdot r_E^i\)
+
+\section{Synthesizing Impure Petri Nets}
+An \emph{(impure) abstract region} \(r\) of a LTS is a pair \(r=(r_\B, r_\F)\) of functions \(E\rightarrow\N\), so that
+\(r_E:=r_\F-r_\B\) is a pure abstract region.
+An \emph{(impure) concrete region} \(r\) of a LTS is a tuple \((r_S, r_\B, r_\F)\) so that \((r_\B, r_\F)\) is an abstract
+region, \((r_S, r_F-r_\B)\) is a pure concrete region and for every edge \(s\xrightarrow{e_i}s'\) we have \(r_S(s)\geq
+r_\B(e_i)\).
+Assuming that the LTS is fully reachable, the function \(r_S\) of an impure region is also fully determined by
+\(r_S(s_0)\), because \(r_S(s)=r_S(s_0)+r_E(\Psi_s)\).
+Any pure abstract region \(r_E\) can be transformed into an impure abstract region \(r(r_E):=(r_\B, r_\F)\) via:
+\begin{align*}
+r_\F(e_i) &:= \begin{cases}
+	0 & \text{if \(r_E<0\)} \\
+	r_E(e_i) & \text{else}
+\end{cases} &
+r_\B(e_i) &:= \begin{cases}
+	-r_E(e_i) & \text{if \(r_E<0\)} \\
+	0 & \text{else}
+\end{cases}
+\end{align*}
+
+For state separation, pure regions are sufficient, because any function \(r_S\) can be part of a pure concrete region iff it can
+be part of an impure one.
+
+For event separation (\(r_S(s)-r_\B(e_i)<0\)), the following algorithm can be used:
+For all \(s'\in S\) where \(\delta(s',e_i)\) is defined, find a single solution for the following system in the unknowns
+\(\lambda_i\in\Z\) (where \(r_E^i\) range over
+a basis of \emph{pure} regions):
+\[
+\sum_{i=1}^k \lambda_i r_E^i(\Psi_s-\Psi_{s'}) \leq -1
+\]
+If the resulting (pure) region \(r_E=\sum_{i=1}^k\lambda_ir_E^i\) separates \(e_i\) from \(s\) (as a normal and concrete
+pure region), use the corresponding impure region for solving ESSP.
+
+Otherwise let \(m=\min\lbrace r_S(s')\mid \delta(s',e_i) \text{ defined}\rbrace\).
+A separating region \(r\) is defined by increasing \(r_\B(e_i)\) and \(r_\F(e_i)\) each by \(m\) (note that this leaves
+\(r_E\) unchanged). Proof:
+
+Let \(s'\) be any state which satisfies \(m=r_S(s')\) and for which \(\delta(s',e_i)\) is defined.
+From the above equation we get that:
+\begin{eqnarray*}
+r_S(s)&=&r_S(s)+r_E(\Psi_{s'})-r_E(\Psi_{s'}) \\
+&=&r_S(s_0)+r_E(\Psi_s)+r_E(\Psi_{s'})-r_E(\Psi_{s'}) \\
+&=&r_S(s_0)+r_E(\Psi_{s'})+(r_E(\Psi_s)-r_E(\Psi_{s'})) \\
+&=&r_S(s')+(r_E(\Psi_s)-r_E(\Psi_{s'})) \\
+&=&m+(r_E(\Psi_s)-r_E(\Psi_{s'})) \\
+&\leq&m-1 < r_\B(e_i)
+\end{eqnarray*}
+The last step follows from the original equation system that was used for calculating \(r\).
+Thus, the calculated region separates state \(s\) and event \(e_i\).
+
+This means that for impure nets, any instance of ESSP is solvable if SSP is solvable for all pairs of distinct states.
+
+\end{document}
+
+% vim: ft=tex:noet:sw=8:sts=8:ts=8:tw=120
