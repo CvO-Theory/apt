@@ -76,15 +76,10 @@ public class SeparationUtility {
 		if (!utility.getSpanningTree().isReachable(state))
 			return null;
 
-		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
-
 		for (Region region : regions) {
 			// We need r(state) to be smaller than the event's backward weight in some region.
-			// By definition: r(state) = r(s0) + r(vector-from-s0-to-state).
-			int stateValue = region.getNormalRegionMarking();
-			stateValue += region.evaluateParikhVector(stateParikhVector);
-			if (stateValue < region.getBackwardWeight(eventIndex))
+			if (region.getNormalRegionMarkingForState(state) < region.getBackwardWeight(eventIndex))
 				return region;
 		}
 

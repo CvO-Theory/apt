@@ -111,11 +111,11 @@ public class SeparationUtilityTest {
 		// "event" must have a non-zero backwards weight
 		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));
 
-		// State "state" must be reachable
-		assertThat(r.getNormalRegionMarking() + r.evaluateParikhVector(utility.getReachingParikhVector(state)), is(greaterThanOrEqualTo(0)));
+		// State "state" must be reachable (This only tests a necessary, but no sufficient, condition)
+		assertThat(r.getNormalRegionMarkingForState(state), is(greaterThanOrEqualTo(0)));
 
 		// After reaching state "state", "event" must be disabled
-		assertThat(r.getNormalRegionMarking() + r.evaluateParikhVector(utility.getReachingParikhVector(state)), is(lessThan(r.getBackwardWeight(event))));
+		assertThat(r.getNormalRegionMarkingForState(state), is(lessThan(r.getBackwardWeight(event))));
 	}
 
 	@Test
