@@ -186,6 +186,16 @@ public class Region {
 	}
 
 	/**
+	 * Get the marking that a normal region based on this abstract would assign to the given state.
+	 * @param state The state to evaluate. Must be reachable from the initial state.
+	 * @return The resulting number.
+	 */
+	public int getNormalRegionMarkingForState(State state) {
+		// TODO: Inefficient!
+		return getNormalRegionMarking() + evaluateParikhVector(utility.getReachingParikhVector(state));
+	}
+
+	/**
 	 * Add a multiple of another region to this region and return the result.
 	 * @param otherRegion The region to add to this one.
 	 * @param factor A factor with which the other region is multiplied before addition.
@@ -313,6 +323,13 @@ public class Region {
 	 */
 	public static Region createTrivialRegion(RegionUtility utility) {
 		List<Integer> vector = Collections.nCopies(utility.getEventList().size(), 0);
+		return new Region(utility, vector, vector);
+	}
+
+	public static Region createUnitRegion(RegionUtility utility, int event) {
+		List<Integer> nullList = Collections.nCopies(utility.getEventList().size(), 0);
+		List<Integer> vector = new ArrayList<>(nullList);
+		vector.set(event, 1);
 		return new Region(utility, vector, vector);
 	}
 }

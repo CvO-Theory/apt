@@ -457,6 +457,64 @@ public class RegionTest {
 		assertThat(region.makePure(), is(pureRegionWithWeights(Arrays.asList("a", "b", "c"),
 						Arrays.asList(1, -1, 1))));
 	}
+
+	@Test
+	public void unitRegion1() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int b = utility.getEventIndex("b");
+		Region region = Region.createUnitRegion(utility, b);
+
+		assertThat(region, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						Arrays.asList(0, 0, 1, 1, 0, 0))));
+	}
+
+	@Test(expectedExceptions = IndexOutOfBoundsException.class)
+	public void unitRegion2() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		Region.createUnitRegion(utility, 23);
+	}
+
+	@Test
+	public void testGetNormalRegionMarkingForState() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region region = Region.createImpureRegionFromVector(utility,
+				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+
+		assertThat(region.getNormalRegionMarkingForState(ts.getNode("s")), equalTo(3));
+		assertThat(region.getNormalRegionMarkingForState(ts.getNode("t")), equalTo(4));
+		assertThat(region.getNormalRegionMarkingForState(ts.getNode("u")), equalTo(5));
+		assertThat(region.getNormalRegionMarkingForState(ts.getNode("v")), equalTo(6));
+		assertThat(region.getNormalRegionMarkingForState(ts.getNode("w")), equalTo(7));
+	}
+
+	@Test
+	public void testGetNormalRegionMarkingForState2() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region region = Region.createImpureRegionFromVector(utility,
+				impureParikhVector(a, 2, 1, b, 3, 0, c, 5, 3));
+
+		assertThat(region.getNormalRegionMarkingForState(ts.getNode("s")), equalTo(9));
+		assertThat(region.getNormalRegionMarkingForState(ts.getNode("t")), equalTo(8));
+		assertThat(region.getNormalRegionMarkingForState(ts.getNode("u")), equalTo(5));
+		assertThat(region.getNormalRegionMarkingForState(ts.getNode("v")), equalTo(3));
+		assertThat(region.getNormalRegionMarkingForState(ts.getNode("w")), equalTo(2));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
