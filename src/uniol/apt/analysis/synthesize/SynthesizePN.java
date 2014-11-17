@@ -43,6 +43,7 @@ public class SynthesizePN {
 	private final Set<Region> regions = new HashSet<>();
 	private final Set<Set<State>> failedStateSeparationProblems = new HashSet<>();
 	private final Set<Pair<String, State>> failedEventStateSeparationProblems = new HashSet<>();
+	private final boolean impure;
 
 	private static void debug(String message) {
 		//System.err.println("SynthesizePN: " + message);
@@ -59,11 +60,13 @@ public class SynthesizePN {
 	/**
 	 * Synthesize a Petri Net which generates the given transition system.
 	 * @param utility An instance of RegionUtility for the requested transition system.
+	 * @param impure True if impure Petri Nets may be calculated
 	 */
-	public SynthesizePN(RegionUtility utility) {
+	public SynthesizePN(RegionUtility utility, boolean impure) {
 		this.ts = utility.getTransitionSystem();
 		this.utility = utility;
 		this.regionBasis = new RegionBasis(utility);
+		this.impure = impure;
 
 		debug("Region basis: " + regionBasis);
 
@@ -82,6 +85,23 @@ public class SynthesizePN {
 		solveEventStateSeparation();
 
 		debug();
+	}
+
+	/**
+	 * Synthesize a Petri Net which generates the given transition system.
+	 * @param utility An instance of RegionUtility for the requested transition system.
+	 */
+	public SynthesizePN(RegionUtility utility) {
+		this(utility, true);
+	}
+
+	/**
+	 * Synthesize a Petri Net which generates the given transition system.
+	 * @param ts The transition system to synthesize.
+	 * @param impure True if impure Petri Nets may be calculated
+	 */
+	public SynthesizePN(TransitionSystem ts, boolean impure) {
+		this(new RegionUtility(ts));
 	}
 
 	/**
@@ -135,7 +155,7 @@ public class SynthesizePN {
 				if (SeparationUtility.getFollowingState(state, event) == null) {
 					debug("Trying to separate " + state + " from event '" + event + "'");
 					Region r = SeparationUtility.findOrCalculateSeparatingRegion(utility,
-							regions, regionBasis, state, event);
+							regions, regionBasis, state, event, impure);
 					if (r == null) {
 						failedEventStateSeparationProblems.add(
 								new Pair<>(event, state));

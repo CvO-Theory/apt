@@ -237,13 +237,17 @@ public class SeparationUtility {
 	 * stable iteration order!
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
+	 * @param impure If impure regions may be calculated
 	 * @return A separating region or null.
 	 */
 	static public Region findOrCalculateSeparatingRegion(RegionUtility utility, Collection<Region> regions,
-			Collection<Region> basis, State state, String event) {
+			Collection<Region> basis, State state, String event, boolean impure) {
 		Region r = findSeparatingRegion(utility, regions, state, event);
 		if (r == null)
-			r = calculateSeparatingRegion(utility, basis, state, event);
+			if (!impure)
+				r = calculateSeparatingRegion(utility, basis, state, event);
+			else
+				r = calculateSeparatingImpureRegion(utility, basis, state, event);
 		return r;
 	}
 
