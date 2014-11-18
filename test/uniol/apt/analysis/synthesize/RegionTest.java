@@ -124,7 +124,8 @@ public class RegionTest {
 		Region region = Region.createImpureRegionFromVector(utility,
 				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
 
-		assertThat(region, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(1, 2, 3, 4, 5, 6))));
+		assertThat(region, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						Arrays.asList(1, 2, 3, 4, 5, 6))));
 	}
 
 	@Test

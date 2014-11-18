@@ -45,7 +45,8 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 @Test
 @SuppressWarnings("unchecked") // I hate generics
 public class SynthesizePNTest {
-	static private Region mockRegion(RegionUtility utility, int normalMarking, List<Integer> backwardWeights, List<Integer> forwardWeights)
+	static private Region mockRegion(RegionUtility utility, int normalMarking,
+			List<Integer> backwardWeights, List<Integer> forwardWeights)
 	{
 		assert backwardWeights.size() == forwardWeights.size();
 
@@ -101,7 +102,8 @@ public class SynthesizePNTest {
 		// Can't really be more specific, way too many possibilities (TODO: Optimize the code so this becomes
 		// testable)
 		assertThat(synth.getSeparatingRegions(), not(empty()));
-		assertThat(synth.getFailedStateSeparationProblems(), contains(containsInAnyOrder(nodeWithID("s1"), nodeWithID("s2"))));
+		assertThat(synth.getFailedStateSeparationProblems(),
+				contains(containsInAnyOrder(nodeWithID("s1"), nodeWithID("s2"))));
 		assertThat(synth.getFailedEventStateSeparationProblems(), empty());
 	}
 
@@ -114,7 +116,8 @@ public class SynthesizePNTest {
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
 		// Can't really be more specific, way too many possibilities
 		assertThat(synth.getSeparatingRegions(), not(empty()));
-		assertThat(synth.getFailedStateSeparationProblems(), contains(containsInAnyOrder(nodeWithID("t"), nodeWithID("u"))));
+		assertThat(synth.getFailedStateSeparationProblems(),
+				contains(containsInAnyOrder(nodeWithID("t"), nodeWithID("u"))));
 		assertThat(synth.getFailedEventStateSeparationProblems(), containsInAnyOrder(
 					equalTo(new Pair<String, State>("c", ts.getNode("t"))),
 					equalTo(new Pair<String, State>("b", ts.getNode("v"))),
@@ -132,7 +135,8 @@ public class SynthesizePNTest {
 		System.err.println(synth.getSeparatingRegions());
 		// Can't really be more specific, way too many possibilities
 		assertThat(synth.getSeparatingRegions(), not(empty()));
-		assertThat(synth.getFailedStateSeparationProblems(), contains(containsInAnyOrder(nodeWithID("t"), nodeWithID("u"))));
+		assertThat(synth.getFailedStateSeparationProblems(),
+				contains(containsInAnyOrder(nodeWithID("t"), nodeWithID("u"))));
 		assertThat(synth.getFailedEventStateSeparationProblems(), containsInAnyOrder(
 					equalTo(new Pair<String, State>("c", ts.getNode("t"))),
 					equalTo(new Pair<String, State>("b", ts.getNode("u")))));

@@ -173,8 +173,6 @@ public class EquationSystem {
 			}
 
 			// Eliminate redundant equations or the trivial equation 0=0 from E2
-			// TODO: What exactly are redundant equations? For now we can just ignore them and let solve()
-			// handle them
 			for (int i = 0; i < equations2.size(); i++) {
 				List<Integer> equation = equations2.get(i);
 				boolean found = false;

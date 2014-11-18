@@ -122,8 +122,6 @@ public class SeparationUtility {
 				// of a single event of type e_j == event.
 				int stateValue = region.evaluateParikhVector(stateParikhVector);
 				int otherStateValue = region.evaluateParikhVector(otherStateParikhVector);
-				// TODO: Can't just use getBackwardWeight, because that "doesn't work" if the resulting
-				// variable is negative
 				int disabledEventValue = region.getWeight(eventIndex);
 				inequality.add(stateValue - otherStateValue + disabledEventValue);
 			}
@@ -253,6 +251,9 @@ public class SeparationUtility {
 
 	/**
 	 * Get the state which is reached by firing the given event in the given state.
+	 * @param state The state to examine.
+	 * @param event The event that should fire.
+	 * @return The following state or zero.
 	 */
 	static public State getFollowingState(State state, String event) {
 		for (Arc arc : state.getPostsetEdges())

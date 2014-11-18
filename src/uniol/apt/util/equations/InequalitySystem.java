@@ -94,6 +94,7 @@ public class InequalitySystem {
 		/**
 		 * Return the comparator which is described by the given string. Must be one of "<=", "<", "=", ">",
 		 * ">=".
+		 * @param str String representation of comparator.
 		 * @return The matching comparator.
 		 */
 		static public Comparator fromString(String str) {
@@ -112,24 +113,38 @@ public class InequalitySystem {
 		private final Comparator comparator;
 		private final int[] coefficients;
 
-		// TODO: Document
+		/**
+		 * Construct a new linear inequality.
+		 * @param leftHandSide The left hand side of the inequality.
+		 * @param comparator The comparator used between both sides.
+		 * @param coefficients The coefficients of the unknowns on the right hand side.
+		 */
 		public Inequality(int leftHandSide, Comparator comparator, int[] coefficients) {
 			this.leftHandSide = leftHandSide;
 			this.comparator = comparator;
 			this.coefficients = Arrays.copyOf(coefficients, coefficients.length);
 		}
 
-		// TODO: Document
+		/**
+		 * Get the left hand side of the inequality
+		 * @return The left hand side.
+		 */
 		public int getLeftHandSide() {
 			return leftHandSide;
 		}
 
-		// TODO: Document
+		/**
+		 * Get the comparator of the inequality.
+		 * @return The comparator.
+		 */
 		public Comparator getComparator() {
 			return comparator;
 		}
 
-		// TODO: Document
+		/**
+		 * Get the coefficients of the right hand side of the inequality.
+		 * @return The coefficients.
+		 */
 		public int[] getCoefficients() {
 			// TODO: This is ugly
 			return Arrays.copyOf(coefficients, coefficients.length);

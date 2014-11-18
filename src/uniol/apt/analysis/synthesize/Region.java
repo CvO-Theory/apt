@@ -326,6 +326,13 @@ public class Region {
 		return new Region(utility, vector, vector);
 	}
 
+	/**
+	 * Create a region which assigns forward and backward weight one to the given event and zero to all other
+	 * events.
+	 * @param utility The RegionUtility whose alphabet should be used.
+	 * @param event The index in the region utility of the event that should get weight one.
+	 * @return The resulting region.
+	 */
 	public static Region createUnitRegion(RegionUtility utility, int event) {
 		List<Integer> nullList = Collections.nCopies(utility.getEventList().size(), 0);
 		List<Integer> vector = new ArrayList<>(nullList);

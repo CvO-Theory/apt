@@ -48,7 +48,8 @@ public class SynthesizeModule extends AbstractModule {
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addParameter("lts", TransitionSystem.class, "The LTS that should be synthesized to a Petri Net");
+		inputSpec.addParameter("lts", TransitionSystem.class,
+				"The LTS that should be synthesized to a Petri Net");
 	}
 
 	@Override
@@ -78,11 +79,14 @@ public class SynthesizeModule extends AbstractModule {
 
 		output.setReturnValue("success", Boolean.class, synthesize.wasSuccessfullySeparated());
 		output.setReturnValue("pn", PetriNet.class, pn);
-		output.setReturnValue("separatingRegions", RegionCollection.class, new RegionCollection(synthesize.getSeparatingRegions()));
+		output.setReturnValue("separatingRegions", RegionCollection.class,
+				new RegionCollection(synthesize.getSeparatingRegions()));
 
 		if (!success) {
-			output.setReturnValue("failedStateSeparationProblems", String.class, synthesize.getFailedStateSeparationProblems().toString());
-			output.setReturnValue("failedEventStateSeparationProblems", String.class, synthesize.getFailedEventStateSeparationProblems().toString());
+			output.setReturnValue("failedStateSeparationProblems", String.class,
+					synthesize.getFailedStateSeparationProblems().toString());
+			output.setReturnValue("failedEventStateSeparationProblems", String.class,
+					synthesize.getFailedEventStateSeparationProblems().toString());
 		}
 	}
 
