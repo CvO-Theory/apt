@@ -101,7 +101,7 @@ public class SynthesizePN {
 	 * @param impure True if impure Petri Nets may be calculated
 	 */
 	public SynthesizePN(TransitionSystem ts, boolean impure) {
-		this(new RegionUtility(ts));
+		this(new RegionUtility(ts), impure);
 	}
 
 	/**
