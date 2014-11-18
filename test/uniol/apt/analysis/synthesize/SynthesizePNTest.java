@@ -106,10 +106,10 @@ public class SynthesizePNTest {
 	}
 
 	@Test
-	public void testPathTS() {
+	public void testPathTSPure() {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
-		SynthesizePN synth = new SynthesizePN(utility);
+		SynthesizePN synth = new SynthesizePN(utility, false);
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
 		// Can't really be more specific, way too many possibilities
@@ -120,6 +120,22 @@ public class SynthesizePNTest {
 					equalTo(new Pair<String, State>("b", ts.getNode("v"))),
 					equalTo(new Pair<String, State>("b", ts.getNode("u"))),
 					equalTo(new Pair<String, State>("b", ts.getNode("s")))));
+	}
+
+	@Test
+	public void testPathTSImpure() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+		SynthesizePN synth = new SynthesizePN(utility);
+
+		assertThat(synth.wasSuccessfullySeparated(), is(false));
+		System.err.println(synth.getSeparatingRegions());
+		// Can't really be more specific, way too many possibilities
+		assertThat(synth.getSeparatingRegions(), not(empty()));
+		assertThat(synth.getFailedStateSeparationProblems(), contains(containsInAnyOrder(nodeWithID("t"), nodeWithID("u"))));
+		assertThat(synth.getFailedEventStateSeparationProblems(), containsInAnyOrder(
+					equalTo(new Pair<String, State>("c", ts.getNode("t"))),
+					equalTo(new Pair<String, State>("b", ts.getNode("u")))));
 	}
 
 	@Test
