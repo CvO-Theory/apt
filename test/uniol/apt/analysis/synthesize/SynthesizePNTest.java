@@ -132,7 +132,6 @@ public class SynthesizePNTest {
 		SynthesizePN synth = new SynthesizePN(utility);
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
-		System.err.println(synth.getSeparatingRegions());
 		// Can't really be more specific, way too many possibilities
 		assertThat(synth.getSeparatingRegions(), not(empty()));
 		assertThat(synth.getFailedStateSeparationProblems(),
