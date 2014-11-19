@@ -129,42 +129,17 @@ public class Region {
 	/**
 	 * Evaluate the given Parikh vector with respect to this region.
 	 * @param vector The vector to evaluate.
-	 * @param eventIndex An event which should additionally be included for its backward weight (optional)
 	 * @return The resulting number that this region assigns to the arguments
 	 */
-	public int evaluateParikhVector(List<Integer> vector, Integer eventIndex) {
+	public int evaluateParikhVector(List<Integer> vector) {
 		List<String> events = utility.getEventList();
 		assert vector.size() == events.size();
 
 		int result = 0;
-		if (eventIndex != null)
-			result = -getBackwardWeight(eventIndex);
-
 		for (int i = 0; i < events.size(); i++)
 			result += vector.get(i) * getWeight(events.get(i));
 
 		return result;
-	}
-
-	/**
-	 * Evaluate the given Parikh vector with respect to this region.
-	 * @param vector The vector to evaluate.
-	 * @param arcEnter An arc which should only be used for its backward weight (optional)
-	 * @return The resulting number that this region assigns to the arguments
-	 */
-	public int evaluateParikhVector(List<Integer> vector, Arc arcEnter) {
-		if (arcEnter == null)
-			return evaluateParikhVector(vector, (Integer) null);
-		return evaluateParikhVector(vector, utility.getEventIndex(arcEnter.getLabel()));
-	}
-
-	/**
-	 * Evaluate the given Parikh vector with respect to this region.
-	 * @param vector The vector to evaluate.
-	 * @return The resulting number that this region assigns to the arguments
-	 */
-	public int evaluateParikhVector(List<Integer> vector) {
-		return evaluateParikhVector(vector, (Integer) null);
 	}
 
 	/**
