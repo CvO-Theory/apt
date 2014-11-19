@@ -121,9 +121,9 @@ a basis of \emph{pure} regions):
 If the resulting (pure) region \(r_E=\sum_{i=1}^k\lambda_ir_E^i\) separates \(e_i\) from \(s\) (as a normal and concrete
 pure region), use the corresponding impure region for solving ESSP.
 
-Otherwise let \(m=\min\lbrace r_S(s')\mid \delta(s',e_i) \text{ defined}\rbrace\).
-A separating region \(r\) is defined by increasing \(r_\B(e_i)\) and \(r_\F(e_i)\) each by \(m\) (note that this leaves
-\(r_E\) unchanged). Proof:
+Otherwise let \(m=\min\lbrace r_S(s')\mid \delta(s',e_i) \text{ defined}\rbrace\).  A separating region \(r\) is defined
+by setting \(r_\B(e_i):=m\) and increasing \(r_\F(e_i)\) so that \(r_E\) does not change\footnote{The situation
+\(r_\B(e_i)>m\) cannot occur, because the pure region does not restrict enabled events.}. Proof:
 
 Let \(s'\) be any state which satisfies \(m=r_S(s')\) and for which \(\delta(s',e_i)\) is defined.
 From the above equation we get that:

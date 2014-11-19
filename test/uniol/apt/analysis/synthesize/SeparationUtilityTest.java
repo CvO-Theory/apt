@@ -26,6 +26,7 @@ import java.util.List;
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.impl.apt.APTLTSParser;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -224,6 +225,50 @@ public class SeparationUtilityTest {
 		basis.add(Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0, 0, 1)));
 
 		checkEventSeparation(utility, basis, "s1", "c", false);
+	}
+
+	@Test
+	public static class CrashkursCC2Tests {
+		protected TransitionSystem ts;
+		protected RegionUtility utility;
+		protected List<Region> regionBasis;
+
+		@BeforeClass
+		public void setup() throws Exception {
+			ts = APTLTSParser.getLTS("nets/crashkurs-cc2-aut.apt", true);
+			utility = new RegionUtility(ts);
+
+			// I'm lazy, let's hope that we always end up with this order (which is currently guaranteed because
+			// TransitionSystem.getAlphabet() uses a SortedSet).
+			assertThat(utility.getEventIndex("t1"), is(0));
+			assertThat(utility.getEventIndex("t2"), is(1));
+			assertThat(utility.getEventIndex("t3"), is(2));
+
+			regionBasis = new ArrayList<>();
+			regionBasis.add(Region.createPureRegionFromVector(utility, Arrays.asList(1, 0, -1)));
+			regionBasis.add(Region.createPureRegionFromVector(utility, Arrays.asList(0, 1, 0)));
+		}
+
+		@Test
+		public void testNoStateRestrictionPure() {
+			Region region = SeparationUtility.findOrCalculateSeparatingRegion(utility, regionBasis,
+					regionBasis, ts.getNode("s3"), "t2", false);
+
+			System.out.println(region);
+			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s2")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+		}
+
+		@Test
+		public void testNoStateRestrictionImpure() {
+			Region region = SeparationUtility.findOrCalculateSeparatingRegion(utility, regionBasis,
+					regionBasis, ts.getNode("s3"), "t2", true);
+
+			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s2")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+		}
 	}
 }
 

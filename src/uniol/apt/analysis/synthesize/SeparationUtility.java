@@ -221,7 +221,10 @@ public class SeparationUtility {
 				min = stateMarking;
 		}
 
-		// TODO: Unreachable states => NullPointerException
+		// TODO: If the event is dead => NullPointerException
+		// Make the event have backward weight m. By construction this must solve separation. Since the region
+		// could already have a non-zero backward weight, we have to handle that.
+		min -= result.getBackwardWeight(eventIndex);
 		assert min > 0;
 		return result.addRegionWithFactor(Region.createUnitRegion(utility, eventIndex), min);
 	}
