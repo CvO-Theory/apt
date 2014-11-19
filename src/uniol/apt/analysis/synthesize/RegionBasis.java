@@ -46,7 +46,7 @@ public class RegionBasis extends AbstractCollection<Region> {
 	 * @param utility An instance of the RegionUtility class for the transition system.
 	 */
 	public RegionBasis(RegionUtility utility) {
-		EquationSystem system = new EquationSystem(utility.getTransitionSystem().getAlphabet().size());
+		EquationSystem system = new EquationSystem(utility.getEventList().size());
 
 		// The events on each fundamental circle must form a T-Invariant of a Petri Net which generates this
 		// transition system. Thus, each region must have zero effect on such a circle.

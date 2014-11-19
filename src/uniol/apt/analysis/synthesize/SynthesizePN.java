@@ -136,11 +136,11 @@ public class SynthesizePN {
 
 						debug("Failure!");
 					} else {
-						debug("Found region " + r);
+						debug("Calculated region " + r);
 						regions.add(r);
 					}
 				} else {
-					debug("Found already-existing separating region " + r);
+					debug("Found region " + r);
 				}
 			}
 		}
@@ -161,9 +161,9 @@ public class SynthesizePN {
 								new Pair<>(event, state));
 						debug("Failure!");
 					} else if (regions.add(r))
-						debug("Found region " + r);
+						debug("Calculated region " + r);
 					else
-						debug("Found already-existing separating region " + r);
+						debug("Found region " + r);
 				}
 			}
 	}
@@ -198,6 +198,10 @@ public class SynthesizePN {
 	 */
 	public Set<Pair<String, State>> getFailedEventStateSeparationProblems() {
 		return Collections.unmodifiableSet(failedEventStateSeparationProblems);
+	}
+
+	public RegionUtility getUtility() {
+		return utility;
 	}
 
 	/**
