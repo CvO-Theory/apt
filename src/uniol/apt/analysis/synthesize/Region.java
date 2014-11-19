@@ -173,14 +173,11 @@ public class Region {
 	 */
 	public int getNormalRegionMarking() {
 		// TODO: This is highly inefficient, would be better to evaluate according to a depth-first search
-		// through reachable markings
+		// through the spanning tree instead of calculating and evaluating so many Parikh Vectors
 		int marking = 0;
 		for (State state : getTransitionSystem().getNodes()) {
-			// For reaching this state, we must reach the predecessor and need then to fire the next event.
-			Arc predecessor = utility.getSpanningTree().getPredecessorEdge(state);
-			if (predecessor != null)
-				marking = Math.max(marking, -evaluateParikhVector(utility.getReachingParikhVector(
-								predecessor.getSource()), predecessor));
+			if (utility.getSpanningTree().isReachable(state))
+				marking = Math.max(marking, -evaluateParikhVector(utility.getReachingParikhVector(state)));
 		}
 		return marking;
 	}
