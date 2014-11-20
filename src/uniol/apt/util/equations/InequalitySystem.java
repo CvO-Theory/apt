@@ -20,7 +20,9 @@
 package uniol.apt.util.equations;
 
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +33,11 @@ import solver.constraints.IntConstraintFactory;
 import solver.variables.IntVar;
 import solver.variables.VariableFactory;
 
+import org.ojalgo.optimisation.Expression;
+import org.ojalgo.optimisation.ExpressionsBasedModel;
+import org.ojalgo.optimisation.Optimisation;
+import org.ojalgo.optimisation.Variable;
+
 /**
  * Representation of an inequality system.
  * @author Uli Schlachter
@@ -38,6 +45,7 @@ import solver.variables.VariableFactory;
 public class InequalitySystem {
 	private final int numVariables;
 	private final List<Inequality> inequalities = new ArrayList<>();
+	private Implementation implementation;
 
 	private static void debug(String message) {
 		//System.err.println("InequalitySystem: " + message);
@@ -65,6 +73,10 @@ public class InequalitySystem {
 			result.add(BigInteger.valueOf(value));
 
 		return result;
+	}
+
+	public static enum Implementation {
+		CHOCO, OJALGO
 	}
 
 	/**
@@ -184,11 +196,37 @@ public class InequalitySystem {
 	/**
 	 * Construct a new inequality system.
 	 * @param numVariables The number of variables in the inequality system.
+	 * @param implementation The implementation to use for solving systems.
 	 */
-	public InequalitySystem(int numVariables) {
+	public InequalitySystem(int numVariables, Implementation implementation) {
 		assert numVariables >= 0;
 
 		this.numVariables = numVariables;
+		this.implementation = implementation;
+	}
+
+	/**
+	 * Construct a new inequality system.
+	 * @param numVariables The number of variables in the inequality system.
+	 */
+	public InequalitySystem(int numVariables) {
+		this(numVariables, Implementation.OJALGO);
+	}
+
+	/**
+	 * Choose which implementation to use for solving systems.
+	 * @param implementation The implementation to use for solving systems.
+	 */
+	public void setImplementation(Implementation implementation) {
+		this.implementation = implementation;
+	}
+
+	/**
+	 * Get the currently selected implementation.
+	 * @return The currently selected implementation.
+	 */
+	public Implementation getImplementation() {
+		return implementation;
 	}
 
 	/**
@@ -254,6 +292,28 @@ public class InequalitySystem {
 	 * @return A solution to the system or an empty list
 	 */
 	public List<Integer> findSolution() {
+		List<Integer> solution;
+		switch (this.implementation) {
+			case CHOCO:
+				solution = findSolutionChoco();
+				break;
+			case OJALGO:
+				solution = findSolutionOJAlgo();
+				break;
+			default:
+				throw new AssertionError("Unknown implementation requested");
+		}
+		if (solution.isEmpty()) {
+			debug("No solution found for:");
+			debug(this);
+		} else {
+			debug("Solution:");
+			debug(solution);
+		}
+		return Collections.unmodifiableList(solution);
+	}
+
+	private List<Integer> findSolutionChoco() {
 		Solver solver = new Solver();
 		IntVar[] vars = VariableFactory.integerArray("x", numVariables,
 				VariableFactory.MIN_INT_BOUND, VariableFactory.MAX_INT_BOUND, solver);
@@ -269,20 +329,67 @@ public class InequalitySystem {
 			solver.post(IntConstraintFactory.scalar(vars, array, comparator, lhsVar));
 		}
 
-		if (!solver.findSolution()) {
-			debug("No solution found for:");
-			debug(this);
+		if (!solver.findSolution())
 			return Collections.emptyList();
-		}
 
 		List<Integer> solution = new ArrayList<>();
 		for (int i = 0; i < numVariables; i++)
 			solution.add(vars[i].getValue());
 
-		debug("Solution:");
-		debug(solution);
+		return solution;
+	}
 
-		return Collections.unmodifiableList(solution);
+	private List<Integer> findSolutionOJAlgo() {
+		ExpressionsBasedModel model = new ExpressionsBasedModel();
+		Variable[] vars = new Variable[numVariables];
+		for (int i = 0; i < numVariables; i++) {
+			vars[i] = Variable.make("x" + i).integer(true);
+			model.addVariable(vars[i]);
+		}
+
+		int inequalityNumber = 0;
+		for (Inequality inequality : inequalities) {
+			String id = "inequality_" + ++inequalityNumber;
+			Expression c = model.addExpression(id);
+			BigDecimal lhs;
+
+			switch (inequality.getComparator()) {
+				case LESS_THAN_OR_EQUAL:
+					lhs = new BigDecimal(inequality.getLeftHandSide());
+					c = c.lower(lhs);
+					break;
+				case LESS_THAN:
+					lhs = new BigDecimal(inequality.getLeftHandSide().add(BigInteger.ONE));
+					c = c.lower(lhs);
+					break;
+				case EQUAL:
+					lhs = new BigDecimal(inequality.getLeftHandSide());
+					c = c.level(lhs);
+					break;
+				case GREATER_THAN:
+					lhs = new BigDecimal(inequality.getLeftHandSide().subtract(BigInteger.ONE));
+					c = c.upper(lhs);
+					break;
+				case GREATER_THAN_OR_EQUAL:
+					lhs = new BigDecimal(inequality.getLeftHandSide());
+					c = c.upper(lhs);
+					break;
+			}
+
+			List<BigInteger> coefficients = inequality.getCoefficients();
+			for (int i = 0; i < numVariables; i++)
+				c.setLinearFactor(vars[i], coefficients.get(i));
+		}
+
+		Optimisation.Result result = model.solve();
+		if (!result.getState().isSuccess())
+			return Collections.emptyList();
+
+		List<Integer> solution = new ArrayList<>();
+		for (int i = 0; i < numVariables; i++)
+			solution.add(result.get(i).round(MathContext.DECIMAL32).intValue());
+
+		return solution;
 	}
 
 	@Override
