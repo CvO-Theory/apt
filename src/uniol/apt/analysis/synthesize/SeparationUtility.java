@@ -221,7 +221,10 @@ public class SeparationUtility {
 				min = stateMarking;
 		}
 
-		// TODO: If the event is dead => NullPointerException
+		// If the event is dead, no reachable marking fires it. Handle this by just adding a simple loop
+		if (min == null)
+			min = 1;
+
 		// Make the event have backward weight m. By construction this must solve separation. Since the region
 		// could already have a non-zero backward weight, we have to handle that.
 		min -= result.getBackwardWeight(eventIndex);
