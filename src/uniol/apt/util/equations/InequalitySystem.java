@@ -20,11 +20,11 @@
 package uniol.apt.util.equations;
 
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Arrays;
 
 import solver.Solver;
 import solver.constraints.IntConstraintFactory;
@@ -51,11 +51,18 @@ public class InequalitySystem {
 		debug(obj.toString());
 	}
 
-	private static int[] toIntArray(Collection<Integer> collection) {
-		int result[] = new int[collection.size()];
-		int i = 0;
+	private static List<BigInteger> toBigIntegerList(Collection<Integer> collection) {
+		List<BigInteger> result = new ArrayList<>(collection.size());
 		for (int value : collection)
-			result[i++] = value;
+			result.add(BigInteger.valueOf(value));
+
+		return result;
+	}
+
+	private static List<BigInteger> toBigIntegerList(int... array) {
+		List<BigInteger> result = new ArrayList<>(array.length);
+		for (int value : array)
+			result.add(BigInteger.valueOf(value));
 
 		return result;
 	}
@@ -109,9 +116,9 @@ public class InequalitySystem {
 	 * Instances of this class represent a linear inequality in a number of unknowns.
 	 */
 	public static class Inequality {
-		private final int leftHandSide;
+		private final BigInteger leftHandSide;
 		private final Comparator comparator;
-		private final int[] coefficients;
+		private final List<BigInteger> coefficients;
 
 		/**
 		 * Construct a new linear inequality.
@@ -119,17 +126,17 @@ public class InequalitySystem {
 		 * @param comparator The comparator used between both sides.
 		 * @param coefficients The coefficients of the unknowns on the right hand side.
 		 */
-		public Inequality(int leftHandSide, Comparator comparator, int[] coefficients) {
+		public Inequality(BigInteger leftHandSide, Comparator comparator, List<BigInteger> coefficients) {
 			this.leftHandSide = leftHandSide;
 			this.comparator = comparator;
-			this.coefficients = Arrays.copyOf(coefficients, coefficients.length);
+			this.coefficients = Collections.unmodifiableList(coefficients);
 		}
 
 		/**
 		 * Get the left hand side of the inequality
 		 * @return The left hand side.
 		 */
-		public int getLeftHandSide() {
+		public BigInteger getLeftHandSide() {
 			return leftHandSide;
 		}
 
@@ -145,9 +152,8 @@ public class InequalitySystem {
 		 * Get the coefficients of the right hand side of the inequality.
 		 * @return The coefficients.
 		 */
-		public int[] getCoefficients() {
-			// TODO: This is ugly
-			return Arrays.copyOf(coefficients, coefficients.length);
+		public List<BigInteger> getCoefficients() {
+			return coefficients;
 		}
 
 		@Override
@@ -156,13 +162,14 @@ public class InequalitySystem {
 			buffer.write("" + leftHandSide);
 			buffer.write(" " + comparator.toString() + " ");
 			boolean first = true;
-			for (int j = 0; j < coefficients.length; j++) {
-				if (coefficients[j] == 0)
+			for (int j = 0; j < coefficients.size(); j++) {
+				BigInteger c = coefficients.get(j);
+				if (c.equals(BigInteger.ZERO))
 					continue;
 
 				if (!first)
 					buffer.write(" + ");
-				buffer.write("" + coefficients[j]);
+				buffer.write("" + c);
 				buffer.write("*x[");
 				buffer.write("" + j);
 				buffer.write("]");
@@ -190,7 +197,7 @@ public class InequalitySystem {
 	 * @param inequality The inequality to add.
 	 */
 	public void addInequality(Inequality inequality) {
-		assert inequality.getCoefficients().length == numVariables;
+		assert inequality.getCoefficients().size() == numVariables;
 		inequalities.add(inequality);
 	}
 
@@ -203,7 +210,7 @@ public class InequalitySystem {
 	 * variable in the inequality system.
 	 */
 	public void addInequality(int lhs, Comparator comparator, int... coefficients) {
-		addInequality(new Inequality(lhs, comparator, coefficients));
+		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients)));
 	}
 
 	/**
@@ -227,7 +234,7 @@ public class InequalitySystem {
 	 * variable in the inequality system.
 	 */
 	public void addInequality(int lhs, Comparator comparator, Collection<Integer> coefficients) {
-		addInequality(lhs, comparator, toIntArray(coefficients));
+		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients)));
 	}
 
 	/**
@@ -239,7 +246,7 @@ public class InequalitySystem {
 	 * variable in the inequality system.
 	 */
 	public void addInequality(int lhs, String comparator, Collection<Integer> coefficients) {
-		addInequality(lhs, Comparator.fromString(comparator), toIntArray(coefficients));
+		addInequality(lhs, Comparator.fromString(comparator), coefficients);
 	}
 
 	/**
@@ -251,10 +258,15 @@ public class InequalitySystem {
 		IntVar[] vars = VariableFactory.integerArray("x", numVariables,
 				VariableFactory.MIN_INT_BOUND, VariableFactory.MAX_INT_BOUND, solver);
 		for (Inequality inequality : inequalities) {
-			IntVar lhsVar = VariableFactory.fixed(inequality.getLeftHandSide(), solver);
+			IntVar lhsVar = VariableFactory.fixed(inequality.getLeftHandSide().intValue(), solver);
 			String comparator = inequality.getComparator().getOpposite().toString();
-			int[] coefficients = inequality.getCoefficients();
-			solver.post(IntConstraintFactory.scalar(vars, coefficients, comparator, lhsVar));
+
+			List<BigInteger> coefficients = inequality.getCoefficients();
+			int[] array = new int[coefficients.size()];
+			for (int i = 0; i < coefficients.size(); i++)
+				array[i] = coefficients.get(i).intValue();
+
+			solver.post(IntConstraintFactory.scalar(vars, array, comparator, lhsVar));
 		}
 
 		if (!solver.findSolution()) {
