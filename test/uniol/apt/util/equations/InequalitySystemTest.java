@@ -202,6 +202,21 @@ public class InequalitySystemTest {
 
 		assertThat(system, hasToString("[\n0 <= 0\n]"));
 	}
+
+	@Test
+	public void testLotsOfTrivialInequalities() {
+		// With choco-solver and variable bounds of VariableFactory.{MIN,MAX}_INT_BOUND, this test (likely) runs
+		// into an integer overflow in choco. Choosing smaller bounds for the variables makes that problem go
+		// away, but I wouldn't really call that a fix.
+		InequalitySystem system = new InequalitySystem(1);
+		for (int i = 1; i <= 300; i++)
+			system.addInequality(-1, ">=", i);
+
+		List<Integer> solution = system.findSolution();
+		assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(1));
+		int x = solution.get(0);
+		assertThat(x, lessThanOrEqualTo(-1));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
