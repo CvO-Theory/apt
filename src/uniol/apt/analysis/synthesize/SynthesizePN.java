@@ -72,17 +72,26 @@ public class SynthesizePN {
 
 		// TODO: Test preconditions on ts (deterministic, totally reachable, reduced)
 		// Deterministic: Non-determinism will make SSP fail
-		// Totally Reachable: Uhm. NullPointerExceptions when we try to get a parikh vector? (Or if empty
-		// vector: SSP fails)
-		// reduced: Otherwise the resulting PN will contain an isolated transitions.
+		//   If both arcs are part of the spanning tree, both states have the same parikh vector.
+		//   If only the arc s->s' is part of the tree, the other has \Psi_t=\Psi_s + e_i - \Psi_{s''} with
+		//     \Psi_{s'} = \Psi_s + e_i, so \Psi_t=\Psi_{s'} - \Psi{s''}. Since r_E(\Psi_t)=0, no region can
+		//     separate the two states.
+		//   If neither arc is part of the tree, we have \Psi_t=\Psi_s + e_i - \Psi_{s''} and \Psi_{t'}=\Psi_s +
+		//     e_i - \Psi{s'}, so 0=r_E(\Psi_t)-r_E(\Psi_{t'})=r_E(\psi_{s'}-\Psi{s''}) and again no region can
+		//     separate the two
+		// Totally Reachable: Should be handled everywhere already by ignoring unreachable states
+		// reduced: If there is an event which cannot fire (only possible by being only firable on unreachable
+		//   markings), then ESSP just needs to create a region with backwards weight 1 for the event.
+
+		// ESSP calculates new regions while SSP only choses regions from the basis. Solve ESSP first since the
+		// calculated regions may also solve SSP and thus we get less places in the resulting net.
+		debug();
+		debug("Solving event-state separation");
+		solveEventStateSeparation();
 
 		debug();
 		debug("Solving state separation");
 		solveStateSeparation();
-
-		debug();
-		debug("Solving event-state separation");
-		solveEventStateSeparation();
 
 		debug();
 	}
