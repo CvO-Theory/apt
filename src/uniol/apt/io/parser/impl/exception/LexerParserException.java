@@ -16,7 +16,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 package uniol.apt.io.parser.impl.exception;
 
 import org.antlr.runtime.Lexer;
@@ -30,84 +29,89 @@ import org.antlr.runtime.RecognitionException;
  */
 public class LexerParserException extends FormatException {
 
-	private static final long serialVersionUID = 1L;
-	private RecognitionException exception;
-	private String lexerMsg = "";
-	private String parserMsg = "";
+    private static final long serialVersionUID = 1L;
+    private RecognitionException exception;
+    private String lexerMsg = "";
+    private String parserMsg = "";
 
-	/**
-	 * Creates a exception by creating a message from the information of the parser.
-	 * <p/>
-	 * @param parser - the parser found the error.
-	 * @param lexer  - the lexer found the error.
-	 * @param e      - the RecognitionException thrown by the parser.
-	 */
-	public LexerParserException(Parser parser, Lexer lexer, RecognitionException e) {
-		exception = e;
-		String hdr = parser.getErrorHeader(e);
-		String msg = parser.getErrorMessage(e, parser.getTokenNames());
-		if (msg == null) {
-			msg = e.getCause().getMessage();
-		}
-		parserMsg = hdr + " " + msg;
-		hdr = lexer.getErrorHeader(e);
-		String lmsg = lexer.getErrorMessage(e, lexer.getTokenNames());
-		msg = (lmsg == null) ? e.getCause().getMessage() : lmsg;
-		lexerMsg += hdr + " " + msg;
-	}
+    /**
+     * Creates a exception by creating a message from the information of the parser.
+     * <p/>
+     * @param parser - the parser found the error.
+     * @param lexer  - the lexer found the error.
+     * @param e      - the RecognitionException thrown by the parser.
+     */
+    public LexerParserException(Parser parser, Lexer lexer, RecognitionException e) {
+        exception = e;
+        String hdr = parser.getErrorHeader(e);
+        String msg = parser.getErrorMessage(e, parser.getTokenNames());
+        if (msg == null) {
+            msg = e.getCause().getMessage();
+        }
+        parserMsg = hdr + " " + msg;
+        hdr = lexer.getErrorHeader(e);
+        String lmsg = lexer.getErrorMessage(e, lexer.getTokenNames());
+        msg = (lmsg == null) ? e.getCause().getMessage() : lmsg;
+        lexerMsg += hdr + " " + msg;
+    }
 
-	/**
-	 * Sets the lexer error message to this exception.
-	 * <p/>
-	 * @param lexerMsg - the lexer error message to set.
-	 */
-	public void setLexerMsg(String lexerMsg) {
-		this.lexerMsg = lexerMsg;
-	}
+    /**
+     * Sets the lexer error message to this exception.
+     * <p/>
+     * @param lexerMsg - the lexer error message to set.
+     */
+    public void setLexerMsg(String lexerMsg) {
+        this.lexerMsg = lexerMsg;
+    }
 
-	/**
-	 * Returns the lexer error message belonging to this exception.
-	 * <p/>
-	 * @return the lexer error message.
-	 */
-	public String getLexerMsg() {
-		return lexerMsg;
-	}
+    /**
+     * Returns the lexer error message belonging to this exception.
+     * <p/>
+     * @return the lexer error message.
+     */
+    public String getLexerMsg() {
+        return lexerMsg;
+    }
 
-	/**
-	 * Returns the parser error message belonging to this exception.
-	 * <p/>
-	 * @return the parser error message.
-	 */
-	public String getParserMsg() {
-		return parserMsg;
-	}
+    /**
+     * Returns the parser error message belonging to this exception.
+     * <p/>
+     * @return the parser error message.
+     */
+    public String getParserMsg() {
+        return parserMsg;
+    }
 
-	/**
-	 * Returns the RecognitionException belonging to this exception.
-	 * <p/>
-	 * @return the RecogntitionException.
-	 */
-	public RecognitionException getException() {
-		return exception;
-	}
+    /**
+     * Returns the RecognitionException belonging to this exception.
+     * <p/>
+     * @return the RecogntitionException.
+     */
+    public RecognitionException getException() {
+        return exception;
+    }
 
-	/**
-	 * Returns the combined error message. That means the lexer error and the parser error. Or only one of them if
-	 * the other isn't set.
-	 * <p/>
-	 * @return the whole error message.
-	 */
-	public String getLexerParserMessage() {
-		StringBuilder sb = new StringBuilder();
-		if (!lexerMsg.isEmpty()) {
-			sb.append("[ERROR] Lexer: ").append(lexerMsg).append("\n");
-		}
-		if (!parserMsg.isEmpty()) {
-			sb.append("[ERROR] Parser: ").append(parserMsg);
-		}
-		return sb.toString();
-	}
+    /**
+     * Returns the combined error message. That means the lexer error and the parser error. Or only one of them if
+     * the other isn't set.
+     * <p/>
+     * @return the whole error message.
+     */
+    public String getLexerParserMessage() {
+        StringBuilder sb = new StringBuilder();
+        if (!lexerMsg.isEmpty()) {
+            sb.append("[ERROR] Lexer: ").append(lexerMsg).append("\n");
+        }
+        if (!parserMsg.isEmpty()) {
+            sb.append("[ERROR] Parser: ").append(parserMsg);
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String getMessage() {
+        return lexerMsg;
+    }
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
