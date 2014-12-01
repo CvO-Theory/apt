@@ -121,6 +121,44 @@ public class SeparationUtility {
 	}
 
 	/**
+	 * Add the needed inequalities so that the system may only produce k-bounded regions.
+	 * @param utility The region utility to use.
+	 * @param system An inequality system produced by makeInequalitySystem().
+	 * @param k The limit for the bound.
+	 */
+	static public void requireKBoundedness(RegionUtility utility, InequalitySystem system, int k) {
+		// We have:
+		//  r_S(s0) = max { -r_E(Psi_s') | s' \in S }
+		//  r_S(s) = r_S(s0) + r_E(Psi_s) = max { r_E(Psi_s - Psi_s') | s' \in S }
+		// We want to require r_S(s) <= k and do so by requiring that for every combination s, s' of state we
+		// have r_E(Psi_s - Psi_s') <= k.
+		// (Put differently: The path from any state to any other state may generate at most k token)
+		for (State state : utility.getTransitionSystem().getNodes()) {
+			if (!utility.getSpanningTree().isReachable(state))
+				continue;
+
+			// A normal region assigns the minimal possible number of tokens to the initial marking. So
+			// let's assume an initial marking of zero and calculate the number of token that each state
+			// gets. This number should be limited suitably.
+			List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
+
+			for (State otherState : utility.getTransitionSystem().getNodes()) {
+				if (state.equals(otherState) || !utility.getSpanningTree().isReachable(otherState))
+					continue;
+
+				// Evaluate the Parikh vector in the region described by the system, just as
+				// Region.evaluateParikhVector() would do.
+				List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
+				int[] inequality = new int[system.getNumberOfVariables()];
+				for (int event = 0; event < stateParikhVector.size(); event++)
+					inequality[event] = stateParikhVector.get(event) - otherStateParikhVector.get(event);
+
+				system.addInequality(k, ">=", inequality);
+			}
+		}
+	}
+
+	/**
 	 * Try to calculate a pure region which separates some state and some event. This calculates a linear combination of
 	 * the given basis of abstract regions.
 	 * @param utility The region utility to use.

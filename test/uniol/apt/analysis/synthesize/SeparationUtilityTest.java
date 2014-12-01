@@ -27,12 +27,14 @@ import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.impl.apt.APTLTSParser;
+import uniol.apt.util.equations.InequalitySystem;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
 import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
@@ -268,6 +270,37 @@ public class SeparationUtilityTest {
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s2")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 		}
+	}
+
+	public void testRequireKBoundedness() {
+		TransitionSystem ts = TestTSCollection.getThreeStatesTwoEdgesTS();
+		RegionUtility utility = new RegionUtility(ts);
+
+		InequalitySystem system = mock(InequalitySystem.class);
+		when(system.getNumberOfVariables()).thenReturn(utility.getEventList().size() + 0);
+
+		SeparationUtility.requireKBoundedness(utility, system, 42);
+
+		// From state s to state v
+		verify(system).addInequality(42, ">=", 0, 1);
+
+		// From state s to state t
+		verify(system).addInequality(42, ">=", 1, 0);
+
+		// From state v to state s
+		verify(system).addInequality(42, ">=", 0, -1);
+
+		// From state v to state t
+		verify(system).addInequality(42, ">=", 1, -1);
+
+		// From state t to state s
+		verify(system).addInequality(42, ">=", -1, 0);
+
+		// From state t to state v
+		verify(system).addInequality(42, ">=", -1, 1);
+
+		verify(system, atLeastOnce()).getNumberOfVariables();
+		verifyNoMoreInteractions(system);
 	}
 }
 

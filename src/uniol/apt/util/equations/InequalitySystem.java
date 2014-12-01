@@ -214,6 +214,14 @@ public class InequalitySystem {
 	}
 
 	/**
+	 * Get the number of variables that this inequality system uses.
+	 * @return The number of variables in the inequality system.
+	 */
+	public int getNumberOfVariables() {
+		return numVariables;
+	}
+
+	/**
 	 * Choose which implementation to use for solving systems.
 	 * @param implementation The implementation to use for solving systems.
 	 */
