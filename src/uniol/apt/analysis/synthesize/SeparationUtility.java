@@ -21,6 +21,7 @@ package uniol.apt.analysis.synthesize;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import uniol.apt.adt.ts.Arc;
@@ -88,6 +89,38 @@ public class SeparationUtility {
 	}
 
 	/**
+	 * Create an inequality system for calculating a region.
+	 * @param utility The region utility to use.
+	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
+	 * stable iteration order!
+	 * @return An inequality system with numEvents + basisSize unknowns. The first unknowns describe the weights of
+	 * the calculated regions, the last ones are weights for linear combinations of the basis.
+	 */
+	static public InequalitySystem makeInequalitySystem(RegionUtility utility, Collection<Region> basis) {
+		// Generate an inequality system. The first eventList.size() variables are the weight of the calculated
+		// region. The next basis.size() variables represent how this region is a linear combination of the
+		// basis.
+		final int events = utility.getEventList().size();
+		final int basisSize = basis.size();
+		InequalitySystem system = new InequalitySystem(events + basisSize);
+
+		// The resulting region is a linear combination of the basis:
+		//   region = sum lambda_i * r^i
+		//        0 = sum lambda_i * r^i - region
+		for (int thisEvent = 0; thisEvent < events; thisEvent++) {
+			int[] inequality = new int[events + basisSize];
+			inequality[thisEvent] = -1;
+			int basisEntry = 0;
+			for (Region region : basis)
+				inequality[events + basisEntry++] = region.getWeight(thisEvent);
+
+			system.addInequality(0, "=", inequality);
+		}
+
+		return system;
+	}
+
+	/**
 	 * Try to calculate a pure region which separates some state and some event. This calculates a linear combination of
 	 * the given basis of abstract regions.
 	 * @param utility The region utility to use.
@@ -99,7 +132,8 @@ public class SeparationUtility {
 	 */
 	static public Region calculateSeparatingPureRegion(RegionUtility utility, Collection<Region> basis,
 			State state, String event) {
-		InequalitySystem system = new InequalitySystem(basis.size());
+		final int events = utility.getEventList().size();
+		InequalitySystem system = makeInequalitySystem(utility, basis);
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
 		assert stateParikhVector != null;
@@ -110,12 +144,15 @@ public class SeparationUtility {
 
 		// Each state must be reachable in the resulting region, but event 'event' should be disabled in state.
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			List<Integer> inequality = new ArrayList<>(basis.size());
+			List<Integer> inequality = new ArrayList<>(events + basis.size());
 			List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
 
 			// Silently ignore unreachable states
 			if (!utility.getSpanningTree().isReachable(otherState))
 				continue;
+
+			// For the resulting region variables, we have value 0
+			inequality.addAll(Collections.nCopies(events, 0));
 
 			for (Region region : basis) {
 				// We want to evaluate [Psi_s - Psi_{s'} + 1_j] * region where 1_j is the Parikh vector
@@ -134,15 +171,7 @@ public class SeparationUtility {
 		if (solution.isEmpty())
 			return null;
 
-		assert solution.size() == basis.size();
-		Region result = Region.createTrivialRegion(utility);
-		int i = 0;
-		for (Region region : basis) {
-			result = result.addRegionWithFactor(region, solution.get(i++));
-		}
-
-		// Because addRegionWithFactor() doesn't work the way that this function would need
-		return result.makePure();
+		return Region.createPureRegionFromVector(utility, solution.subList(0, events));
 	}
 
 	/**
@@ -156,7 +185,8 @@ public class SeparationUtility {
 	 */
 	static public Region calculateSeparatingImpureRegion(RegionUtility utility, Collection<Region> basis,
 			State state, String event) {
-		InequalitySystem system = new InequalitySystem(basis.size());
+		final int events = utility.getEventList().size();
+		InequalitySystem system = makeInequalitySystem(utility, basis);
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
 		assert stateParikhVector != null;
@@ -177,6 +207,9 @@ public class SeparationUtility {
 			List<Integer> inequality = new ArrayList<>(basis.size());
 			List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
 
+			// For the resulting region variables, we have value 0
+			inequality.addAll(Collections.nCopies(events, 0));
+
 			for (Region region : basis) {
 				// We want to evaluate [Psi_s - Psi_{s'}] * region
 				int stateValue = region.evaluateParikhVector(stateParikhVector);
@@ -192,14 +225,7 @@ public class SeparationUtility {
 		if (solution.isEmpty())
 			return null;
 
-		assert solution.size() == basis.size();
-		Region result = Region.createTrivialRegion(utility);
-		int i = 0;
-		for (Region region : basis) {
-			result = result.addRegionWithFactor(region, solution.get(i++));
-		}
-		// Because addRegionWithFactor() doesn't work the way that this function would need
-		result = result.makePure();
+		Region result = Region.createPureRegionFromVector(utility, solution.subList(0, events));
 
 		// If this already solves ESSP, return it
 		if (result.getNormalRegionMarkingForState(state) < result.getBackwardWeight(eventIndex))
