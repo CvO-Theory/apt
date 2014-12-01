@@ -47,6 +47,16 @@ public class SynthesizeModuleTest {
 	}
 
 	@Test
+	public void testSafe() throws Exception {
+		assertThat(parse("Safe"), Matchers.<PNProperties.PNProperty>contains(PNProperties.SAFE));
+	}
+
+	@Test
+	public void testPlain() throws Exception {
+		assertThat(parse("PLAIN"), contains(PNProperties.PLAIN));
+	}
+
+	@Test
 	public void test3Bounded() throws Exception {
 		assertThat(parse("3-bounded"), Matchers.<PNProperties.PNProperty>contains(PNProperties.kBounded(3)));
 	}

@@ -40,6 +40,12 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 			return "PURE";
 		}
 	};
+	public final static PNProperty PLAIN = new PNProperty() {
+		@Override
+		public String toString() {
+			return "PLAIN";
+		}
+	};
 
 	static public interface PNProperty {
 	}
@@ -74,6 +80,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	final static private int KBOUNDED_DEFAULT = -1;
 	private int kBounded = KBOUNDED_DEFAULT;
 	private boolean pure = false;
+	private boolean plain = false;
 
 	/**
 	 * Create a new, empty Petri net properties instance.
@@ -133,6 +140,13 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 		return pure;
 	}
 
+	/**
+	 * Return true if this property description requires plainness.
+	 */
+	public boolean isPlain() {
+		return plain;
+	}
+
 	@Override
 	public boolean contains(Object o) {
 		if (!(o instanceof PNProperty))
@@ -143,6 +157,8 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 			return isKBounded(((KBounded)property).k);
 		} else if (PURE.equals(property)) {
 			return pure;
+		} else if (PLAIN.equals(property)) {
+			return plain;
 		}
 		return false;
 	}
@@ -157,6 +173,8 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 				kBounded = k;
 		} else if (PURE.equals(property)) {
 			pure = true;
+		} else if (PLAIN.equals(property)) {
+			plain = true;
 		}
 		return true;
 	}
@@ -180,7 +198,9 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 					state++;
 				if (state == 1 && !pure)
 					state++;
-				return state < 2;
+				if (state == 2 && !plain)
+					state++;
+				return state < 3;
 			}
 
 			@Override
@@ -192,6 +212,8 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 						return kBounded(kBounded);
 					case 1:
 						return PURE;
+					case 2:
+						return PLAIN;
 					default:
 						throw new NoSuchElementException();
 				}

@@ -120,6 +120,9 @@ public class SynthesizeModule extends AbstractModule {
 				case "pure":
 					result.add(PNProperties.PURE);
 					break;
+				case "plain":
+					result.add(PNProperties.PLAIN);
+					break;
 				default:
 					if (prop.endsWith("-bounded")) {
 						String value = prop.substring(0, prop.length() - "-bounded".length());

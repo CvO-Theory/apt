@@ -159,6 +159,22 @@ public class SeparationUtility {
 	}
 
 	/**
+	 * Add the needed inequalities so that the system may only produce plain regions.
+	 * @param utility The region utility to use.
+	 * @param system An inequality system produced by makeInequalitySystem().
+	 */
+	static public void requirePlainness(RegionUtility utility, InequalitySystem system) {
+		for (int event = 0; event < utility.getEventList().size(); event++) {
+			int[] inequality = new int[system.getNumberOfVariables()];
+
+			inequality[event] = 1;
+
+			system.addInequality(1, ">=", inequality);
+			system.addInequality(-1, "<=", inequality);
+		}
+	}
+
+	/**
 	 * Try to calculate a pure region which separates some state and some event. This calculates a linear combination of
 	 * the given basis of abstract regions.
 	 * @param utility The region utility to use.
@@ -315,6 +331,8 @@ public class SeparationUtility {
 			InequalitySystem system = makeInequalitySystem(utility, basis);
 			if (properties.isKBounded())
 				requireKBoundedness(utility, system, properties.getKForKBoundedness());
+			if (properties.isPlain())
+				requirePlainness(utility, system);
 
 			if (properties.isPure())
 				r = calculateSeparatingPureRegion(utility, basis, system, state, event);

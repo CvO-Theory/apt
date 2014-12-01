@@ -57,8 +57,15 @@ public class PNPropertiesTest {
 		return new Object[][] {
 			{ PNProperties.kBounded(42) },
 			{ PNProperties.SAFE },
-			{ PNProperties.PURE }
+			{ PNProperties.PURE },
+			{ PNProperties.PLAIN }
 		};
+	}
+
+	@Test
+	public void addAllTest() {
+		properties.addAll(Arrays.asList(PNProperties.SAFE, PNProperties.kBounded(7), PNProperties.PURE, PNProperties.PLAIN));
+		assertThat(properties, containsInAnyOrder(PNProperties.SAFE, PNProperties.PURE, PNProperties.PLAIN));
 	}
 
 	@Test(dataProvider = "properties")
@@ -78,7 +85,8 @@ public class PNPropertiesTest {
 			return new Object[][] {
 				{ new PNProperties(PNProperties.kBounded(42)), PNProperties.kBounded(42) },
 				{ new PNProperties(PNProperties.SAFE), PNProperties.SAFE },
-				{ new PNProperties(PNProperties.PURE), PNProperties.PURE }
+				{ new PNProperties(PNProperties.PURE), PNProperties.PURE },
+				{ new PNProperties(PNProperties.PLAIN), PNProperties.PLAIN }
 			};
 		}
 
