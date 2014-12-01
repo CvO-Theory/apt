@@ -114,13 +114,15 @@ public class SeparationUtilityTest {
 		@Test
 		public void testCalculate1() {
 			State s = utility.getTransitionSystem().getNode("s");
-			assertThat(SeparationUtility.calculateSeparatingPureRegion(utility, regionBasis, s, "a"), is(nullValue()));
+			InequalitySystem system = SeparationUtility.makeInequalitySystem(utility, regionBasis);
+			assertThat(SeparationUtility.calculateSeparatingPureRegion(utility, regionBasis, system, s, "a"), is(nullValue()));
 		}
 
 		@Test
 		public void testCalculate1Impure() {
 			State s = utility.getTransitionSystem().getNode("s");
-			assertThat(SeparationUtility.calculateSeparatingImpureRegion(utility, regionBasis, s, "a"), is(nullValue()));
+			InequalitySystem system = SeparationUtility.makeInequalitySystem(utility, regionBasis);
+			assertThat(SeparationUtility.calculateSeparatingImpureRegion(utility, regionBasis, system, s, "a"), is(nullValue()));
 		}
 
 		@Test
@@ -135,8 +137,11 @@ public class SeparationUtilityTest {
 
 		@Test
 		public void testCalculateUnreachable() {
-			assertThat(SeparationUtility.calculateSeparatingPureRegion(utility, regionBasis, ts.getNode("unreachable"), "a"), nullValue());
-			assertThat(SeparationUtility.calculateSeparatingImpureRegion(utility, regionBasis, ts.getNode("unreachable"), "a"), nullValue());
+			InequalitySystem system = SeparationUtility.makeInequalitySystem(utility, regionBasis);
+			assertThat(SeparationUtility.calculateSeparatingPureRegion(utility, regionBasis, system, ts.getNode("unreachable"), "a"), nullValue());
+
+			system = SeparationUtility.makeInequalitySystem(utility, regionBasis);
+			assertThat(SeparationUtility.calculateSeparatingImpureRegion(utility, regionBasis, system, ts.getNode("unreachable"), "a"), nullValue());
 		}
 
 		@DataProvider(name = "stateEventPairs")
@@ -187,11 +192,12 @@ public class SeparationUtilityTest {
 
 	private static void checkEventSeparation(RegionUtility utility, List<Region> basis, String stateName, String event, boolean pure) {
 		State state = utility.getTransitionSystem().getNode(stateName);
+		InequalitySystem system = SeparationUtility.makeInequalitySystem(utility, basis);
 		Region r;
 		if (pure)
-			r = SeparationUtility.calculateSeparatingPureRegion(utility, basis, state, event);
+			r = SeparationUtility.calculateSeparatingPureRegion(utility, basis, system, state, event);
 		else
-			r = SeparationUtility.calculateSeparatingImpureRegion(utility, basis, state, event);
+			r = SeparationUtility.calculateSeparatingImpureRegion(utility, basis, system, state, event);
 
 		// "event" must have a non-zero backwards weight
 		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));

@@ -98,10 +98,17 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	}
 
 	/**
+	 * Return true if this property description requires k-boundedness for some k.
+	 */
+	public boolean isKBounded() {
+		return kBounded != KBOUNDED_DEFAULT;
+	}
+
+	/**
 	 * Return true if this property description requires k-boundedness.
 	 */
 	public boolean isKBounded(int k) {
-		return kBounded != KBOUNDED_DEFAULT && kBounded <= k;
+		return isKBounded() && kBounded <= k;
 	}
 
 	/**
@@ -109,6 +116,14 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	 */
 	public boolean isSafe() {
 		return isKBounded(1);
+	}
+
+	/**
+	 * Return the k that for k-boundedness. This may only be called if isKBounded() returns true.
+	 */
+	public int getKForKBoundedness() {
+		assert isKBounded();
+		return kBounded;
 	}
 
 	/**
@@ -161,7 +176,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 			@Override
 			public boolean hasNext() {
-				if (state == 0 && kBounded == KBOUNDED_DEFAULT)
+				if (state == 0 && !isKBounded())
 					state++;
 				if (state == 1 && !pure)
 					state++;

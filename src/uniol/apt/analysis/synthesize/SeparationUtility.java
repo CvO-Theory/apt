@@ -164,14 +164,14 @@ public class SeparationUtility {
 	 * @param utility The region utility to use.
 	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
 	 * stable iteration order!
+	 * @param system An inequality system produced by makeInequalitySystem().
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
 	 * @return A separating region or null.
 	 */
-	static public Region calculateSeparatingPureRegion(RegionUtility utility, Collection<Region> basis,
+	static public Region calculateSeparatingPureRegion(RegionUtility utility, Collection<Region> basis, InequalitySystem system,
 			State state, String event) {
 		final int events = utility.getEventList().size();
-		InequalitySystem system = makeInequalitySystem(utility, basis);
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
 		assert stateParikhVector != null;
@@ -217,14 +217,14 @@ public class SeparationUtility {
 	 * @param utility The region utility to use.
 	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
 	 * stable iteration order!
+	 * @param system An inequality system produced by makeInequalitySystem().
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
 	 * @return A separating region or null.
 	 */
-	static public Region calculateSeparatingImpureRegion(RegionUtility utility, Collection<Region> basis,
+	static public Region calculateSeparatingImpureRegion(RegionUtility utility, Collection<Region> basis, InequalitySystem system,
 			State state, String event) {
 		final int events = utility.getEventList().size();
-		InequalitySystem system = makeInequalitySystem(utility, basis);
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
 		assert stateParikhVector != null;
@@ -242,7 +242,7 @@ public class SeparationUtility {
 			if (!utility.getSpanningTree().isReachable(otherState))
 				continue;
 
-			List<Integer> inequality = new ArrayList<>(basis.size());
+			List<Integer> inequality = new ArrayList<>(events + basis.size());
 			List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
 
 			// For the resulting region variables, we have value 0
@@ -311,11 +311,16 @@ public class SeparationUtility {
 	static public Region findOrCalculateSeparatingRegion(RegionUtility utility, Collection<Region> regions,
 			Collection<Region> basis, State state, String event, PNProperties properties) {
 		Region r = findSeparatingRegion(utility, regions, state, event);
-		if (r == null)
+		if (r == null) {
+			InequalitySystem system = makeInequalitySystem(utility, basis);
+			if (properties.isKBounded())
+				requireKBoundedness(utility, system, properties.getKForKBoundedness());
+
 			if (properties.isPure())
-				r = calculateSeparatingPureRegion(utility, basis, state, event);
+				r = calculateSeparatingPureRegion(utility, basis, system, state, event);
 			else
-				r = calculateSeparatingImpureRegion(utility, basis, state, event);
+				r = calculateSeparatingImpureRegion(utility, basis, system, state, event);
+		}
 		return r;
 	}
 
