@@ -88,7 +88,7 @@ public class SeparationUtility {
 	}
 
 	/**
-	 * Try to calculate a region which separates some state and some event. This calculates a linear combination of
+	 * Try to calculate a pure region which separates some state and some event. This calculates a linear combination of
 	 * the given basis of abstract regions.
 	 * @param utility The region utility to use.
 	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
@@ -97,7 +97,7 @@ public class SeparationUtility {
 	 * @param event The event of the separation problem
 	 * @return A separating region or null.
 	 */
-	static public Region calculateSeparatingRegion(RegionUtility utility, Collection<Region> basis,
+	static public Region calculateSeparatingPureRegion(RegionUtility utility, Collection<Region> basis,
 			State state, String event) {
 		InequalitySystem system = new InequalitySystem(basis.size());
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
@@ -249,7 +249,7 @@ public class SeparationUtility {
 		Region r = findSeparatingRegion(utility, regions, state, event);
 		if (r == null)
 			if (!impure)
-				r = calculateSeparatingRegion(utility, basis, state, event);
+				r = calculateSeparatingPureRegion(utility, basis, state, event);
 			else
 				r = calculateSeparatingImpureRegion(utility, basis, state, event);
 		return r;

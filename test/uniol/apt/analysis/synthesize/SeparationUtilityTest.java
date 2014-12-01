@@ -112,7 +112,7 @@ public class SeparationUtilityTest {
 		@Test
 		public void testCalculate1() {
 			State s = utility.getTransitionSystem().getNode("s");
-			assertThat(SeparationUtility.calculateSeparatingRegion(utility, regionBasis, s, "a"), is(nullValue()));
+			assertThat(SeparationUtility.calculateSeparatingPureRegion(utility, regionBasis, s, "a"), is(nullValue()));
 		}
 
 		@Test
@@ -133,7 +133,7 @@ public class SeparationUtilityTest {
 
 		@Test
 		public void testCalculateUnreachable() {
-			assertThat(SeparationUtility.calculateSeparatingRegion(utility, regionBasis, ts.getNode("unreachable"), "a"), nullValue());
+			assertThat(SeparationUtility.calculateSeparatingPureRegion(utility, regionBasis, ts.getNode("unreachable"), "a"), nullValue());
 			assertThat(SeparationUtility.calculateSeparatingImpureRegion(utility, regionBasis, ts.getNode("unreachable"), "a"), nullValue());
 		}
 
@@ -187,7 +187,7 @@ public class SeparationUtilityTest {
 		State state = utility.getTransitionSystem().getNode(stateName);
 		Region r;
 		if (pure)
-			r = SeparationUtility.calculateSeparatingRegion(utility, basis, state, event);
+			r = SeparationUtility.calculateSeparatingPureRegion(utility, basis, state, event);
 		else
 			r = SeparationUtility.calculateSeparatingImpureRegion(utility, basis, state, event);
 
