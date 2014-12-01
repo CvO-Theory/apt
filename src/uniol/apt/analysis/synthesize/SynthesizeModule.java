@@ -42,12 +42,23 @@ public class SynthesizeModule extends AbstractModule {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + ".\n\nExample calls:\n\n"
+			+ " apt " + getName() + " none lts.apt\n"
+			+ " apt " + getName() + " 3-bounded lts.apt\n"
+			+ " apt " + getName() + " pure,safe lts.apt\n";
+	}
+
+	@Override
 	public String getName() {
 		return "synthesize";
 	}
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
+		inputSpec.addParameter("properties", String.class,
+				"Comma separated list of properties for the synthesized net,"
+				+ " can be none, safe, [k]-bounded and pure");
 		inputSpec.addParameter("lts", TransitionSystem.class,
 				"The LTS that should be synthesized to a Petri Net");
 	}
@@ -68,7 +79,8 @@ public class SynthesizeModule extends AbstractModule {
 		output.setReturnValue("warning", String.class, "THIS MODULE IS EXPERIMENTAL AND SHOULD NOT BE TRUSTED");
 
 		TransitionSystem ts = input.getParameter("lts", TransitionSystem.class);
-		SynthesizePN synthesize = new SynthesizePN(ts);
+		PNProperties properties = parseProperties(input.getParameter("properties", String.class));
+		SynthesizePN synthesize = new SynthesizePN(ts, properties);
 		boolean success = synthesize.wasSuccessfullySeparated();
 
 		PetriNet pn = synthesize.synthesizePetriNet();
@@ -93,6 +105,42 @@ public class SynthesizeModule extends AbstractModule {
 	@Override
 	public Category[] getCategories() {
 		return new Category[]{Category.LTS};
+	}
+
+	static public PNProperties parseProperties(String properties) throws ModuleException {
+		PNProperties result = new PNProperties();
+		for (String prop : properties.split(",")) {
+			prop = prop.trim().toLowerCase();
+			switch (prop) {
+				case "none":
+					break;
+				case "safe":
+					result.add(PNProperties.SAFE);
+					break;
+				case "pure":
+					result.add(PNProperties.PURE);
+					break;
+				default:
+					if (prop.endsWith("-bounded")) {
+						String value = prop.substring(0, prop.length() - "-bounded".length());
+						int k;
+						try {
+							k = Integer.parseInt(value);
+						}
+						catch (NumberFormatException e) {
+							throw new ModuleException("Cannot parse '" + prop + "': "
+									+ "Invalid number for property 'k-bounded'");
+						}
+						if (k < 1)
+							throw new ModuleException("Cannot parse '" + prop + "': "
+									+ "Bound must be positve");
+						result.add(PNProperties.kBounded(k));
+					} else
+						throw new ModuleException("Cannot parse '" + prop
+								+ "': Unknown property");
+			}
+		}
+		return result;
 	}
 }
 
