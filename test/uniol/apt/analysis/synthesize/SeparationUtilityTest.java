@@ -252,9 +252,8 @@ public class SeparationUtilityTest {
 		@Test
 		public void testNoStateRestrictionPure() {
 			Region region = SeparationUtility.findOrCalculateSeparatingRegion(utility, regionBasis,
-					regionBasis, ts.getNode("s3"), "t2", false);
+					regionBasis, ts.getNode("s3"), "t2", new PNProperties(PNProperties.PURE));
 
-			System.out.println(region);
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s2")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
@@ -263,7 +262,7 @@ public class SeparationUtilityTest {
 		@Test
 		public void testNoStateRestrictionImpure() {
 			Region region = SeparationUtility.findOrCalculateSeparatingRegion(utility, regionBasis,
-					regionBasis, ts.getNode("s3"), "t2", true);
+					regionBasis, ts.getNode("s3"), "t2", new PNProperties());
 
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));

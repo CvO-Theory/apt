@@ -241,14 +241,14 @@ public class SeparationUtility {
 	 * stable iteration order!
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
-	 * @param impure If impure regions may be calculated
+	 * @param properties Properties that the calculated region should satisfy.
 	 * @return A separating region or null.
 	 */
 	static public Region findOrCalculateSeparatingRegion(RegionUtility utility, Collection<Region> regions,
-			Collection<Region> basis, State state, String event, boolean impure) {
+			Collection<Region> basis, State state, String event, PNProperties properties) {
 		Region r = findSeparatingRegion(utility, regions, state, event);
 		if (r == null)
-			if (!impure)
+			if (properties.isPure())
 				r = calculateSeparatingPureRegion(utility, basis, state, event);
 			else
 				r = calculateSeparatingImpureRegion(utility, basis, state, event);

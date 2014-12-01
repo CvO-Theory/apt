@@ -111,7 +111,7 @@ public class SynthesizePNTest {
 	public void testPathTSPure() {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
-		SynthesizePN synth = new SynthesizePN(utility, false);
+		SynthesizePN synth = new SynthesizePN(utility, new PNProperties(PNProperties.PURE));
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
 		// Can't really be more specific, way too many possibilities

@@ -43,7 +43,7 @@ public class SynthesizePN {
 	private final Set<Region> regions = new HashSet<>();
 	private final Set<Set<State>> failedStateSeparationProblems = new HashSet<>();
 	private final Set<Pair<String, State>> failedEventStateSeparationProblems = new HashSet<>();
-	private final boolean impure;
+	private final PNProperties properties;
 
 	private static void debug(String message) {
 		//System.err.println("SynthesizePN: " + message);
@@ -60,13 +60,13 @@ public class SynthesizePN {
 	/**
 	 * Synthesize a Petri Net which generates the given transition system.
 	 * @param utility An instance of RegionUtility for the requested transition system.
-	 * @param impure True if impure Petri Nets may be calculated
+	 * @param properties Properties that the synthesized Petri net should satisfy.
 	 */
-	public SynthesizePN(RegionUtility utility, boolean impure) {
+	public SynthesizePN(RegionUtility utility, PNProperties properties) {
 		this.ts = utility.getTransitionSystem();
 		this.utility = utility;
 		this.regionBasis = new RegionBasis(utility);
-		this.impure = impure;
+		this.properties = properties;
 
 		debug("Region basis: " + regionBasis);
 
@@ -101,16 +101,16 @@ public class SynthesizePN {
 	 * @param utility An instance of RegionUtility for the requested transition system.
 	 */
 	public SynthesizePN(RegionUtility utility) {
-		this(utility, true);
+		this(utility, new PNProperties());
 	}
 
 	/**
 	 * Synthesize a Petri Net which generates the given transition system.
 	 * @param ts The transition system to synthesize.
-	 * @param impure True if impure Petri Nets may be calculated
+	 * @param properties Properties that the synthesized Petri net should satisfy.
 	 */
-	public SynthesizePN(TransitionSystem ts, boolean impure) {
-		this(new RegionUtility(ts), impure);
+	public SynthesizePN(TransitionSystem ts, PNProperties properties) {
+		this(new RegionUtility(ts), properties);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class SynthesizePN {
 	 * @param ts The transition system to synthesize.
 	 */
 	public SynthesizePN(TransitionSystem ts) {
-		this(new RegionUtility(ts));
+		this(ts, new PNProperties());
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class SynthesizePN {
 				if (SeparationUtility.getFollowingState(state, event) == null) {
 					debug("Trying to separate " + state + " from event '" + event + "'");
 					Region r = SeparationUtility.findOrCalculateSeparatingRegion(utility,
-							regions, regionBasis, state, event, impure);
+							regions, regionBasis, state, event, properties);
 					if (r == null) {
 						failedEventStateSeparationProblems.add(
 								new Pair<>(event, state));
