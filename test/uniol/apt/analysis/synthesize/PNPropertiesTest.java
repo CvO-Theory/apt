@@ -58,14 +58,15 @@ public class PNPropertiesTest {
 			{ PNProperties.kBounded(42) },
 			{ PNProperties.SAFE },
 			{ PNProperties.PURE },
-			{ PNProperties.PLAIN }
+			{ PNProperties.PLAIN },
+			{ PNProperties.TNET },
 		};
 	}
 
 	@Test
 	public void addAllTest() {
-		properties.addAll(Arrays.asList(PNProperties.SAFE, PNProperties.kBounded(7), PNProperties.PURE, PNProperties.PLAIN));
-		assertThat(properties, containsInAnyOrder(PNProperties.SAFE, PNProperties.PURE, PNProperties.PLAIN));
+		properties.addAll(Arrays.asList(PNProperties.SAFE, PNProperties.kBounded(7), PNProperties.PURE, PNProperties.PLAIN, PNProperties.TNET));
+		assertThat(properties, containsInAnyOrder(PNProperties.SAFE, PNProperties.PURE, PNProperties.PLAIN, PNProperties.TNET));
 	}
 
 	@Test(dataProvider = "properties")
@@ -86,7 +87,8 @@ public class PNPropertiesTest {
 				{ new PNProperties(PNProperties.kBounded(42)), PNProperties.kBounded(42) },
 				{ new PNProperties(PNProperties.SAFE), PNProperties.SAFE },
 				{ new PNProperties(PNProperties.PURE), PNProperties.PURE },
-				{ new PNProperties(PNProperties.PLAIN), PNProperties.PLAIN }
+				{ new PNProperties(PNProperties.PLAIN), PNProperties.PLAIN },
+				{ new PNProperties(PNProperties.TNET), PNProperties.TNET }
 			};
 		}
 

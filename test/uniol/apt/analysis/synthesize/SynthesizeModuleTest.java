@@ -57,6 +57,11 @@ public class SynthesizeModuleTest {
 	}
 
 	@Test
+	public void testTNet() throws Exception {
+		assertThat(parse("tNeT"), contains(PNProperties.TNET));
+	}
+
+	@Test
 	public void test3Bounded() throws Exception {
 		assertThat(parse("3-bounded"), Matchers.<PNProperties.PNProperty>contains(PNProperties.kBounded(3)));
 	}

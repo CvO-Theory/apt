@@ -175,6 +175,29 @@ public class SeparationUtility {
 	}
 
 	/**
+	 * Add the needed inequalities so that the system may only produce T-Net regions.
+	 * @param utility The region utility to use.
+	 * @param system An inequality system produced by makeInequalitySystem().
+	 */
+	static public void requireTNet(RegionUtility utility, InequalitySystem system) {
+		// Let's assume both event a and event b are in the preset of the place corresponding to the region.
+		// This means both events have a non-zero backward weight. Let's forbid this case.
+		for (int a = 0; a < utility.getEventList().size(); a++)
+			for (int b = 0; b < utility.getEventList().size(); b++) {
+				if (a == b)
+					continue;
+
+				int[] inequality = new int[system.getNumberOfVariables()];
+
+				inequality[a] = 1;
+				inequality[b] = 1;
+
+				system.addInequality(1, ">=", inequality);
+				system.addInequality(-1, "<=", inequality);
+			}
+	}
+
+	/**
 	 * Try to calculate a pure region which separates some state and some event. This calculates a linear combination of
 	 * the given basis of abstract regions.
 	 * @param utility The region utility to use.
@@ -333,6 +356,8 @@ public class SeparationUtility {
 				requireKBoundedness(utility, system, properties.getKForKBoundedness());
 			if (properties.isPlain())
 				requirePlainness(utility, system);
+			if (properties.isTNet())
+				requireTNet(utility, system);
 
 			if (properties.isPure())
 				r = calculateSeparatingPureRegion(utility, basis, system, state, event);
