@@ -135,10 +135,10 @@ state		: idi {
 opts		: '[' option (',' option)* ']';
 option		: ID '=' string {
 				options.put($ID.text, $string.val);
-				}
-		   | 'initial' {
-						options.put("initial", "true");
-						};
+				}		 
+                   | ID {
+                                options.put($ID.text, "true");
+                                };
 
 /* LABELS */
 labels		: '.labels' label*;

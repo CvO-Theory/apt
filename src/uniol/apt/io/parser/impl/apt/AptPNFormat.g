@@ -119,7 +119,7 @@ places     : '.places' place*;
 place      :  idi { id = $idi.text; options = new HashMap<>();} (opts)? {out.addPlace(id, options, input); };
 
 opts : '[' option (',' option)* ']';
-option : ID '=' string {options.put($ID.text, $string.val);};
+option : ID '=' string {options.put($ID.text, $string.val);} | ID {options.put($ID.text, $ID.text);};
 
 /* TRANSITIONS */
 transitions : '.transitions' transition*;
