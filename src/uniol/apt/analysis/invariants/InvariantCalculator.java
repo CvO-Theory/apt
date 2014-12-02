@@ -513,20 +513,6 @@ public class InvariantCalculator {
 
     /**
      * Checks whether the the given petri net is covered by s-invariants with
-     * the pipe algorithm. Returns the invariant which covers or null if not
-     * existent.
-     * <p/>
-     * @param pn - the petri net to check covered.
-     * @param invariants - the invariants which should be tested if they cover.
-     * <p/>
-     * @return the invariant which covers or null if it is not covered.
-     */
-    public static Vector coveredBySInvariants(PetriNet pn, Set<List<Integer>> invariants) {
-        return coveredBySInvariants(pn, invariants, InvariantAlgorithm.PIPE);
-    }
-
-    /**
-     * Checks whether the the given petri net is covered by s-invariants with
      * the given algorithm. Returns the invariant which covers or null if not
      * existent.
      * <p/>
@@ -537,21 +523,19 @@ public class InvariantCalculator {
      */
     public static Vector coveredBySInvariants(PetriNet pn, InvariantAlgorithm algo) {
         Set<List<Integer>> invariants = InvariantCalculator.calcSInvariants(pn, algo);
-        return coveredBySInvariants(pn, invariants, algo);
+        return coveredBySInvariants(pn, invariants);
     }
 
     /**
-     * Checks whether the the given petri net is covered by s-invariants with
-     * the given algorithm. Returns the invariant which covers or null if not
-     * existent.
+     * Checks whether the the given petri net is covered by the given s-invariants.
+     * Returns the invariant which covers or null if not existent.
      * <p/>
      * @param pn - the petri net to check covered.
-     * @param algo - the algorithm with which it should be checked.
      * @param invariants - the invariants which should be tested if they cover.
      * <p/>
      * @return the invariant which covers or null if it is not covered.
      */
-    public static Vector coveredBySInvariants(PetriNet pn, Set<List<Integer>> invariants, InvariantAlgorithm algo) {
+    public static Vector coveredBySInvariants(PetriNet pn, Set<List<Integer>> invariants) {
         if (invariants.isEmpty()) {
             return null;
         }
@@ -584,20 +568,6 @@ public class InvariantCalculator {
 
     /**
      * Checks whether the the given petri net is covered by t-invariants with
-     * the pipe algorithm. Returns the invariant which covers or null if not
-     * existent.
-     * <p/>
-     * @param pn - the petri net to check covered.
-     * @param invariants - the invariants which should be tested if they cover.
-     * <p/>
-     * @return the invariant which covers or null if it is not covered.
-     */
-    public static Vector coveredByTInvariants(PetriNet pn, Set<List<Integer>> invariants) {
-        return coveredByTInvariants(pn, invariants, InvariantAlgorithm.PIPE);
-    }
-
-    /**
-     * Checks whether the the given petri net is covered by t-invariants with
      * the given algorithm. Returns the invariant which covers or null if not
      * existent.
      * <p/>
@@ -608,21 +578,19 @@ public class InvariantCalculator {
      */
     public static Vector coveredByTInvariants(PetriNet pn, InvariantAlgorithm algo) {
         Set<List<Integer>> invariants = InvariantCalculator.calcTInvariants(pn, algo);
-        return coveredByTInvariants(pn, invariants, algo);
+        return coveredByTInvariants(pn, invariants);
     }
 
     /**
-     * Checks whether the the given petri net is covered by t-invariants with
-     * the given algorithm. Returns the invariant which covers or null if not
-     * existent.
+     * Checks whether the the given petri net is covered by the given t-invariants.
+     * Returns the invariant which covers or null if not existent.
      * <p/>
      * @param pn - the petri net to check covered.
-     * @param algo - the algorithm with which it should be checked.
      * @param invariants - the invariants which should be tested if they cover.
      * <p/>
      * @return the invariant which covers or null if it is not covered.
      */
-    public static Vector coveredByTInvariants(PetriNet pn, Set<List<Integer>> invariants, InvariantAlgorithm algo) {
+    public static Vector coveredByTInvariants(PetriNet pn, Set<List<Integer>> invariants) {
         if (invariants.isEmpty()) {
             return null;
         }
