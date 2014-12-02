@@ -45,7 +45,7 @@ public abstract class AbstractPNParserOutput<G> extends AbstractParserOutput<G> 
 	protected Set<Map<String, Integer>> finalMarkings = new HashSet<>();
 
 	@Override
-	public void addPlace(String id, Map<String, String> attributes, IntStream input) throws RecognitionException {
+	public void addPlace(String id, Map<String, Object> attributes, IntStream input) throws RecognitionException {
 		try {
 			addPlace(id, attributes);
 		} catch (NodeAlreadyExistsException ne) {
@@ -56,7 +56,7 @@ public abstract class AbstractPNParserOutput<G> extends AbstractParserOutput<G> 
 	}
 
 	@Override
-	public void addTransition(String id, Map<String, String> attributes, IntStream input) throws RecognitionException {
+	public void addTransition(String id, Map<String, Object> attributes, IntStream input) throws RecognitionException {
 		try {
 			addTransition(id, attributes);
 		} catch (NodeAlreadyExistsException ne) {
@@ -67,7 +67,7 @@ public abstract class AbstractPNParserOutput<G> extends AbstractParserOutput<G> 
 	}
 
 	@Override
-	public void addPlace(String id, Map<String, String> attributes) throws NodeAlreadyExistsException {
+	public void addPlace(String id, Map<String, Object> attributes) throws NodeAlreadyExistsException {
 		if (places.containsKey(id)) {
 			throw new NodeAlreadyExistsException(id);
 		}
@@ -77,7 +77,7 @@ public abstract class AbstractPNParserOutput<G> extends AbstractParserOutput<G> 
 	}
 
 	@Override
-	public void addTransition(String id, Map<String, String> attributes) throws NodeAlreadyExistsException {
+	public void addTransition(String id, Map<String, Object> attributes) throws NodeAlreadyExistsException {
 		if (transitions.containsKey(id)) {
 			throw new NodeAlreadyExistsException(id);
 		}

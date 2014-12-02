@@ -51,9 +51,9 @@ public class APTLTSParserOutput extends AbstractLTSParserOutput<TransitionSystem
 		for (String stateId : states.keySet()) {
 			State node = ts.createState(stateId);
 			// Add options
-			Map<String, String> options = states.get(stateId).getOptions();
+			Map<String, Object> options = states.get(stateId).getOptions();
 			for (String opt : options.keySet()) {
-				String value = options.get(opt);
+				Object value = options.get(opt);
 				switch (opt) {
 					case "initial":
 						if (initCount == 1) {
@@ -86,9 +86,9 @@ public class APTLTSParserOutput extends AbstractLTSParserOutput<TransitionSystem
 				throw new StructureException("Label '" + parserArc.getLabel()
 					+ "' used but not defined.");
 			}
-			Map<String, String> options = label.getOptions();
+			Map<String, Object> options = label.getOptions();
 			for (String opt : options.keySet()) {
-				String value = options.get(opt);
+				Object value = options.get(opt);
 				e.putExtension(opt, value);
 			}
 		}

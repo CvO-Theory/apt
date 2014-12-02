@@ -31,7 +31,7 @@ import uniol.apt.io.parser.IParserNode;
 public class ParserNode implements IParserNode {
 
 	private String id;
-	private Map<String, String> options = new HashMap<>();
+	private Map<String, Object> options = new HashMap<>();
 
 	/**
 	 * Creates a node with the given id.
@@ -47,7 +47,7 @@ public class ParserNode implements IParserNode {
 	 * <p/>
 	 * @param m - the options of this node.
 	 */
-	public void putAllOptions(Map<? extends String, ? extends String> m) {
+	public void putAllOptions(Map<? extends String, ?> m) {
 		options.putAll(m);
 	}
 
@@ -59,7 +59,7 @@ public class ParserNode implements IParserNode {
 	 * <p/>
 	 * @return the previous option with the same key in this map if exists.
 	 */
-	public String putOption(String key, String value) {
+	public Object putOption(String key, Object value) {
 		return options.put(key, value);
 	}
 
@@ -77,7 +77,7 @@ public class ParserNode implements IParserNode {
 	 * <p/>
 	 * @return the options of this node.
 	 */
-	public Map<String, String> getOptions() {
+	public Map<String, Object> getOptions() {
 		return options;
 	}
 

@@ -38,7 +38,7 @@ import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 public class SynetLTSParserOutput extends AbstractLTSParserOutput<TransitionSystem> {
 
 	@Override
-	public void addState(String id, Map<String, String> attributes) throws NodeAlreadyExistsException {
+	public void addState(String id, Map<String, Object> attributes) throws NodeAlreadyExistsException {
 		try {
 			super.addState(id, attributes);
 		} catch (NodeAlreadyExistsException e) {

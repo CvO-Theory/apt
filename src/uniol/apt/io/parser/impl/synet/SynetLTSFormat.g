@@ -32,7 +32,7 @@ grammar SynetLTSFormat;
 
 @members {
 	private ILTSParserOutput<?> out;
-	private Map<String, String> options = new HashMap<>();
+	private Map<String, Object> options = new HashMap<>();
 	private boolean suppressWarnings = false;
 
 	public SynetLTSFormatParser(CommonTokenStream cts, ILTSParserOutput<?> out) {

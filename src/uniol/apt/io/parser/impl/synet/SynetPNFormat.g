@@ -84,14 +84,14 @@ statement    : location | transition | place | flow ;
 location     : 'location' locationid;
 transition   : 'transition' eventid ('::' locationid)?
                   {
-			 Map<String, String> op = new HashMap<>();
+			 Map<String, Object> op = new HashMap<>();
 			 if($locationid.text!=null) { op.put("location",$locationid.text);}
                          out.addTransition($eventid.text,op,input);
 			};
 place        : 'place' placeid (':=' INT {initMarking.put($placeid.text,Integer.parseInt($INT.text));})?
 			('::' locationid)?
                    {
-			Map<String, String> op = new HashMap<>();
+			Map<String, Object> op = new HashMap<>();
 			if($locationid.text!=null) { op.put("location",$locationid.text);}
 			out.addPlace($placeid.text,op,input);
 			};

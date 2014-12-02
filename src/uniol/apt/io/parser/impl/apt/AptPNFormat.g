@@ -40,7 +40,7 @@ grammar AptPNFormat;
 
 	// places and transitions
 	private String id;
-	private Map<String, String> options = new HashMap<>();
+	private Map<String, Object> options = new HashMap<>();
 
 	private String flowTransitionId;
 
@@ -119,7 +119,8 @@ places     : '.places' place*;
 place      :  idi { id = $idi.text; options = new HashMap<>();} (opts)? {out.addPlace(id, options, input); };
 
 opts : '[' option (',' option)* ']';
-option : ID '=' string {options.put($ID.text, $string.val);} | ID {options.put($ID.text, $ID.text);};
+option : ID '=' string {options.put($ID.text, $string.val);} | ID {options.put($ID.text, $ID.text);}
+        | ID '=' INT {options.put($ID.text,Integer.parseInt($INT.text));};
 
 /* TRANSITIONS */
 transitions : '.transitions' transition*;

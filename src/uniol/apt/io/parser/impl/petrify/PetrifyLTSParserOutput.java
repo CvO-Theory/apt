@@ -31,7 +31,7 @@ import uniol.apt.io.parser.impl.exception.NodeAlreadyExistsException;
 public class PetrifyLTSParserOutput extends APTLTSParserOutput {
 
 	@Override
-	public void addState(String id, Map<String, String> attributes) throws NodeAlreadyExistsException {
+	public void addState(String id, Map<String, Object> attributes) throws NodeAlreadyExistsException {
 		try {
 			super.addState(id, attributes);
 		} catch (NodeAlreadyExistsException e) {

@@ -35,7 +35,7 @@ grammar AptLTSFormat;
 	private ILTSParserOutput<?> out;
 
 	private String id;
-	private Map<String, String> options = new HashMap<>();
+	private Map<String, Object> options = new HashMap<>();
 
 	private int name, type, description;
 
@@ -138,7 +138,10 @@ option		: ID '=' string {
 				}		 
                    | ID {
                                 options.put($ID.text, "true");
-                                };
+                                }
+                    | ID '=' INT {
+				options.put($ID.text, Integer.parseInt($INT.text));
+				};
 
 /* LABELS */
 labels		: '.labels' label*;

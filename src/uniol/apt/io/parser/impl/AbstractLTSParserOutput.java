@@ -16,7 +16,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 package uniol.apt.io.parser.impl;
 
 import java.util.HashMap;
@@ -37,58 +36,58 @@ import uniol.apt.io.parser.impl.exception.NodeAlreadyExistsException;
  */
 public abstract class AbstractLTSParserOutput<G> extends AbstractParserOutput<G> implements ILTSParserOutput<G> {
 
-	protected Map<String, ParserNode> states = new HashMap<>();
-	protected Map<String, ParserNode> labels = new HashMap<>();
-	protected Set<ParserArc> arcs = new HashSet<>();
+    protected Map<String, ParserNode> states = new HashMap<>();
+    protected Map<String, ParserNode> labels = new HashMap<>();
+    protected Set<ParserArc> arcs = new HashSet<>();
 
-	@Override
-	public void addState(String id, Map<String, String> attributes, IntStream input) throws RecognitionException {
-		try {
-			addState(id, attributes);
-		} catch (NodeAlreadyExistsException ne) {
-			RecognitionException re = new RecognitionException(input);
-			re.initCause(ne);
-			throw re;
-		}
-	}
+    @Override
+    public void addState(String id, Map<String, Object> attributes, IntStream input) throws RecognitionException {
+        try {
+            addState(id, attributes);
+        } catch (NodeAlreadyExistsException ne) {
+            RecognitionException re = new RecognitionException(input);
+            re.initCause(ne);
+            throw re;
+        }
+    }
 
-	@Override
-	public void addState(String id, Map<String, String> attributes) throws NodeAlreadyExistsException {
-		if (states.containsKey(id)) {
-			throw new NodeAlreadyExistsException(id);
-		}
-		ParserNode state = new ParserNode(id);
-		state.putAllOptions(attributes);
-		states.put(id, state);
-	}
+    @Override
+    public void addState(String id, Map<String, Object> attributes) throws NodeAlreadyExistsException {
+        if (states.containsKey(id)) {
+            throw new NodeAlreadyExistsException(id);
+        }
+        ParserNode state = new ParserNode(id);
+        state.putAllOptions(attributes);
+        states.put(id, state);
+    }
 
-	@Override
-	public void addLabel(String id, Map<String, String> attributes) {
-		ParserNode label = new ParserNode(id);
-		label.putAllOptions(attributes);
-		labels.put(id, label);
-	}
+    @Override
+    public void addLabel(String id, Map<String, Object> attributes) {
+        ParserNode label = new ParserNode(id);
+        label.putAllOptions(attributes);
+        labels.put(id, label);
+    }
 
-	@Override
-	public void addArc(String fromNode, String label, String toNode) {
-		arcs.add(new ParserArc(fromNode, label, toNode));
-	}
+    @Override
+    public void addArc(String fromNode, String label, String toNode) {
+        arcs.add(new ParserArc(fromNode, label, toNode));
+    }
 
-	@Override
-	public void setInitialState(String id) {
-		ParserNode node = states.get(id);
-		if (node != null) {
-			node.putOption("initial", "true");
-		} else {
-			Map<String, String> map = new HashMap<>();
-			map.put("initial", "true");
-			try {
-				addState(id, map);
-			} catch (NodeAlreadyExistsException ex) {
-				//not possible since node == null
-			}
-		}
-	}
+    @Override
+    public void setInitialState(String id) {
+        ParserNode node = states.get(id);
+        if (node != null) {
+            node.putOption("initial", "true");
+        } else {
+            Map<String, Object> map = new HashMap<>();
+            map.put("initial", "true");
+            try {
+                addState(id, map);
+            } catch (NodeAlreadyExistsException ex) {
+                //not possible since node == null
+            }
+        }
+    }
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

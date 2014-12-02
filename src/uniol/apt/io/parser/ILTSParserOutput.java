@@ -43,7 +43,7 @@ public interface ILTSParserOutput<G> extends IParserOutput<G> {
 	 * @param input      - the stream used for parsing.
 	 * @throws RecognitionException thrown if a state with the same id already exists within the graph.
 	 */
-	public void addState(String id, Map<String, String> attributes, IntStream input) throws RecognitionException;
+	public void addState(String id, Map<String, Object> attributes, IntStream input) throws RecognitionException;
 
 	/**
 	 * Adds a state with the given id and attributes to the internal datastructure.
@@ -52,7 +52,7 @@ public interface ILTSParserOutput<G> extends IParserOutput<G> {
 	 * @param attributes - a map of attributes.
 	 * @throws NodeAlreadyExistsException thrown if a state with the same id already exists within the graph.
 	 */
-	public void addState(String id, Map<String, String> attributes) throws NodeAlreadyExistsException;
+	public void addState(String id, Map<String, Object> attributes) throws NodeAlreadyExistsException;
 
 	/**
 	 * Adds a label with the given id and attributes to the internal datastructure.
@@ -60,7 +60,7 @@ public interface ILTSParserOutput<G> extends IParserOutput<G> {
 	 * @param id         - the id of the Label.
 	 * @param attributes - a map of attributes.
 	 */
-	public void addLabel(String id, Map<String, String> attributes);
+	public void addLabel(String id, Map<String, Object> attributes);
 
 	/**
 	 * Adds a arc from the state with idFrom to a state with idTo and a given label to the internal datastructure.
