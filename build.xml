@@ -28,7 +28,7 @@
 
 	<taskdef name="testng" classname="org.testng.TestNGAntTask" classpathref="test.class.path" />
 	<taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
-		classpath="lib/checkstyle-5.6/checkstyle-5.6-all.jar" />
+		classpath="lib/checkstyle-6.1.1/checkstyle-6.1.1-all.jar" />
 
 	<!-- Only run the antlr target if some .g file is newer than generated-src/antlr.stamp (which the antlr target touches) -->
 	<target name="antlr.checkforchanges">
