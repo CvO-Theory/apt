@@ -193,7 +193,12 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 			plain = true;
 		} else if (TNET.equals(property)) {
 			tnet = true;
+			// Our definition of TNet includes plainness
 			plain = true;
+			// An impure TNet (while technically possible) makes no sense, because if a transition has a
+			// place as a side-condition, the place cannot be connected to anything else and thus never
+			// changes its marking
+			pure = true;
 		}
 		return true;
 	}

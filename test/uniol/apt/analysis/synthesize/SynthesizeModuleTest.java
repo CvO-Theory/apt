@@ -38,42 +38,42 @@ public class SynthesizeModuleTest {
 
 	@Test
 	public void testNone() throws Exception {
-		assertThat(parse("none"), emptyIterable());
+		assertThat(parse("none"), equalTo(new PNProperties()));
 	}
 
 	@Test
 	public void testPure() throws Exception {
-		assertThat(parse("pure"), contains(PNProperties.PURE));
+		assertThat(parse("pure"), equalTo(new PNProperties(PNProperties.PURE)));
 	}
 
 	@Test
 	public void testSafe() throws Exception {
-		assertThat(parse("Safe"), Matchers.<PNProperties.PNProperty>contains(PNProperties.SAFE));
+		assertThat(parse("Safe"), equalTo(new PNProperties(PNProperties.SAFE)));
 	}
 
 	@Test
 	public void testPlain() throws Exception {
-		assertThat(parse("PLAIN"), contains(PNProperties.PLAIN));
+		assertThat(parse("PLAIN"), equalTo(new PNProperties(PNProperties.PLAIN)));
 	}
 
 	@Test
 	public void testTNet() throws Exception {
-		assertThat(parse("tNeT"), containsInAnyOrder(PNProperties.TNET, PNProperties.PLAIN));
+		assertThat(parse("tNeT"), equalTo(new PNProperties(PNProperties.TNET)));
 	}
 
 	@Test
 	public void test3Bounded() throws Exception {
-		assertThat(parse("3-bounded"), Matchers.<PNProperties.PNProperty>contains(PNProperties.kBounded(3)));
+		assertThat(parse("3-bounded"), equalTo(new PNProperties(PNProperties.kBounded(3))));
 	}
 
 	@Test
 	public void testComma() throws Exception {
-		assertThat(parse("safe,none,pure"), containsInAnyOrder(PNProperties.SAFE, PNProperties.PURE));
+		assertThat(parse("safe,none,pure"), equalTo(new PNProperties(PNProperties.SAFE, PNProperties.PURE)));
 	}
 
 	@Test
 	public void testSpaces() throws Exception {
-		assertThat(parse(" none "), emptyIterable());
+		assertThat(parse(" none "), equalTo(new PNProperties()));
 	}
 
 	@DataProvider(name = "unparsable")

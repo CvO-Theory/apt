@@ -95,7 +95,7 @@ public class PNPropertiesTest {
 				makeSimpleProperty(PNProperties.PURE),
 				makeSimpleProperty(PNProperties.PLAIN),
 				{ new PNProperties(PNProperties.TNET),
-					new PNProperties.PNProperty[] { PNProperties.TNET, PNProperties.PLAIN } },
+					new PNProperties.PNProperty[] { PNProperties.TNET, PNProperties.PLAIN, PNProperties.PURE } },
 			};
 		}
 
