@@ -259,12 +259,14 @@ public class SeparationUtility {
 	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
 	 * stable iteration order!
 	 * @param system An inequality system produced by makeInequalitySystem().
-	 * @param state The state of the separation problem
-	 * @param event The event of the separation problem
+	 * @param state The state of the separation problem.
+	 * @param event The event of the separation problem.
+	 * @param plainNet Whether the generated region should correspond to a plain Petri Net and thus any
+	 * side-condition must be plain, too.
 	 * @return A separating region or null.
 	 */
 	static public Region calculateSeparatingImpureRegion(RegionUtility utility, Collection<Region> basis, InequalitySystem system,
-			State state, String event) {
+			State state, String event, boolean plainNet) {
 		final int events = utility.getEventList().size();
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
@@ -334,6 +336,13 @@ public class SeparationUtility {
 		// could already have a non-zero backward weight, we have to handle that.
 		min -= result.getBackwardWeight(eventIndex);
 		assert min > 0;
+
+		// Does adding the side-condition violate the required plainness?
+		if (plainNet && (min > 1 || result.getWeight(eventIndex) != 0))
+			// XXX: I'm not totally sure that no separating region exists in this case. Some other region
+			// could satisfy the inequality system *and* result in a plain place.
+			return null;
+
 		return result.addRegionWithFactor(Region.createUnitRegion(utility, eventIndex), min);
 	}
 
@@ -364,7 +373,7 @@ public class SeparationUtility {
 			if (properties.isPure())
 				r = calculateSeparatingPureRegion(utility, basis, system, state, event);
 			else
-				r = calculateSeparatingImpureRegion(utility, basis, system, state, event);
+				r = calculateSeparatingImpureRegion(utility, basis, system, state, event, properties.isPlain());
 		}
 		return r;
 	}

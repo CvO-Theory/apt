@@ -122,7 +122,7 @@ public class SeparationUtilityTest {
 		public void testCalculate1Impure() {
 			State s = utility.getTransitionSystem().getNode("s");
 			InequalitySystem system = SeparationUtility.makeInequalitySystem(utility, regionBasis);
-			assertThat(SeparationUtility.calculateSeparatingImpureRegion(utility, regionBasis, system, s, "a"), is(nullValue()));
+			assertThat(SeparationUtility.calculateSeparatingImpureRegion(utility, regionBasis, system, s, "a", false), is(nullValue()));
 		}
 
 		@Test
@@ -141,7 +141,7 @@ public class SeparationUtilityTest {
 			assertThat(SeparationUtility.calculateSeparatingPureRegion(utility, regionBasis, system, ts.getNode("unreachable"), "a"), nullValue());
 
 			system = SeparationUtility.makeInequalitySystem(utility, regionBasis);
-			assertThat(SeparationUtility.calculateSeparatingImpureRegion(utility, regionBasis, system, ts.getNode("unreachable"), "a"), nullValue());
+			assertThat(SeparationUtility.calculateSeparatingImpureRegion(utility, regionBasis, system, ts.getNode("unreachable"), "a", false), nullValue());
 		}
 
 		@DataProvider(name = "stateEventPairs")
@@ -197,7 +197,7 @@ public class SeparationUtilityTest {
 		if (pure)
 			r = SeparationUtility.calculateSeparatingPureRegion(utility, basis, system, state, event);
 		else
-			r = SeparationUtility.calculateSeparatingImpureRegion(utility, basis, system, state, event);
+			r = SeparationUtility.calculateSeparatingImpureRegion(utility, basis, system, state, event, false);
 
 		// "event" must have a non-zero backwards weight
 		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));

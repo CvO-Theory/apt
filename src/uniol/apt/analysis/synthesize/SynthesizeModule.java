@@ -76,6 +76,9 @@ public class SynthesizeModule extends AbstractModule {
 
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
+		// Before removing this, think about the following from SeparationUtility.calculateSeparatingImpureRegion:
+		// XXX: I'm not totally sure that no separating region exists in this case. Some other region
+		// could satisfy the inequality system *and* result in a plain place.
 		output.setReturnValue("warning", String.class, "THIS MODULE IS EXPERIMENTAL AND SHOULD NOT BE TRUSTED");
 
 		TransitionSystem ts = input.getParameter("lts", TransitionSystem.class);
