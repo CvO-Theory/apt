@@ -176,12 +176,14 @@ public class SeparationUtility {
 
 	/**
 	 * Add the needed inequalities so that the system may only produce T-Net regions.
+	 * This requires plainness as a pre-condition!
 	 * @param utility The region utility to use.
 	 * @param system An inequality system produced by makeInequalitySystem().
 	 */
 	static public void requireTNet(RegionUtility utility, InequalitySystem system) {
 		// Let's assume both event a and event b are in the preset of the place corresponding to the region.
-		// This means both events have a non-zero backward weight. Let's forbid this case.
+		// This means both events have a non-zero backward weight. Forbid this via -1 <= r(a)+r(b)
+		// Analogously 1 >= r(a)+r(b) forbids both places to be in the postset.
 		for (int a = 0; a < utility.getEventList().size(); a++)
 			for (int b = 0; b < utility.getEventList().size(); b++) {
 				if (a == b)

@@ -81,30 +81,37 @@ public class PNPropertiesTest {
 
 	@Test
 	public static class SingletonListTest {
+		private Object[] makeSimpleProperty(PNProperties.PNProperty prop) {
+			return new Object[] {
+				new PNProperties(prop), new PNProperties.PNProperty[] { prop }
+			};
+		}
+
 		@DataProvider(name = "propertiesAndMatchers")
 		private Object[][] createProperties() {
 			return new Object[][] {
-				{ new PNProperties(PNProperties.kBounded(42)), PNProperties.kBounded(42) },
-				{ new PNProperties(PNProperties.SAFE), PNProperties.SAFE },
-				{ new PNProperties(PNProperties.PURE), PNProperties.PURE },
-				{ new PNProperties(PNProperties.PLAIN), PNProperties.PLAIN },
-				{ new PNProperties(PNProperties.TNET), PNProperties.TNET }
+				makeSimpleProperty(PNProperties.kBounded(42)),
+				makeSimpleProperty(PNProperties.SAFE),
+				makeSimpleProperty(PNProperties.PURE),
+				makeSimpleProperty(PNProperties.PLAIN),
+				{ new PNProperties(PNProperties.TNET),
+					new PNProperties.PNProperty[] { PNProperties.TNET, PNProperties.PLAIN } },
 			};
 		}
 
 		@Test(dataProvider = "propertiesAndMatchers")
-		public void containsTest(PNProperties properties, PNProperties.PNProperty property) {
-			assertThat(properties.contains(property), equalTo(true));
+		public void containsTest(PNProperties properties, PNProperties.PNProperty[] property) {
+			assertThat(properties.contains(property[0]), equalTo(true));
 		}
 
 		@Test(dataProvider = "propertiesAndMatchers")
-		public void iterateTest(PNProperties properties, PNProperties.PNProperty property) {
+		public void iterateTest(PNProperties properties, PNProperties.PNProperty[] property) {
 			assertThat(properties, containsInAnyOrder(property));
 		}
 
 		@Test(dataProvider = "propertiesAndMatchers")
-		public void sizeTest(PNProperties properties, PNProperties.PNProperty property) {
-			assertThat(properties.size(), equalTo(1));
+		public void sizeTest(PNProperties properties, PNProperties.PNProperty[] property) {
+			assertThat(properties.size(), equalTo(property.length));
 		}
 	}
 

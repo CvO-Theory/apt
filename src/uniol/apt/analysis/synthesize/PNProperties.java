@@ -193,6 +193,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 			plain = true;
 		} else if (TNET.equals(property)) {
 			tnet = true;
+			plain = true;
 		}
 		return true;
 	}

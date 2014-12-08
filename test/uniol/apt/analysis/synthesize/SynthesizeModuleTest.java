@@ -58,7 +58,7 @@ public class SynthesizeModuleTest {
 
 	@Test
 	public void testTNet() throws Exception {
-		assertThat(parse("tNeT"), contains(PNProperties.TNET));
+		assertThat(parse("tNeT"), containsInAnyOrder(PNProperties.TNET, PNProperties.PLAIN));
 	}
 
 	@Test
