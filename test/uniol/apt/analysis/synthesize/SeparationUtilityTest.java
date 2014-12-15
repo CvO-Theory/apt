@@ -47,6 +47,8 @@ public class SeparationUtilityTest {
 		protected Region region1;
 		protected Region region2;
 		protected Region region3;
+		protected SeparationUtility pureSeparationUtility;
+		protected SeparationUtility impureSeparationUtility;
 
 		abstract protected TransitionSystem getTS();
 
@@ -74,6 +76,9 @@ public class SeparationUtilityTest {
 			regionBasis.add(region1);
 			regionBasis.add(region2);
 			regionBasis.add(region3);
+
+			pureSeparationUtility = new SeparationUtility(utility, regionBasis, new PNProperties(PNProperties.PURE));
+			impureSeparationUtility = new SeparationUtility(utility, regionBasis, new PNProperties());
 		}
 
 		@Test
@@ -114,15 +119,13 @@ public class SeparationUtilityTest {
 		@Test
 		public void testCalculate1() {
 			State s = utility.getTransitionSystem().getNode("s");
-			SeparationUtility sep = new SeparationUtility(utility, Collections.<Region>emptyList(), regionBasis, s, "a", new PNProperties(PNProperties.PURE));
-			assertThat(sep.getRegion(), is(nullValue()));
+			assertThat(pureSeparationUtility.getSeparatingRegion(Collections.<Region>emptyList(), s, "a"), is(nullValue()));
 		}
 
 		@Test
 		public void testCalculate1Impure() {
 			State s = utility.getTransitionSystem().getNode("s");
-			SeparationUtility sep = new SeparationUtility(utility, Collections.<Region>emptyList(), regionBasis, s, "a");
-			assertThat(sep.getRegion(), is(nullValue()));
+			assertThat(impureSeparationUtility.getSeparatingRegion(Collections.<Region>emptyList(), s, "a"), is(nullValue()));
 		}
 
 		@Test
@@ -132,21 +135,19 @@ public class SeparationUtilityTest {
 
 		@Test
 		public void testEventSeparationUnreachable() {
-			assertThat(new SeparationUtility(utility, Collections.<Region>emptyList(), regionBasis, ts.getNode("unreachable"), "a").getRegion(), nullValue());
+			assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, ts.getNode("unreachable"), "a"), is(nullValue()));
 		}
 
 		@Test
 		public void testCalculateUnreachable() {
 			State s = utility.getTransitionSystem().getNode("unreachable");
-			SeparationUtility sep = new SeparationUtility(utility, Collections.<Region>emptyList(), regionBasis, s, "a", new PNProperties(PNProperties.PURE));
-			assertThat(sep.getRegion(), is(nullValue()));
+			assertThat(pureSeparationUtility.getSeparatingRegion(Collections.<Region>emptyList(), s, "a"), is(nullValue()));
 		}
 
 		@Test
 		public void testCalculateUnreachableImpure() {
 			State s = utility.getTransitionSystem().getNode("unreachable");
-			SeparationUtility sep = new SeparationUtility(utility, Collections.<Region>emptyList(), regionBasis, s, "a");
-			assertThat(sep.getRegion(), is(nullValue()));
+			assertThat(impureSeparationUtility.getSeparatingRegion(Collections.<Region>emptyList(), s, "a"), is(nullValue()));
 		}
 
 		@DataProvider(name = "stateEventPairs")
@@ -201,7 +202,7 @@ public class SeparationUtilityTest {
 		if (pure)
 			properties.add(PNProperties.PURE);
 
-		Region r = new SeparationUtility(utility, Collections.<Region>emptyList(), basis, state, event, properties).getRegion();
+		Region r = new SeparationUtility(utility, basis, properties).getSeparatingRegion(Collections.<Region>emptyList(), state, event);
 
 		// "event" must have a non-zero backwards weight
 		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));
@@ -263,8 +264,8 @@ public class SeparationUtilityTest {
 
 		@Test
 		public void testNoStateRestrictionPure() {
-			Region region = new SeparationUtility(utility, regionBasis,
-					regionBasis, ts.getNode("s3"), "t2", new PNProperties(PNProperties.PURE)).getRegion();
+			Region region = new SeparationUtility(utility, regionBasis, new PNProperties(PNProperties.PURE))
+				.getSeparatingRegion(regionBasis, ts.getNode("s3"), "t2");
 
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
@@ -273,8 +274,8 @@ public class SeparationUtilityTest {
 
 		@Test
 		public void testNoStateRestrictionImpure() {
-			Region region = new SeparationUtility(utility, regionBasis,
-					regionBasis, ts.getNode("s3"), "t2", new PNProperties()).getRegion();
+			Region region = new SeparationUtility(utility, regionBasis)
+				.getSeparatingRegion(regionBasis, ts.getNode("s3"), "t2");
 
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));

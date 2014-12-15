@@ -44,6 +44,7 @@ public class SynthesizePN {
 	private final Set<Set<State>> failedStateSeparationProblems = new HashSet<>();
 	private final Set<Pair<String, State>> failedEventStateSeparationProblems = new HashSet<>();
 	private final PNProperties properties;
+	private final SeparationUtility separationUtility;
 
 	private static void debug(String message) {
 		//System.err.println("SynthesizePN: " + message);
@@ -67,6 +68,7 @@ public class SynthesizePN {
 		this.utility = utility;
 		this.regionBasis = new RegionBasis(utility);
 		this.properties = properties;
+		this.separationUtility = new SeparationUtility(utility, regionBasis, properties);
 
 		debug("Region basis: " + regionBasis);
 
@@ -163,7 +165,7 @@ public class SynthesizePN {
 			for (String event : ts.getAlphabet()) {
 				if (!SeparationUtility.isEventEnabled(state, event)) {
 					debug("Trying to separate " + state + " from event '" + event + "'");
-					Region r = new SeparationUtility(utility, regions, regionBasis, state, event, properties).getRegion();
+					Region r = separationUtility.getSeparatingRegion(regions, state, event);
 					if (r == null) {
 						failedEventStateSeparationProblems.add(
 								new Pair<>(event, state));
