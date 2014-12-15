@@ -156,7 +156,7 @@ public class SeparationUtilityTest {
 		@Test(dataProvider = "stateEventPairs")
 		public void testEventSeparation(String stateName, String event) {
 			State state = utility.getTransitionSystem().getNode(stateName);
-			if (SeparationUtility.getFollowingState(state, event) != null || stateName.equals("unreachable"))
+			if (SeparationUtility.isEventEnabled(state, event) || stateName.equals("unreachable"))
 				return;
 			checkEventSeparation(utility, regionBasis, stateName, event, true);
 		}
@@ -164,7 +164,7 @@ public class SeparationUtilityTest {
 		@Test(dataProvider = "stateEventPairs")
 		public void testEventSeparationImpure(String stateName, String event) {
 			State state = utility.getTransitionSystem().getNode(stateName);
-			if (SeparationUtility.getFollowingState(state, event) != null || stateName.equals("unreachable"))
+			if (SeparationUtility.isEventEnabled(state, event) || stateName.equals("unreachable"))
 				return;
 			checkEventSeparation(utility, regionBasis, stateName, event, false);
 		}

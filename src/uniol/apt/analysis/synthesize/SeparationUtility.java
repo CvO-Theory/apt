@@ -37,6 +37,21 @@ public class SeparationUtility {
 	}
 
 	/**
+	 * Test if there exists an outgoing arc labelled with the given event.
+	 * Get the state which is reached by firing the given event in the given state.
+	 * @param state The state to examine.
+	 * @param event The event that should fire.
+	 * @return True if a suitable arc exists, else false.
+	 * @return The following state or zero.
+	 */
+	static public boolean isEventEnabled(State state, String event) {
+		for (Arc arc : state.getPostsetEdges())
+			if (arc.getLabel().equals(event))
+				return true;
+		return false;
+	}
+
+	/**
 	 * Try to find an existing region which separates the two given states.
 	 * @param utility The region utility to use.
 	 * @param regions The regions to choose from.
@@ -278,7 +293,7 @@ public class SeparationUtility {
 
 		// For each state in which 'event' is enabled...
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			if (getFollowingState(otherState, event) == null)
+			if (!isEventEnabled(otherState, event))
 				continue;
 
 			// Silently ignore unreachable states
@@ -316,7 +331,7 @@ public class SeparationUtility {
 		// For each state in which 'event' is enabled...
 		Integer min = null;
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			if (getFollowingState(otherState, event) == null)
+			if (!isEventEnabled(otherState, event))
 				continue;
 
 			// Silently ignore unreachable states
@@ -376,19 +391,6 @@ public class SeparationUtility {
 				r = calculateSeparatingImpureRegion(utility, basis, system, state, event, properties.isPlain());
 		}
 		return r;
-	}
-
-	/**
-	 * Get the state which is reached by firing the given event in the given state.
-	 * @param state The state to examine.
-	 * @param event The event that should fire.
-	 * @return The following state or zero.
-	 */
-	static public State getFollowingState(State state, String event) {
-		for (Arc arc : state.getPostsetEdges())
-			if (arc.getLabel().equals(event))
-				return arc.getTarget();
-		return null;
 	}
 }
 
