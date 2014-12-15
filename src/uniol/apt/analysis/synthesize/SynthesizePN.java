@@ -163,8 +163,7 @@ public class SynthesizePN {
 			for (String event : ts.getAlphabet()) {
 				if (!SeparationUtility.isEventEnabled(state, event)) {
 					debug("Trying to separate " + state + " from event '" + event + "'");
-					Region r = SeparationUtility.findOrCalculateSeparatingRegion(utility,
-							regions, regionBasis, state, event, properties);
+					Region r = new SeparationUtility(utility, regions, regionBasis, state, event, properties).getRegion();
 					if (r == null) {
 						failedEventStateSeparationProblems.add(
 								new Pair<>(event, state));

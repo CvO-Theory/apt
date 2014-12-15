@@ -29,13 +29,10 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.util.equations.InequalitySystem;
 
 /**
- * Helper functions for solving separation problems.
+ * Helper class for solving separation problems.
  * @author Uli Schlachter
  */
 public class SeparationUtility {
-	private SeparationUtility() {
-	}
-
 	/**
 	 * Test if there exists an outgoing arc labelled with the given event.
 	 * Get the state which is reached by firing the given event in the given state.
@@ -81,22 +78,16 @@ public class SeparationUtility {
 
 	/**
 	 * Try to find an existing region which separates some state and some event.
-	 * @param utility The region utility to use.
-	 * @param regions The regions to choose from.
-	 * @param state The state of the separation problem
-	 * @param event The event of the separation problem
 	 * @return A separating region or null.
 	 */
-	static public Region findSeparatingRegion(RegionUtility utility, Collection<Region> regions,
-			State state, String event) {
+	private Region findSeparatingRegion(Collection<Region> regions) {
 		// Unreachable states cannot be separated
 		if (!utility.getSpanningTree().isReachable(state))
 			return null;
 
-		int eventIndex = utility.getEventIndex(event);
 		for (Region region : regions) {
 			// We need r(state) to be smaller than the event's backward weight in some region.
-			if (region.getNormalRegionMarkingForState(state) < region.getBackwardWeight(eventIndex))
+			if (region.getNormalRegionMarkingForState(state) < region.getBackwardWeight(event))
 				return region;
 		}
 
@@ -105,13 +96,10 @@ public class SeparationUtility {
 
 	/**
 	 * Create an inequality system for calculating a region.
-	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
-	 * stable iteration order!
 	 * @return An inequality system with numEvents + basisSize unknowns. The first unknowns describe the weights of
 	 * the calculated regions, the last ones are weights for linear combinations of the basis.
 	 */
-	static public InequalitySystem makeInequalitySystem(RegionUtility utility, Collection<Region> basis) {
+	private InequalitySystem makeInequalitySystem() {
 		// Generate an inequality system. The first eventList.size() variables are the weight of the calculated
 		// region. The next basis.size() variables represent how this region is a linear combination of the
 		// basis.
@@ -137,17 +125,21 @@ public class SeparationUtility {
 
 	/**
 	 * Add the needed inequalities so that the system may only produce k-bounded regions.
-	 * @param utility The region utility to use.
-	 * @param system An inequality system produced by makeInequalitySystem().
 	 * @param k The limit for the bound.
 	 */
-	static public void requireKBoundedness(RegionUtility utility, InequalitySystem system, int k) {
+	private void requireKBoundedness(int k) {
 		// We have:
 		//  r_S(s0) = max { -r_E(Psi_s') | s' \in S }
 		//  r_S(s) = r_S(s0) + r_E(Psi_s) = max { r_E(Psi_s - Psi_s') | s' \in S }
 		// We want to require r_S(s) <= k and do so by requiring that for every combination s, s' of state we
 		// have r_E(Psi_s - Psi_s') <= k.
 		// (Put differently: The path from any state to any other state may generate at most k token)
+
+		// This produces waaaay too many inequalities. How about adding the initial marking as another variable
+		// so that we only have n+n instead of n*n inequalties? (n for the initial marking, n for limiting the
+		// marking in each state).
+		// Hmmm, how exactly do the inequalities for the initial marking look like? We can only force a lower
+		// bound, not the exact one... But that's enough for what this needs!
 		for (State state : utility.getTransitionSystem().getNodes()) {
 			if (!utility.getSpanningTree().isReachable(state))
 				continue;
@@ -175,10 +167,8 @@ public class SeparationUtility {
 
 	/**
 	 * Add the needed inequalities so that the system may only produce plain regions.
-	 * @param utility The region utility to use.
-	 * @param system An inequality system produced by makeInequalitySystem().
 	 */
-	static public void requirePlainness(RegionUtility utility, InequalitySystem system) {
+	private void requirePlainness() {
 		for (int event = 0; event < utility.getNumberOfEvents(); event++) {
 			int[] inequality = new int[utility.getNumberOfEvents()];
 
@@ -192,10 +182,8 @@ public class SeparationUtility {
 	/**
 	 * Add the needed inequalities so that the system may only produce T-Net regions.
 	 * This requires plainness as a pre-condition!
-	 * @param utility The region utility to use.
-	 * @param system An inequality system produced by makeInequalitySystem().
 	 */
-	static public void requireTNet(RegionUtility utility, InequalitySystem system) {
+	private void requireTNet() {
 		// Let's assume both event a and event b are in the preset of the place corresponding to the region.
 		// This means both events have a non-zero backward weight. Forbid this via -1 <= r(a)+r(b)
 		// Analogously 1 >= r(a)+r(b) forbids both places to be in the postset.
@@ -217,19 +205,11 @@ public class SeparationUtility {
 	/**
 	 * Try to calculate a pure region which separates some state and some event. This calculates a linear combination of
 	 * the given basis of abstract regions.
-	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
-	 * stable iteration order!
-	 * @param system An inequality system produced by makeInequalitySystem().
-	 * @param state The state of the separation problem
-	 * @param event The event of the separation problem
 	 * @return A separating region or null.
 	 */
-	static public Region calculateSeparatingPureRegion(RegionUtility utility, Collection<Region> basis, InequalitySystem system,
-			State state, String event) {
+	private Region calculateSeparatingPureRegion() {
 		final int events = utility.getNumberOfEvents();
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
-		int eventIndex = utility.getEventIndex(event);
 		assert stateParikhVector != null;
 
 		// Unreachable states cannot be separated
@@ -270,21 +250,13 @@ public class SeparationUtility {
 
 	/**
 	 * Try to calculate an impure region which separates some state and some event.
-	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
-	 * stable iteration order!
-	 * @param system An inequality system produced by makeInequalitySystem().
-	 * @param state The state of the separation problem.
-	 * @param event The event of the separation problem.
 	 * @param plainNet Whether the generated region should correspond to a plain Petri Net and thus any
 	 * side-condition must be plain, too.
 	 * @return A separating region or null.
 	 */
-	static public Region calculateSeparatingImpureRegion(RegionUtility utility, Collection<Region> basis, InequalitySystem system,
-			State state, String event, boolean plainNet) {
+	private Region calculateSeparatingImpureRegion(boolean plainNet) {
 		final int events = utility.getNumberOfEvents();
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
-		int eventIndex = utility.getEventIndex(event);
 		assert stateParikhVector != null;
 
 		// Unreachable states cannot be separated
@@ -361,9 +333,16 @@ public class SeparationUtility {
 		return result.addRegionWithFactor(Region.createUnitRegion(utility, eventIndex), min);
 	}
 
+	private final RegionUtility utility;
+	private final Collection<Region> basis;
+	private final State state;
+	private final String event;
+	private final int eventIndex;
+	private final InequalitySystem system;
+	private final Region resultingRegion;
+
 	/**
-	 * Try to find a region which separates some state and some event. First the existing regions in the collection
-	 * are checked. If no suitable region is found, an attempt is made to calculate a new one via the given basis.
+	 * Construct a new SeparationUtility for the given event/state separation instance.
 	 * @param utility The region utility to use.
 	 * @param regions The regions to choose from.
 	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
@@ -371,27 +350,59 @@ public class SeparationUtility {
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
 	 * @param properties Properties that the calculated region should satisfy.
-	 * @return A separating region or null.
 	 */
-	static public Region findOrCalculateSeparatingRegion(RegionUtility utility, Collection<Region> regions,
-			Collection<Region> basis, State state, String event, PNProperties properties) {
-		Region r = findSeparatingRegion(utility, regions, state, event);
+	public SeparationUtility(RegionUtility utility, Collection<Region> regions, Collection<Region> basis,
+			State state, String event, PNProperties properties) {
+		this.utility = utility;
+		this.basis = basis;
+		this.state = state;
+		this.event = event;
+		this.eventIndex = utility.getEventIndex(event);
+		this.system = makeInequalitySystem();
+
+		assert this.eventIndex >= 0;
+
+		// TODO: Nothing guarantees that all regions in the basis satisfy <properties> (same for the direct call
+		// to findSeparatingRegion() in SynthesizePN)
+		Region r = findSeparatingRegion(regions);
 		if (r == null) {
-			InequalitySystem system = makeInequalitySystem(utility, basis);
 			if (properties.isKBounded())
-				requireKBoundedness(utility, system, properties.getKForKBoundedness());
+				requireKBoundedness(properties.getKForKBoundedness());
 			if (properties.isPlain())
-				requirePlainness(utility, system);
+				requirePlainness();
 			if (properties.isTNet())
-				requireTNet(utility, system);
+				requireTNet();
 
 			if (properties.isPure())
-				r = calculateSeparatingPureRegion(utility, basis, system, state, event);
+				r = calculateSeparatingPureRegion();
 			else
-				r = calculateSeparatingImpureRegion(utility, basis, system, state, event, properties.isPlain());
+				r = calculateSeparatingImpureRegion(properties.isPlain());
 		}
-		return r;
+		this.resultingRegion = r;
 	}
+
+	/**
+	 * Construct a new SeparationUtility for the given event/state separation instance.
+	 * @param utility The region utility to use.
+	 * @param regions The regions to choose from.
+	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
+	 * stable iteration order!
+	 * @param state The state of the separation problem
+	 * @param event The event of the separation problem
+	 */
+	public SeparationUtility(RegionUtility utility, Collection<Region> regions, Collection<Region> basis,
+			State state, String event) {
+		this(utility, regions, basis, state, event, new PNProperties());
+	}
+
+	/**
+	 * Get the resulting region that solves this separation problem.
+	 * @return Either one of the pre-existing regions, a new one that solves the specified problem or null.
+	 */
+	public Region getRegion() {
+		return resultingRegion;
+	}
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
