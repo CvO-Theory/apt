@@ -149,7 +149,7 @@ public class SeparationUtility {
 				// Evaluate the Parikh vector in the region described by the system, just as
 				// Region.evaluateParikhVector() would do.
 				List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
-				int[] inequality = new int[system.getNumberOfVariables()];
+				int[] inequality = new int[utility.getEventList().size()];
 				for (int event = 0; event < stateParikhVector.size(); event++)
 					inequality[event] = stateParikhVector.get(event) - otherStateParikhVector.get(event);
 
@@ -165,7 +165,7 @@ public class SeparationUtility {
 	 */
 	static public void requirePlainness(RegionUtility utility, InequalitySystem system) {
 		for (int event = 0; event < utility.getEventList().size(); event++) {
-			int[] inequality = new int[system.getNumberOfVariables()];
+			int[] inequality = new int[utility.getEventList().size()];
 
 			inequality[event] = 1;
 
@@ -189,7 +189,7 @@ public class SeparationUtility {
 				if (a == b)
 					continue;
 
-				int[] inequality = new int[system.getNumberOfVariables()];
+				int[] inequality = new int[utility.getEventList().size()];
 
 				inequality[a] = 1;
 				inequality[b] = 1;

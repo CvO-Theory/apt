@@ -304,9 +304,6 @@ public class SeparationUtilityTest {
 
 		// From state t to state v
 		verify(system).addInequality(42, ">=", -1, 1);
-
-		verify(system, atLeastOnce()).getNumberOfVariables();
-		verifyNoMoreInteractions(system);
 	}
 }
 
