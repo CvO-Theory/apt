@@ -47,8 +47,8 @@ public class Region {
 		this.backwardWeights = Collections.unmodifiableList(new ArrayList<>(backwardWeights));
 		this.forwardWeights = Collections.unmodifiableList(new ArrayList<>(forwardWeights));
 
-		assert backwardWeights.size() == utility.getEventList().size();
-		assert forwardWeights.size() == utility.getEventList().size();
+		assert backwardWeights.size() == utility.getNumberOfEvents();
+		assert forwardWeights.size() == utility.getNumberOfEvents();
 
 		for (int i : backwardWeights)
 			assert i >= 0;
@@ -179,10 +179,10 @@ public class Region {
 		if (factor == 0)
 			return this;
 
-		List<Integer> backwardList = new ArrayList<>(utility.getEventList().size());
-		List<Integer> forwardList = new ArrayList<>(utility.getEventList().size());
+		List<Integer> backwardList = new ArrayList<>(utility.getNumberOfEvents());
+		List<Integer> forwardList = new ArrayList<>(utility.getNumberOfEvents());
 
-		for (int i = 0; i < utility.getEventList().size(); i++) {
+		for (int i = 0; i < utility.getNumberOfEvents(); i++) {
 			int backward = this.backwardWeights.get(i);
 			int forward = this.forwardWeights.get(i);
 			if (factor > 0) {
@@ -214,9 +214,9 @@ public class Region {
 	 * @return The resulting region.
 	 */
 	public Region makePure() {
-		List<Integer> vector = new ArrayList<>(utility.getEventList().size());
+		List<Integer> vector = new ArrayList<>(utility.getNumberOfEvents());
 
-		for (int i = 0; i < utility.getEventList().size(); i++) {
+		for (int i = 0; i < utility.getNumberOfEvents(); i++) {
 			vector.add(getWeight(i));
 		}
 
@@ -258,9 +258,9 @@ public class Region {
 	 * @return The resulting region.
 	 */
 	public static Region createPureRegionFromVector(RegionUtility utility, List<Integer> vector) {
-		List<Integer> backwardList = new ArrayList<>(utility.getEventList().size());
-		List<Integer> forwardList = new ArrayList<>(utility.getEventList().size());
-		assert vector.size() == utility.getEventList().size();
+		List<Integer> backwardList = new ArrayList<>(utility.getNumberOfEvents());
+		List<Integer> forwardList = new ArrayList<>(utility.getNumberOfEvents());
+		assert vector.size() == utility.getNumberOfEvents();
 
 		for (int i = 0; i < vector.size(); i++) {
 			int value = vector.get(i);
@@ -294,7 +294,7 @@ public class Region {
 	 * @return The resulting region.
 	 */
 	public static Region createTrivialRegion(RegionUtility utility) {
-		List<Integer> vector = Collections.nCopies(utility.getEventList().size(), 0);
+		List<Integer> vector = Collections.nCopies(utility.getNumberOfEvents(), 0);
 		return new Region(utility, vector, vector);
 	}
 
@@ -306,7 +306,7 @@ public class Region {
 	 * @return The resulting region.
 	 */
 	public static Region createUnitRegion(RegionUtility utility, int event) {
-		List<Integer> nullList = Collections.nCopies(utility.getEventList().size(), 0);
+		List<Integer> nullList = Collections.nCopies(utility.getNumberOfEvents(), 0);
 		List<Integer> vector = new ArrayList<>(nullList);
 		vector.set(event, 1);
 		return new Region(utility, vector, vector);

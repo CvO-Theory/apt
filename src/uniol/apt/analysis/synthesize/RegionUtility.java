@@ -65,7 +65,7 @@ public class RegionUtility {
 	 * @param event The event whose index should be returned.
 	 * @return The event's index or null.
 	 */
-	public Integer getEventIndex(String event) {
+	public int getEventIndex(String event) {
 		return eventList.indexOf(event);
 	}
 
@@ -76,6 +76,14 @@ public class RegionUtility {
 	 */
 	public List<String> getEventList() {
 		return eventList;
+	}
+
+	/**
+	 * Get the number of events.
+	 * @return The number of events.
+	 */
+	public int getNumberOfEvents() {
+		return eventList.size();
 	}
 
 	/**

@@ -283,7 +283,7 @@ public class SeparationUtilityTest {
 		RegionUtility utility = new RegionUtility(ts);
 
 		InequalitySystem system = mock(InequalitySystem.class);
-		when(system.getNumberOfVariables()).thenReturn(utility.getEventList().size() + 0);
+		when(system.getNumberOfVariables()).thenReturn(utility.getNumberOfEvents() + 0);
 
 		SeparationUtility.requireKBoundedness(utility, system, 42);
 

@@ -100,7 +100,7 @@ public class SeparationUtility {
 		// Generate an inequality system. The first eventList.size() variables are the weight of the calculated
 		// region. The next basis.size() variables represent how this region is a linear combination of the
 		// basis.
-		final int events = utility.getEventList().size();
+		final int events = utility.getNumberOfEvents();
 		final int basisSize = basis.size();
 		InequalitySystem system = new InequalitySystem();
 
@@ -149,7 +149,7 @@ public class SeparationUtility {
 				// Evaluate the Parikh vector in the region described by the system, just as
 				// Region.evaluateParikhVector() would do.
 				List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
-				int[] inequality = new int[utility.getEventList().size()];
+				int[] inequality = new int[utility.getNumberOfEvents()];
 				for (int event = 0; event < stateParikhVector.size(); event++)
 					inequality[event] = stateParikhVector.get(event) - otherStateParikhVector.get(event);
 
@@ -164,8 +164,8 @@ public class SeparationUtility {
 	 * @param system An inequality system produced by makeInequalitySystem().
 	 */
 	static public void requirePlainness(RegionUtility utility, InequalitySystem system) {
-		for (int event = 0; event < utility.getEventList().size(); event++) {
-			int[] inequality = new int[utility.getEventList().size()];
+		for (int event = 0; event < utility.getNumberOfEvents(); event++) {
+			int[] inequality = new int[utility.getNumberOfEvents()];
 
 			inequality[event] = 1;
 
@@ -184,12 +184,12 @@ public class SeparationUtility {
 		// Let's assume both event a and event b are in the preset of the place corresponding to the region.
 		// This means both events have a non-zero backward weight. Forbid this via -1 <= r(a)+r(b)
 		// Analogously 1 >= r(a)+r(b) forbids both places to be in the postset.
-		for (int a = 0; a < utility.getEventList().size(); a++)
-			for (int b = 0; b < utility.getEventList().size(); b++) {
+		for (int a = 0; a < utility.getNumberOfEvents(); a++)
+			for (int b = 0; b < utility.getNumberOfEvents(); b++) {
 				if (a == b)
 					continue;
 
-				int[] inequality = new int[utility.getEventList().size()];
+				int[] inequality = new int[utility.getNumberOfEvents()];
 
 				inequality[a] = 1;
 				inequality[b] = 1;
@@ -212,7 +212,7 @@ public class SeparationUtility {
 	 */
 	static public Region calculateSeparatingPureRegion(RegionUtility utility, Collection<Region> basis, InequalitySystem system,
 			State state, String event) {
-		final int events = utility.getEventList().size();
+		final int events = utility.getNumberOfEvents();
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
 		assert stateParikhVector != null;
@@ -267,7 +267,7 @@ public class SeparationUtility {
 	 */
 	static public Region calculateSeparatingImpureRegion(RegionUtility utility, Collection<Region> basis, InequalitySystem system,
 			State state, String event, boolean plainNet) {
-		final int events = utility.getEventList().size();
+		final int events = utility.getNumberOfEvents();
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
 		assert stateParikhVector != null;
