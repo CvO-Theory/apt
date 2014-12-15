@@ -128,40 +128,30 @@ public class SeparationUtility {
 	 * @param k The limit for the bound.
 	 */
 	private void requireKBoundedness(int k) {
-		// We have:
-		//  r_S(s0) = max { -r_E(Psi_s') | s' \in S }
-		//  r_S(s) = r_S(s0) + r_E(Psi_s) = max { r_E(Psi_s - Psi_s') | s' \in S }
-		// We want to require r_S(s) <= k and do so by requiring that for every combination s, s' of state we
-		// have r_E(Psi_s - Psi_s') <= k.
-		// (Put differently: The path from any state to any other state may generate at most k token)
+		int initialMarking = utility.getNumberOfEvents() + basis.size();
+		int numVariables = initialMarking + 1;
 
-		// This produces waaaay too many inequalities. How about adding the initial marking as another variable
-		// so that we only have n+n instead of n*n inequalties? (n for the initial marking, n for limiting the
-		// marking in each state).
-		// Hmmm, how exactly do the inequalities for the initial marking look like? We can only force a lower
-		// bound, not the exact one... But that's enough for what this needs!
+		// Any initial marking r_S(s0) is possible, as long as it satisfies for each reachable state s:
+		//    0 <= r_S(s) = r_S(s0) + r_E(Psi_s)
+		// We also want to require k >= r_S(s)
+		// (For the synthesized Petri Net we will use the minimal initial marking possible. However, we cannot
+		// express this as a linear inequality and thus the solver may as well calculate something higher.)
 		for (State state : utility.getTransitionSystem().getNodes()) {
 			if (!utility.getSpanningTree().isReachable(state))
 				continue;
 
-			// A normal region assigns the minimal possible number of tokens to the initial marking. So
-			// let's assume an initial marking of zero and calculate the number of token that each state
-			// gets. This number should be limited suitably.
+			int[] inequality = new int[numVariables];
 			List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 
-			for (State otherState : utility.getTransitionSystem().getNodes()) {
-				if (state.equals(otherState) || !utility.getSpanningTree().isReachable(otherState))
-					continue;
+			inequality[initialMarking] = 1;
 
-				// Evaluate the Parikh vector in the region described by the system, just as
-				// Region.evaluateParikhVector() would do.
-				List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
-				int[] inequality = new int[utility.getNumberOfEvents()];
-				for (int event = 0; event < stateParikhVector.size(); event++)
-					inequality[event] = stateParikhVector.get(event) - otherStateParikhVector.get(event);
+			// Evaluate the Parikh vector in the region described by the system, just as
+			// Region.evaluateParikhVector() would do.
+			for (int event = 0; event < stateParikhVector.size(); event++)
+				inequality[event] = stateParikhVector.get(event);
 
-				system.addInequality(k, ">=", inequality);
-			}
+			system.addInequality(0, "<=", inequality);
+			system.addInequality(k, ">=", inequality);
 		}
 	}
 
@@ -338,6 +328,17 @@ public class SeparationUtility {
 	private final State state;
 	private final String event;
 	private final int eventIndex;
+
+	/**
+	 * This inequality system describes the regions that we are looking for. The first unknowns describe the weights
+	 * for the calculated region. The next unknowns are the coefficients for the entries of the basis that describe
+	 * how this region is produced from the basis.
+	 *
+	 * In summary:
+	 * [0, numEvents): Weights for the calculated region
+	 * [numEvents, numEvents+basisSize): Coefficients for the entries of the basis
+	 * [numEvents+basisSize): Initial marking (used by requireKBoundedness)
+	 */
 	private final InequalitySystem system;
 	private final Region resultingRegion;
 
