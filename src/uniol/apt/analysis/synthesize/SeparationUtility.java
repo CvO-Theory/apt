@@ -33,6 +33,18 @@ import uniol.apt.util.equations.InequalitySystem;
  * @author Uli Schlachter
  */
 public class SeparationUtility {
+	private static void debug(String message) {
+		// System.err.println("SeparationUtility: " + message);
+	}
+
+	private static void debug() {
+		debug("");
+	}
+
+	private static void debug(Object obj) {
+		debug(obj.toString());
+	}
+
 	/**
 	 * Test if there exists an outgoing arc labelled with the given event.
 	 * Get the state which is reached by firing the given event in the given state.
@@ -78,9 +90,14 @@ public class SeparationUtility {
 
 	/**
 	 * Try to find an existing region which separates some state and some event.
+	 * @param utility The region utility to use.
+	 * @param regions The regions to choose from.
+	 * @param state The state of the separation problem
+	 * @param event The event of the separation problem
 	 * @return A separating region or null.
 	 */
-	private Region findSeparatingRegion(Collection<Region> regions) {
+	static public Region findSeparatingRegion(RegionUtility utility, Collection<Region> regions,
+			State state, String event) {
 		// Unreachable states cannot be separated
 		if (!utility.getSpanningTree().isReachable(state))
 			return null;
@@ -112,12 +129,32 @@ public class SeparationUtility {
 		//        0 = sum lambda_i * r^i - region
 		for (int thisEvent = 0; thisEvent < events; thisEvent++) {
 			int[] inequality = new int[events + basisSize];
-			inequality[thisEvent] = -1;
+			inequality[systemWeightsStart + thisEvent] = -1;
 			int basisEntry = 0;
 			for (Region region : basis)
-				inequality[events + basisEntry++] = region.getWeight(thisEvent);
+				inequality[systemCoefficientsStart + basisEntry++] = region.getWeight(thisEvent);
 
 			system.addInequality(0, "=", inequality);
+		}
+
+		final int inequalitySize = systemBackwardWeightsStart + utility.getNumberOfEvents();
+		for (int thisEvent = 0; thisEvent < events; thisEvent++) {
+			// weight = forwardWeight - backwardWeight (=> 0 = -w + f - b)
+			int[] inequality = new int[inequalitySize];
+			inequality[systemWeightsStart + thisEvent] = -1;
+			inequality[systemForwardWeightsStart + thisEvent] = 1;
+			inequality[systemBackwardWeightsStart + thisEvent] = -1;
+			system.addInequality(0, "=", inequality);
+
+			// Forward weight must be non-negative
+			inequality = new int[inequalitySize];
+			inequality[systemForwardWeightsStart + thisEvent] = 1;
+			system.addInequality(0, "<=", inequality);
+
+			// Backward weight must be non-negative
+			inequality = new int[inequalitySize];
+			inequality[systemBackwardWeightsStart + thisEvent] = 1;
+			system.addInequality(0, "<=", inequality);
 		}
 
 		return system;
@@ -128,8 +165,7 @@ public class SeparationUtility {
 	 * @param k The limit for the bound.
 	 */
 	private void requireKBoundedness(int k) {
-		int initialMarking = utility.getNumberOfEvents() + basis.size();
-		int numVariables = initialMarking + 1;
+		int numVariables = systemInitialMarking + 1;
 
 		// Any initial marking r_S(s0) is possible, as long as it satisfies for each reachable state s:
 		//    0 <= r_S(s) = r_S(s0) + r_E(Psi_s)
@@ -143,12 +179,12 @@ public class SeparationUtility {
 			int[] inequality = new int[numVariables];
 			List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 
-			inequality[initialMarking] = 1;
+			inequality[systemInitialMarking] = 1;
 
 			// Evaluate the Parikh vector in the region described by the system, just as
 			// Region.evaluateParikhVector() would do.
 			for (int event = 0; event < stateParikhVector.size(); event++)
-				inequality[event] = stateParikhVector.get(event);
+				inequality[systemWeightsStart + event] = stateParikhVector.get(event);
 
 			system.addInequality(0, "<=", inequality);
 			system.addInequality(k, ">=", inequality);
@@ -162,7 +198,7 @@ public class SeparationUtility {
 		for (int event = 0; event < utility.getNumberOfEvents(); event++) {
 			int[] inequality = new int[utility.getNumberOfEvents()];
 
-			inequality[event] = 1;
+			inequality[systemWeightsStart + event] = 1;
 
 			system.addInequality(1, ">=", inequality);
 			system.addInequality(-1, "<=", inequality);
@@ -184,8 +220,8 @@ public class SeparationUtility {
 
 				int[] inequality = new int[utility.getNumberOfEvents()];
 
-				inequality[a] = 1;
-				inequality[b] = 1;
+				inequality[systemWeightsStart + a] = 1;
+				inequality[systemWeightsStart + b] = 1;
 
 				system.addInequality(1, ">=", inequality);
 				system.addInequality(-1, "<=", inequality);
@@ -231,9 +267,15 @@ public class SeparationUtility {
 		}
 
 		// Calculate the resulting linear combination
+		debug("Solving the following system:");
+		debug(system);
 		List<Integer> solution = system.findSolution();
-		if (solution.isEmpty())
+		if (solution.isEmpty()) {
+			debug("No solution found");
 			return null;
+		}
+
+		debug("solution: " + solution);
 
 		return Region.createPureRegionFromVector(utility, solution.subList(0, events));
 	}
@@ -279,9 +321,15 @@ public class SeparationUtility {
 		}
 
 		// Calculate the resulting linear combination
+		debug("Solving the following system:");
+		debug(system);
 		List<Integer> solution = system.findSolution();
-		if (solution.isEmpty())
+		if (solution.isEmpty()) {
+			debug("No solution found");
 			return null;
+		}
+
+		debug("solution: " + solution);
 
 		Region result = Region.createPureRegionFromVector(utility, solution.subList(0, events));
 
@@ -332,14 +380,16 @@ public class SeparationUtility {
 	/**
 	 * This inequality system describes the regions that we are looking for. The first unknowns describe the weights
 	 * for the calculated region. The next unknowns are the coefficients for the entries of the basis that describe
-	 * how this region is produced from the basis.
-	 *
-	 * In summary:
-	 * [0, numEvents): Weights for the calculated region
-	 * [numEvents, numEvents+basisSize): Coefficients for the entries of the basis
-	 * [numEvents+basisSize): Initial marking (used by requireKBoundedness)
+	 * how this region is produced from the basis. Then come separate variables for the forward weights and
+	 * afterwards variables for the backward weights. Finally there is a single variable for the initial marking.
 	 */
 	private final InequalitySystem system;
+	private final int systemWeightsStart;
+	private final int systemCoefficientsStart;
+	private final int systemForwardWeightsStart;
+	private final int systemBackwardWeightsStart;
+	private final int systemInitialMarking;
+
 	private final Region resultingRegion;
 
 	/**
@@ -359,13 +409,26 @@ public class SeparationUtility {
 		this.state = state;
 		this.event = event;
 		this.eventIndex = utility.getEventIndex(event);
+		this.systemWeightsStart = 0;
+		this.systemCoefficientsStart = systemWeightsStart + utility.getNumberOfEvents();
+		this.systemForwardWeightsStart = systemCoefficientsStart + basis.size();
+		this.systemBackwardWeightsStart = systemForwardWeightsStart + utility.getNumberOfEvents();
+		this.systemInitialMarking = systemBackwardWeightsStart + utility.getNumberOfEvents();
+
+		debug("Variables:");
+		debug("Weights start at " + systemWeightsStart);
+		debug("Coefficients from basis start at " + systemCoefficientsStart);
+		debug("Forward weights start at " + systemForwardWeightsStart);
+		debug("Backward weights start at " + systemBackwardWeightsStart);
+		debug("Initial marking is variable " + systemInitialMarking);
+
 		this.system = makeInequalitySystem();
 
 		assert this.eventIndex >= 0;
 
 		// TODO: Nothing guarantees that all regions in the basis satisfy <properties> (same for the direct call
 		// to findSeparatingRegion() in SynthesizePN)
-		Region r = findSeparatingRegion(regions);
+		Region r = findSeparatingRegion(utility, regions, state, event);
 		if (r == null) {
 			if (properties.isKBounded())
 				requireKBoundedness(properties.getKForKBoundedness());

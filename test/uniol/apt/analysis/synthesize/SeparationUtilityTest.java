@@ -102,15 +102,13 @@ public class SeparationUtilityTest {
 		@Test
 		public void testEventSeparation1() {
 			State w = utility.getTransitionSystem().getNode("w");
-			SeparationUtility sep = new SeparationUtility(utility, Collections.<Region>emptyList(), regionBasis, w, "c");
-			assertThat(sep.getRegion(), equalTo(region3));
+			assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, w, "c"), equalTo(region3));
 		}
 
 		@Test
 		public void testEventSeparation2() {
 			State s = utility.getTransitionSystem().getNode("s");
-			SeparationUtility sep = new SeparationUtility(utility, Collections.<Region>emptyList(), regionBasis, s, "c");
-			assertThat(sep.getRegion(), is(nullValue()));
+			assertThat(SeparationUtility.findSeparatingRegion(utility, regionBasis, s, "c"), is(nullValue()));
 		}
 
 		@Test
