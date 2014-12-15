@@ -43,7 +43,6 @@ import org.ojalgo.optimisation.Variable;
  * @author Uli Schlachter
  */
 public class InequalitySystem {
-	private final int numVariables;
 	private final List<Inequality> inequalities = new ArrayList<>();
 	private Implementation implementation;
 
@@ -168,6 +167,14 @@ public class InequalitySystem {
 			return coefficients;
 		}
 
+		/**
+		 * Get the number of coefficients in the inequality.
+		 * @return The number of coefficients.
+		 */
+		public int getNumberOfCoefficients() {
+			return coefficients.size();
+		}
+
 		@Override
 		public String toString() {
 			StringWriter buffer = new StringWriter();
@@ -195,22 +202,17 @@ public class InequalitySystem {
 
 	/**
 	 * Construct a new inequality system.
-	 * @param numVariables The number of variables in the inequality system.
 	 * @param implementation The implementation to use for solving systems.
 	 */
-	public InequalitySystem(int numVariables, Implementation implementation) {
-		assert numVariables >= 0;
-
-		this.numVariables = numVariables;
+	public InequalitySystem(Implementation implementation) {
 		this.implementation = implementation;
 	}
 
 	/**
 	 * Construct a new inequality system.
-	 * @param numVariables The number of variables in the inequality system.
 	 */
-	public InequalitySystem(int numVariables) {
-		this(numVariables, Implementation.OJALGO);
+	public InequalitySystem() {
+		this(Implementation.OJALGO);
 	}
 
 	/**
@@ -218,6 +220,10 @@ public class InequalitySystem {
 	 * @return The number of variables in the inequality system.
 	 */
 	public int getNumberOfVariables() {
+		int numVariables = 0;
+		for (Inequality inequality : inequalities)
+			if (inequality.getNumberOfCoefficients() > numVariables)
+				numVariables = inequality.getNumberOfCoefficients();
 		return numVariables;
 	}
 
@@ -243,7 +249,6 @@ public class InequalitySystem {
 	 * @param inequality The inequality to add.
 	 */
 	public void addInequality(Inequality inequality) {
-		assert inequality.getCoefficients().size() == numVariables;
 		inequalities.add(inequality);
 	}
 
@@ -322,7 +327,9 @@ public class InequalitySystem {
 	}
 
 	private List<Integer> findSolutionChoco() {
+		final int numVariables = getNumberOfVariables();
 		Solver solver = new Solver();
+
 		IntVar[] vars = VariableFactory.integerArray("x", numVariables,
 				VariableFactory.MIN_INT_BOUND, VariableFactory.MAX_INT_BOUND, solver);
 		for (Inequality inequality : inequalities) {
@@ -330,7 +337,7 @@ public class InequalitySystem {
 			String comparator = inequality.getComparator().getOpposite().toString();
 
 			List<BigInteger> coefficients = inequality.getCoefficients();
-			int[] array = new int[coefficients.size()];
+			int[] array = new int[numVariables];
 			for (int i = 0; i < coefficients.size(); i++)
 				array[i] = coefficients.get(i).intValue();
 
@@ -348,7 +355,9 @@ public class InequalitySystem {
 	}
 
 	private List<Integer> findSolutionOJAlgo() {
+		final int numVariables = getNumberOfVariables();
 		ExpressionsBasedModel model = new ExpressionsBasedModel();
+
 		Variable[] vars = new Variable[numVariables];
 		for (int i = 0; i < numVariables; i++) {
 			vars[i] = Variable.make("x" + i).integer(true);
@@ -385,7 +394,7 @@ public class InequalitySystem {
 			}
 
 			List<BigInteger> coefficients = inequality.getCoefficients();
-			for (int i = 0; i < numVariables; i++)
+			for (int i = 0; i < coefficients.size(); i++)
 				c.setLinearFactor(vars[i], coefficients.get(i));
 		}
 

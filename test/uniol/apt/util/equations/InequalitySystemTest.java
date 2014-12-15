@@ -30,11 +30,11 @@ import static org.hamcrest.Matchers.*;
 @Test
 public class InequalitySystemTest {
 	private abstract class TestSolver {
-		abstract InequalitySystem makeSystem(int unknowns);
+		abstract InequalitySystem makeSystem();
 
 		@Test
 		public void testSimpleSystem0() {
-			InequalitySystem system = makeSystem(3);
+			InequalitySystem system = makeSystem();
 			system.addInequality(0, ">=", 1, 0, 1);
 			system.addInequality(0, ">=", -1, 0, -1);
 			system.addInequality(0, ">=", 0, 1, 1);
@@ -49,7 +49,7 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testSimpleSystem1() {
-			InequalitySystem system = makeSystem(3);
+			InequalitySystem system = makeSystem();
 			system.addInequality(0, ">=", 2, 1, 3);
 			system.addInequality(0, ">=", 1, 1, 2);
 			system.addInequality(0, ">=", 1, 2, 3);
@@ -64,7 +64,7 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testSimpleSystem2() {
-			InequalitySystem system = makeSystem(3);
+			InequalitySystem system = makeSystem();
 			system.addInequality(1, ">=", 2, 1, 3);
 			system.addInequality(2, ">=", 1, 1, 2);
 			system.addInequality(3, ">=", 1, 2, 3);
@@ -81,8 +81,8 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testSimpleSystem3() {
-			InequalitySystem system = makeSystem(3);
-			system.addInequality(0, ">=", 1, 2, 0);
+			InequalitySystem system = makeSystem();
+			system.addInequality(0, ">=", 1, 2);
 			system.addInequality(0, ">=", 0, 1, 1);
 			system.addInequality(0, ">=", 1, 0, 1);
 
@@ -96,7 +96,7 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testSimpleSystem4() {
-			InequalitySystem system = makeSystem(3);
+			InequalitySystem system = makeSystem();
 			system.addInequality(10, ">=", 4, 2, 6);
 			system.addInequality(10, ">=", 2, 2, 4);
 			system.addInequality(10, ">=", 2, 4, 6);
@@ -111,7 +111,7 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testSimpleSystem5() {
-			InequalitySystem system = makeSystem(3);
+			InequalitySystem system = makeSystem();
 			system.addInequality(0, ">=", 4, 2, 5);
 			system.addInequality(0, ">=", 2, 2, 4);
 
@@ -124,28 +124,28 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testSimpleSystem6() {
-			InequalitySystem system = makeSystem(3);
+			InequalitySystem system = makeSystem();
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
+			assertThat(solution, empty());
 		}
 
 		@Test
 		public void testSimpleSystem7() {
-			InequalitySystem system = makeSystem(3);
-			system.addInequality(0, ">=", 0, 42, 0);
+			InequalitySystem system = makeSystem();
+			system.addInequality(0, ">=", 0, 42);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
+			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(2));
 			int y = solution.get(1);
 			assertThat(y, lessThanOrEqualTo(0));
 		}
 
 		@Test
 		public void testSimpleSystem8() {
-			InequalitySystem system = makeSystem(3);
-			system.addInequality(2, ">", 1, 1, 0);
-			system.addInequality(1, "<=", 1, 1, 0);
+			InequalitySystem system = makeSystem();
+			system.addInequality(2, ">", 1, 1);
+			system.addInequality(1, "<=", 1, 1);
 			system.addInequality(1, "<", 1, 0, 1);
 			system.addInequality(1, "=", 0, 0, 1);
 
@@ -159,7 +159,7 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testEmptySystem1() {
-			InequalitySystem system = makeSystem(0);
+			InequalitySystem system = makeSystem();
 			system.addInequality(0, ">=");
 
 			List<Integer> solution = system.findSolution();
@@ -168,7 +168,7 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testEmptySystem2() {
-			InequalitySystem system = makeSystem(0);
+			InequalitySystem system = makeSystem();
 
 			List<Integer> solution = system.findSolution();
 			assertThat(solution, empty());
@@ -176,7 +176,7 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testToStringEmptySystem1() {
-			InequalitySystem system = makeSystem(0);
+			InequalitySystem system = makeSystem();
 			system.addInequality(0, "<");
 
 			assertThat(system, hasToString("[\n0 < 0\n]"));
@@ -184,14 +184,14 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testToStringEmptySystem2() {
-			InequalitySystem system = makeSystem(0);
+			InequalitySystem system = makeSystem();
 
 			assertThat(system, hasToString("[\n]"));
 		}
 
 		@Test
 		public void testToStringSimpleSystem() {
-			InequalitySystem system = makeSystem(3);
+			InequalitySystem system = makeSystem();
 			system.addInequality(2, ">=", 1, 0, 1);
 			system.addInequality(3, ">=", 0, 1, 1);
 
@@ -199,8 +199,17 @@ public class InequalitySystemTest {
 		}
 
 		@Test
+		public void testToStringSimpleSystemDifferentVariableNumber() {
+			InequalitySystem system = makeSystem();
+			system.addInequality(2, ">=", 1);
+			system.addInequality(3, ">=", 0, 1);
+
+			assertThat(system, hasToString("[\n2 >= 1*x[0]\n3 >= 1*x[1]\n]"));
+		}
+
+		@Test
 		public void testToStringTrivialSystem() {
-			InequalitySystem system = makeSystem(1);
+			InequalitySystem system = makeSystem();
 			system.addInequality(0, "<=", 0);
 
 			assertThat(system, hasToString("[\n0 <= 0\n]"));
@@ -208,7 +217,7 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testLotsOfTrivialInequalities() {
-			InequalitySystem system = makeSystem(1);
+			InequalitySystem system = makeSystem();
 
 			// With choco-solver and variable bounds of VariableFactory.{MIN,MAX}_INT_BOUND, this test (likely) runs
 			// into an integer overflow in choco. Choosing smaller bounds for the variables makes that problem go
@@ -225,21 +234,54 @@ public class InequalitySystemTest {
 			int x = solution.get(0);
 			assertThat(x, lessThanOrEqualTo(-1));
 		}
+
+		@Test
+		public void testNumberOfVariables0() {
+			InequalitySystem system = makeSystem();
+
+			assertThat(system.getNumberOfVariables(), equalTo(0));
+		}
+
+		@Test
+		public void testNumberOfVariables1() {
+			InequalitySystem system = makeSystem();
+			system.addInequality(0, "<=", 0);
+
+			assertThat(system.getNumberOfVariables(), equalTo(1));
+		}
+
+		@Test
+		public void testNumberOfVariables3() {
+			InequalitySystem system = makeSystem();
+			system.addInequality(0, "<=", 0);
+			system.addInequality(2, "<=", 0, 1, 2);
+			system.addInequality(1, "<=", 0, 2);
+
+			assertThat(system.getNumberOfVariables(), equalTo(3));
+		}
+
+		@Test
+		public void testNumberOfVariablesTrailing0() {
+			InequalitySystem system = makeSystem();
+			system.addInequality(0, "<=", 0, 0, 0);
+
+			assertThat(system.getNumberOfVariables(), equalTo(3));
+		}
 	}
 
 	@Test
 	public class TestSolverChoco extends TestSolver {
 		@Override
-		InequalitySystem makeSystem(int unknowns) {
-			return new InequalitySystem(unknowns, InequalitySystem.Implementation.CHOCO);
+		InequalitySystem makeSystem() {
+			return new InequalitySystem(InequalitySystem.Implementation.CHOCO);
 		}
 	}
 
 	@Test
 	public class TestSolverOJAlgo extends TestSolver {
 		@Override
-		InequalitySystem makeSystem(int unknowns) {
-			return new InequalitySystem(unknowns, InequalitySystem.Implementation.OJALGO);
+		InequalitySystem makeSystem() {
+			return new InequalitySystem(InequalitySystem.Implementation.OJALGO);
 		}
 	}
 }

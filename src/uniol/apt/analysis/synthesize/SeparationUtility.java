@@ -102,7 +102,7 @@ public class SeparationUtility {
 		// basis.
 		final int events = utility.getEventList().size();
 		final int basisSize = basis.size();
-		InequalitySystem system = new InequalitySystem(events + basisSize);
+		InequalitySystem system = new InequalitySystem();
 
 		// The resulting region is a linear combination of the basis:
 		//   region = sum lambda_i * r^i
