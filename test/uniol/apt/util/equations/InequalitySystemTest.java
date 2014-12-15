@@ -267,6 +267,17 @@ public class InequalitySystemTest {
 
 			assertThat(system.getNumberOfVariables(), equalTo(3));
 		}
+
+		@Test
+		public void testCopyConstructor() {
+			InequalitySystem system = makeSystem();
+			system.addInequality(2, ">=", 1);
+			system.addInequality(3, ">=", 0, 1);
+
+			system = new InequalitySystem(system);
+
+			assertThat(system, hasToString("[\n2 >= 1*x[0]\n3 >= 1*x[1]\n]"));
+		}
 	}
 
 	@Test

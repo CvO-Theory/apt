@@ -78,6 +78,8 @@ public class InequalitySystem {
 		CHOCO, OJALGO
 	}
 
+	final static public Implementation DEFAULT_IMPLEMENTATION = Implementation.OJALGO;
+
 	/**
 	 * An enumeration of comparators on numbers.
 	 */
@@ -201,6 +203,23 @@ public class InequalitySystem {
 	}
 
 	/**
+	 * Construct a new inequality system as a copy of another system.
+	 * @param system The inequality system to copy from.
+	 * @param implementation The implementation to use for solving systems.
+	 */
+	public InequalitySystem(InequalitySystem system, Implementation implementation) {
+		inequalities.addAll(system.inequalities);
+		this.implementation = implementation;
+	}
+
+	/**
+	 * Construct a new inequality system.
+	 */
+	public InequalitySystem(InequalitySystem system) {
+		this(system, DEFAULT_IMPLEMENTATION);
+	}
+
+	/**
 	 * Construct a new inequality system.
 	 * @param implementation The implementation to use for solving systems.
 	 */
@@ -212,7 +231,7 @@ public class InequalitySystem {
 	 * Construct a new inequality system.
 	 */
 	public InequalitySystem() {
-		this(Implementation.OJALGO);
+		this(DEFAULT_IMPLEMENTATION);
 	}
 
 	/**
