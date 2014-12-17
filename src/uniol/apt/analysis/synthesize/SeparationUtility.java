@@ -45,6 +45,69 @@ public class SeparationUtility {
 		debug(obj.toString());
 	}
 
+	private final RegionUtility utility;
+	private final Collection<Region> basis;
+	private final PNProperties properties;
+
+	/**
+	 * This inequality system describes the regions that we are looking for. The first unknowns describe the weights
+	 * for the calculated region. The next unknowns are the coefficients for the entries of the basis that describe
+	 * how this region is produced from the basis. Then come separate variables for the forward weights and
+	 * afterwards variables for the backward weights. Finally there is a single variable for the initial marking.
+	 */
+	private final InequalitySystem system;
+	private final int systemWeightsStart;
+	private final int systemCoefficientsStart;
+	private final int systemForwardWeightsStart;
+	private final int systemBackwardWeightsStart;
+	private final int systemInitialMarking;
+
+	/**
+	 * Construct a new SeparationUtility for the given event/state separation instance.
+	 * @param utility The region utility to use.
+	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
+	 * stable iteration order!
+	 * @param properties Properties that the calculated region should satisfy.
+	 */
+	public SeparationUtility(RegionUtility utility, Collection<Region> basis, PNProperties properties) {
+		this.utility = utility;
+		this.basis = basis;
+		this.properties = new PNProperties(properties);
+		this.systemWeightsStart = 0;
+		this.systemCoefficientsStart = systemWeightsStart + utility.getNumberOfEvents();
+		this.systemForwardWeightsStart = systemCoefficientsStart + basis.size();
+		this.systemBackwardWeightsStart = systemForwardWeightsStart + utility.getNumberOfEvents();
+		this.systemInitialMarking = systemBackwardWeightsStart + utility.getNumberOfEvents();
+
+		debug("Variables:");
+		debug("Weights start at " + systemWeightsStart);
+		debug("Coefficients from basis start at " + systemCoefficientsStart);
+		debug("Forward weights start at " + systemForwardWeightsStart);
+		debug("Backward weights start at " + systemBackwardWeightsStart);
+		debug("Initial marking is variable " + systemInitialMarking);
+
+		this.system = makeInequalitySystem();
+
+		if (properties.isKBounded())
+			requireKBoundedness(properties.getKForKBoundedness());
+		if (properties.isPlain())
+			requirePlainness();
+		if (properties.isTNet())
+			requireTNet();
+	}
+
+	/**
+	 * Construct a new SeparationUtility for the given event/state separation instance.
+	 * @param utility The region utility to use.
+	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
+	 * stable iteration order!
+	 * @param state The state of the separation problem
+	 * @param event The event of the separation problem
+	 */
+	public SeparationUtility(RegionUtility utility, Collection<Region> basis) {
+		this(utility, basis, new PNProperties());
+	}
+
 	/**
 	 * Test if there exists an outgoing arc labelled with the given event.
 	 * Get the state which is reached by firing the given event in the given state.
@@ -307,69 +370,6 @@ public class SeparationUtility {
 		if (pure)
 			return r.makePure();
 		return r;
-	}
-
-	private final RegionUtility utility;
-	private final Collection<Region> basis;
-	private final PNProperties properties;
-
-	/**
-	 * This inequality system describes the regions that we are looking for. The first unknowns describe the weights
-	 * for the calculated region. The next unknowns are the coefficients for the entries of the basis that describe
-	 * how this region is produced from the basis. Then come separate variables for the forward weights and
-	 * afterwards variables for the backward weights. Finally there is a single variable for the initial marking.
-	 */
-	private final InequalitySystem system;
-	private final int systemWeightsStart;
-	private final int systemCoefficientsStart;
-	private final int systemForwardWeightsStart;
-	private final int systemBackwardWeightsStart;
-	private final int systemInitialMarking;
-
-	/**
-	 * Construct a new SeparationUtility for the given event/state separation instance.
-	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
-	 * stable iteration order!
-	 * @param properties Properties that the calculated region should satisfy.
-	 */
-	public SeparationUtility(RegionUtility utility, Collection<Region> basis, PNProperties properties) {
-		this.utility = utility;
-		this.basis = basis;
-		this.properties = new PNProperties(properties);
-		this.systemWeightsStart = 0;
-		this.systemCoefficientsStart = systemWeightsStart + utility.getNumberOfEvents();
-		this.systemForwardWeightsStart = systemCoefficientsStart + basis.size();
-		this.systemBackwardWeightsStart = systemForwardWeightsStart + utility.getNumberOfEvents();
-		this.systemInitialMarking = systemBackwardWeightsStart + utility.getNumberOfEvents();
-
-		debug("Variables:");
-		debug("Weights start at " + systemWeightsStart);
-		debug("Coefficients from basis start at " + systemCoefficientsStart);
-		debug("Forward weights start at " + systemForwardWeightsStart);
-		debug("Backward weights start at " + systemBackwardWeightsStart);
-		debug("Initial marking is variable " + systemInitialMarking);
-
-		this.system = makeInequalitySystem();
-
-		if (properties.isKBounded())
-			requireKBoundedness(properties.getKForKBoundedness());
-		if (properties.isPlain())
-			requirePlainness();
-		if (properties.isTNet())
-			requireTNet();
-	}
-
-	/**
-	 * Construct a new SeparationUtility for the given event/state separation instance.
-	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
-	 * stable iteration order!
-	 * @param state The state of the separation problem
-	 * @param event The event of the separation problem
-	 */
-	public SeparationUtility(RegionUtility utility, Collection<Region> basis) {
-		this(utility, basis, new PNProperties());
 	}
 
 	/**
