@@ -132,6 +132,21 @@ public class InequalitySystem {
 		private final BigInteger leftHandSide;
 		private final Comparator comparator;
 		private final List<BigInteger> coefficients;
+		private final String comment;
+
+		/**
+		 * Construct a new linear inequality.
+		 * @param leftHandSide The left hand side of the inequality.
+		 * @param comparator The comparator used between both sides.
+		 * @param coefficients The coefficients of the unknowns on the right hand side.
+		 * @param comment A comment that describes the meaning of this inequality.
+		 */
+		public Inequality(BigInteger leftHandSide, Comparator comparator, List<BigInteger> coefficients, String comment) {
+			this.leftHandSide = leftHandSide;
+			this.comparator = comparator;
+			this.coefficients = Collections.unmodifiableList(coefficients);
+			this.comment = comment;
+		}
 
 		/**
 		 * Construct a new linear inequality.
@@ -140,9 +155,15 @@ public class InequalitySystem {
 		 * @param coefficients The coefficients of the unknowns on the right hand side.
 		 */
 		public Inequality(BigInteger leftHandSide, Comparator comparator, List<BigInteger> coefficients) {
-			this.leftHandSide = leftHandSide;
-			this.comparator = comparator;
-			this.coefficients = Collections.unmodifiableList(coefficients);
+			this(leftHandSide, comparator, coefficients, "");
+		}
+
+		/**
+		 * Get the comment for this inequality.
+		 * @return The comment.
+		 */
+		public String getComment() {
+			return comment;
 		}
 
 		/**
@@ -198,6 +219,11 @@ public class InequalitySystem {
 			}
 			if (first)
 				buffer.write("0");
+			if (!comment.isEmpty()) {
+				buffer.write("\t(");
+				buffer.write(comment);
+				buffer.write(")");
+			}
 			return buffer.toString();
 		}
 	}
@@ -277,9 +303,33 @@ public class InequalitySystem {
 	 * @param lhs The left hand side of the inequality.
 	 * @param comparator Comparator for the inequality,
 	 * @param coefficients List of coefficients for the inequality.
+	 * @param comment A comment describing the inequality.
+	 */
+	public void addInequality(int lhs, Comparator comparator, int[] coefficients, String comment) {
+		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients), comment));
+	}
+
+	/**
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality
+	 * system.
+	 * @param lhs The left hand side of the inequality.
+	 * @param comparator Comparator for the inequality,
+	 * @param coefficients List of coefficients for the inequality.
 	 */
 	public void addInequality(int lhs, Comparator comparator, int... coefficients) {
 		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients)));
+	}
+
+	/**
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality
+	 * system.
+	 * @param lhs The left hand side of the inequality.
+	 * @param comparator Comparator for the inequality,
+	 * @param coefficients List of coefficients for the inequality.
+	 * @param comment A comment describing the inequality.
+	 */
+	public void addInequality(int lhs, String comparator, int[] coefficients, String comment) {
+		addInequality(lhs, Comparator.fromString(comparator), coefficients, comment);
 	}
 
 	/**
@@ -299,9 +349,33 @@ public class InequalitySystem {
 	 * @param lhs The left hand side of the inequality.
 	 * @param comparator Comparator for the inequality,
 	 * @param coefficients List of coefficients for the inequality.
+	 * @param comment A comment describing the inequality.
+	 */
+	public void addInequality(int lhs, Comparator comparator, Collection<Integer> coefficients, String comment) {
+		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients), comment));
+	}
+
+	/**
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality
+	 * system.
+	 * @param lhs The left hand side of the inequality.
+	 * @param comparator Comparator for the inequality,
+	 * @param coefficients List of coefficients for the inequality.
 	 */
 	public void addInequality(int lhs, Comparator comparator, Collection<Integer> coefficients) {
 		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients)));
+	}
+
+	/**
+	 * Add an inequality of the form <pre>lhs [comparator] sum(x[i] * coefficients[i])</pre> to the inequality
+	 * system.
+	 * @param lhs The left hand side of the inequality.
+	 * @param comparator Comparator for the inequality,
+	 * @param coefficients List of coefficients for the inequality.
+	 * @param comment A comment describing the inequality.
+	 */
+	public void addInequality(int lhs, String comparator, Collection<Integer> coefficients, String comment) {
+		addInequality(lhs, Comparator.fromString(comparator), coefficients, comment);
 	}
 
 	/**

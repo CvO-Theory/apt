@@ -20,6 +20,7 @@
 package uniol.apt.util.equations;
 
 import java.util.List;
+import java.util.Arrays;
 
 import org.testng.annotations.Test;
 import org.hamcrest.collection.IsIterableWithSize;
@@ -213,6 +214,16 @@ public class InequalitySystemTest {
 			system.addInequality(0, "<=", 0);
 
 			assertThat(system, hasToString("[\n0 <= 0\n]"));
+		}
+
+		@Test
+		public void testToStringWithComments() {
+			InequalitySystem system = makeSystem();
+			system.addInequality(0, "<=", Arrays.asList(0), "Just ensuring the trivial");
+			system.addInequality(0, "<=", Arrays.asList(1), "and something useful");
+			system.addInequality(0, ">=", 1);
+
+			assertThat(system, hasToString("[\n0 <= 0\t(Just ensuring the trivial)\n0 <= 1*x[0]\t(and something useful)\n0 >= 1*x[0]\n]"));
 		}
 
 		@Test
