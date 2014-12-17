@@ -134,7 +134,7 @@ public class SeparationUtility {
 			for (Region region : basis)
 				inequality[systemCoefficientsStart + basisEntry++] = region.getWeight(thisEvent);
 
-			system.addInequality(0, "=", inequality);
+			system.addInequality(0, "=", inequality, "Resulting region is a linear combination of basis for event " + thisEvent);
 		}
 
 		// The weight is a combination of the forward and backward weight
@@ -145,17 +145,17 @@ public class SeparationUtility {
 			inequality[systemWeightsStart + thisEvent] = -1;
 			inequality[systemForwardWeightsStart + thisEvent] = 1;
 			inequality[systemBackwardWeightsStart + thisEvent] = -1;
-			system.addInequality(0, "=", inequality);
+			system.addInequality(0, "=", inequality, "weight = forward - backward for event " + thisEvent);
 
 			// Forward weight must be non-negative
 			inequality = new int[inequalitySize];
 			inequality[systemForwardWeightsStart + thisEvent] = 1;
-			system.addInequality(0, "<=", inequality);
+			system.addInequality(0, "<=", inequality, "Forward weight must be positive");
 
 			// Backward weight must be non-negative
 			inequality = new int[inequalitySize];
 			inequality[systemBackwardWeightsStart + thisEvent] = 1;
-			system.addInequality(0, "<=", inequality);
+			system.addInequality(0, "<=", inequality, "Backward weight must be positive");
 		}
 
 		// Any enabled event really must be enabled in the calculated region
@@ -177,7 +177,7 @@ public class SeparationUtility {
 
 			inequality[systemBackwardWeightsStart + utility.getEventIndex(arc.getLabel())] = -1;
 
-			system.addInequality(0, "<=", inequality);
+			system.addInequality(0, "<=", inequality, "Event " + arc.getLabel() + " is enabled in state " + state);
 		}
 
 		return system;
@@ -205,7 +205,7 @@ public class SeparationUtility {
 			for (int event = 0; event < stateParikhVector.size(); event++)
 				inequality[systemWeightsStart + event] = stateParikhVector.get(event);
 
-			system.addInequality(k, ">=", inequality);
+			system.addInequality(k, ">=", inequality, "State " + state + " must obey " + k + "-boundedness");
 		}
 	}
 
@@ -218,8 +218,8 @@ public class SeparationUtility {
 
 			inequality[systemWeightsStart + event] = 1;
 
-			system.addInequality(1, ">=", inequality);
-			system.addInequality(-1, "<=", inequality);
+			system.addInequality(1, ">=", inequality, "Plain");
+			system.addInequality(-1, "<=", inequality, "Plain");
 		}
 	}
 
@@ -241,8 +241,8 @@ public class SeparationUtility {
 				inequality[systemWeightsStart + a] = 1;
 				inequality[systemWeightsStart + b] = 1;
 
-				system.addInequality(1, ">=", inequality);
-				system.addInequality(-1, "<=", inequality);
+				system.addInequality(1, ">=", inequality, "T-Net");
+				system.addInequality(-1, "<=", inequality, "T-Net");
 			}
 	}
 
@@ -284,11 +284,10 @@ public class SeparationUtility {
 			// the resulting region solves ESSP.
 			inequality[systemWeightsStart + eventIndex] += 1;
 		} else {
-			// XXX: This is broken, since it produces solutions were not all states are reachable
 			inequality[systemBackwardWeightsStart + eventIndex] = -1;
 		}
 
-		system.addInequality(-1, ">=", inequality);
+		system.addInequality(-1, ">=", inequality, "Region should separate state " + state + " from event " + event);
 
 		// Calculate the resulting linear combination
 		debug("Solving the following system to separate " + state + " from " + event + ":");
