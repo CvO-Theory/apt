@@ -276,8 +276,7 @@ public class InequalitySystem {
 	 * system.
 	 * @param lhs The left hand side of the inequality.
 	 * @param comparator Comparator for the inequality,
-	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each
-	 * variable in the inequality system.
+	 * @param coefficients List of coefficients for the inequality.
 	 */
 	public void addInequality(int lhs, Comparator comparator, int... coefficients) {
 		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients)));
@@ -288,8 +287,7 @@ public class InequalitySystem {
 	 * system.
 	 * @param lhs The left hand side of the inequality.
 	 * @param comparator Comparator for the inequality,
-	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each
-	 * variable in the inequality system.
+	 * @param coefficients List of coefficients for the inequality.
 	 */
 	public void addInequality(int lhs, String comparator, int... coefficients) {
 		addInequality(lhs, Comparator.fromString(comparator), coefficients);
@@ -300,8 +298,7 @@ public class InequalitySystem {
 	 * system.
 	 * @param lhs The left hand side of the inequality.
 	 * @param comparator Comparator for the inequality,
-	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each
-	 * variable in the inequality system.
+	 * @param coefficients List of coefficients for the inequality.
 	 */
 	public void addInequality(int lhs, Comparator comparator, Collection<Integer> coefficients) {
 		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients)));
@@ -312,8 +309,7 @@ public class InequalitySystem {
 	 * system.
 	 * @param lhs The left hand side of the inequality.
 	 * @param comparator Comparator for the inequality,
-	 * @param coefficients List of coefficients for the inequality. This must have exactly one entry for each
-	 * variable in the inequality system.
+	 * @param coefficients List of coefficients for the inequality.
 	 */
 	public void addInequality(int lhs, String comparator, Collection<Integer> coefficients) {
 		addInequality(lhs, Comparator.fromString(comparator), coefficients);
