@@ -61,6 +61,7 @@ public class SeparationUtility {
 	private final int systemForwardWeightsStart;
 	private final int systemBackwardWeightsStart;
 	private final int systemInitialMarking;
+	private final int systemNumberOfVariables;
 
 	/**
 	 * Construct a new SeparationUtility for the given event/state separation instance.
@@ -78,6 +79,7 @@ public class SeparationUtility {
 		this.systemForwardWeightsStart = systemCoefficientsStart + basis.size();
 		this.systemBackwardWeightsStart = systemForwardWeightsStart + utility.getNumberOfEvents();
 		this.systemInitialMarking = systemBackwardWeightsStart + utility.getNumberOfEvents();
+		this.systemNumberOfVariables = systemInitialMarking + 1;
 
 		debug("Variables:");
 		debug("Weights start at " + systemWeightsStart);
@@ -175,9 +177,30 @@ public class SeparationUtility {
 	}
 
 	/**
+	 * Get an array of coefficients that describe the marking of the given state.
+	 * @param state The state whose marking should be calculated.
+	 * @return An array of coefficients or null if the state is not reachable.
+	 */
+	private int[] coefficientsForStateMarking(State state) {
+		if (!utility.getSpanningTree().isReachable(state))
+			return null;
+
+		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
+		int[] inequality = new int[systemNumberOfVariables];
+
+		// Evaluate the Parikh vector in the region described by the system, just as
+		// Region.evaluateParikhVector() would do.
+		for (int event = 0; event < stateParikhVector.size(); event++)
+			inequality[systemWeightsStart + event] = stateParikhVector.get(event);
+
+		inequality[systemInitialMarking] = 1;
+
+		return inequality;
+	}
+
+	/**
 	 * Create an inequality system for calculating a region.
-	 * @return An inequality system with numEvents + basisSize unknowns. The first unknowns describe the weights of
-	 * the calculated regions, the last ones are weights for linear combinations of the basis.
+	 * @return An inequality system prepared for calculating separating regions.
 	 */
 	private InequalitySystem makeInequalitySystem() {
 		// Generate an inequality system. The first eventList.size() variables are the weight of the calculated
@@ -222,23 +245,14 @@ public class SeparationUtility {
 		}
 
 		// Any enabled event really must be enabled in the calculated region
-		inequalitySize = systemInitialMarking + 1;
 		for (Arc arc : utility.getTransitionSystem().getEdges()) {
 			State state = arc.getSource();
 			if (!utility.getSpanningTree().isReachable(state))
 				continue;
 
-			int[] inequality = new int[inequalitySize];
-			List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
-
-			inequality[systemInitialMarking] = 1;
-
-			// Evaluate the Parikh vector in the region described by the system, just as
-			// Region.evaluateParikhVector() would do.
-			for (int event = 0; event < stateParikhVector.size(); event++)
-				inequality[systemWeightsStart + event] = stateParikhVector.get(event);
-
-			inequality[systemBackwardWeightsStart + utility.getEventIndex(arc.getLabel())] = -1;
+			// r_B(event) <= r_S(state) = r_S(s0) + r_E(Psi_state)
+			int[] inequality = coefficientsForStateMarking(state);
+			inequality[systemBackwardWeightsStart + utility.getEventIndex(arc.getLabel())] += -1;
 
 			system.addInequality(0, "<=", inequality, "Event " + arc.getLabel() + " is enabled in state " + state);
 		}
@@ -258,16 +272,8 @@ public class SeparationUtility {
 			if (!utility.getSpanningTree().isReachable(state))
 				continue;
 
-			int[] inequality = new int[inequalitySize];
-			List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
-
-			inequality[systemInitialMarking] = 1;
-
-			// Evaluate the Parikh vector in the region described by the system, just as
-			// Region.evaluateParikhVector() would do.
-			for (int event = 0; event < stateParikhVector.size(); event++)
-				inequality[systemWeightsStart + event] = stateParikhVector.get(event);
-
+			// k >= r_S(state)
+			int[] inequality = coefficientsForStateMarking(state);
 			system.addInequality(k, ">=", inequality, "State " + state + " must obey " + k + "-boundedness");
 		}
 	}
@@ -334,12 +340,8 @@ public class SeparationUtility {
 			return null;
 
 		// Each state must be reachable in the resulting region, but event 'event' should be disabled in state.
-		// We want -1 >= r_S(s) - r_B(event) = r_S(s_0) + r_E(Psi_s) - r_B(event)
-		int inequalitySize = systemInitialMarking + 1;
-		int[] inequality = new int[systemInitialMarking + 1];
-		inequality[systemInitialMarking] = 1;
-		for (int idx = 0; idx < utility.getNumberOfEvents(); idx++)
-			inequality[systemWeightsStart + idx] = stateParikhVector.get(idx);
+		// We want -1 >= r_S(s) - r_B(event)
+		int[] inequality = coefficientsForStateMarking(state);
 
 		if (pure) {
 			// In the pure case, in the above -r_B(event) is replaced with +r_E(event). Since all
@@ -347,7 +349,7 @@ public class SeparationUtility {
 			// the resulting region solves ESSP.
 			inequality[systemWeightsStart + eventIndex] += 1;
 		} else {
-			inequality[systemBackwardWeightsStart + eventIndex] = -1;
+			inequality[systemBackwardWeightsStart + eventIndex] += -1;
 		}
 
 		system.addInequality(-1, ">=", inequality, "Region should separate state " + state + " from event " + event);
