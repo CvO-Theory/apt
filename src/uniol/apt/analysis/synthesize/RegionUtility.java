@@ -63,7 +63,7 @@ public class RegionUtility {
 	/**
 	 * Get the index of the given event.
 	 * @param event The event whose index should be returned.
-	 * @return The event's index or null.
+	 * @return The event's index or -1.
 	 */
 	public int getEventIndex(String event) {
 		return eventList.indexOf(event);
