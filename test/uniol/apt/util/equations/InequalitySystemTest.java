@@ -176,57 +176,6 @@ public class InequalitySystemTest {
 		}
 
 		@Test
-		public void testToStringEmptySystem1() {
-			InequalitySystem system = makeSystem();
-			system.addInequality(0, "<");
-
-			assertThat(system, hasToString("[\n0 < 0\n]"));
-		}
-
-		@Test
-		public void testToStringEmptySystem2() {
-			InequalitySystem system = makeSystem();
-
-			assertThat(system, hasToString("[\n]"));
-		}
-
-		@Test
-		public void testToStringSimpleSystem() {
-			InequalitySystem system = makeSystem();
-			system.addInequality(2, ">=", 1, 0, 1);
-			system.addInequality(3, ">=", 0, 1, 1);
-
-			assertThat(system, hasToString("[\n2 >= 1*x[0] + 1*x[2]\n3 >= 1*x[1] + 1*x[2]\n]"));
-		}
-
-		@Test
-		public void testToStringSimpleSystemDifferentVariableNumber() {
-			InequalitySystem system = makeSystem();
-			system.addInequality(2, ">=", 1);
-			system.addInequality(3, ">=", 0, 1);
-
-			assertThat(system, hasToString("[\n2 >= 1*x[0]\n3 >= 1*x[1]\n]"));
-		}
-
-		@Test
-		public void testToStringTrivialSystem() {
-			InequalitySystem system = makeSystem();
-			system.addInequality(0, "<=", 0);
-
-			assertThat(system, hasToString("[\n0 <= 0\n]"));
-		}
-
-		@Test
-		public void testToStringWithComments() {
-			InequalitySystem system = makeSystem();
-			system.addInequality(0, "<=", Arrays.asList(0), "Just ensuring the trivial");
-			system.addInequality(0, "<=", Arrays.asList(1), "and something useful");
-			system.addInequality(0, ">=", 1);
-
-			assertThat(system, hasToString("[\n0 <= 0\t(Just ensuring the trivial)\n0 <= 1*x[0]\t(and something useful)\n0 >= 1*x[0]\n]"));
-		}
-
-		@Test
 		public void testLotsOfTrivialInequalities() {
 			InequalitySystem system = makeSystem();
 
@@ -245,50 +194,6 @@ public class InequalitySystemTest {
 			int x = solution.get(0);
 			assertThat(x, lessThanOrEqualTo(-1));
 		}
-
-		@Test
-		public void testNumberOfVariables0() {
-			InequalitySystem system = makeSystem();
-
-			assertThat(system.getNumberOfVariables(), equalTo(0));
-		}
-
-		@Test
-		public void testNumberOfVariables1() {
-			InequalitySystem system = makeSystem();
-			system.addInequality(0, "<=", 0);
-
-			assertThat(system.getNumberOfVariables(), equalTo(1));
-		}
-
-		@Test
-		public void testNumberOfVariables3() {
-			InequalitySystem system = makeSystem();
-			system.addInequality(0, "<=", 0);
-			system.addInequality(2, "<=", 0, 1, 2);
-			system.addInequality(1, "<=", 0, 2);
-
-			assertThat(system.getNumberOfVariables(), equalTo(3));
-		}
-
-		@Test
-		public void testNumberOfVariablesTrailing0() {
-			InequalitySystem system = makeSystem();
-			system.addInequality(0, "<=", 0, 0, 0);
-
-			assertThat(system.getNumberOfVariables(), equalTo(3));
-		}
-
-		@Test
-		public void testCopyConstructor() {
-			InequalitySystem system = makeSystem();
-			system.addInequality(2, ">=", 1);
-			system.addInequality(3, ">=", 0, 1);
-
-			system = new InequalitySystem(system);
-
-			assertThat(system, hasToString("[\n2 >= 1*x[0]\n3 >= 1*x[1]\n]"));
-		}
 	}
 
 	@Test
@@ -305,6 +210,101 @@ public class InequalitySystemTest {
 		InequalitySystem makeSystem() {
 			return new InequalitySystem(InequalitySystem.Implementation.OJALGO);
 		}
+	}
+
+	@Test
+	public void testToStringEmptySystem1() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(0, "<");
+
+		assertThat(system, hasToString("[\n0 < 0\n]"));
+	}
+
+	@Test
+	public void testToStringEmptySystem2() {
+		InequalitySystem system = new InequalitySystem();
+
+		assertThat(system, hasToString("[\n]"));
+	}
+
+	@Test
+	public void testToStringSimpleSystem() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(2, ">=", 1, 0, 1);
+		system.addInequality(3, ">=", 0, 1, 1);
+
+		assertThat(system, hasToString("[\n2 >= 1*x[0] + 1*x[2]\n3 >= 1*x[1] + 1*x[2]\n]"));
+	}
+
+	@Test
+	public void testToStringSimpleSystemDifferentVariableNumber() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(2, ">=", 1);
+		system.addInequality(3, ">=", 0, 1);
+
+		assertThat(system, hasToString("[\n2 >= 1*x[0]\n3 >= 1*x[1]\n]"));
+	}
+
+	@Test
+	public void testToStringTrivialSystem() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(0, "<=", 0);
+
+		assertThat(system, hasToString("[\n0 <= 0\n]"));
+	}
+
+	@Test
+	public void testToStringWithComments() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(0, "<=", Arrays.asList(0), "Just ensuring the trivial");
+		system.addInequality(0, "<=", Arrays.asList(1), "and something useful");
+		system.addInequality(0, ">=", 1);
+
+		assertThat(system, hasToString("[\n0 <= 0\t(Just ensuring the trivial)\n0 <= 1*x[0]\t(and something useful)\n0 >= 1*x[0]\n]"));
+	}
+
+	@Test
+	public void testNumberOfVariables0() {
+		InequalitySystem system = new InequalitySystem();
+
+		assertThat(system.getNumberOfVariables(), equalTo(0));
+	}
+
+	@Test
+	public void testNumberOfVariables1() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(0, "<=", 0);
+
+		assertThat(system.getNumberOfVariables(), equalTo(1));
+	}
+
+	@Test
+	public void testNumberOfVariables3() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(0, "<=", 0);
+		system.addInequality(2, "<=", 0, 1, 2);
+		system.addInequality(1, "<=", 0, 2);
+
+		assertThat(system.getNumberOfVariables(), equalTo(3));
+	}
+
+	@Test
+	public void testNumberOfVariablesTrailing0() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(0, "<=", 0, 0, 0);
+
+		assertThat(system.getNumberOfVariables(), equalTo(3));
+	}
+
+	@Test
+	public void testCopyConstructor() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(2, ">=", 1);
+		system.addInequality(3, ">=", 0, 1);
+
+		system = new InequalitySystem(system);
+
+		assertThat(system, hasToString("[\n2 >= 1*x[0]\n3 >= 1*x[1]\n]"));
 	}
 }
 
