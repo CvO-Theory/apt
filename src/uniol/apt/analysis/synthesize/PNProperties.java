@@ -52,6 +52,12 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 			return "TNET";
 		}
 	};
+	public final static PNProperty OUTPUT_NONBRANCHING = new PNProperty() {
+		@Override
+		public String toString() {
+			return "OUTPUT_NONBRANCHING";
+		}
+	};
 
 	static public interface PNProperty {
 	}
@@ -88,6 +94,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	private boolean pure = false;
 	private boolean plain = false;
 	private boolean tnet = false;
+	private boolean output_nonbranching = false;
 
 	/**
 	 * Create a new, empty Petri net properties instance.
@@ -161,6 +168,13 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 		return tnet;
 	}
 
+	/**
+	 * Return true if this property description requires an output nonbranching PN.
+	 */
+	public boolean isOutputNonbranching() {
+		return output_nonbranching;
+	}
+
 	@Override
 	public boolean contains(Object o) {
 		if (!(o instanceof PNProperty))
@@ -175,6 +189,8 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 			return plain;
 		} else if (TNET.equals(property)) {
 			return tnet;
+		} else if (OUTPUT_NONBRANCHING.equals(property)) {
+			return output_nonbranching;
 		}
 		return false;
 	}
@@ -199,6 +215,10 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 			// place as a side-condition, the place cannot be connected to anything else and thus never
 			// changes its marking
 			pure = true;
+			// A T-Net is ON + the same condition on the presets.
+			output_nonbranching = true;
+		} else if (OUTPUT_NONBRANCHING.equals(property)) {
+			output_nonbranching = true;
 		}
 		return true;
 	}
@@ -226,7 +246,9 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 					state++;
 				if (state == 3 && !tnet)
 					state++;
-				return state < 4;
+				if (state == 4 && !output_nonbranching)
+					state++;
+				return state < 5;
 			}
 
 			@Override
@@ -242,6 +264,8 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 						return PLAIN;
 					case 3:
 						return TNET;
+					case 4:
+						return OUTPUT_NONBRANCHING;
 					default:
 						throw new NoSuchElementException();
 				}

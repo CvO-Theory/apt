@@ -97,6 +97,8 @@ public class SeparationUtility {
 			requirePlainness();
 		if (properties.isTNet())
 			requireTNet();
+		if (properties.isOutputNonbranching())
+			requireOutputNonbranchingNet();
 	}
 
 	/**
@@ -301,17 +303,21 @@ public class SeparationUtility {
 	 * This requires plainness as a pre-condition!
 	 */
 	private void requireTNet() {
-		// A T-Net is by definition plain (this is implemented in PNProperties). So all we have to ensure is
-		// that at most one event is in the pre-/postset of the region aka the sum of all backward / forward
-		// weights is at most one.
-		int[] inequalityPre = new int[systemNumberOfVariables];
-		int[] inequalityPost = new int[systemNumberOfVariables];
+		// The implementation (in PNProperties) makes sure that T-Net also requires output-nonbranching. So we
+		// only have to handle the postsets here.
+		int[] inequality = new int[systemNumberOfVariables];
+		Arrays.fill(inequality, systemForwardWeightsStart, systemForwardWeightsStart + utility.getNumberOfEvents(), 1);
+		system.addInequality(1, ">=", inequality, "T-Net");
+	}
 
-		Arrays.fill(inequalityPre, systemBackwardWeightsStart, systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
-		Arrays.fill(inequalityPost, systemForwardWeightsStart, systemForwardWeightsStart + utility.getNumberOfEvents(), 1);
-
-		system.addInequality(1, ">=", inequalityPre, "T-Net");
-		system.addInequality(1, ">=", inequalityPost, "T-Net");
+	/**
+	 * Add the needed inequalities so that the system may only produce output-nonbranching regions.
+	 */
+	private void requireOutputNonbranchingNet() {
+		// A ON-net has at most one place that removes token from it.
+		int[] inequality = new int[systemNumberOfVariables];
+		Arrays.fill(inequality, systemBackwardWeightsStart, systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
+		system.addInequality(1, ">=", inequality, "Output-nonbranching");
 	}
 
 	/**

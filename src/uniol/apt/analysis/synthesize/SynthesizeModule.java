@@ -58,7 +58,7 @@ public class SynthesizeModule extends AbstractModule {
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("properties", String.class,
 				"Comma separated list of properties for the synthesized net,"
-				+ " can be none, safe, [k]-bounded, pure, plain and t-net");
+				+ " can be none, safe, [k]-bounded, pure, plain, t-net and output-nonbranching");
 		inputSpec.addParameter("lts", TransitionSystem.class,
 				"The LTS that should be synthesized to a Petri Net");
 	}
@@ -127,6 +127,9 @@ public class SynthesizeModule extends AbstractModule {
 					break;
 				case "tnet":
 					result.add(PNProperties.TNET);
+					break;
+				case "output-nonbranching":
+					result.add(PNProperties.OUTPUT_NONBRANCHING);
 					break;
 				default:
 					if (prop.endsWith("-bounded")) {

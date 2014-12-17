@@ -67,6 +67,11 @@ public class SynthesizeModuleTest {
 	}
 
 	@Test
+	public void testON() throws Exception {
+		assertThat(parse("output-nonbranching"), equalTo(new PNProperties(PNProperties.OUTPUT_NONBRANCHING)));
+	}
+
+	@Test
 	public void testComma() throws Exception {
 		assertThat(parse("safe,none,pure"), equalTo(new PNProperties(PNProperties.SAFE, PNProperties.PURE)));
 	}

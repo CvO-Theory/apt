@@ -35,6 +35,7 @@ import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
+import uniol.apt.analysis.on.OutputNonBranching;
 import uniol.apt.analysis.plain.Plain;
 import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.tnet.TNet;
@@ -245,6 +246,8 @@ public class SynthesizePN {
 			}
 		if (properties.isKBounded())
 			assert new Bounded().checkBounded(pn).k <= properties.getKForKBoundedness() : regions;
+		if (properties.isOutputNonbranching())
+			assert new OutputNonBranching(pn).check() : regions;
 
 		// The resulting PN should always have a reachability graph isomorphic to what we started with
 		try {
