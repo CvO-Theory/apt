@@ -137,7 +137,8 @@ public class SeparationUtility {
 			system.addInequality(0, "=", inequality);
 		}
 
-		final int inequalitySize = systemBackwardWeightsStart + utility.getNumberOfEvents();
+		// The weight is a combination of the forward and backward weight
+		int inequalitySize = systemBackwardWeightsStart + utility.getNumberOfEvents();
 		for (int thisEvent = 0; thisEvent < events; thisEvent++) {
 			// weight = forwardWeight - backwardWeight (=> 0 = -w + f - b)
 			int[] inequality = new int[inequalitySize];
@@ -157,26 +158,14 @@ public class SeparationUtility {
 			system.addInequality(0, "<=", inequality);
 		}
 
-		return system;
-	}
-
-	/**
-	 * Add the needed inequalities so that the system may only produce k-bounded regions.
-	 * @param k The limit for the bound.
-	 */
-	private void requireKBoundedness(int k) {
-		int numVariables = systemInitialMarking + 1;
-
-		// Any initial marking r_S(s0) is possible, as long as it satisfies for each reachable state s:
-		//    0 <= r_S(s) = r_S(s0) + r_E(Psi_s)
-		// We also want to require k >= r_S(s)
-		// (For the synthesized Petri Net we will use the minimal initial marking possible. However, we cannot
-		// express this as a linear inequality and thus the solver may as well calculate something higher.)
-		for (State state : utility.getTransitionSystem().getNodes()) {
+		// Any enabled event really must be enabled in the calculated region
+		inequalitySize = systemInitialMarking + 1;
+		for (Arc arc : utility.getTransitionSystem().getEdges()) {
+			State state = arc.getSource();
 			if (!utility.getSpanningTree().isReachable(state))
 				continue;
 
-			int[] inequality = new int[numVariables];
+			int[] inequality = new int[inequalitySize];
 			List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 
 			inequality[systemInitialMarking] = 1;
@@ -186,7 +175,36 @@ public class SeparationUtility {
 			for (int event = 0; event < stateParikhVector.size(); event++)
 				inequality[systemWeightsStart + event] = stateParikhVector.get(event);
 
+			inequality[systemBackwardWeightsStart + utility.getEventIndex(arc.getLabel())] = -1;
+
 			system.addInequality(0, "<=", inequality);
+		}
+
+		return system;
+	}
+
+	/**
+	 * Add the needed inequalities so that the system may only produce k-bounded regions.
+	 * @param k The limit for the bound.
+	 */
+	private void requireKBoundedness(int k) {
+		int inequalitySize = systemInitialMarking + 1;
+
+		// Require k >= r_S(s) = r_S(s0) + r_E(Psi_s)
+		for (State state : utility.getTransitionSystem().getNodes()) {
+			if (!utility.getSpanningTree().isReachable(state))
+				continue;
+
+			int[] inequality = new int[inequalitySize];
+			List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
+
+			inequality[systemInitialMarking] = 1;
+
+			// Evaluate the Parikh vector in the region described by the system, just as
+			// Region.evaluateParikhVector() would do.
+			for (int event = 0; event < stateParikhVector.size(); event++)
+				inequality[systemWeightsStart + event] = stateParikhVector.get(event);
+
 			system.addInequality(k, ">=", inequality);
 		}
 	}
@@ -237,46 +255,43 @@ public class SeparationUtility {
 	 * stable iteration order!
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
+	 * @param pure Whether the generated region should describe part of a pure Petri Net and thus must not generate
+	 * any side-conditions.
 	 * @return A separating region or null.
 	 */
-	static public Region calculateSeparatingPureRegion(RegionUtility utility, InequalitySystem system,
-			Collection<Region> basis, State state, String event) {
+	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
+			Collection<Region> basis, State state, String event, boolean pure) {
 		final int eventIndex = utility.getEventIndex(event);
 		final int events = utility.getNumberOfEvents();
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		system = new InequalitySystem(system);
-		assert stateParikhVector != null;
 
 		// Unreachable states cannot be separated
 		if (!utility.getSpanningTree().isReachable(state))
 			return null;
 
 		// Each state must be reachable in the resulting region, but event 'event' should be disabled in state.
-		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			List<Integer> inequality = new ArrayList<>(events + basis.size());
-			List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
+		// We want -1 >= r_S(s) - r_B(event) = r_S(s_0) + r_E(Psi_s) - r_B(event)
+		int inequalitySize = systemInitialMarking + 1;
+		int[] inequality = new int[systemInitialMarking + 1];
+		inequality[systemInitialMarking] = 1;
+		for (int idx = 0; idx < utility.getNumberOfEvents(); idx++)
+			inequality[systemWeightsStart + idx] = stateParikhVector.get(idx);
 
-			// Silently ignore unreachable states
-			if (!utility.getSpanningTree().isReachable(otherState))
-				continue;
-
-			// For the resulting region variables, we have value 0
-			inequality.addAll(Collections.nCopies(events, 0));
-
-			for (Region region : basis) {
-				// We want to evaluate [Psi_s - Psi_{s'} + 1_j] * region where 1_j is the Parikh vector
-				// of a single event of type e_j == event.
-				int stateValue = region.evaluateParikhVector(stateParikhVector);
-				int otherStateValue = region.evaluateParikhVector(otherStateParikhVector);
-				int disabledEventValue = region.getWeight(eventIndex);
-				inequality.add(stateValue - otherStateValue + disabledEventValue);
-			}
-
-			system.addInequality(-1, ">=", inequality);
+		if (pure) {
+			// In the pure case, in the above -r_B(event) is replaced with +r_E(event). Since all
+			// states must be reachable, this makes sure that r_E(event) really is negative and thus
+			// the resulting region solves ESSP.
+			inequality[systemWeightsStart + eventIndex] += 1;
+		} else {
+			// XXX: This is broken, since it produces solutions were not all states are reachable
+			inequality[systemBackwardWeightsStart + eventIndex] = -1;
 		}
 
+		system.addInequality(-1, ">=", inequality);
+
 		// Calculate the resulting linear combination
-		debug("Solving the following system:");
+		debug("Solving the following system to separate " + state + " from " + event + ":");
 		debug(system);
 		List<Integer> solution = system.findSolution();
 		if (solution.isEmpty()) {
@@ -286,107 +301,13 @@ public class SeparationUtility {
 
 		debug("solution: " + solution);
 
-		return Region.createPureRegionFromVector(utility, solution.subList(0, events));
-	}
-
-	/**
-	 * Try to calculate an impure region which separates some state and some event.
-	 * @param utility The region utility to use.
-	 * @param system An inequality system that is suitably prepared.
-	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
-	 * stable iteration order!
-	 * @param state The state of the separation problem
-	 * @param event The event of the separation problem
-	 * @param plainNet Whether the generated region should correspond to a plain Petri Net and thus any
-	 * side-condition must be plain, too.
-	 * @return A separating region or null.
-	 */
-	static public Region calculateSeparatingImpureRegion(RegionUtility utility, InequalitySystem system,
-			Collection<Region> basis, State state, String event, boolean plainNet) {
-		final int eventIndex = utility.getEventIndex(event);
-		final int events = utility.getNumberOfEvents();
-		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
-		system = new InequalitySystem(system);
-		assert stateParikhVector != null;
-
-		// Unreachable states cannot be separated
-		if (!utility.getSpanningTree().isReachable(state))
-			return null;
-
-		// For each state in which 'event' is enabled...
-		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			if (!isEventEnabled(otherState, event))
-				continue;
-
-			// Silently ignore unreachable states
-			if (!utility.getSpanningTree().isReachable(otherState))
-				continue;
-
-			List<Integer> inequality = new ArrayList<>(events + basis.size());
-			List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
-
-			// For the resulting region variables, we have value 0
-			inequality.addAll(Collections.nCopies(events, 0));
-
-			for (Region region : basis) {
-				// We want to evaluate [Psi_s - Psi_{s'}] * region
-				int stateValue = region.evaluateParikhVector(stateParikhVector);
-				int otherStateValue = region.evaluateParikhVector(otherStateParikhVector);
-				inequality.add(stateValue - otherStateValue);
-			}
-
-			system.addInequality(-1, ">=", inequality);
-		}
-
-		// Calculate the resulting linear combination
-		debug("Solving the following system:");
-		debug(system);
-		List<Integer> solution = system.findSolution();
-		if (solution.isEmpty()) {
-			debug("No solution found");
-			return null;
-		}
-
-		debug("solution: " + solution);
-
-		Region result = Region.createPureRegionFromVector(utility, solution.subList(0, events));
-
-		// If this already solves ESSP, return it
-		if (result.getNormalRegionMarkingForState(state) < result.getBackwardWeight(eventIndex))
-			return result;
-
-		// Calculate m = min { r_S(s') | delta(s', event) defined }
-		// For each state in which 'event' is enabled...
-		Integer min = null;
-		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			if (!isEventEnabled(otherState, event))
-				continue;
-
-			// Silently ignore unreachable states
-			if (!utility.getSpanningTree().isReachable(otherState))
-				continue;
-
-			int stateMarking = result.getNormalRegionMarkingForState(otherState);
-			if (min == null || min > stateMarking)
-				min = stateMarking;
-		}
-
-		// If the event is dead, no reachable marking fires it. Handle this by just adding a simple loop
-		if (min == null)
-			min = 1;
-
-		// Make the event have backward weight m. By construction this must solve separation. Since the region
-		// could already have a non-zero backward weight, we have to handle that.
-		min -= result.getBackwardWeight(eventIndex);
-		assert min > 0;
-
-		// Does adding the side-condition violate the required plainness?
-		if (plainNet && (min > 1 || result.getWeight(eventIndex) != 0))
-			// XXX: I'm not totally sure that no separating region exists in this case. Some other region
-			// could satisfy the inequality system *and* result in a plain place.
-			return null;
-
-		return result.addRegionWithFactor(Region.createUnitRegion(utility, eventIndex), min);
+		Region r = new Region(utility,
+				solution.subList(systemBackwardWeightsStart, systemBackwardWeightsStart + events),
+				solution.subList(systemForwardWeightsStart, systemForwardWeightsStart + events));
+		debug("region: " + r);
+		if (pure)
+			return r.makePure();
+		return r;
 	}
 
 	private final RegionUtility utility;
@@ -463,13 +384,8 @@ public class SeparationUtility {
 		// TODO: Nothing guarantees that all regions in the basis satisfy <properties> (same for the direct call
 		// to findSeparatingRegion() in SynthesizePN)
 		Region r = findSeparatingRegion(utility, regions, state, event);
-		if (r == null) {
-
-			if (properties.isPure())
-				r = calculateSeparatingPureRegion(utility, system, basis, state, event);
-			else
-				r = calculateSeparatingImpureRegion(utility, system, basis, state, event, properties.isPlain());
-		}
+		if (r == null)
+			r = calculateSeparatingRegion(utility, system, basis, state, event, properties.isPure());
 		return r;
 	}
 
