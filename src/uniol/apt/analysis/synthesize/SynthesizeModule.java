@@ -87,8 +87,7 @@ public class SynthesizeModule extends AbstractModule {
 		boolean success = synthesize.wasSuccessfullySeparated();
 
 		PetriNet pn = synthesize.synthesizePetriNet();
-		if (success)
-			// TODO: If these stay in, the file output is screwed up. Can we fix the renderers?
+		if (pn != null)
 			for (Place p : pn.getPlaces())
 				p.removeExtension(Region.class.getName());
 
