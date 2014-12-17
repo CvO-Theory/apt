@@ -20,6 +20,7 @@
 package uniol.apt.analysis.synthesize;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -283,12 +284,15 @@ public class SeparationUtility {
 	 */
 	private void requirePlainness() {
 		for (int event = 0; event < utility.getNumberOfEvents(); event++) {
-			int[] inequality = new int[utility.getNumberOfEvents()];
+			int[] inequality = new int[systemNumberOfVariables];
 
-			inequality[systemWeightsStart + event] = 1;
-
+			inequality[systemForwardWeightsStart + event] = 1;
+			inequality[systemBackwardWeightsStart + event] = 0;
 			system.addInequality(1, ">=", inequality, "Plain");
-			system.addInequality(-1, "<=", inequality, "Plain");
+
+			inequality[systemForwardWeightsStart + event] = 0;
+			inequality[systemBackwardWeightsStart + event] = 1;
+			system.addInequality(1, ">=", inequality, "Plain");
 		}
 	}
 
@@ -297,22 +301,17 @@ public class SeparationUtility {
 	 * This requires plainness as a pre-condition!
 	 */
 	private void requireTNet() {
-		// Let's assume both event a and event b are in the preset of the place corresponding to the region.
-		// This means both events have a non-zero backward weight. Forbid this via -1 <= r(a)+r(b)
-		// Analogously 1 >= r(a)+r(b) forbids both places to be in the postset.
-		for (int a = 0; a < utility.getNumberOfEvents(); a++)
-			for (int b = 0; b < utility.getNumberOfEvents(); b++) {
-				if (a == b)
-					continue;
+		// A T-Net is by definition plain (this is implemented in PNProperties). So all we have to ensure is
+		// that at most one event is in the pre-/postset of the region aka the sum of all backward / forward
+		// weights is at most one.
+		int[] inequalityPre = new int[systemNumberOfVariables];
+		int[] inequalityPost = new int[systemNumberOfVariables];
 
-				int[] inequality = new int[utility.getNumberOfEvents()];
+		Arrays.fill(inequalityPre, systemBackwardWeightsStart, systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
+		Arrays.fill(inequalityPost, systemForwardWeightsStart, systemForwardWeightsStart + utility.getNumberOfEvents(), 1);
 
-				inequality[systemWeightsStart + a] = 1;
-				inequality[systemWeightsStart + b] = 1;
-
-				system.addInequality(1, ">=", inequality, "T-Net");
-				system.addInequality(-1, "<=", inequality, "T-Net");
-			}
+		system.addInequality(1, ">=", inequalityPre, "T-Net");
+		system.addInequality(1, ">=", inequalityPost, "T-Net");
 	}
 
 	/**
