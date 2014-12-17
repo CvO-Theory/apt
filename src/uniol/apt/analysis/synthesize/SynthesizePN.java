@@ -30,6 +30,14 @@ import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.bounded.Bounded;
+import uniol.apt.analysis.coverability.CoverabilityGraph;
+import uniol.apt.analysis.exception.PreconditionFailedException;
+import uniol.apt.analysis.exception.UnboundedException;
+import uniol.apt.analysis.isomorphism.IsomorphismLogic;
+import uniol.apt.analysis.plain.Plain;
+import uniol.apt.analysis.sideconditions.Pure;
+import uniol.apt.analysis.tnet.TNet;
 import uniol.apt.util.Pair;
 
 /**
@@ -221,7 +229,31 @@ public class SynthesizePN {
 	public PetriNet synthesizePetriNet() {
 		if (!wasSuccessfullySeparated())
 			return null;
-		return synthesizePetriNet(regions);
+		PetriNet pn = synthesizePetriNet(regions);
+
+		// Test if the synthesized PN really satisfies all the properties that it should
+		if (properties.isPure())
+			assert Pure.checkPure(pn) : regions;
+		if (properties.isPlain())
+			assert new Plain().checkPlain(pn) : regions;
+		if (properties.isTNet())
+			try {
+				assert new TNet(pn).testPlainTNet() : regions;
+			}
+			catch (PreconditionFailedException e) {
+				assert false : regions;
+			}
+		if (properties.isKBounded())
+			assert new Bounded().checkBounded(pn).k <= properties.getKForKBoundedness() : regions;
+
+		// The resulting PN should always have a reachability graph isomorphic to what we started with
+		try {
+			assert new IsomorphismLogic(new CoverabilityGraph(pn).toReachabilityLTS(), ts, true).isIsomorphic() : regions;
+		}
+		catch (UnboundedException e) {
+			assert false : regions;
+		}
+		return pn;
 	}
 
 	/**
