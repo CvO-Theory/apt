@@ -144,7 +144,7 @@ public class SynthesizeModule extends AbstractModule {
 						}
 						if (k < 1)
 							throw new ModuleException("Cannot parse '" + prop + "': "
-									+ "Bound must be positve");
+									+ "Bound must be positive");
 						result.add(PNProperties.kBounded(k));
 					} else
 						throw new ModuleException("Cannot parse '" + prop
