@@ -239,10 +239,11 @@ public class InequalitySystem {
 	}
 
 	/**
-	 * Construct a new inequality system.
+	 * Construct a new inequality system as a copy of another system.
+	 * @param system The inequality system to copy from.
 	 */
 	public InequalitySystem(InequalitySystem system) {
-		this(system, DEFAULT_IMPLEMENTATION);
+		this(system, system.implementation);
 	}
 
 	/**
