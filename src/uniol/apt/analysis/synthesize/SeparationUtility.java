@@ -435,8 +435,10 @@ public class SeparationUtility {
 				solution.subList(systemBackwardWeightsStart, systemBackwardWeightsStart + events),
 				solution.subList(systemForwardWeightsStart, systemForwardWeightsStart + events));
 		debug("region: " + r);
+
 		if (pure)
-			return r.makePure();
+			r = r.makePure();
+		assert r.getNormalRegionMarking() <= solution.get(systemInitialMarking) : solution;
 		return r;
 	}
 
