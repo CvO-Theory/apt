@@ -72,7 +72,7 @@ public class SynthesizePN {
 	 * @param utility An instance of RegionUtility for the requested transition system.
 	 * @param properties Properties that the synthesized Petri net should satisfy.
 	 */
-	public SynthesizePN(RegionUtility utility, PNProperties properties) {
+	public SynthesizePN(RegionUtility utility, PNProperties properties) throws MissingLocationException {
 		this.ts = utility.getTransitionSystem();
 		this.utility = utility;
 		this.regionBasis = new RegionBasis(utility);
@@ -111,7 +111,7 @@ public class SynthesizePN {
 	 * Synthesize a Petri Net which generates the given transition system.
 	 * @param utility An instance of RegionUtility for the requested transition system.
 	 */
-	public SynthesizePN(RegionUtility utility) {
+	public SynthesizePN(RegionUtility utility) throws MissingLocationException {
 		this(utility, new PNProperties());
 	}
 
@@ -120,7 +120,7 @@ public class SynthesizePN {
 	 * @param ts The transition system to synthesize.
 	 * @param properties Properties that the synthesized Petri net should satisfy.
 	 */
-	public SynthesizePN(TransitionSystem ts, PNProperties properties) {
+	public SynthesizePN(TransitionSystem ts, PNProperties properties) throws MissingLocationException {
 		this(new RegionUtility(ts), properties);
 	}
 
@@ -128,7 +128,7 @@ public class SynthesizePN {
 	 * Synthesize a Petri Net which generates the given transition system.
 	 * @param ts The transition system to synthesize.
 	 */
-	public SynthesizePN(TransitionSystem ts) {
+	public SynthesizePN(TransitionSystem ts) throws MissingLocationException {
 		this(ts, new PNProperties());
 	}
 

@@ -53,7 +53,7 @@ public class SeparationUtilityTest {
 		abstract protected TransitionSystem getTS();
 
 		@BeforeClass
-		public void setup() {
+		public void setup() throws MissingLocationException {
 			ts = getTS();
 
 			// Add an unreachable state
@@ -160,7 +160,7 @@ public class SeparationUtilityTest {
 		}
 
 		@Test(dataProvider = "stateEventPairs")
-		public void testEventSeparation(String stateName, String event) {
+		public void testEventSeparation(String stateName, String event) throws MissingLocationException {
 			State state = utility.getTransitionSystem().getNode(stateName);
 			if (SeparationUtility.isEventEnabled(state, event) || stateName.equals("unreachable"))
 				return;
@@ -168,7 +168,7 @@ public class SeparationUtilityTest {
 		}
 
 		@Test(dataProvider = "stateEventPairs")
-		public void testEventSeparationImpure(String stateName, String event) {
+		public void testEventSeparationImpure(String stateName, String event) throws MissingLocationException {
 			State state = utility.getTransitionSystem().getNode(stateName);
 			if (SeparationUtility.isEventEnabled(state, event) || stateName.equals("unreachable"))
 				return;
@@ -192,11 +192,11 @@ public class SeparationUtilityTest {
 		}
 	}
 
-	private static void checkEventSeparation(RegionUtility utility, List<Region> basis, String stateName, String event) {
+	private static void checkEventSeparation(RegionUtility utility, List<Region> basis, String stateName, String event) throws MissingLocationException {
 		checkEventSeparation(utility, basis, stateName, event, true);
 	}
 
-	private static void checkEventSeparation(RegionUtility utility, List<Region> basis, String stateName, String event, boolean pure) {
+	private static void checkEventSeparation(RegionUtility utility, List<Region> basis, String stateName, String event, boolean pure) throws MissingLocationException {
 		State state = utility.getTransitionSystem().getNode(stateName);
 		PNProperties properties = new PNProperties();
 		if (pure)
@@ -215,7 +215,7 @@ public class SeparationUtilityTest {
 	}
 
 	@Test
-	public void testCalculate3() {
+	public void testCalculate3() throws MissingLocationException {
 		RegionUtility utility = new RegionUtility(TestTSCollection.getOneCycleLTS());
 		List<Region> basis = new ArrayList<>();
 
@@ -228,7 +228,7 @@ public class SeparationUtilityTest {
 	}
 
 	@Test
-	public void testCalculate3Impure() {
+	public void testCalculate3Impure() throws MissingLocationException {
 		RegionUtility utility = new RegionUtility(TestTSCollection.getOneCycleLTS());
 		List<Region> basis = new ArrayList<>();
 
@@ -263,7 +263,7 @@ public class SeparationUtilityTest {
 		}
 
 		@Test
-		public void testNoStateRestrictionPure() {
+		public void testNoStateRestrictionPure() throws MissingLocationException {
 			Region region = new SeparationUtility(utility, regionBasis, new PNProperties(PNProperties.PURE))
 				.getSeparatingRegion(regionBasis, ts.getNode("s3"), "t2");
 
@@ -273,7 +273,7 @@ public class SeparationUtilityTest {
 		}
 
 		@Test
-		public void testNoStateRestrictionImpure() {
+		public void testNoStateRestrictionImpure() throws MissingLocationException {
 			Region region = new SeparationUtility(utility, regionBasis)
 				.getSeparatingRegion(regionBasis, ts.getNode("s3"), "t2");
 
@@ -281,6 +281,26 @@ public class SeparationUtilityTest {
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s2")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 		}
+	}
+
+	@Test
+	public void testLocations() throws Exception {
+		TransitionSystem ts = TestTSCollection.getPersistentTS();
+		ts.getArc("s0", "l", "a").putExtension("location", "X");
+		ts.getArc("s0", "r", "b").putExtension("location", "Y");
+		ts.getArc("l", "s1", "b").putExtension("location", "Y");
+		ts.getArc("r", "s1", "a").putExtension("location", "X");
+
+		assertThat(SeparationUtility.getLocationMap(new RegionUtility(ts)), arrayContaining("X", "Y"));
+	}
+
+	@Test(expectedExceptions = MissingLocationException.class)
+	public void testMissingLocation() throws Exception {
+		TransitionSystem ts = TestTSCollection.getPersistentTS();
+		ts.getArc("s0", "l", "a").putExtension("location", "X");
+		ts.getArc("r", "s1", "a").putExtension("location", "X");
+
+		SeparationUtility.getLocationMap(new RegionUtility(ts));
 	}
 }
 

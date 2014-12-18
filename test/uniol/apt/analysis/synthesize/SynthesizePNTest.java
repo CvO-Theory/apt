@@ -93,7 +93,7 @@ public class SynthesizePNTest {
 	}
 
 	@Test
-	public void testNonDeterministicTS() {
+	public void testNonDeterministicTS() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getNonDeterministicTS();
 		RegionUtility utility = new RegionUtility(ts);
 		SynthesizePN synth = new SynthesizePN(utility);
@@ -108,7 +108,7 @@ public class SynthesizePNTest {
 	}
 
 	@Test
-	public void testPathTSPure() {
+	public void testPathTSPure() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
 		SynthesizePN synth = new SynthesizePN(utility, new PNProperties(PNProperties.PURE));
@@ -126,7 +126,7 @@ public class SynthesizePNTest {
 	}
 
 	@Test
-	public void testPathTSImpure() {
+	public void testPathTSImpure() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
 		SynthesizePN synth = new SynthesizePN(utility);
@@ -142,7 +142,7 @@ public class SynthesizePNTest {
 	}
 
 	@Test
-	public void testPureSynthesizablePathTS() {
+	public void testPureSynthesizablePathTS() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getPureSynthesizablePathTS();
 		RegionUtility utility = new RegionUtility(ts);
 		SynthesizePN synth = new SynthesizePN(utility);

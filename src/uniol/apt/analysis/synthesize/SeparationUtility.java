@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.util.equations.InequalitySystem;
@@ -49,6 +50,7 @@ public class SeparationUtility {
 	private final RegionUtility utility;
 	private final Collection<Region> basis;
 	private final PNProperties properties;
+	private final String[] locationMap;
 
 	/**
 	 * This inequality system describes the regions that we are looking for. The first unknowns describe the weights
@@ -71,7 +73,7 @@ public class SeparationUtility {
 	 * stable iteration order!
 	 * @param properties Properties that the calculated region should satisfy.
 	 */
-	public SeparationUtility(RegionUtility utility, Collection<Region> basis, PNProperties properties) {
+	public SeparationUtility(RegionUtility utility, Collection<Region> basis, PNProperties properties) throws MissingLocationException {
 		this.utility = utility;
 		this.basis = basis;
 		this.properties = new PNProperties(properties);
@@ -81,6 +83,7 @@ public class SeparationUtility {
 		this.systemBackwardWeightsStart = systemForwardWeightsStart + utility.getNumberOfEvents();
 		this.systemInitialMarking = systemBackwardWeightsStart + utility.getNumberOfEvents();
 		this.systemNumberOfVariables = systemInitialMarking + 1;
+		this.locationMap = getLocationMap(utility);
 
 		debug("Variables:");
 		debug("Weights start at " + systemWeightsStart);
@@ -109,7 +112,7 @@ public class SeparationUtility {
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
 	 */
-	public SeparationUtility(RegionUtility utility, Collection<Region> basis) {
+	public SeparationUtility(RegionUtility utility, Collection<Region> basis) throws MissingLocationException {
 		this(utility, basis, new PNProperties());
 	}
 
@@ -321,6 +324,65 @@ public class SeparationUtility {
 	}
 
 	/**
+	 * Calculate a mapping from events to their location.
+	 * @param utility The region utility that describes the events.
+	 * @return An array containing the location for each event.
+	 */
+	static public String[] getLocationMap(RegionUtility utility) throws MissingLocationException {
+		// Build a mapping from events to locations. Yaaay. Need to iterate over all arcs...
+		String[] locationMap = new String[utility.getNumberOfEvents()];
+		boolean hadEventWithLocation = false;
+
+		for (Arc arc : utility.getTransitionSystem().getEdges()) {
+			String location;
+			try {
+				location = arc.getExtension("location").toString();
+			} catch (StructureException e) {
+				// Because just returning "null" is too easy...
+				continue;
+			}
+
+			int event = utility.getEventIndex(arc.getLabel());
+			String oldLocation = locationMap[event];
+			locationMap[event] = location;
+			hadEventWithLocation = true;
+
+			// The parser makes sure that this assertion always holds. If something constructs a PN which
+			// breaks this assumption, then the bug is in that code.
+			assert oldLocation == null || oldLocation.equals(location);
+		}
+
+		// Do all events have a location?
+		if (hadEventWithLocation && Arrays.asList(locationMap).contains(null))
+			throw new MissingLocationException("Trying to synthesize a Petri Net where some events have a "
+					+ "location and others do not. Either all or no event must have a location.");
+
+		return locationMap;
+	}
+
+	/**
+	 * Add the needed inequalities to guarantee that a distributable Petri Net region is calculated.
+	 * @param system The inequality system to which the inequalities should be added.
+	 * @param locationMap Mapping that describes the location of each event.
+	 * @param event Only events with the same location as this event may consume tokens from this region.
+	 */
+	private void requireDistributableNet(InequalitySystem system, String[] locationMap, String event) {
+		int[] inequality = new int[systemNumberOfVariables];
+		String location = locationMap[utility.getEventIndex(event)];
+
+		if (location == null)
+			return;
+
+		// Only events having the same location as 'event' may consume token from this region.
+		for (int eventIndex = 0; eventIndex < utility.getNumberOfEvents(); eventIndex++) {
+			if (locationMap[eventIndex] != null && !locationMap[eventIndex].equals(location))
+				inequality[systemBackwardWeightsStart + eventIndex] = 1;
+		}
+
+		system.addInequality(0, "=", inequality, "Only events with same location as event " + event + " may consume tokens from this region");
+	}
+
+	/**
 	 * Try to calculate a pure region which separates some state and some event. This calculates a linear combination of
 	 * the given basis of abstract regions.
 	 * @param utility The region utility to use.
@@ -338,7 +400,6 @@ public class SeparationUtility {
 		final int eventIndex = utility.getEventIndex(event);
 		final int events = utility.getNumberOfEvents();
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
-		system = new InequalitySystem(system);
 
 		// Unreachable states cannot be separated
 		if (!utility.getSpanningTree().isReachable(state))
@@ -391,10 +452,13 @@ public class SeparationUtility {
 		// to findSeparatingRegion() in SynthesizePN)
 		Region r = findSeparatingRegion(utility, regions, state, event);
 		if (r == null)
+		{
+			InequalitySystem system = new InequalitySystem(this.system);
+			requireDistributableNet(system, locationMap, event);
 			r = calculateSeparatingRegion(utility, system, basis, state, event, properties.isPure());
+		}
 		return r;
 	}
-
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
