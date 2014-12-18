@@ -106,6 +106,7 @@ import uniol.apt.analysis.snet.SNetResult;
 import uniol.apt.analysis.synet.SynthesizeDistributedLTSModule;
 import uniol.apt.analysis.synthesize.RegionCollection;
 import uniol.apt.analysis.synthesize.SynthesizeModule;
+import uniol.apt.analysis.synthesize.SynthesizeWordModule;
 import uniol.apt.analysis.tnet.TNetModule;
 import uniol.apt.analysis.tnet.TNetResult;
 import uniol.apt.analysis.totallyreachable.TotallyReachableModule;
@@ -255,6 +256,7 @@ public class APT {
 		new Synet2AptModule(),
 		new SynthesizeDistributedLTSModule(),
 		new SynthesizeModule(),
+		new SynthesizeWordModule(),
 		new TNetGeneratorModule(),
 		new TNetModule(),
 		new TotallyReachableModule(),

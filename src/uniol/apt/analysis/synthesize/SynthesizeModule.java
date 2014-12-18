@@ -54,37 +54,39 @@ public class SynthesizeModule extends AbstractModule {
 		return "synthesize";
 	}
 
-	@Override
-	public void require(ModuleInputSpec inputSpec) {
+	static public void requireCommon(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("properties", String.class,
 				"Comma separated list of properties for the synthesized net,"
 				+ " can be none, safe, [k]-bounded, pure, plain, t-net and output-nonbranching");
+	}
+
+	@Override
+	public void require(ModuleInputSpec inputSpec) {
+		requireCommon(inputSpec);
 		inputSpec.addParameter("lts", TransitionSystem.class,
 				"The LTS that should be synthesized to a Petri Net");
 	}
 
-	@Override
-	public void provide(ModuleOutputSpec outputSpec) {
+	static public void provideCommon(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("warning", String.class);
 		outputSpec.addReturnValue("success", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
-		outputSpec.addReturnValue("failedStateSeparationProblems", String.class);
-		outputSpec.addReturnValue("failedEventStateSeparationProblems", String.class);
 		outputSpec.addReturnValue("separatingRegions", RegionCollection.class);
 		outputSpec.addReturnValue("pn", PetriNet.class,
 			ModuleOutputSpec.PROPERTY_FILE, ModuleOutputSpec.PROPERTY_RAW);
 	}
 
 	@Override
-	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
-		// Before removing this, think about the following from SeparationUtility.calculateSeparatingImpureRegion:
-		// XXX: I'm not totally sure that no separating region exists in this case. Some other region
-		// could satisfy the inequality system *and* result in a plain place.
+	public void provide(ModuleOutputSpec outputSpec) {
+		provideCommon(outputSpec);
+		outputSpec.addReturnValue("failedStateSeparationProblems", String.class);
+		outputSpec.addReturnValue("failedEventStateSeparationProblems", String.class);
+	}
+
+	static public SynthesizePN runSynthesis(TransitionSystem ts, ModuleInput input, ModuleOutput output) throws ModuleException {
 		output.setReturnValue("warning", String.class, "THIS MODULE IS EXPERIMENTAL AND SHOULD NOT BE TRUSTED");
 
-		TransitionSystem ts = input.getParameter("lts", TransitionSystem.class);
 		PNProperties properties = parseProperties(input.getParameter("properties", String.class));
 		SynthesizePN synthesize = new SynthesizePN(ts, properties);
-		boolean success = synthesize.wasSuccessfullySeparated();
 
 		PetriNet pn = synthesize.synthesizePetriNet();
 		if (pn != null)
@@ -96,7 +98,15 @@ public class SynthesizeModule extends AbstractModule {
 		output.setReturnValue("separatingRegions", RegionCollection.class,
 				new RegionCollection(synthesize.getSeparatingRegions()));
 
-		if (!success) {
+		return synthesize;
+	}
+
+	@Override
+	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
+		TransitionSystem ts = input.getParameter("lts", TransitionSystem.class);
+		SynthesizePN synthesize = runSynthesis(ts, input, output);
+
+		if (!synthesize.wasSuccessfullySeparated()) {
 			output.setReturnValue("failedStateSeparationProblems", String.class,
 					synthesize.getFailedStateSeparationProblems().toString());
 			output.setReturnValue("failedEventStateSeparationProblems", String.class,
