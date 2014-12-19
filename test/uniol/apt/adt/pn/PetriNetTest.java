@@ -201,9 +201,11 @@ public class PetriNetTest {
 	public void testSoftReferences() {
 		PetriNet pn = getTestNet();
 		try {
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder(" ");
+			StringBuilder sb2 = new StringBuilder(sb);
 			while (true) {
-				sb.append(new Object().toString());
+				sb.append(sb2);
+				sb2.append(sb);
 			}
 		} catch (OutOfMemoryError e) {
 			Node p0 = pn.getNode("p0");

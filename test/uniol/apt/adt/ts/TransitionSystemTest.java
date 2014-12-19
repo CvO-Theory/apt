@@ -70,9 +70,11 @@ public class TransitionSystemTest {
 	public void testSoftReferences() {
 		TransitionSystem ts = getTestSystem();
 		try {
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder(" ");
+			StringBuilder sb2 = new StringBuilder(sb);
 			while (true) {
-				sb.append(new Object().toString());
+				sb.append(sb2);
+				sb2.append(sb);
 			}
 		} catch (OutOfMemoryError e) {
 			State p0 = ts.getNode("s0");
