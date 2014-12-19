@@ -61,15 +61,18 @@ public class PNPropertiesTest {
 			{ PNProperties.PLAIN },
 			{ PNProperties.TNET },
 			{ PNProperties.OUTPUT_NONBRANCHING },
+			{ PNProperties.CONFLICT_FREE },
 		};
 	}
 
 	@Test
 	public void addAllTest() {
 		properties.addAll(Arrays.asList(PNProperties.SAFE, PNProperties.kBounded(7), PNProperties.PURE,
-					PNProperties.PLAIN, PNProperties.TNET, PNProperties.OUTPUT_NONBRANCHING));
+					PNProperties.PLAIN, PNProperties.TNET, PNProperties.OUTPUT_NONBRANCHING,
+					PNProperties.CONFLICT_FREE));
 		assertThat(properties, containsInAnyOrder(PNProperties.SAFE, PNProperties.PURE, PNProperties.PLAIN,
-					PNProperties.TNET, PNProperties.OUTPUT_NONBRANCHING));
+					PNProperties.TNET, PNProperties.OUTPUT_NONBRANCHING,
+					PNProperties.CONFLICT_FREE));
 	}
 
 	@Test(dataProvider = "properties")
@@ -101,6 +104,8 @@ public class PNPropertiesTest {
 					new PNProperties.PNProperty[] { PNProperties.TNET, PNProperties.PLAIN,
 						PNProperties.PURE, PNProperties.OUTPUT_NONBRANCHING } },
 				makeSimpleProperty(PNProperties.OUTPUT_NONBRANCHING),
+				{ new PNProperties(PNProperties.CONFLICT_FREE),
+					new PNProperties.PNProperty[] { PNProperties.CONFLICT_FREE, PNProperties.PLAIN } },
 			};
 		}
 

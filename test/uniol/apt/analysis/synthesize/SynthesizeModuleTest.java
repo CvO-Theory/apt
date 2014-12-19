@@ -67,8 +67,23 @@ public class SynthesizeModuleTest {
 	}
 
 	@Test
-	public void testON() throws Exception {
+	public void testOutputNonbranching() throws Exception {
 		assertThat(parse("output-nonbranching"), equalTo(new PNProperties(PNProperties.OUTPUT_NONBRANCHING)));
+	}
+
+	@Test
+	public void testON() throws Exception {
+		assertThat(parse("ON"), equalTo(new PNProperties(PNProperties.OUTPUT_NONBRANCHING)));
+	}
+
+	@Test
+	public void testConflictFree() throws Exception {
+		assertThat(parse("Conflict-Free"), equalTo(new PNProperties(PNProperties.CONFLICT_FREE)));
+	}
+
+	@Test
+	public void testCF() throws Exception {
+		assertThat(parse("CF"), equalTo(new PNProperties(PNProperties.CONFLICT_FREE)));
 	}
 
 	@Test

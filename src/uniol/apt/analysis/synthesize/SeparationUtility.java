@@ -101,7 +101,7 @@ public class SeparationUtility {
 		if (properties.isTNet())
 			requireTNet();
 		if (properties.isOutputNonbranching())
-			requireOutputNonbranchingNet();
+			requireOutputNonbranchingNet(system);
 	}
 
 	/**
@@ -315,8 +315,9 @@ public class SeparationUtility {
 
 	/**
 	 * Add the needed inequalities so that the system may only produce output-nonbranching regions.
+	 * @param system The inequality system to which the inequalities should be added.
 	 */
-	private void requireOutputNonbranchingNet() {
+	private void requireOutputNonbranchingNet(InequalitySystem system) {
 		// A ON-net has at most one place that removes token from it.
 		int[] inequality = new int[systemNumberOfVariables];
 		Arrays.fill(inequality, systemBackwardWeightsStart, systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
@@ -380,6 +381,19 @@ public class SeparationUtility {
 		}
 
 		system.addInequality(0, "=", inequality, "Only events with same location as event " + event + " may consume tokens from this region");
+	}
+
+	/**
+	 * Add the needed inequalities to guarantee that the preset is contained in the postset. This is used for
+	 * synthesizing conflict-free nets.
+	 * @param system The inequality system to which the inequalities should be added.
+	 */
+	private void requirePostsetContainsPreset(InequalitySystem system) {
+		for (int eventIndex = 0; eventIndex < utility.getNumberOfEvents(); eventIndex++) {
+			int[] inequality = new int[systemNumberOfVariables];
+			inequality[systemWeightsStart + eventIndex] = 1;
+			system.addInequality(0, "<=", inequality, "Preset contains postset for event " + eventIndex + " (No tokens are consumed)");
+		}
 	}
 
 	/**
@@ -455,9 +469,25 @@ public class SeparationUtility {
 		Region r = findSeparatingRegion(utility, regions, state, event);
 		if (r == null)
 		{
+			InequalitySystem systemCopy = null;
 			InequalitySystem system = new InequalitySystem(this.system);
 			requireDistributableNet(system, locationMap, event);
+
+			if (properties.isConflictFree() && !properties.isOutputNonbranching()) {
+				systemCopy = new InequalitySystem(system);
+
+				// Conflict free: Either the place is output-nonbranching or the preset is contained in
+				// the postset.
+				requireOutputNonbranchingNet(systemCopy);
+				requirePostsetContainsPreset(system);
+			}
+
 			r = calculateSeparatingRegion(utility, system, basis, state, event, properties.isPure());
+
+			if (r == null && systemCopy != null) {
+				debug("Trying again with output-nonbranching");
+				r = calculateSeparatingRegion(utility, systemCopy, basis, state, event, properties.isPure());
+			}
 		}
 		return r;
 	}

@@ -31,6 +31,7 @@ import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.bounded.Bounded;
+import uniol.apt.analysis.cf.ConflictFree;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.exception.UnboundedException;
@@ -235,6 +236,13 @@ public class SynthesizePN {
 			assert new Bounded().checkBounded(pn).k <= properties.getKForKBoundedness() : regions;
 		if (properties.isOutputNonbranching())
 			assert new OutputNonBranching(pn).check() : regions;
+		if (properties.isConflictFree())
+			try {
+				assert new ConflictFree(pn).check() : regions;
+			}
+			catch (PreconditionFailedException e) {
+				assert false : regions;
+			}
 
 		// The resulting PN should always have a reachability graph isomorphic to what we started with
 		try {

@@ -57,7 +57,7 @@ public class SynthesizeModule extends AbstractModule {
 	static public void requireCommon(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("properties", String.class,
 				"Comma separated list of properties for the synthesized net,"
-				+ " can be none, safe, [k]-bounded, pure, plain, t-net and output-nonbranching");
+				+ " can be none, safe, [k]-bounded, pure, plain, t-net, output-nonbranching (on), conflict-free (cf)");
 	}
 
 	@Override
@@ -139,7 +139,12 @@ public class SynthesizeModule extends AbstractModule {
 					result.add(PNProperties.TNET);
 					break;
 				case "output-nonbranching":
+				case "on":
 					result.add(PNProperties.OUTPUT_NONBRANCHING);
+					break;
+				case "conflict-free":
+				case "cf":
+					result.add(PNProperties.CONFLICT_FREE);
 					break;
 				default:
 					if (prop.endsWith("-bounded")) {

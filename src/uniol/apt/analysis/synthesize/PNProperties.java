@@ -58,6 +58,12 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 			return "OUTPUT_NONBRANCHING";
 		}
 	};
+	public final static PNProperty CONFLICT_FREE = new PNProperty() {
+		@Override
+		public String toString() {
+			return "CONFLICT_FREE";
+		}
+	};
 
 	static public interface PNProperty {
 	}
@@ -95,6 +101,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	private boolean plain = false;
 	private boolean tnet = false;
 	private boolean output_nonbranching = false;
+	private boolean conflict_free = false;
 
 	/**
 	 * Create a new, empty Petri net properties instance.
@@ -114,8 +121,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	 * Create a new Petri net properties instance from the given collection.
 	 */
 	public PNProperties(Collection<? extends PNProperty> properties) {
-		for (PNProperty property : properties)
-			add(property);
+		addAll(properties);
 	}
 
 	/**
@@ -175,6 +181,13 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 		return output_nonbranching;
 	}
 
+	/**
+	 * Return true if this property description requires a conflict free PN.
+	 */
+	public boolean isConflictFree() {
+		return conflict_free;
+	}
+
 	@Override
 	public boolean contains(Object o) {
 		if (!(o instanceof PNProperty))
@@ -191,6 +204,8 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 			return tnet;
 		} else if (OUTPUT_NONBRANCHING.equals(property)) {
 			return output_nonbranching;
+		} else if (CONFLICT_FREE.equals(property)) {
+			return conflict_free;
 		}
 		return false;
 	}
@@ -219,6 +234,10 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 			output_nonbranching = true;
 		} else if (OUTPUT_NONBRANCHING.equals(property)) {
 			output_nonbranching = true;
+		} else if (CONFLICT_FREE.equals(property)) {
+			conflict_free = true;
+			// Out definition of CF requires plainness
+			plain = true;
 		}
 		return true;
 	}
@@ -248,7 +267,9 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 					state++;
 				if (state == 4 && !output_nonbranching)
 					state++;
-				return state < 5;
+				if (state == 5 && !conflict_free)
+					state++;
+				return state < 6;
 			}
 
 			@Override
@@ -266,6 +287,8 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 						return TNET;
 					case 4:
 						return OUTPUT_NONBRANCHING;
+					case 5:
+						return CONFLICT_FREE;
 					default:
 						throw new NoSuchElementException();
 				}
