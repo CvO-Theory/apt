@@ -90,6 +90,13 @@
 			<arg value="uniol.apt.io.parser.impl"/>
 			<arg line="${basedir}/src/uniol/apt/io/parser/impl/RegexFormatParser.g4"/>
 		</java>
+		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
+			<arg value="-o"/>
+			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg value="-package"/>
+			<arg value="uniol.apt.io.parser.impl"/>
+			<arg line="${basedir}/src/uniol/apt/io/parser/impl/AptPNFormat.g4"/>
+		</java>
 		<!-- Touch the time stamp file which antlr.checkforchanges checks for -->
 		<touch file="generated-src/antlr.stamp" mkdirs="true"/>
 	</target>
