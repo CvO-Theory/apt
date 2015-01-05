@@ -20,7 +20,6 @@
 package uniol.apt.analysis.language;
 
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import uniol.apt.adt.ts.State;
@@ -33,6 +32,7 @@ import java.util.List;
 
 /** @author Uli Schlachter */
 @Test
+@SuppressWarnings("unchecked")
 public class DeterministicFiniteAutomatonTest {
 
 	private void newEdge(TransitionSystem ts, State source, State target, String label) {
@@ -44,39 +44,39 @@ public class DeterministicFiniteAutomatonTest {
 		assertThat(dfa.getLabels(), containsInAnyOrder("a", "b", "c"));
 
 		DeterministicFiniteAutomatonState stateInit = dfa.getInitialState();
-		assertNotNull(stateInit);
-		assertTrue(stateInit.isAccepting());
+		assertThat(stateInit, is(not(nullValue())));
+		assertThat(stateInit.isAccepting(), equalTo(true));
 
 		DeterministicFiniteAutomatonState stateA = stateInit.getState("a");
-		assertNotNull(stateA);
-		assertTrue(stateA.isAccepting());
-		assertNotEquals(stateInit, stateA);
+		assertThat(stateA, is(not(nullValue())));
+		assertThat(stateA.isAccepting(), equalTo(true));
+		assertThat(stateA, is(not(equalTo(stateInit))));
 
 		DeterministicFiniteAutomatonState stateB = stateA.getState("b");
-		assertNotNull(stateB);
-		assertTrue(stateB.isAccepting());
-		assertNotEquals(stateInit, stateB);
-		assertNotEquals(stateA, stateB);
+		assertThat(stateB, is(not(nullValue())));
+		assertThat(stateB.isAccepting(), equalTo(true));
+		assertThat(stateB, is(not(equalTo(stateInit))));
+		assertThat(stateB, is(not(equalTo(stateA))));
 
 		DeterministicFiniteAutomatonState stateErr = stateB.getState("a");
-		assertNotNull(stateErr);
-		assertFalse(stateErr.isAccepting());
-		assertNotEquals(stateInit, stateErr);
-		assertNotEquals(stateA, stateErr);
-		assertNotEquals(stateB, stateErr);
+		assertThat(stateErr, is(not(nullValue())));
+		assertThat(stateErr.isAccepting(), equalTo(false));
+		assertThat(stateErr, is(not(equalTo(stateInit))));
+		assertThat(stateErr, is(not(equalTo(stateA))));
+		assertThat(stateErr, is(not(equalTo(stateB))));
 
-		assertEquals(stateInit.getState("a"), stateA);
-		assertEquals(stateInit.getState("b"), stateErr);
-		assertEquals(stateInit.getState("c"), stateErr);
-		assertEquals(stateA.getState("a"), stateErr);
-		assertEquals(stateA.getState("b"), stateB);
-		assertEquals(stateA.getState("c"), stateErr);
-		assertEquals(stateB.getState("a"), stateErr);
-		assertEquals(stateB.getState("b"), stateErr);
-		assertEquals(stateB.getState("c"), stateInit);
-		assertEquals(stateErr.getState("a"), stateErr);
-		assertEquals(stateErr.getState("b"), stateErr);
-		assertEquals(stateErr.getState("c"), stateErr);
+		assertThat(stateInit.getState("a"), equalTo(stateA));
+		assertThat(stateInit.getState("b"), equalTo(stateErr));
+		assertThat(stateInit.getState("c"), equalTo(stateErr));
+		assertThat(stateA.getState("a"), equalTo(stateErr));
+		assertThat(stateA.getState("b"), equalTo(stateB));
+		assertThat(stateA.getState("c"), equalTo(stateErr));
+		assertThat(stateB.getState("a"), equalTo(stateErr));
+		assertThat(stateB.getState("b"), equalTo(stateErr));
+		assertThat(stateB.getState("c"), equalTo(stateInit));
+		assertThat(stateErr.getState("a"), equalTo(stateErr));
+		assertThat(stateErr.getState("b"), equalTo(stateErr));
+		assertThat(stateErr.getState("c"), equalTo(stateErr));
 
 		// Kids, the above is why I will not write more tests for the TS -> DFA transformation
 	}
@@ -129,7 +129,7 @@ public class DeterministicFiniteAutomatonTest {
 		DeterministicFiniteAutomaton dfa2 = new DeterministicFiniteAutomaton(ts);
 
 		List<String> list = DeterministicFiniteAutomaton.checkAutomatonEquivalence(dfa1, dfa2);
-		assertEquals(list, Arrays.asList("b"));
+		assertThat(list, contains("b"));
 	}
 
 	@Test
@@ -142,15 +142,15 @@ public class DeterministicFiniteAutomatonTest {
 		DeterministicFiniteAutomaton dfa2 = new DeterministicFiniteAutomaton(ts);
 
 		List<Word> list = DeterministicFiniteAutomaton.checkAutomatonEquivalence(dfa1, dfa2, true);
-		assertEquals(list, Arrays.asList(Arrays.asList("b")));
+		assertThat(list, contains(contains("b")));
 	}
 
 	private void testTS(TransitionSystem ts) {
 		DeterministicFiniteAutomaton automaton = new DeterministicFiniteAutomaton(ts);
 		automaton = automaton.minimize();
-		assertNull(DeterministicFiniteAutomaton.checkAutomatonEquivalence(automaton, automaton));
-		assertTrue(DeterministicFiniteAutomaton.checkAutomatonEquivalence(automaton, automaton,
-					true).isEmpty());
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(automaton, automaton), is(nullValue()));
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(automaton, automaton,
+					true), is(empty()));
 
 		if (ts.getNodes().size() == 1)
 			return;
@@ -159,9 +159,9 @@ public class DeterministicFiniteAutomatonTest {
 		DeterministicFiniteAutomaton automaton2 = new DeterministicFiniteAutomaton(
 				TestTSCollection.getSingleStateTS());
 		automaton2 = automaton2.minimize();
-		assertNotNull(DeterministicFiniteAutomaton.checkAutomatonEquivalence(automaton, automaton2));
-		assertFalse(DeterministicFiniteAutomaton.checkAutomatonEquivalence(automaton, automaton2,
-					true).isEmpty());
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(automaton, automaton2), is(not(nullValue())));
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(automaton, automaton2,
+					true), is(not(empty())));
 	}
 
 	@Test
@@ -213,7 +213,7 @@ public class DeterministicFiniteAutomatonTest {
 				TestTSCollection.getNotTotallyReachableTS());
 		a = a.minimize();
 		b = b.minimize();
-		assertEquals(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b), Arrays.asList("b"));
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b), contains("b"));
 	}
 
 	@Test
@@ -224,10 +224,10 @@ public class DeterministicFiniteAutomatonTest {
 				TestTSCollection.getNotTotallyReachableTS());
 		a = a.minimize();
 		b = b.minimize();
-		assertEquals(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b, true),
-				Arrays.asList(
-					Arrays.asList("b"),
-					Arrays.asList("a", "b")));
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b, true),
+				containsInAnyOrder(
+					contains("b"),
+					contains("a", "b")));
 	}
 
 	@Test
@@ -239,7 +239,7 @@ public class DeterministicFiniteAutomatonTest {
 				TestTSCollection.getSingleStateSingleTransitionTS());
 		a = a.minimize();
 		b = b.minimize();
-		assertEquals(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b), Arrays.asList("NotA"));
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b), contains("NotA"));
 	}
 
 	@Test
@@ -251,9 +251,9 @@ public class DeterministicFiniteAutomatonTest {
 				TestTSCollection.getSingleStateSingleTransitionTS());
 		a = a.minimize();
 		b = b.minimize();
-		assertEquals(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b, true), Arrays.asList(
-					Arrays.asList("NotA"),
-					Arrays.asList("a")));
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b, true), containsInAnyOrder(
+					contains("NotA"),
+					contains("a")));
 	}
 
 	@Test
@@ -263,7 +263,7 @@ public class DeterministicFiniteAutomatonTest {
 				TestTSCollection.getSingleStateWithUnreachableTS());
 		DeterministicFiniteAutomaton b = new DeterministicFiniteAutomaton(
 				TestTSCollection.getNonDeterministicTS());
-		assertEquals(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b), Arrays.asList("a"));
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b), contains("a"));
 	}
 
 	@Test
@@ -273,8 +273,8 @@ public class DeterministicFiniteAutomatonTest {
 				TestTSCollection.getSingleStateWithUnreachableTS());
 		DeterministicFiniteAutomaton b = new DeterministicFiniteAutomaton(
 				TestTSCollection.getNonDeterministicTS());
-		assertEquals(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b, true),
-				Arrays.asList(Arrays.asList("a")));
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b, true),
+				contains(contains("a")));
 	}
 }
 
