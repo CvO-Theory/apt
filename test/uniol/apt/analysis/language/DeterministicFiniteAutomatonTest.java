@@ -128,8 +128,13 @@ public class DeterministicFiniteAutomatonTest {
 		newEdge(ts, ts.getInitialState(), ts.createState(), "b");
 		DeterministicFiniteAutomaton dfa2 = new DeterministicFiniteAutomaton(ts);
 
+		// dfa1 accepts the prefix language of (abc)^*. dfa2 accepts the prefix language of (abc)^*b. Due to the
+		// way the algorithm is implemented (read: iteration order over the set of labels), we can reach the
+		// state that describes the difference either via abcb (if we start in the root with label a) or b (if
+		// we start with label b). So either result is fine.
+
 		List<String> list = DeterministicFiniteAutomaton.checkAutomatonEquivalence(dfa1, dfa2);
-		assertThat(list, contains("b"));
+		assertThat(list, anyOf(contains("b"), contains("a", "b", "c", "b")));
 	}
 
 	@Test
@@ -141,8 +146,13 @@ public class DeterministicFiniteAutomatonTest {
 		newEdge(ts, ts.getInitialState(), ts.createState(), "b");
 		DeterministicFiniteAutomaton dfa2 = new DeterministicFiniteAutomaton(ts);
 
+		// dfa1 accepts the prefix language of (abc)^*. dfa2 accepts the prefix language of (abc)^*b. Due to the
+		// way the algorithm is implemented (read: iteration order over the set of labels), we can reach the
+		// state that describes the difference either via abcb (if we start in the root with label a) or b (if
+		// we start with label b). So either result is fine.
+
 		List<Word> list = DeterministicFiniteAutomaton.checkAutomatonEquivalence(dfa1, dfa2, true);
-		assertThat(list, contains(contains("b")));
+		assertThat(list, contains(anyOf(contains("b"), contains("a", "b", "c", "b"))));
 	}
 
 	private void testTS(TransitionSystem ts) {
@@ -213,7 +223,7 @@ public class DeterministicFiniteAutomatonTest {
 				TestTSCollection.getNotTotallyReachableTS());
 		a = a.minimize();
 		b = b.minimize();
-		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b), contains("b"));
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b), anyOf(contains("b"), contains("a", "b")));
 	}
 
 	@Test
@@ -239,7 +249,7 @@ public class DeterministicFiniteAutomatonTest {
 				TestTSCollection.getSingleStateSingleTransitionTS());
 		a = a.minimize();
 		b = b.minimize();
-		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b), contains("NotA"));
+		assertThat(DeterministicFiniteAutomaton.checkAutomatonEquivalence(a, b), anyOf(contains("NotA"), contains("a")));
 	}
 
 	@Test
