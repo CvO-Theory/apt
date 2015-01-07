@@ -358,6 +358,36 @@ public class TestTSCollection {
 		ts.createArc(w, w, "b");
 		return ts;
 	}
+
+	/**
+	 * The transitions system:
+	 * <pre>
+	 *      b
+	 * [s] ---> [u]
+	 *  \\       ^\\
+	 * a \\   a /  \\ a
+	 *    v   /     v
+	 *     [t] ---> [v]
+	 *          b
+	 * </pre>
+	 */
+	public static TransitionSystem getTwoBThreeATS() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s = ts.createState("s");
+		State t = ts.createState("t");
+		State u = ts.createState("u");
+		State v = ts.createState("v");
+
+		ts.setInitialState(s);
+
+		ts.createArc(s, t, "a");
+		ts.createArc(t, u, "a");
+		ts.createArc(u, v, "a");
+		ts.createArc(s, u, "b");
+		ts.createArc(t, v, "b");
+		return ts;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

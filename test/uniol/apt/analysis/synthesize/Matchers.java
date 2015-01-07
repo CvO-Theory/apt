@@ -30,6 +30,10 @@ import org.hamcrest.Matcher;
  * @author Uli Schlachter
  */
 public class Matchers extends org.hamcrest.Matchers {
+	public static Matcher<Region> plainRegion() {
+		return PlainRegionMatcher.plainRegion();
+	}
+
 	public static Matcher<Region> pureRegion() {
 		return PureRegionMatcher.pureRegion();
 	}

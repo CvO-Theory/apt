@@ -153,6 +153,32 @@ public class SynthesizePNTest {
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems(), empty());
 	}
+
+	@Test
+	public void testStateSeparationSatisfiesProperties() throws MissingLocationException {
+		// This transition system leads to a region basis with a:1 and b:2. This region is not plain, but the
+		// code would add it for state separation anyway! Since this is the only entry in the basis and all
+		// regions must be a linear combination of the basis, there are no plain regions at all for this TS.
+		TransitionSystem ts = TestTSCollection.getTwoBThreeATS();
+		State s = ts.getNode("s");
+		State t = ts.getNode("t");
+		State u = ts.getNode("u");
+		State v = ts.getNode("v");
+		SynthesizePN synth = new SynthesizePN(ts, new PNProperties(PNProperties.PLAIN));
+
+		assertThat(synth.getSeparatingRegions(), everyItem(plainRegion()));
+		assertThat(synth.getFailedEventStateSeparationProblems(), containsInAnyOrder(
+					equalTo(new Pair<String, State>("a", v)),
+					equalTo(new Pair<String, State>("b", v)),
+					equalTo(new Pair<String, State>("b", u))));
+		assertThat(synth.getFailedStateSeparationProblems(), containsInAnyOrder(
+					containsInAnyOrder(s, t),
+					containsInAnyOrder(s, u),
+					containsInAnyOrder(s, v),
+					containsInAnyOrder(t, u),
+					containsInAnyOrder(t, v),
+					containsInAnyOrder(u, v)));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
