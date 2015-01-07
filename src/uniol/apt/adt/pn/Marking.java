@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import uniol.apt.adt.exception.NoSuchNodeException;
-import uniol.apt.adt.exception.NotArrangableException;
 import uniol.apt.adt.exception.StructureException;
 
 /**
@@ -39,7 +38,7 @@ import uniol.apt.adt.exception.StructureException;
  * <p/>
  * @author Manuel Gieseking
  */
-public class Marking implements Comparable<Marking> {
+public class Marking {
 
 	private final HashMap<String, Token> map = new HashMap<>();
 	private final PetriNet net;
@@ -419,51 +418,6 @@ public class Marking implements Comparable<Marking> {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Compares this marking to an other.
-	 * <p/>
-	 * @param o the marking to compare to.
-	 * <p/>
-	 * @return 0 if equal, -1 if less and 1 if greater.
-	 * <p/>
-	 * @throws IllegalArgumentException thrown if the mapping of the marking do not fit together.
-	 * @throws NotArrangableException   thrown if not all components of the marking are less or greater than the
-	 *                                  others and the markings are not equal.
-	 */
-	@Override
-	public int compareTo(Marking o) {
-		ensureConsistency();
-		o.ensureConsistency();
-		if (o.map.size() != map.size()) {
-			throw new IllegalArgumentException("Markings are not comparable (map size do not fit).");
-		}
-		boolean equal = true;
-		boolean less = true;
-		boolean greater = true;
-		for (String key : map.keySet()) {
-			if (!o.map.containsKey(key)) {
-				throw new IllegalArgumentException("Markings are not comparable (not same places).");
-			}
-			Token other = o.getToken(key);
-			Token own = map.get(key);
-			int comp = own.compareTo(other);
-			if (comp != 0) {
-				equal = false;
-			}
-			if (comp == 1) {
-				less = false;
-			}
-			if (comp == -1) {
-				greater = false;
-			}
-		}
-		int ret = (less && !equal) ? -1 : (greater && !equal) ? 1 : (equal) ? 0 : -2;
-		if (ret == -2) {
-			throw new NotArrangableException("markings", this, o);
-		}
-		return ret;
 	}
 
 	@Override
