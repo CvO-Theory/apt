@@ -128,7 +128,7 @@ public class SynthesizeWordModule extends AbstractModule {
 		return new Category[]{Category.LTS};
 	}
 
-	static public TransitionSystem makeTS(Word word) {
+	static public TransitionSystem makeTS(List<String> word) {
 		TransitionSystem ts = new TransitionSystem();
 		State state = ts.createState();
 		state.putExtension("index", 0);

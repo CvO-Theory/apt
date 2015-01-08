@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import uniol.apt.TestTSCollection;
+import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.impl.apt.APTLTSParser;
@@ -301,6 +302,53 @@ public class SeparationUtilityTest {
 		ts.getArc("r", "s1", "a").putExtension("location", "X");
 
 		SeparationUtility.getLocationMap(new RegionUtility(ts));
+	}
+
+	@Test
+	public static class testWordB2AB5AB6AB6 {
+		protected List<String> word;
+		protected TransitionSystem ts;
+		protected SeparationUtility utility;
+
+		@BeforeClass
+		public void setup() throws Exception {
+			word = Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b", "a", "b", "b",
+					"b", "b", "b", "b");
+			ts = SynthesizeWordModule.makeTS(word);
+			RegionUtility reg_util = new RegionUtility(ts);
+
+			List<Region> regionBasis = new ArrayList<>();
+			regionBasis.add(Region.createPureRegionFromVector(reg_util, Arrays.asList(1, 0)));
+			regionBasis.add(Region.createPureRegionFromVector(reg_util, Arrays.asList(0, 1)));
+
+			utility = new SeparationUtility(reg_util, regionBasis);
+		}
+
+		@DataProvider(name = "stateDisabledEventPairs")
+		public Object[][] createStateEventPairs() {
+			List<Object[]> pairs = new ArrayList<>();
+			for (State state : ts.getNodes())
+				for (String event : ts.getAlphabet())
+					if (!SeparationUtility.isEventEnabled(state, event))
+						pairs.add(new Object[] { state.getId(), event });
+			return pairs.toArray(new Object[][] {});
+		}
+
+		@Test(dataProvider = "stateDisabledEventPairs")
+		public void testEventSeparation(String state, String event) throws MissingLocationException {
+			Region r = utility.getSeparatingRegion(Collections.<Region>emptyList(), ts.getNode(state), event);
+
+			assertThat(r, notNullValue());
+			assertThat(r.getInitialMarking(), greaterThanOrEqualTo(0));
+
+			for (State s : ts.getNodes())
+				for (Arc arc : s.getPostsetEdges()) {
+					String label = arc.getLabel();
+					int backwards = r.getBackwardWeight(label);
+					assertThat(r.getInitialMarking() + " : " + r + " : " + s.toString() + " : " + label,
+							r.getNormalRegionMarkingForState(s), greaterThanOrEqualTo(backwards));
+				}
+		}
 	}
 }
 
