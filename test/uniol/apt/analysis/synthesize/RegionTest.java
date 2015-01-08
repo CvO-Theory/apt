@@ -420,7 +420,7 @@ public class RegionTest {
 	}
 
 	@Test
-	public void testGetNormalRegionMarkingForState() {
+	public void testGetMarkingForState() {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
 
@@ -431,15 +431,15 @@ public class RegionTest {
 		Region region = Region.createImpureRegionFromVector(utility,
 				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
 
-		assertThat(region.getNormalRegionMarkingForState(ts.getNode("s")), equalTo(0));
-		assertThat(region.getNormalRegionMarkingForState(ts.getNode("t")), equalTo(1));
-		assertThat(region.getNormalRegionMarkingForState(ts.getNode("u")), equalTo(2));
-		assertThat(region.getNormalRegionMarkingForState(ts.getNode("v")), equalTo(3));
-		assertThat(region.getNormalRegionMarkingForState(ts.getNode("w")), equalTo(4));
+		assertThat(region.getMarkingForState(ts.getNode("s")), equalTo(0));
+		assertThat(region.getMarkingForState(ts.getNode("t")), equalTo(1));
+		assertThat(region.getMarkingForState(ts.getNode("u")), equalTo(2));
+		assertThat(region.getMarkingForState(ts.getNode("v")), equalTo(3));
+		assertThat(region.getMarkingForState(ts.getNode("w")), equalTo(4));
 	}
 
 	@Test
-	public void testGetNormalRegionMarkingForState2() {
+	public void testGetMarkingForState2() {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
 
@@ -450,11 +450,11 @@ public class RegionTest {
 		Region region = Region.createImpureRegionFromVector(utility,
 				impureParikhVector(a, 2, 1, b, 3, 0, c, 5, 3));
 
-		assertThat(region.getNormalRegionMarkingForState(ts.getNode("s")), equalTo(7));
-		assertThat(region.getNormalRegionMarkingForState(ts.getNode("t")), equalTo(6));
-		assertThat(region.getNormalRegionMarkingForState(ts.getNode("u")), equalTo(3));
-		assertThat(region.getNormalRegionMarkingForState(ts.getNode("v")), equalTo(1));
-		assertThat(region.getNormalRegionMarkingForState(ts.getNode("w")), equalTo(0));
+		assertThat(region.getMarkingForState(ts.getNode("s")), equalTo(7));
+		assertThat(region.getMarkingForState(ts.getNode("t")), equalTo(6));
+		assertThat(region.getMarkingForState(ts.getNode("u")), equalTo(3));
+		assertThat(region.getMarkingForState(ts.getNode("v")), equalTo(1));
+		assertThat(region.getMarkingForState(ts.getNode("w")), equalTo(0));
 	}
 }
 

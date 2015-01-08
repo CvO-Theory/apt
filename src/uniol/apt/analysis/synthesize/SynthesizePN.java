@@ -267,7 +267,7 @@ public class SynthesizePN {
 
 		for (Region region : regions) {
 			Place place = pn.createPlace();
-			place.setInitialToken(region.getNormalRegionMarking());
+			place.setInitialToken(region.getInitialMarking());
 			place.putExtension(Region.class.getName(), region);
 
 			for (String event : region.getRegionUtility().getEventList()) {

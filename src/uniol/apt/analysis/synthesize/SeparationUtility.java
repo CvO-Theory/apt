@@ -175,7 +175,7 @@ public class SeparationUtility {
 
 		for (Region region : regions) {
 			// We need r(state) to be smaller than the event's backward weight in some region.
-			if (region.getNormalRegionMarkingForState(state) < region.getBackwardWeight(event))
+			if (region.getMarkingForState(state) < region.getBackwardWeight(event))
 				return region;
 		}
 

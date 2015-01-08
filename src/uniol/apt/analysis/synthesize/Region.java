@@ -35,14 +35,16 @@ public class Region {
 	private final RegionUtility utility;
 	private final List<Integer> backwardWeights;
 	private final List<Integer> forwardWeights;
+	private final int initialMarking;
 
 	/**
 	 * Create a new region.
 	 * @param utility The RegionUtility instance that supports this region.
 	 * @param backwardWeights List of weights for the backward weight of each event.
 	 * @param forwardWeights List of weights for the forward weights of each event.
+	 * @param initialMarking Initial marking, or null if one should be calculated.
 	 */
-	public Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights) {
+	private Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights, Integer initialMarking) {
 		this.utility = utility;
 		this.backwardWeights = Collections.unmodifiableList(new ArrayList<>(backwardWeights));
 		this.forwardWeights = Collections.unmodifiableList(new ArrayList<>(forwardWeights));
@@ -54,6 +56,33 @@ public class Region {
 			assert i >= 0;
 		for (int i : forwardWeights)
 			assert i >= 0;
+
+		if (initialMarking != null)
+			this.initialMarking = initialMarking;
+		else
+			this.initialMarking = getNormalRegionMarking();
+
+		assert this.initialMarking >= 0;
+	}
+
+	/**
+	 * Create a new region.
+	 * @param utility The RegionUtility instance that supports this region.
+	 * @param backwardWeights List of weights for the backward weight of each event.
+	 * @param forwardWeights List of weights for the forward weights of each event.
+	 */
+	public Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights, int initialMarking) {
+		this(utility, backwardWeights, forwardWeights, Integer.valueOf(initialMarking));
+	}
+
+	/**
+	 * Create a new region.
+	 * @param utility The RegionUtility instance that supports this region.
+	 * @param backwardWeights List of weights for the backward weight of each event.
+	 * @param forwardWeights List of weights for the forward weights of each event.
+	 */
+	public Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights) {
+		this(utility, backwardWeights, forwardWeights, (Integer) null);
 	}
 
 	/**
@@ -143,12 +172,18 @@ public class Region {
 	}
 
 	/**
+	 * Return the initial marking of this region.
+	 * @return The initial marking of this region.
+	 */
+	public int getInitialMarking() {
+		return this.initialMarking;
+	}
+
+	/**
 	 * Get the marking that a normal region based on this abstract would assign to the initial state.
 	 * @return The resulting number.
 	 */
 	public int getNormalRegionMarking() {
-		// TODO: This is highly inefficient, would be better to evaluate according to a depth-first search
-		// through the spanning tree instead of calculating and evaluating so many Parikh Vectors
 		int marking = 0;
 		for (State state : getTransitionSystem().getNodes()) {
 			if (utility.getSpanningTree().isReachable(state))
@@ -162,9 +197,8 @@ public class Region {
 	 * @param state The state to evaluate. Must be reachable from the initial state.
 	 * @return The resulting number.
 	 */
-	public int getNormalRegionMarkingForState(State state) {
-		// TODO: Inefficient!
-		return getNormalRegionMarking() + evaluateParikhVector(utility.getReachingParikhVector(state));
+	public int getMarkingForState(State state) {
+		return getInitialMarking() + evaluateParikhVector(utility.getReachingParikhVector(state));
 	}
 
 	/**
@@ -196,7 +230,8 @@ public class Region {
 			forwardList.add(forward);
 		}
 
-		return new Region(utility, backwardList, forwardList);
+		return new Region(utility, backwardList, forwardList)
+			.withInitialMarking(initialMarking + factor * otherRegion.getInitialMarking());
 	}
 
 	/**
@@ -220,7 +255,16 @@ public class Region {
 			vector.add(getWeight(i));
 		}
 
-		return createPureRegionFromVector(utility, vector);
+		return createPureRegionFromVector(utility, vector).withInitialMarking(initialMarking);
+	}
+
+	/**
+	 * Create a new region that is a copy of this region, but with the specified initial marking.
+	 * @param initialMarking The initial marking for the new region.
+	 * @return The new region.
+	 */
+	public Region withInitialMarking(int initialMarking) {
+		return new Region(utility, backwardWeights, forwardWeights, initialMarking);
 	}
 
 	@Override

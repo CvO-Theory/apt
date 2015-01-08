@@ -209,10 +209,10 @@ public class SeparationUtilityTest {
 		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));
 
 		// State "state" must be reachable (This only tests a necessary, but no sufficient, condition)
-		assertThat(r.getNormalRegionMarkingForState(state), is(greaterThanOrEqualTo(0)));
+		assertThat(r.getMarkingForState(state), is(greaterThanOrEqualTo(0)));
 
 		// After reaching state "state", "event" must be disabled
-		assertThat(r.getNormalRegionMarkingForState(state), is(lessThan(r.getBackwardWeight(event))));
+		assertThat(r.getMarkingForState(state), is(lessThan(r.getBackwardWeight(event))));
 	}
 
 	@Test
@@ -268,9 +268,9 @@ public class SeparationUtilityTest {
 			Region region = new SeparationUtility(utility, regionBasis, new PNProperties(PNProperties.PURE))
 				.getSeparatingRegion(regionBasis, ts.getNode("s3"), "t2");
 
-			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
-			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
-			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s2")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getMarkingForState(ts.getNode("s2")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 		}
 
 		@Test
@@ -278,9 +278,9 @@ public class SeparationUtilityTest {
 			Region region = new SeparationUtility(utility, regionBasis)
 				.getSeparatingRegion(regionBasis, ts.getNode("s3"), "t2");
 
-			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
-			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
-			assertThat(region.getNormalRegionMarkingForState(ts.getNode("s2")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getMarkingForState(ts.getNode("s2")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 		}
 	}
 
@@ -346,7 +346,7 @@ public class SeparationUtilityTest {
 					String label = arc.getLabel();
 					int backwards = r.getBackwardWeight(label);
 					assertThat(r.getInitialMarking() + " : " + r + " : " + s.toString() + " : " + label,
-							r.getNormalRegionMarkingForState(s), greaterThanOrEqualTo(backwards));
+							r.getMarkingForState(s), greaterThanOrEqualTo(backwards));
 				}
 		}
 	}
