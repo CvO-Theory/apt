@@ -447,7 +447,8 @@ public class SeparationUtility {
 
 		Region r = new Region(utility,
 				solution.subList(systemBackwardWeightsStart, systemBackwardWeightsStart + events),
-				solution.subList(systemForwardWeightsStart, systemForwardWeightsStart + events));
+				solution.subList(systemForwardWeightsStart, systemForwardWeightsStart + events))
+			.withInitialMarking(solution.get(systemInitialMarking));
 		debug("region: " + r);
 
 		if (pure)
