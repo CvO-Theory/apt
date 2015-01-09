@@ -28,8 +28,11 @@ import java.util.Set;
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
-import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.adt.ts.State;
+import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.coverability.CoverabilityGraph;
+import uniol.apt.analysis.exception.UnboundedException;
+import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.util.Pair;
 
 import org.hamcrest.collection.IsIterableWithSize;
@@ -142,7 +145,7 @@ public class SynthesizePNTest {
 	}
 
 	@Test
-	public void testPureSynthesizablePathTS() throws MissingLocationException {
+	public void testPureSynthesizablePathTS() throws MissingLocationException, UnboundedException {
 		TransitionSystem ts = TestTSCollection.getPureSynthesizablePathTS();
 		RegionUtility utility = new RegionUtility(ts);
 		SynthesizePN synth = new SynthesizePN(utility);
@@ -152,6 +155,9 @@ public class SynthesizePNTest {
 		assertThat(synth.getSeparatingRegions(), IsIterableWithSize.<Region>iterableWithSize(greaterThanOrEqualTo(3)));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems(), empty());
+
+		TransitionSystem ts2 = new CoverabilityGraph(synth.synthesizePetriNet()).toReachabilityLTS();
+		assertThat(new IsomorphismLogic(ts, ts2, true).isIsomorphic(), is(true));
 	}
 
 	@Test
@@ -178,6 +184,36 @@ public class SynthesizePNTest {
 					containsInAnyOrder(t, u),
 					containsInAnyOrder(t, v),
 					containsInAnyOrder(u, v)));
+	}
+
+	@Test
+	public void testWordB2AB5AB6AB6None() throws MissingLocationException, UnboundedException {
+		TransitionSystem ts = SynthesizeWordModule.makeTS(Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b",
+					"a", "b", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b"));
+		SynthesizePN synth = new SynthesizePN(ts, new PNProperties());
+
+		assertThat(synth.wasSuccessfullySeparated(), is(true));
+
+		// Bypass the assertions in synthesizePetriNet() which already check for isomorphism
+		PetriNet pn = SynthesizePN.synthesizePetriNet(synth.getSeparatingRegions());
+		TransitionSystem ts2 = new CoverabilityGraph(pn).toReachabilityLTS();
+
+		assertThat(new IsomorphismLogic(ts, ts2, true).isIsomorphic(), is(true));
+	}
+
+	@Test
+	public void testWordB2AB5AB6AB6Pure() throws MissingLocationException, UnboundedException {
+		TransitionSystem ts = SynthesizeWordModule.makeTS(Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b",
+					"a", "b", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b"));
+		SynthesizePN synth = new SynthesizePN(ts, new PNProperties(PNProperties.PURE));
+
+		assertThat(synth.wasSuccessfullySeparated(), is(true));
+
+		// Bypass the assertions in synthesizePetriNet() which already check for isomorphism
+		PetriNet pn = SynthesizePN.synthesizePetriNet(synth.getSeparatingRegions());
+		TransitionSystem ts2 = new CoverabilityGraph(pn).toReachabilityLTS();
+
+		assertThat(new IsomorphismLogic(ts, ts2, true).isIsomorphic(), is(true));
 	}
 }
 
