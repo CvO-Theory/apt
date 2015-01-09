@@ -269,13 +269,19 @@ public class Region {
 
 	@Override
 	public String toString() {
-		String result = "";
+		StringBuilder result = new StringBuilder();
+		result.append("{ init=");
+		result.append(initialMarking);
 		for (String event : utility.getEventList()) {
-			if (!result.isEmpty())
-				result += ", ";
-			result += getBackwardWeight(event) + ":" + event + ":" + getForwardWeight(event);
+			result.append(", ");
+			result.append(getBackwardWeight(event));
+			result.append(":");
+			result.append(event);
+			result.append(":");
+			result.append(getForwardWeight(event));
 		}
-		return "{ " + result + " }";
+		result.append(" }");
+		return result.toString();
 	}
 
 	@Override

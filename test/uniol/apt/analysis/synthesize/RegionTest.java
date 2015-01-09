@@ -138,15 +138,15 @@ public class RegionTest {
 		int c = utility.getEventIndex("c");
 
 		Region region = Region.createImpureRegionFromVector(utility,
-				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6));
+				impureParikhVector(a, 1, 2, b, 3, 4, c, 5, 6)).withInitialMarking(0);
 
 		assertThat(region.toString(), anyOf(
-					equalTo("{ 1:a:2, 3:b:4, 5:c:6 }"),
-					equalTo("{ 1:a:2, 5:c:6, 3:b:4 }"),
-					equalTo("{ 3:b:4, 1:a:2, 5:c:6 }"),
-					equalTo("{ 3:b:4, 5:c:6, 1:a:2 }"),
-					equalTo("{ 5:c:6, 1:a:2, 3:b:4 }"),
-					equalTo("{ 5:c:6, 3:b:4, 1:a:2 }")
+					equalTo("{ init=0, 1:a:2, 3:b:4, 5:c:6 }"),
+					equalTo("{ init=0, 1:a:2, 5:c:6, 3:b:4 }"),
+					equalTo("{ init=0, 3:b:4, 1:a:2, 5:c:6 }"),
+					equalTo("{ init=0, 3:b:4, 5:c:6, 1:a:2 }"),
+					equalTo("{ init=0, 5:c:6, 1:a:2, 3:b:4 }"),
+					equalTo("{ init=0, 5:c:6, 3:b:4, 1:a:2 }")
 					));
 	}
 
