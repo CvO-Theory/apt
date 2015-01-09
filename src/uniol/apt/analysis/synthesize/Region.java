@@ -287,12 +287,13 @@ public class Region {
 		Region reg = (Region) obj;
 		return reg.utility.equals(utility) &&
 			reg.forwardWeights.equals(forwardWeights) &&
-			reg.backwardWeights.equals(backwardWeights);
+			reg.backwardWeights.equals(backwardWeights) &&
+			reg.initialMarking == initialMarking;
 	}
 
 	@Override
 	public int hashCode() {
-		return forwardWeights.hashCode() + backwardWeights.hashCode();
+		return 31 * (forwardWeights.hashCode() + 31 * backwardWeights.hashCode()) + initialMarking;
 	}
 
 	/**
