@@ -304,11 +304,12 @@ public class SeparationUtilityTest {
 		SeparationUtility.getLocationMap(new RegionUtility(ts));
 	}
 
-	@Test
-	public static class testWordB2AB5AB6AB6 {
+	public static abstract class testWordB2AB5AB6AB6 {
 		protected List<String> word;
 		protected TransitionSystem ts;
 		protected SeparationUtility utility;
+
+		abstract protected PNProperties getProperties();
 
 		@BeforeClass
 		public void setup() throws Exception {
@@ -321,7 +322,7 @@ public class SeparationUtilityTest {
 			regionBasis.add(Region.createPureRegionFromVector(reg_util, Arrays.asList(1, 0)));
 			regionBasis.add(Region.createPureRegionFromVector(reg_util, Arrays.asList(0, 1)));
 
-			utility = new SeparationUtility(reg_util, regionBasis);
+			utility = new SeparationUtility(reg_util, regionBasis, getProperties());
 		}
 
 		@DataProvider(name = "stateDisabledEventPairs")
@@ -348,6 +349,20 @@ public class SeparationUtilityTest {
 					assertThat(r.getInitialMarking() + " : " + r + " : " + s.toString() + " : " + label,
 							r.getMarkingForState(s), greaterThanOrEqualTo(backwards));
 				}
+		}
+	}
+
+	@Test
+	public static class testWordB2AB5AB6AB6None extends testWordB2AB5AB6AB6 {
+		protected PNProperties getProperties() {
+			return new PNProperties();
+		}
+	}
+
+	@Test
+	public static class testWordB2AB5AB6AB6Pure extends testWordB2AB5AB6AB6 {
+		protected PNProperties getProperties() {
+			return new PNProperties(PNProperties.PURE);
 		}
 	}
 }
