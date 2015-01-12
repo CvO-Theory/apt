@@ -172,49 +172,6 @@ public class SeparationUtility {
 	}
 
 	/**
-	 * Try to find an existing region which separates the two given states.
-	 * @param utility The region utility to use.
-	 * @param regions The regions to choose from.
-	 * @param state The first state of the separation problem
-	 * @param otherState The second state of the separation problem
-	 * @return A separating region or null.
-	 */
-	static public Region findSeparatingRegion(RegionUtility utility, Collection<Region> regions,
-			State state, State otherState) {
-		// Unreachable states cannot be separated
-		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
-			return null;
-
-		for (Region region : regions)
-			if (isSeparatingRegion(utility, region, state, otherState))
-				return region;
-
-		return null;
-	}
-
-	/**
-	 * Try to find an existing region which separates some state and some event.
-	 * @param utility The region utility to use.
-	 * @param regions The regions to choose from.
-	 * @param state The state of the separation problem
-	 * @param event The event of the separation problem
-	 * @return A separating region or null.
-	 */
-	static public Region findSeparatingRegion(RegionUtility utility, Collection<Region> regions,
-			State state, String event) {
-		// Unreachable states cannot be separated
-		if (!utility.getSpanningTree().isReachable(state))
-			return null;
-
-		for (Region region : regions) {
-			if (isSeparatingRegion(utility, region, state, event))
-				return region;
-		}
-
-		return null;
-	}
-
-	/**
 	 * Get an array of coefficients that describe the marking of the given state.
 	 * @param state The state whose marking should be calculated.
 	 * @return An array of coefficients or null if the state is not reachable.
@@ -543,30 +500,34 @@ public class SeparationUtility {
 	 * @return A region solving the problem or null.
 	 */
 	public Region getSeparatingRegion(Collection<Region> regions, State state, State otherState) {
-		Region r = findSeparatingRegion(utility, regions, state, otherState);
-		if (r == null)
-		{
-			InequalitySystem systemCopy = null;
-			InequalitySystem system = new InequalitySystem(this.system);
-			// TODO: How can this be implemented?
-			//requireDistributableNet(system, locationMap, event);
+		// Unreachable states cannot be separated
+		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
+			return null;
 
-			// TODO: Is this needed? Can this be optimized? Think about it
-			if (properties.isConflictFree() && !properties.isOutputNonbranching()) {
-				systemCopy = new InequalitySystem(system);
+		for (Region region : regions)
+			if (isSeparatingRegion(utility, region, state, otherState))
+				return region;
 
-				// Conflict free: Either the place is output-nonbranching or the preset is contained in
-				// the postset.
-				requireOutputNonbranchingNet(systemCopy);
-				requirePostsetContainsPreset(system);
-			}
+		InequalitySystem systemCopy = null;
+		InequalitySystem system = new InequalitySystem(this.system);
+		// TODO: How can this be implemented?
+		//requireDistributableNet(system, locationMap, event);
 
-			r = calculateSeparatingRegion(utility, system, basis, state, otherState, properties.isPure());
+		// TODO: Is this needed? Can this be optimized? Think about it
+		if (properties.isConflictFree() && !properties.isOutputNonbranching()) {
+			systemCopy = new InequalitySystem(system);
 
-			if (r == null && systemCopy != null) {
-				debug("Trying again with output-nonbranching");
-				r = calculateSeparatingRegion(utility, systemCopy, basis, state, otherState, properties.isPure());
-			}
+			// Conflict free: Either the place is output-nonbranching or the preset is contained in
+			// the postset.
+			requireOutputNonbranchingNet(systemCopy);
+			requirePostsetContainsPreset(system);
+		}
+
+		Region r = calculateSeparatingRegion(utility, system, basis, state, otherState, properties.isPure());
+
+		if (r == null && systemCopy != null) {
+			debug("Trying again with output-nonbranching");
+			r = calculateSeparatingRegion(utility, systemCopy, basis, state, otherState, properties.isPure());
 		}
 		return r;
 	}
@@ -579,28 +540,32 @@ public class SeparationUtility {
 	 * @return A region solving the problem or null.
 	 */
 	public Region getSeparatingRegion(Collection<Region> regions, State state, String event) {
-		Region r = findSeparatingRegion(utility, regions, state, event);
-		if (r == null)
-		{
-			InequalitySystem systemCopy = null;
-			InequalitySystem system = new InequalitySystem(this.system);
-			requireDistributableNet(system, locationMap, event);
+		// Unreachable states cannot be separated
+		if (!utility.getSpanningTree().isReachable(state))
+			return null;
 
-			if (properties.isConflictFree() && !properties.isOutputNonbranching()) {
-				systemCopy = new InequalitySystem(system);
+		for (Region region : regions)
+			if (isSeparatingRegion(utility, region, state, event))
+				return region;
 
-				// Conflict free: Either the place is output-nonbranching or the preset is contained in
-				// the postset.
-				requireOutputNonbranchingNet(systemCopy);
-				requirePostsetContainsPreset(system);
-			}
+		InequalitySystem systemCopy = null;
+		InequalitySystem system = new InequalitySystem(this.system);
+		requireDistributableNet(system, locationMap, event);
 
-			r = calculateSeparatingRegion(utility, system, basis, state, event, properties.isPure());
+		if (properties.isConflictFree() && !properties.isOutputNonbranching()) {
+			systemCopy = new InequalitySystem(system);
 
-			if (r == null && systemCopy != null) {
-				debug("Trying again with output-nonbranching");
-				r = calculateSeparatingRegion(utility, systemCopy, basis, state, event, properties.isPure());
-			}
+			// Conflict free: Either the place is output-nonbranching or the preset is contained in
+			// the postset.
+			requireOutputNonbranchingNet(systemCopy);
+			requirePostsetContainsPreset(system);
+		}
+
+		Region r = calculateSeparatingRegion(utility, system, basis, state, event, properties.isPure());
+
+		if (r == null && systemCopy != null) {
+			debug("Trying again with output-nonbranching");
+			r = calculateSeparatingRegion(utility, systemCopy, basis, state, event, properties.isPure());
 		}
 		return r;
 	}
