@@ -490,6 +490,7 @@ public class SeparationUtility {
 
 		debug("solution: " + solution);
 
+		final int events = utility.getNumberOfEvents();
 		Region r = new Region(utility,
 				solution.subList(systemBackwardWeightsStart, systemBackwardWeightsStart + events),
 				solution.subList(systemForwardWeightsStart, systemForwardWeightsStart + events))
