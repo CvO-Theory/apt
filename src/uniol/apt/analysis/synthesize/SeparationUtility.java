@@ -411,7 +411,6 @@ public class SeparationUtility {
 	 */
 	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
 			Collection<Region> basis, State state, State otherState, boolean pure) {
-		final int events = utility.getNumberOfEvents();
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 
 		// Unreachable states cannot be separated
@@ -428,27 +427,7 @@ public class SeparationUtility {
 
 		system.addInequality(-1, ">=", inequality, "Region should separate state " + state + " from state " + otherState);
 
-		// Calculate the resulting linear combination
-		debug("Solving the following system to separate " + state + " from " + otherState + ":");
-		debug(system);
-		List<Integer> solution = system.findSolution();
-		if (solution.isEmpty()) {
-			debug("No solution found");
-			return null;
-		}
-
-		debug("solution: " + solution);
-
-		Region r = new Region(utility,
-				solution.subList(systemBackwardWeightsStart, systemBackwardWeightsStart + events),
-				solution.subList(systemForwardWeightsStart, systemForwardWeightsStart + events))
-			.withInitialMarking(solution.get(systemInitialMarking));
-		debug("region: " + r);
-
-		if (pure)
-			r = r.makePure();
-		assert r.getNormalRegionMarking() <= solution.get(systemInitialMarking) : solution;
-		return r;
+		return regionFromSolution(system, pure);
 	}
 
 
@@ -468,7 +447,6 @@ public class SeparationUtility {
 	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
 			Collection<Region> basis, State state, String event, boolean pure) {
 		final int eventIndex = utility.getEventIndex(event);
-		final int events = utility.getNumberOfEvents();
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 
 		// Unreachable states cannot be separated
@@ -492,6 +470,17 @@ public class SeparationUtility {
 
 		// Calculate the resulting linear combination
 		debug("Solving the following system to separate " + state + " from " + event + ":");
+		return regionFromSolution(system, pure);
+	}
+
+	/**
+	 * Try to solve the given inequality system and create a region from the solution found.
+	 * @param system An inequality system that is suitably prepared.
+	 * @param pure Whether the generated region should describe part of a pure Petri Net and thus must not generate
+	 * any side-conditions.
+	 * @return A region or null.
+	 */
+	private Region regionFromSolution(InequalitySystem system, boolean pure) {
 		debug(system);
 		List<Integer> solution = system.findSolution();
 		if (solution.isEmpty()) {
