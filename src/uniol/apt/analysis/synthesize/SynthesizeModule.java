@@ -121,6 +121,12 @@ public class SynthesizeModule extends AbstractModule {
 
 	static public PNProperties parseProperties(String properties) throws ModuleException {
 		PNProperties result = new PNProperties();
+
+		// Explicitly allow empty string
+		properties = properties.trim();
+		if (properties.isEmpty())
+			return result;
+
 		for (String prop : properties.split(",")) {
 			prop = prop.trim().toLowerCase();
 			switch (prop) {
