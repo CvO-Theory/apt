@@ -132,6 +132,46 @@ public class SeparationUtility {
 	}
 
 	/**
+	 * Check if the given region separates the two given states.
+	 * @param utility The region utility to use.
+	 * @param region The region to examine.
+	 * @param state The first state of the separation problem
+	 * @param otherState The second state of the separation problem
+	 * @return A separating region or null.
+	 */
+	static public boolean isSeparatingRegion(RegionUtility utility, Region region, State state, State otherState) {
+		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
+		List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
+
+		// Unreachable states cannot be separated
+		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
+			return false;
+
+		// We need a region which assigns different values to these two states.
+		int stateValue = region.evaluateParikhVector(stateParikhVector);
+		int otherStateValue = region.evaluateParikhVector(otherStateParikhVector);
+		return stateValue != otherStateValue;
+	}
+
+	/**
+	 * Check if the given region separates the state from the event.
+	 * @param utility The region utility to use.
+	 * @param region The region to examine.
+	 * @param state The state of the separation problem
+	 * @param event The event of the separation problem
+	 * @return A separating region or null.
+	 */
+	static public boolean isSeparatingRegion(RegionUtility utility, Region region,
+			State state, String event) {
+		// Unreachable states cannot be separated
+		if (!utility.getSpanningTree().isReachable(state))
+			return false;
+
+		// We need r(state) to be smaller than the event's backward weight in some region.
+		return region.getMarkingForState(state) < region.getBackwardWeight(event);
+	}
+
+	/**
 	 * Try to find an existing region which separates the two given states.
 	 * @param utility The region utility to use.
 	 * @param regions The regions to choose from.
@@ -141,20 +181,13 @@ public class SeparationUtility {
 	 */
 	static public Region findSeparatingRegion(RegionUtility utility, Collection<Region> regions,
 			State state, State otherState) {
-		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
-		List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
-
 		// Unreachable states cannot be separated
 		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
 			return null;
 
-		for (Region region : regions) {
-			// We need a region which assigns different values to these two states.
-			int stateValue = region.evaluateParikhVector(stateParikhVector);
-			int otherStateValue = region.evaluateParikhVector(otherStateParikhVector);
-			if (stateValue != otherStateValue)
+		for (Region region : regions)
+			if (isSeparatingRegion(utility, region, state, otherState))
 				return region;
-		}
 
 		return null;
 	}
@@ -174,8 +207,7 @@ public class SeparationUtility {
 			return null;
 
 		for (Region region : regions) {
-			// We need r(state) to be smaller than the event's backward weight in some region.
-			if (region.getMarkingForState(state) < region.getBackwardWeight(event))
+			if (isSeparatingRegion(utility, region, state, event))
 				return region;
 		}
 

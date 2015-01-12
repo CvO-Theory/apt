@@ -19,8 +19,10 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import uniol.apt.adt.exception.NoSuchNodeException;
@@ -91,6 +93,9 @@ public class SynthesizePN {
 		debug();
 		debug("Solving state separation");
 		solveStateSeparation();
+
+		debug();
+		minimizeRegions(utility, regions);
 
 		debug();
 	}
@@ -169,6 +174,75 @@ public class SynthesizePN {
 					}
 				}
 			}
+	}
+
+	/**
+	 * Try to eliminate redundant regions.
+	 * @param utility The region utility on which this function should work.
+	 * @param requiredRegions Set of regions to minimize. Redundant regions will be removed.
+	 */
+	static public void minimizeRegions(RegionUtility utility, Set<Region> requiredRegions) {
+		TransitionSystem ts = utility.getTransitionSystem();
+		Set<Region> allRegions = new HashSet<>(requiredRegions);
+		requiredRegions.clear();
+
+		// Build a list where each entry is generated from a separation problem and contains all regions that
+		// solve this problem.
+		List<Set<Region>> separationProblems = new ArrayList<>();
+
+		// State separation
+		Set<State> alreadyHandled = new HashSet<>();
+		for (State state : ts.getNodes()) {
+			alreadyHandled.add(state);
+			for (State otherState : ts.getNodes()) {
+				if (alreadyHandled.contains(otherState))
+					continue;
+
+				Set<Region> sep = new HashSet<>();
+				for (Region r : allRegions) {
+					if (SeparationUtility.isSeparatingRegion(utility, r, state, otherState))
+						sep.add(r);
+				}
+				separationProblems.add(sep);
+			}
+		}
+		// Event separation
+		for (State state : ts.getNodes()) {
+			for (String event : ts.getAlphabet()) {
+				if (!SeparationUtility.isEventEnabled(state, event)) {
+					Set<Region> sep = new HashSet<>();
+					for (Region r : allRegions) {
+						if (SeparationUtility.isSeparatingRegion(utility, r, state, event))
+							sep.add(r);
+					}
+					separationProblems.add(sep);
+				}
+			}
+		}
+
+		debug("List of regions that solve each separation problem:");
+		debug(separationProblems);
+
+		// Now pick some 'kind of minimal' set of regions from this list
+
+		// First declare each region that solves a problem that is solved by nothing else as required
+		for (Set<Region> problem : separationProblems) {
+			if (problem.size() == 1)
+				// There is a single region that solves this problem, that region is required
+				requiredRegions.add(problem.iterator().next());
+		}
+		debug("required regions after first pass:");
+		debug(requiredRegions);
+
+		// Now go through all remaining problems again
+		for (Set<Region> problem : separationProblems) {
+			// If none of our required regions solve this problem, we pick one arbitrarily that does
+			if (!problem.isEmpty() && Collections.disjoint(requiredRegions, problem))
+				requiredRegions.add(problem.iterator().next());
+		}
+
+		debug("List of required regions:");
+		debug(requiredRegions);
 	}
 
 	/**

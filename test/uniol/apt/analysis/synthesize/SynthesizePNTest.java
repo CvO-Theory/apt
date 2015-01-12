@@ -36,6 +36,7 @@ import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.util.Pair;
 
 import org.hamcrest.collection.IsIterableWithSize;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -214,6 +215,91 @@ public class SynthesizePNTest {
 		TransitionSystem ts2 = new CoverabilityGraph(pn).toReachabilityLTS();
 
 		assertThat(new IsomorphismLogic(ts, ts2, true).isIsomorphic(), is(true));
+	}
+
+	@Test
+	static public class MinimizeRegions {
+		private TransitionSystem ts;
+		private RegionUtility utility;
+
+		@BeforeClass
+		public void setup() {
+			ts = SynthesizeWordModule.makeTS(Arrays.asList("a", "b"));
+			// Add an unreachable state, just because we can
+			ts.createState();
+			utility = new RegionUtility(ts);
+		}
+
+		@Test
+		public void testEmpty() {
+			Set<Region> regions = new HashSet<>();
+
+			SynthesizePN.minimizeRegions(utility, regions);
+			assertThat(regions, empty());
+		}
+
+		@Test
+		public void testSingleRegion() {
+			Region region = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0));
+			Set<Region> regions = new HashSet<>(Arrays.asList(region));
+
+			SynthesizePN.minimizeRegions(utility, regions);
+			assertThat(regions, containsInAnyOrder(region));
+		}
+
+		@Test
+		public void testUselessRegion() {
+			Region region = new Region(utility, Arrays.asList(1, 1), Arrays.asList(1, 1)).withInitialMarking(1);
+			Set<Region> regions = new HashSet<>(Arrays.asList(region));
+
+			SynthesizePN.minimizeRegions(utility, regions);
+			assertThat(regions, empty());
+		}
+
+		@Test
+		public void testNoUselessRegion() {
+			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
+			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
+			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
+
+			SynthesizePN.minimizeRegions(utility, regions);
+			assertThat(regions, containsInAnyOrder(region1, region2));
+		}
+
+		@Test
+		public void testUselessRegionForSSP() {
+			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
+			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
+			Region region3 = Region.createPureRegionFromVector(utility, Arrays.asList(1, 1));
+			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2, region3));
+
+			SynthesizePN.minimizeRegions(utility, regions);
+			assertThat(regions, containsInAnyOrder(region1, region2));
+		}
+
+		@Test
+		public void testDuplicateRegion() {
+			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
+			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(-2, 0)).withInitialMarking(2);
+			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
+
+			SynthesizePN.minimizeRegions(utility, regions);
+			assertThat(regions, anyOf(contains(region1), contains(region2)));
+		}
+
+		@Test
+		public void testLessUsefulRegion() {
+			// There are three SSP instances and two ESSP instances. This region solves all of them except
+			// for one ESSP instance (disabling a after the first a).
+			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, -1)).withInitialMarking(2);
+			// This region solves only two SSP and one ESSP instance (less than the above and the above
+			// solves all these problems, too)
+			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
+			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
+
+			SynthesizePN.minimizeRegions(utility, regions);
+			assertThat(regions, contains(region1));
+		}
 	}
 }
 
