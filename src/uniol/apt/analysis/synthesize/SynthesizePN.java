@@ -132,21 +132,16 @@ public class SynthesizePN {
 					continue;
 
 				debug("Trying to separate " + state + " from " + otherState);
-				Region r = SeparationUtility.findSeparatingRegion(utility, regions, state, otherState);
+				Region r = separationUtility.getSeparatingRegion(regions, state, otherState);
 				if (r == null) {
-					r = SeparationUtility.findSeparatingRegion(utility, regionBasis,
-							state, otherState);
-					if (r == null) {
-						Set<State> problem = new HashSet<>();
-						problem.add(state);
-						problem.add(otherState);
-						failedStateSeparationProblems.add(problem);
+					Set<State> problem = new HashSet<>();
+					problem.add(state);
+					problem.add(otherState);
+					failedStateSeparationProblems.add(problem);
 
-						debug("Failure!");
-					} else {
-						debug("Calculated region " + r);
-						regions.add(r);
-					}
+					debug("Failure!");
+				} else if (regions.add(r)) {
+					debug("Calculated region " + r);
 				} else {
 					debug("Found region " + r);
 				}
@@ -167,10 +162,11 @@ public class SynthesizePN {
 						failedEventStateSeparationProblems.add(
 								new Pair<>(event, state));
 						debug("Failure!");
-					} else if (regions.add(r))
+					} else if (regions.add(r)) {
 						debug("Calculated region " + r);
-					else
+					} else {
 						debug("Found region " + r);
+					}
 				}
 			}
 	}

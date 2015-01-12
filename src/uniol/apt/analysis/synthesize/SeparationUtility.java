@@ -403,6 +403,62 @@ public class SeparationUtility {
 	 * @param system An inequality system that is suitably prepared.
 	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
 	 * stable iteration order!
+	 * @param state The first state of the separation problem
+	 * @param otherState The second state of the separation problem
+	 * @param pure Whether the generated region should describe part of a pure Petri Net and thus must not generate
+	 * any side-conditions.
+	 * @return A separating region or null.
+	 */
+	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
+			Collection<Region> basis, State state, State otherState, boolean pure) {
+		final int events = utility.getNumberOfEvents();
+		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
+
+		// Unreachable states cannot be separated
+		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
+			return null;
+
+		// We want r_S(s) != r_S(s'). Since for each region there exists a complementary region (we are only
+		// looking at the bounded case!), we can require r_S(s) < r_S(s')
+		int[] inequality = coefficientsForStateMarking(state);
+		int[] otherInequality = coefficientsForStateMarking(state);
+
+		for (int i = 0; i < inequality.length; i++)
+			inequality[i] -= otherInequality[i];
+
+		system.addInequality(-1, ">=", inequality, "Region should separate state " + state + " from state " + otherState);
+
+		// Calculate the resulting linear combination
+		debug("Solving the following system to separate " + state + " from " + otherState + ":");
+		debug(system);
+		List<Integer> solution = system.findSolution();
+		if (solution.isEmpty()) {
+			debug("No solution found");
+			return null;
+		}
+
+		debug("solution: " + solution);
+
+		Region r = new Region(utility,
+				solution.subList(systemBackwardWeightsStart, systemBackwardWeightsStart + events),
+				solution.subList(systemForwardWeightsStart, systemForwardWeightsStart + events))
+			.withInitialMarking(solution.get(systemInitialMarking));
+		debug("region: " + r);
+
+		if (pure)
+			r = r.makePure();
+		assert r.getNormalRegionMarking() <= solution.get(systemInitialMarking) : solution;
+		return r;
+	}
+
+
+	/**
+	 * Try to calculate a pure region which separates some state and some event. This calculates a linear combination of
+	 * the given basis of abstract regions.
+	 * @param utility The region utility to use.
+	 * @param system An inequality system that is suitably prepared.
+	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
+	 * stable iteration order!
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
 	 * @param pure Whether the generated region should describe part of a pure Petri Net and thus must not generate
@@ -460,13 +516,47 @@ public class SeparationUtility {
 	/**
 	 * Get a region solving some separation problem.
 	 * @param regions The regions to choose from.
+	 * @param state The first state of the separation problem
+	 * @param otherState The second state of the separation problem
+	 * @return A region solving the problem or null.
+	 */
+	public Region getSeparatingRegion(Collection<Region> regions, State state, State otherState) {
+		Region r = findSeparatingRegion(utility, regions, state, otherState);
+		if (r == null)
+		{
+			InequalitySystem systemCopy = null;
+			InequalitySystem system = new InequalitySystem(this.system);
+			// TODO: How can this be implemented?
+			//requireDistributableNet(system, locationMap, event);
+
+			// TODO: Is this needed? Can this be optimized? Think about it
+			if (properties.isConflictFree() && !properties.isOutputNonbranching()) {
+				systemCopy = new InequalitySystem(system);
+
+				// Conflict free: Either the place is output-nonbranching or the preset is contained in
+				// the postset.
+				requireOutputNonbranchingNet(systemCopy);
+				requirePostsetContainsPreset(system);
+			}
+
+			r = calculateSeparatingRegion(utility, system, basis, state, otherState, properties.isPure());
+
+			if (r == null && systemCopy != null) {
+				debug("Trying again with output-nonbranching");
+				r = calculateSeparatingRegion(utility, systemCopy, basis, state, otherState, properties.isPure());
+			}
+		}
+		return r;
+	}
+
+	/**
+	 * Get a region solving some separation problem.
+	 * @param regions The regions to choose from.
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
 	 * @return A region solving the problem or null.
 	 */
 	public Region getSeparatingRegion(Collection<Region> regions, State state, String event) {
-		// TODO: Nothing guarantees that all regions in the basis satisfy <properties> (same for the direct call
-		// to findSeparatingRegion() in SynthesizePN)
 		Region r = findSeparatingRegion(utility, regions, state, event);
 		if (r == null)
 		{
