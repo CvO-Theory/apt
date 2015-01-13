@@ -17,26 +17,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.synthesize;
+package uniol.apt.analysis.synthesize.separation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
+import uniol.apt.analysis.synthesize.MissingLocationException;
+import uniol.apt.analysis.synthesize.PNProperties;
+import uniol.apt.analysis.synthesize.Region;
+import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.util.equations.InequalitySystem;
 
 /**
  * Helper class for solving separation problems.
  * @author Uli Schlachter
  */
-public class SeparationUtility {
+class InequalitySystemSeparation implements Separation {
 	private static void debug(String message) {
-		// System.err.println("SeparationUtility: " + message);
+		// System.err.println("InequalitySystemSeparation: " + message);
 	}
 
 	private static void debug() {
@@ -48,16 +51,9 @@ public class SeparationUtility {
 	}
 
 	private final RegionUtility utility;
-	private final Collection<Region> basis;
+	private final List<Region> basis;
 	private final PNProperties properties;
 	private final String[] locationMap;
-
-	/**
-	 * This inequality system describes the regions that we are looking for. The first unknowns describe the weights
-	 * for the calculated region. The next unknowns are the coefficients for the entries of the basis that describe
-	 * how this region is produced from the basis. Then come separate variables for the forward weights and
-	 * afterwards variables for the backward weights. Finally there is a single variable for the initial marking.
-	 */
 	private final InequalitySystem system;
 	private final int systemWeightsStart;
 	private final int systemCoefficientsStart;
@@ -67,13 +63,13 @@ public class SeparationUtility {
 	private final int systemNumberOfVariables;
 
 	/**
-	 * Construct a new SeparationUtility for the given event/state separation instance.
+	 * Construct a new instance for solving separation problems.
 	 * @param utility The region utility to use.
 	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
 	 * stable iteration order!
 	 * @param properties Properties that the calculated region should satisfy.
 	 */
-	public SeparationUtility(RegionUtility utility, Collection<Region> basis, PNProperties properties) throws MissingLocationException {
+	public InequalitySystemSeparation(RegionUtility utility, List<Region> basis, PNProperties properties, String[] locationMap) {
 		this.utility = utility;
 		this.basis = basis;
 		this.properties = new PNProperties(properties);
@@ -83,7 +79,7 @@ public class SeparationUtility {
 		this.systemBackwardWeightsStart = systemForwardWeightsStart + utility.getNumberOfEvents();
 		this.systemInitialMarking = systemBackwardWeightsStart + utility.getNumberOfEvents();
 		this.systemNumberOfVariables = systemInitialMarking + 1;
-		this.locationMap = getLocationMap(utility);
+		this.locationMap = locationMap;
 
 		debug("Variables:");
 		debug("Weights start at " + systemWeightsStart);
@@ -102,73 +98,6 @@ public class SeparationUtility {
 			requireTNet();
 		if (properties.isOutputNonbranching())
 			requireOutputNonbranchingNet(system);
-	}
-
-	/**
-	 * Construct a new SeparationUtility for the given event/state separation instance.
-	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
-	 * stable iteration order!
-	 * @param state The state of the separation problem
-	 * @param event The event of the separation problem
-	 */
-	public SeparationUtility(RegionUtility utility, Collection<Region> basis) throws MissingLocationException {
-		this(utility, basis, new PNProperties());
-	}
-
-	/**
-	 * Test if there exists an outgoing arc labelled with the given event.
-	 * Get the state which is reached by firing the given event in the given state.
-	 * @param state The state to examine.
-	 * @param event The event that should fire.
-	 * @return True if a suitable arc exists, else false.
-	 * @return The following state or zero.
-	 */
-	static public boolean isEventEnabled(State state, String event) {
-		for (Arc arc : state.getPostsetEdges())
-			if (arc.getLabel().equals(event))
-				return true;
-		return false;
-	}
-
-	/**
-	 * Check if the given region separates the two given states.
-	 * @param utility The region utility to use.
-	 * @param region The region to examine.
-	 * @param state The first state of the separation problem
-	 * @param otherState The second state of the separation problem
-	 * @return A separating region or null.
-	 */
-	static public boolean isSeparatingRegion(RegionUtility utility, Region region, State state, State otherState) {
-		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
-		List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
-
-		// Unreachable states cannot be separated
-		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
-			return false;
-
-		// We need a region which assigns different values to these two states.
-		int stateValue = region.evaluateParikhVector(stateParikhVector);
-		int otherStateValue = region.evaluateParikhVector(otherStateParikhVector);
-		return stateValue != otherStateValue;
-	}
-
-	/**
-	 * Check if the given region separates the state from the event.
-	 * @param utility The region utility to use.
-	 * @param region The region to examine.
-	 * @param state The state of the separation problem
-	 * @param event The event of the separation problem
-	 * @return A separating region or null.
-	 */
-	static public boolean isSeparatingRegion(RegionUtility utility, Region region,
-			State state, String event) {
-		// Unreachable states cannot be separated
-		if (!utility.getSpanningTree().isReachable(state))
-			return false;
-
-		// We need r(state) to be smaller than the event's backward weight in some region.
-		return region.getMarkingForState(state) < region.getBackwardWeight(event);
 	}
 
 	/**
@@ -314,43 +243,6 @@ public class SeparationUtility {
 	}
 
 	/**
-	 * Calculate a mapping from events to their location.
-	 * @param utility The region utility that describes the events.
-	 * @return An array containing the location for each event.
-	 */
-	static public String[] getLocationMap(RegionUtility utility) throws MissingLocationException {
-		// Build a mapping from events to locations. Yaaay. Need to iterate over all arcs...
-		String[] locationMap = new String[utility.getNumberOfEvents()];
-		boolean hadEventWithLocation = false;
-
-		for (Arc arc : utility.getTransitionSystem().getEdges()) {
-			String location;
-			try {
-				location = arc.getExtension("location").toString();
-			} catch (StructureException e) {
-				// Because just returning "null" is too easy...
-				continue;
-			}
-
-			int event = utility.getEventIndex(arc.getLabel());
-			String oldLocation = locationMap[event];
-			locationMap[event] = location;
-			hadEventWithLocation = true;
-
-			// The parser makes sure that this assertion always holds. If something constructs a PN which
-			// breaks this assumption, then the bug is in that code.
-			assert oldLocation == null || oldLocation.equals(location);
-		}
-
-		// Do all events have a location?
-		if (hadEventWithLocation && Arrays.asList(locationMap).contains(null))
-			throw new MissingLocationException("Trying to synthesize a Petri Net where some events have a "
-					+ "location and others do not. Either all or no event must have a location.");
-
-		return locationMap;
-	}
-
-	/**
 	 * Add the needed inequalities to guarantee that a distributable Petri Net region is calculated.
 	 * @param system The inequality system to which the inequalities should be added.
 	 * @param locationMap Mapping that describes the location of each event.
@@ -399,7 +291,7 @@ public class SeparationUtility {
 	 * @return A separating region or null.
 	 */
 	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
-			Collection<Region> basis, State state, State otherState, boolean pure) {
+			List<Region> basis, State state, State otherState, boolean pure) {
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 
 		// Unreachable states cannot be separated
@@ -434,7 +326,7 @@ public class SeparationUtility {
 	 * @return A separating region or null.
 	 */
 	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
-			Collection<Region> basis, State state, String event, boolean pure) {
+			List<Region> basis, State state, String event, boolean pure) {
 		final int eventIndex = utility.getEventIndex(event);
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 
@@ -476,7 +368,6 @@ public class SeparationUtility {
 			debug("No solution found");
 			return null;
 		}
-
 		debug("solution: " + solution);
 
 		final int events = utility.getNumberOfEvents();
@@ -499,13 +390,14 @@ public class SeparationUtility {
 	 * @param otherState The second state of the separation problem
 	 * @return A region solving the problem or null.
 	 */
-	public Region getSeparatingRegion(Collection<Region> regions, State state, State otherState) {
+	@Override
+	public Region calculateSeparatingRegion(Collection<Region> regions, State state, State otherState) {
 		// Unreachable states cannot be separated
 		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
 			return null;
 
 		for (Region region : regions)
-			if (isSeparatingRegion(utility, region, state, otherState))
+			if (SeparationUtility.isSeparatingRegion(utility, region, state, otherState))
 				return region;
 
 		InequalitySystem systemCopy = null;
@@ -539,13 +431,14 @@ public class SeparationUtility {
 	 * @param event The event of the separation problem
 	 * @return A region solving the problem or null.
 	 */
-	public Region getSeparatingRegion(Collection<Region> regions, State state, String event) {
+	@Override
+	public Region calculateSeparatingRegion(Collection<Region> regions, State state, String event) {
 		// Unreachable states cannot be separated
 		if (!utility.getSpanningTree().isReachable(state))
 			return null;
 
 		for (Region region : regions)
-			if (isSeparatingRegion(utility, region, state, event))
+			if (SeparationUtility.isSeparatingRegion(utility, region, state, event))
 				return region;
 
 		InequalitySystem systemCopy = null;

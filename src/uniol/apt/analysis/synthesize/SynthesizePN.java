@@ -41,6 +41,8 @@ import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.analysis.on.OutputNonBranching;
 import uniol.apt.analysis.plain.Plain;
 import uniol.apt.analysis.sideconditions.Pure;
+import uniol.apt.analysis.synthesize.separation.Separation;
+import uniol.apt.analysis.synthesize.separation.SeparationUtility;
 import uniol.apt.analysis.tnet.TNet;
 import uniol.apt.util.Pair;
 
@@ -56,7 +58,7 @@ public class SynthesizePN {
 	private final Set<Set<State>> failedStateSeparationProblems = new HashSet<>();
 	private final Set<Pair<String, State>> failedEventStateSeparationProblems = new HashSet<>();
 	private final PNProperties properties;
-	private final SeparationUtility separationUtility;
+	private final Separation separation;
 
 	private static void debug(String message) {
 		//System.err.println("SynthesizePN: " + message);
@@ -80,7 +82,7 @@ public class SynthesizePN {
 		this.utility = utility;
 		this.regionBasis = new RegionBasis(utility);
 		this.properties = properties;
-		this.separationUtility = new SeparationUtility(utility, regionBasis, properties);
+		this.separation = SeparationUtility.createSeparationInstance(utility, regionBasis, properties);
 
 		debug("Region basis: " + regionBasis);
 
@@ -137,7 +139,7 @@ public class SynthesizePN {
 					continue;
 
 				debug("Trying to separate " + state + " from " + otherState);
-				Region r = separationUtility.getSeparatingRegion(regions, state, otherState);
+				Region r = separation.calculateSeparatingRegion(regions, state, otherState);
 				if (r == null) {
 					Set<State> problem = new HashSet<>();
 					problem.add(state);
@@ -162,7 +164,7 @@ public class SynthesizePN {
 			for (String event : ts.getAlphabet()) {
 				if (!SeparationUtility.isEventEnabled(state, event)) {
 					debug("Trying to separate " + state + " from event '" + event + "'");
-					Region r = separationUtility.getSeparatingRegion(regions, state, event);
+					Region r = separation.calculateSeparatingRegion(regions, state, event);
 					if (r == null) {
 						failedEventStateSeparationProblems.add(
 								new Pair<>(event, state));
