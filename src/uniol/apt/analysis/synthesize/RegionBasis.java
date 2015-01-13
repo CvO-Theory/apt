@@ -19,10 +19,7 @@
 
 package uniol.apt.analysis.synthesize;
 
-import java.util.AbstractCollection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -38,8 +35,8 @@ import uniol.apt.util.equations.EquationSystem;
  * Badouel, Bernardinello and Darondeau.
  * @author Uli Schlachter
  */
-public class RegionBasis extends AbstractCollection<Region> {
-	private final Set<Region> regions;
+public class RegionBasis extends ArrayList<Region> {
+	public static final long serialVersionUID = 1L;
 
 	/**
 	 * Calculates a region basis for the given transition system.
@@ -55,10 +52,9 @@ public class RegionBasis extends AbstractCollection<Region> {
 		}
 
 		Set<List<Integer>> basis = system.findBasis();
-		Set<Region> result = new LinkedHashSet<>();
+		List<Region> result = new ArrayList<>();
 		for (List<Integer> vector : basis)
-			result.add(Region.createPureRegionFromVector(utility, vector));
-		this.regions = Collections.unmodifiableSet(result);
+			add(Region.createPureRegionFromVector(utility, vector));
 	}
 
 	/**
@@ -75,29 +71,6 @@ public class RegionBasis extends AbstractCollection<Region> {
 	 */
 	public RegionBasis(TransitionSystem ts) {
 		this(new SpanningTree<TransitionSystem, Arc, State>(ts, ts.getInitialState()));
-	}
-
-	/**
-	 * Returns an iterator over the regions in the basis. The order of this iterator is guaranteed to be stable.
-	 * @return an iterator iterating the basis
-	 */
-	@Override
-	public Iterator<Region> iterator() {
-		return regions.iterator();
-	}
-
-	/**
-	 * Returns the number of regions in the basis.
-	 * @return The size of the basis
-	 */
-	@Override
-	public int size() {
-		return regions.size();
-	}
-
-	@Override
-	public String toString() {
-		return regions.toString();
 	}
 }
 
