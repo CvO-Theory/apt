@@ -83,6 +83,14 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 	}
 
 	/**
+	 * Prepare an inequality system for use by this class.
+	 * @return A new inequality system.
+	 */
+	protected InequalitySystem prepareInequalitySystem() {
+		return new InequalitySystem();
+	}
+
+	/**
 	 * Get a region solving some event/state separation problem.
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
@@ -98,7 +106,7 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 		// for a normal region is max { r_E(Psi_s - Psi_s') | s' in states }. We want 'event' to be disabled, so
 		// it would need to lead to a negative marking: 0 > max { r_E(Psi_s - Psi_s' + 1*event) | s' in states }.
 		// Since we are limiting the maximum from above, we can just require this for all states.
-		InequalitySystem system = new InequalitySystem();
+		InequalitySystem system = prepareInequalitySystem();
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
 		assert stateParikhVector != null;

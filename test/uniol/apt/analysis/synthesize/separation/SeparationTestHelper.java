@@ -53,13 +53,18 @@ public class SeparationTestHelper {
 	}
 
 	static public Object[] factory(SeparationFactory factory) {
-		return new Object[] {
-			new SeparationTestHelper(factory),
-			new PureSynthesizablePathTS(factory),
-			new ImpureSynthesizablePathTS(factory),
-			new CrashkursCC2Tests(factory),
-			new TestWordB2AB5AB6AB6(factory)
-		};
+		return factory(factory, true);
+	}
+
+	static public Object[] factory(SeparationFactory factory, boolean includeWord) {
+		List<Object> pairs = new ArrayList<>();
+		pairs.add(new SeparationTestHelper(factory));
+		pairs.add(new PureSynthesizablePathTS(factory));
+		pairs.add(new ImpureSynthesizablePathTS(factory));
+		pairs.add(new CrashkursCC2Tests(factory));
+		if (includeWord)
+			pairs.add(new TestWordB2AB5AB6AB6(factory));
+		return pairs.toArray(new Object[pairs.size()]);
 	}
 
 	static private void checkEventSeparation(SeparationFactory factory, RegionUtility utility, List<Region> basis,

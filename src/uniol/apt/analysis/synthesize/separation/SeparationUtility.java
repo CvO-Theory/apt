@@ -173,6 +173,13 @@ public class SeparationUtility extends DebugUtil {
 		catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
 		}
+		try {
+			if (result == null)
+				result = new PlainPureSeparation(utility, basis, properties, locationMap);
+		}
+		catch (UnsupportedPNPropertiesException e) {
+			// Ignore, try the other implementations
+		}
 		if (result == null)
 			result = new InequalitySystemSeparation(utility, basis, properties, locationMap);
 
