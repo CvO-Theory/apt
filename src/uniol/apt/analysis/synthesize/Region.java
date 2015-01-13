@@ -230,8 +230,7 @@ public class Region {
 			forwardList.add(forward);
 		}
 
-		return new Region(utility, backwardList, forwardList)
-			.withInitialMarking(initialMarking + factor * otherRegion.getInitialMarking());
+		return new Region(utility, backwardList, forwardList);
 	}
 
 	/**
