@@ -223,7 +223,11 @@ public class SynthesizePN {
 					if (SeparationUtility.isSeparatingRegion(utility, r, state, otherState))
 						sep.add(r);
 				}
-				separationProblems.add(sep);
+				if (sep.size() == 1)
+					// If only one region solves this problem, that region is required
+					requiredRegions.add(sep.iterator().next());
+				else if (!sep.isEmpty())
+					separationProblems.add(sep);
 			}
 		}
 		// Event separation
@@ -235,29 +239,24 @@ public class SynthesizePN {
 						if (SeparationUtility.isSeparatingRegion(utility, r, state, event))
 							sep.add(r);
 					}
-					separationProblems.add(sep);
+					if (sep.size() == 1)
+						// If only one region solves this problem, that region is required
+						requiredRegions.add(sep.iterator().next());
+					else if (!sep.isEmpty())
+						separationProblems.add(sep);
 				}
 			}
 		}
 
 		debug("List of regions that solve each separation problem:");
 		debug(separationProblems);
-
-		// Now pick some 'kind of minimal' set of regions from this list
-
-		// First declare each region that solves a problem that is solved by nothing else as required
-		for (Set<Region> problem : separationProblems) {
-			if (problem.size() == 1)
-				// There is a single region that solves this problem, that region is required
-				requiredRegions.add(problem.iterator().next());
-		}
 		debug("required regions after first pass:");
 		debug(requiredRegions);
 
 		// Now go through all remaining problems again
 		for (Set<Region> problem : separationProblems) {
 			// If none of our required regions solve this problem, we pick one arbitrarily that does
-			if (!problem.isEmpty() && Collections.disjoint(requiredRegions, problem))
+			if (Collections.disjoint(requiredRegions, problem))
 				requiredRegions.add(problem.iterator().next());
 		}
 
