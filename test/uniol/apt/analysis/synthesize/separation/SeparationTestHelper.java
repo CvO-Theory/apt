@@ -55,8 +55,8 @@ public class SeparationTestHelper {
 	static public Object[] factory(SeparationFactory factory) {
 		return new Object[] {
 			new SeparationTestHelper(factory),
-			new PureSynthesizablePathTSTest(factory),
-			new ImpureSynthesizablePathTSTest(factory),
+			new PureSynthesizablePathTS(factory),
+			new ImpureSynthesizablePathTS(factory),
 			new CrashkursCC2Tests(factory),
 			new TestWordB2AB5AB6AB6(factory)
 		};
@@ -151,8 +151,8 @@ public class SeparationTestHelper {
 		}
 	}
 
-	static public class PureSynthesizablePathTSTest extends Tester {
-		public PureSynthesizablePathTSTest(SeparationFactory factory) {
+	static public class PureSynthesizablePathTS extends Tester {
+		public PureSynthesizablePathTS(SeparationFactory factory) {
 			super(factory);
 		}
 
@@ -162,8 +162,8 @@ public class SeparationTestHelper {
 		}
 	}
 
-	static public class ImpureSynthesizablePathTSTest extends Tester {
-		public ImpureSynthesizablePathTSTest(SeparationFactory factory) {
+	static public class ImpureSynthesizablePathTS extends Tester {
+		public ImpureSynthesizablePathTS(SeparationFactory factory) {
 			super(factory);
 		}
 
