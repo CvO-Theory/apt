@@ -31,21 +31,19 @@ import uniol.apt.analysis.synthesize.Region;
 public interface Separation {
 	/**
 	 * Calculate a region solving some state separation problem.
-	 * @param regions Already existing regions to chose from.
 	 * @param state The first state of the separation problem
 	 * @param otherState The second state of the separation problem
 	 * @return A region solving the problem or null.
 	 */
-	public Region calculateSeparatingRegion(Collection<Region> regions, State state, State otherState);
+	public Region calculateSeparatingRegion(State state, State otherState);
 
 	/**
 	 * Get a region solving some event/state separation problem.
-	 * @param regions Already existing regions to chose from.
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
 	 * @return A region solving the problem or null.
 	 */
-	public Region calculateSeparatingRegion(Collection<Region> regions, State state, String event);
+	public Region calculateSeparatingRegion(State state, String event);
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

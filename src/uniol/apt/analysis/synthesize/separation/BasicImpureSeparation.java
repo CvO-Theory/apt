@@ -76,20 +76,15 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 
 	/**
 	 * Get a region solving some event/state separation problem.
-	 * @param regions Already existing regions to chose from.
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
 	 * @return A region solving the problem or null.
 	 */
 	@Override
-	public Region calculateSeparatingRegion(Collection<Region> regions, State state, String event) {
+	public Region calculateSeparatingRegion(State state, String event) {
 		// Unreachable states cannot be separated
 		if (!utility.getSpanningTree().isReachable(state))
 			return null;
-
-		for (Region region : regions)
-			if (SeparationUtility.isSeparatingRegion(utility, region, state, event))
-				return region;
 
 		// Calculate a region which assigns to state a marking less than the marking of any state in which event
 		// is enabled. This means we want 0 > r_E(Psi_s - Psi_s').

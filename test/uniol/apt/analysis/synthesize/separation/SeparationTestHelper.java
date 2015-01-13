@@ -65,8 +65,7 @@ public class SeparationTestHelper {
 	static private void checkEventSeparation(SeparationFactory factory, RegionUtility utility, List<Region> basis,
 			String stateName, String event) {
 		State state = utility.getTransitionSystem().getNode(stateName);
-		Region r = factory.createSeparation(utility, basis).calculateSeparatingRegion(
-				Collections.<Region>emptyList(), state, event);
+		Region r = factory.createSeparation(utility, basis).calculateSeparatingRegion(state, event);
 
 		// "event" must have a non-zero backwards weight
 		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));
@@ -123,14 +122,14 @@ public class SeparationTestHelper {
 		public void testCalculate1() {
 			Separation separation = factory.createSeparation(utility, regionBasis);
 			State s = utility.getTransitionSystem().getNode("s");
-			assertThat(separation.calculateSeparatingRegion(Collections.<Region>emptyList(), s, "a"), is(nullValue()));
+			assertThat(separation.calculateSeparatingRegion(s, "a"), is(nullValue()));
 		}
 
 		@Test
 		public void testCalculateUnreachable() {
 			Separation separation = factory.createSeparation(utility, regionBasis);
 			State s = utility.getTransitionSystem().getNode("unreachable");
-			assertThat(separation.calculateSeparatingRegion(Collections.<Region>emptyList(), s, "a"), is(nullValue()));
+			assertThat(separation.calculateSeparatingRegion(s, "a"), is(nullValue()));
 		}
 
 		@DataProvider(name = "stateEventPairs")
@@ -215,7 +214,7 @@ public class SeparationTestHelper {
 		@Test
 		public void testNoStateRestriction() {
 			Region region = factory.createSeparation(utility, regionBasis)
-				.calculateSeparatingRegion(regionBasis, ts.getNode("s3"), "t2");
+				.calculateSeparatingRegion(ts.getNode("s3"), "t2");
 
 			assertThat(region.getMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
 			assertThat(region.getMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
@@ -260,7 +259,7 @@ public class SeparationTestHelper {
 		@Test(dataProvider = "stateDisabledEventPairs")
 		public void testEventSeparation(String state, String event) {
 			Separation separation = factory.createSeparation(utility, regionBasis);
-			Region r = separation.calculateSeparatingRegion(Collections.<Region>emptyList(), ts.getNode(state), event);
+			Region r = separation.calculateSeparatingRegion(ts.getNode(state), event);
 
 			assertThat(r, notNullValue());
 			assertThat(r.getInitialMarking(), greaterThanOrEqualTo(0));

@@ -385,20 +385,15 @@ class InequalitySystemSeparation implements Separation {
 
 	/**
 	 * Get a region solving some separation problem.
-	 * @param regions The regions to choose from.
 	 * @param state The first state of the separation problem
 	 * @param otherState The second state of the separation problem
 	 * @return A region solving the problem or null.
 	 */
 	@Override
-	public Region calculateSeparatingRegion(Collection<Region> regions, State state, State otherState) {
+	public Region calculateSeparatingRegion(State state, State otherState) {
 		// Unreachable states cannot be separated
 		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
 			return null;
-
-		for (Region region : regions)
-			if (SeparationUtility.isSeparatingRegion(utility, region, state, otherState))
-				return region;
 
 		InequalitySystem systemCopy = null;
 		InequalitySystem system = new InequalitySystem(this.system);
@@ -426,20 +421,15 @@ class InequalitySystemSeparation implements Separation {
 
 	/**
 	 * Get a region solving some separation problem.
-	 * @param regions The regions to choose from.
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
 	 * @return A region solving the problem or null.
 	 */
 	@Override
-	public Region calculateSeparatingRegion(Collection<Region> regions, State state, String event) {
+	public Region calculateSeparatingRegion(State state, String event) {
 		// Unreachable states cannot be separated
 		if (!utility.getSpanningTree().isReachable(state))
 			return null;
-
-		for (Region region : regions)
-			if (SeparationUtility.isSeparatingRegion(utility, region, state, event))
-				return region;
 
 		InequalitySystem systemCopy = null;
 		InequalitySystem system = new InequalitySystem(this.system);

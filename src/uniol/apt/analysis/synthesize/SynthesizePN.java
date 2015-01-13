@@ -139,7 +139,18 @@ public class SynthesizePN {
 					continue;
 
 				debug("Trying to separate " + state + " from " + otherState);
-				Region r = separation.calculateSeparatingRegion(regions, state, otherState);
+				Region r = null;
+				for (Region region : regions)
+					if (SeparationUtility.isSeparatingRegion(utility, region, state, otherState)) {
+						r = region;
+						break;
+					}
+				if (r != null) {
+					debug("Found region " + r);
+					continue;
+				}
+
+				r = separation.calculateSeparatingRegion(state, otherState);
 				if (r == null) {
 					Set<State> problem = new HashSet<>();
 					problem.add(state);
@@ -147,10 +158,9 @@ public class SynthesizePN {
 					failedStateSeparationProblems.add(problem);
 
 					debug("Failure!");
-				} else if (regions.add(r)) {
-					debug("Calculated region " + r);
 				} else {
-					debug("Found region " + r);
+					debug("Calculated region " + r);
+					regions.add(r);
 				}
 			}
 		}
@@ -164,15 +174,25 @@ public class SynthesizePN {
 			for (String event : ts.getAlphabet()) {
 				if (!SeparationUtility.isEventEnabled(state, event)) {
 					debug("Trying to separate " + state + " from event '" + event + "'");
-					Region r = separation.calculateSeparatingRegion(regions, state, event);
+					Region r = null;
+					for (Region region : regions)
+						if (SeparationUtility.isSeparatingRegion(utility, region, state, event)) {
+							r = region;
+							break;
+						}
+					if (r != null) {
+						debug("Found region " + r);
+						continue;
+					}
+
+					r = separation.calculateSeparatingRegion(state, event);
 					if (r == null) {
 						failedEventStateSeparationProblems.add(
 								new Pair<>(event, state));
 						debug("Failure!");
-					} else if (regions.add(r)) {
-						debug("Calculated region " + r);
 					} else {
-						debug("Found region " + r);
+						debug("Calculated region " + r);
+						regions.add(r);
 					}
 				}
 			}
