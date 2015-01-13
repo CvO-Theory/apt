@@ -19,10 +19,8 @@
 
 package uniol.apt.analysis.synthesize;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import uniol.apt.adt.exception.NoSuchNodeException;
@@ -210,7 +208,7 @@ public class SynthesizePN {
 
 		// Build a list where each entry is generated from a separation problem and contains all regions that
 		// solve this problem.
-		List<Set<Region>> separationProblems = new ArrayList<>();
+		Set<Set<Region>> separationProblems = new HashSet<>();
 
 		// State separation
 		Set<State> alreadyHandled = new HashSet<>();
@@ -265,6 +263,7 @@ public class SynthesizePN {
 
 		debug("List of required regions:");
 		debug(requiredRegions);
+		debug("Picked " + requiredRegions.size() + " required regions out of " + allRegions.size() + " input regions");
 	}
 
 	/**
