@@ -31,25 +31,14 @@ import uniol.apt.analysis.synthesize.MissingLocationException;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
+import uniol.apt.util.DebugUtil;
 import uniol.apt.util.equations.InequalitySystem;
 
 /**
  * Helper class for solving separation problems.
  * @author Uli Schlachter
  */
-class InequalitySystemSeparation implements Separation {
-	private static void debug(String message) {
-		// System.err.println("InequalitySystemSeparation: " + message);
-	}
-
-	private static void debug() {
-		debug("");
-	}
-
-	private static void debug(Object obj) {
-		debug(obj.toString());
-	}
-
+class InequalitySystemSeparation extends DebugUtil implements Separation {
 	private final RegionUtility utility;
 	private final List<Region> basis;
 	private final PNProperties properties;

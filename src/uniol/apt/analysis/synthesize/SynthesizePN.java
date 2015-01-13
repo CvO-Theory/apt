@@ -42,13 +42,14 @@ import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.synthesize.separation.Separation;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
 import uniol.apt.analysis.tnet.TNet;
+import uniol.apt.util.DebugUtil;
 import uniol.apt.util.Pair;
 
 /**
  * Synthesize a Petri Net from a transition system.
  * @author Uli Schlachter
  */
-public class SynthesizePN {
+public class SynthesizePN extends DebugUtil {
 	private final TransitionSystem ts;
 	private final RegionBasis regionBasis;
 	private final RegionUtility utility;
@@ -57,18 +58,6 @@ public class SynthesizePN {
 	private final Set<Pair<String, State>> failedEventStateSeparationProblems = new HashSet<>();
 	private final PNProperties properties;
 	private final Separation separation;
-
-	private static void debug(String message) {
-		//System.err.println("SynthesizePN: " + message);
-	}
-
-	private static void debug() {
-		debug("");
-	}
-
-	private static void debug(Object obj) {
-		debug(obj.toString());
-	}
 
 	/**
 	 * Synthesize a Petri Net which generates the given transition system.

@@ -27,25 +27,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import uniol.apt.util.DebugUtil;
+
 /**
  * Representation of an equation system.
  * @author Uli Schlachter
  */
-public class EquationSystem {
+public class EquationSystem extends DebugUtil {
 	private final int numVariables;
 	private final List<List<Integer>> equations = new ArrayList<>();
-
-	private static void debug(String message) {
-		//System.err.println("EquationSystem: " + message);
-	}
-
-	private static void debug() {
-		debug("");
-	}
-
-	private static void debug(Object obj) {
-		debug(obj.toString());
-	}
 
 	private static class EquationSystemSolver {
 		// Algorithm 4 from "Petri Net Synthesis" by Badouel, Bernardinello and Darondeau, page 190

@@ -29,25 +29,14 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
+import uniol.apt.util.DebugUtil;
 import uniol.apt.util.equations.InequalitySystem;
 
 /**
  * This class finds pure solutions to separation problems without any other properties.
  * @author Uli Schlachter
  */
-class BasicPureSeparation implements Separation {
-	private static void debug(String message) {
-		// System.err.println("BasicPureSeparation: " + message);
-	}
-
-	private static void debug() {
-		debug("");
-	}
-
-	private static void debug(Object obj) {
-		debug(obj.toString());
-	}
-
+class BasicPureSeparation extends DebugUtil implements Separation {
 	protected final RegionUtility utility;
 	protected final List<Region> basis;
 

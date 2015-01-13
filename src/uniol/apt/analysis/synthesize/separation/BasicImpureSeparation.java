@@ -36,18 +36,6 @@ import uniol.apt.util.equations.InequalitySystem;
  * @author Uli Schlachter
  */
 class BasicImpureSeparation extends BasicPureSeparation implements Separation {
-	private static void debug(String message) {
-		// System.err.println("BasicImpureSeparation: " + message);
-	}
-
-	private static void debug() {
-		debug("");
-	}
-
-	private static void debug(Object obj) {
-		debug(obj.toString());
-	}
-
 	/**
 	 * Construct a new instance for solving separation problems. This constructor does not do any checks for
 	 * supported properties. It is the caller's responsibility to check this.

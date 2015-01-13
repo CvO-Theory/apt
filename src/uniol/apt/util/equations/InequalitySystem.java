@@ -28,6 +28,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import uniol.apt.util.DebugUtil;
+
 import solver.Solver;
 import solver.constraints.IntConstraintFactory;
 import solver.variables.IntVar;
@@ -42,21 +44,9 @@ import org.ojalgo.optimisation.Variable;
  * Representation of an inequality system.
  * @author Uli Schlachter
  */
-public class InequalitySystem {
+public class InequalitySystem extends DebugUtil {
 	private final List<Inequality> inequalities = new ArrayList<>();
 	private Implementation implementation;
-
-	private static void debug(String message) {
-		//System.err.println("InequalitySystem: " + message);
-	}
-
-	private static void debug() {
-		debug("");
-	}
-
-	private static void debug(Object obj) {
-		debug(obj.toString());
-	}
 
 	private static List<BigInteger> toBigIntegerList(Collection<Integer> collection) {
 		List<BigInteger> result = new ArrayList<>(collection.size());

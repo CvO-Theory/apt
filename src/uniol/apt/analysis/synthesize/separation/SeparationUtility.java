@@ -30,12 +30,13 @@ import uniol.apt.analysis.synthesize.MissingLocationException;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
+import uniol.apt.util.DebugUtil;
 
 /**
  * Helper functions for solving separation problems.
  * @author Uli Schlachter
  */
-public class SeparationUtility {
+public class SeparationUtility extends DebugUtil {
 	private SeparationUtility() {
 	}
 
