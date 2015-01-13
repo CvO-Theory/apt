@@ -20,6 +20,7 @@
 package uniol.apt.analysis.synthesize.separation;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import uniol.apt.adt.exception.StructureException;
@@ -129,10 +130,18 @@ public class SeparationUtility {
 			assert oldLocation == null || oldLocation.equals(location);
 		}
 
-		// Do all events have a location?
-		if (hadEventWithLocation && Arrays.asList(locationMap).contains(null))
-			throw new MissingLocationException("Trying to synthesize a Petri Net where some events have a "
-					+ "location and others do not. Either all or no event must have a location.");
+		if (hadEventWithLocation) {
+			// Do all events have a location?
+			if (Arrays.asList(locationMap).contains(null))
+				throw new MissingLocationException("Trying to synthesize a Petri Net where some events have a "
+						+ "location and others do not. Either all or no event must have a location.");
+
+			// Do all events have the same location?
+			if (Collections.frequency(Arrays.asList(locationMap), locationMap[0]) == locationMap.length) {
+				// No location handling needed, discard the map
+				locationMap = new String[locationMap.length];
+			}
+		}
 
 		return locationMap;
 	}
