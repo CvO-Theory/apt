@@ -39,16 +39,19 @@ import uniol.apt.util.equations.InequalitySystem;
 class BasicPureSeparation extends DebugUtil implements Separation {
 	protected final RegionUtility utility;
 	protected final List<Region> basis;
+	protected final String[] locationMap;
 
 	/**
 	 * Construct a new instance for solving separation problems. This constructor does not do any checks for
 	 * supported properties. It is the caller's responsibility to check this.
 	 * @param utility The region utility to use.
 	 * @param basis A basis of abstract regions of the underlying transition system.
+	 * @param locationMap Mapping that describes the location of each event.
 	 */
-	protected BasicPureSeparation(RegionUtility utility, List<Region> basis) {
+	protected BasicPureSeparation(RegionUtility utility, List<Region> basis, String[] locationMap) {
 		this.utility = utility;
 		this.basis = basis;
+		this.locationMap = locationMap;
 	}
 
 	/**
@@ -56,13 +59,11 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 	 * @param utility The region utility to use.
 	 * @param basis A basis of abstract regions of the underlying transition system.
 	 * @param properties Properties that the calculated region should satisfy.
+	 * @param locationMap Mapping that describes the location of each event.
 	 */
 	public BasicPureSeparation(RegionUtility utility, List<Region> basis, PNProperties properties,
 			String[] locationMap) throws UnsupportedPNPropertiesException {
-		this(utility, basis);
-		// We do not support locations, so no locations may be specified
-		if (Collections.frequency(Arrays.asList(locationMap), null) != locationMap.length)
-			throw new UnsupportedPNPropertiesException();
+		this(utility, basis, locationMap);
 		if (!properties.equals(new PNProperties(PNProperties.PURE)))
 			throw new UnsupportedPNPropertiesException();
 	}
@@ -91,6 +92,29 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 	}
 
 	/**
+	 * Add the needed inequalities to guarantee that a distributable Petri Net region is calculated.
+	 * @param system The inequality system to which the inequalities should be added.
+	 * @param event Only events with the same location as this event may consume tokens from this region.
+	 */
+	protected void requireDistributableNet(InequalitySystem system, String event) {
+		String location = locationMap[utility.getEventIndex(event)];
+
+		if (location == null)
+			return;
+
+		// Only events having the same location as 'event' may consume token from this region.
+		for (int eventIndex = 0; eventIndex < utility.getNumberOfEvents(); eventIndex++) {
+			if (locationMap[eventIndex] != null && !locationMap[eventIndex].equals(location)) {
+				List<Integer> inequality = new ArrayList<>(basis.size());
+				for (Region region : basis)
+					inequality.add(region.getWeight(eventIndex));
+
+				system.addInequality(0, "<=", inequality, "Only events with same location as event " + event + " may consume tokens from this region");
+			}
+		}
+	}
+
+	/**
 	 * Get a region solving some event/state separation problem.
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
@@ -111,6 +135,8 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 		int eventIndex = utility.getEventIndex(event);
 		assert stateParikhVector != null;
 		assert utility.getSpanningTree().isReachable(state);
+
+		requireDistributableNet(system, event);
 
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
 			if (!utility.getSpanningTree().isReachable(otherState))

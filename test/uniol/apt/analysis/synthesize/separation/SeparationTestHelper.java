@@ -43,7 +43,7 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 /** @author Uli Schlachter */
 public class SeparationTestHelper {
 	public interface SeparationFactory {
-		Separation createSeparation(RegionUtility utility, List<Region> basis);
+		Separation createSeparation(RegionUtility utility, List<Region> basis, String[] locationMap);
 	}
 
 	final private SeparationFactory factory;
@@ -70,7 +70,8 @@ public class SeparationTestHelper {
 	static private void checkEventSeparation(SeparationFactory factory, RegionUtility utility, List<Region> basis,
 			String stateName, String event) {
 		State state = utility.getTransitionSystem().getNode(stateName);
-		Region r = factory.createSeparation(utility, basis).calculateSeparatingRegion(state, event);
+		String[] locationMap = new String[utility.getNumberOfEvents()];
+		Region r = factory.createSeparation(utility, basis, locationMap).calculateSeparatingRegion(state, event);
 
 		// "event" must have a non-zero backwards weight
 		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));
@@ -90,6 +91,7 @@ public class SeparationTestHelper {
 		protected Region region1;
 		protected Region region2;
 		protected Region region3;
+		protected Separation separation;
 
 		public Tester(SeparationFactory factory) {
 			this.factory = factory;
@@ -121,18 +123,19 @@ public class SeparationTestHelper {
 			regionBasis.add(region1);
 			regionBasis.add(region2);
 			regionBasis.add(region3);
+
+			String[] locationMap = new String[3];
+			separation = factory.createSeparation(utility, regionBasis, locationMap);
 		}
 
 		@Test
 		public void testCalculate1() {
-			Separation separation = factory.createSeparation(utility, regionBasis);
 			State s = utility.getTransitionSystem().getNode("s");
 			assertThat(separation.calculateSeparatingRegion(s, "a"), is(nullValue()));
 		}
 
 		@Test
 		public void testCalculateUnreachable() {
-			Separation separation = factory.createSeparation(utility, regionBasis);
 			State s = utility.getTransitionSystem().getNode("unreachable");
 			assertThat(separation.calculateSeparatingRegion(s, "a"), is(nullValue()));
 		}
@@ -218,7 +221,8 @@ public class SeparationTestHelper {
 
 		@Test
 		public void testNoStateRestriction() {
-			Region region = factory.createSeparation(utility, regionBasis)
+			String[] locationMap = new String[3];
+			Region region = factory.createSeparation(utility, regionBasis, locationMap)
 				.calculateSeparatingRegion(ts.getNode("s3"), "t2");
 
 			assertThat(region.getMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
@@ -263,7 +267,8 @@ public class SeparationTestHelper {
 
 		@Test(dataProvider = "stateDisabledEventPairs")
 		public void testEventSeparation(String state, String event) {
-			Separation separation = factory.createSeparation(utility, regionBasis);
+			String[] locationMap = new String[2];
+			Separation separation = factory.createSeparation(utility, regionBasis, locationMap);
 			Region r = separation.calculateSeparatingRegion(ts.getNode(state), event);
 
 			assertThat(r, notNullValue());

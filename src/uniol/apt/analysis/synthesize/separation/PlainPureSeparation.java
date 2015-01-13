@@ -41,9 +41,10 @@ class PlainPureSeparation extends BasicPureSeparation implements Separation {
 	 * supported properties. It is the caller's responsibility to check this.
 	 * @param utility The region utility to use.
 	 * @param basis A basis of abstract regions of the underlying transition system.
+	 * @param locationMap Mapping that describes the location of each event.
 	 */
-	protected PlainPureSeparation(RegionUtility utility, List<Region> basis) {
-		super(utility, basis);
+	protected PlainPureSeparation(RegionUtility utility, List<Region> basis, String[] locationMap) {
+		super(utility, basis, locationMap);
 	}
 
 	/**
@@ -51,13 +52,11 @@ class PlainPureSeparation extends BasicPureSeparation implements Separation {
 	 * @param utility The region utility to use.
 	 * @param basis A basis of abstract regions of the underlying transition system.
 	 * @param properties Properties that the calculated region should satisfy.
+	 * @param locationMap Mapping that describes the location of each event.
 	 */
 	public PlainPureSeparation(RegionUtility utility, List<Region> basis, PNProperties properties,
 			String[] locationMap) throws UnsupportedPNPropertiesException {
-		this(utility, basis);
-		// We do not support locations, so no locations may be specified
-		if (Collections.frequency(Arrays.asList(locationMap), null) != locationMap.length)
-			throw new UnsupportedPNPropertiesException();
+		this(utility, basis, locationMap);
 		if (!properties.equals(new PNProperties(PNProperties.PURE, PNProperties.PLAIN)))
 			throw new UnsupportedPNPropertiesException();
 	}
