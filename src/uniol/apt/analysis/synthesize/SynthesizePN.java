@@ -20,7 +20,9 @@
 package uniol.apt.analysis.synthesize;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import uniol.apt.adt.exception.NoSuchNodeException;
@@ -54,7 +56,7 @@ public class SynthesizePN extends DebugUtil {
 	private final RegionBasis regionBasis;
 	private final RegionUtility utility;
 	private final Set<Region> regions = new HashSet<>();
-	private final Set<Set<State>> failedStateSeparationProblems = new HashSet<>();
+	private final Set<Set<State>> maximalFailedStateSeparationProblems = new HashSet<>();
 	private final Set<Pair<String, State>> failedEventStateSeparationProblems = new HashSet<>();
 	private final PNProperties properties;
 	private final Separation separation;
@@ -81,7 +83,7 @@ public class SynthesizePN extends DebugUtil {
 
 		debug();
 		debug("Solving state separation");
-		solveStateSeparation();
+		computeMaximalFailedStateSeparationProblems(solveStateSeparation());
 
 		debug();
 		minimizeRegions(utility, regions);
@@ -117,7 +119,8 @@ public class SynthesizePN extends DebugUtil {
 	/**
 	 * Solve all instances of the state separation problem (SSP).
 	 */
-	private void solveStateSeparation() {
+	private Set<Set<State>> solveStateSeparation() {
+		Set<Set<State>> failedStateSeparationProblems = new HashSet<>();
 		Set<State> alreadyHandled = new HashSet<>();
 		for (State state : ts.getNodes()) {
 			alreadyHandled.add(state);
@@ -151,6 +154,28 @@ public class SynthesizePN extends DebugUtil {
 				}
 			}
 		}
+		return failedStateSeparationProblems;
+	}
+
+	/**
+	 * Given a set of e.g. pairs of states, this computes maximal sets of states where each state in such a set
+	 * cannot be separated from all the other states in the set. The basic observation for this is that if states
+	 * {a,b} and {a,c} cannot be separated, then {b,c} cannot be separated either.
+	 */
+	private void computeMaximalFailedStateSeparationProblems(Set<Set<State>> failedStateSeparationProblems) {
+		Map<State, Set<State>> stateToFailureGroup = new HashMap<>();
+		for (Set<State> problem : failedStateSeparationProblems) {
+			Set<State> problemGroup = new HashSet<>(problem);
+			for (State state : problem) {
+				Set<State> group = stateToFailureGroup.get(state);
+				if (group != null)
+					problemGroup.addAll(group);
+			}
+			for (State state : problem) {
+				stateToFailureGroup.put(state, problemGroup);
+			}
+		}
+		maximalFailedStateSeparationProblems.addAll(stateToFailureGroup.values());
 	}
 
 	/**
@@ -267,7 +292,7 @@ public class SynthesizePN extends DebugUtil {
 	 * @return True if the transition was successfully separated.
 	 */
 	public boolean wasSuccessfullySeparated() {
-		return failedStateSeparationProblems.isEmpty() && failedEventStateSeparationProblems.isEmpty();
+		return maximalFailedStateSeparationProblems.isEmpty() && failedEventStateSeparationProblems.isEmpty();
 	}
 
 	/**
@@ -275,7 +300,7 @@ public class SynthesizePN extends DebugUtil {
 	 * @return A set containing sets of two states which cannot be differentiated by any region.
 	 */
 	public Set<Set<State>> getFailedStateSeparationProblems() {
-		return Collections.unmodifiableSet(failedStateSeparationProblems);
+		return Collections.unmodifiableSet(maximalFailedStateSeparationProblems);
 	}
 
 	/**

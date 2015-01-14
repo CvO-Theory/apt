@@ -179,13 +179,7 @@ public class SynthesizePNTest {
 					equalTo(new Pair<String, State>("a", v)),
 					equalTo(new Pair<String, State>("b", v)),
 					equalTo(new Pair<String, State>("b", u))));
-		assertThat(synth.getFailedStateSeparationProblems(), containsInAnyOrder(
-					containsInAnyOrder(s, t),
-					containsInAnyOrder(s, u),
-					containsInAnyOrder(s, v),
-					containsInAnyOrder(t, u),
-					containsInAnyOrder(t, v),
-					containsInAnyOrder(u, v)));
+		assertThat(synth.getFailedStateSeparationProblems(), contains(containsInAnyOrder(s, t, u, v)));
 	}
 
 	@Test
