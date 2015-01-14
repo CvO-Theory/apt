@@ -290,6 +290,38 @@ public class SynthesizePN extends DebugUtil {
 		return utility;
 	}
 
+	static public boolean isDistributedImplementation(RegionUtility utility, PetriNet pn) {
+		String[] locationMap;
+		try {
+			locationMap = SeparationUtility.getLocationMap(utility);
+		}
+		catch (MissingLocationException e) {
+			debug("Couldn't get location map");
+			return false;
+		}
+
+		// All transitions that consume tokens from the same place must have the same location.
+		for (Place p : pn.getPlaces()) {
+			String location = null;
+			debug("Examining preset of place " + p + " for obeying the required distribution");
+			for (Transition t : p.getPostset()) {
+				int event = utility.getEventIndex(t.getLabel());
+				if (locationMap[event] == null)
+					continue;
+				if (location == null) {
+					location = locationMap[event];
+					debug("Transition " + t + " sets location to " + location);
+				} else if (!location.equals(locationMap[event])) {
+					debug("Transition " + t + " would set location to " + locationMap[event] + ", but this conflicts with earlier location");
+					debug("PN is not a distributed implementation!");
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	/**
 	 * Synthesize a Petri Net from the separating regions that were calculated.
 	 * @return The synthesized PetriNet
@@ -330,6 +362,8 @@ public class SynthesizePN extends DebugUtil {
 		catch (UnboundedException e) {
 			assert false : regions;
 		}
+		assert isDistributedImplementation(utility, pn) : regions;
+
 		return pn;
 	}
 

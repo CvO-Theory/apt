@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import uniol.apt.TestNetCollection;
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
@@ -299,6 +300,56 @@ public class SynthesizePNTest {
 
 			SynthesizePN.minimizeRegions(utility, regions);
 			assertThat(regions, contains(region1));
+		}
+	}
+
+	@Test
+	static public class DistributedImplementation {
+		private TransitionSystem ts;
+		private RegionUtility utility;
+
+		@BeforeClass
+		private void setup() {
+			ts = TestTSCollection.getPersistentTS();
+			ts.getArc("s0", "l", "a").putExtension("location", "a");
+			ts.getArc("s0", "r", "b").putExtension("location", "b");
+			ts.getArc("l", "s1", "b").putExtension("location", "b");
+			ts.getArc("r", "s1", "a").putExtension("location", "a");
+
+			utility = new RegionUtility(ts);
+		}
+
+		private PetriNet setupPN(PetriNet pn) {
+			pn.getTransition("t1").setLabel("a");
+			pn.getTransition("t2").setLabel("b");
+			return pn;
+		}
+
+		@Test
+		public void testConcurrentDiamond() {
+			PetriNet pn = setupPN(TestNetCollection.getConcurrentDiamondNet());
+
+			assertThat(SynthesizePN.isDistributedImplementation(utility, pn), is(true));
+		}
+
+		@Test
+		public void testConcurrentDiamondWithCommonPostset() {
+			PetriNet pn = setupPN(TestNetCollection.getConcurrentDiamondNet());
+
+			// Create a new place which has both transitions in its post-set. This tests that the
+			// implementation really checks the places' pre-set and ignores their post-sets.
+			pn.createPlace("post");
+			pn.createFlow("t1", "post");
+			pn.createFlow("t2", "post");
+
+			assertThat(SynthesizePN.isDistributedImplementation(utility, pn), is(true));
+		}
+
+		@Test
+		public void testConflictingDiamond() {
+			PetriNet pn = setupPN(TestNetCollection.getConflictingDiamondNet());
+
+			assertThat(SynthesizePN.isDistributedImplementation(utility, pn), is(false));
 		}
 	}
 }
