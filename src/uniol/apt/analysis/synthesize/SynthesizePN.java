@@ -57,7 +57,7 @@ public class SynthesizePN extends DebugUtil {
 	private final RegionUtility utility;
 	private final Set<Region> regions = new HashSet<>();
 	private final Set<Set<State>> maximalFailedStateSeparationProblems = new HashSet<>();
-	private final Set<Pair<String, State>> failedEventStateSeparationProblems = new HashSet<>();
+	private final Map<String, Set<State>> failedEventStateSeparationProblems = new HashMap<>();
 	private final PNProperties properties;
 	private final Separation separation;
 
@@ -199,8 +199,12 @@ public class SynthesizePN extends DebugUtil {
 
 					r = separation.calculateSeparatingRegion(state, event);
 					if (r == null) {
-						failedEventStateSeparationProblems.add(
-								new Pair<>(event, state));
+						Set<State> states = failedEventStateSeparationProblems.get(event);
+						if (states == null) {
+							states = new HashSet<>();
+							failedEventStateSeparationProblems.put(event, states);
+						}
+						states.add(state);
 						debug("Failure!");
 					} else {
 						debug("Calculated region " + r);
@@ -307,8 +311,9 @@ public class SynthesizePN extends DebugUtil {
 	 * Get all the event/state separation problems which could not be solved.
 	 * @return A set containing instances of the event/state separation problem.
 	 */
-	public Set<Pair<String, State>> getFailedEventStateSeparationProblems() {
-		return Collections.unmodifiableSet(failedEventStateSeparationProblems);
+	public Map<String, Set<State>> getFailedEventStateSeparationProblems() {
+		// This would still allow modifying the entries of the map. Whatever...
+		return Collections.unmodifiableMap(failedEventStateSeparationProblems);
 	}
 
 	public RegionUtility getUtility() {

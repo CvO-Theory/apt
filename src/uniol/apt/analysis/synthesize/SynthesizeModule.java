@@ -19,8 +19,15 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
+import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -107,10 +114,23 @@ public class SynthesizeModule extends AbstractModule {
 		SynthesizePN synthesize = runSynthesis(ts, input, output);
 
 		if (!synthesize.wasSuccessfullySeparated()) {
-			output.setReturnValue("failedStateSeparationProblems", String.class,
-					synthesize.getFailedStateSeparationProblems().toString());
-			output.setReturnValue("failedEventStateSeparationProblems", String.class,
-					synthesize.getFailedEventStateSeparationProblems().toString());
+			Set<Set<String>> failedSSP = new HashSet<>();
+			for (Set<State> group : synthesize.getFailedStateSeparationProblems()) {
+				Set<String> states = new TreeSet<>();
+				for (State state : group)
+					states.add(state.getId());
+				failedSSP.add(states);
+			}
+			output.setReturnValue("failedStateSeparationProblems", String.class, failedSSP.toString());
+
+			Map<String, Set<String>> failedESSP = new TreeMap<>();
+			for (Map.Entry<String, Set<State>> entry : synthesize.getFailedEventStateSeparationProblems().entrySet()) {
+				Set<String> states = new TreeSet<>();
+				for (State state : entry.getValue())
+					states.add(state.getId());
+				failedESSP.put(entry.getKey(), states);
+			}
+			output.setReturnValue("failedEventStateSeparationProblems", String.class, failedESSP.toString());
 		}
 	}
 

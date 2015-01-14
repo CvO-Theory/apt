@@ -22,6 +22,7 @@ package uniol.apt.analysis.synthesize;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import uniol.apt.adt.ts.State;
@@ -103,9 +104,11 @@ public class SynthesizeWordModule extends AbstractModule {
 			}
 
 			// Add all failed separation problems into the above list
-			for (Pair<String, State> failure : synthesize.getFailedEventStateSeparationProblems()) {
-				int index = Integer.parseInt(failure.getSecond().getExtension("index").toString());
-				failedSeparation.get(index).add(failure.getFirst());
+			for (Map.Entry<String, Set<State>> failures : synthesize.getFailedEventStateSeparationProblems().entrySet()) {
+				for (State state : failures.getValue()) {
+					int index = Integer.parseInt(state.getExtension("index").toString());
+					failedSeparation.get(index).add(failures.getKey());
+				}
 			}
 
 			// Build the string representation of the separation failures

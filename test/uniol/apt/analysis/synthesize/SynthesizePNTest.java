@@ -109,7 +109,7 @@ public class SynthesizePNTest {
 		assertThat(synth.getSeparatingRegions(), not(empty()));
 		assertThat(synth.getFailedStateSeparationProblems(),
 				contains(containsInAnyOrder(nodeWithID("s1"), nodeWithID("s2"))));
-		assertThat(synth.getFailedEventStateSeparationProblems(), empty());
+		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}
 
 	@Test
@@ -123,11 +123,11 @@ public class SynthesizePNTest {
 		assertThat(synth.getSeparatingRegions(), not(empty()));
 		assertThat(synth.getFailedStateSeparationProblems(),
 				contains(containsInAnyOrder(nodeWithID("t"), nodeWithID("u"))));
-		assertThat(synth.getFailedEventStateSeparationProblems(), containsInAnyOrder(
-					equalTo(new Pair<String, State>("c", ts.getNode("t"))),
-					equalTo(new Pair<String, State>("b", ts.getNode("v"))),
-					equalTo(new Pair<String, State>("b", ts.getNode("u"))),
-					equalTo(new Pair<String, State>("b", ts.getNode("s")))));
+		assertThat(synth.getFailedEventStateSeparationProblems().toString(),
+				synth.getFailedEventStateSeparationProblems().size(), is(2));
+		assertThat(synth.getFailedEventStateSeparationProblems(), allOf(
+					hasEntry(is("b"), containsInAnyOrder(ts.getNode("v"), ts.getNode("u"), ts.getNode("s"))),
+					hasEntry(is("c"), contains(ts.getNode("t")))));
 	}
 
 	@Test
@@ -141,9 +141,11 @@ public class SynthesizePNTest {
 		assertThat(synth.getSeparatingRegions(), not(empty()));
 		assertThat(synth.getFailedStateSeparationProblems(),
 				contains(containsInAnyOrder(nodeWithID("t"), nodeWithID("u"))));
-		assertThat(synth.getFailedEventStateSeparationProblems(), containsInAnyOrder(
-					equalTo(new Pair<String, State>("c", ts.getNode("t"))),
-					equalTo(new Pair<String, State>("b", ts.getNode("u")))));
+		assertThat(synth.getFailedEventStateSeparationProblems().toString(),
+				synth.getFailedEventStateSeparationProblems().size(), is(2));
+		assertThat(synth.getFailedEventStateSeparationProblems(), allOf(
+					hasEntry(is("b"), contains(ts.getNode("u"))),
+					hasEntry(is("c"), contains(ts.getNode("t")))));
 	}
 
 	@Test
@@ -156,7 +158,7 @@ public class SynthesizePNTest {
 		// Can't really be more specific, way too many possibilities
 		assertThat(synth.getSeparatingRegions(), IsIterableWithSize.<Region>iterableWithSize(greaterThanOrEqualTo(3)));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
-		assertThat(synth.getFailedEventStateSeparationProblems(), empty());
+		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 
 		TransitionSystem ts2 = new CoverabilityGraph(synth.synthesizePetriNet()).toReachabilityLTS();
 		assertThat(new IsomorphismLogic(ts, ts2, true).isIsomorphic(), is(true));
@@ -175,10 +177,11 @@ public class SynthesizePNTest {
 		SynthesizePN synth = new SynthesizePN(ts, new PNProperties(PNProperties.PLAIN));
 
 		assertThat(synth.getSeparatingRegions(), everyItem(plainRegion()));
-		assertThat(synth.getFailedEventStateSeparationProblems(), containsInAnyOrder(
-					equalTo(new Pair<String, State>("a", v)),
-					equalTo(new Pair<String, State>("b", v)),
-					equalTo(new Pair<String, State>("b", u))));
+		assertThat(synth.getFailedEventStateSeparationProblems().toString(),
+				synth.getFailedEventStateSeparationProblems().size(), is(2));
+		assertThat(synth.getFailedEventStateSeparationProblems(), allOf(
+					hasEntry(is("a"), contains(v)),
+					hasEntry(is("b"), containsInAnyOrder(u, v))));
 		assertThat(synth.getFailedStateSeparationProblems(), contains(containsInAnyOrder(s, t, u, v)));
 	}
 
