@@ -223,6 +223,7 @@ public class SynthesizePN extends DebugUtil {
 	static public void minimizeRegions(RegionUtility utility, Set<Region> requiredRegions) {
 		TransitionSystem ts = utility.getTransitionSystem();
 		Set<Region> allRegions = new HashSet<>(requiredRegions);
+		Set<Region> remainingRegions = new HashSet<>(requiredRegions);
 		requiredRegions.clear();
 
 		// Build a list where each entry is generated from a separation problem and contains all regions that
@@ -236,31 +237,51 @@ public class SynthesizePN extends DebugUtil {
 			State state = iterator.next();
 			iterator.remove();
 
+			innerStatesLoop:
 			for (State otherState : remainingStates) {
+				// Does one of our required regions already solve SSP? If so, skip
+				for (Region r : requiredRegions) {
+					if (SeparationUtility.isSeparatingRegion(utility, r, state, otherState))
+						continue innerStatesLoop;
+				}
+				// Calculate which of the remaining regions solves SSP for this instance
 				Set<Region> sep = new HashSet<>();
-				for (Region r : allRegions) {
+				for (Region r : remainingRegions) {
 					if (SeparationUtility.isSeparatingRegion(utility, r, state, otherState))
 						sep.add(r);
 				}
-				if (sep.size() == 1)
+				if (sep.size() == 1) {
 					// If only one region solves this problem, that region is required
-					requiredRegions.add(sep.iterator().next());
+					Region r = sep.iterator().next();
+					requiredRegions.add(r);
+					remainingRegions.remove(r);
+				}
 				else if (!sep.isEmpty())
 					separationProblems.add(sep);
 			}
 		}
 		// Event separation
 		for (State state : ts.getNodes()) {
+			innerStatesLoop:
 			for (String event : ts.getAlphabet()) {
 				if (!SeparationUtility.isEventEnabled(state, event)) {
+					// Does one of our required regions already solve ESSP? If so, skip
+					for (Region r : requiredRegions) {
+						if (SeparationUtility.isSeparatingRegion(utility, r, state, event))
+							continue innerStatesLoop;
+					}
+					// Calculate which of the remaining regions solves this ESSP instance
 					Set<Region> sep = new HashSet<>();
-					for (Region r : allRegions) {
+					for (Region r : remainingRegions) {
 						if (SeparationUtility.isSeparatingRegion(utility, r, state, event))
 							sep.add(r);
 					}
-					if (sep.size() == 1)
+					if (sep.size() == 1) {
 						// If only one region solves this problem, that region is required
-						requiredRegions.add(sep.iterator().next());
+						Region r = sep.iterator().next();
+						requiredRegions.add(r);
+						remainingRegions.remove(r);
+					}
 					else if (!sep.isEmpty())
 						separationProblems.add(sep);
 				}
