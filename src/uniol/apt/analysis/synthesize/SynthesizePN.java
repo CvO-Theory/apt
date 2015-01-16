@@ -231,6 +231,33 @@ public class SynthesizePN extends DebugUtil {
 		// solve this problem.
 		Set<Set<Region>> separationProblems = new HashSet<>();
 
+		// Event separation
+		for (State state : ts.getNodes()) {
+			innerStatesLoop:
+			for (String event : ts.getAlphabet()) {
+				if (!SeparationUtility.isEventEnabled(state, event)) {
+					// Does one of our required regions already solve ESSP? If so, skip
+					for (Region r : requiredRegions) {
+						if (SeparationUtility.isSeparatingRegion(utility, r, state, event))
+							continue innerStatesLoop;
+					}
+					// Calculate which of the remaining regions solves this ESSP instance
+					Set<Region> sep = new HashSet<>();
+					for (Region r : remainingRegions) {
+						if (SeparationUtility.isSeparatingRegion(utility, r, state, event))
+							sep.add(r);
+					}
+					if (sep.size() == 1) {
+						// If only one region solves this problem, that region is required
+						Region r = sep.iterator().next();
+						requiredRegions.add(r);
+						remainingRegions.remove(r);
+					}
+					else if (!sep.isEmpty())
+						separationProblems.add(sep);
+				}
+			}
+		}
 		// State separation
 		Set<State> remainingStates = new HashSet<>(ts.getNodes());
 		Iterator<State> iterator = remainingStates.iterator();
@@ -259,33 +286,6 @@ public class SynthesizePN extends DebugUtil {
 				}
 				else if (!sep.isEmpty())
 					separationProblems.add(sep);
-			}
-		}
-		// Event separation
-		for (State state : ts.getNodes()) {
-			innerStatesLoop:
-			for (String event : ts.getAlphabet()) {
-				if (!SeparationUtility.isEventEnabled(state, event)) {
-					// Does one of our required regions already solve ESSP? If so, skip
-					for (Region r : requiredRegions) {
-						if (SeparationUtility.isSeparatingRegion(utility, r, state, event))
-							continue innerStatesLoop;
-					}
-					// Calculate which of the remaining regions solves this ESSP instance
-					Set<Region> sep = new HashSet<>();
-					for (Region r : remainingRegions) {
-						if (SeparationUtility.isSeparatingRegion(utility, r, state, event))
-							sep.add(r);
-					}
-					if (sep.size() == 1) {
-						// If only one region solves this problem, that region is required
-						Region r = sep.iterator().next();
-						requiredRegions.add(r);
-						remainingRegions.remove(r);
-					}
-					else if (!sep.isEmpty())
-						separationProblems.add(sep);
-				}
 			}
 		}
 
