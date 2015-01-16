@@ -22,6 +22,7 @@ package uniol.apt.analysis.synthesize;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -121,13 +122,13 @@ public class SynthesizePN extends DebugUtil {
 	 */
 	private Set<Set<State>> solveStateSeparation() {
 		Set<Set<State>> failedStateSeparationProblems = new HashSet<>();
-		Set<State> alreadyHandled = new HashSet<>();
-		for (State state : ts.getNodes()) {
-			alreadyHandled.add(state);
-			for (State otherState : ts.getNodes()) {
-				if (alreadyHandled.contains(otherState))
-					continue;
+		Set<State> remainingStates = new HashSet<>(ts.getNodes());
+		Iterator<State> iterator = remainingStates.iterator();
+		while (iterator.hasNext()) {
+			State state = iterator.next();
+			iterator.remove();
 
+			for (State otherState : remainingStates) {
 				debug("Trying to separate " + state + " from " + otherState);
 				Region r = null;
 				for (Region region : regions)
@@ -229,13 +230,13 @@ public class SynthesizePN extends DebugUtil {
 		Set<Set<Region>> separationProblems = new HashSet<>();
 
 		// State separation
-		Set<State> alreadyHandled = new HashSet<>();
-		for (State state : ts.getNodes()) {
-			alreadyHandled.add(state);
-			for (State otherState : ts.getNodes()) {
-				if (alreadyHandled.contains(otherState))
-					continue;
+		Set<State> remainingStates = new HashSet<>(ts.getNodes());
+		Iterator<State> iterator = remainingStates.iterator();
+		while (iterator.hasNext()) {
+			State state = iterator.next();
+			iterator.remove();
 
+			for (State otherState : remainingStates) {
 				Set<Region> sep = new HashSet<>();
 				for (Region r : allRegions) {
 					if (SeparationUtility.isSeparatingRegion(utility, r, state, otherState))
