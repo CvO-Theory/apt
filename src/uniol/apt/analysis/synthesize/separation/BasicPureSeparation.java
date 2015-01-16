@@ -155,14 +155,10 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 		}
 
 		// Calculate the resulting linear combination
-		debug("Solving the following system to separate " + state + " from " + event + ":");
-		debug(system);
+		debug("Solving an inequality system to separate ", state, " from ", event, ":");
 		List<Integer> solution = system.findSolution();
-		if (solution.isEmpty()) {
-			debug("No solution found");
+		if (solution.isEmpty())
 			return null;
-		}
-		debug("solution: " + solution);
 
 		assert solution.size() == basis.size();
 		Region result = Region.createTrivialRegion(utility);
@@ -173,7 +169,7 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 
 		result = result.makePure();
 		result = result.withInitialMarking(result.getNormalRegionMarking());
-		debug("region: " + result);
+		debug("region: ", result);
 		return result;
 	}
 }

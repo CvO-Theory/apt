@@ -180,7 +180,7 @@ public class SeparationUtility extends DebugUtil {
 		if (result == null)
 			result = new InequalitySystemSeparation(utility, basis, properties, locationMap);
 
-		debug("Created Separation instance from class " + result.getClass().getName());
+		debug("Created Separation instance from class ", result.getClass().getName());
 		return result;
 	}
 }

@@ -30,7 +30,7 @@ public class DebugUtil {
 	static final public boolean debugOutputEnabled = false;
 	static final private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
 
-	static private void debug(String prefix, String message) {
+	static private void printDebug(String prefix, String message) {
 		prefix = dateFormat.format(new Date()) + " " + prefix + ": ";
 		for (String line : message.split("\n"))
 			System.err.println(prefix + line);
@@ -49,17 +49,46 @@ public class DebugUtil {
 
 	static protected void debug(String message) {
 		if (debugOutputEnabled)
-			debug(getCaller(), message);
+			printDebug(getCaller(), message);
 	}
 
 	static protected void debug() {
 		if (debugOutputEnabled)
-			debug(getCaller(), "");
+			printDebug(getCaller(), "");
 	}
 
 	static protected void debug(Object obj) {
 		if (debugOutputEnabled)
-			debug(getCaller(), obj.toString());
+			printDebug(getCaller(), obj.toString());
+	}
+
+	static protected void debug(Object obj1, Object obj2) {
+		if (debugOutputEnabled)
+			printDebug(getCaller(), obj1.toString() + obj2.toString());
+	}
+
+	static protected void debug(Object obj1, Object obj2, Object obj3) {
+		if (debugOutputEnabled)
+			printDebug(getCaller(), obj1.toString() + obj2.toString() + obj3.toString());
+	}
+
+	static protected void debug(Object obj1, Object obj2, Object obj3, Object obj4) {
+		if (debugOutputEnabled)
+			printDebug(getCaller(), obj1.toString() + obj2.toString() + obj3.toString() + obj4.toString());
+	}
+
+	static protected void debug(Object obj1, Object obj2, Object obj3, Object obj4, Object obj5) {
+		if (debugOutputEnabled)
+			printDebug(getCaller(), obj1.toString() + obj2.toString() + obj3.toString() + obj4.toString() + obj5.toString());
+	}
+
+	static protected void debug(Object... objs) {
+		if (debugOutputEnabled) {
+			StringBuilder sb = new StringBuilder();
+			for (Object o : objs)
+				sb.append(o);
+			printDebug(getCaller(), sb.toString());
+		}
 	}
 }
 

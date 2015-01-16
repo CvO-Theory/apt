@@ -107,14 +107,10 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 		}
 
 		// Calculate the resulting linear combination
-		debug("Solving the following system to separate " + state + " from " + event + ":");
-		debug(system);
+		debug("Solving an inequality system to separate ", state, " from ", event, ":");
 		List<Integer> solution = system.findSolution();
-		if (solution.isEmpty()) {
-			debug("No solution found");
+		if (solution.isEmpty())
 			return null;
-		}
-		debug("solution: " + solution);
 
 		assert solution.size() == basis.size();
 		Region result = Region.createTrivialRegion(utility);
@@ -124,7 +120,7 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 		}
 		result = result.makePure();
 		result = result.withInitialMarking(result.getNormalRegionMarking());
-		debug("region: " + result);
+		debug("region: ", result);
 
 		// If this already is a separating region, return it
 		if (SeparationUtility.isSeparatingRegion(utility, result, state, event))
@@ -155,7 +151,7 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 		// marking than all states in which 'event' is enabled. Thus, we can add suitably many loops to solve
 		// ESSP.)
 		min -= result.getBackwardWeight(eventIndex);
-		debug("Adding self-loop to event " + event + " with weight " + min);
+		debug("Adding self-loop to event ", event, " with weight ", min);
 		assert min > 0;
 		return result.addRegionWithFactor(Region.createUnitRegion(utility, eventIndex), min);
 	}

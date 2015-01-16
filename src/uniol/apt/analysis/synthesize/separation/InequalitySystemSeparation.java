@@ -71,11 +71,11 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 		this.locationMap = locationMap;
 
 		debug("Variables:");
-		debug("Weights start at " + systemWeightsStart);
-		debug("Coefficients from basis start at " + systemCoefficientsStart);
-		debug("Forward weights start at " + systemForwardWeightsStart);
-		debug("Backward weights start at " + systemBackwardWeightsStart);
-		debug("Initial marking is variable " + systemInitialMarking);
+		debug("Weights start at ", systemWeightsStart);
+		debug("Coefficients from basis start at ", systemCoefficientsStart);
+		debug("Forward weights start at ", systemForwardWeightsStart);
+		debug("Backward weights start at ", systemBackwardWeightsStart);
+		debug("Initial marking is variable ", systemInitialMarking);
 
 		this.system = makeInequalitySystem();
 
@@ -339,7 +339,7 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 		system.addInequality(-1, ">=", inequality, "Region should separate state " + state + " from event " + event);
 
 		// Calculate the resulting linear combination
-		debug("Solving the following system to separate " + state + " from " + event + ":");
+		debug("Solving the following system to separate ", state, " from ", event, ":");
 		return regionFromSolution(system, pure);
 	}
 
@@ -351,20 +351,16 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 * @return A region or null.
 	 */
 	private Region regionFromSolution(InequalitySystem system, boolean pure) {
-		debug(system);
 		List<Integer> solution = system.findSolution();
-		if (solution.isEmpty()) {
-			debug("No solution found");
+		if (solution.isEmpty())
 			return null;
-		}
-		debug("solution: " + solution);
 
 		final int events = utility.getNumberOfEvents();
 		Region r = new Region(utility,
 				solution.subList(systemBackwardWeightsStart, systemBackwardWeightsStart + events),
 				solution.subList(systemForwardWeightsStart, systemForwardWeightsStart + events))
 			.withInitialMarking(solution.get(systemInitialMarking));
-		debug("region: " + r);
+		debug("region: ", r);
 
 		if (pure)
 			r = r.makePure();

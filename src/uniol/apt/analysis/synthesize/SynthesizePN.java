@@ -74,7 +74,7 @@ public class SynthesizePN extends DebugUtil {
 		this.properties = properties;
 		this.separation = SeparationUtility.createSeparationInstance(utility, regionBasis, properties);
 
-		debug("Region basis: " + regionBasis);
+		debug("Region basis: ", regionBasis);
 
 		// ESSP calculates new regions while SSP only choses regions from the basis. Solve ESSP first since the
 		// calculated regions may also solve SSP and thus we get less places in the resulting net.
@@ -87,6 +87,7 @@ public class SynthesizePN extends DebugUtil {
 		computeMaximalFailedStateSeparationProblems(solveStateSeparation());
 
 		debug();
+		debug("Minimizing regions");
 		minimizeRegions(utility, regions);
 
 		debug();
@@ -129,7 +130,7 @@ public class SynthesizePN extends DebugUtil {
 			iterator.remove();
 
 			for (State otherState : remainingStates) {
-				debug("Trying to separate " + state + " from " + otherState);
+				debug("Trying to separate ", state,  " from ", otherState);
 				Region r = null;
 				for (Region region : regions)
 					if (SeparationUtility.isSeparatingRegion(utility, region, state, otherState)) {
@@ -137,7 +138,7 @@ public class SynthesizePN extends DebugUtil {
 						break;
 					}
 				if (r != null) {
-					debug("Found region " + r);
+					debug("Found region ", r);
 					continue;
 				}
 
@@ -150,7 +151,7 @@ public class SynthesizePN extends DebugUtil {
 
 					debug("Failure!");
 				} else {
-					debug("Calculated region " + r);
+					debug("Calculated region ", r);
 					regions.add(r);
 				}
 			}
@@ -186,7 +187,7 @@ public class SynthesizePN extends DebugUtil {
 		for (State state : ts.getNodes())
 			for (String event : ts.getAlphabet()) {
 				if (!SeparationUtility.isEventEnabled(state, event)) {
-					debug("Trying to separate " + state + " from event '" + event + "'");
+					debug("Trying to separate ", state, " from event '", event, "'");
 					Region r = null;
 					for (Region region : regions)
 						if (SeparationUtility.isSeparatingRegion(utility, region, state, event)) {
@@ -194,7 +195,7 @@ public class SynthesizePN extends DebugUtil {
 							break;
 						}
 					if (r != null) {
-						debug("Found region " + r);
+						debug("Found region ", r);
 						continue;
 					}
 
@@ -208,7 +209,7 @@ public class SynthesizePN extends DebugUtil {
 						states.add(state);
 						debug("Failure!");
 					} else {
-						debug("Calculated region " + r);
+						debug("Calculated region ", r);
 						regions.add(r);
 					}
 				}
@@ -302,7 +303,7 @@ public class SynthesizePN extends DebugUtil {
 
 		debug("List of required regions:");
 		debug(requiredRegions);
-		debug("Picked " + requiredRegions.size() + " required regions out of " + allRegions.size() + " input regions");
+		debug("Picked ", requiredRegions.size(), " required regions out of ", allRegions.size(), " input regions");
 	}
 
 	/**
@@ -355,16 +356,16 @@ public class SynthesizePN extends DebugUtil {
 		// All transitions that consume tokens from the same place must have the same location.
 		for (Place p : pn.getPlaces()) {
 			String location = null;
-			debug("Examining preset of place " + p + " for obeying the required distribution");
+			debug("Examining preset of place ", p, " for obeying the required distribution");
 			for (Transition t : p.getPostset()) {
 				int event = utility.getEventIndex(t.getLabel());
 				if (locationMap[event] == null)
 					continue;
 				if (location == null) {
 					location = locationMap[event];
-					debug("Transition " + t + " sets location to " + location);
+					debug("Transition ", t, " sets location to ", location);
 				} else if (!location.equals(locationMap[event])) {
-					debug("Transition " + t + " would set location to " + locationMap[event] + ", but this conflicts with earlier location");
+					debug("Transition ", t, " would set location to ", locationMap[event], ", but this conflicts with earlier location");
 					debug("PN is not a distributed implementation!");
 					return false;
 				}

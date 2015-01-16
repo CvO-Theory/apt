@@ -182,7 +182,7 @@ public class EquationSystem extends DebugUtil {
 		 * Invert variable y_j in all equations.
 		 */
 		private void invertVariableY(int j) {
-			debug("Inverting variable y_" + j);
+			debug("Inverting variable y_", j);
 			for (int i = 0; i < equations1.size(); i++) {
 				List<Integer> equation = equations1.get(i);
 				equation.set(j, -equation.get(j));
@@ -197,7 +197,7 @@ public class EquationSystem extends DebugUtil {
 		 * Remove variable y_j from all equations.
 		 */
 		private void removeVariable(int j) {
-			debug("Removing variable y_" + j);
+			debug("Removing variable y_", j);
 			for (int i = 0; i < equations1.size(); i++)
 				equations1.get(i).set(j, 0);
 			for (int i = 0; i < equations2.size(); i++)
@@ -208,8 +208,8 @@ public class EquationSystem extends DebugUtil {
 		 * Substitute variable y_variableIndex with y_variableIndex + factor * y_addendIndex in all equations.
 		 */
 		private void substituteVariable(int variableIndex, int factor, int addendIndex) {
-			debug("Substituting variable y_" + variableIndex + " with y_" + variableIndex + " + "
-					+ factor + " * y_" + addendIndex);
+			debug("Substituting variable y_", variableIndex, " with y_", variableIndex, " + ",
+					factor, " * y_", addendIndex);
 			for (int i = 0; i < equations1.size(); i++)
 				substituteVariable(equations1.get(i), variableIndex, factor, addendIndex);
 			for (int i = 0; i < equations2.size(); i++)
@@ -288,7 +288,7 @@ public class EquationSystem extends DebugUtil {
 				result.add(Collections.unmodifiableList(row));
 		}
 
-		debug("Basis found: " + result);
+		debug("Basis found: ", result);
 		debug("");
 
 		return Collections.unmodifiableSet(result);
