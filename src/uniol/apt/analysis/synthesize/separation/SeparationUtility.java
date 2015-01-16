@@ -72,16 +72,13 @@ public class SeparationUtility extends DebugUtil {
 	 * @return A separating region or null.
 	 */
 	static public boolean isSeparatingRegion(RegionUtility utility, Region region, State state, State otherState) {
-		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
-		List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
-
 		// Unreachable states cannot be separated
 		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
 			return false;
 
 		// We need a region which assigns different values to these two states.
-		int stateValue = region.evaluateParikhVector(stateParikhVector);
-		int otherStateValue = region.evaluateParikhVector(otherStateParikhVector);
+		int stateValue = region.getMarkingForState(state);
+		int otherStateValue = region.getMarkingForState(otherState);
 		return stateValue != otherStateValue;
 	}
 
