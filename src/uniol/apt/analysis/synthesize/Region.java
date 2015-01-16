@@ -152,7 +152,8 @@ public class Region {
 	 * @return the total weight of the given event.
 	 */
 	public int getWeight(String event) {
-		return getForwardWeight(event) - getBackwardWeight(event);
+		int index = utility.getEventIndex(event);
+		return getForwardWeight(index) - getBackwardWeight(index);
 	}
 
 	/**
