@@ -21,7 +21,9 @@ package uniol.apt.analysis.synthesize;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.Arc;
@@ -36,6 +38,7 @@ public class Region {
 	private final List<Integer> backwardWeights;
 	private final List<Integer> forwardWeights;
 	private final int initialMarking;
+	private final Map<State, Integer> stateMarkingCache = new HashMap<>();
 
 	/**
 	 * Create a new region.
@@ -199,7 +202,12 @@ public class Region {
 	 * @return The resulting number.
 	 */
 	public int getMarkingForState(State state) {
-		return getInitialMarking() + evaluateParikhVector(utility.getReachingParikhVector(state));
+		Integer i = stateMarkingCache.get(state);
+		if (i == null) {
+			i = getInitialMarking() + evaluateParikhVector(utility.getReachingParikhVector(state));
+			stateMarkingCache.put(state, i);
+		}
+		return i;
 	}
 
 	/**
