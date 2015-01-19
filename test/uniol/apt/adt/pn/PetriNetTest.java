@@ -31,6 +31,7 @@ import uniol.apt.CrashCourseNets;
 import uniol.apt.adt.EdgeKey;
 import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.module.exception.ModuleException;
+import uniol.tests.TestUtils;
 
 /**
  *
@@ -201,12 +202,7 @@ public class PetriNetTest {
 	public void testSoftReferences() {
 		PetriNet pn = getTestNet();
 		try {
-			StringBuilder sb = new StringBuilder(" ");
-			StringBuilder sb2 = new StringBuilder(sb);
-			while (true) {
-				sb.append(sb2);
-				sb2.append(sb);
-			}
+			TestUtils.causeOutOfMemory();
 		} catch (OutOfMemoryError e) {
 			Node p0 = pn.getNode("p0");
 			assertTrue(p0.getPostsetNodes().isEmpty());

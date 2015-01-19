@@ -25,6 +25,7 @@ import org.testng.annotations.Test;
 import uniol.apt.adt.exception.ArcExistsException;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
+import uniol.tests.TestUtils;
 
 /**
  *
@@ -70,12 +71,7 @@ public class TransitionSystemTest {
 	public void testSoftReferences() {
 		TransitionSystem ts = getTestSystem();
 		try {
-			StringBuilder sb = new StringBuilder(" ");
-			StringBuilder sb2 = new StringBuilder(sb);
-			while (true) {
-				sb.append(sb2);
-				sb2.append(sb);
-			}
+			TestUtils.causeOutOfMemory();
 		} catch (OutOfMemoryError e) {
 			State p0 = ts.getNode("s0");
 			assertEquals(p0.getPresetEdges().size(), 1);
