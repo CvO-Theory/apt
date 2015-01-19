@@ -217,20 +217,18 @@ public class SynthesizePN extends DebugUtil {
 	}
 
 	/**
-	 * Try to eliminate redundant regions.
+	 * Calculate definitely required regions and for each remaining separation problem all regions which solve this
+	 * problem.
 	 * @param utility The region utility on which this function should work.
-	 * @param requiredRegions Set of regions to minimize. Redundant regions will be removed.
+	 * @param separationProblems For each still unsolved separation problem, the set of all regions that solve it is
+	 * calculated and added to this argument.
+	 * @param requiredRegions Regions which are definitely required will be added to this set.
+	 * @param remainingRegions Regions to choose from and if they are definitely required to move to
+	 * requiredRegions.
 	 */
-	static public void minimizeRegions(RegionUtility utility, Set<Region> requiredRegions) {
+	static private void calculateRequiredRegionsAndProblems(RegionUtility utility, Set<Set<Region>> separationProblems,
+			Set<Region> requiredRegions, Set<Region> remainingRegions) {
 		TransitionSystem ts = utility.getTransitionSystem();
-		Set<Region> allRegions = new HashSet<>(requiredRegions);
-		Set<Region> remainingRegions = new HashSet<>(requiredRegions);
-		requiredRegions.clear();
-
-		// Build a list where each entry is generated from a separation problem and contains all regions that
-		// solve this problem.
-		Set<Set<Region>> separationProblems = new HashSet<>();
-
 		// Event separation
 		for (State state : ts.getNodes()) {
 			innerStatesLoop:
@@ -288,11 +286,28 @@ public class SynthesizePN extends DebugUtil {
 					separationProblems.add(sep);
 			}
 		}
+	}
 
-		debug("List of regions that solve each separation problem:");
-		debug(separationProblems);
-		debug("required regions after first pass:");
+	/**
+	 * Try to eliminate redundant regions.
+	 * @param utility The region utility on which this function should work.
+	 * @param requiredRegions Set of regions to minimize. Redundant regions will be removed.
+	 */
+	static public void minimizeRegions(RegionUtility utility, Set<Region> requiredRegions) {
+		TransitionSystem ts = utility.getTransitionSystem();
+		Set<Region> allRegions = Collections.unmodifiableSet(new HashSet<>(requiredRegions));
+		Set<Region> remainingRegions = new HashSet<>(requiredRegions);
+		requiredRegions.clear();
+
+		// Build a list where each entry is generated from a separation problem and contains all regions that
+		// solve this problem.
+		Set<Set<Region>> separationProblems = new HashSet<>();
+		calculateRequiredRegionsAndProblems(utility, separationProblems, requiredRegions, remainingRegions);
+
+		debug("Required regions after first pass:");
 		debug(requiredRegions);
+		debug("List of regions that solve each remaining separation problem:");
+		debug(separationProblems);
 
 		// Now go through all remaining problems again
 		for (Set<Region> problem : separationProblems) {
