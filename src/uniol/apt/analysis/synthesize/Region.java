@@ -165,12 +165,11 @@ public class Region {
 	 * @return The resulting number that this region assigns to the arguments
 	 */
 	public int evaluateParikhVector(List<Integer> vector) {
-		List<String> events = utility.getEventList();
-		assert vector.size() == events.size();
+		assert vector.size() == utility.getEventList().size();
 
 		int result = 0;
-		for (int i = 0; i < events.size(); i++)
-			result += vector.get(i) * getWeight(events.get(i));
+		for (int i = 0; i < vector.size(); i++)
+			result += vector.get(i) * getWeight(i);
 
 		return result;
 	}
