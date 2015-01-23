@@ -65,7 +65,8 @@ public class BoundedModule extends AbstractModule {
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("bounded", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("witness_place", Place.class);
-		outputSpec.addReturnValue("witness_firing_sequence", FiringSequenceLabels.class);
+		outputSpec.addReturnValue("witness_firing_sequence", FiringSequence.class);
+		outputSpec.addReturnValue("witness_firing_sequence_cycle", FiringSequence.class);
 	}
 
 	@Override
@@ -80,9 +81,14 @@ public class BoundedModule extends AbstractModule {
 			boundedResult = result.isKBounded(k);
 		}
 		output.setReturnValue("bounded", Boolean.class, boundedResult);
-		output.setReturnValue("witness_place", Place.class, result.unboundedPlace);
-		output.setReturnValue("witness_firing_sequence", FiringSequenceLabels.class,
-			new FiringSequence(result.sequence).toFiringSequenceLabels());
+		if (!boundedResult) {
+			output.setReturnValue("witness_place", Place.class, result.unboundedPlace);
+			output.setReturnValue("witness_firing_sequence", FiringSequence.class,
+				new FiringSequence(result.sequence));
+			if (!result.isBounded())
+				output.setReturnValue("witness_firing_sequence_cycle", FiringSequence.class,
+					new FiringSequence(result.cycle));
+		}
 	}
 
 	@Override

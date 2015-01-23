@@ -75,6 +75,7 @@ import uniol.apt.analysis.invariants.CoveredByInvariantModule;
 import uniol.apt.analysis.invariants.Vector;
 import uniol.apt.analysis.isolated.IsolatedModule;
 import uniol.apt.analysis.isomorphism.IsomorphismModule;
+import uniol.apt.analysis.language.FiringSequence;
 import uniol.apt.analysis.language.LanguageEquivalenceModule;
 import uniol.apt.analysis.language.Word;
 import uniol.apt.analysis.language.WordInLanguageModule;
@@ -351,6 +352,8 @@ public class APT {
 			new ComponentsReturnValueTransformation());
 		returnValuesTransformer.addTransformation(CycleCounterExample.class,
 			new ToStringReturnValueTransformation<CycleCounterExample>());
+		returnValuesTransformer.addTransformation(FiringSequence.class,
+			new INodeCollectionReturnValueTransformation<FiringSequence>());
 		returnValuesTransformer.addTransformation(FiringSequenceLabels.class,
 			new FiringSequenceLabelsReturnValueTransformation());
 		returnValuesTransformer.addTransformation((Class<INode<?, ?, ?>>) (Class<?>) INode.class,

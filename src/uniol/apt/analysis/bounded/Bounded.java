@@ -20,6 +20,7 @@
 package uniol.apt.analysis.bounded;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import uniol.apt.adt.pn.Marking;
@@ -64,9 +65,12 @@ public class Bounded {
 			for (Place p : places) {
 				Token val = mark.getToken(p);
 
-				if (val.isOmega())
+				if (val.isOmega()) {
 					// The net is unbounded, it can't get worse than this
-					return new BoundedResult(pn, p, null, n.getFiringSequence());
+					CoverabilityGraphNode covered = n.getCoveredNode();
+					return new BoundedResult(pn, p, null, covered.getFiringSequence(),
+							n.getFiringSequenceFrom(covered));
+				}
 				if (k < val.getValue()) {
 					// We found a larger k, update our variables
 					witness = p;
@@ -76,7 +80,7 @@ public class Bounded {
 			}
 		}
 
-		return new BoundedResult(pn, witness, k, sequence);
+		return new BoundedResult(pn, witness, k, sequence, Collections.<Transition>emptyList());
 	}
 }
 
