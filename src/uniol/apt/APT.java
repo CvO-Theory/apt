@@ -172,9 +172,9 @@ import uniol.apt.ui.impl.parameter.StringParameterTransformation;
 import uniol.apt.ui.impl.parameter.TSParameterTransformation;
 import uniol.apt.ui.impl.parameter.WordParameterTransformation;
 import uniol.apt.ui.impl.returns.BooleanReturnValueTransformation;
-import uniol.apt.ui.impl.returns.ComponentReturnValueTransformation;
 import uniol.apt.ui.impl.returns.ComponentsReturnValueTransformation;
 import uniol.apt.ui.impl.returns.FiringSequenceLabelsReturnValueTransformation;
+import uniol.apt.ui.impl.returns.INodeCollectionReturnValueTransformation;
 import uniol.apt.ui.impl.returns.INodeReturnValueTransformation;
 import uniol.apt.ui.impl.returns.MarkingReturnValueTransformation;
 import uniol.apt.ui.impl.returns.NetReturnValueTransformation;
@@ -346,7 +346,7 @@ public class APT {
 	public static void addReturnValuesTransformations() {
 		returnValuesTransformer.addTransformation(Boolean.class, new BooleanReturnValueTransformation());
 		returnValuesTransformer.addTransformation(Component.class,
-			new ComponentReturnValueTransformation());
+			new INodeCollectionReturnValueTransformation<Component>());
 		returnValuesTransformer.addTransformation(Components.class,
 			new ComponentsReturnValueTransformation());
 		returnValuesTransformer.addTransformation(CycleCounterExample.class,

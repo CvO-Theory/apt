@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2012-2013  Members of the project group APT
+ * Copyright (C) 2012-2015  Members of the project group APT
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,30 +19,22 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.util.Collection;
+
 import uniol.apt.adt.INode;
-import uniol.apt.analysis.connectivity.Component;
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
- * Transform a component of a graph into a string listing the IDs.
  * @author Uli Schlachter
+ * @param <T> the type of the node that is transformed into a string
  */
-public class ComponentReturnValueTransformation implements ReturnValueTransformation<Component> {
+public class INodeCollectionReturnValueTransformation<T extends Collection<? extends INode<?, ?, ?>>> implements ReturnValueTransformation<T> {
 	@Override
-	public String transform(Component component) {
-		return transformComponent(component);
-	}
-
-	/**
-	 * Transform the given component into a string describing its content.
-	 * @param component The component to transform.
-	 * @return A human readable description of the component.
-	 */
-	static public String transformComponent(Component component) {
+	public String transform(T nodes) {
 		StringBuilder sb = new StringBuilder("[");
 		boolean first = true;
 
-		for (INode<?, ?, ?> node : component) {
+		for (INode<?, ?, ?> node : nodes) {
 			if (!first)
 				sb.append(", ");
 			sb.append(node.getId());
