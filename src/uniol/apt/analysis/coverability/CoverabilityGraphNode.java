@@ -40,6 +40,7 @@ public class CoverabilityGraphNode {
 	private final Marking marking;
 	private final List<Transition> firingSequence;
 	private final CoverabilityGraphNode parent;
+	private final CoverabilityGraphNode covered;
 	private Set<CoverabilityGraphEdge> postsetEdges;
 
 	/**
@@ -49,7 +50,7 @@ public class CoverabilityGraphNode {
 	 * @param marking The marking that identifies this node.
 	 */
 	CoverabilityGraphNode(CoverabilityGraph graph, Marking marking) {
-		this(graph, null, marking, null);
+		this(graph, null, marking, null, null);
 	}
 
 	/**
@@ -61,9 +62,23 @@ public class CoverabilityGraphNode {
 	 */
 	CoverabilityGraphNode(CoverabilityGraph graph, Transition transition, Marking marking,
 			CoverabilityGraphNode parent) {
+		this(graph, transition, marking, parent, null);
+	}
+
+	/**
+	 * Construct a new coverability graph node.
+	 * @param graph The graph that this node belongs to.
+	 * @param transition The transition that is fired from this node's parent to reach this new node.
+	 * @param marking The marking that identifies this node.
+	 * @param parent The parent node of this node.
+	 * @param covered The node which is covered by this node.
+	 */
+	CoverabilityGraphNode(CoverabilityGraph graph, Transition transition, Marking marking,
+			CoverabilityGraphNode parent, CoverabilityGraphNode covered) {
 		this.graph = graph;
 		this.marking = marking;
 		this.parent = parent;
+		this.covered = covered;
 		List<Transition> sequence = new LinkedList<>();
 		if (parent != null) {
 			sequence.addAll(parent.firingSequence);
@@ -76,10 +91,18 @@ public class CoverabilityGraphNode {
 
 	/**
 	 * Get the parent of this node on the path back to the root of the depth first search tree.
-	 * @return the parent.
+	 * @return the parent or null
 	 */
 	CoverabilityGraphNode getParent() {
 		return this.parent;
+	}
+
+	/**
+	 * Get the node in the coverability graph that is covered by this node, if such a node exists.
+	 * @return the covered node or null
+	 */
+	public CoverabilityGraphNode getCoveredNode() {
+		return this.covered;
 	}
 
 	/**
