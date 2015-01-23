@@ -123,6 +123,17 @@ public class CoverabilityGraphNode {
 	}
 
 	/**
+	 * Get the firing sequence which reaches this node from some ancestor. The given ancestor must be a parent,
+	 * grandparent or "older" of us. The implementation does not check this requirement and might return bogus
+	 * results or thrown an exception if this is violated.
+	 * @return The firing sequence.
+	 */
+	public List<Transition> getFiringSequenceFrom(CoverabilityGraphNode ancestor) {
+		int ancestorSequenceLength = ancestor.getFiringSequence().size();
+		return this.firingSequence.subList(ancestorSequenceLength, this.firingSequence.size());
+	}
+
+	/**
 	 * Get all nodes that are in this node's postset.
 	 * @return the postset.
 	 */
