@@ -31,6 +31,9 @@ import uniol.apt.analysis.exception.NoSuchTransitionException;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.analysis.language.FiringSequence;
+
+import java.util.List;
 
 /**
  * Provide the strongly live test as a module.
@@ -46,8 +49,10 @@ public class StronglyLiveModule extends AbstractModule {
 	@Override
 	public String getLongDescription() {
 		return getShortDescription() + ". A transition is strongly live when for every reachable marking "
-			+ "there exists a firing sequence after which this transition is activated. A Petri net is"
-			+ "strongly live when all of its transitions are strongly live";
+			+ "there exists a firing sequence after which this transition is activated. A Petri net is "
+			+ "strongly live when all of its transitions are strongly live. For a transition which is not "
+			+ "strongly live, this module finds a firing sequence after which the transition cannot fire "
+			+ "anymore.";
 	}
 
 	@Override
@@ -66,6 +71,7 @@ public class StronglyLiveModule extends AbstractModule {
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("strongly_live", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("sample_witness_transition", Transition.class);
+		outputSpec.addReturnValue("sample_witness_firing_sequence", FiringSequence.class);
 	}
 
 	@Override
@@ -76,14 +82,19 @@ public class StronglyLiveModule extends AbstractModule {
 			Transition trans = Live.findNonStronglyLiveTransition(pn);
 			output.setReturnValue("strongly_live", Boolean.class, trans == null);
 			output.setReturnValue("sample_witness_transition", Transition.class, trans);
+			if (trans != null)
+				output.setReturnValue("sample_witness_firing_sequence", FiringSequence.class,
+						new FiringSequence(Live.findKillingFireSequence(pn, trans)));
 		} else {
 			Transition transition = pn.getTransition(id);
 			if (transition == null) {
 				throw new NoSuchTransitionException(pn, id);
 			}
 
-			boolean live = Live.checkStronglyLive(pn, transition);
-			output.setReturnValue("strongly_live", Boolean.class, live);
+			List<Transition> killingSequence = Live.findKillingFireSequence(pn, transition);
+			output.setReturnValue("strongly_live", Boolean.class, killingSequence == null);
+			if (killingSequence != null)
+				output.setReturnValue("sample_witness_firing_sequence", FiringSequence.class, new FiringSequence(killingSequence));
 		}
 	}
 
