@@ -28,7 +28,6 @@ import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
 import uniol.apt.analysis.language.FiringSequence;
-import uniol.apt.analysis.separation.FiringSequenceLabels;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
@@ -58,7 +57,7 @@ public class BCFModule extends AbstractModule {
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("bcf", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("witness_marking", Marking.class);
-		outputSpec.addReturnValue("witness_firing_sequence", FiringSequenceLabels.class);
+		outputSpec.addReturnValue("witness_firing_sequence", FiringSequence.class);
 		outputSpec.addReturnValue("witness_transition1", Transition.class);
 		outputSpec.addReturnValue("witness_transition2", Transition.class);
 	}
@@ -71,8 +70,7 @@ public class BCFModule extends AbstractModule {
 		if (result != null) {
 			FiringSequence firingSequence = new FiringSequence(result.sequence);
 			output.setReturnValue("witness_marking", Marking.class, result.m);
-			output.setReturnValue("witness_firing_sequence", FiringSequenceLabels.class,
-				firingSequence.toFiringSequenceLabels());
+			output.setReturnValue("witness_firing_sequence", FiringSequence.class, firingSequence);
 			output.setReturnValue("witness_transition1", Transition.class, result.t1);
 			output.setReturnValue("witness_transition2", Transition.class, result.t2);
 		}

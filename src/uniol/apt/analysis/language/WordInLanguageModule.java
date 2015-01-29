@@ -20,7 +20,6 @@
 package uniol.apt.analysis.language;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.analysis.separation.FiringSequenceLabels;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -55,7 +54,7 @@ public class WordInLanguageModule extends AbstractModule {
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("in_language", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
-		outputSpec.addReturnValue("firing_sequence", FiringSequenceLabels.class);
+		outputSpec.addReturnValue("firing_sequence", FiringSequence.class);
 	}
 
 	@Override
@@ -66,8 +65,7 @@ public class WordInLanguageModule extends AbstractModule {
 		FiringSequence result = test.checkWord(word);
 		output.setReturnValue("in_language", Boolean.class, result != null);
 		if (result != null) {
-			output.setReturnValue("firing_sequence", FiringSequenceLabels.class,
-				result.toFiringSequenceLabels());
+			output.setReturnValue("firing_sequence", FiringSequence.class, result);
 		}
 	}
 

@@ -30,7 +30,6 @@ import uniol.apt.module.exception.ModuleException;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.analysis.language.FiringSequence;
-import uniol.apt.analysis.separation.FiringSequenceLabels;
 
 /**
  * Provide the safeness test as a module.
@@ -63,7 +62,7 @@ public class SafeModule extends AbstractModule {
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("safe", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("witness_place", Place.class);
-		outputSpec.addReturnValue("witness_firing_sequence", FiringSequenceLabels.class);
+		outputSpec.addReturnValue("witness_firing_sequence", FiringSequence.class);
 	}
 
 	@Override
@@ -74,8 +73,8 @@ public class SafeModule extends AbstractModule {
 		output.setReturnValue("safe", Boolean.class, result.isSafe());
 		if (!result.isSafe()) {
 			output.setReturnValue("witness_place", Place.class, result.unboundedPlace);
-			output.setReturnValue("witness_firing_sequence", FiringSequenceLabels.class,
-				new FiringSequence(result.sequence).toFiringSequenceLabels());
+			output.setReturnValue("witness_firing_sequence", FiringSequence.class,
+				new FiringSequence(result.sequence));
 		}
 	}
 

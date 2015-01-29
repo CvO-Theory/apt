@@ -30,7 +30,6 @@ import uniol.apt.module.exception.ModuleException;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.analysis.language.FiringSequence;
-import uniol.apt.analysis.separation.FiringSequenceLabels;
 
 /**
  * Provide the boundedness test as a module.

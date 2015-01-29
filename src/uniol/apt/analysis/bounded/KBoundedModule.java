@@ -30,7 +30,6 @@ import uniol.apt.module.exception.ModuleException;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.analysis.language.FiringSequence;
-import uniol.apt.analysis.separation.FiringSequenceLabels;
 
 /**
  * Provide the k-boundedness test as a module.
@@ -65,7 +64,7 @@ public class KBoundedModule extends AbstractModule {
 		outputSpec.addReturnValue("k", Integer.class);
 		outputSpec.addReturnValue("bounded", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("witness_place", Place.class);
-		outputSpec.addReturnValue("witness_firing_sequence", FiringSequenceLabels.class);
+		outputSpec.addReturnValue("witness_firing_sequence", FiringSequence.class);
 	}
 
 	@Override
@@ -75,8 +74,8 @@ public class KBoundedModule extends AbstractModule {
 		output.setReturnValue("k", Integer.class, result.k);
 		output.setReturnValue("bounded", Boolean.class, result.isBounded());
 		output.setReturnValue("witness_place", Place.class, result.unboundedPlace);
-		output.setReturnValue("witness_firing_sequence", FiringSequenceLabels.class,
-			new FiringSequence(result.sequence).toFiringSequenceLabels());
+		output.setReturnValue("witness_firing_sequence", FiringSequence.class,
+			new FiringSequence(result.sequence));
 	}
 
 	@Override
