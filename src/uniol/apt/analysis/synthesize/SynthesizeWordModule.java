@@ -20,6 +20,7 @@
 package uniol.apt.analysis.synthesize;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,32 @@ public class SynthesizeWordModule extends AbstractModule {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + ". This module tries to synthesize a Petri Net whose prefix language "
+			+ "contains only the specified word. Thus, no other words are firable. If this fails, a list " +
+			" of separation failures is printed.\n\nExample calls:\n\n"
+			+ " apt " + getName() + " none a,b,a,b\n\n"
+			+ "The above prints a Petri net\n\n\n"
+			+ " apt " + getName() + " pure,safe a,b,c,a\n\n"
+			+ "This also prints a Petri net\n\n\n"
+			+ " apt " + getName() + " none a,b,b,a,a\n\n"
+			+ "The above produces the following output:\n\n"
+			+ " separatingRegions: [{ init=1, 1:a:0, 0:b:1 }, { init=2, 0:a:0, 1:b:0 }, { init=0, 0:a:1, 1:b:1 }]\n"
+			+ " separationFailurePoints: a, b, [a] b, a, a\n\n"
+			+ "Here three places where calculated. For Example, the first one of them has an initial "
+			+ "marking of one, transition 'a' consumes a token on this place and 'b' produces one. However, "
+			+ "these three places are not enough for producing the requested word, because after firing 'a' "
+			+ "and 'b' once, transition 'a' is enabled, but shouldn't. The module also could not calculate "
+			+ "any place which would prevent 'a' from occurring in this state without also restricting 'a' "
+			+ "in some state where it must occur.\n\n\n"
+			+ " apt " + getName() + " 3-bounded a,a,a,a\n\n"
+			+ "The above produces the following output:\n\n"
+			+ " separationFailurePoints: a, a, a, a [a]\n\n"
+			+ "This means that there is no 3-bounded Petri Net where three a's are firable in sequence, "
+			+ "but not also a fourth one can occur.";
+	}
+
+	@Override
 	public String getName() {
 		return "word_synthesize";
 	}
@@ -63,6 +90,7 @@ public class SynthesizeWordModule extends AbstractModule {
 	public void provide(ModuleOutputSpec outputSpec) {
 		SynthesizeModule.provideCommon(outputSpec);
 		outputSpec.addReturnValue("separationFailurePoints", String.class);
+		outputSpec.addReturnValue("stateSeparationFailurePoints", String.class);
 	}
 
 	static private void appendSeparationFailure(StringBuilder result, Set<String> failures) {
@@ -83,6 +111,9 @@ public class SynthesizeWordModule extends AbstractModule {
 	}
 
 	static public String formatESSPFailure(Word word, Map<String, Set<State>> separationFailures) {
+		if (separationFailures.isEmpty())
+			return null;
+
 		// List mapping indices into the word to sets of failed separation problems
 		List<Set<String>> failedSeparation = new ArrayList<>(word.size());
 		// Add one for the initial state
@@ -113,22 +144,51 @@ public class SynthesizeWordModule extends AbstractModule {
 		return result.toString();
 	}
 
+	static public String formatSSPFailure(Word word, Set<Set<State>> separationFailures) {
+		// State separation can only fail due to boundedness. E.g. a safe Petri net cannot generate the word a,a.
+		if (separationFailures.isEmpty())
+			return null;
+
+		int separable[] = new int[word.size() + 1];
+		Arrays.fill(separable, 0);
+
+		int numFailure = 0;
+		for (Set<State> states : separationFailures) {
+			numFailure++;
+			for (State state : states) {
+				int index = Integer.parseInt(state.getExtension("index").toString());
+				separable[index] = numFailure;
+			}
+		}
+
+		// Build the string representation of the separation failures
+		StringBuilder result = new StringBuilder();
+		for (int index = 0; index < word.size(); index++) {
+			if (index != 0)
+				result.append(",");
+			if (separable[index] != 0) {
+				if (index != 0)
+					result.append(" ");
+				result.append(separable[index]);
+			}
+			if (result.length() != 0)
+				result.append(" ");
+			result.append(word.get(index));
+		}
+		if (separable[word.size()] != 0)
+			result.append(" " + separable[word.size()]);
+		return result.toString();
+	}
+
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		Word word = input.getParameter("word", Word.class);
 		TransitionSystem ts = makeTS(word);
 		SynthesizePN synthesize = SynthesizeModule.runSynthesis(ts, input, output);
-
-		// TODO: Maybe this should be moved from a module into its own class? Or perhaps into a static function?
-
-		if (!synthesize.wasSuccessfullySeparated()) {
-			// Since we are looking at finite words, start separation can never fail: Just add a place where
-			// every transition removes one token.
-			assert synthesize.getFailedStateSeparationProblems().isEmpty();
-
-			output.setReturnValue("separationFailurePoints", String.class,
-					formatESSPFailure(word, synthesize.getFailedEventStateSeparationProblems()));
-		}
+		output.setReturnValue("stateSeparationFailurePoints", String.class,
+				formatSSPFailure(word, synthesize.getFailedStateSeparationProblems()));
+		output.setReturnValue("separationFailurePoints", String.class,
+				formatESSPFailure(word, synthesize.getFailedEventStateSeparationProblems()));
 	}
 
 	@Override
