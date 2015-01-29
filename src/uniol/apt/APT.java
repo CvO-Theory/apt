@@ -92,7 +92,6 @@ import uniol.apt.analysis.plain.PlainModule;
 import uniol.apt.analysis.reversible.ReversibleModule;
 import uniol.apt.analysis.reversible.ReversibleNetModule;
 import uniol.apt.analysis.reversible.ReversibleTSModule;
-import uniol.apt.analysis.separation.FiringSequenceLabels;
 import uniol.apt.analysis.separation.LargestKModule;
 import uniol.apt.analysis.separation.StrongSeparationLengthModule;
 import uniol.apt.analysis.separation.StrongSeparationModule;
@@ -162,7 +161,6 @@ import uniol.apt.ui.impl.SimpleParametersParser;
 import uniol.apt.ui.impl.TrimmedOutputStreamPrinter;
 import uniol.apt.ui.impl.parameter.CharacterParameterTransformation;
 import uniol.apt.ui.impl.parameter.ExtendModeParameterTransformation;
-import uniol.apt.ui.impl.parameter.FiringSequenceLabelsParameterTransformation;
 import uniol.apt.ui.impl.parameter.GraphParameterTransformation;
 import uniol.apt.ui.impl.parameter.IntegerParameterTransformation;
 import uniol.apt.ui.impl.parameter.MatrixFileFormatParameterTransformation;
@@ -332,8 +330,6 @@ public class APT {
 		parametersTransformer.addTransformation(ParikhVector.class, new ParikhVectorParameterTransformation());
 		parametersTransformer.addTransformation(PetriNetOrTransitionSystem.class,
 			new NetOrTSParameterTransformation());
-		parametersTransformer.addTransformation(FiringSequenceLabels.class,
-			new FiringSequenceLabelsParameterTransformation());
 		parametersTransformer.addTransformation((Class<IGraph<?, ?, ?>>) (Class<?>) IGraph.class,
 			new GraphParameterTransformation());
 		parametersTransformer.addTransformation(MatrixFileFormat.class, new MatrixFileFormatParameterTransformation());

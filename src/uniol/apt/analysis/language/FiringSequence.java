@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.analysis.separation.FiringSequenceLabels;
 
 /**
  * This class represents a firing sequence of a Petri net. It is needed for the module system.
@@ -45,21 +44,6 @@ public class FiringSequence extends ArrayList<Transition> {
 	 */
 	public FiringSequence(Collection<Transition> sequence) {
 		super(sequence);
-	}
-
-	/**
-	 * Converts to FiringSequenceLabels
-	 *
-	 * @return label information
-	 */
-	public FiringSequenceLabels toFiringSequenceLabels() {
-		FiringSequenceLabels fsLabels = new FiringSequenceLabels();
-
-		for (Transition transition : this) {
-			fsLabels.add(transition.getLabel());
-		}
-
-		return (fsLabels);
 	}
 }
 

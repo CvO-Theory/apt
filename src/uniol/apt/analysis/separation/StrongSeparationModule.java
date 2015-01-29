@@ -20,6 +20,7 @@
 package uniol.apt.analysis.separation;
 
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.analysis.language.Word;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -64,7 +65,7 @@ public class StrongSeparationModule extends AbstractModule {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
-		inputSpec.addParameter("sequence", FiringSequenceLabels.class,
+		inputSpec.addParameter("sequence", Word.class,
 			"Firing sequence which should be checked");
 		inputSpec.addOptionalParameter("k", Integer.class, 0, "Value of k");
 		inputSpec.addOptionalParameter("verbose", String.class, "", "Optional more output");
@@ -93,7 +94,7 @@ public class StrongSeparationModule extends AbstractModule {
 			verbose = true;
 		}
 
-		FiringSequenceLabels choosenFiringSequence = input.getParameter("sequence", FiringSequenceLabels.class);
+		Word choosenFiringSequence = input.getParameter("sequence", Word.class);
 
 		// get petri net
 		PetriNet pn = input.getParameter("pn", PetriNet.class);

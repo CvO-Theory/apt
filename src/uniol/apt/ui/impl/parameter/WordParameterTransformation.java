@@ -25,14 +25,24 @@ import uniol.apt.ui.ParameterTransformation;
 
 /**
  * Transform a string into an instance of Word.
- * @author Uli Schlachter
+ * @author Uli Schlachter, Daniel
  */
 public class WordParameterTransformation implements ParameterTransformation<Word> {
 	@Override
 	public Word transform(String arg) throws ModuleException {
-		String[] tokens = arg.split(",", -1);
+		String[] tokens;
+		if (arg.contains(";")) {
+			// with ; --> "a;b;c"/ "a; b ; c" possible
+			tokens = arg.split(";", -1);
+		} else if (arg.contains(",")) {
+			tokens = arg.split(",", -1);
+		} else {
+			tokens = arg.split(" ", -1);
+		}
+
 		Word word = new Word();
 		for (String t : tokens) {
+			t = t.trim();
 			if (t.isEmpty())
 				throw new ModuleException("Empty label found while parsing word '" + arg + "' after " +
 						word + ".");

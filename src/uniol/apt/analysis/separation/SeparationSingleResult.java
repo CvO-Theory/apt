@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import uniol.apt.ui.impl.returns.FiringSequenceLabelsReturnValueTransformation;
+import uniol.apt.analysis.language.Word;
 
 /**
  * Class to save results of separation check
@@ -135,18 +135,7 @@ public class SeparationSingleResult {
 	 * @return String
 	 */
 	public static String outputFirableSequence(ArrayList<String> firableSequence) {
-		FiringSequenceLabelsReturnValueTransformation converter =
-				new FiringSequenceLabelsReturnValueTransformation();
-
-		FiringSequenceLabels sequence = new FiringSequenceLabels();
-
-		for (String transitionLabel : firableSequence) {
-			sequence.add(transitionLabel);
-		}
-
-		String returnString = converter.transform(sequence);
-
-		return returnString;
+		return new Word(firableSequence).toString();
 	}
 
 	/**
