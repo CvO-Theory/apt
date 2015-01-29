@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis.live;
 
+import java.util.List;
+
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -28,6 +30,7 @@ import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
 import uniol.apt.analysis.exception.NoSuchTransitionException;
+import uniol.apt.analysis.language.FiringSequence;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
@@ -47,7 +50,8 @@ public class SimplyLiveModule extends AbstractModule {
 	public String getLongDescription() {
 		return getShortDescription()
 			+ ". A transition is simply live when it can fire at least once. A Petri net is simply live "
-			+ "when all of its transitions are simply live";
+			+ "when all of its transitions are simply live. For a simply live transition, this module "
+			+ "finds a firing sequence that fires the transition.";
 	}
 
 	@Override
@@ -66,6 +70,7 @@ public class SimplyLiveModule extends AbstractModule {
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("simply_live", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("sample_dead_transition", Transition.class);
+		outputSpec.addReturnValue("sample_witness_firing_sequence", FiringSequence.class);
 	}
 
 	@Override
@@ -82,8 +87,10 @@ public class SimplyLiveModule extends AbstractModule {
 				throw new NoSuchTransitionException(pn, id);
 			}
 
-			boolean live = Live.checkSimplyLive(pn, transition);
-			output.setReturnValue("simply_live", Boolean.class, live);
+			List<Transition> live = Live.checkSimplyLive(pn, transition);
+			output.setReturnValue("simply_live", Boolean.class, live != null);
+			if (live != null)
+				output.setReturnValue("sample_witness_firing_sequence", FiringSequence.class, new FiringSequence(live));
 		}
 	}
 

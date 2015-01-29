@@ -32,6 +32,7 @@ import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.coverability.CoverabilityGraphEdge;
 import uniol.apt.analysis.coverability.CoverabilityGraphNode;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -53,7 +54,7 @@ public class Live {
 	 */
 	static public Transition findDeadTransition(PetriNet pn) throws UnboundedException {
 		for (Transition t : pn.getTransitions())
-			if (!checkSimplyLive(pn, t))
+			if (checkSimplyLive(pn, t) == null)
 				return t;
 		return null;
 	}
@@ -63,19 +64,22 @@ public class Live {
 	 * reachable state and thus is not dead.
 	 * @param pn The Petri net that should be examined.
 	 * @param transition The transition that is checked.
-	 * @return True if the transition is simply live, else false.
+	 * @return A firable firing sequence that ends with the given transition, or null.
 	 * @throws UnboundedException If the reachability graph is unbounded.
 	 */
-	static public boolean checkSimplyLive(PetriNet pn, Transition transition) throws UnboundedException {
+	static public List<Transition> checkSimplyLive(PetriNet pn, Transition transition) throws UnboundedException {
 		CoverabilityGraph cover = new CoverabilityGraph(pn);
 		for (CoverabilityGraphEdge edge : cover.getEdges()) {
 			Transition trans = edge.getTransition();
-			if (trans.equals(transition))
+			if (trans.equals(transition)) {
 				// We found an edge which actually fires this transition!
-				return true;
+				List<Transition> result = new ArrayList<>(edge.getSource().getFiringSequence());
+				result.add(transition);
+				return result;
+			}
 		}
 		// We checked the coverability graph and the wanted transition didn't show up. Thus it must be dead.
-		return false;
+		return null;
 	}
 
 	/**
