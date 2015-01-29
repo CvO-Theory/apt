@@ -21,15 +21,14 @@ package uniol.apt.analysis.live;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
+import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.analysis.connectivity.Component;
 import uniol.apt.analysis.connectivity.Components;
 import uniol.apt.analysis.connectivity.Connectivity;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
-import uniol.apt.analysis.coverability.CoverabilityGraphEdge;
 import uniol.apt.analysis.coverability.CoverabilityGraphNode;
 
 import java.util.ArrayList;
@@ -68,12 +67,14 @@ public class Live {
 	 * @throws UnboundedException If the reachability graph is unbounded.
 	 */
 	static public List<Transition> checkSimplyLive(PetriNet pn, Transition transition) throws UnboundedException {
-		CoverabilityGraph cover = new CoverabilityGraph(pn);
-		for (CoverabilityGraphEdge edge : cover.getEdges()) {
-			Transition trans = edge.getTransition();
+		TransitionSystem lts = new CoverabilityGraph(pn).toReachabilityLTS();
+		for (Arc arc : lts.getEdges()) {
+			Transition trans = (Transition) arc.getExtension(Transition.class.getName());
 			if (trans.equals(transition)) {
 				// We found an edge which actually fires this transition!
-				List<Transition> result = new ArrayList<>(edge.getSource().getFiringSequence());
+				CoverabilityGraphNode source = (CoverabilityGraphNode)
+					arc.getSource().getExtension(CoverabilityGraphNode.class.getName());
+				List<Transition> result = new ArrayList<>(source.getFiringSequence());
 				result.add(transition);
 				return result;
 			}
