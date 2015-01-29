@@ -20,7 +20,6 @@
 package uniol.apt.analysis.live;
 
 import org.testng.annotations.Test;
-import static org.testng.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import static uniol.apt.adt.matcher.Matchers.*;
@@ -39,9 +38,9 @@ public class LiveTest {
 
 	private void testLiveness(PetriNet pn, Transition transition, boolean simply,
 		boolean weakly, boolean strongly) throws Exception {
-		assertEquals(Live.checkSimplyLive(pn, transition), simply);
-		assertEquals(Live.checkWeaklyLive(pn, transition), weakly);
-		assertEquals(Live.checkStronglyLive(pn, transition), strongly);
+		assertThat(Live.checkSimplyLive(pn, transition) != null, equalTo(simply));
+		assertThat(Live.checkWeaklyLive(pn, transition), equalTo(weakly));
+		assertThat(Live.checkStronglyLive(pn, transition), equalTo(strongly));
 	}
 
 	private void testLiveNet(PetriNet pn, boolean result) throws Exception {
@@ -60,8 +59,21 @@ public class LiveTest {
 	}
 
 	@Test(expectedExceptions = UnboundedException.class)
-	public void testTokenGeneratorNet() throws Exception {
-		testLiveNet(getTokenGeneratorNet(), true);
+	public void testTokenGeneratorNetSimply() throws Exception {
+		PetriNet pn = getTokenGeneratorNet();
+		Live.checkSimplyLive(pn, pn.getTransition("t1"));
+	}
+
+	@Test(expectedExceptions = UnboundedException.class)
+	public void testTokenGeneratorNetWeakly() throws Exception {
+		PetriNet pn = getTokenGeneratorNet();
+		Live.checkWeaklyLive(pn, pn.getTransition("t1"));
+	}
+
+	@Test(expectedExceptions = UnboundedException.class)
+	public void testTokenGeneratorNetStrongly() throws Exception {
+		PetriNet pn = getTokenGeneratorNet();
+		Live.checkStronglyLive(pn, pn.getTransition("t1"));
 	}
 
 	@Test
@@ -89,7 +101,7 @@ public class LiveTest {
 		PetriNet pn = getDeadTransitionNet();
 		testLiveness(pn, pn.getTransition("td"), false, false, false);
 		testLiveness(pn, pn.getTransition("tl"), true, true, true);
-		assertEquals(Live.findKillingFireSequence(pn, pn.getTransition("td")), emptyList());
+		assertThat(Live.findKillingFireSequence(pn, pn.getTransition("td")), empty());
 	}
 }
 
