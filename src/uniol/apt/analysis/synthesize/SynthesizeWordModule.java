@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2014  Uli Schlachter
+ * Copyright (C) 2014-2015  Uli Schlachter
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +82,37 @@ public class SynthesizeWordModule extends AbstractModule {
 		result.append("]");
 	}
 
+	static public String formatESSPFailure(Word word, Map<String, Set<State>> separationFailures) {
+		// List mapping indices into the word to sets of failed separation problems
+		List<Set<String>> failedSeparation = new ArrayList<>(word.size());
+		// Add one for the initial state
+		failedSeparation.add(new HashSet<String>());
+		for (String event : word) {
+			failedSeparation.add(new HashSet<String>());
+		}
+
+		// Add all failed separation problems into the above list
+		for (Map.Entry<String, Set<State>> failures : separationFailures.entrySet()) {
+			for (State state : failures.getValue()) {
+				int index = Integer.parseInt(state.getExtension("index").toString());
+				failedSeparation.get(index).add(failures.getKey());
+			}
+		}
+
+		// Build the string representation of the separation failures
+		StringBuilder result = new StringBuilder();
+		for (int index = 0; index < word.size(); index++) {
+			if (index != 0)
+				result.append(",");
+			appendSeparationFailure(result, failedSeparation.get(index));
+			if (result.length() != 0)
+				result.append(" ");
+			result.append(word.get(index));
+		}
+		appendSeparationFailure(result, failedSeparation.get(word.size()));
+		return result.toString();
+	}
+
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		Word word = input.getParameter("word", Word.class);
@@ -95,34 +126,8 @@ public class SynthesizeWordModule extends AbstractModule {
 			// every transition removes one token.
 			assert synthesize.getFailedStateSeparationProblems().isEmpty();
 
-			// List mapping indices into the word to sets of failed separation problems
-			List<Set<String>> failedSeparation = new ArrayList<>(word.size());
-			// Add one for the initial state
-			failedSeparation.add(new HashSet<String>());
-			for (String event : word) {
-				failedSeparation.add(new HashSet<String>());
-			}
-
-			// Add all failed separation problems into the above list
-			for (Map.Entry<String, Set<State>> failures : synthesize.getFailedEventStateSeparationProblems().entrySet()) {
-				for (State state : failures.getValue()) {
-					int index = Integer.parseInt(state.getExtension("index").toString());
-					failedSeparation.get(index).add(failures.getKey());
-				}
-			}
-
-			// Build the string representation of the separation failures
-			StringBuilder result = new StringBuilder();
-			for (int index = 0; index < word.size(); index++) {
-				if (index != 0)
-					result.append(",");
-				appendSeparationFailure(result, failedSeparation.get(index));
-				if (result.length() != 0)
-					result.append(" ");
-				result.append(word.get(index));
-			}
-			appendSeparationFailure(result, failedSeparation.get(word.size()));
-			output.setReturnValue("separationFailurePoints", String.class, result.toString());
+			output.setReturnValue("separationFailurePoints", String.class,
+					formatESSPFailure(word, synthesize.getFailedEventStateSeparationProblems()));
 		}
 	}
 
