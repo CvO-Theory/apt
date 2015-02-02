@@ -29,16 +29,6 @@ import java.util.List;
 
 import uniol.apt.util.DebugUtil;
 
-import solver.Solver;
-import solver.constraints.IntConstraintFactory;
-import solver.variables.IntVar;
-import solver.variables.VariableFactory;
-
-import org.ojalgo.optimisation.Expression;
-import org.ojalgo.optimisation.ExpressionsBasedModel;
-import org.ojalgo.optimisation.Optimisation;
-import org.ojalgo.optimisation.Variable;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.varia.NullAppender;
 
@@ -58,7 +48,6 @@ import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.SMTInterpol;
  */
 public class InequalitySystem extends DebugUtil {
 	private final List<Inequality> inequalities = new ArrayList<>();
-	private Implementation implementation;
 
 	private static List<BigInteger> toBigIntegerList(Collection<Integer> collection) {
 		List<BigInteger> result = new ArrayList<>(collection.size());
@@ -74,10 +63,6 @@ public class InequalitySystem extends DebugUtil {
 			result.add(BigInteger.valueOf(value));
 
 		return result;
-	}
-
-	public static enum Implementation {
-		DEFAULT, CHOCO, OJALGO, SMTINTERPOL
 	}
 
 	/**
@@ -311,34 +296,15 @@ public class InequalitySystem extends DebugUtil {
 	/**
 	 * Construct a new inequality system as a copy of another system.
 	 * @param system The inequality system to copy from.
-	 * @param implementation The implementation to use for solving systems.
-	 */
-	public InequalitySystem(InequalitySystem system, Implementation implementation) {
-		inequalities.addAll(system.inequalities);
-		this.implementation = implementation;
-	}
-
-	/**
-	 * Construct a new inequality system as a copy of another system.
-	 * @param system The inequality system to copy from.
 	 */
 	public InequalitySystem(InequalitySystem system) {
-		this(system, system.implementation);
-	}
-
-	/**
-	 * Construct a new inequality system.
-	 * @param implementation The implementation to use for solving systems.
-	 */
-	public InequalitySystem(Implementation implementation) {
-		this.implementation = implementation;
+		inequalities.addAll(system.inequalities);
 	}
 
 	/**
 	 * Construct a new inequality system.
 	 */
 	public InequalitySystem() {
-		this(Implementation.DEFAULT);
 	}
 
 	/**
@@ -351,22 +317,6 @@ public class InequalitySystem extends DebugUtil {
 			if (inequality.getNumberOfCoefficients() > numVariables)
 				numVariables = inequality.getNumberOfCoefficients();
 		return numVariables;
-	}
-
-	/**
-	 * Choose which implementation to use for solving systems.
-	 * @param implementation The implementation to use for solving systems.
-	 */
-	public void setImplementation(Implementation implementation) {
-		this.implementation = implementation;
-	}
-
-	/**
-	 * Get the currently selected implementation.
-	 * @return The currently selected implementation.
-	 */
-	public Implementation getImplementation() {
-		return implementation;
 	}
 
 	/**
@@ -500,22 +450,7 @@ public class InequalitySystem extends DebugUtil {
 	 * @return A solution to the system or an empty list
 	 */
 	public List<Integer> findSolution() {
-		List<Integer> solution = null;
-		switch (this.implementation) {
-			case DEFAULT:
-			case OJALGO:
-				solution = findSolutionOJAlgo();
-				break;
-			case CHOCO:
-				solution = findSolutionChoco();
-				break;
-			case SMTINTERPOL:
-				solution = findSolutionSMTInterpol();
-				break;
-			default:
-				throw new AssertionError("Unknown implementation requested");
-		}
-
+		List<Integer> solution = findSolutionSMTInterpol();
 		if (solution.isEmpty()) {
 			debug("No solution found for:");
 			debug(this);
@@ -525,89 +460,6 @@ public class InequalitySystem extends DebugUtil {
 			assert fulfilledBy(solution) : solution + " should solve this system but does not";
 		}
 		return Collections.unmodifiableList(solution);
-	}
-
-	private List<Integer> findSolutionChoco() {
-		final int numVariables = getNumberOfVariables();
-		Solver solver = new Solver();
-
-		IntVar[] vars = VariableFactory.integerArray("x", numVariables,
-				VariableFactory.MIN_INT_BOUND, VariableFactory.MAX_INT_BOUND, solver);
-		for (Inequality inequality : inequalities) {
-			IntVar lhsVar = VariableFactory.fixed(inequality.getLeftHandSide().intValue(), solver);
-			String comparator = inequality.getComparator().getOpposite().toString();
-
-			List<BigInteger> coefficients = inequality.getCoefficients();
-			int[] array = new int[numVariables];
-			for (int i = 0; i < coefficients.size(); i++)
-				array[i] = coefficients.get(i).intValue();
-
-			solver.post(IntConstraintFactory.scalar(vars, array, comparator, lhsVar));
-		}
-
-		if (!solver.findSolution())
-			return Collections.emptyList();
-
-		List<Integer> solution = new ArrayList<>();
-		for (int i = 0; i < numVariables; i++)
-			solution.add(vars[i].getValue());
-
-		return solution;
-	}
-
-	private List<Integer> findSolutionOJAlgo() {
-		final int numVariables = getNumberOfVariables();
-		ExpressionsBasedModel model = new ExpressionsBasedModel();
-
-		Variable[] vars = new Variable[numVariables];
-		for (int i = 0; i < numVariables; i++) {
-			vars[i] = Variable.make("x" + i).integer(true);
-			model.addVariable(vars[i]);
-		}
-
-		int inequalityNumber = 0;
-		for (Inequality inequality : inequalities) {
-			String id = "inequality_" + ++inequalityNumber;
-			Expression c = model.addExpression(id);
-			BigDecimal lhs;
-
-			switch (inequality.getComparator()) {
-				case LESS_THAN_OR_EQUAL:
-					lhs = new BigDecimal(inequality.getLeftHandSide());
-					c = c.lower(lhs);
-					break;
-				case LESS_THAN:
-					lhs = new BigDecimal(inequality.getLeftHandSide().add(BigInteger.ONE));
-					c = c.lower(lhs);
-					break;
-				case EQUAL:
-					lhs = new BigDecimal(inequality.getLeftHandSide());
-					c = c.level(lhs);
-					break;
-				case GREATER_THAN:
-					lhs = new BigDecimal(inequality.getLeftHandSide().subtract(BigInteger.ONE));
-					c = c.upper(lhs);
-					break;
-				case GREATER_THAN_OR_EQUAL:
-					lhs = new BigDecimal(inequality.getLeftHandSide());
-					c = c.upper(lhs);
-					break;
-			}
-
-			List<BigInteger> coefficients = inequality.getCoefficients();
-			for (int i = 0; i < coefficients.size(); i++)
-				c.setLinearFactor(vars[i], coefficients.get(i));
-		}
-
-		Optimisation.Result result = model.minimise();
-		if (!result.getState().isSuccess())
-			return Collections.emptyList();
-
-		List<Integer> solution = new ArrayList<>();
-		for (int i = 0; i < numVariables; i++)
-			solution.add(result.get(i).setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
-
-		return solution;
 	}
 
 	private List<Integer> findSolutionSMTInterpol() {

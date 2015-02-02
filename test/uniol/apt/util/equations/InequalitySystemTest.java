@@ -34,13 +34,7 @@ import static org.hamcrest.Matchers.*;
 /** @author Uli Schlachter */
 @Test
 public class InequalitySystemTest {
-	private abstract class TestSolver {
-		abstract List<Integer> solveSystem(InequalitySystem system, boolean skipChoco);
-
-		List<Integer> solveSystem(InequalitySystem system) {
-			return solveSystem(system, false);
-		}
-
+	static public class TestSolver {
 		@Test
 		public void testSimpleSystem0() {
 			InequalitySystem system = new InequalitySystem();
@@ -49,7 +43,7 @@ public class InequalitySystemTest {
 			system.addInequality(0, ">=", 0, 1, 1);
 			system.addInequality(0, ">=", 0, -1, -1);
 
-			List<Integer> solution = solveSystem(system);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(x + z, is(0));
@@ -63,7 +57,7 @@ public class InequalitySystemTest {
 			system.addInequality(0, ">=", 1, 1, 2);
 			system.addInequality(0, ">=", 1, 2, 3);
 
-			List<Integer> solution = solveSystem(system);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(2 * x + 1 * y + 3 * z, lessThanOrEqualTo(0));
@@ -79,7 +73,7 @@ public class InequalitySystemTest {
 			system.addInequality(3, ">=", 1, 2, 3);
 			system.addInequality(4, ">=", 3, 3, 6);
 
-			List<Integer> solution = solveSystem(system);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(2 * x + 1 * y + 3 * z, lessThanOrEqualTo(1));
@@ -95,7 +89,7 @@ public class InequalitySystemTest {
 			system.addInequality(0, ">=", 0, 1, 1);
 			system.addInequality(0, ">=", 1, 0, 1);
 
-			List<Integer> solution = solveSystem(system);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(1 * x + 2 * y + 0 * z, lessThanOrEqualTo(0));
@@ -110,7 +104,7 @@ public class InequalitySystemTest {
 			system.addInequality(10, ">=", 2, 2, 4);
 			system.addInequality(10, ">=", 2, 4, 6);
 
-			List<Integer> solution = solveSystem(system);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(4 * x + 2 * y + 6 * z, lessThanOrEqualTo(10));
@@ -124,7 +118,7 @@ public class InequalitySystemTest {
 			system.addInequality(0, ">=", 4, 2, 5);
 			system.addInequality(0, ">=", 2, 2, 4);
 
-			List<Integer> solution = solveSystem(system);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(4 * x + 2 * y + 5 * z, lessThanOrEqualTo(0));
@@ -135,7 +129,7 @@ public class InequalitySystemTest {
 		public void testSimpleSystem6() {
 			InequalitySystem system = new InequalitySystem();
 
-			List<Integer> solution = solveSystem(system);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, empty());
 		}
 
@@ -144,7 +138,7 @@ public class InequalitySystemTest {
 			InequalitySystem system = new InequalitySystem();
 			system.addInequality(0, ">=", 0, 42);
 
-			List<Integer> solution = solveSystem(system);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(2));
 			int y = solution.get(1);
 			assertThat(y, lessThanOrEqualTo(0));
@@ -158,7 +152,7 @@ public class InequalitySystemTest {
 			system.addInequality(1, "<", 1, 0, 1);
 			system.addInequality(1, "=", 0, 0, 1);
 
-			List<Integer> solution = solveSystem(system);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(x + y, is(1));
@@ -171,7 +165,7 @@ public class InequalitySystemTest {
 			InequalitySystem system = new InequalitySystem();
 			system.addInequality(0, ">=");
 
-			List<Integer> solution = solveSystem(system);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, empty());
 		}
 
@@ -179,21 +173,17 @@ public class InequalitySystemTest {
 		public void testEmptySystem2() {
 			InequalitySystem system = new InequalitySystem();
 
-			List<Integer> solution = solveSystem(system);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, empty());
 		}
 
 		@Test
 		public void testLotsOfTrivialInequalities() {
 			InequalitySystem system = new InequalitySystem();
-
 			for (int i = 1; i <= 300; i++)
 				system.addInequality(-1, ">=", i);
 
-			// With choco-solver and variable bounds of VariableFactory.{MIN,MAX}_INT_BOUND, this test (likely) runs
-			// into an integer overflow in choco. Choosing smaller bounds for the variables makes that problem go
-			// away, but I wouldn't really call that a fix. Thus, skip this test
-			List<Integer> solution = solveSystem(system, true);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(1));
 			int x = solution.get(0);
 			assertThat(x, lessThanOrEqualTo(-1));
@@ -211,42 +201,13 @@ public class InequalitySystemTest {
 				system.addInequality(0, ">", -1 - (i / 20), -i);
 			system.addInequality(0, ">", -10, -200);
 
-			List<Integer> solution = solveSystem(system, true);
+			List<Integer> solution = system.findSolution();
 			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(2));
 
 			int x = solution.get(0), y = solution.get(1);
 			assertThat(x, greaterThan(-20 * y));
 			assertThat(y, lessThan(0));
 			assertThat(system.fulfilledBy(solution), is(true));
-		}
-	}
-
-	@Test
-	public class TestSolverChoco extends TestSolver {
-		@Override
-		List<Integer> solveSystem(InequalitySystem system, boolean skipChoco) {
-			if (skipChoco)
-				throw new SkipException("Choco fails at solving this system");
-			system.setImplementation(InequalitySystem.Implementation.CHOCO);
-			return system.findSolution();
-		}
-	}
-
-	@Test
-	public class TestSolverOJAlgo extends TestSolver {
-		@Override
-		List<Integer> solveSystem(InequalitySystem system, boolean skipChoco) {
-			system.setImplementation(InequalitySystem.Implementation.OJALGO);
-			return system.findSolution();
-		}
-	}
-
-	@Test
-	public class TestSolverSMTInterpol extends TestSolver {
-		@Override
-		List<Integer> solveSystem(InequalitySystem system, boolean skipChoco) {
-			system.setImplementation(InequalitySystem.Implementation.SMTINTERPOL);
-			return system.findSolution();
 		}
 	}
 
