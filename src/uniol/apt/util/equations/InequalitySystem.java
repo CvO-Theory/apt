@@ -229,6 +229,44 @@ public class InequalitySystem extends DebugUtil {
 			return comparator.compare(leftHandSide, rhs);
 		}
 
+		/**
+		 * Test if this inequality is homogeneous. A homogeneous inequality has the special property that if x
+		 * is a solution, then so is r*x for any r >= 1. Please note that r is required to be at least one!
+		 * @return True if this inequality is homegenous.
+		 */
+		public boolean isHomogeneous() {
+			/*
+			 * Also, since we are looking at linear inequalities, if we
+			 * multiply an r >= 1 to x in x[0]*c[0]+...+x[n]*c[n], then the r can be be factored out and the whole result of
+			 * this line will be multiplied by r as well. Since r >= 1, this means that the following conditions
+			 * must hold (but only if we are looking at integer solutions, else > and < need to change!).
+			 */
+			switch (getComparator()) {
+				case LESS_THAN_OR_EQUAL:
+					if (leftHandSide.signum() < 0)
+						return false;
+					break;
+				case LESS_THAN:
+					if (leftHandSide.compareTo(BigInteger.ONE.negate()) < 0)
+						return false;
+					break;
+				case EQUAL:
+					if (leftHandSide.signum() != 0)
+						return false;
+					break;
+				case GREATER_THAN:
+					if (leftHandSide.compareTo(BigInteger.ONE) > 0)
+						return false;
+					break;
+				case GREATER_THAN_OR_EQUAL:
+					if (leftHandSide.signum() > 0)
+						return false;
+					break;
+			}
+
+			return true;
+		}
+
 		@Override
 		public String toString() {
 			StringWriter buffer = new StringWriter();
@@ -431,6 +469,18 @@ public class InequalitySystem extends DebugUtil {
 			if (!inequality.fulfilledBy(values))
 				return false;
 		}
+		return true;
+	}
+
+	/**
+	 * Test if this inequality system is homogeneous. A homogeneous inequality system has the special property that
+	 * if x is a solution, then so is r*x for any r >= 1. Please note that r is required to be at least one!
+	 * @return True if this inequality is homegenous.
+	 */
+	public boolean isHomogeneous() {
+		for (Inequality inequality : inequalities)
+			if (!inequality.isHomogeneous())
+				return false;
 		return true;
 	}
 

@@ -19,10 +19,13 @@
 
 package uniol.apt.util.equations;
 
-import java.util.List;
+import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.testng.SkipException;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.hamcrest.collection.IsIterableWithSize;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -331,6 +334,51 @@ public class InequalitySystemTest {
 		system = new InequalitySystem(system);
 
 		assertThat(system, hasToString("[\n2 >= 1*x[0]\n3 >= 1*x[1]\n]"));
+	}
+
+	@DataProvider(name = "createHomogeneous")
+	private Object[][] createHomogeneous() {
+		BigInteger ZERO = BigInteger.ZERO;
+		BigInteger P_ONE = BigInteger.ONE;
+		BigInteger P_TEN = BigInteger.TEN;
+		BigInteger M_ONE = P_ONE.negate();
+		BigInteger M_TEN = P_TEN.negate();
+
+		// Expected result, LHS, comparator, coefficients
+		return new Object[][] {
+			{ true,   ZERO, InequalitySystem.Comparator.LESS_THAN_OR_EQUAL, Collections.singletonList(P_ONE) },
+			{ true,  P_ONE, InequalitySystem.Comparator.LESS_THAN_OR_EQUAL, Collections.singletonList(P_ONE) },
+			{ true,  P_TEN, InequalitySystem.Comparator.LESS_THAN_OR_EQUAL, Collections.singletonList(P_ONE) },
+			{ false, M_ONE, InequalitySystem.Comparator.LESS_THAN_OR_EQUAL, Collections.singletonList(P_ONE) },
+			{ false, M_TEN, InequalitySystem.Comparator.LESS_THAN_OR_EQUAL, Collections.singletonList(P_ONE) },
+			{ true,   ZERO, InequalitySystem.Comparator.LESS_THAN, Collections.singletonList(P_ONE) },
+			{ true,  P_ONE, InequalitySystem.Comparator.LESS_THAN, Collections.singletonList(P_ONE) },
+			{ true,  P_TEN, InequalitySystem.Comparator.LESS_THAN, Collections.singletonList(P_ONE) },
+			{ true,  M_ONE, InequalitySystem.Comparator.LESS_THAN, Collections.singletonList(P_ONE) },
+			{ false, M_TEN, InequalitySystem.Comparator.LESS_THAN, Collections.singletonList(P_ONE) },
+			{ true,   ZERO, InequalitySystem.Comparator.EQUAL, Collections.singletonList(P_ONE) },
+			{ false, P_ONE, InequalitySystem.Comparator.EQUAL, Collections.singletonList(P_ONE) },
+			{ false, P_TEN, InequalitySystem.Comparator.EQUAL, Collections.singletonList(P_ONE) },
+			{ false, M_ONE, InequalitySystem.Comparator.EQUAL, Collections.singletonList(P_ONE) },
+			{ false, M_TEN, InequalitySystem.Comparator.EQUAL, Collections.singletonList(P_ONE) },
+			{ true,   ZERO, InequalitySystem.Comparator.GREATER_THAN, Collections.singletonList(P_ONE) },
+			{ true,  P_ONE, InequalitySystem.Comparator.GREATER_THAN, Collections.singletonList(P_ONE) },
+			{ false, P_TEN, InequalitySystem.Comparator.GREATER_THAN, Collections.singletonList(P_ONE) },
+			{ true,  M_ONE, InequalitySystem.Comparator.GREATER_THAN, Collections.singletonList(P_ONE) },
+			{ true,  M_TEN, InequalitySystem.Comparator.GREATER_THAN, Collections.singletonList(P_ONE) },
+			{ true,   ZERO, InequalitySystem.Comparator.GREATER_THAN_OR_EQUAL, Collections.singletonList(P_ONE) },
+			{ false, P_ONE, InequalitySystem.Comparator.GREATER_THAN_OR_EQUAL, Collections.singletonList(P_ONE) },
+			{ false, P_TEN, InequalitySystem.Comparator.GREATER_THAN_OR_EQUAL, Collections.singletonList(P_ONE) },
+			{ true,  M_ONE, InequalitySystem.Comparator.GREATER_THAN_OR_EQUAL, Collections.singletonList(P_ONE) },
+			{ true,  M_TEN, InequalitySystem.Comparator.GREATER_THAN_OR_EQUAL, Collections.singletonList(P_ONE) },
+		};
+	}
+
+	@Test(dataProvider = "createHomogeneous")
+	public void testHomogeneous(boolean expected, BigInteger lhs, InequalitySystem.Comparator comparator,
+			List<BigInteger> coefficients) {
+		InequalitySystem.Inequality inequality = new InequalitySystem.Inequality(lhs, comparator, coefficients);
+		assertThat(inequality.isHomogeneous(), is(expected));
 	}
 }
 
