@@ -22,7 +22,6 @@ package uniol.apt.util.equations;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -535,13 +534,13 @@ public class InequalitySystem extends DebugUtil {
 				c.setLinearFactor(vars[i], coefficients.get(i));
 		}
 
-		Optimisation.Result result = model.solve();
+		Optimisation.Result result = model.minimise();
 		if (!result.getState().isSuccess())
 			return Collections.emptyList();
 
 		List<Integer> solution = new ArrayList<>();
 		for (int i = 0; i < numVariables; i++)
-			solution.add(result.get(i).round(MathContext.DECIMAL32).intValue());
+			solution.add(result.get(i).setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
 
 		return solution;
 	}
