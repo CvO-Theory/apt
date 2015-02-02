@@ -101,6 +101,24 @@ public class InequalitySystem extends DebugUtil {
 			return representation;
 		}
 
+		public <T> boolean compare(Comparable<T> left, T right) {
+			int result = left.compareTo(right);
+			switch (this) {
+				case LESS_THAN_OR_EQUAL:
+					return result <= 0;
+				case LESS_THAN:
+					return result < 0;
+				case EQUAL:
+					return result == 0;
+				case GREATER_THAN:
+					return result > 0;
+				case GREATER_THAN_OR_EQUAL:
+					return result >= 0;
+				default:
+					throw new AssertionError("Came across a Comparator with an invalid value: " + this.toString());
+			}
+		}
+
 		/**
 		 * Return the comparator which is described by the given string. Must be one of "<=", "<", "=", ">",
 		 * ">=".
@@ -186,6 +204,30 @@ public class InequalitySystem extends DebugUtil {
 		 */
 		public int getNumberOfCoefficients() {
 			return coefficients.size();
+		}
+
+		/**
+		 * Test if the given values for the unknowns fulfill this inequality.
+		 * @param values The values for each variable.
+		 * @return true if this inequality is fulfilled.
+		 */
+		public boolean fulfilledBy(List<? extends Number> values) {
+			BigInteger rhs = BigInteger.ZERO;
+			for (int i = 0; i < coefficients.size(); i++) {
+				Number numberValue = values.get(i);
+				BigInteger value;
+				if (numberValue instanceof Integer) {
+					value = BigInteger.valueOf((Integer) numberValue);
+				} else if (numberValue instanceof BigInteger) {
+					value = (BigInteger) numberValue;
+				} else {
+					throw new AssertionError("Sorry, cannot handle this type of list");
+				}
+				BigInteger coeff = coefficients.get(i);
+				rhs = rhs.add(coeff.multiply(value));
+			}
+
+			return comparator.compare(leftHandSide, rhs);
 		}
 
 		@Override
@@ -381,6 +423,19 @@ public class InequalitySystem extends DebugUtil {
 	}
 
 	/**
+	 * Test if the given values for the unknowns fulfill this inequality system.
+	 * @param values The values for each variable.
+	 * @return true if this inequality system is fulfilled.
+	 */
+	public boolean fulfilledBy(List<? extends Number> values) {
+		for (Inequality inequality : inequalities) {
+			if (!inequality.fulfilledBy(values))
+				return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Calculate a solution of the inequality system.
 	 * @return A solution to the system or an empty list
 	 */
@@ -396,12 +451,14 @@ public class InequalitySystem extends DebugUtil {
 			default:
 				throw new AssertionError("Unknown implementation requested");
 		}
+
 		if (solution.isEmpty()) {
 			debug("No solution found for:");
 			debug(this);
 		} else {
 			debug("Solution:");
 			debug(solution);
+			assert fulfilledBy(solution) : solution + " should solve this system but does not";
 		}
 		return Collections.unmodifiableList(solution);
 	}
