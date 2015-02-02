@@ -484,12 +484,20 @@ public class InequalitySystem extends DebugUtil {
 		// Assert each inequality
 		for (Inequality inequality : inequalities) {
 			List<BigInteger> coefficients = inequality.getCoefficients();
-			Term terms[] = new Term[coefficients.size()];
-			for (int i = 0; i < coefficients.size(); i++)
-				terms[i] = script.term("*", script.numeral(coefficients.get(i)), script.term("var" + i));
+			Term rhs;
+			if (coefficients.isEmpty())
+				rhs = script.numeral(BigInteger.ZERO);
+			else {
+				Term terms[] = new Term[coefficients.size()];
+				for (int i = 0; i < coefficients.size(); i++)
+					terms[i] = script.term("*", script.numeral(coefficients.get(i)), script.term("var" + i));
+				if (coefficients.size() == 1)
+					rhs = terms[0];
+				else
+					rhs = script.term("+", terms);
+			}
 
 			Term lhs = script.numeral(inequality.getLeftHandSide());
-			Term rhs = script.term("+", terms);
 			String comparator = inequality.getComparator().toString();
 			script.assertTerm(script.term(comparator, lhs, rhs));
 		}
