@@ -242,6 +242,15 @@ public class InequalitySystemTest {
 	}
 
 	@Test
+	public class TestSolverSMTInterpol extends TestSolver {
+		@Override
+		List<Integer> solveSystem(InequalitySystem system, boolean skipChoco) {
+			system.setImplementation(InequalitySystem.Implementation.SMTINTERPOL);
+			return system.findSolution();
+		}
+	}
+
+	@Test
 	public void testToStringEmptySystem1() {
 		InequalitySystem system = new InequalitySystem();
 		system.addInequality(0, "<");

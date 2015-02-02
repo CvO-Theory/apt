@@ -39,6 +39,19 @@ import org.ojalgo.optimisation.ExpressionsBasedModel;
 import org.ojalgo.optimisation.Optimisation;
 import org.ojalgo.optimisation.Variable;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.varia.NullAppender;
+
+import de.uni_freiburg.informatik.ultimate.logic.ConstantTerm;
+import de.uni_freiburg.informatik.ultimate.logic.Logics;
+import de.uni_freiburg.informatik.ultimate.logic.Model;
+import de.uni_freiburg.informatik.ultimate.logic.Rational;
+import de.uni_freiburg.informatik.ultimate.logic.Script.LBool;
+import de.uni_freiburg.informatik.ultimate.logic.Script;
+import de.uni_freiburg.informatik.ultimate.logic.Sort;
+import de.uni_freiburg.informatik.ultimate.logic.Term;
+import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.SMTInterpol;
+
 /**
  * Representation of an inequality system.
  * @author Uli Schlachter
@@ -64,10 +77,8 @@ public class InequalitySystem extends DebugUtil {
 	}
 
 	public static enum Implementation {
-		CHOCO, OJALGO
+		DEFAULT, CHOCO, OJALGO, SMTINTERPOL
 	}
-
-	final static public Implementation DEFAULT_IMPLEMENTATION = Implementation.OJALGO;
 
 	/**
 	 * An enumeration of comparators on numbers.
@@ -327,7 +338,7 @@ public class InequalitySystem extends DebugUtil {
 	 * Construct a new inequality system.
 	 */
 	public InequalitySystem() {
-		this(DEFAULT_IMPLEMENTATION);
+		this(Implementation.DEFAULT);
 	}
 
 	/**
@@ -489,13 +500,17 @@ public class InequalitySystem extends DebugUtil {
 	 * @return A solution to the system or an empty list
 	 */
 	public List<Integer> findSolution() {
-		List<Integer> solution;
+		List<Integer> solution = null;
 		switch (this.implementation) {
+			case DEFAULT:
+			case OJALGO:
+				solution = findSolutionOJAlgo();
+				break;
 			case CHOCO:
 				solution = findSolutionChoco();
 				break;
-			case OJALGO:
-				solution = findSolutionOJAlgo();
+			case SMTINTERPOL:
+				solution = findSolutionSMTInterpol();
 				break;
 			default:
 				throw new AssertionError("Unknown implementation requested");
@@ -592,6 +607,65 @@ public class InequalitySystem extends DebugUtil {
 		for (int i = 0; i < numVariables; i++)
 			solution.add(result.get(i).setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
 
+		return solution;
+	}
+
+	private List<Integer> findSolutionSMTInterpol() {
+		// Set up SMTInterpol in a way that it doesn't produce debug output
+		Logger logger = Logger.getRootLogger();
+		logger.addAppender(new NullAppender());
+		Script script = new SMTInterpol(logger, false);
+
+		// If we have a homogeneous system, we can produce a rational solution and easily lift it to integer
+		final boolean homogeneous = isHomogeneous() && false; // TODO: Implement this correctly
+		if (homogeneous)
+			script.setLogic(Logics.QF_LRA);
+		else
+			script.setLogic(Logics.QF_LIA);
+
+		// Create variables
+		final int numVariables = getNumberOfVariables();
+		Sort sort = homogeneous ? script.sort("Real") : script.sort("Int");
+		for (int i = 0; i < numVariables; i++)
+			script.declareFun("var" + i, new Sort[0], sort);
+
+		// Assert each inequality
+		for (Inequality inequality : inequalities) {
+			List<BigInteger> coefficients = inequality.getCoefficients();
+			Term terms[] = new Term[coefficients.size()];
+			for (int i = 0; i < coefficients.size(); i++)
+				terms[i] = script.term("*", script.numeral(coefficients.get(i)), script.term("var" + i));
+
+			Term lhs = script.numeral(inequality.getLeftHandSide());
+			Term rhs = script.term("+", terms);
+			String comparator = inequality.getComparator().toString();
+			script.assertTerm(script.term(comparator, lhs, rhs));
+		}
+
+		LBool isSat = script.checkSat();
+		if (isSat != LBool.SAT) {
+			debug("SMTInterpol produced unsat: " + isSat.toString());
+			return Collections.emptyList();
+		}
+
+		// Transform the solution
+		Model model = script.getModel();
+		List<Integer> solution = new ArrayList<>();
+		for (int i = 0; i < numVariables; i++) {
+			Term term = model.evaluate(script.term("var" + i));
+			assert term instanceof ConstantTerm : term;
+
+			Object value = ((ConstantTerm) term).getValue();
+			assert value instanceof Rational : value;
+
+			Rational rat = (Rational) value;
+			solution.add(rat.numerator().intValue());
+			if (!homogeneous)
+				assert rat.denominator().equals(BigInteger.ONE) : value;
+			else {
+				assert false : "Still need to handle the denominators correctly";
+			}
+		}
 		return solution;
 	}
 
