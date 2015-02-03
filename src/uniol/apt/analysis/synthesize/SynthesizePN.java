@@ -119,11 +119,57 @@ public class SynthesizePN extends DebugUtil {
 	}
 
 	/**
+	 * Calculate the set of states which aren't separated by the given regions.
+	 */
+	static public Set<State> calculateUnseparatedStates(RegionUtility utility, Set<Region> regions) {
+		Set<Set<State>> partition = new HashSet<>();
+		partition.add(new HashSet<>(utility.getTransitionSystem().getNodes()));
+
+		debug("Calculating unseparated states");
+		for (Region region : regions) {
+			int discarded = 0;
+			Set<Set<State>> newPartition = new HashSet<>();
+			for (Set<State> family : partition) {
+				// Separate this family by the given region: States to which this region assigns
+				// different markings are separated.
+				Map<Integer, Set<State>> markings = new HashMap<>();
+				for (State state : family) {
+					int marking = region.getMarkingForState(state);
+					Set<State> newFamily = markings.get(marking);
+					if (newFamily == null) {
+						newFamily = new HashSet<>();
+						markings.put(marking, newFamily);
+					}
+					newFamily.add(state);
+				}
+
+				// Now collect families of not-yet-separated states
+				for (Map.Entry<Integer, Set<State>> entry : markings.entrySet()) {
+					if (entry.getValue().size() > 1)
+						newPartition.add(entry.getValue());
+					else
+						discarded++;
+				}
+			}
+
+			partition = newPartition;
+			debug("After region ", region, ", still have ", partition.size(), " families (", discarded, " resulting singular families discarded)");
+		}
+
+		// All remaining states are not yet separated. Throw away the family information and return them all.
+		Set<State> result = new HashSet<>();
+		for (Set<State> family : partition)
+			result.addAll(family);
+
+		return result;
+	}
+
+	/**
 	 * Solve all instances of the state separation problem (SSP).
 	 */
 	private Set<Set<State>> solveStateSeparation() {
 		Set<Set<State>> failedStateSeparationProblems = new HashSet<>();
-		Set<State> remainingStates = new HashSet<>(ts.getNodes());
+		Set<State> remainingStates = new HashSet<>(calculateUnseparatedStates(utility, regions));
 		Iterator<State> iterator = remainingStates.iterator();
 		while (iterator.hasNext()) {
 			State state = iterator.next();
