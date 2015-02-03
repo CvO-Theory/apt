@@ -303,7 +303,9 @@ public class SynthesizePN extends DebugUtil {
 			}
 		}
 		// State separation
-		Set<State> remainingStates = new HashSet<>(ts.getNodes());
+		// All regions which are already separated by our requiredRegions can be skipped, so use
+		// calculateUnseparatedStates() to look at the rest.
+		Set<State> remainingStates = new HashSet<>(calculateUnseparatedStates(utility, requiredRegions));
 		Iterator<State> iterator = remainingStates.iterator();
 		while (iterator.hasNext()) {
 			State state = iterator.next();
