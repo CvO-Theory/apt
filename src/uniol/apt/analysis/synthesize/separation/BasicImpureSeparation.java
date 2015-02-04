@@ -128,7 +128,6 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 			result = result.addRegionWithFactor(region, solution.get(i++));
 		}
 		result = result.makePure();
-		result = result.withInitialMarking(result.getNormalRegionMarking());
 		debug("region: ", result);
 
 		// If this already is a separating region, return it
@@ -165,7 +164,8 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 		min -= result.getBackwardWeight(eventIndex);
 		debug("Adding self-loop to event ", event, " with weight ", min);
 		assert min > 0;
-		return result.addRegionWithFactor(Region.createUnitRegion(utility, eventIndex), min);
+		return result.addRegionWithFactor(Region.createUnitRegion(utility, eventIndex), min)
+			.withInitialMarking(result.getInitialMarking());
 	}
 }
 

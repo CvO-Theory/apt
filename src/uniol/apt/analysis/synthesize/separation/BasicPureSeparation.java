@@ -176,7 +176,6 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 		}
 
 		result = result.makePure();
-		result = result.withInitialMarking(result.getNormalRegionMarking());
 		debug("region: ", result);
 		return result;
 	}
