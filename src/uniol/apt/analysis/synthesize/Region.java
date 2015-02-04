@@ -37,7 +37,7 @@ public class Region {
 	private final RegionUtility utility;
 	private final List<Integer> backwardWeights;
 	private final List<Integer> forwardWeights;
-	private final int initialMarking;
+	private Integer initialMarking;
 	private final Map<State, Integer> stateMarkingCache = new HashMap<>();
 
 	/**
@@ -60,12 +60,9 @@ public class Region {
 		for (int i : forwardWeights)
 			assert i >= 0;
 
-		if (initialMarking != null)
-			this.initialMarking = initialMarking;
-		else
-			this.initialMarking = getNormalRegionMarking();
+		this.initialMarking = initialMarking;
 
-		assert this.initialMarking >= 0;
+		assert this.initialMarking == null || this.initialMarking >= 0;
 	}
 
 	/**
@@ -179,6 +176,10 @@ public class Region {
 	 * @return The initial marking of this region.
 	 */
 	public int getInitialMarking() {
+		if (this.initialMarking == null) {
+			this.initialMarking = getNormalRegionMarking();
+			assert this.initialMarking >= 0;
+		}
 		return this.initialMarking;
 	}
 
@@ -267,7 +268,7 @@ public class Region {
 			vector.add(getWeight(i));
 		}
 
-		return createPureRegionFromVector(utility, vector).withInitialMarking(initialMarking);
+		return createPureRegionFromVector(utility, vector);
 	}
 
 	/**
@@ -283,7 +284,7 @@ public class Region {
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		result.append("{ init=");
-		result.append(initialMarking);
+		result.append(getInitialMarking());
 		for (String event : utility.getEventList()) {
 			result.append(", ");
 			result.append(getBackwardWeight(event));
@@ -306,12 +307,12 @@ public class Region {
 		return reg.utility.equals(utility) &&
 			reg.forwardWeights.equals(forwardWeights) &&
 			reg.backwardWeights.equals(backwardWeights) &&
-			reg.initialMarking == initialMarking;
+			reg.getInitialMarking() == getInitialMarking();
 	}
 
 	@Override
 	public int hashCode() {
-		return 31 * (forwardWeights.hashCode() + 31 * backwardWeights.hashCode()) + initialMarking;
+		return 31 * (forwardWeights.hashCode() + 31 * backwardWeights.hashCode()) + getInitialMarking();
 	}
 
 	/**
