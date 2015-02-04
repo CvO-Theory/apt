@@ -79,36 +79,35 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 		// is enabled. This means we want 0 > r_E(Psi_s - Psi_s').
 		InequalitySystem system = new InequalitySystem();
 		int eventIndex = utility.getEventIndex(event);
-		List<Integer> stateParikhVector;
-		try {
-			stateParikhVector = utility.getReachingParikhVector(state);
-		}
-		catch (UnreachableException e) {
+		if (!utility.getSpanningTree().isReachable(state))
 			// Unreachable states cannot be separated
 			return null;
-		}
-		assert stateParikhVector != null;
-		assert utility.getSpanningTree().isReachable(state);
 
 		requireDistributableNet(system, event);
 
+		stateLoop:
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
 			if (SeparationUtility.getFollowingState(otherState, event) == null)
 				continue;
 
-			List<Integer> otherStateParikhVector;
-			try {
-				otherStateParikhVector = utility.getReachingParikhVector(otherState);
-			}
-			catch (UnreachableException e) {
-				// Just ignore and skip unreachable states
-				continue;
-			}
 			List<Integer> inequality = new ArrayList<>(basis.size());
 			for (Region region : basis) {
 				// Evaluate [Psi_s - Psi_s'] in this region
-				int stateValue = region.evaluateParikhVector(stateParikhVector);
-				int otherStateValue = region.evaluateParikhVector(otherStateParikhVector);
+				int stateValue, otherStateValue;
+				try {
+					stateValue = region.getMarkingForState(state);
+				}
+				catch (UnreachableException e) {
+					throw new AssertionError("Made sure that the state is reachable, but "
+							+ "apparently it isn't?!", e);
+				}
+				try {
+					otherStateValue = region.getMarkingForState(otherState);
+				}
+				catch (UnreachableException e) {
+					// Just ignore and skip unreachable states
+					continue stateLoop;
+				}
 				inequality.add(stateValue - otherStateValue);
 			}
 
