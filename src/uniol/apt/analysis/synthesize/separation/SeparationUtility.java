@@ -30,6 +30,7 @@ import uniol.apt.analysis.synthesize.MissingLocationException;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
+import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.util.DebugUtil;
 
 /**
@@ -72,14 +73,15 @@ public class SeparationUtility extends DebugUtil {
 	 * @return A separating region or null.
 	 */
 	static public boolean isSeparatingRegion(RegionUtility utility, Region region, State state, State otherState) {
-		// Unreachable states cannot be separated
-		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
+		try {
+			// We need a region which assigns different values to these two states.
+			int stateValue = region.getMarkingForState(state);
+			int otherStateValue = region.getMarkingForState(otherState);
+			return stateValue != otherStateValue;
+		}
+		catch (UnreachableException e) {
 			return false;
-
-		// We need a region which assigns different values to these two states.
-		int stateValue = region.getMarkingForState(state);
-		int otherStateValue = region.getMarkingForState(otherState);
-		return stateValue != otherStateValue;
+		}
 	}
 
 	/**
@@ -91,12 +93,13 @@ public class SeparationUtility extends DebugUtil {
 	 * @return A separating region or null.
 	 */
 	static public boolean isSeparatingRegion(RegionUtility utility, Region region, State state, String event) {
-		// Unreachable states cannot be separated
-		if (!utility.getSpanningTree().isReachable(state))
+		try {
+			// We need r(state) to be smaller than the event's backward weight in some region.
+			return region.getMarkingForState(state) < region.getBackwardWeight(event);
+		}
+		catch (UnreachableException e) {
 			return false;
-
-		// We need r(state) to be smaller than the event's backward weight in some region.
-		return region.getMarkingForState(state) < region.getBackwardWeight(event);
+		}
 	}
 
 	/**

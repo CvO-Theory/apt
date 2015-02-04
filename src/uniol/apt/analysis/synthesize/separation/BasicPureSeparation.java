@@ -29,6 +29,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
+import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.util.DebugUtil;
 import uniol.apt.util.equations.InequalitySystem;
 
@@ -122,27 +123,34 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 	 */
 	@Override
 	public Region calculateSeparatingRegion(State state, String event) {
-		// Unreachable states cannot be separated
-		if (!utility.getSpanningTree().isReachable(state))
-			return null;
-
 		// The initial marking of a normal region is max { r_E(-Psi_s') | s' in states }. The marking in state s
 		// for a normal region is max { r_E(Psi_s - Psi_s') | s' in states }. We want 'event' to be disabled, so
 		// it would need to lead to a negative marking: 0 > max { r_E(Psi_s - Psi_s' + 1*event) | s' in states }.
 		// Since we are limiting the maximum from above, we can just require this for all states.
 		InequalitySystem system = prepareInequalitySystem();
-		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
+		List<Integer> stateParikhVector;
+		try {
+			stateParikhVector = utility.getReachingParikhVector(state);
+		}
+		catch (UnreachableException e) {
+			// Unreachable states cannot be separated
+			return null;
+		}
 		assert stateParikhVector != null;
 		assert utility.getSpanningTree().isReachable(state);
 
 		requireDistributableNet(system, event);
 
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			if (!utility.getSpanningTree().isReachable(otherState))
+			List<Integer> otherStateParikhVector;
+			try {
+				otherStateParikhVector = utility.getReachingParikhVector(otherState);
+			}
+			catch (UnreachableException e) {
 				continue;
+			}
 
-			List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
 			List<Integer> inequality = new ArrayList<>(basis.size());
 			for (Region region : basis) {
 				// Evaluate [Psi_s - Psi_s' + 1*event] in this region

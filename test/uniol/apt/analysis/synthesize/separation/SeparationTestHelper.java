@@ -31,6 +31,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.SynthesizeWordModule;
+import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.io.parser.impl.apt.APTLTSParser;
 
 import org.testng.annotations.BeforeClass;
@@ -68,7 +69,7 @@ public class SeparationTestHelper {
 	}
 
 	static private void checkEventSeparation(SeparationFactory factory, RegionUtility utility, List<Region> basis,
-			String stateName, String event) {
+			String stateName, String event) throws UnreachableException {
 		State state = utility.getTransitionSystem().getNode(stateName);
 		String[] locationMap = new String[utility.getNumberOfEvents()];
 		Region r = factory.createSeparation(utility, basis, locationMap).calculateSeparatingRegion(state, event);
@@ -150,7 +151,7 @@ public class SeparationTestHelper {
 		}
 
 		@Test(dataProvider = "stateEventPairs")
-		public void testEventSeparation(String stateName, String event) {
+		public void testEventSeparation(String stateName, String event) throws UnreachableException {
 			State state = utility.getTransitionSystem().getNode(stateName);
 			if (SeparationUtility.isEventEnabled(state, event) || stateName.equals("unreachable"))
 				return;
@@ -181,7 +182,7 @@ public class SeparationTestHelper {
 	}
 
 	@Test
-	public void testCalculate3() {
+	public void testCalculate3() throws UnreachableException {
 		RegionUtility utility = new RegionUtility(TestTSCollection.getOneCycleLTS());
 		List<Region> basis = new ArrayList<>();
 
@@ -220,7 +221,7 @@ public class SeparationTestHelper {
 		}
 
 		@Test
-		public void testNoStateRestriction() {
+		public void testNoStateRestriction() throws UnreachableException {
 			String[] locationMap = new String[3];
 			Region region = factory.createSeparation(utility, regionBasis, locationMap)
 				.calculateSeparatingRegion(ts.getNode("s3"), "t2");
@@ -266,7 +267,7 @@ public class SeparationTestHelper {
 		}
 
 		@Test(dataProvider = "stateDisabledEventPairs")
-		public void testEventSeparation(String state, String event) {
+		public void testEventSeparation(String state, String event) throws UnreachableException {
 			String[] locationMap = new String[2];
 			Separation separation = factory.createSeparation(utility, regionBasis, locationMap);
 			Region r = separation.calculateSeparatingRegion(ts.getNode(state), event);

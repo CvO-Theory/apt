@@ -29,6 +29,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
+import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.util.equations.InequalitySystem;
 
 /**
@@ -74,27 +75,35 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 	 */
 	@Override
 	public Region calculateSeparatingRegion(State state, String event) {
-		// Unreachable states cannot be separated
-		if (!utility.getSpanningTree().isReachable(state))
-			return null;
-
 		// Calculate a region which assigns to state a marking less than the marking of any state in which event
 		// is enabled. This means we want 0 > r_E(Psi_s - Psi_s').
 		InequalitySystem system = new InequalitySystem();
-		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int eventIndex = utility.getEventIndex(event);
+		List<Integer> stateParikhVector;
+		try {
+			stateParikhVector = utility.getReachingParikhVector(state);
+		}
+		catch (UnreachableException e) {
+			// Unreachable states cannot be separated
+			return null;
+		}
 		assert stateParikhVector != null;
 		assert utility.getSpanningTree().isReachable(state);
 
 		requireDistributableNet(system, event);
 
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			if (!utility.getSpanningTree().isReachable(otherState))
-				continue;
 			if (SeparationUtility.getFollowingState(otherState, event) == null)
 				continue;
 
-			List<Integer> otherStateParikhVector = utility.getReachingParikhVector(otherState);
+			List<Integer> otherStateParikhVector;
+			try {
+				otherStateParikhVector = utility.getReachingParikhVector(otherState);
+			}
+			catch (UnreachableException e) {
+				// Just ignore and skip unreachable states
+				continue;
+			}
 			List<Integer> inequality = new ArrayList<>(basis.size());
 			for (Region region : basis) {
 				// Evaluate [Psi_s - Psi_s'] in this region
@@ -130,15 +139,18 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 		// For each state in which 'event' is enabled...
 		Integer min = null;
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			// Silently ignore unreachable states
-			if (!utility.getSpanningTree().isReachable(otherState))
-				continue;
 			if (SeparationUtility.getFollowingState(otherState, event) == null)
 				continue;
 
-			int stateMarking = result.getMarkingForState(otherState);
-			if (min == null || min > stateMarking)
-				min = stateMarking;
+			try {
+				int stateMarking = result.getMarkingForState(otherState);
+				if (min == null || min > stateMarking)
+					min = stateMarking;
+			}
+			catch (UnreachableException e) {
+				// Silently ignore unreachable states
+				continue;
+			}
 		}
 
 		// If the event is dead, no reachable marking fires it. Handle this by just adding a simple loop

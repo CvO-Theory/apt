@@ -106,7 +106,7 @@ public class RegionUtility {
 	 * @param node The node whose Parikh vector should be returned.
 	 * @return The Parikh vector that reaches the node from the initial state.
 	 */
-	public List<Integer> getReachingParikhVector(State node) {
+	public List<Integer> getReachingParikhVector(State node) throws UnreachableException {
 		List<Integer> result = parikhVectorMap.get(node);
 		if (result == null) {
 			if (node.equals(tree.getStartNode())) {
@@ -116,7 +116,7 @@ public class RegionUtility {
 			} else {
 				Arc predecessor = tree.getPredecessorEdge(node);
 				if (predecessor == null)
-					return Collections.emptyList();
+					throw new UnreachableException(ts, node);
 
 				List<Integer> predVector = getReachingParikhVector(predecessor.getSource());
 				result = new ArrayList<>();
@@ -137,7 +137,7 @@ public class RegionUtility {
 	 * @param edge The edge to examine.
 	 * @return The edge's Parikh vector or an empty list if none exists.
 	 */
-	public List<Integer> getParikhVectorForEdge(Arc edge) {
+	public List<Integer> getParikhVectorForEdge(Arc edge) throws UnreachableException {
 		State source = edge.getSource();
 		State target = edge.getTarget();
 		List<Integer> sourcePV = getReachingParikhVector(source);

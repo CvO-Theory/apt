@@ -420,7 +420,7 @@ public class RegionTest {
 	}
 
 	@Test
-	public void testGetMarkingForState() {
+	public void testGetMarkingForState() throws UnreachableException {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
 
@@ -439,7 +439,7 @@ public class RegionTest {
 	}
 
 	@Test
-	public void testGetMarkingForState2() {
+	public void testGetMarkingForState2() throws UnreachableException {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
 

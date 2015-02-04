@@ -27,10 +27,10 @@ import java.util.List;
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
-import uniol.apt.analysis.synthesize.MissingLocationException;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
+import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.util.DebugUtil;
 import uniol.apt.util.equations.InequalitySystem;
 
@@ -94,10 +94,7 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 * @param state The state whose marking should be calculated.
 	 * @return An array of coefficients or null if the state is not reachable.
 	 */
-	private int[] coefficientsForStateMarking(State state) {
-		if (!utility.getSpanningTree().isReachable(state))
-			return null;
-
+	private int[] coefficientsForStateMarking(State state) throws UnreachableException {
 		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
 		int[] inequality = new int[systemNumberOfVariables];
 
@@ -159,12 +156,15 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 
 		// Any enabled event really must be enabled in the calculated region
 		for (Arc arc : utility.getTransitionSystem().getEdges()) {
-			State state = arc.getSource();
-			if (!utility.getSpanningTree().isReachable(state))
-				continue;
-
 			// r_B(event) <= r_S(state) = r_S(s0) + r_E(Psi_state)
-			int[] inequality = coefficientsForStateMarking(state);
+			State state = arc.getSource();
+			int[] inequality;
+			try {
+				inequality = coefficientsForStateMarking(state);
+			}
+			catch (UnreachableException e) {
+				continue;
+			}
 			inequality[systemBackwardWeightsStart + utility.getEventIndex(arc.getLabel())] += -1;
 
 			system.addInequality(0, "<=", inequality, "Event " + arc.getLabel() + " is enabled in state " + state);
@@ -182,12 +182,14 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 
 		// Require k >= r_S(s) = r_S(s0) + r_E(Psi_s)
 		for (State state : utility.getTransitionSystem().getNodes()) {
-			if (!utility.getSpanningTree().isReachable(state))
+			try {
+				// k >= r_S(state)
+				int[] inequality = coefficientsForStateMarking(state);
+				system.addInequality(k, ">=", inequality, "State " + state + " must obey " + k + "-boundedness");
+			}
+			catch (UnreachableException e) {
 				continue;
-
-			// k >= r_S(state)
-			int[] inequality = coefficientsForStateMarking(state);
-			system.addInequality(k, ">=", inequality, "State " + state + " must obey " + k + "-boundedness");
+			}
 		}
 	}
 
@@ -281,16 +283,18 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 */
 	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
 			List<Region> basis, State state, State otherState, boolean pure) {
-		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
-
-		// Unreachable states cannot be separated
-		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
-			return null;
-
 		// We want r_S(s) != r_S(s'). Since for each region there exists a complementary region (we are only
 		// looking at the bounded case!), we can require r_S(s) < r_S(s')
-		int[] inequality = coefficientsForStateMarking(state);
-		int[] otherInequality = coefficientsForStateMarking(state);
+		int[] inequality;
+		int[] otherInequality;
+		try {
+			inequality = coefficientsForStateMarking(state);
+			otherInequality = coefficientsForStateMarking(state);
+		}
+		catch (UnreachableException e) {
+			// Unreachable states cannot be separated
+			return null;
+		}
 
 		for (int i = 0; i < inequality.length; i++)
 			inequality[i] -= otherInequality[i];
@@ -317,15 +321,17 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
 			List<Region> basis, State state, String event, boolean pure) {
 		final int eventIndex = utility.getEventIndex(event);
-		List<Integer> stateParikhVector = utility.getReachingParikhVector(state);
-
-		// Unreachable states cannot be separated
-		if (!utility.getSpanningTree().isReachable(state))
-			return null;
 
 		// Each state must be reachable in the resulting region, but event 'event' should be disabled in state.
 		// We want -1 >= r_S(s) - r_B(event)
-		int[] inequality = coefficientsForStateMarking(state);
+		int[] inequality;
+		try {
+			inequality = coefficientsForStateMarking(state);
+		}
+		catch (UnreachableException e) {
+			// Unreachable states cannot be separated
+			return null;
+		}
 
 		if (pure) {
 			// In the pure case, in the above -r_B(event) is replaced with +r_E(event). Since all

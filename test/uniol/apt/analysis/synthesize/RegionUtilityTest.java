@@ -47,7 +47,7 @@ public class RegionUtilityTest {
 	}
 
 	@Test
-	public void testSingleStateTS() {
+	public void testSingleStateTS() throws UnreachableException {
 		TransitionSystem ts = TestTSCollection.getSingleStateTS();
 		State s0 = ts.getNode("s0");
 
@@ -57,7 +57,7 @@ public class RegionUtilityTest {
 	}
 
 	@Test
-	public void testcc1LTS() {
+	public void testcc1LTS() throws UnreachableException {
 		TransitionSystem ts = TestTSCollection.getcc1LTS();
 		State s0 = ts.getNode("s0");
 		State s1 = ts.getNode("s1");
@@ -81,7 +81,7 @@ public class RegionUtilityTest {
 	}
 
 	@Test
-	public void testThreeStatesTwoEdgesTS() {
+	public void testThreeStatesTwoEdgesTS() throws UnreachableException {
 		TransitionSystem ts = TestTSCollection.getThreeStatesTwoEdgesTS();
 		State s = ts.getNode("s");
 		State t = ts.getNode("t");
@@ -98,7 +98,7 @@ public class RegionUtilityTest {
 	}
 
 	@Test
-	public void testPersistentTS() {
+	public void testPersistentTS() throws UnreachableException {
 		TransitionSystem ts = TestTSCollection.getPersistentTS();
 		State s0 = ts.getNode("s0");
 		State l = ts.getNode("l");
@@ -117,11 +117,10 @@ public class RegionUtilityTest {
 	}
 
 	@Test
-	public void testNotTotallyReachableTS() {
+	public void testNotTotallyReachableTSReachablePart() throws UnreachableException {
 		TransitionSystem ts = TestTSCollection.getNotTotallyReachableTS();
 		State s0 = ts.getNode("s0");
 		State s1 = ts.getNode("s1");
-		State fail = ts.getNode("fail");
 
 		RegionUtility utility = new RegionUtility(ts);
 
@@ -130,11 +129,17 @@ public class RegionUtilityTest {
 
 		assertThat(utility.getReachingParikhVector(s0), is(parikhVector(a, 0, b, 0)));
 		assertThat(utility.getReachingParikhVector(s1), is(parikhVector(a, 1, b, 0)));
-		assertThat(utility.getReachingParikhVector(fail), is(empty()));
+	}
+
+	@Test(expectedExceptions = UnreachableException.class)
+	public void testNotTotallyReachableTSUnreachablePart() throws UnreachableException {
+		TransitionSystem ts = TestTSCollection.getNotTotallyReachableTS();
+		RegionUtility utility = new RegionUtility(ts);
+		utility.getReachingParikhVector(ts.getNode("fail"));
 	}
 
 	@Test
-	public void testParikhVectorForNonChords() {
+	public void testParikhVectorForNonChords() throws UnreachableException {
 		TransitionSystem ts = new TransitionSystem();
 
 		State s0 = ts.createState("s0");
@@ -163,7 +168,7 @@ public class RegionUtilityTest {
 	}
 
 	@Test
-	public void testParikhVectorForChords() {
+	public void testParikhVectorForChords() throws UnreachableException {
 		TransitionSystem ts = TestTSCollection.getPersistentTS();
 		State s0 = ts.getNode("s0");
 		State l = ts.getNode("l");

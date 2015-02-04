@@ -48,7 +48,13 @@ public class RegionBasis extends ArrayList<Region> {
 		// The events on each fundamental circle must form a T-Invariant of a Petri Net which generates this
 		// transition system. Thus, each region must have zero effect on such a circle.
 		for (Arc chord : utility.getSpanningTree().getChords()) {
-			system.addEquation(utility.getParikhVectorForEdge(chord));
+			try {
+				system.addEquation(utility.getParikhVectorForEdge(chord));
+			}
+			catch (UnreachableException e) {
+				throw new AssertionError("A chord by definition belongs to reachable nodes, "
+						+ "yet one of them was unreachable?", e);
+			}
 		}
 
 		Set<List<Integer>> basis = system.findBasis();

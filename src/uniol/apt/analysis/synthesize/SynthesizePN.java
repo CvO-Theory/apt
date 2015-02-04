@@ -122,6 +122,7 @@ public class SynthesizePN extends DebugUtil {
 	 * Calculate the set of states which aren't separated by the given regions.
 	 */
 	static public Set<State> calculateUnseparatedStates(RegionUtility utility, Set<Region> regions) {
+		Set<State> result = new HashSet<>();
 		Set<Set<State>> partition = new HashSet<>();
 		partition.add(new HashSet<>(utility.getTransitionSystem().getNodes()));
 
@@ -134,7 +135,15 @@ public class SynthesizePN extends DebugUtil {
 				// different markings are separated.
 				Map<Integer, Set<State>> markings = new HashMap<>();
 				for (State state : family) {
-					int marking = region.getMarkingForState(state);
+					int marking;
+					try {
+						marking = region.getMarkingForState(state);
+					}
+					catch (UnreachableException e) {
+						// Unreachable states cannot be separated, so add this to result
+						result.add(state);
+						continue;
+					}
 					Set<State> newFamily = markings.get(marking);
 					if (newFamily == null) {
 						newFamily = new HashSet<>();
@@ -157,7 +166,6 @@ public class SynthesizePN extends DebugUtil {
 		}
 
 		// All remaining states are not yet separated. Throw away the family information and return them all.
-		Set<State> result = new HashSet<>();
 		for (Set<State> family : partition)
 			result.addAll(family);
 

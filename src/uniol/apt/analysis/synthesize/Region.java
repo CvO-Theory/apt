@@ -189,8 +189,13 @@ public class Region {
 	public int getNormalRegionMarking() {
 		int marking = 0;
 		for (State state : getTransitionSystem().getNodes()) {
-			if (utility.getSpanningTree().isReachable(state))
-				marking = Math.max(marking, -evaluateParikhVector(utility.getReachingParikhVector(state)));
+			try {
+				marking = Math.max(marking, -evaluateParikhVector(
+							utility.getReachingParikhVector(state)));
+			}
+			catch (UnreachableException e) {
+				continue;
+			}
 		}
 		return marking;
 	}
@@ -200,7 +205,7 @@ public class Region {
 	 * @param state The state to evaluate. Must be reachable from the initial state.
 	 * @return The resulting number.
 	 */
-	public int getMarkingForState(State state) {
+	public int getMarkingForState(State state) throws UnreachableException {
 		Integer i = stateMarkingCache.get(state);
 		if (i == null) {
 			i = getInitialMarking() + evaluateParikhVector(utility.getReachingParikhVector(state));
