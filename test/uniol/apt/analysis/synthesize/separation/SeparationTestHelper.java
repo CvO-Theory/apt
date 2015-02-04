@@ -32,7 +32,7 @@ import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.SynthesizeWordModule;
 import uniol.apt.analysis.synthesize.UnreachableException;
-import uniol.apt.io.parser.impl.apt.APTLTSParser;
+import uniol.apt.io.parser.ParserTestUtils;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -206,7 +206,7 @@ public class SeparationTestHelper {
 
 		@BeforeClass
 		public void setup() throws Exception {
-			ts = APTLTSParser.getLTS("nets/crashkurs-cc2-aut.apt", true);
+			ts = ParserTestUtils.getAptLTS("nets/crashkurs-cc2-aut.apt");
 			utility = new RegionUtility(ts);
 
 			// I'm lazy, let's hope that we always end up with this order (which is currently guaranteed because

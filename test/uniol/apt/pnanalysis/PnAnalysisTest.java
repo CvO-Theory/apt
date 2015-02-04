@@ -28,7 +28,7 @@ import uniol.apt.TestNetCollection;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.analysis.exception.PreconditionFailedException;
-import uniol.apt.io.parser.impl.apt.APTPNParser;
+import uniol.apt.io.parser.ParserTestUtils;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import static org.testng.Assert.fail;
 import static org.testng.Assert.assertEquals;
@@ -54,14 +54,14 @@ public class PnAnalysisTest {
 	public void testPreconditionFailedTest() throws IOException, FormatException, ModuleException {
 		PnAnalysis ana = new PnAnalysis();
 		try {
-			PetriNet pn = APTPNParser.getPetriNet("nets/crashkurs-cc2-net.apt");
+			PetriNet pn = ParserTestUtils.getAptPN("nets/crashkurs-cc2-net.apt");
 			ana.checkAllIsomorphicTSystemsForPetriNet(pn, 42, 1, false);
 			fail("Not recogniced that net is not plain.");
 		} catch (PreconditionFailedException ex) {
 			assertEquals(ex.getMessage(), "The input Petri net is not plain.");
 		}
 		try {
-			PetriNet pn = APTPNParser.getPetriNet("nets/crashkurs-cc1-net.apt");
+			PetriNet pn = ParserTestUtils.getAptPN("nets/crashkurs-cc1-net.apt");
 			ana.checkAllIsomorphicTSystemsForPetriNet(pn, 42, 1, false);
 			fail("Not recogniced that net has no k-marking >=2.");
 		} catch (PreconditionFailedException ex) {
@@ -71,8 +71,8 @@ public class PnAnalysisTest {
 
 	@Test
 	public void testIsomorphism() throws IOException, FormatException, ModuleException {
-		PetriNet pn1 = APTPNParser.getPetriNet("nets/ksysT-net-aut-net.apt");
-		PetriNet pn2 = APTPNParser.getPetriNet("./nets/EB-PhD-Fundamenta.apt");
+		PetriNet pn1 = ParserTestUtils.getAptPN("nets/ksysT-net-aut-net.apt");
+		PetriNet pn2 = ParserTestUtils.getAptPN("./nets/EB-PhD-Fundamenta.apt");
 		IsomorphismLogic logic = new IsomorphismLogic(pn1, pn2, false);
 		assertTrue(logic.isIsomorphic());
 	}
@@ -93,7 +93,7 @@ public class PnAnalysisTest {
 
 	@Test(enabled = false) // This test needs sometimes more than hour (instead of a minute) => disable it
 	public void testRandom() throws IOException, FormatException, ModuleException {
-		PetriNet pn = APTPNParser.getPetriNet("./nets/EB-PhD-Fundamenta.apt");
+		PetriNet pn = ParserTestUtils.getAptPN("./nets/EB-PhD-Fundamenta.apt");
 		PnAnalysis ana = new PnAnalysis();
 		PetriNet net = ana.checkAllIsomorphicTSystemsForPetriNet(pn, 20, 10, true);
 		if (net != null) {
@@ -135,7 +135,7 @@ public class PnAnalysisTest {
 
 	@Test(enabled = false)
 	public void test() throws IOException, FormatException, ModuleException {
-		PetriNet pn = APTPNParser.getPetriNet("./nets/EB-PhD-Fundamenta.apt");
+		PetriNet pn = ParserTestUtils.getAptPN("./nets/EB-PhD-Fundamenta.apt");
 		PnAnalysis ana = new PnAnalysis();
 		assertNotEquals(null, ana.checkAllIsomorphicTSystemsForPetriNet(pn, 8, 2, false));
 	}
