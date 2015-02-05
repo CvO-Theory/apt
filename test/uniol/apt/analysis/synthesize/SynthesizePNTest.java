@@ -72,7 +72,9 @@ public class SynthesizePNTest {
 
 	@Test
 	public void testSynthesizePetriNetEmpty() {
-		PetriNet pn = SynthesizePN.synthesizePetriNet(Collections.<Region>emptySet());
+		TransitionSystem ts = TestTSCollection.getSingleStateTS();
+		RegionUtility utility = new RegionUtility(ts);
+		PetriNet pn = SynthesizePN.synthesizePetriNet(utility, Collections.<Region>emptySet());
 
 		assertThat(pn.getPlaces(), is(empty()));
 		assertThat(pn.getTransitions(), is(empty()));
@@ -88,13 +90,24 @@ public class SynthesizePNTest {
 		Set<Region> regions = new HashSet<>();
 		regions.add(mockRegion(utility, 1, Arrays.asList(1, 1), Arrays.asList(0, 0)));
 
-		PetriNet pn = SynthesizePN.synthesizePetriNet(regions);
+		PetriNet pn = SynthesizePN.synthesizePetriNet(utility, regions);
 
 		assertThat(pn.getPlaces(), IsIterableWithSize.<Place>iterableWithSize(1));
 		assertThat(pn.getTransitions(), containsInAnyOrder(nodeWithID("a"), nodeWithID("b")));
 		assertThat(pn.getEdges(), containsInAnyOrder(
 					flowThatConnects(anything(), nodeWithID("a")),
 					flowThatConnects(anything(), nodeWithID("b"))));
+	}
+
+	@Test
+	public void testSingleStateTSWithLoop() throws MissingLocationException {
+		TransitionSystem ts = TestTSCollection.getSingleStateTSWithLoop();
+		RegionUtility utility = new RegionUtility(ts);
+		PetriNet pn = SynthesizePN.synthesizePetriNet(utility, Collections.<Region>emptySet());
+
+		assertThat(pn.getPlaces(), is(empty()));
+		assertThat(pn.getTransitions(), contains(nodeWithID("a")));
+		assertThat(pn.getEdges(), is(empty()));
 	}
 
 	@Test
@@ -194,7 +207,7 @@ public class SynthesizePNTest {
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 
 		// Bypass the assertions in synthesizePetriNet() which already check for isomorphism
-		PetriNet pn = SynthesizePN.synthesizePetriNet(synth.getSeparatingRegions());
+		PetriNet pn = SynthesizePN.synthesizePetriNet(synth.getUtility(), synth.getSeparatingRegions());
 		TransitionSystem ts2 = new CoverabilityGraph(pn).toReachabilityLTS();
 
 		assertThat(new IsomorphismLogic(ts, ts2, true).isIsomorphic(), is(true));
@@ -209,7 +222,7 @@ public class SynthesizePNTest {
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 
 		// Bypass the assertions in synthesizePetriNet() which already check for isomorphism
-		PetriNet pn = SynthesizePN.synthesizePetriNet(synth.getSeparatingRegions());
+		PetriNet pn = SynthesizePN.synthesizePetriNet(synth.getUtility(), synth.getSeparatingRegions());
 		TransitionSystem ts2 = new CoverabilityGraph(pn).toReachabilityLTS();
 
 		assertThat(new IsomorphismLogic(ts, ts2, true).isIsomorphic(), is(true));

@@ -44,6 +44,17 @@ public class TestTSCollection {
 		return ts;
 	}
 
+	public static TransitionSystem getSingleStateTSWithLoop() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s0 = ts.createState("s0");
+		ts.createArc(s0, s0, "a");
+
+		ts.setInitialState(s0);
+
+		return ts;
+	}
+
 	/**
 	 *
 	 * The transitions system:

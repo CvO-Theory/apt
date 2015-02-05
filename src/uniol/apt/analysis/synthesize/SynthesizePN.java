@@ -453,7 +453,7 @@ public class SynthesizePN extends DebugUtil {
 	public PetriNet synthesizePetriNet() {
 		if (!wasSuccessfullySeparated())
 			return null;
-		PetriNet pn = synthesizePetriNet(regions);
+		PetriNet pn = synthesizePetriNet(utility, regions);
 
 		// Test if the synthesized PN really satisfies all the properties that it should
 		if (properties.isPure())
@@ -493,14 +493,19 @@ public class SynthesizePN extends DebugUtil {
 
 	/**
 	 * Synthesize a Petri Net from the given regions.
+	 * @param utility An instance of RegionUtility for the requested transition system.
 	 * @param regions The regions that should be used for synthesis.
 	 * @return The synthesized PetriNet
 	 */
-	public static PetriNet synthesizePetriNet(Set<Region> regions) {
+	public static PetriNet synthesizePetriNet(RegionUtility utility, Set<Region> regions) {
 		PetriNet pn = new PetriNet();
 
 		debug("Synthesizing PetriNet from these regions:");
 		debug(regions);
+
+		// First generate the transitions so that isolated transitions do get created
+		for (String event : utility.getEventList())
+			pn.createTransition(event);
 
 		for (Region region : regions) {
 			Place place = pn.createPlace();
@@ -508,7 +513,7 @@ public class SynthesizePN extends DebugUtil {
 			place.putExtension(Region.class.getName(), region);
 
 			for (String event : region.getRegionUtility().getEventList()) {
-				Transition transition = getOrCreateTransition(pn, event);
+				Transition transition = pn.getTransition(event);
 				int backward = region.getBackwardWeight(event);
 				assert backward >= 0;
 				if (backward > 0)
@@ -522,23 +527,6 @@ public class SynthesizePN extends DebugUtil {
 		}
 
 		return pn;
-	}
-
-	/**
-	 * Get or create the given transition in the Petri Net.
-	 */
-	private static Transition getOrCreateTransition(PetriNet pn, String id) {
-		try {
-			return pn.getTransition(id);
-		} catch (NoSuchNodeException ex) {
-			try {
-				return pn.createTransition(id);
-			} catch (NodeExistsException ex2) {
-				throw new AssertionError("Tried to get or create transition with id '" + id + "'. " +
-						"Getting failed, claiming that the transition doesn't exist. " +
-						"Creating failed, claiming that the transition already exists.", ex2);
-			}
-		}
 	}
 }
 
