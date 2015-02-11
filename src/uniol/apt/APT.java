@@ -42,6 +42,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.ExamineLTSModule;
 import uniol.apt.analysis.ExaminePNModule;
+import uniol.apt.analysis.FireSequence;
 import uniol.apt.analysis.InfoModule;
 import uniol.apt.analysis.algebra.MatrixFileFormat;
 import uniol.apt.analysis.algebra.MatrixModule;
@@ -217,10 +218,11 @@ public class APT {
 		new DrawModule(),
 		new ExamineLTSModule(),
 		new ExaminePNModule(),
-		new ExtendTSModule(),
 		new ExtendTSExplicitPVModule(),
+		new ExtendTSModule(),
 		new FCModule(),
 		new FCNetModule(),
+		new FireSequence(),
 		new InfoModule(),
 		new InverseNetGeneratorModule(),
 		new IsolatedElementsModule(),
