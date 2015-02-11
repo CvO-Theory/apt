@@ -60,13 +60,25 @@ public class CoverabilityGraph {
 	private Marking marking;
 
 	/**
-	 * Construct the coverability graph for a given Petri net.
+	 * Construct the coverability graph for a given Petri net. This constructor is actually cheap. The coverability
+	 * graph is constructed on-demand when needed. If you want to force full calculation of the graph, use the
+	 * {@link #calculateNodes() calculateNodes} method.
 	 * @param pn The Petri net whose coverability graph is wanted.
 	 */
 	public CoverabilityGraph(PetriNet pn) {
 		this.pn = pn;
 		addNode(null, pn.getInitialMarkingCopy(), null, null);
 		marking = pn.getInitialMarkingCopy();
+	}
+
+	/**
+	 * Calculate all nodes of the coverability graph.
+	 * @return Number of nodes in the graph.
+	 */
+	public int calculateNodes() {
+		while (visitNode()) {
+		}
+		return nodes.size();
 	}
 
 	private boolean visitNode() {
