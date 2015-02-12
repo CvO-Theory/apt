@@ -31,6 +31,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import org.apache.commons.collections4.map.ReferenceMap;
+import org.apache.commons.collections4.map.AbstractReferenceMap.ReferenceStrength;
+
 import uniol.apt.adt.EdgeKey;
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.exception.FlowExistsException;
@@ -59,8 +63,8 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 	private final SortedMap<String, Node> nodes = new TreeMap<>();
 	private final SortedMap<String, Place> places = new TreeMap<>();
 	private final SortedMap<String, Transition> transitions = new TreeMap<>();
-	private SoftReference<Map<String, Set<Node>>> presetNodes = new SoftReference<Map<String, Set<Node>>>(new HashMap<String, Set<Node>>());
-	private SoftReference<Map<String, Set<Node>>> postsetNodes = new SoftReference<Map<String, Set<Node>>>(new HashMap<String, Set<Node>>());
+	private ReferenceMap<String, Set<Node>> presetNodes = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
+	private ReferenceMap<String, Set<Node>> postsetNodes = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
 	private SoftReference<Map<String, Set<Flow>>> presetEdges = new SoftReference<Map<String, Set<Flow>>>(new HashMap<String, Set<Flow>>());
 	private SoftReference<Map<String, Set<Flow>>> postsetEdges = new SoftReference<Map<String, Set<Flow>>>(new HashMap<String, Set<Flow>>());
 	private Marking initialMarking = new Marking(this);
@@ -253,21 +257,10 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 			this.places.put(id, p);
 			this.nodes.put(id, p);
 			// update pre- and postsets
-			Map<String, Set<Node>> preSets = presetNodes.get();
-			if (preSets == null) {
-				preSets = new HashMap<>();
-				presetNodes = new SoftReference<>(preSets);
-			}
 			Set<Node> pre = new HashSet<>();
-			preSets.put(id, pre);
-
-			Map<String, Set<Node>> postSets = postsetNodes.get();
-			if (postSets == null) {
-				postSets = new HashMap<>();
-				postsetNodes = new SoftReference<>(postSets);
-			}
+			presetNodes.put(id, pre);
 			Set<Node> post = new HashSet<>();
-			postSets.put(id, post);
+			postsetNodes.put(id, post);
 
 			Map<String, Set<Flow>> preSetsE = presetEdges.get();
 			if (preSetsE == null) {
@@ -422,21 +415,10 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 			this.transitions.put(id, t);
 			this.nodes.put(id, t);
 			// update pre- and postsets
-			Map<String, Set<Node>> preSets = presetNodes.get();
-			if (preSets == null) {
-				preSets = new HashMap<>();
-				presetNodes = new SoftReference<>(preSets);
-			}
 			Set<Node> pre = new HashSet<>();
-			preSets.put(id, pre);
-
-			Map<String, Set<Node>> postSets = postsetNodes.get();
-			if (postSets == null) {
-				postSets = new HashMap<>();
-				postsetNodes = new SoftReference<>(postSets);
-			}
+			presetNodes.put(id, pre);
 			Set<Node> post = new HashSet<>();
-			postSets.put(id, post);
+			postsetNodes.put(id, post);
 
 			Map<String, Set<Flow>> preSetsE = presetEdges.get();
 			if (preSetsE == null) {
@@ -575,19 +557,13 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 			throw new NoSuchEdgeException(this, sourceId, targetId);
 		}
 		// update pre- and postsets
-		Map<String, Set<Node>> setNodes = presetNodes.get();
-		if (setNodes != null) {
-			Set<Node> pre = setNodes.get(targetId);
-			if (pre != null) {
-				pre.remove(nodes.get(sourceId));
-			}
+		Set<Node> preNodes = presetNodes.get(targetId);
+		if (preNodes != null) {
+			preNodes.remove(nodes.get(sourceId));
 		}
-		setNodes = postsetNodes.get();
-		if (setNodes != null) {
-			Set<Node> post = setNodes.get(sourceId);
-			if (post != null) {
-				post.remove(nodes.get(targetId));
-			}
+		Set<Node> postNodes = postsetNodes.get(sourceId);
+		if (postNodes != null) {
+			postNodes.remove(nodes.get(targetId));
 		}
 		Map<String, Set<Flow>> edges = presetEdges.get();
 		if (edges != null) {
@@ -708,14 +684,8 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 		}
 
 		// update pre- and postsets
-		Map<String, Set<Node>> setNodes = presetNodes.get();
-		if (setNodes != null) {
-			setNodes.remove(id);
-		}
-		setNodes = postsetNodes.get();
-		if (setNodes != null) {
-			setNodes.remove(id);
-		}
+		presetNodes.remove(id);
+		postsetNodes.remove(id);
 		Map<String, Set<Flow>> edges = presetEdges.get();
 		if (edges != null) {
 			edges.remove(id);
@@ -1361,19 +1331,13 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 	 * @return the preset nodes of the given node.
 	 */
 	private Set<Node> calcPresetNodes(String id) {
-		// save hardreference so that things aren't garbage-collected while we work with it
-		Map<String, Set<Node>> preSets = presetNodes.get();
-		if (preSets == null) {
-			preSets = new HashMap<>();
-			presetNodes = new SoftReference<>(preSets);
-		}
-		Set<Node> pre = preSets.get(id);
+		Set<Node> pre = presetNodes.get(id);
 		if (pre == null) {
 			pre = new HashSet<>();
 			for (Flow a : this.getPresetEdges(id)) {
 				pre.add(a.getSource());
 			}
-			preSets.put(id, pre);
+			presetNodes.put(id, pre);
 		}
 		return pre;
 	}
@@ -1386,18 +1350,13 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 	 * @return the postset nodes of the given node.
 	 */
 	private Set<Node> calcPostsetNodes(String id) {
-		Map<String, Set<Node>> postSets = postsetNodes.get();
-		if (postSets == null) {
-			postSets = new HashMap<>();
-			postsetNodes = new SoftReference<>(postSets);
-		}
-		Set<Node> post = postSets.get(id);
+		Set<Node> post = postsetNodes.get(id);
 		if (post == null) {
 			post = new HashSet<>();
 			for (Flow a : this.getPostsetEdges(id)) {
 				post.add(a.getTarget());
 			}
-			postSets.put(id, post);
+			postsetNodes.put(id, post);
 		}
 		return post;
 	}
