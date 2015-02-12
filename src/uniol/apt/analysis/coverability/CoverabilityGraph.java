@@ -20,9 +20,11 @@
 package uniol.apt.analysis.coverability;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +55,7 @@ public class CoverabilityGraph {
 	// Map from visited markings to the corresponding nodes
 	private final Map<Marking, CoverabilityGraphNode> states = new HashMap<>();
 	// List of nodes which were generated but whose enabled transitions weren't handled yet.
-	private final Set<CoverabilityGraphNode> unvisited = new HashSet<>();
+	private final Deque<CoverabilityGraphNode> unvisited = new LinkedList<>();
 	// List of nodes that were already visited, this is a list to implement iterators.
 	private final List<CoverabilityGraphNode> nodes = new ArrayList<>();
 	// Actual marking
@@ -83,11 +85,10 @@ public class CoverabilityGraph {
 
 	private boolean visitNode() {
 		// Pick a random, unvisited node
-		Iterator<CoverabilityGraphNode> it = unvisited.iterator();
-		if (!it.hasNext()) {
+		// (Here: breadth-first search so that we have short paths to the initial node in checkCover())
+		CoverabilityGraphNode node = unvisited.pollFirst();
+		if (node == null)
 			return false;
-		}
-		CoverabilityGraphNode node = it.next();
 
 		// Make the node generate its postset
 		node.getPostsetEdges();
@@ -100,13 +101,9 @@ public class CoverabilityGraph {
 	 * @return The node's postset
 	 */
 	Set<CoverabilityGraphEdge> getPostsetEdges(CoverabilityGraphNode node) {
-		// The node must be unvisited.
-		boolean wasUnvisited = unvisited.remove(node);
-		assert wasUnvisited == true;
-
 		// Now follow all activated transitions of that node
 		marking = new Marking(node.getMarking());
-		Set<CoverabilityGraphEdge> result = new HashSet<>();
+		final Set<CoverabilityGraphEdge> result = new HashSet<>();
 		for (Transition t : pn.getTransitions()) {
 			if (!t.isFireable(marking)) {
 				continue;
@@ -176,8 +173,9 @@ public class CoverabilityGraph {
 		mark = new Marking(mark);
 		CoverabilityGraphNode node = new CoverabilityGraphNode(this, transition, mark, parent, covered);
 		states.put(mark, node);
-		unvisited.add(node);
 		nodes.add(node);
+		// Append it to the tail of the unvisited nodes so that we do a breadth-first search
+		unvisited.addLast(node);
 		return node;
 	}
 
