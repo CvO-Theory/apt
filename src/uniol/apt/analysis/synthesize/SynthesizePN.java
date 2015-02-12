@@ -26,6 +26,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections4.FactoryUtils;
+import org.apache.commons.collections4.map.LazyMap;
+
 import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.pn.PetriNet;
@@ -133,23 +136,17 @@ public class SynthesizePN extends DebugUtil {
 			for (Set<State> family : partition) {
 				// Separate this family by the given region: States to which this region assigns
 				// different markings are separated.
-				Map<Integer, Set<State>> markings = new HashMap<>();
+				Map<Integer, Set<State>> markings = LazyMap.lazyMap(new HashMap<Integer, Set<State>>(),
+						FactoryUtils.prototypeFactory(new HashSet<State>()));
 				for (State state : family) {
-					int marking;
 					try {
-						marking = region.getMarkingForState(state);
+						markings.get(region.getMarkingForState(state)).add(state)
 					}
 					catch (UnreachableException e) {
 						// Unreachable states cannot be separated, so add this to result
 						result.add(state);
 						continue;
 					}
-					Set<State> newFamily = markings.get(marking);
-					if (newFamily == null) {
-						newFamily = new HashSet<>();
-						markings.put(marking, newFamily);
-					}
-					newFamily.add(state);
 				}
 
 				// Now collect families of not-yet-separated states
