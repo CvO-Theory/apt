@@ -27,12 +27,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
-import org.apache.commons.collections4.map.ReferenceMap;
+import org.apache.commons.collections4.SortedBag;
+import org.apache.commons.collections4.bag.TreeBag;
 import org.apache.commons.collections4.map.AbstractReferenceMap.ReferenceStrength;
+import org.apache.commons.collections4.map.ReferenceMap;
 
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.exception.ArcExistsException;
@@ -55,8 +55,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	private int nextStateId = 0;
 	private final Map<ArcKey, Arc> arcs = new HashMap<>();
 	private final SortedMap<String, State> states = new TreeMap<>();
-	private final SortedSet<String> alphabet = new TreeSet<>();
-	private final Map<String, Integer> alphabetCount = new HashMap<>();
+	private final SortedBag<String> alphabet = new TreeBag<>();
 	private final Map<String, Set<State>> presetNodes = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
 	private final Map<String, Set<State>> postsetNodes = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
 	private final Map<String, Set<Arc>> presetEdges = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
@@ -96,7 +95,6 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 			this.arcs.put(key, new Arc(this, ts.arcs.get(key)));
 		}
 		this.alphabet.addAll(ts.alphabet);
-		this.alphabetCount.putAll(ts.alphabetCount);
 		this.initialState = states.get(ts.getInitialState().getId());
 		copyExtensions(ts);
 	}
@@ -565,7 +563,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	 * @return the alphabet of this TransitionSystem.
 	 */
 	public Set<String> getAlphabet() {
-		return Collections.unmodifiableSortedSet(this.alphabet);
+		return Collections.unmodifiableSet(this.alphabet.uniqueSet());
 	}
 
 	/**
@@ -633,13 +631,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	 * @param label the label to add.
 	 */
 	private void addLabel(String label) {
-		Integer count = alphabetCount.get(label);
-		if (count == null) {
-			alphabetCount.put(label, 1);
-			alphabet.add(label);
-		} else {
-			alphabetCount.put(label, ++count);
-		}
+		alphabet.add(label);
 		++labelRev;
 	}
 
@@ -650,16 +642,8 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	 * @param label the label to remove.
 	 */
 	private void removeLabel(String label) {
-		Integer count = alphabetCount.get(label);
-		if (count != null) {
-			if (count == 1) {
-				alphabetCount.remove(label);
-				alphabet.remove(label);
-			} else {
-				alphabetCount.put(label, --count);
-			}
-			++labelRev;
-		}
+		alphabet.remove(label, 1);
+		++labelRev;
 	}
 
 	public void setName(String name) {
