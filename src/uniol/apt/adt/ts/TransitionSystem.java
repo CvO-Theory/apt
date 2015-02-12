@@ -19,7 +19,6 @@
 
 package uniol.apt.adt.ts;
 
-import java.lang.ref.SoftReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +30,10 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import org.apache.commons.collections4.map.ReferenceMap;
+import org.apache.commons.collections4.map.AbstractReferenceMap.ReferenceStrength;
+
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.exception.ArcExistsException;
 import uniol.apt.adt.exception.NoSuchEdgeException;
@@ -54,10 +57,10 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	private final SortedMap<String, State> states = new TreeMap<>();
 	private final SortedSet<String> alphabet = new TreeSet<>();
 	private final Map<String, Integer> alphabetCount = new HashMap<>();
-	private SoftReference<Map<String, Set<State>>> presetNodes = new SoftReference<Map<String, Set<State>>>(new HashMap<String, Set<State>>());
-	private SoftReference<Map<String, Set<State>>> postsetNodes = new SoftReference<Map<String, Set<State>>>(new HashMap<String, Set<State>>());
-	private SoftReference<Map<String, Set<Arc>>> presetEdges = new SoftReference<Map<String, Set<Arc>>>(new HashMap<String, Set<Arc>>());
-	private SoftReference<Map<String, Set<Arc>>> postsetEdges = new SoftReference<Map<String, Set<Arc>>>(new HashMap<String, Set<Arc>>());
+	private final Map<String, Set<State>> presetNodes = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
+	private final Map<String, Set<State>> postsetNodes = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
+	private final Map<String, Set<Arc>> presetEdges = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
+	private final Map<String, Set<Arc>> postsetEdges = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
 	private State initialState = null;
 	private long labelRev = 0;
 
@@ -252,37 +255,14 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 		s = new State(this, id);
 		states.put(id, s);
 		// update pre- and postsets
-		Map<String, Set<State>> preSets = presetNodes.get();
-		if (preSets == null) {
-			preSets = new HashMap<>();
-			presetNodes = new SoftReference<>(preSets);
-		}
 		Set<State> pre = new HashSet<>();
-		preSets.put(id, pre);
-
-		Map<String, Set<State>> postSets = postsetNodes.get();
-		if (postSets == null) {
-			postSets = new HashMap<>();
-			postsetNodes = new SoftReference<>(postSets);
-		}
+		presetNodes.put(id, pre);
 		Set<State> post = new HashSet<>();
-		postSets.put(id, post);
-
-		Map<String, Set<Arc>> preSetsE = presetEdges.get();
-		if (preSetsE == null) {
-			preSetsE = new HashMap<>();
-			presetEdges = new SoftReference<>(preSetsE);
-		}
+		postsetNodes.put(id, post);
 		Set<Arc> preE = new HashSet<>();
-		preSetsE.put(id, preE);
-
-		Map<String, Set<Arc>> postSetsE = postsetEdges.get();
-		if (postSetsE == null) {
-			postSetsE = new HashMap<>();
-			postsetEdges = new SoftReference<>(postSetsE);
-		}
+		presetEdges.put(id, preE);
 		Set<Arc> postE = new HashSet<>();
-		postSetsE.put(id, postE);
+		postsetEdges.put(id, postE);
 		return s;
 	}
 
@@ -408,33 +388,21 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 			throw new NoSuchEdgeException(this, sourceId, targetId);
 		}
 		// update pre- and postsets
-		Map<String, Set<State>> setNodes = presetNodes.get();
-		if (setNodes != null) {
-			Set<State> pre = setNodes.get(targetId);
-			if (pre != null) {
-				pre.remove(states.get(sourceId));
-			}
+		Set<State> preNodes = presetNodes.get(targetId);
+		if (preNodes != null) {
+			preNodes.remove(states.get(sourceId));
 		}
-		setNodes = postsetNodes.get();
-		if (setNodes != null) {
-			Set<State> post = setNodes.get(sourceId);
-			if (post != null) {
-				post.remove(states.get(targetId));
-			}
+		Set<State> postNodes = postsetNodes.get(sourceId);
+		if (postNodes != null) {
+			postNodes.remove(states.get(targetId));
 		}
-		Map<String, Set<Arc>> edges = presetEdges.get();
-		if (edges != null) {
-			Set<Arc> pre = edges.get(targetId);
-			if (pre != null) {
-				pre.remove(a);
-			}
+		Set<Arc> preEdges = presetEdges.get(targetId);
+		if (preEdges != null) {
+			preEdges.remove(a);
 		}
-		edges = postsetEdges.get();
-		if (edges != null) {
-			Set<Arc> post = edges.get(sourceId);
-			if (post != null) {
-				post.remove(a);
-			}
+		Set<Arc> postEdges = postsetEdges.get(sourceId);
+		if (postEdges != null) {
+			postEdges.remove(a);
 		}
 
 		arcs.remove(key);
@@ -493,22 +461,10 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 		}
 
 		// update pre- and postsets
-		Map<String, Set<State>> setNodes = presetNodes.get();
-		if (setNodes != null) {
-			setNodes.remove(id);
-		}
-		setNodes = postsetNodes.get();
-		if (setNodes != null) {
-			setNodes.remove(id);
-		}
-		Map<String, Set<Arc>> edges = presetEdges.get();
-		if (edges != null) {
-			edges.remove(id);
-		}
-		edges = postsetEdges.get();
-		if (edges != null) {
-			edges.remove(id);
-		}
+		presetNodes.remove(id);
+		postsetNodes.remove(id);
+		presetEdges.remove(id);
+		postsetEdges.remove(id);
 
 		if (initialState != null && initialState.getId().equals(id)) {
 			initialState = null;
@@ -764,19 +720,13 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	 * @return the preset nodes of the given node.
 	 */
 	private Set<State> calcPresetNodes(String id) {
-		// save hardreference so that garbage won't work
-		Map<String, Set<State>> preSets = presetNodes.get();
-		if (preSets == null) {
-			preSets = new HashMap<>();
-			presetNodes = new SoftReference<>(preSets);
-		}
-		Set<State> pre = preSets.get(id);
+		Set<State> pre = presetNodes.get(id);
 		if (pre == null) {
 			pre = new HashSet<>();
 			for (Arc a : this.getPresetEdges(id)) {
 				pre.add(a.getSource());
 			}
-			preSets.put(id, pre);
+			presetNodes.put(id, pre);
 		}
 		return pre;
 	}
@@ -789,18 +739,13 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	 * @return the postset nodes of the given node.
 	 */
 	private Set<State> calcPostsetNodes(String id) {
-		Map<String, Set<State>> postSets = postsetNodes.get();
-		if (postSets == null) {
-			postSets = new HashMap<>();
-			postsetNodes = new SoftReference<>(postSets);
-		}
-		Set<State> post = postSets.get(id);
+		Set<State> post = postsetNodes.get(id);
 		if (post == null) {
 			post = new HashSet<>();
 			for (Arc a : this.getPostsetEdges(id)) {
 				post.add(a.getTarget());
 			}
-			postSets.put(id, post);
+			postsetNodes.put(id, post);
 		}
 		return post;
 	}
@@ -813,12 +758,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	 * @return the preset edges of the given node.
 	 */
 	private Set<Arc> calcPresetEdges(String id) {
-		Map<String, Set<Arc>> preSets = presetEdges.get();
-		if (preSets == null) {
-			preSets = new HashMap<>();
-			presetEdges = new SoftReference<>(preSets);
-		}
-		Set<Arc> pre = preSets.get(id);
+		Set<Arc> pre = presetEdges.get(id);
 		if (pre == null) {
 			pre = new HashSet<>();
 			for (Arc a : this.getEdges()) {
@@ -826,7 +766,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 					pre.add(a);
 				}
 			}
-			preSets.put(id, pre);
+			presetEdges.put(id, pre);
 		}
 		return pre;
 	}
@@ -839,12 +779,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	 * @return the postset edges of the given node.
 	 */
 	private Set<Arc> calcPostsetEdges(String id) {
-		Map<String, Set<Arc>> postSets = postsetEdges.get();
-		if (postSets == null) {
-			postSets = new HashMap<>();
-			postsetEdges = new SoftReference<>(postSets);
-		}
-		Set<Arc> post = postSets.get(id);
+		Set<Arc> post = postsetEdges.get(id);
 		if (post == null) {
 			post = new HashSet<>();
 			for (Arc a : this.getEdges()) {
@@ -852,7 +787,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 					post.add(a);
 				}
 			}
-			postSets.put(id, post);
+			postsetEdges.put(id, post);
 		}
 		return post;
 	}
