@@ -97,7 +97,7 @@ public class CoverabilityGraph {
 	 * {@link #calculateNodes() calculateNodes} method.
 	 * @param pn The Petri net whose coverability graph is wanted.
 	 */
-	public CoverabilityGraph(PetriNet pn) {
+	private CoverabilityGraph(PetriNet pn) {
 		this.pn = pn;
 		addNode(null, pn.getInitialMarkingCopy(), null, null);
 	}

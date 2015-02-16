@@ -54,7 +54,7 @@ public class Bounded {
 	 */
 	public BoundedResult checkBounded(PetriNet pn) {
 		Collection<Place> places = pn.getPlaces();
-		CoverabilityGraph cover = new CoverabilityGraph(pn);
+		CoverabilityGraph cover = CoverabilityGraph.get(pn);
 		List<Transition> sequence = new FiringSequence();
 		Place witness = null;
 		int k = 0;

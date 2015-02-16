@@ -183,7 +183,7 @@ public class Separation {
 	 */
 	public static boolean isSequenceASequenceOfNet(PetriNet petriNet,
 			ArrayList<String> chosenFiringSequence) {
-		CoverabilityGraph coverability = new CoverabilityGraph(petriNet);
+		CoverabilityGraph coverability = CoverabilityGraph.get(petriNet);
 		TransitionSystem coverabilityGraph = null;
 
 		// in separationLogic we use toReachabilityLTS() ...

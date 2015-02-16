@@ -67,7 +67,7 @@ public class Live {
 	 * @throws UnboundedException If the reachability graph is unbounded.
 	 */
 	static public List<Transition> checkSimplyLive(PetriNet pn, Transition transition) throws UnboundedException {
-		TransitionSystem lts = new CoverabilityGraph(pn).toReachabilityLTS();
+		TransitionSystem lts = CoverabilityGraph.get(pn).toReachabilityLTS();
 		for (Arc arc : lts.getEdges()) {
 			Transition trans = (Transition) arc.getExtension(Transition.class.getName());
 			if (trans.equals(transition)) {
@@ -116,7 +116,7 @@ public class Live {
 		 * component, there obviously can't be an infinite fire sequence which contains the transition
 		 * infinitely often.
 		 */
-		TransitionSystem lts = new CoverabilityGraph(pn).toReachabilityLTS();
+		TransitionSystem lts = CoverabilityGraph.get(pn).toReachabilityLTS();
 		Components components = Connectivity.getStronglyConnectedComponents(lts);
 		for (Arc edge : lts.getEdges()) {
 			// Look for edges labeled with our transition...
@@ -181,7 +181,7 @@ public class Live {
 	static public List<Transition> findKillingFireSequence(PetriNet pn, Transition transition)
 			throws UnboundedException {
 		// We are looking for a node from which no edge for our transition is reachable
-		TransitionSystem lts = new CoverabilityGraph(pn).toReachabilityLTS();
+		TransitionSystem lts = CoverabilityGraph.get(pn).toReachabilityLTS();
 		Collection<State> nodes = new HashSet<>(lts.getNodes());
 
 		// Look for edges labeled with our transition...

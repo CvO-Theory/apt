@@ -94,7 +94,7 @@ public class CoverabilityTest {
 			edgeMatchers.add(edgeNodesMarkingEq(prevMark, curMark));
 		}
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		// LTS looks like:
@@ -109,7 +109,7 @@ public class CoverabilityTest {
 	@IntRangeParameter(start = 2, end = 3)
 	public void testBistatePhilNet(int size) {
 		PetriNet pn = biStatePhilNetGenerator.generateNet(size);
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		/* These LTS are growing quite fast. I don't think we can sanely calculate the number of edges
@@ -123,7 +123,7 @@ public class CoverabilityTest {
 	@IntRangeParameter(start = 2, end = 3)
 	public void testTristatePhilNet(int size) {
 		PetriNet pn = triStatePhilNetGenerator.generateNet(size);
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		/* These LTS are growing quite fast. I don't think we can sanely calculate the number of edges
@@ -137,7 +137,7 @@ public class CoverabilityTest {
 	@IntRangeParameter(start = 2, end = 3)
 	public void testQuadstatePhilNet(int size) {
 		PetriNet pn = quadStatePhilNetGenerator.generateNet(size);
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		/* These LTS are growing quite fast. I don't think we can sanely calculate the number of edges
@@ -152,7 +152,7 @@ public class CoverabilityTest {
 		PetriNet pn = getEmptyNet();
 		Marking initialMark = pn.getInitialMarkingCopy();
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		// LTS looks like:
@@ -168,7 +168,7 @@ public class CoverabilityTest {
 		PetriNet pn = getNoTransitionOnePlaceNet();
 		Marking initialMark = pn.getInitialMarkingCopy();
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		// LTS looks like:
@@ -184,7 +184,7 @@ public class CoverabilityTest {
 		PetriNet pn = getOneTransitionNoPlaceNet();
 		Marking initialMark = pn.getInitialMarkingCopy();
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		// LTS looks like:
@@ -203,7 +203,7 @@ public class CoverabilityTest {
 		Marking aMark = new Marking(initialMark);
 		aMark.setToken(pn.getPlaces().iterator().next(), Token.OMEGA);
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		// LTS looks like:
@@ -224,7 +224,7 @@ public class CoverabilityTest {
 		Marking initialMark = pn.getInitialMarkingCopy();
 		Marking aMark = transitions[0].fire(pn.getInitialMarkingCopy());
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		// LTS looks like:
@@ -245,7 +245,7 @@ public class CoverabilityTest {
 		Transition ta = pn.getTransition("a");
 		Marking aMark = ta.fire(pn.getInitialMarkingCopy());
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		// LTS looks like:
@@ -272,7 +272,7 @@ public class CoverabilityTest {
 		Marking abMark = new Marking(actM.fire(tb));
 		Marking bMark = tb.fire(pn.getInitialMarkingCopy());
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		// LTS looks like:
@@ -309,7 +309,7 @@ public class CoverabilityTest {
 		Marking abMark = new Marking(actMark.fire(transitions[1]));
 		Marking bMark = new Marking(transitions[1].fire(pn.getInitialMarkingCopy()));
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		// LTS looks like:
@@ -340,7 +340,7 @@ public class CoverabilityTest {
 		Marking abMark = new Marking(actMark.fire(transitions[1]));
 		Marking bMark = new Marking(transitions[1].fire(pn.getInitialMarkingCopy()));
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		// LTS looks like:
@@ -365,7 +365,7 @@ public class CoverabilityTest {
 		PetriNet pn = getMultiArcNet();
 		Marking initialMark = pn.getInitialMarkingCopy();
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
 
 		// LTS has a self-loop in the initial state with weight 2

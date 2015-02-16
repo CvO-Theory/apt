@@ -51,7 +51,7 @@ public class PersistentNet {
 	public void check() {
 
 		TransitionSystem ts;
-		ts = new CoverabilityGraph(pn_).toCoverabilityLTS();
+		ts = CoverabilityGraph.get(pn_).toCoverabilityLTS();
 
 		PersistentTS ltsPersistent = new PersistentTS(ts);
 		deterministic_ = ltsPersistent.isPersistent();

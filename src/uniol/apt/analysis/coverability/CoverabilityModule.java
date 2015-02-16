@@ -61,7 +61,7 @@ public class CoverabilityModule extends AbstractModule {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
-		TransitionSystem result = new CoverabilityGraph(pn).toCoverabilityLTS();
+		TransitionSystem result = CoverabilityGraph.get(pn).toCoverabilityLTS();
 		boolean isReachability = true;
 		for (State node : result.getNodes()) {
 			CoverabilityGraphNode coverNode =

@@ -77,14 +77,14 @@ public class Bisimulation {
 		TransitionSystem ltsTwo = null;
 		if (pn1 != null) {
 			// Step 1: Generate the reachability graph. At the same time, we check if Pn is bounded.
-			CoverabilityGraph cover1 = new CoverabilityGraph(pn1);
+			CoverabilityGraph cover1 = CoverabilityGraph.get(pn1);
 			ltsOne = cover1.toReachabilityLTS();
 		} else {
 			ltsOne = pnOrLts1.getTs();
 		}
 		if (pn2 != null) {
 			// Step 1: Generate the reachability graph. At the same time, we check if Pn is bounded.
-			CoverabilityGraph cover2 = new CoverabilityGraph(pn2);
+			CoverabilityGraph cover2 = CoverabilityGraph.get(pn2);
 			ltsTwo = cover2.toReachabilityLTS();
 		} else {
 			ltsTwo = pnOrLts2.getTs();

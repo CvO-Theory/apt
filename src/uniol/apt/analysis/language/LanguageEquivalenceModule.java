@@ -79,10 +79,10 @@ public class LanguageEquivalenceModule extends AbstractModule {
 		TransitionSystem lts1 = arg1.getTs();
 		TransitionSystem lts2 = arg2.getTs();
 		if (lts1 == null) {
-			lts1 = new CoverabilityGraph(arg1.getNet()).toReachabilityLTS();
+			lts1 = CoverabilityGraph.get(arg1.getNet()).toReachabilityLTS();
 		}
 		if (lts2 == null) {
-			lts2 = new CoverabilityGraph(arg2.getNet()).toReachabilityLTS();
+			lts2 = CoverabilityGraph.get(arg2.getNet()).toReachabilityLTS();
 		}
 
 		List<Word> words = LanguageEquivalence.checkLanguageEquivalence(lts1, lts2, all);

@@ -82,7 +82,7 @@ public class CoverabilityGraphTest {
 			edgeMatchers.add(edgeCoverNodesMarkingEq(prevMark, curMark));
 		}
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
 		// LTS looks like:
 		// i=1: init <-    (self loop)
@@ -119,7 +119,7 @@ public class CoverabilityGraphTest {
 		PetriNet pn = getEmptyNet();
 		Marking initialMark = new Marking(pn.getInitialMarkingCopy());
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
 		// LTS looks like:
 		// init       (no edge)
@@ -134,7 +134,7 @@ public class CoverabilityGraphTest {
 		PetriNet pn = getNoTransitionOnePlaceNet();
 		Marking initialMark = new Marking(pn.getInitialMarkingCopy());
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
 		// LTS looks like:
 		// init       (no edge)
@@ -149,7 +149,7 @@ public class CoverabilityGraphTest {
 		PetriNet pn = getOneTransitionNoPlaceNet();
 		Marking initialMark = new Marking(pn.getInitialMarkingCopy());
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
 		// LTS looks like:
 		// init <-    (self loop)
@@ -167,7 +167,7 @@ public class CoverabilityGraphTest {
 		Marking aMark = new Marking(initialMark);
 		aMark.setToken(pn.getPlaces().iterator().next(), Token.OMEGA);
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
 		// LTS looks like:
 		// init --> a <-    (self loop)
@@ -187,7 +187,7 @@ public class CoverabilityGraphTest {
 		Marking initialMark = pn.getInitialMarkingCopy();
 		Marking aMark = transitions[0].fire(pn.getInitialMarkingCopy());
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
 		// LTS looks like:
 		// init ==> a (2 edges to a)
@@ -207,7 +207,7 @@ public class CoverabilityGraphTest {
 		Transition ta = pn.getTransition("a");
 		Marking aMark = ta.fire(pn.getInitialMarkingCopy());
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
 		// LTS looks like:
 		// init ==> a (2 edges to a)
@@ -233,7 +233,7 @@ public class CoverabilityGraphTest {
 		Marking abMark = new Marking(actM.fire(tb));
 		Marking bMark = tb.fire(pn.getInitialMarkingCopy());
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
 		// LTS looks like:
 		//     -> init <-   (every edge is bidirectional)
@@ -269,7 +269,7 @@ public class CoverabilityGraphTest {
 		Marking abMark = new Marking(actMark.fire(transitions[1]));
 		Marking bMark = new Marking(transitions[1].fire(pn.getInitialMarkingCopy()));
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
 		// LTS looks like:
 		// a <-- init --> b
@@ -300,7 +300,7 @@ public class CoverabilityGraphTest {
 		Marking bMark = pn.getInitialMarkingCopy();
 		bMark.fire(transitions[1]);
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
 		// LTS looks like:
 		// a <-- init --> b
@@ -324,7 +324,7 @@ public class CoverabilityGraphTest {
 		PetriNet pn = getMultiArcNet();
 		Marking initialMark = pn.getInitialMarkingCopy();
 
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
 		// LTS has a self-loop in the initial state with weight 2
 		assertThat(cov.getInitialNode(), coverNodeMarkingEq(initialMark));
@@ -337,7 +337,7 @@ public class CoverabilityGraphTest {
 	@Test(expectedExceptions = NoSuchElementException.class)
 	public void testIteratorHasNext() {
 		PetriNet pn = getTokenGeneratorNet();
-		CoverabilityGraph cov = new CoverabilityGraph(pn);
+		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		Iterator<CoverabilityGraphEdge> it = cov.getEdges().iterator();
 		int edges = 0;
 

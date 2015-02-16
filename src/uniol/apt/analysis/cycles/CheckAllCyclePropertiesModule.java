@@ -71,7 +71,7 @@ public class CheckAllCyclePropertiesModule extends AbstractModule {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
-		TransitionSystem ts = new CoverabilityGraph(pn).toReachabilityLTS();
+		TransitionSystem ts = CoverabilityGraph.get(pn).toReachabilityLTS();
 
 		// Compute Parikh vectors of smallest cycles
 		ComputeSmallestCycles small = new ComputeSmallestCycles();

@@ -541,12 +541,12 @@ public class SynthesizePN extends DebugUtil {
 		try {
 			if (!onlyEventSeparation)
 				// The resulting PN should always have a reachability graph isomorphic to the ts
-				assert new IsomorphismLogic(new CoverabilityGraph(pn).toReachabilityLTS(), ts, true)
+				assert new IsomorphismLogic(CoverabilityGraph.get(pn).toReachabilityLTS(), ts, true)
 					.isIsomorphic() : regions;
 			else
 				// The resulting PN should be language-equivalent to what we started with
 				assert LanguageEquivalence.checkLanguageEquivalence(
-						new CoverabilityGraph(pn).toReachabilityLTS(), ts, false).isEmpty()
+						CoverabilityGraph.get(pn).toReachabilityLTS(), ts, false).isEmpty()
 					: regions;
 		} catch (UnboundedException e) {
 			assert false : regions;

@@ -268,7 +268,7 @@ public class SeparationLogic {
 		ArrayList<ArrayList<String>> fireableSequences = new ArrayList<>();
 
 		// use coverability graph
-		CoverabilityGraph coverability = new CoverabilityGraph(petriNet);
+		CoverabilityGraph coverability = CoverabilityGraph.get(petriNet);
 		TransitionSystem coverabilityGraph = null;
 
 		coverabilityGraph = coverability.toReachabilityLTS();

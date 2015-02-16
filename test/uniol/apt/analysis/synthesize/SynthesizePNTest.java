@@ -179,7 +179,7 @@ public class SynthesizePNTest {
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 
-		TransitionSystem ts2 = new CoverabilityGraph(synth.synthesizePetriNet()).toReachabilityLTS();
+		TransitionSystem ts2 = CoverabilityGraph.get(synth.synthesizePetriNet()).toReachabilityLTS();
 		assertThat(new IsomorphismLogic(ts, ts2, true).isIsomorphic(), is(true));
 	}
 
@@ -214,7 +214,7 @@ public class SynthesizePNTest {
 
 		// Bypass the assertions in synthesizePetriNet() which already check for isomorphism
 		PetriNet pn = SynthesizePN.synthesizePetriNet(synth.getUtility(), synth.getSeparatingRegions());
-		TransitionSystem ts2 = new CoverabilityGraph(pn).toReachabilityLTS();
+		TransitionSystem ts2 = CoverabilityGraph.get(pn).toReachabilityLTS();
 
 		assertThat(new IsomorphismLogic(ts, ts2, true).isIsomorphic(), is(true));
 	}
@@ -229,7 +229,7 @@ public class SynthesizePNTest {
 
 		// Bypass the assertions in synthesizePetriNet() which already check for isomorphism
 		PetriNet pn = SynthesizePN.synthesizePetriNet(synth.getUtility(), synth.getSeparatingRegions());
-		TransitionSystem ts2 = new CoverabilityGraph(pn).toReachabilityLTS();
+		TransitionSystem ts2 = CoverabilityGraph.get(pn).toReachabilityLTS();
 
 		assertThat(new IsomorphismLogic(ts, ts2, true).isIsomorphic(), is(true));
 	}

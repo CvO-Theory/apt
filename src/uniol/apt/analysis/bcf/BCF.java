@@ -69,7 +69,7 @@ public class BCF {
 	 * @throws UnboundedException If the given Petri net is not bounded and thus can't be examined.
 	 */
 	public Result check(PetriNet pn) throws UnboundedException {
-		CoverabilityGraph cover = new CoverabilityGraph(pn);
+		CoverabilityGraph cover = CoverabilityGraph.get(pn);
 
 		for (CoverabilityGraphNode node : cover.getNodes()) {
 			Set<CoverabilityGraphEdge> edges = new HashSet<>(node.getPostsetEdges());

@@ -57,7 +57,7 @@ public class CyclesHaveSamePV {
 	 * @throws UnboundedException thrown if the net is not bounded.
 	 */
 	public boolean check(ComputeSmallestCycles.Algorithm algo) throws UnboundedException {
-		TransitionSystem ts = new CoverabilityGraph(pn_).toReachabilityLTS();
+		TransitionSystem ts = CoverabilityGraph.get(pn_).toReachabilityLTS();
 
 		ComputeSmallestCycles cycle = new ComputeSmallestCycles();
 		if (!cycle.checkSamePVs(ts, algo)) {

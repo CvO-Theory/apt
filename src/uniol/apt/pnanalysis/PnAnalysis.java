@@ -84,7 +84,7 @@ public class PnAnalysis {
 		}
 
 		// Step 1: Generate reachability graph of the given Petri net
-		CoverabilityGraph cover = new CoverabilityGraph(pn);
+		CoverabilityGraph cover = CoverabilityGraph.get(pn);
 		TransitionSystem reachabilitylts1 = cover.toReachabilityLTS();
 
 		// Check preconditions for lts
@@ -150,7 +150,7 @@ public class PnAnalysis {
 	 * @throws UnboundedException is thrown, if the T-system is unbounded.
 	 */
 	private boolean isIsomorphic(TransitionSystem t1, PetriNet tSystem) throws UnboundedException {
-		CoverabilityGraph coverTSystem = new CoverabilityGraph(tSystem);
+		CoverabilityGraph coverTSystem = CoverabilityGraph.get(tSystem);
 		TransitionSystem reachabilitylts2;
 		try {
 			reachabilitylts2 = coverTSystem.toReachabilityLTS();

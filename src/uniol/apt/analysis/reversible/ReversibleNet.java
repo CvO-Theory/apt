@@ -49,7 +49,7 @@ public class ReversibleNet {
 	public void check() {
 
 		TransitionSystem ts;
-		ts = new CoverabilityGraph(pn_).toCoverabilityLTS();
+		ts = CoverabilityGraph.get(pn_).toCoverabilityLTS();
 
 		ReversibleTS ltsPersistent = new ReversibleTS(ts);
 		ltsPersistent.check();
