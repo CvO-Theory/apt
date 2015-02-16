@@ -140,7 +140,7 @@ public class SynthesizePN extends DebugUtil {
 						FactoryUtils.prototypeFactory(new HashSet<State>()));
 				for (State state : family) {
 					try {
-						markings.get(region.getMarkingForState(state)).add(state)
+						markings.get(region.getMarkingForState(state)).add(state);
 					}
 					catch (UnreachableException e) {
 						// Unreachable states cannot be separated, so add this to result
