@@ -25,14 +25,16 @@ import uniol.apt.adt.INode;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Calculate a spanning tree of a graph
+ * Calculate a spanning tree of a graph based on a breadth-first search.
  * @param <G> The type of the graph itself.
  * @param <E> The type of the edges.
  * @param <N> The type of the nodes.
@@ -59,19 +61,16 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 		// visited yet and enlarge the spanning tree by the path from the current node to the children.
 		Map<N, E> predecessorMap = new HashMap<>();
 		Set<N> unvisitedNodes = new HashSet<>(graph.getNodes());
-		Set<N> stillToVisit = new HashSet<>();
+		Deque<N> stillToVisit = new LinkedList<>();
 		Set<E> chords = new HashSet<>();
 
 		// Start by visiting the start node.
 		if (startNode != null) {
-			stillToVisit.add(startNode);
 			unvisitedNodes.remove(startNode);
 		}
+		N node = startNode;
 
-		while (!stillToVisit.isEmpty()) {
-			N node = stillToVisit.iterator().next();
-			stillToVisit.remove(node);
-
+		while (node != null) {
 			// For each child of the current node...
 			for (E edge : node.getPostsetEdges()) {
 				N child = edge.getTarget();
@@ -81,12 +80,15 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 					// ...remember the path to the start node.
 					predecessorMap.put(child, edge);
 					// Also, we have to visit this node later.
-					stillToVisit.add(child);
+					stillToVisit.addLast(child);
 				} else {
 					// It was already visited, so we found a new chord
 					chords.add(edge);
 				}
 			}
+
+			// Pick a new node to visit for the next iteration
+			node = stillToVisit.pollFirst();
 		}
 
 		this.predecessorMap = Collections.unmodifiableMap(predecessorMap);
