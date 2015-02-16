@@ -29,7 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import uniol.apt.adt.StructuralExtensionRemover;
+import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.Marking;
+import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.Arc;
@@ -37,6 +40,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 
 import uniol.apt.adt.exception.ArcExistsException;
+import uniol.apt.adt.exception.StructureException;
 import uniol.apt.analysis.exception.UnboundedException;
 
 /**
@@ -58,6 +62,34 @@ public class CoverabilityGraph {
 	private final Deque<CoverabilityGraphNode> unvisited = new LinkedList<>();
 	// List of nodes that were already visited, this is a list to implement iterators.
 	private final List<CoverabilityGraphNode> nodes = new ArrayList<>();
+
+	/**
+	 * Construct the coverability graph for a given Petri net. If a coverability graph for this Petri net is already
+	 * known, that instance is re-used instead of creating a new one.
+	 * @param pn The Petri net whose coverability graph is wanted.
+	 * @return A coverability graph.
+	 */
+	static public CoverabilityGraph get(PetriNet pn) {
+		String key = CoverabilityGraph.class.getName();
+
+		Object extension = null;
+		try {
+			extension = pn.getExtension(key);
+		}
+		catch (StructureException e) {
+			// No such extension. Returning "null" would be too easy...
+		}
+
+		if (extension != null && extension instanceof CoverabilityGraph)
+			return (CoverabilityGraph) extension;
+
+		CoverabilityGraph result = new CoverabilityGraph(pn);
+		// Save this coverability graph as an extension, but make sure that it is removed if the structure of
+		// the Petri net is changed in any way.
+		pn.putExtension(key, result);
+		pn.addListener(new StructuralExtensionRemover<PetriNet, Flow, Node>(key));
+		return result;
+	}
 
 	/**
 	 * Construct the coverability graph for a given Petri net. This constructor is actually cheap. The coverability
