@@ -1,0 +1,15 @@
+
+.name ""
+.type LTS
+
+.states
+s0[initial] /* [ [s:2] ] */
+s1 /* [ [s:1] ] */
+s2 /* [ [s:0] ] */
+
+.labels
+a
+
+.arcs
+s0 a s1
+s1 a s2

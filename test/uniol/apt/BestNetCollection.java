@@ -48,28 +48,56 @@ public class BestNetCollection {
 		return getNet("aeq-iso-bisim", "1a");
 	}
 
+	public static TransitionSystem getTs1A() {
+		return getTs("aeq-iso-bisim", "1a");
+	}
+
 	public static PetriNet getNet1B() {
 		return getNet("aeq-iso-bisim", "1b");
+	}
+
+	public static TransitionSystem getTs1B() {
+		return getTs("aeq-iso-bisim", "1b");
 	}
 
 	public static PetriNet getNet2A() {
 		return getNet("aeq-iso-bisim", "2a");
 	}
 
+	public static TransitionSystem getTs2A() {
+		return getTs("aeq-iso-bisim", "2a");
+	}
+
 	public static PetriNet getNet2B() {
 		return getNet("aeq-iso-bisim", "2b");
+	}
+
+	public static TransitionSystem getTs2B() {
+		return getTs("aeq-iso-bisim", "2b");
 	}
 
 	public static PetriNet getNet3A() {
 		return getNet("aeq-iso-bisim", "3a");
 	}
 
+	public static TransitionSystem getTs3A() {
+		return getTs("aeq-iso-bisim", "3a");
+	}
+
 	public static PetriNet getNet3B() {
 		return getNet("aeq-iso-bisim", "3b");
 	}
 
+	public static TransitionSystem getTs3B() {
+		return getTs("aeq-iso-bisim", "3b");
+	}
+
 	public static PetriNet getNet4A() {
 		return getNet("aeq-iso-bisim", "4a");
+	}
+
+	public static TransitionSystem getTs4A() {
+		return getTs("aeq-iso-bisim", "4a");
 	}
 
 	public static PetriNet getNet4B() {

@@ -22,18 +22,17 @@ package uniol.apt.analysis.isomorphism;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 import static uniol.apt.BestNetCollection.*;
-import static uniol.apt.TestNetCollection.getNoTransitionOnePlaceNet;
 import static uniol.apt.TestNetsForIsomorphism.*;
+import static uniol.apt.TestTSCollection.getSingleStateTS;
+import static uniol.apt.TestTSCollection.getSingleStateTSWithLoop;
 
 import java.io.IOException;
+import org.apache.commons.collections4.BidiMap;
 
 import org.testng.annotations.Test;
 
-import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.coverability.CoverabilityGraph;
-import uniol.apt.analysis.exception.UnboundedException;
-import uniol.apt.module.exception.ModuleException;
+import uniol.apt.adt.ts.State;
 
 /**
  * Collection of nets to test the isomorphism-module
@@ -51,13 +50,14 @@ public class IsomorphismTest {
 	 *
 	 * @param pn1
 	 * @param pn2
-	 * @throws UnboundedException
 	 */
-	private void testIsomorphism(PetriNet pn1, PetriNet pn2) throws UnboundedException {
-		IsomorphismLogic logic = new IsomorphismLogic(pn1, pn2, false);
-		assertTrue(logic.isIsomorphic());
-		logic = new IsomorphismLogic(pn1, pn2, true);
-		assertTrue(logic.isIsomorphic());
+	private BidiMap<State, State> testIsomorphism(TransitionSystem lts1, TransitionSystem lts2) {
+		IsomorphismLogic logic1 = new IsomorphismLogic(lts1, lts2, false);
+		assertTrue(logic1.isIsomorphic());
+		IsomorphismLogic logic2 = new IsomorphismLogic(lts1, lts2, true);
+		assertTrue(logic2.isIsomorphic());
+		assertTrue(logic1.getIsomorphism().equals(logic2.getIsomorphism()));
+		return logic1.getIsomorphism();
 	}
 
 	/**
@@ -65,13 +65,14 @@ public class IsomorphismTest {
 	 *
 	 * @param pn1
 	 * @param pn2
-	 * @throws UnboundedException
 	 */
-	private void testWeakIsomorphism(PetriNet pn1, PetriNet pn2) throws UnboundedException {
-		IsomorphismLogic logic = new IsomorphismLogic(pn1, pn2, false);
-		assertTrue(logic.isIsomorphic());
-		logic = new IsomorphismLogic(pn1, pn2, true);
-		assertFalse(logic.isIsomorphic());
+	private BidiMap<State, State> testWeakIsomorphism(TransitionSystem lts1, TransitionSystem lts2) {
+		IsomorphismLogic logic1 = new IsomorphismLogic(lts1, lts2, false);
+		assertTrue(logic1.isIsomorphic());
+		IsomorphismLogic logic2 = new IsomorphismLogic(lts1, lts2, true);
+		assertFalse(logic2.isIsomorphic());
+		assertTrue(logic2.getIsomorphism().isEmpty());
+		return logic1.getIsomorphism();
 	}
 
 	/**
@@ -79,25 +80,26 @@ public class IsomorphismTest {
 	 *
 	 * @param pn1
 	 * @param pn2
-	 * @throws UnboundedException
 	 */
-	private void testNonWeakIsomorphism(PetriNet pn1, PetriNet pn2) throws UnboundedException {
-		IsomorphismLogic logic = new IsomorphismLogic(pn1, pn2, false);
+	private void testNonWeakIsomorphism(TransitionSystem lts1, TransitionSystem lts2) {
+		IsomorphismLogic logic = new IsomorphismLogic(lts1, lts2, false);
 		assertFalse(logic.isIsomorphic());
-		logic = new IsomorphismLogic(pn1, pn2, true);
+		assertTrue(logic.getIsomorphism().isEmpty());
+		logic = new IsomorphismLogic(lts1, lts2, true);
 		assertFalse(logic.isIsomorphic());
+		assertTrue(logic.getIsomorphism().isEmpty());
 	}
 
 	//Tests for strong isomorphic nets:
 
 	@Test
-	public void testIsomorphicWithItSelf() throws IOException, ModuleException {
-		testIsomorphism(getNet3A(), getNet3A());
+	public void testIsomorphicWithItSelf() throws IOException {
+		testIsomorphism(getTs3A(), getTs3A());
 	}
 
 	@Test
-	public void testIsomorphicNets1() throws IOException, ModuleException {
-		testIsomorphism(getNet3A(), getNet3B());
+	public void testIsomorphicNets1() throws IOException {
+		testIsomorphism(getTs3A(), getTs3B());
 	}
 
 	/**
@@ -108,13 +110,13 @@ public class IsomorphismTest {
 	 * @throws ModuleException
 	 */
 	@Test
-	public void testIsomorphicNets2() throws IOException, ModuleException {
-		testIsomorphism(getIsoNet1A(), getIsoNet1B());
+	public void testIsomorphicNets2() throws IOException {
+		testIsomorphism(getIsoTs1A(), getIsoTs1B());
 	}
 
 	@Test
-	public void testIsomorphicNets3() throws IOException, ModuleException {
-		testIsomorphism(getIsoNet2A(), getIsoNet2B());
+	public void testIsomorphicNets3() throws IOException {
+		testIsomorphism(getIsoTs2A(), getIsoTs2B());
 	}
 
 	// Tests for non isomorphic nets (neither weak nor strong isomorphism):
@@ -127,23 +129,23 @@ public class IsomorphismTest {
 	 * @throws ModuleException
 	 */
 	@Test
-	public void testEmptyNet() throws IOException, ModuleException {
-		testNonWeakIsomorphism(getOneTransitionNet(), getNoTransitionOnePlaceNet());
+	public void testEmptyNet() throws IOException {
+		testNonWeakIsomorphism(getSingleStateTS(), getSingleStateTSWithLoop());
 	}
 
 	@Test
-	public void testNonIsomorphicNets1() throws IOException, ModuleException {
-		testNonWeakIsomorphism(getNet1A(), getNet1B());
+	public void testNonIsomorphicNets1() throws IOException {
+		testNonWeakIsomorphism(getTs1A(), getTs1B());
 	}
 
 	@Test
-	public void testNonIsomorphicNets2() throws IOException, ModuleException {
-		testNonWeakIsomorphism(getNet2A(), getNet2B());
+	public void testNonIsomorphicNets2() throws IOException {
+		testNonWeakIsomorphism(getTs2A(), getTs2B());
 	}
 
 	@Test
-	public void testNonIsomorphicNets3() throws IOException, ModuleException {
-		testNonWeakIsomorphism(getNet4A(), getNet4B());
+	public void testNonIsomorphicNets3() throws IOException {
+		testNonWeakIsomorphism(getTs4A(), getTs4B());
 	}
 
 	//Tests for (non) weak isomorphism
@@ -157,8 +159,8 @@ public class IsomorphismTest {
 	 * @throws ModuleException
 	 */
 	@Test
-	public void testNonIsomorphicNets3Own() throws IOException, ModuleException {
-		testWeakIsomorphism(getIsoNet3A(), getIsoNet3B());
+	public void testNonIsomorphicNets3Own() throws IOException {
+		testWeakIsomorphism(getIsoTs3A(), getIsoTs3B());
 	}
 
 	/**
@@ -169,8 +171,8 @@ public class IsomorphismTest {
 	 * @throws ModuleException
 	 */
 	@Test
-	public void testNonIsomorphicNets4() throws IOException, ModuleException {
-		testNonWeakIsomorphism(getIsoNet4A(), getIsoNet4B());
+	public void testNonIsomorphicNets4() throws IOException {
+		testNonWeakIsomorphism(getIsoTs4A(), getIsoTs4B());
 	}
 
 }

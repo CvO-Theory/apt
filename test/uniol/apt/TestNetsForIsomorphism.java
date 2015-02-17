@@ -20,6 +20,7 @@
 package uniol.apt;
 
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParserTestUtils;
 
 
@@ -47,6 +48,16 @@ public class TestNetsForIsomorphism {
 	}
 
 	/**
+	 * Method to parse ts in folder "nets/isomorphism-nets/" easier.
+	 *
+	 * @param prefixnet Name of wanted ts
+	 * @return wanted ts
+	 */
+	private static TransitionSystem getIsoTs(String prefixnet) {
+		return ParserTestUtils.getAptLTS("nets/isomorphism-nets/" + prefixnet + "-aut.apt");
+	}
+
+	/**
 	 * Method to parse nets in folder "nets/" easier.
 	 *
 	 * @param prefixnet Name of wanted net
@@ -60,32 +71,64 @@ public class TestNetsForIsomorphism {
 		return getIsoNet("iso-net-1A");
 	}
 
+	public static TransitionSystem getIsoTs1A() {
+		return getIsoTs("iso-net-1A");
+	}
+
 	public static PetriNet getIsoNet1B() {
 		return getIsoNet("iso-net-1B");
+	}
+
+	public static TransitionSystem getIsoTs1B() {
+		return getIsoTs("iso-net-1B");
 	}
 
 	public static PetriNet getIsoNet2A() {
 		return getIsoNet("iso-net-2A");
 	}
 
+	public static TransitionSystem getIsoTs2A() {
+		return getIsoTs("iso-net-2A");
+	}
+
 	public static PetriNet getIsoNet2B() {
 		return getIsoNet("iso-net-2B");
+	}
+
+	public static TransitionSystem getIsoTs2B() {
+		return getIsoTs("iso-net-2B");
 	}
 
 	public static PetriNet getIsoNet3A() {
 		return getIsoNet("iso-net-3A");
 	}
 
+	public static TransitionSystem getIsoTs3A() {
+		return getIsoTs("iso-net-3A");
+	}
+
 	public static PetriNet getIsoNet3B() {
 		return getIsoNet("iso-net-3B");
+	}
+
+	public static TransitionSystem getIsoTs3B() {
+		return getIsoTs("iso-net-3B");
 	}
 
 	public static PetriNet getIsoNet4A() {
 		return getIsoNet("iso-net-4A");
 	}
 
+	public static TransitionSystem getIsoTs4A() {
+		return getIsoTs("iso-net-4A");
+	}
+
 	public static PetriNet getIsoNet4B() {
 		return getIsoNet("iso-net-4B");
+	}
+
+	public static TransitionSystem getIsoTs4B() {
+		return getIsoTs("iso-net-4B");
 	}
 
 	public static PetriNet getOneTransitionNet() {
