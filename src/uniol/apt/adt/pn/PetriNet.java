@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import uniol.apt.adt.AbstractGraph;
 import uniol.apt.adt.EdgeKey;
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.SoftMap;
@@ -40,7 +41,6 @@ import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.exception.TransitionFireException;
-import uniol.apt.adt.extension.Extensible;
 
 /**
  * The PetriNet is the base class for representing a petri net. With flows, places, transitions, a initial marking and
@@ -50,7 +50,7 @@ import uniol.apt.adt.extension.Extensible;
  * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
-public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node> {
+public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGraph<PetriNet, Flow, Node> {
 
 	private String name;
 	private long nextPlaceId = 0;
@@ -167,6 +167,7 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 			calcPostsetNodes(sourceId).add(this.getNode(targetId));
 			calcPresetEdges(targetId).add(f);
 			calcPostsetEdges(sourceId).add(f);
+			invokeListeners();
 		}
 		return f;
 	}
@@ -263,6 +264,7 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 			Set<Flow> postE = new HashSet<>();
 			postsetEdges.put(id, postE);
 			++placeRev;
+			invokeListeners();
 			return p;
 		} else {
 			throw new NodeExistsException(this, id);
@@ -408,6 +410,7 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 			presetEdges.put(id, preE);
 			Set<Flow> postE = new HashSet<>();
 			postsetEdges.put(id, postE);
+			invokeListeners();
 			return t;
 		} else {
 			throw new NodeExistsException(this, id);
@@ -547,6 +550,7 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 			postEdges.remove(f);
 		}
 		this.flows.remove(key);
+		invokeListeners();
 	}
 
 	/**
@@ -676,6 +680,7 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 		rmNode(id);
 		places.remove(id);
 		++placeRev;
+		invokeListeners();
 	}
 
 	/**
@@ -710,6 +715,7 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 		}
 		rmNode(id);
 		this.transitions.remove(id);
+		invokeListeners();
 	}
 
 	/**
@@ -945,6 +951,7 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 				+ " net " + getName());
 		}
 		this.initialMarking = m;
+		invokeListeners();
 	}
 
 	/**
@@ -1034,6 +1041,7 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 	 */
 	void setInitialToken(String id, Token t) {
 		initialMarking.setToken(id, t);
+		invokeListeners();
 	}
 
 	/**
@@ -1064,6 +1072,7 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 			this.removeFlow(sourceId, targetId);
 		} else {
 			f.weight = w;
+			invokeListeners();
 		}
 	}
 
@@ -1144,6 +1153,7 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 			throw new NoSuchNodeException(this, id);
 		}
 		t.label = label;
+		invokeListeners();
 	}
 
 	/**

@@ -32,6 +32,7 @@ import java.util.TreeMap;
 import org.apache.commons.collections4.SortedBag;
 import org.apache.commons.collections4.bag.TreeBag;
 
+import uniol.apt.adt.AbstractGraph;
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.SoftMap;
 import uniol.apt.adt.exception.ArcExistsException;
@@ -39,7 +40,6 @@ import uniol.apt.adt.exception.NoSuchEdgeException;
 import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.exception.StructureException;
-import uniol.apt.adt.extension.Extensible;
 
 /**
  * Represents a Transitionsystem. With states, arcs and an alphabet. It holds the pre- and postsets with the help of
@@ -48,7 +48,8 @@ import uniol.apt.adt.extension.Extensible;
  * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
-public class TransitionSystem extends Extensible implements IGraph<TransitionSystem, Arc, State> {
+public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State>
+	implements IGraph<TransitionSystem, Arc, State> {
 
 	private String name;
 	private int nextStateId = 0;
@@ -126,6 +127,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 			throw new IllegalArgumentException("id == null");
 		}
 		this.initialState = this.states.get(id);
+		invokeListeners();
 		if (this.initialState == null) {
 			throw new NoSuchNodeException(this, id);
 		}
@@ -181,6 +183,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 		calcPostsetNodes(sourceId).add(this.getNode(targetId));
 		calcPresetEdges(targetId).add(a);
 		calcPostsetEdges(sourceId).add(a);
+		invokeListeners();
 		return a;
 	}
 
@@ -260,6 +263,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 		presetEdges.put(id, preE);
 		Set<Arc> postE = new HashSet<>();
 		postsetEdges.put(id, postE);
+		invokeListeners();
 		return s;
 	}
 
@@ -404,6 +408,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 
 		arcs.remove(key);
 		removeLabel(label);
+		invokeListeners();
 	}
 
 	/**
@@ -467,6 +472,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 			initialState = null;
 		}
 		this.states.remove(id);
+		invokeListeners();
 	}
 
 	/**
@@ -621,6 +627,7 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 			removeLabel(oldLabel);
 			addLabel(newLabel);
 			this.arcs.put(newKey, a);
+			invokeListeners();
 		}
 	}
 

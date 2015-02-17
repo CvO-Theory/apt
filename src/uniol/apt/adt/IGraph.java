@@ -43,6 +43,20 @@ public interface IGraph<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N e
 	extends IExtensible {
 
 	/**
+	 * Add a listener to this graph. The listener will be invoked on changes to the graph.
+	 * @param listener The listener to add.
+	 * @return true if this listener was added, false if it was already added before.
+	 */
+	public boolean addListener(IGraphListener<G, E, N> listener);
+
+	/**
+	 * Remove a listener from this graph.
+	 * @param listener The listener to remove.
+	 * @return true if this listener was removed, false if it was not added before.
+	 */
+	public boolean removeListener(IGraphListener<G, E, N> listener);
+
+	/**
 	 * Retrieves the name of this graph or "" if not set.
 	 * <p/>
 	 * @return a String containing the name.
