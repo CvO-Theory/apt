@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
+import static org.apache.commons.collections4.bidimap.UnmodifiableBidiMap.unmodifiableBidiMap;
+
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
@@ -43,6 +47,7 @@ import uniol.apt.util.Pair;
  */
 public class IsomorphismLogic {
 	private Deque<ExtendedState> finalState = new LinkedList<>();
+	private final BidiMap<State, State> isomorphism = new DualHashBidiMap<>();
 
 	private final int numNodes;
 	private final TransitionSystem graph1;
@@ -209,7 +214,11 @@ public class IsomorphismLogic {
 		}
 
 		//Set final state, to get pairs of isomorphic nodes.
-		setFinalState(states);
+		this.finalState = states;
+		for (ExtendedState ext : states) {
+			if (ext.depth > 0)
+				isomorphism.put(ext.n, ext.m);
+		}
 
 		return (depth == numNodes);
 	}
@@ -524,13 +533,8 @@ public class IsomorphismLogic {
 		return finalState;
 	}
 
-	/**
-	 * Set final state (includes pairs of isomorphic nodes)
-	 *
-	 * @param finalState
-	 */
-	public void setFinalState(Deque<ExtendedState> finalState) {
-		this.finalState = finalState;
+	public BidiMap<State, State> getIsomorphism() {
+		return unmodifiableBidiMap(isomorphism);
 	}
 }
 
