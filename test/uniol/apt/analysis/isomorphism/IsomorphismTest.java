@@ -19,12 +19,14 @@
 
 package uniol.apt.analysis.isomorphism;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 import static uniol.apt.BestNetCollection.*;
 import static uniol.apt.TestNetsForIsomorphism.*;
 import static uniol.apt.TestTSCollection.getSingleStateTS;
 import static uniol.apt.TestTSCollection.getSingleStateTSWithLoop;
+import static uniol.apt.adt.matcher.Matchers.*;
 
 import java.io.IOException;
 import org.apache.commons.collections4.BidiMap;
@@ -94,12 +96,24 @@ public class IsomorphismTest {
 
 	@Test
 	public void testIsomorphicWithItSelf() throws IOException {
-		testIsomorphism(getTs3A(), getTs3A());
+		BidiMap<State, State> isomorphism = testIsomorphism(getTs3A(), getTs3A());
+		assertTrue(isomorphism.size() == 3);
+		assertThat(isomorphism, allOf(
+					hasEntry(nodeWithID("s0"), nodeWithID("s0")),
+					hasEntry(nodeWithID("s1"), nodeWithID("s1")),
+					hasEntry(nodeWithID("s2"), nodeWithID("s2"))
+					));
 	}
 
 	@Test
 	public void testIsomorphicNets1() throws IOException {
-		testIsomorphism(getTs3A(), getTs3B());
+		BidiMap<State, State> isomorphism = testIsomorphism(getTs3A(), getTs3B());
+		assertTrue(isomorphism.size() == 3);
+		assertThat(isomorphism, allOf(
+					hasEntry(nodeWithID("s0"), nodeWithID("s0")),
+					hasEntry(nodeWithID("s1"), nodeWithID("s1")),
+					hasEntry(nodeWithID("s2"), nodeWithID("s2"))
+					));
 	}
 
 	/**
@@ -111,12 +125,16 @@ public class IsomorphismTest {
 	 */
 	@Test
 	public void testIsomorphicNets2() throws IOException {
-		testIsomorphism(getIsoTs1A(), getIsoTs1B());
+		BidiMap<State, State> isomorphism = testIsomorphism(getIsoTs1A(), getIsoTs1B());
+		assertTrue(isomorphism.size() == 1);
+		assertThat(isomorphism, hasEntry(nodeWithID("s0"), nodeWithID("s0")));
 	}
 
 	@Test
 	public void testIsomorphicNets3() throws IOException {
-		testIsomorphism(getIsoTs2A(), getIsoTs2B());
+		BidiMap<State, State> isomorphism = testIsomorphism(getIsoTs2A(), getIsoTs2B());
+		assertTrue(isomorphism.size() == 1);
+		assertThat(isomorphism, hasEntry(nodeWithID("s0"), nodeWithID("s0")));
 	}
 
 	// Tests for non isomorphic nets (neither weak nor strong isomorphism):
@@ -160,7 +178,11 @@ public class IsomorphismTest {
 	 */
 	@Test
 	public void testNonIsomorphicNets3Own() throws IOException {
-		testWeakIsomorphism(getIsoTs3A(), getIsoTs3B());
+		BidiMap<State, State> isomorphism = testWeakIsomorphism(getIsoTs3A(), getIsoTs3B());
+		assertTrue(isomorphism.size() == 2);
+		assertThat(isomorphism, allOf(
+					hasEntry(nodeWithID("s0"), nodeWithID("s0")),
+					hasEntry(nodeWithID("s1"), nodeWithID("s1"))));
 	}
 
 	/**
