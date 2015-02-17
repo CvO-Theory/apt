@@ -36,11 +36,42 @@ import static uniol.apt.adt.matcher.Matchers.*;
 /** @author Uli Schlachter */
 @Test
 public class SpanningTreeTest {
+	static private SpanningTree<TransitionSystem, Arc, State> get(TransitionSystem ts) {
+		return SpanningTree.<TransitionSystem, Arc, State>get(ts);
+	}
+
+	static private SpanningTree<TransitionSystem, Arc, State> get(TransitionSystem ts, State init) {
+		return SpanningTree.<TransitionSystem, Arc, State>get(ts, init);
+	}
+
+	@Test
+	public void testCache() {
+		TransitionSystem ts = new TransitionSystem();
+
+		SpanningTree<TransitionSystem, Arc, State> tree1 = get(ts);
+		SpanningTree<TransitionSystem, Arc, State> tree2 = get(ts);
+
+		assertThat(tree2, sameInstance(tree1));
+	}
+
+	@Test
+	public void testCacheClear() {
+		TransitionSystem ts = new TransitionSystem();
+
+		SpanningTree<TransitionSystem, Arc, State> tree1 = get(ts);
+
+		ts.createState();
+
+		SpanningTree<TransitionSystem, Arc, State> tree2 = get(ts);
+
+		assertThat(tree2, not(sameInstance(tree1)));
+	}
+
 	@Test
 	public void testEmptyTS() {
 		TransitionSystem ts = new TransitionSystem();
 
-		SpanningTree<TransitionSystem, Arc, State> tree = new SpanningTree<>(ts);
+		SpanningTree<TransitionSystem, Arc, State> tree = get(ts);
 
 		assertThat(tree.getStartNode(), is(equalTo(null)));
 		assertThat(tree.getUnreachableNodes(), is(empty()));
@@ -64,13 +95,13 @@ public class SpanningTreeTest {
 	@Test
 	public void testSingleStateTS() {
 		TransitionSystem ts = TestTSCollection.getSingleStateTS();
-		verifySingleStateTS(new SpanningTree<>(ts, ts.getInitialState()));
+		verifySingleStateTS(get(ts, ts.getInitialState()));
 	}
 
 	@Test
 	public void testSingleStateTS2() {
 		TransitionSystem ts = TestTSCollection.getSingleStateTS();
-		verifySingleStateTS(new SpanningTree<>(ts));
+		verifySingleStateTS(get(ts));
 	}
 
 	@Test
@@ -81,7 +112,7 @@ public class SpanningTreeTest {
 		State s2 = ts.getNode("s2");
 		State s3 = ts.getNode("s3");
 
-		SpanningTree<TransitionSystem, Arc, State> tree = new SpanningTree<>(ts, ts.getInitialState());
+		SpanningTree<TransitionSystem, Arc, State> tree = get(ts, ts.getInitialState());
 
 		assertThat(tree.getStartNode(), is(equalTo(ts.getInitialState())));
 		assertThat(tree.getUnreachableNodes(), is(empty()));
@@ -123,7 +154,7 @@ public class SpanningTreeTest {
 		State t = ts.getNode("t");
 		State v = ts.getNode("v");
 
-		SpanningTree<TransitionSystem, Arc, State> tree = new SpanningTree<>(ts, ts.getInitialState());
+		SpanningTree<TransitionSystem, Arc, State> tree = get(ts, ts.getInitialState());
 
 		assertThat(tree.getStartNode(), is(equalTo(ts.getInitialState())));
 		assertThat(tree.getUnreachableNodes(), is(empty()));
@@ -150,7 +181,7 @@ public class SpanningTreeTest {
 		State r = ts.getNode("r");
 		State s1 = ts.getNode("s1");
 
-		SpanningTree<TransitionSystem, Arc, State> tree = new SpanningTree<>(ts, ts.getInitialState());
+		SpanningTree<TransitionSystem, Arc, State> tree = get(ts, ts.getInitialState());
 
 		assertThat(tree.getStartNode(), is(equalTo(ts.getInitialState())));
 		assertThat(tree.getUnreachableNodes(), is(empty()));
@@ -184,7 +215,7 @@ public class SpanningTreeTest {
 		State s1 = ts.getNode("s1");
 		State fail = ts.getNode("fail");
 
-		SpanningTree<TransitionSystem, Arc, State> tree = new SpanningTree<>(ts, ts.getInitialState());
+		SpanningTree<TransitionSystem, Arc, State> tree = get(ts, ts.getInitialState());
 
 		assertThat(tree.getStartNode(), is(equalTo(ts.getInitialState())));
 		assertThat(tree.getUnreachableNodes(), contains(fail));

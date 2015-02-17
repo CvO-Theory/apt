@@ -19,10 +19,6 @@
 
 package uniol.apt.util;
 
-import uniol.apt.adt.IEdge;
-import uniol.apt.adt.IGraph;
-import uniol.apt.adt.INode;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
@@ -32,6 +28,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import uniol.apt.adt.IEdge;
+import uniol.apt.adt.IGraph;
+import uniol.apt.adt.INode;
+import uniol.apt.adt.StructuralExtensionRemover;
+import uniol.apt.adt.exception.StructureException;
 
 /**
  * Calculate a spanning tree of a graph based on a breadth-first search.
@@ -47,14 +49,67 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	private final N startNode;
 	private final G graph;
 
-	// TODO: Possible extensions: Spanning forest?
+	/**
+	 * Construct a spanning tree for the given graph. If a spanning tree was already computed, it is re-used instead
+	 * of creating a new one.
+	 * @param graph The graph for which a spanning tree should be constructed.
+	 * @return A spanning tree.
+	 */
+	static public <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
+			SpanningTree<G, E, N> get(G graph) {
+		return get(graph, graph.getNodes().isEmpty() ? null : graph.getNodes().iterator().next());
+	}
+
+	/**
+	 * Construct a spanning tree for the given graph. If a spanning tree was already computed, it is re-used instead
+	 * of creating a new one.
+	 * @param graph The graph for which a spanning tree should be constructed.
+	 * @param startNode The start node for the spanning tree.
+	 * @return A spanning tree.
+	 */
+	static public <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
+			SpanningTree<G, E, N> get(G graph, N startNode) {
+		String key = SpanningTree.class.getName();
+
+		Object extension = null;
+		try {
+			extension = graph.getExtension(key);
+		}
+		catch (StructureException e) {
+			// No such extension. Returning "null" would be too easy...
+		}
+
+		Map<Object, Object> map = null;
+		if (extension != null && extension instanceof Map) {
+			@SuppressWarnings("unchecked")
+			Map<Object, Object> castedMap = (Map<Object, Object>) extension;
+			map = castedMap;
+		} else {
+			map = new HashMap<>();
+			graph.putExtension(key, map);
+			// Save this map as an extension, but make sure that it is removed if the structure of
+			// the graph is changed in any way.
+			graph.addListener(new StructuralExtensionRemover<G, E, N>(key));
+		}
+
+		Object tree = map.get(startNode);
+		if (tree != null && tree instanceof SpanningTree) {
+			@SuppressWarnings("unchecked")
+			SpanningTree<G, E, N> result = (SpanningTree<G, E, N>) tree;
+			return result;
+		}
+
+		SpanningTree<G, E, N> result = new SpanningTree<>(graph, startNode);
+		map.put(startNode, result);
+		return result;
+	}
 
 	/**
 	 * Construct a new spanning tree
 	 * @param graph The graph for which a spanning tree should be constructed.
 	 * @param startNode The start node for the spanning tree.
 	 */
-	public SpanningTree(G graph, N startNode) {
+	private SpanningTree(G graph, N startNode) {
 		// Calculate the spanning tree: For each node we remember its predecessor in the tree and we keep a set
 		// of unvisited nodes. We visit unvisited nodes in turn, look at all their children which we haven't
 		// visited yet and enlarge the spanning tree by the path from the current node to the children.
@@ -95,14 +150,6 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 		this.chords = Collections.unmodifiableSet(chords);
 		this.startNode = startNode;
 		this.graph = graph;
-	}
-
-	/**
-	 * Construct a new spanning tree
-	 * @param graph The graph for which a spanning tree should be constructed.
-	 */
-	public SpanningTree(G graph) {
-		this(graph, graph.getNodes().isEmpty() ? null : graph.getNodes().iterator().next());
 	}
 
 	/**

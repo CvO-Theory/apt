@@ -74,7 +74,7 @@ public class TotallyReachable {
 				break;
 			case SPANNING_TREE:
 				SpanningTree<TransitionSystem, Arc, State> tree
-					= new SpanningTree<>(ts, ts.getInitialState());
+					= SpanningTree.<TransitionSystem, Arc, State>get(ts, ts.getInitialState());
 				if (tree.isTotallyReachable())
 					unreachableState = null;
 				else

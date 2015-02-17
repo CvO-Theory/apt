@@ -60,7 +60,7 @@ public class RegionUtility {
 	 * @param ts The TransitionSystem on which regions should be examined.
 	 */
 	public RegionUtility(TransitionSystem ts) {
-		this(new SpanningTree<TransitionSystem, Arc, State>(ts, ts.getInitialState()));
+		this(SpanningTree.<TransitionSystem, Arc, State>get(ts, ts.getInitialState()));
 	}
 
 	/**
