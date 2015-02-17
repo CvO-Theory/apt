@@ -36,6 +36,12 @@ public interface IExtensible {
 	public void putExtension(String key, Object value);
 
 	/**
+	 * Removes the value associated with the given key.
+	 * @param key An identifying key as string.
+	 */
+	public void removeExtension(String key);
+
+	/**
 	 * Retrieves the saved value using the given key as identifier.
 	 * <p/>
 	 * @param key An identifying key as string.

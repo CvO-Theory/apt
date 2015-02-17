@@ -73,6 +73,7 @@ public class Extensible implements IExtensible {
      * Removes the value associated with the given key.
      * @param key An identifying key as string.
      */
+    @Override
     public void removeExtension(String key) {
         this.extensions.remove(key);
     }
