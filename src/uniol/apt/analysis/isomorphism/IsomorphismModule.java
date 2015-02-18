@@ -60,7 +60,7 @@ public class IsomorphismModule extends AbstractModule {
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("isomorphic_reachability_graphs", Boolean.class,
 			ModuleOutputSpec.PROPERTY_SUCCESS);
-		// TODO: Is it possible to find some witnesses?
+		outputSpec.addReturnValue("isomorphism", Isomorphism.class);
 	}
 
 	@Override
@@ -80,8 +80,11 @@ public class IsomorphismModule extends AbstractModule {
 		if(input.getParameter("dontCheckLabels", String.class) != null)
 		    checkLabels = false;
 
-		boolean result = new IsomorphismLogic(lts1, lts2, checkLabels).isIsomorphic();
+		IsomorphismLogic logic = new IsomorphismLogic(lts1, lts2, checkLabels);
+		boolean result = logic.isIsomorphic();
 		output.setReturnValue("isomorphic_reachability_graphs", Boolean.class, result);
+		if (result)
+			output.setReturnValue("isomorphism", Isomorphism.class, new Isomorphism(logic.getIsomorphism()));
 	}
 
 	@Override

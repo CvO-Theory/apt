@@ -75,6 +75,7 @@ import uniol.apt.analysis.invariants.ComputeMinSemiPosInvariantsModule;
 import uniol.apt.analysis.invariants.CoveredByInvariantModule;
 import uniol.apt.analysis.invariants.Vector;
 import uniol.apt.analysis.isolated.IsolatedModule;
+import uniol.apt.analysis.isomorphism.Isomorphism;
 import uniol.apt.analysis.isomorphism.IsomorphismModule;
 import uniol.apt.analysis.language.FiringSequence;
 import uniol.apt.analysis.language.LanguageEquivalenceModule;
@@ -175,6 +176,7 @@ import uniol.apt.ui.impl.returns.BooleanReturnValueTransformation;
 import uniol.apt.ui.impl.returns.ComponentsReturnValueTransformation;
 import uniol.apt.ui.impl.returns.INodeCollectionReturnValueTransformation;
 import uniol.apt.ui.impl.returns.INodeReturnValueTransformation;
+import uniol.apt.ui.impl.returns.IsomorphismReturnValueTransformation;
 import uniol.apt.ui.impl.returns.MarkingReturnValueTransformation;
 import uniol.apt.ui.impl.returns.NetReturnValueTransformation;
 import uniol.apt.ui.impl.returns.NonBisimilarPathReturnValueTransformation;
@@ -353,6 +355,8 @@ public class APT {
 			new INodeCollectionReturnValueTransformation<FiringSequence>());
 		returnValuesTransformer.addTransformation((Class<INode<?, ?, ?>>) (Class<?>) INode.class,
 			new INodeReturnValueTransformation<>());
+		returnValuesTransformer.addTransformation(Isomorphism.class,
+				new IsomorphismReturnValueTransformation());
 		returnValuesTransformer.addTransformation(Integer.class,
 			new ToStringReturnValueTransformation<Integer>());
 		returnValuesTransformer.addTransformation(Marking.class, new MarkingReturnValueTransformation());
