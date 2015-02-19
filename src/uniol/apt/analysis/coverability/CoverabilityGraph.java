@@ -291,27 +291,29 @@ public class CoverabilityGraph {
 			}
 		}
 
-		for (CoverabilityGraphEdge edge : this.getEdges()) {
-			State source = ltsStates.get(edge.getSource().getMarking());
-			State target = ltsStates.get(edge.getTarget().getMarking());
-			Transition transition = edge.getTransition();
-			try {
-				Arc e = lts.createArc(source.getId(), target.getId(), transition.getLabel());
-				e.putExtension(Transition.class.getName(), transition);
-				e.putExtension(CoverabilityGraphEdge.class.getName(), edge);
-			} catch (ArcExistsException e) {
-				// Ignore this. Continue your life. Go away. There is nothing to see here.
-				//
-				// Per definition, a LTS doesn't have arc weights. For a given source node, label and
-				// target node, there can only be a single arc (or no arc at all). However, we just
-				// calculated something which says otherwise. Since the definition is always right,
-				// let's just ignore this calculation.
-				//
-				// (For unlabeled Petri-nets, this cannot happen)
-				//
-				// For everyone out there who uses the extension that we put on Arcs: You get some
-				// random Transition/CoverabilityGraphEdge instance. It might be another Transition the
-				// next time you run this code.
+		for (CoverabilityGraphNode sourceNode : this.getNodes()) {
+			State source = ltsStates.get(sourceNode.getMarking());
+			for (CoverabilityGraphEdge edge : sourceNode.getPostsetEdges()) {
+				State target = ltsStates.get(edge.getTarget().getMarking());
+				Transition transition = edge.getTransition();
+				try {
+					Arc e = lts.createArc(source.getId(), target.getId(), transition.getLabel());
+					e.putExtension(Transition.class.getName(), transition);
+					e.putExtension(CoverabilityGraphEdge.class.getName(), edge);
+				} catch (ArcExistsException e) {
+					// Ignore this. Continue your life. Go away. There is nothing to see here.
+					//
+					// Per definition, a LTS doesn't have arc weights. For a given source node,
+					// label and target node, there can only be a single arc (or no arc at all).
+					// However, we just calculated something which says otherwise. Since the
+					// definition is always right, let's just ignore this calculation.
+					//
+					// (For unlabeled Petri-nets, this cannot happen)
+					//
+					// For everyone out there who uses the extension that we put on Arcs: You get
+					// some random Transition/CoverabilityGraphEdge instance. It might be another
+					// Transition the next time you run this code.
+				}
 			}
 		}
 
