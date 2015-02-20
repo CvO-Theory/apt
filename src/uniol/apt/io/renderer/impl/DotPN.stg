@@ -1,0 +1,68 @@
+/*-
+ * APT - Analysis of Petri Nets and labeled Transition systems
+ * Copyright (C) 2015  vsp
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+/**
+ * Stringtemplate template group file for the Dot file format.
+ * @author: vsp
+ */
+
+/**
+ * Main template, the DotPNRenderer uses this.
+ * @param places A list of all places in the net
+ * @param transitions A list of transitions of the net
+ */
+pn(pn) ::= <<
+digraph PN {
+	node [fontsize=20,shape=rect,height=0.5,width=0.5,fixedsize=true];
+	<pn.places:place();separator="\n">
+
+	node [fontsize=20,shape=circle,height=0.5,width=0.5,fixedsize=true];
+	<pn.transitions:transition();separator="\n">
+
+	edge [fontsize=20]
+	<pn.edges:arc();separator="\n">
+}
+
+>>
+
+/**
+ * Template for a single transition
+ * @param t Object describing the transition (Needed properties: id, label)
+ */
+transition(t) ::= <<
+<t.id>[label="<t.id>", xlabel="<t.label>"];
+>>
+
+/**
+ * Template for a single place
+ * @param p Object describing the place (Needed properties: id and initialToken)
+ */
+place(p) ::= <<
+<p.id>[label="<p.initialToken>", xlabel="<p.id>", shape=circle];
+>>
+
+/**
+ * Template for an arc
+ * @param a an Object holding an arc (Needed properties: source and target, both must hav an id property)
+ */
+arc(a) ::= <<
+<a.source.id> -> <a.target.id> [xlabel="<a.weight>"];
+>>
+
+// vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
