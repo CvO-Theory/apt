@@ -341,18 +341,6 @@ public class Region {
 	}
 
 	/**
-	 * Create an impure region with the given weight vector.
-	 * @param utility The RegionUtility whose alphabet should be used.
-	 * @param vector A vector which contains the weight for each event in the order described by the RegionUtility.
-	 * This vector first contains all backward weights and afterwards all forward weights.
-	 * @return The resulting region.
-	 */
-	public static Region createImpureRegionFromVector(RegionUtility utility, List<Integer> vector) {
-		return new Region(utility, vector.subList(0, vector.size() / 2),
-				vector.subList(vector.size() / 2, vector.size()));
-	}
-
-	/**
 	 * Create the trivial region which assigns weight 0 to everything.
 	 * @param utility The RegionUtility whose alphabet should be used.
 	 * @return The resulting region.
