@@ -58,8 +58,6 @@ public class CoverabilityGraph {
 	private final Deque<CoverabilityGraphNode> unvisited = new LinkedList<>();
 	// List of nodes that were already visited, this is a list to implement iterators.
 	private final List<CoverabilityGraphNode> nodes = new ArrayList<>();
-	// Actual marking
-	private Marking marking;
 
 	/**
 	 * Construct the coverability graph for a given Petri net. This constructor is actually cheap. The coverability
@@ -70,7 +68,6 @@ public class CoverabilityGraph {
 	public CoverabilityGraph(PetriNet pn) {
 		this.pn = pn;
 		addNode(null, pn.getInitialMarkingCopy(), null, null);
-		marking = pn.getInitialMarkingCopy();
 	}
 
 	/**
@@ -102,21 +99,17 @@ public class CoverabilityGraph {
 	 */
 	Set<CoverabilityGraphEdge> getPostsetEdges(CoverabilityGraphNode node) {
 		// Now follow all activated transitions of that node
-		marking = new Marking(node.getMarking());
+		final Marking marking = node.getMarking();
 		final Set<CoverabilityGraphEdge> result = new HashSet<>();
 		for (Transition t : pn.getTransitions()) {
 			if (!t.isFireable(marking)) {
 				continue;
 			}
 
-			marking.fire(t);
+			Marking newMarking = t.fire(marking);
 			// checkCover() will also change the marking of the Petri net if some OMEGAs are created!
-			CoverabilityGraphNode covered = checkCover(marking, node);
-			result.add(addArc(t, marking, node, covered));
-
-			// We can't use t.unfire() here because checkCover() might have introduced OMEGAs into
-			// the marking that wouldn't be undone, hence we do this.
-			marking = node.getMarking();
+			CoverabilityGraphNode covered = checkCover(newMarking, node);
+			result.add(addArc(t, newMarking, node, covered));
 		}
 
 		return result;
