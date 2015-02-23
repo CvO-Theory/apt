@@ -35,6 +35,11 @@ public class BasicImpureSeparationTest {
 		public Separation createSeparation(RegionUtility utility, List<Region> basis, String[] locationMap) {
 			return new BasicImpureSeparation(utility, basis, locationMap);
 		}
+
+		@Override
+		public boolean supportsImpure() {
+			return true;
+		}
 	}
 
 	@Factory

@@ -45,6 +45,7 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 public class SeparationTestHelper {
 	public interface SeparationFactory {
 		Separation createSeparation(RegionUtility utility, List<Region> basis, String[] locationMap);
+		boolean supportsImpure();
 	}
 
 	final private SeparationFactory factory;
@@ -86,6 +87,7 @@ public class SeparationTestHelper {
 
 	abstract static public class Tester {
 		private final SeparationFactory factory;
+		private final String skipEvent;
 		protected TransitionSystem ts;
 		protected RegionUtility utility;
 		protected List<Region> regionBasis;
@@ -94,8 +96,13 @@ public class SeparationTestHelper {
 		protected Region region3;
 		protected Separation separation;
 
-		public Tester(SeparationFactory factory) {
+		public Tester(SeparationFactory factory, String skipEvent) {
 			this.factory = factory;
+			this.skipEvent = skipEvent;
+		}
+
+		public Tester(SeparationFactory factory) {
+			this(factory, null);
 		}
 
 		abstract protected TransitionSystem getTS();
@@ -146,7 +153,8 @@ public class SeparationTestHelper {
 			List<Object[]> pairs = new ArrayList<>();
 			for (State state : ts.getNodes())
 				for (String event : ts.getAlphabet())
-					pairs.add(new Object[] { state.getId(), event });
+					if (!event.equals(skipEvent) || factory.supportsImpure())
+						pairs.add(new Object[] { state.getId(), event });
 			return pairs.toArray(new Object[][] {});
 		}
 
@@ -172,7 +180,7 @@ public class SeparationTestHelper {
 
 	static public class ImpureSynthesizablePathTS extends Tester {
 		public ImpureSynthesizablePathTS(SeparationFactory factory) {
-			super(factory);
+			super(factory, "b");
 		}
 
 		@Override

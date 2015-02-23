@@ -44,6 +44,11 @@ public class InequalitySystemSeparationTest {
 		public Separation createSeparation(RegionUtility utility, List<Region> basis, String[] locationMap) {
 			return new InequalitySystemSeparation(utility, basis, properties, locationMap);
 		}
+
+		@Override
+		public boolean supportsImpure() {
+			return !properties.contains(PNProperties.PURE);
+		}
 	}
 
 	@Factory
