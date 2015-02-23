@@ -266,8 +266,9 @@ public class CoverabilityGraph {
 	 * @return The new transition system.
 	 */
 	private TransitionSystem toLTS(boolean onlyReachability) throws UnboundedException {
+		String name = (onlyReachability ? "Reachability" : "Coverability") + " graph of " + this.pn.getName();
 		Map<Marking, State> ltsStates = new HashMap<>();
-		TransitionSystem lts = new TransitionSystem();
+		TransitionSystem lts = new TransitionSystem(name);
 		lts.putExtension(PetriNet.class.getName(), this.pn);
 
 		for (CoverabilityGraphNode node : this.getNodes()) {
