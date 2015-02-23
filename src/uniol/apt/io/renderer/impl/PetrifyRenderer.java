@@ -43,6 +43,8 @@ public class PetrifyRenderer implements PNTSRenderer {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(".model ").append(pn.getName());
+		if (pn.getName().isEmpty())
+			sb.append("model");
 		sb.append("\n");
 
 		sb.append(".inputs ");
@@ -127,6 +129,7 @@ public class PetrifyRenderer implements PNTSRenderer {
 		sb.append("\n");
 
 		sb.append(".end");
+		sb.append("\n");
 
 		return sb.toString();
 	}
@@ -136,6 +139,8 @@ public class PetrifyRenderer implements PNTSRenderer {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(".model ").append(ts.getName());
+		if (ts.getName().isEmpty())
+			sb.append("model");
 		sb.append("\n");
 
 		sb.append(".inputs ");
@@ -163,6 +168,7 @@ public class PetrifyRenderer implements PNTSRenderer {
 		sb.append("\n");
 
 		sb.append(".end");
+		sb.append("\n");
 		return sb.toString();
 	}
 }
