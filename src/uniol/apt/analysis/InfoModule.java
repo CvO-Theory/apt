@@ -41,6 +41,11 @@ public class InfoModule extends AbstractModule {
 
 	@Override
 	public String getShortDescription() {
+		return "Report basic statistics about a Petri net.";
+	}
+
+	@Override
+	public String getLongDescription() {
 		return "Report the number of places, transitions, different transition labels," + System.lineSeparator() +
 				"arcs, and tokens in the initial marking of the given Petri net.";
 	}
