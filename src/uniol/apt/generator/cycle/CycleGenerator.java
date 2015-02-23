@@ -52,7 +52,8 @@ public class CycleGenerator {
 			throw new IllegalArgumentException("Cannot construct cycles of a non-positive size");
 		}
 
-		PetriNet pn = new PetriNet();
+		PetriNet pn = new PetriNet("Cycle of size " + String.valueOf(n)
+				+ " with " + String.valueOf(init) + " tokens");
 
 		Place p = pn.createPlace("p0");
 		Place pfirst = p;

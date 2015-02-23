@@ -41,7 +41,7 @@ abstract class AbstractBitNetGenerator implements BitNetGenerator {
 		if (n < 1)
 			throw new IllegalArgumentException("Number of bits must at least be 1.");
 
-		PetriNet pn = new PetriNet();
+		PetriNet pn = new PetriNet(String.valueOf(n) + "-bit net");
 		Bit[] bits = new Bit[n];
 
 		for (int i = 0; i < n; i++) {

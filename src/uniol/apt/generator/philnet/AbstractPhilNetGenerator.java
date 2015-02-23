@@ -50,7 +50,7 @@ abstract class AbstractPhilNetGenerator implements PhilNetGenerator {
 		if (n < 2)
 			throw new IllegalArgumentException("Number of philosophers must at least be 2.");
 
-		PetriNet pn = new PetriNet();
+		PetriNet pn = new PetriNet(String.valueOf(n) + "-philosophers net");
 		Philosopher[] phils = new Philosopher[n];
 
 		for (int i = 0; i < n; i++) {
