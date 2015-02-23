@@ -32,8 +32,8 @@ import org.testng.annotations.Test;
 public class PlainPureSeparationTest {
 	static public class PlainPureSeparationFactory implements SeparationTestHelper.SeparationFactory {
 		@Override
-		public Separation createSeparation(RegionUtility utility, List<Region> basis, String[] locationMap) {
-			return new PlainPureSeparation(utility, basis, locationMap);
+		public Separation createSeparation(RegionUtility utility, String[] locationMap) {
+			return new PlainPureSeparation(utility, locationMap);
 		}
 
 		@Override

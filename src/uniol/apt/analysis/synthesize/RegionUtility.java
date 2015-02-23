@@ -30,6 +30,7 @@ import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.util.SpanningTree;
+import uniol.apt.util.equations.EquationSystem;
 
 /**
  * Utility class for generating regions. This class assigns indices to the variable and produces parikh vectors that
@@ -41,6 +42,7 @@ public class RegionUtility {
 	private final SpanningTree<TransitionSystem, Arc, State> tree;
 	private final List<String> eventList;
 	private final Map<State, List<Integer>> parikhVectorMap = new HashMap<>();
+	private List<Region> regionBasis;
 
 	/**
 	 * Construct a new RegionUtility.
@@ -50,6 +52,7 @@ public class RegionUtility {
 		this.ts = tree.getGraph();
 		this.tree = tree;
 		this.eventList = Collections.unmodifiableList(new ArrayList<>(ts.getAlphabet()));
+		this.regionBasis = null;
 	}
 
 	/**
@@ -152,6 +155,37 @@ public class RegionUtility {
 			result.add(sourcePV.get(i) - targetPV.get(i) + (i == eventIndex ? 1 : 0));
 
 		return Collections.unmodifiableList(result);
+	}
+
+	/**
+	 * Calculate a basis of abstract regions for the LTS that this region utility belongs to.
+	 * This calculates a basis of abstract regions via proposition 6.14 from "Petri Net Synthesis" by Badouel,
+	 * Bernardinello and Darondeau. All regions on the LTS are a linear combinations of the elements in the basis.
+	 * @return The region basis.
+	 */
+	public List<Region> getRegionBasis() {
+		if (this.regionBasis == null) {
+			EquationSystem system = new EquationSystem(this.getNumberOfEvents());
+
+			// The events on each fundamental circle must form a T-Invariant of a Petri Net which generates this
+			// transition system. Thus, each region must have zero effect on such a circle.
+			for (Arc chord : tree.getChords()) {
+				try {
+					system.addEquation(this.getParikhVectorForEdge(chord));
+				}
+				catch (UnreachableException e) {
+					throw new AssertionError("A chord by definition belongs to reachable nodes, "
+							+ "yet one of them was unreachable?", e);
+				}
+			}
+
+			List<Region> result = new ArrayList<>();
+			for (List<Integer> vector : system.findBasis())
+				result.add(Region.createPureRegionFromVector(this, vector));
+
+			this.regionBasis = Collections.unmodifiableList(result);
+		}
+		return this.regionBasis;
 	}
 }
 

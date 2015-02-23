@@ -41,23 +41,21 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 	 * Construct a new instance for solving separation problems. This constructor does not do any checks for
 	 * supported properties. It is the caller's responsibility to check this.
 	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system.
 	 * @param locationMap Mapping that describes the location of each event.
 	 */
-	protected BasicImpureSeparation(RegionUtility utility, List<Region> basis, String[] locationMap) {
-		super(utility, basis, locationMap);
+	protected BasicImpureSeparation(RegionUtility utility, String[] locationMap) {
+		super(utility, locationMap);
 	}
 
 	/**
 	 * Construct a new instance for solving separation problems.
 	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system.
 	 * @param properties Properties that the calculated region should satisfy.
 	 * @param locationMap Mapping that describes the location of each event.
 	 */
-	public BasicImpureSeparation(RegionUtility utility, List<Region> basis, PNProperties properties,
+	public BasicImpureSeparation(RegionUtility utility, PNProperties properties,
 			String[] locationMap) throws UnsupportedPNPropertiesException {
-		this(utility, basis, locationMap);
+		this(utility, locationMap);
 		if (!properties.equals(new PNProperties()))
 			throw new UnsupportedPNPropertiesException();
 	}
@@ -79,6 +77,7 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 		// is enabled. This means we want 0 > r_E(Psi_s - Psi_s').
 		InequalitySystem system = new InequalitySystem();
 		int eventIndex = utility.getEventIndex(event);
+		final List<Region> basis = utility.getRegionBasis();
 		if (!utility.getSpanningTree().isReachable(state))
 			// Unreachable states cannot be separated
 			return null;

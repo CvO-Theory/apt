@@ -150,38 +150,36 @@ public class SeparationUtility extends DebugUtil {
 	/**
 	 * Construct a new Separation instance.
 	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
-	 * stable iteration order!
 	 * @param properties Properties that the calculated region should satisfy.
 	 * @return A suitable Separation instance
 	 */
-	static public Separation createSeparationInstance(RegionUtility utility, List<Region> basis,
-			PNProperties properties) throws MissingLocationException {
+	static public Separation createSeparationInstance(RegionUtility utility, PNProperties properties)
+			throws MissingLocationException {
 		String[] locationMap = getLocationMap(utility);
 		Separation result = null;
 		try {
 			if (result == null)
-				result = new BasicPureSeparation(utility, basis, properties, locationMap);
+				result = new BasicPureSeparation(utility, properties, locationMap);
 		}
 		catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
 		}
 		try {
 			if (result == null)
-				result = new BasicImpureSeparation(utility, basis, properties, locationMap);
+				result = new BasicImpureSeparation(utility, properties, locationMap);
 		}
 		catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
 		}
 		try {
 			if (result == null)
-				result = new PlainPureSeparation(utility, basis, properties, locationMap);
+				result = new PlainPureSeparation(utility, properties, locationMap);
 		}
 		catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
 		}
 		if (result == null)
-			result = new InequalitySystemSeparation(utility, basis, properties, locationMap);
+			result = new InequalitySystemSeparation(utility, properties, locationMap);
 
 		debug("Created Separation instance from class ", result.getClass().getName());
 		return result;

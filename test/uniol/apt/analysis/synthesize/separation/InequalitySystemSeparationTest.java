@@ -41,8 +41,8 @@ public class InequalitySystemSeparationTest {
 		}
 
 		@Override
-		public Separation createSeparation(RegionUtility utility, List<Region> basis, String[] locationMap) {
-			return new InequalitySystemSeparation(utility, basis, properties, locationMap);
+		public Separation createSeparation(RegionUtility utility, String[] locationMap) {
+			return new InequalitySystemSeparation(utility, properties, locationMap);
 		}
 
 		@Override

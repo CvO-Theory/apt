@@ -44,7 +44,7 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 /** @author Uli Schlachter */
 public class SeparationTestHelper {
 	public interface SeparationFactory {
-		Separation createSeparation(RegionUtility utility, List<Region> basis, String[] locationMap);
+		Separation createSeparation(RegionUtility utility, String[] locationMap);
 		boolean supportsImpure();
 	}
 
@@ -69,11 +69,11 @@ public class SeparationTestHelper {
 		return pairs.toArray(new Object[pairs.size()]);
 	}
 
-	static private void checkEventSeparation(SeparationFactory factory, RegionUtility utility, List<Region> basis,
+	static private void checkEventSeparation(SeparationFactory factory, RegionUtility utility,
 			String stateName, String event) throws UnreachableException {
 		State state = utility.getTransitionSystem().getNode(stateName);
 		String[] locationMap = new String[utility.getNumberOfEvents()];
-		Region r = factory.createSeparation(utility, basis, locationMap).calculateSeparatingRegion(state, event);
+		Region r = factory.createSeparation(utility, locationMap).calculateSeparatingRegion(state, event);
 
 		// "event" must have a non-zero backwards weight
 		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));
@@ -90,7 +90,6 @@ public class SeparationTestHelper {
 		private final String skipEvent;
 		protected TransitionSystem ts;
 		protected RegionUtility utility;
-		protected List<Region> regionBasis;
 		protected Region region1;
 		protected Region region2;
 		protected Region region3;
@@ -127,13 +126,8 @@ public class SeparationTestHelper {
 			region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1, 0));
 			region3 = Region.createPureRegionFromVector(utility, Arrays.asList(0, 0, -1));
 
-			regionBasis = new ArrayList<>();
-			regionBasis.add(region1);
-			regionBasis.add(region2);
-			regionBasis.add(region3);
-
 			String[] locationMap = new String[3];
-			separation = factory.createSeparation(utility, regionBasis, locationMap);
+			separation = factory.createSeparation(utility, locationMap);
 		}
 
 		@Test
@@ -163,7 +157,7 @@ public class SeparationTestHelper {
 			State state = utility.getTransitionSystem().getNode(stateName);
 			if (SeparationUtility.isEventEnabled(state, event) || stateName.equals("unreachable"))
 				return;
-			checkEventSeparation(factory, utility, regionBasis, stateName, event);
+			checkEventSeparation(factory, utility, stateName, event);
 		}
 	}
 
@@ -192,21 +186,14 @@ public class SeparationTestHelper {
 	@Test
 	public void testCalculate3() throws UnreachableException {
 		RegionUtility utility = new RegionUtility(TestTSCollection.getOneCycleLTS());
-		List<Region> basis = new ArrayList<>();
 
-		// Event order does not matter here, all events behave the same
-		basis.add(Region.createPureRegionFromVector(utility, Arrays.asList(-1, 1, 0, 0)));
-		basis.add(Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0, 1, 0)));
-		basis.add(Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0, 0, 1)));
-
-		checkEventSeparation(factory, utility, basis, "s1", "c");
+		checkEventSeparation(factory, utility, "s1", "c");
 	}
 
 	static public class CrashkursCC2Tests {
 		final private SeparationFactory factory;
 		protected TransitionSystem ts;
 		protected RegionUtility utility;
-		protected List<Region> regionBasis;
 
 		public CrashkursCC2Tests(SeparationFactory factory) {
 			this.factory = factory;
@@ -222,16 +209,12 @@ public class SeparationTestHelper {
 			assertThat(utility.getEventIndex("t1"), is(0));
 			assertThat(utility.getEventIndex("t2"), is(1));
 			assertThat(utility.getEventIndex("t3"), is(2));
-
-			regionBasis = new ArrayList<>();
-			regionBasis.add(Region.createPureRegionFromVector(utility, Arrays.asList(1, 0, -1)));
-			regionBasis.add(Region.createPureRegionFromVector(utility, Arrays.asList(0, 1, 0)));
 		}
 
 		@Test
 		public void testNoStateRestriction() throws UnreachableException {
 			String[] locationMap = new String[3];
-			Region region = factory.createSeparation(utility, regionBasis, locationMap)
+			Region region = factory.createSeparation(utility, locationMap)
 				.calculateSeparatingRegion(ts.getNode("s3"), "t2");
 
 			assertThat(region.getMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
@@ -246,7 +229,6 @@ public class SeparationTestHelper {
 		protected List<String> word;
 		protected TransitionSystem ts;
 		protected RegionUtility utility;
-		protected List<Region> regionBasis;
 
 		public TestWordB2AB5AB6AB6(SeparationFactory factory) {
 			this.factory = factory;
@@ -258,10 +240,6 @@ public class SeparationTestHelper {
 					"b", "b", "b", "b");
 			ts = SynthesizeWordModule.makeTS(word);
 			utility = new RegionUtility(ts);
-
-			regionBasis = new ArrayList<>();
-			regionBasis.add(Region.createPureRegionFromVector(utility, Arrays.asList(1, 0)));
-			regionBasis.add(Region.createPureRegionFromVector(utility, Arrays.asList(0, 1)));
 		}
 
 		@DataProvider(name = "stateDisabledEventPairs")
@@ -277,7 +255,7 @@ public class SeparationTestHelper {
 		@Test(dataProvider = "stateDisabledEventPairs")
 		public void testEventSeparation(String state, String event) throws UnreachableException {
 			String[] locationMap = new String[2];
-			Separation separation = factory.createSeparation(utility, regionBasis, locationMap);
+			Separation separation = factory.createSeparation(utility, locationMap);
 			Region r = separation.calculateSeparatingRegion(ts.getNode(state), event);
 
 			assertThat(r, notNullValue());

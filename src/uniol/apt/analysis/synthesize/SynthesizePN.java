@@ -57,7 +57,6 @@ import uniol.apt.util.Pair;
  */
 public class SynthesizePN extends DebugUtil {
 	private final TransitionSystem ts;
-	private final RegionBasis regionBasis;
 	private final RegionUtility utility;
 	private final Set<Region> regions = new HashSet<>();
 	private final Set<Set<State>> maximalFailedStateSeparationProblems = new HashSet<>();
@@ -73,11 +72,10 @@ public class SynthesizePN extends DebugUtil {
 	public SynthesizePN(RegionUtility utility, PNProperties properties) throws MissingLocationException {
 		this.ts = utility.getTransitionSystem();
 		this.utility = utility;
-		this.regionBasis = new RegionBasis(utility);
 		this.properties = properties;
-		this.separation = SeparationUtility.createSeparationInstance(utility, regionBasis, properties);
+		this.separation = SeparationUtility.createSeparationInstance(utility, properties);
 
-		debug("Region basis: ", regionBasis);
+		debug("Region basis: ", utility.getRegionBasis());
 
 		// ESSP calculates new regions while SSP only choses regions from the basis. Solve ESSP first since the
 		// calculated regions may also solve SSP and thus we get less places in the resulting net.

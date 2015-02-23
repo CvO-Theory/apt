@@ -39,32 +39,28 @@ import uniol.apt.util.equations.InequalitySystem;
  */
 class BasicPureSeparation extends DebugUtil implements Separation {
 	protected final RegionUtility utility;
-	protected final List<Region> basis;
 	protected final String[] locationMap;
 
 	/**
 	 * Construct a new instance for solving separation problems. This constructor does not do any checks for
 	 * supported properties. It is the caller's responsibility to check this.
 	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system.
 	 * @param locationMap Mapping that describes the location of each event.
 	 */
-	protected BasicPureSeparation(RegionUtility utility, List<Region> basis, String[] locationMap) {
+	protected BasicPureSeparation(RegionUtility utility, String[] locationMap) {
 		this.utility = utility;
-		this.basis = basis;
 		this.locationMap = locationMap;
 	}
 
 	/**
 	 * Construct a new instance for solving separation problems.
 	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system.
 	 * @param properties Properties that the calculated region should satisfy.
 	 * @param locationMap Mapping that describes the location of each event.
 	 */
-	public BasicPureSeparation(RegionUtility utility, List<Region> basis, PNProperties properties,
+	public BasicPureSeparation(RegionUtility utility, PNProperties properties,
 			String[] locationMap) throws UnsupportedPNPropertiesException {
-		this(utility, basis, locationMap);
+		this(utility, locationMap);
 		if (!properties.equals(new PNProperties(PNProperties.PURE)))
 			throw new UnsupportedPNPropertiesException();
 	}
@@ -77,7 +73,7 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 	 */
 	@Override
 	public Region calculateSeparatingRegion(State state, State otherState) {
-		for (Region region : basis)
+		for (Region region : utility.getRegionBasis())
 			if (SeparationUtility.isSeparatingRegion(utility, region, state, otherState))
 				return region;
 
@@ -106,8 +102,8 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 		// Only events having the same location as 'event' may consume token from this region.
 		for (int eventIndex = 0; eventIndex < utility.getNumberOfEvents(); eventIndex++) {
 			if (locationMap[eventIndex] != null && !locationMap[eventIndex].equals(location)) {
-				List<Integer> inequality = new ArrayList<>(basis.size());
-				for (Region region : basis)
+				List<Integer> inequality = new ArrayList<>();
+				for (Region region : utility.getRegionBasis())
 					inequality.add(region.getWeight(eventIndex));
 
 				system.addInequality(0, "<=", inequality, "Only events with same location as event " + event + " may consume tokens from this region");
@@ -129,6 +125,7 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 		// Since we are limiting the maximum from above, we can just require this for all states.
 		InequalitySystem system = prepareInequalitySystem();
 		int eventIndex = utility.getEventIndex(event);
+		final List<Region> basis = utility.getRegionBasis();
 		if (!utility.getSpanningTree().isReachable(state))
 			// Unreachable states cannot be separated
 			return null;

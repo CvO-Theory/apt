@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.util.Arrays;
 import org.hamcrest.Matcher;
 
 import uniol.apt.TestTSCollection;
@@ -28,9 +29,10 @@ import uniol.apt.adt.ts.TransitionSystem;
 
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uniol.apt.adt.matcher.Matchers.*;
+import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
+@SuppressWarnings("unchecked") // I hate generics
 @Test
 public class RegionUtilityTest {
 	private Matcher<Iterable<? extends Integer>> parikhVector(int... args) {
@@ -184,6 +186,53 @@ public class RegionUtilityTest {
 		// All non-chords have vector (0, 0) anyway and the chord one is a+b-a-b, too, thanks to persistency.
 		for (Arc arc : ts.getEdges())
 			assertThat(utility.getParikhVectorForEdge(arc), is(parikhVector(a, 0, b, 0)));
+	}
+
+	// Region basis tests
+
+	@Test
+	public void testRegionBasisSingleStateTS() {
+		RegionUtility utility = new RegionUtility(TestTSCollection.getSingleStateTS());
+
+		assertThat(utility.getRegionBasis(), emptyIterable());
+	}
+
+	@Test
+	public void testRegionBasiscc1LTS() {
+		RegionUtility utility = new RegionUtility(TestTSCollection.getcc1LTS());
+
+		assertThat(utility.getRegionBasis(), contains(anyOf(
+						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
+							Arrays.asList(1, -1, -1, 1)),
+						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
+							Arrays.asList(-1, 1, 1, -1)))));
+	}
+
+	@Test
+	public void testRegionBasisThreeStatesTwoEdgesTS() {
+		RegionUtility utility = new RegionUtility(TestTSCollection.getThreeStatesTwoEdgesTS());
+
+		assertThat(utility.getRegionBasis(), containsInAnyOrder(
+					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(1, 0)),
+					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(0, 1))));
+	}
+
+	@Test
+	public void testRegionBasisPersistentTS() {
+		RegionUtility utility = new RegionUtility(TestTSCollection.getPersistentTS());
+
+		assertThat(utility.getRegionBasis(), containsInAnyOrder(
+					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(1, 0)),
+					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(0, 1))));
+	}
+
+	@Test
+	public void testRegionBasisNotTotallyReachableTS() {
+		RegionUtility utility = new RegionUtility(TestTSCollection.getNotTotallyReachableTS());
+
+		assertThat(utility.getRegionBasis(), containsInAnyOrder(
+					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(1, 0)),
+					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(0, 1))));
 	}
 }
 

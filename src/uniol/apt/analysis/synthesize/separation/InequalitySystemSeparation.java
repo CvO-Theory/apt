@@ -40,7 +40,6 @@ import uniol.apt.util.equations.InequalitySystem;
  */
 class InequalitySystemSeparation extends DebugUtil implements Separation {
 	private final RegionUtility utility;
-	private final List<Region> basis;
 	private final PNProperties properties;
 	private final String[] locationMap;
 	private final InequalitySystem system;
@@ -54,17 +53,14 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	/**
 	 * Construct a new instance for solving separation problems.
 	 * @param utility The region utility to use.
-	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
-	 * stable iteration order!
 	 * @param properties Properties that the calculated region should satisfy.
 	 */
-	public InequalitySystemSeparation(RegionUtility utility, List<Region> basis, PNProperties properties, String[] locationMap) {
+	public InequalitySystemSeparation(RegionUtility utility, PNProperties properties, String[] locationMap) {
 		this.utility = utility;
-		this.basis = basis;
 		this.properties = new PNProperties(properties);
 		this.systemWeightsStart = 0;
 		this.systemCoefficientsStart = systemWeightsStart + utility.getNumberOfEvents();
-		this.systemForwardWeightsStart = systemCoefficientsStart + basis.size();
+		this.systemForwardWeightsStart = systemCoefficientsStart + utility.getRegionBasis().size();
 		this.systemBackwardWeightsStart = systemForwardWeightsStart + utility.getNumberOfEvents();
 		this.systemInitialMarking = systemBackwardWeightsStart + utility.getNumberOfEvents();
 		this.systemNumberOfVariables = systemInitialMarking + 1;
@@ -117,6 +113,7 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 		// region. The next basis.size() variables represent how this region is a linear combination of the
 		// basis.
 		final int events = utility.getNumberOfEvents();
+		final List<Region> basis = utility.getRegionBasis();
 		final int basisSize = basis.size();
 		InequalitySystem system = new InequalitySystem();
 
@@ -273,8 +270,6 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 * the given basis of abstract regions.
 	 * @param utility The region utility to use.
 	 * @param system An inequality system that is suitably prepared.
-	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
-	 * stable iteration order!
 	 * @param state The first state of the separation problem
 	 * @param otherState The second state of the separation problem
 	 * @param pure Whether the generated region should describe part of a pure Petri Net and thus must not generate
@@ -282,14 +277,14 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 * @return A separating region or null.
 	 */
 	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
-			List<Region> basis, State state, State otherState, boolean pure) {
+			State state, State otherState, boolean pure) {
 		// We want r_S(s) != r_S(s'). Since for each region there exists a complementary region (we are only
 		// looking at the bounded case!), we can require r_S(s) < r_S(s')
 		int[] inequality;
 		int[] otherInequality;
 		try {
 			inequality = coefficientsForStateMarking(state);
-			otherInequality = coefficientsForStateMarking(state);
+			otherInequality = coefficientsForStateMarking(otherState);
 		}
 		catch (UnreachableException e) {
 			// Unreachable states cannot be separated
@@ -310,8 +305,6 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 * the given basis of abstract regions.
 	 * @param utility The region utility to use.
 	 * @param system An inequality system that is suitably prepared.
-	 * @param basis A basis of abstract regions of the underlying transition system. This collection must guarantee
-	 * stable iteration order!
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
 	 * @param pure Whether the generated region should describe part of a pure Petri Net and thus must not generate
@@ -319,7 +312,7 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 * @return A separating region or null.
 	 */
 	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
-			List<Region> basis, State state, String event, boolean pure) {
+			State state, String event, boolean pure) {
 		final int eventIndex = utility.getEventIndex(event);
 
 		// Each state must be reachable in the resulting region, but event 'event' should be disabled in state.
@@ -401,11 +394,11 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 			requirePostsetContainsPreset(system);
 		}
 
-		Region r = calculateSeparatingRegion(utility, system, basis, state, otherState, properties.isPure());
+		Region r = calculateSeparatingRegion(utility, system, state, otherState, properties.isPure());
 
 		if (r == null && systemCopy != null) {
 			debug("Trying again with output-nonbranching");
-			r = calculateSeparatingRegion(utility, systemCopy, basis, state, otherState, properties.isPure());
+			r = calculateSeparatingRegion(utility, systemCopy, state, otherState, properties.isPure());
 		}
 		return r;
 	}
@@ -435,11 +428,11 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 			requirePostsetContainsPreset(system);
 		}
 
-		Region r = calculateSeparatingRegion(utility, system, basis, state, event, properties.isPure());
+		Region r = calculateSeparatingRegion(utility, system, state, event, properties.isPure());
 
 		if (r == null && systemCopy != null) {
 			debug("Trying again with output-nonbranching");
-			r = calculateSeparatingRegion(utility, systemCopy, basis, state, event, properties.isPure());
+			r = calculateSeparatingRegion(utility, systemCopy, state, event, properties.isPure());
 		}
 		return r;
 	}
