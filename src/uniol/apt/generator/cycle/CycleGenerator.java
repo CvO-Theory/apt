@@ -31,12 +31,23 @@ import uniol.apt.adt.pn.Transition;
 public class CycleGenerator {
 
 	/**
-	 * Generate the Petri net
+	 * Generate the Petri net with initial marking 1.
 	 *
-	 * @param n size of the cycle
+	 * @param n size of the cycle.
 	 * @return The generated Petri net.
 	 */
 	public PetriNet generateNet(int n) {
+		return generateNet(n, 1);
+	}
+
+	/**
+	 * Generate the Petri net
+	 *
+	 * @param n size of the cycle.
+	 * @param init number of token initially on some place.
+	 * @return The generated Petri net.
+	 */
+	public PetriNet generateNet(int n, int init) {
 		if (n < 1) {
 			throw new IllegalArgumentException("Cannot construct cycles of a non-positive size");
 		}
@@ -46,7 +57,7 @@ public class CycleGenerator {
 		Place p = pn.createPlace("p0");
 		Place pfirst = p;
 		Transition t = pn.createTransition("t0");
-		p.setInitialToken(1);
+		p.setInitialToken(init);
 		pn.createFlow(p, t);
 
 		for (int i = 1; i < n; i++) {
