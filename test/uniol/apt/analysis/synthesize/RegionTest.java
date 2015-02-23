@@ -34,7 +34,7 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 /** @author Uli Schlachter */
 @Test
 public class RegionTest {
-	private List<Integer> pureParikhVector(int... args) {
+	private List<Integer> makeVector(int... args) {
 		assert args.length % 2 == 0;
 
 		Integer[] vector = new Integer[args.length / 2];
@@ -53,7 +53,7 @@ public class RegionTest {
 		TransitionSystem ts = TestTSCollection.getSingleStateTS();
 		RegionUtility utility = new RegionUtility(ts);
 
-		Region region = Region.createPureRegionFromVector(utility, pureParikhVector());
+		Region region = Region.createPureRegionFromVector(utility, makeVector());
 
 		assertThat(region, is(pureRegion()));
 	}
@@ -67,7 +67,7 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = Region.createPureRegionFromVector(utility, pureParikhVector(a, 1, b, 3, c, -1));
+		Region region = Region.createPureRegionFromVector(utility, makeVector(a, 1, b, 3, c, -1));
 
 		assertThat(region, is(pureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(1, 3, -1))));
 	}
@@ -81,8 +81,7 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
+		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		assertThat(region, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
 						Arrays.asList(1, 2, 3, 4, 5, 6))));
@@ -97,8 +96,7 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6), 0);
+		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6), 0);
 
 		assertThat(region.toString(), anyOf(
 					equalTo("{ init=0, 1:a:2, 3:b:4, 5:c:6 }"),
@@ -119,8 +117,8 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6)).withInitialMarking(0);
+		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6))
+			.withInitialMarking(0);
 
 		assertThat(region.toString(), anyOf(
 					equalTo("{ init=0, 1:a:2, 3:b:4, 5:c:6 }"),
@@ -141,10 +139,9 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
+		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
-		assertThat(region.evaluateParikhVector(pureParikhVector(a, 0, b, 0, c, 0)), is(equalTo(0)));
+		assertThat(region.evaluateParikhVector(makeVector(a, 0, b, 0, c, 0)), is(equalTo(0)));
 	}
 
 	@Test
@@ -156,10 +153,9 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
+		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
-		assertThat(region.evaluateParikhVector(pureParikhVector(a, 1, b, 0, c, 0)), is(equalTo(1)));
+		assertThat(region.evaluateParikhVector(makeVector(a, 1, b, 0, c, 0)), is(equalTo(1)));
 	}
 
 	@Test
@@ -171,10 +167,9 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
+		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
-		assertThat(region.evaluateParikhVector(pureParikhVector(a, 2, b, 0, c, 0)), is(equalTo(2)));
+		assertThat(region.evaluateParikhVector(makeVector(a, 2, b, 0, c, 0)), is(equalTo(2)));
 	}
 
 	@Test
@@ -186,10 +181,9 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
+		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
-		assertThat(region.evaluateParikhVector(pureParikhVector(a, -6, b, 7, c, 9)), is(equalTo(10)));
+		assertThat(region.evaluateParikhVector(makeVector(a, -6, b, 7, c, 9)), is(equalTo(10)));
 	}
 
 	@Test
@@ -201,8 +195,7 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
+		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		assertThat(region.getNormalRegionMarking(), is(equalTo(0)));
 	}
@@ -216,8 +209,7 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 2, b, 3, c, 5),
-				pureParikhVector(a, 1, b, 0, c, 3));
+		Region region = new Region(utility, makeVector(a, 2, b, 3, c, 5), makeVector(a, 1, b, 0, c, 3));
 
 		assertThat(region.getNormalRegionMarking(), is(equalTo(7)));
 	}
@@ -231,10 +223,8 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region1 = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
-		Region region2 = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
+		Region region1 = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
+		Region region2 = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		assertEquals(region1, region2);
 		assertEquals(region1.hashCode(), region2.hashCode());
@@ -249,10 +239,8 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region1 = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
-		Region region2 = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 8));
+		Region region1 = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
+		Region region2 = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 8));
 
 		assertNotEquals(region1, region2);
 	}
@@ -276,9 +264,8 @@ public class RegionTest {
 		int c = utility.getEventIndex("c");
 
 		Region r1 = Region.createTrivialRegion(utility);
-		Region r2 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 1, b, 3, c, -1));
-		Region r3 = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
+		Region r2 = Region.createPureRegionFromVector(utility, makeVector(a, 1, b, 3, c, -1));
+		Region r3 = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		assertThat(r1.addRegion(r1), equalTo(r1));
 		assertThat(r1.addRegion(r2), equalTo(r2));
@@ -300,9 +287,9 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region r1 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 1, b, 3, c, -2));
-		Region r2 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 2, b, 6, c, -4));
-		Region r3 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 3, b, 9, c, -6));
+		Region r1 = Region.createPureRegionFromVector(utility, makeVector(a, 1, b, 3, c, -2));
+		Region r2 = Region.createPureRegionFromVector(utility, makeVector(a, 2, b, 6, c, -4));
+		Region r3 = Region.createPureRegionFromVector(utility, makeVector(a, 3, b, 9, c, -6));
 
 		assertThat(r1.addRegion(r1), equalTo(r2));
 		assertThat(r1.addRegionWithFactor(r1, 2), equalTo(r3));
@@ -320,9 +307,8 @@ public class RegionTest {
 		int c = utility.getEventIndex("c");
 
 		Region r1 = Region.createTrivialRegion(utility);
-		Region r2 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 1, b, 3, c, -2));
-		Region r3 = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
+		Region r2 = Region.createPureRegionFromVector(utility, makeVector(a, 1, b, 3, c, -2));
+		Region r3 = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		assertThat(r2.addRegionWithFactor(r2, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
 						Arrays.asList(1, 1, 3, 3, 2, 2))));
@@ -341,9 +327,8 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region r1 = Region.createPureRegionFromVector(utility, pureParikhVector(a, 1, b, 3, c, -2));
-		Region r2 = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
+		Region r1 = Region.createPureRegionFromVector(utility, makeVector(a, 1, b, 3, c, -2));
+		Region r2 = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		Region result = r1.addRegionWithFactor(r1, 4);
 		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
@@ -377,8 +362,7 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 1, b, 4, c, 5),
-				pureParikhVector(a, 2, b, 3, c, 6));
+		Region region = new Region(utility, makeVector(a, 1, b, 4, c, 5), makeVector(a, 2, b, 3, c, 6));
 
 		assertThat(region.makePure(), is(pureRegionWithWeights(Arrays.asList("a", "b", "c"),
 						Arrays.asList(1, -1, 1))));
@@ -413,8 +397,7 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 1, b, 3, c, 5),
-				pureParikhVector(a, 2, b, 4, c, 6));
+		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		assertThat(region.getMarkingForState(ts.getNode("s")), equalTo(0));
 		assertThat(region.getMarkingForState(ts.getNode("t")), equalTo(1));
@@ -432,8 +415,7 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, pureParikhVector(a, 2, b, 3, c, 5),
-				pureParikhVector(a, 1, b, 0, c, 3));
+		Region region = new Region(utility, makeVector(a, 2, b, 3, c, 5), makeVector(a, 1, b, 0, c, 3));
 
 		assertThat(region.getMarkingForState(ts.getNode("s")), equalTo(7));
 		assertThat(region.getMarkingForState(ts.getNode("t")), equalTo(6));
