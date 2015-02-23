@@ -44,28 +44,6 @@ public class CoverabilityGraphNode {
 	private Set<CoverabilityGraphEdge> postsetEdges;
 
 	/**
-	 * Construct a new coverability graph node. This is used for constructing the initial node of the coverability
-	 * graph. Thus, it will have no parent and is not reached via any transition.
-	 * @param graph The graph that this node belongs to.
-	 * @param marking The marking that identifies this node.
-	 */
-	CoverabilityGraphNode(CoverabilityGraph graph, Marking marking) {
-		this(graph, null, marking, null, null);
-	}
-
-	/**
-	 * Construct a new coverability graph node.
-	 * @param graph The graph that this node belongs to.
-	 * @param transition The transition that is fired from this node's parent to reach this new node.
-	 * @param marking The marking that identifies this node.
-	 * @param parent The parent node of this node.
-	 */
-	CoverabilityGraphNode(CoverabilityGraph graph, Transition transition, Marking marking,
-			CoverabilityGraphNode parent) {
-		this(graph, transition, marking, parent, null);
-	}
-
-	/**
 	 * Construct a new coverability graph node.
 	 * @param graph The graph that this node belongs to.
 	 * @param transition The transition that is fired from this node's parent to reach this new node.
