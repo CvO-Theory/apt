@@ -41,7 +41,6 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.impl.apt.APTLTSParser;
 import uniol.apt.io.parser.impl.apt.APTPNParser;
-import uniol.apt.io.parser.impl.apt.APTPNParserModule;
 import uniol.apt.io.parser.impl.apt.APTParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
@@ -184,15 +183,9 @@ public class APTParserTest {
 	}
 
 	@Test
-	public void testCrashkursCC1Net() throws IOException, ModuleException {
-		try (InputStream data = new FileInputStream(new File("nets/crashkurs-cc1-net.apt"))) {
-			APTPNParserModule mod = new APTPNParserModule();
-			ModuleInvoker m = new ModuleInvoker();
-			List<Object> objs = m.invoke(mod, data);
-			PetriNet net = (PetriNet) objs.get(0);
-			assertNotNull(net);
-			//assertEquals(net.getExtension("description"), "Crashkurs Netz cc1");
-		}
+	public void testCrashkursCC1Net() throws IOException, FormatException {
+		PetriNet pn = APTPNParser.getPetriNet("nets/crashkurs-cc1-net.apt");
+		assertNotNull(pn);
 	}
 
 	@Test
