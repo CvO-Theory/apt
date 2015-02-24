@@ -245,7 +245,15 @@ public class SynthesizePNTest {
 		public void testEmpty() {
 			Set<Region> regions = new HashSet<>();
 
-			SynthesizePN.minimizeRegions(utility, regions);
+			SynthesizePN.minimizeRegions(utility, regions, false);
+			assertThat(regions, empty());
+		}
+
+		@Test
+		public void testEmptyESSP() {
+			Set<Region> regions = new HashSet<>();
+
+			SynthesizePN.minimizeRegions(utility, regions, true);
 			assertThat(regions, empty());
 		}
 
@@ -254,7 +262,16 @@ public class SynthesizePNTest {
 			Region region = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
-			SynthesizePN.minimizeRegions(utility, regions);
+			SynthesizePN.minimizeRegions(utility, regions, false);
+			assertThat(regions, containsInAnyOrder(region));
+		}
+
+		@Test
+		public void testSingleRegionESSP() {
+			Region region = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0));
+			Set<Region> regions = new HashSet<>(Arrays.asList(region));
+
+			SynthesizePN.minimizeRegions(utility, regions, true);
 			assertThat(regions, containsInAnyOrder(region));
 		}
 
@@ -263,7 +280,16 @@ public class SynthesizePNTest {
 			Region region = new Region(utility, Arrays.asList(1, 1), Arrays.asList(1, 1)).withInitialMarking(1);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
-			SynthesizePN.minimizeRegions(utility, regions);
+			SynthesizePN.minimizeRegions(utility, regions, false);
+			assertThat(regions, empty());
+		}
+
+		@Test
+		public void testUselessRegionESSP() {
+			Region region = new Region(utility, Arrays.asList(1, 1), Arrays.asList(1, 1)).withInitialMarking(1);
+			Set<Region> regions = new HashSet<>(Arrays.asList(region));
+
+			SynthesizePN.minimizeRegions(utility, regions, true);
 			assertThat(regions, empty());
 		}
 
@@ -273,7 +299,17 @@ public class SynthesizePNTest {
 			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
-			SynthesizePN.minimizeRegions(utility, regions);
+			SynthesizePN.minimizeRegions(utility, regions, false);
+			assertThat(regions, containsInAnyOrder(region1, region2));
+		}
+
+		@Test
+		public void testNoUselessRegionESSP() {
+			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
+			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
+			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
+
+			SynthesizePN.minimizeRegions(utility, regions, true);
 			assertThat(regions, containsInAnyOrder(region1, region2));
 		}
 
@@ -284,7 +320,18 @@ public class SynthesizePNTest {
 			Region region3 = Region.createPureRegionFromVector(utility, Arrays.asList(1, 1));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2, region3));
 
-			SynthesizePN.minimizeRegions(utility, regions);
+			SynthesizePN.minimizeRegions(utility, regions, false);
+			assertThat(regions, containsInAnyOrder(region1, region2));
+		}
+
+		@Test
+		public void testUselessRegionForSSPESSP() {
+			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
+			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
+			Region region3 = Region.createPureRegionFromVector(utility, Arrays.asList(1, 1));
+			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2, region3));
+
+			SynthesizePN.minimizeRegions(utility, regions, true);
 			assertThat(regions, containsInAnyOrder(region1, region2));
 		}
 
@@ -294,7 +341,17 @@ public class SynthesizePNTest {
 			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(-2, 0)).withInitialMarking(2);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
-			SynthesizePN.minimizeRegions(utility, regions);
+			SynthesizePN.minimizeRegions(utility, regions, false);
+			assertThat(regions, anyOf(contains(region1), contains(region2)));
+		}
+
+		@Test
+		public void testDuplicateRegionESSP() {
+			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
+			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(-2, 0)).withInitialMarking(2);
+			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
+
+			SynthesizePN.minimizeRegions(utility, regions, true);
 			assertThat(regions, anyOf(contains(region1), contains(region2)));
 		}
 
@@ -308,7 +365,21 @@ public class SynthesizePNTest {
 			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
-			SynthesizePN.minimizeRegions(utility, regions);
+			SynthesizePN.minimizeRegions(utility, regions, false);
+			assertThat(regions, contains(region1));
+		}
+
+		@Test
+		public void testLessUsefulRegionESSP() {
+			// There are three SSP instances and two ESSP instances. This region solves all of them except
+			// for one ESSP instance (disabling a after the first a).
+			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, -1)).withInitialMarking(2);
+			// This region solves only two SSP and one ESSP instance (less than the above and the above
+			// solves all these problems, too)
+			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
+			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
+
+			SynthesizePN.minimizeRegions(utility, regions, true);
 			assertThat(regions, contains(region1));
 		}
 	}
