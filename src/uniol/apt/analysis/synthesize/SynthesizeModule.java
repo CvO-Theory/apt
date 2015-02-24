@@ -53,7 +53,8 @@ public class SynthesizeModule extends AbstractModule {
 		return getShortDescription() + ".\n\nExample calls:\n\n"
 			+ " apt " + getName() + " none lts.apt\n"
 			+ " apt " + getName() + " 3-bounded lts.apt\n"
-			+ " apt " + getName() + " pure,safe lts.apt\n";
+			+ " apt " + getName() + " pure,safe lts.apt\n"
+			+ " apt " + getName() + " upto-language-equivalence lts.apt\n";
 	}
 
 	@Override
@@ -64,7 +65,7 @@ public class SynthesizeModule extends AbstractModule {
 	static public void requireCommon(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("properties", String.class,
 				"Comma separated list of properties for the synthesized net,"
-				+ " can be none, safe, [k]-bounded, pure, plain, t-net, output-nonbranching (on), conflict-free (cf)");
+				+ " can be none, safe, [k]-bounded, pure, plain, t-net, output-nonbranching (on), conflict-free (cf), upto-language-equivalence (language, le)");
 	}
 
 	@Override
@@ -92,8 +93,11 @@ public class SynthesizeModule extends AbstractModule {
 	static public SynthesizePN runSynthesis(TransitionSystem ts, ModuleInput input, ModuleOutput output) throws ModuleException {
 		output.setReturnValue("warning", String.class, "THIS MODULE IS EXPERIMENTAL AND SHOULD NOT BE TRUSTED");
 
-		PNProperties properties = parseProperties(input.getParameter("properties", String.class));
-		SynthesizePN synthesize = new SynthesizePN(ts, properties);
+		PNProperties properties = new PNProperties();
+		boolean uptoLanguageEquivalence = parseProperties(properties, input.getParameter("properties", String.class));
+		if (uptoLanguageEquivalence)
+			ts = LimitedUnfolding.calculateLimitedUnfolding(ts);
+		SynthesizePN synthesize = new SynthesizePN(ts, properties, uptoLanguageEquivalence);
 
 		PetriNet pn = synthesize.synthesizePetriNet();
 		if (pn != null)
@@ -139,14 +143,13 @@ public class SynthesizeModule extends AbstractModule {
 		return new Category[]{Category.LTS};
 	}
 
-	static public PNProperties parseProperties(String properties) throws ModuleException {
-		PNProperties result = new PNProperties();
-
+	static public boolean parseProperties(PNProperties result, String properties) throws ModuleException {
 		// Explicitly allow empty string
 		properties = properties.trim();
 		if (properties.isEmpty())
-			return result;
+			return false;
 
+		boolean uptoLanguageEquivalence = false;
 		for (String prop : properties.split(",")) {
 			prop = prop.trim().toLowerCase();
 			switch (prop) {
@@ -172,6 +175,11 @@ public class SynthesizeModule extends AbstractModule {
 				case "cf":
 					result.add(PNProperties.CONFLICT_FREE);
 					break;
+				case "upto-language-equivalence":
+				case "language":
+				case "le":
+					uptoLanguageEquivalence = true;
+					break;
 				default:
 					if (prop.endsWith("-bounded")) {
 						String value = prop.substring(0, prop.length() - "-bounded".length());
@@ -192,7 +200,7 @@ public class SynthesizeModule extends AbstractModule {
 								+ "': Unknown property");
 			}
 		}
-		return result;
+		return uptoLanguageEquivalence;
 	}
 }
 

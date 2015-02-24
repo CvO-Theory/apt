@@ -33,7 +33,9 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 public class SynthesizeModuleTest {
 	// I'm too lazy to type
 	private PNProperties parse(String arg) throws ModuleException {
-		return SynthesizeModule.parseProperties(arg);
+		PNProperties properties = new PNProperties();
+		assertThat(SynthesizeModule.parseProperties(properties, arg), equalTo(false));
+		return properties;
 	}
 
 	@Test
@@ -84,6 +86,27 @@ public class SynthesizeModuleTest {
 	@Test
 	public void testCF() throws Exception {
 		assertThat(parse("CF"), equalTo(new PNProperties(PNProperties.CONFLICT_FREE)));
+	}
+
+	@Test
+	public void testLanguageEquivalence1() throws Exception {
+		PNProperties properties = new PNProperties();
+		assertThat(SynthesizeModule.parseProperties(properties, "upto-language-equivalence"), equalTo(true));
+		assertThat(properties, equalTo(new PNProperties()));
+	}
+
+	@Test
+	public void testLanguageEquivalence2() throws Exception {
+		PNProperties properties = new PNProperties();
+		assertThat(SynthesizeModule.parseProperties(properties, "language"), equalTo(true));
+		assertThat(properties, equalTo(new PNProperties()));
+	}
+
+	@Test
+	public void testLanguageEquivalence3() throws Exception {
+		PNProperties properties = new PNProperties();
+		assertThat(SynthesizeModule.parseProperties(properties, "le"), equalTo(true));
+		assertThat(properties, equalTo(new PNProperties()));
 	}
 
 	@Test
