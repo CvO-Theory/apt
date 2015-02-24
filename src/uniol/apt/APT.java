@@ -107,6 +107,7 @@ import uniol.apt.analysis.snet.SNetModule;
 import uniol.apt.analysis.snet.SNetResult;
 import uniol.apt.analysis.synet.SynthesizeDistributedLTSModule;
 import uniol.apt.analysis.synthesize.RegionCollection;
+import uniol.apt.analysis.synthesize.LimitedUnfoldingModule;
 import uniol.apt.analysis.synthesize.SynthesizeModule;
 import uniol.apt.analysis.synthesize.SynthesizeWordModule;
 import uniol.apt.analysis.tnet.TNetModule;
@@ -233,17 +234,18 @@ public class APT {
 		new KBoundedModule(),
 		new LanguageEquivalenceModule(),
 		new LargestKModule(),
+		new LimitedUnfoldingModule(),
 		new LoLARendererModule(),
 		new MatrixModule(),
 		new NonPureModule(),
 		new OutputNonBranchingModule(),
 		new PVsOfSmallestCyclesModule(),
+		new PNMLRendererModule(),
 		new PersistentModule(),
 		new Petrify2AptModule(),
 		new PetrifySynthesizeModule(),
 		new PlainModule(),
 		new PnAnalysisModule(),
-		new PNMLRendererModule(),
 		new PureModule(),
 		new QuadstatePhilNetGeneratorModule(),
 		new RandomTNetGeneratorModule(),
