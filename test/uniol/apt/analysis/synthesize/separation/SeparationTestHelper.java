@@ -145,18 +145,21 @@ public class SeparationTestHelper {
 		@DataProvider(name = "stateEventPairs")
 		public Object[][] createStateEventPairs() {
 			List<Object[]> pairs = new ArrayList<>();
-			for (State state : ts.getNodes())
+			for (State state : ts.getNodes()) {
+				if (state.getId().equals("unreachable"))
+					continue;
 				for (String event : ts.getAlphabet())
-					if (!event.equals(skipEvent) || factory.supportsImpure())
+					if (!SeparationUtility.isEventEnabled(state, event) &&
+							(!event.equals(skipEvent) || factory.supportsImpure()))
 						pairs.add(new Object[] { state.getId(), event });
+			}
 			return pairs.toArray(new Object[][] {});
 		}
+
 
 		@Test(dataProvider = "stateEventPairs")
 		public void testEventSeparation(String stateName, String event) throws UnreachableException {
 			State state = utility.getTransitionSystem().getNode(stateName);
-			if (SeparationUtility.isEventEnabled(state, event) || stateName.equals("unreachable"))
-				return;
 			checkEventSeparation(factory, utility, stateName, event);
 		}
 	}
