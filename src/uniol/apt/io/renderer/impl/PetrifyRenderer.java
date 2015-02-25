@@ -42,10 +42,15 @@ public class PetrifyRenderer implements PNTSRenderer {
 	public String render(PetriNet pn) throws ModuleException {
 		StringBuilder sb = new StringBuilder();
 
+		// Petrify does not like:
+		// - empty names (attempted fix below)
+		// - names containing spaces (thus this code was disabled)
+		/*
 		sb.append(".model ").append(pn.getName());
 		if (pn.getName().isEmpty())
 			sb.append("model");
 		sb.append("\n");
+		*/
 
 		sb.append(".inputs ");
 		ArrayList<String> c = new ArrayList<>(0);
@@ -138,10 +143,15 @@ public class PetrifyRenderer implements PNTSRenderer {
 	public String render(TransitionSystem ts) {
 		StringBuilder sb = new StringBuilder();
 
+		// Petrify does not like:
+		// - empty names (attempted fix below)
+		// - names containing spaces (thus this code was disabled)
+		/*
 		sb.append(".model ").append(ts.getName());
 		if (ts.getName().isEmpty())
 			sb.append("model");
 		sb.append("\n");
+		*/
 
 		sb.append(".inputs ");
 		ArrayList<String> c = new ArrayList<>(0);
