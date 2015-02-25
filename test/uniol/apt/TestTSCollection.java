@@ -399,6 +399,59 @@ public class TestTSCollection {
 		ts.createArc(t, v, "b");
 		return ts;
 	}
+
+	/**
+	 * The transitions system:
+	 * <pre>
+	 *      b
+	 * [s] ---> [u]
+	 *  \\       ^
+	 * a \\   b /
+	 *    v   /
+	 *     [t]
+	 * </pre>
+	 */
+	public static TransitionSystem getABandB() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s = ts.createState("s");
+		State t = ts.createState("t");
+		State u = ts.createState("u");
+
+		ts.setInitialState(s);
+
+		ts.createArc(s, t, "a");
+		ts.createArc(t, u, "b");
+		ts.createArc(s, u, "b");
+		return ts;
+	}
+
+	/**
+	 * The transitions system:
+	 * <pre>
+	 *      b
+	 * [s] ---> [u]
+	 *  \\
+	 * a \\
+	 *    v    b
+	 *     [t]--->[v]
+	 * </pre>
+	 */
+	public static TransitionSystem getABandBUnfolded() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s = ts.createState("s");
+		State t = ts.createState("t");
+		State u = ts.createState("u");
+		State v = ts.createState("v");
+
+		ts.setInitialState(s);
+
+		ts.createArc(s, t, "a");
+		ts.createArc(t, v, "b");
+		ts.createArc(s, u, "b");
+		return ts;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

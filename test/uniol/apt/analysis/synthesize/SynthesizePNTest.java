@@ -19,10 +19,11 @@
 
 package uniol.apt.analysis.synthesize;
 
-import java.util.List;
-import java.util.Collections;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import uniol.apt.TestNetCollection;
@@ -113,15 +114,25 @@ public class SynthesizePNTest {
 	@Test
 	public void testNonDeterministicTS() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getNonDeterministicTS();
-		RegionUtility utility = new RegionUtility(ts);
-		SynthesizePN synth = new SynthesizePN(utility);
+		SynthesizePN synth = new SynthesizePN(ts);
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
-		// Can't really be more specific, way too many possibilities (TODO: Optimize the code so this becomes
-		// testable)
-		assertThat(synth.getSeparatingRegions(), not(empty()));
+		assertThat(synth.getSeparatingRegions(), contains(
+					allOf(regionWithInitialMarking(1), pureRegionWithWeight("a", -1))));
 		assertThat(synth.getFailedStateSeparationProblems(),
 				contains(containsInAnyOrder(nodeWithID("s1"), nodeWithID("s2"))));
+		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
+	}
+
+	@Test
+	public void testNonDeterministicTSNoSSP() throws MissingLocationException {
+		TransitionSystem ts = TestTSCollection.getNonDeterministicTS();
+		SynthesizePN synth = new SynthesizePN(ts, new PNProperties(), true);
+
+		assertThat(synth.wasSuccessfullySeparated(), is(true));
+		assertThat(synth.getSeparatingRegions(), contains(
+					allOf(regionWithInitialMarking(1), pureRegionWithWeight("a", -1))));
+		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}
 
@@ -226,6 +237,50 @@ public class SynthesizePNTest {
 		TransitionSystem ts2 = new CoverabilityGraph(pn).toReachabilityLTS();
 
 		assertThat(new IsomorphismLogic(ts, ts2, true).isIsomorphic(), is(true));
+	}
+
+	@Test
+	public void testABandB() throws MissingLocationException {
+		TransitionSystem ts = TestTSCollection.getABandB();
+		SynthesizePN synth = new SynthesizePN(ts);
+
+		assertThat(synth.wasSuccessfullySeparated(), is(false));
+		assertThat(synth.getSeparatingRegions(), contains(
+					allOf(regionWithInitialMarking(1), pureRegionWithWeight("b", -1), impureRegionWithWeight("a", 1, 1))));
+		assertThat(synth.getFailedStateSeparationProblems(),
+				contains(containsInAnyOrder(nodeWithID("s"), nodeWithID("t"))));
+		assertThat(synth.getFailedEventStateSeparationProblems().toString(),
+				synth.getFailedEventStateSeparationProblems().size(), is(1));
+		assertThat(synth.getFailedEventStateSeparationProblems(),
+				hasEntry(equalTo("a"), contains(nodeWithID("t"))));
+	}
+
+	@Test
+	public void testABandBNoSSP() throws MissingLocationException {
+		TransitionSystem ts = TestTSCollection.getABandB();
+		SynthesizePN synth = new SynthesizePN(ts, new PNProperties(), true);
+
+		assertThat(synth.wasSuccessfullySeparated(), is(false));
+		assertThat(synth.getSeparatingRegions(), contains(
+					allOf(regionWithInitialMarking(1), pureRegionWithWeight("b", -1), impureRegionWithWeight("a", 1, 1))));
+		assertThat(synth.getFailedStateSeparationProblems(), empty());
+		assertThat(synth.getFailedEventStateSeparationProblems().toString(),
+				synth.getFailedEventStateSeparationProblems().size(), is(1));
+		assertThat(synth.getFailedEventStateSeparationProblems(),
+				hasEntry(equalTo("a"), contains(nodeWithID("t"))));
+	}
+
+	@Test
+	public void testABandBUnfolded() throws MissingLocationException {
+		TransitionSystem ts = TestTSCollection.getABandBUnfolded();
+		SynthesizePN synth = new SynthesizePN(ts);
+
+		assertThat(synth.wasSuccessfullySeparated(), is(true));
+		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
+					allOf(regionWithInitialMarking(1), pureRegionWithWeight("b", -1), impureRegionWithWeight("a", 1, 1)),
+					allOf(regionWithInitialMarking(1), pureRegionWithWeight("b", 0), pureRegionWithWeight("a", -1))));
+		assertThat(synth.getFailedStateSeparationProblems(), empty());
+		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}
 
 	@Test
