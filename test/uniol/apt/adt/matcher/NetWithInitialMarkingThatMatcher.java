@@ -19,10 +19,9 @@
 
 package uniol.apt.adt.matcher;
 
-import org.hamcrest.Description;
 import org.hamcrest.Factory;
+import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
@@ -31,23 +30,14 @@ import uniol.apt.adt.pn.PetriNet;
  * Matcher to verify that a Petri net has a matching initial marking
  * @author Uli Schlachter
  */
-public class NetWithInitialMarkingThatMatcher extends TypeSafeMatcher<PetriNet> {
-
-	private final Matcher<? super Marking> matcher;
-
+public class NetWithInitialMarkingThatMatcher extends FeatureMatcher<PetriNet, Marking> {
 	private NetWithInitialMarkingThatMatcher(Matcher<? super Marking> matcher) {
-		this.matcher = matcher;
+		super(matcher, "PetriNet with initial marking", "initial marking");
 	}
 
 	@Override
-	public boolean matchesSafely(PetriNet pn) {
-		return matcher.matches(pn.getInitialMarkingCopy());
-	}
-
-	@Override
-	public void describeTo(Description description) {
-		description.appendText("PetriNet with initial marking that ");
-		matcher.describeTo(description);
+	protected Marking featureValueOf(PetriNet pn) {
+		return pn.getInitialMarkingCopy();
 	}
 
 	@Factory

@@ -19,41 +19,30 @@
 
 package uniol.apt.adt.matcher;
 
-import org.hamcrest.Description;
 import org.hamcrest.Factory;
+import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 
 import uniol.apt.adt.pn.Marking;
-
 import uniol.apt.analysis.coverability.CoverabilityGraphNode;
 
 /**
  * Matcher to verify that a node has a matching marking
  *
- * @author vsp
+ * @author vsp, Uli Schlachter
  */
-public class CoverNodeMarkingThatMatcher extends TypeSafeMatcher<CoverabilityGraphNode> {
-	private final Matcher<Marking> matcher;
-
-	private CoverNodeMarkingThatMatcher(Matcher<Marking> matcher) {
-		this.matcher = matcher;
+public class CoverNodeMarkingThatMatcher extends FeatureMatcher<CoverabilityGraphNode, Marking> {
+	private CoverNodeMarkingThatMatcher(Matcher<? super Marking> matcher) {
+		super(matcher, "Node with marking", "marking");
 	}
 
 	@Override
-	public boolean matchesSafely(CoverabilityGraphNode node) {
-		Marking nodeMark = node.getMarking();
-		return matcher.matches(nodeMark);
-	}
-
-	@Override
-	public void describeTo(Description description) {
-		description.appendText("Node with marking that ");
-		matcher.describeTo(description);
+	protected Marking featureValueOf(CoverabilityGraphNode node) {
+		return node.getMarking();
 	}
 
 	@Factory
-	public static <T> Matcher<CoverabilityGraphNode> nodeMarkingThat(Matcher<Marking> matcher) {
+	public static <T> Matcher<CoverabilityGraphNode> nodeMarkingThat(Matcher<? super Marking> matcher) {
 		return new CoverNodeMarkingThatMatcher(matcher);
 	}
 }

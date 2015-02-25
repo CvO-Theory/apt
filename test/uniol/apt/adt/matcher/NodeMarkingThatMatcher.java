@@ -19,10 +19,9 @@
 
 package uniol.apt.adt.matcher;
 
-import org.hamcrest.Description;
 import org.hamcrest.Factory;
+import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.ts.State;
@@ -30,29 +29,20 @@ import uniol.apt.adt.ts.State;
 /**
  * Matcher to verify that a node has a matching marking
  *
- * @author vsp
+ * @author vsp, Uli Schlachter
  */
-public class NodeMarkingThatMatcher extends TypeSafeMatcher<State> {
-	private final Matcher<Marking> matcher;
-
-	private NodeMarkingThatMatcher(Matcher<Marking> matcher) {
-		this.matcher = matcher;
+public class NodeMarkingThatMatcher extends FeatureMatcher<State, Marking> {
+	private NodeMarkingThatMatcher(Matcher<? super Marking> matcher) {
+		super(matcher, "Node with marking", "marking");
 	}
 
 	@Override
-	public boolean matchesSafely(State node) {
-		Marking nodeMark = (Marking) node.getExtension(Marking.class.getName());
-		return matcher.matches(nodeMark);
-	}
-
-	@Override
-	public void describeTo(Description description) {
-		description.appendText("Node with marking that ");
-		matcher.describeTo(description);
+	protected Marking featureValueOf(State node) {
+		return (Marking) node.getExtension(Marking.class.getName());
 	}
 
 	@Factory
-	public static <T> Matcher<State> nodeMarkingThat(Matcher<Marking> matcher) {
+	public static <T> Matcher<State> nodeMarkingThat(Matcher<? super Marking> matcher) {
 		return new NodeMarkingThatMatcher(matcher);
 	}
 }

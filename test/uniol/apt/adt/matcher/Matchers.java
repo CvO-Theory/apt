@@ -60,7 +60,7 @@ public class Matchers extends org.hamcrest.Matchers {
 		return EdgeCoverNodesThatMatcher.edgeCoverNodesThat(source, target);
 	}
 
-	public static <T> Matcher<State> nodeMarkingThat(Matcher<Marking> matcher) {
+	public static <T> Matcher<State> nodeMarkingThat(Matcher<? super Marking> matcher) {
 		return NodeMarkingThatMatcher.nodeMarkingThat(matcher);
 	}
 
@@ -76,7 +76,7 @@ public class Matchers extends org.hamcrest.Matchers {
 		return coverNodeMarkingThat(is(equalTo(mark)));
 	}
 
-	public static <T> Matcher<INode<?, ?, ?>> nodeWithID(Matcher<String> matcher) {
+	public static <T> Matcher<INode<?, ?, ?>> nodeWithID(Matcher<? super String> matcher) {
 		return NodeWithIDMatcher.nodeWithID(matcher);
 	}
 

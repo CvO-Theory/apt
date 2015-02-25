@@ -19,10 +19,9 @@
 
 package uniol.apt.adt.matcher;
 
-import org.hamcrest.Description;
 import org.hamcrest.Factory;
+import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 
 import uniol.apt.adt.INode;
 
@@ -31,26 +30,18 @@ import uniol.apt.adt.INode;
  *
  * @author Uli Schlachter, vsp
  */
-public class NodeWithIDMatcher extends TypeSafeMatcher<INode<?, ?, ?>> {
-	private final Matcher<String> matcher;
-
-	private NodeWithIDMatcher(Matcher<String> matcher) {
-		this.matcher = matcher;
+public class NodeWithIDMatcher extends FeatureMatcher<INode<?, ?, ?>, String> {
+	private NodeWithIDMatcher(Matcher<? super String> matcher) {
+		super(matcher, "Node with ID", "ID");
 	}
 
 	@Override
-	public boolean matchesSafely(INode<?, ?, ?> node) {
-		return matcher.matches(node.getId());
-	}
-
-	@Override
-	public void describeTo(Description description) {
-		description.appendText("Node with ID that ");
-		matcher.describeTo(description);
+	protected String featureValueOf(INode<?, ?, ?> node) {
+		return node.getId();
 	}
 
 	@Factory
-	public static <T> Matcher<INode<?, ?, ?>> nodeWithID(Matcher<String> matcher) {
+	public static <T> Matcher<INode<?, ?, ?>> nodeWithID(Matcher<? super String> matcher) {
 		return new NodeWithIDMatcher(matcher);
 	}
 }
