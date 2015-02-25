@@ -98,6 +98,14 @@ public class Matchers extends org.hamcrest.Matchers {
 		}
 		return pureRegionWithWeightsThat(events, matchers);
 	}
+
+	public static Matcher<Region> regionWithInitialMarking(Matcher<? super Integer> markingThat) {
+		return RegionWithInitialMarkingThatMatcher.regionWithInitialMarking(markingThat);
+	}
+
+	public static Matcher<Region> regionWithInitialMarking(int marking) {
+		return regionWithInitialMarking(equalTo(marking));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
