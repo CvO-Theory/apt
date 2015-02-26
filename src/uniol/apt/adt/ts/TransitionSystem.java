@@ -31,10 +31,9 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections4.SortedBag;
 import org.apache.commons.collections4.bag.TreeBag;
-import org.apache.commons.collections4.map.AbstractReferenceMap.ReferenceStrength;
-import org.apache.commons.collections4.map.ReferenceMap;
 
 import uniol.apt.adt.IGraph;
+import uniol.apt.adt.SoftMap;
 import uniol.apt.adt.exception.ArcExistsException;
 import uniol.apt.adt.exception.NoSuchEdgeException;
 import uniol.apt.adt.exception.NoSuchNodeException;
@@ -56,10 +55,10 @@ public class TransitionSystem extends Extensible implements IGraph<TransitionSys
 	private final Map<ArcKey, Arc> arcs = new HashMap<>();
 	private final SortedMap<String, State> states = new TreeMap<>();
 	private final SortedBag<String> alphabet = new TreeBag<>();
-	private final Map<String, Set<State>> presetNodes = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
-	private final Map<String, Set<State>> postsetNodes = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
-	private final Map<String, Set<Arc>> presetEdges = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
-	private final Map<String, Set<Arc>> postsetEdges = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
+	private final Map<String, Set<State>> presetNodes = new SoftMap<>();
+	private final Map<String, Set<State>> postsetNodes = new SoftMap<>();
+	private final Map<String, Set<Arc>> presetEdges = new SoftMap<>();
+	private final Map<String, Set<Arc>> postsetEdges = new SoftMap<>();
 	private State initialState = null;
 	private long labelRev = 0;
 

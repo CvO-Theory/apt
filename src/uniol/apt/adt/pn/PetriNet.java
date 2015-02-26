@@ -31,11 +31,9 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.commons.collections4.map.ReferenceMap;
-import org.apache.commons.collections4.map.AbstractReferenceMap.ReferenceStrength;
-
 import uniol.apt.adt.EdgeKey;
 import uniol.apt.adt.IGraph;
+import uniol.apt.adt.SoftMap;
 import uniol.apt.adt.exception.FlowExistsException;
 import uniol.apt.adt.exception.NoSuchEdgeException;
 import uniol.apt.adt.exception.NoSuchNodeException;
@@ -62,10 +60,10 @@ public class PetriNet extends Extensible implements IGraph<PetriNet, Flow, Node>
 	private final SortedMap<String, Node> nodes = new TreeMap<>();
 	private final SortedMap<String, Place> places = new TreeMap<>();
 	private final SortedMap<String, Transition> transitions = new TreeMap<>();
-	private final Map<String, Set<Node>> presetNodes = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
-	private final Map<String, Set<Node>> postsetNodes = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
-	private final Map<String, Set<Flow>> presetEdges = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
-	private final Map<String, Set<Flow>> postsetEdges = new ReferenceMap<>(ReferenceStrength.HARD, ReferenceStrength.SOFT);
+	private final Map<String, Set<Node>> presetNodes = new SoftMap<>();
+	private final Map<String, Set<Node>> postsetNodes = new SoftMap<>();
+	private final Map<String, Set<Flow>> presetEdges = new SoftMap<>();
+	private final Map<String, Set<Flow>> postsetEdges = new SoftMap<>();
 	private Marking initialMarking = new Marking(this);
 	private final Set<Marking> finalMarkings = new HashSet<>();
 
