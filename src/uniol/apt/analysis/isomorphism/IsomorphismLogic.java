@@ -424,18 +424,18 @@ public class IsomorphismLogic {
 	private void computeTerminalSets(int depth, ExtendedState s) {
 		for (State src : nodes1List) {
 			if (core1.containsKey(src)) {
-				for (Arc outArc : src.getPostsetEdges()) {
-					if (!core1.containsKey(outArc.getTarget())) {
-						if (!out1.containsKey(outArc.getTarget())) {
-							out1.put(outArc.getTarget(), depth);
+				for (State postNode : src.getPostsetNodes()) {
+					if (!core1.containsKey(postNode)) {
+						if (!out1.containsKey(postNode)) {
+							out1.put(postNode, depth);
 							s.numout1++;
 						}
 					}
 				}
-				for (Arc inArc : src.getPresetEdges()) {
-					if (!core1.containsKey(inArc.getSource())) {
-						if (!in1.containsKey(inArc.getSource())) {
-							in1.put(inArc.getSource(), depth);
+				for (State preNode : src.getPresetNodes()) {
+					if (!core1.containsKey(preNode)) {
+						if (!in1.containsKey(preNode)) {
+							in1.put(preNode, depth);
 							s.numin1++;
 						}
 					}
@@ -445,18 +445,18 @@ public class IsomorphismLogic {
 
 		for (State src : nodes2List) {
 			if (core2.containsKey(src)) {
-				for (Arc outArc : src.getPostsetEdges()) {
-					if (!core2.containsKey(outArc.getTarget())) {
-						if (!out2.containsKey(outArc.getTarget())) {
-							out2.put(outArc.getTarget(), depth);
+				for (State postNode : src.getPostsetNodes()) {
+					if (!core2.containsKey(postNode)) {
+						if (!out2.containsKey(postNode)) {
+							out2.put(postNode, depth);
 							s.numout2++;
 						}
 					}
 				}
-				for (Arc inArc : src.getPresetEdges()) {
-					if (!core2.containsKey(inArc.getSource())) {
-						if (!in2.containsKey(inArc.getSource())) {
-							in2.put(inArc.getSource(), depth);
+				for (State preNode : src.getPresetNodes()) {
+					if (!core2.containsKey(preNode)) {
+						if (!in2.containsKey(preNode)) {
+							in2.put(preNode, depth);
 							s.numin2++;
 						}
 					}
