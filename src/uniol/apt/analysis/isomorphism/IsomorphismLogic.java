@@ -425,19 +425,15 @@ public class IsomorphismLogic {
 		for (State src : nodes1List) {
 			if (core1.containsKey(src)) {
 				for (State postNode : src.getPostsetNodes()) {
-					if (!core1.containsKey(postNode)) {
-						if (!out1.containsKey(postNode)) {
-							out1.put(postNode, depth);
-							s.numout1++;
-						}
+					if (!out1.containsKey(postNode) && !core1.containsKey(postNode)) {
+						out1.put(postNode, depth);
+						s.numout1++;
 					}
 				}
 				for (State preNode : src.getPresetNodes()) {
-					if (!core1.containsKey(preNode)) {
-						if (!in1.containsKey(preNode)) {
-							in1.put(preNode, depth);
-							s.numin1++;
-						}
+					if (!in1.containsKey(preNode) && !core1.containsKey(preNode)) {
+						in1.put(preNode, depth);
+						s.numin1++;
 					}
 				}
 			}
@@ -446,19 +442,15 @@ public class IsomorphismLogic {
 		for (State src : nodes2List) {
 			if (core2.containsKey(src)) {
 				for (State postNode : src.getPostsetNodes()) {
-					if (!core2.containsKey(postNode)) {
-						if (!out2.containsKey(postNode)) {
-							out2.put(postNode, depth);
-							s.numout2++;
-						}
+					if (!out2.containsKey(postNode) && !core2.containsKey(postNode)) {
+						out2.put(postNode, depth);
+						s.numout2++;
 					}
 				}
 				for (State preNode : src.getPresetNodes()) {
-					if (!core2.containsKey(preNode)) {
-						if (!in2.containsKey(preNode)) {
-							in2.put(preNode, depth);
-							s.numin2++;
-						}
+					if (!in2.containsKey(preNode) && !core2.containsKey(preNode)) {
+						in2.put(preNode, depth);
+						s.numin2++;
 					}
 				}
 			}
