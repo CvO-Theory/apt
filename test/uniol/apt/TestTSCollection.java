@@ -201,6 +201,25 @@ public class TestTSCollection {
 		return ts;
 	}
 
+	public static TransitionSystem getNonPersistentTSReversed() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s0 = ts.createState("s0");
+		State left = ts.createState("l");
+		State right = ts.createState("r");
+		State s1 = ts.createState("s1");
+		State right2 = ts.createState("r2");
+
+		ts.setInitialState(s0);
+
+		ts.createArc(left, s0, "a");
+		ts.createArc(right, s0, "b");
+		ts.createArc(s1, left, "b");
+		ts.createArc(s1, right, "a");
+		ts.createArc(right2, right, "fail");
+		return ts;
+	}
+
 	public static TransitionSystem getNotTotallyReachableTS() {
 		TransitionSystem ts = new TransitionSystem();
 

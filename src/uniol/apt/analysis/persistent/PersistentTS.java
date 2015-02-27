@@ -45,15 +45,21 @@ import uniol.apt.adt.ts.TransitionSystem;
  */
 public class PersistentTS {
 	private final TransitionSystem ts;
+	private final boolean backwards;
 
 	private boolean persistent = false;
 	private State node_ = null;
 	private String label1_ = null;
 	private String label2_ = null;
 
-	public PersistentTS(TransitionSystem ts) {
+	public PersistentTS(TransitionSystem ts, boolean backwards) {
+		this.backwards = backwards;
 		this.ts = ts;
 		check();
+	}
+
+	public PersistentTS(TransitionSystem ts) {
+		this(ts, false);
 	}
 
 	/**
@@ -104,7 +110,11 @@ public class PersistentTS {
 
 	private Set<String> getPostLabels(State n) {
 		Set<String> labels = new HashSet<String>();
-		Set<Arc> post = n.getPostsetEdges();
+		Set<Arc> post;
+		if (!backwards)
+			post = n.getPostsetEdges();
+		else
+			post = n.getPresetEdges();
 		for (Arc e : post) {
 			labels.add(e.getLabel());
 		}
@@ -120,10 +130,17 @@ public class PersistentTS {
 	 */
 	private Set<State> getDirectlyReachableNodes(State n, String l) {
 		Set<State> nodes = new HashSet<State>();
-		Set<Arc> post = n.getPostsetEdges();
+		Set<Arc> post;
+		if (!backwards)
+			post = n.getPostsetEdges();
+		else
+			post = n.getPresetEdges();
 		for (Arc e : post) {
 			if (e.getLabel().equals(l)) {
-				nodes.add(e.getTarget());
+				if (!backwards)
+					nodes.add(e.getTarget());
+				else
+					nodes.add(e.getSource());
 			}
 		}
 		return nodes;

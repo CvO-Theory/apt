@@ -28,26 +28,57 @@ import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.TransitionSystem;
 
 /**
- * @author Vincent Göbel
- *
+ * @author Vincent Göbel, Uli Schlachter
  */
 @Test
 public class PersistentTSTest {
+	@Test
+	public void testPersistentTS() {
+		TransitionSystem ts = TestTSCollection.getPersistentTS();
+		PersistentTS det = new PersistentTS(ts, false);
+		assertTrue(det.isPersistent());
+	}
 
 	@Test
-	public void test() {
+	public void testPersistentTSBackwards() {
 		TransitionSystem ts = TestTSCollection.getPersistentTS();
-		PersistentTS det = new PersistentTS(ts);
+		PersistentTS det = new PersistentTS(ts, true);
 		assertTrue(det.isPersistent());
+	}
 
-		ts = TestTSCollection.getNonPersistentTS();
-		det = new PersistentTS(ts);
+	@Test
+	public void testNonPersistentTS() {
+		TransitionSystem ts = TestTSCollection.getNonPersistentTS();
+		PersistentTS det = new PersistentTS(ts, false);
 		assertFalse(det.isPersistent());
 		assertEquals(det.getNode().getId(), "r");
 		assertTrue(det.getLabel1().equals("fail") || det.getLabel2().equals("fail"));
 		assertTrue(det.getLabel2().equals("a") || det.getLabel1().equals("a"));
 	}
 
+	@Test
+	public void testNonPersistentTSBackwards() {
+		TransitionSystem ts = TestTSCollection.getNonPersistentTS();
+		PersistentTS det = new PersistentTS(ts, true);
+		assertTrue(det.isPersistent());
+	}
+
+	@Test
+	public void testNonPersistentTSReversed() {
+		TransitionSystem ts = TestTSCollection.getNonPersistentTSReversed();
+		PersistentTS det = new PersistentTS(ts, false);
+		assertTrue(det.isPersistent());
+	}
+
+	@Test
+	public void testNonPersistentTSReversedBackwards() {
+		TransitionSystem ts = TestTSCollection.getNonPersistentTSReversed();
+		PersistentTS det = new PersistentTS(ts, true);
+		assertFalse(det.isPersistent());
+		assertEquals(det.getNode().getId(), "r");
+		assertTrue(det.getLabel1().equals("fail") || det.getLabel2().equals("fail"));
+		assertTrue(det.getLabel2().equals("a") || det.getLabel1().equals("a"));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
