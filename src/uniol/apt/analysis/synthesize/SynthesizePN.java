@@ -19,10 +19,12 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,6 +54,7 @@ import uniol.apt.analysis.tnet.TNet;
 import uniol.apt.util.DebugUtil;
 import uniol.apt.util.Pair;
 
+import static uniol.apt.analysis.synthesize.LimitedUnfolding.ORIGINAL_STATE_KEY;
 import static uniol.apt.analysis.synthesize.LimitedUnfolding.calculateLimitedUnfolding;
 
 /**
@@ -67,6 +70,7 @@ public class SynthesizePN extends DebugUtil {
 	private final Map<String, Set<State>> failedEventStateSeparationProblems = new HashMap<>();
 	private final PNProperties properties;
 	private final Separation separation;
+	private final String stateMappingExtension;
 
 	/**
 	 * Create a SynthesizePN instance that synthesizes a given transition system up to language equivalence.
@@ -77,7 +81,7 @@ public class SynthesizePN extends DebugUtil {
 	 * @see LimitedUnfolding#calculateLimitedUnfolding
 	 */
 	static public SynthesizePN createUpToLanguageEquivalence(TransitionSystem ts, PNProperties properties) throws MissingLocationException {
-		return new SynthesizePN(new RegionUtility(calculateLimitedUnfolding(ts)), properties, true);
+		return new SynthesizePN(new RegionUtility(calculateLimitedUnfolding(ts)), properties, true, ORIGINAL_STATE_KEY);
 	}
 
 	/**
@@ -96,13 +100,17 @@ public class SynthesizePN extends DebugUtil {
 	 * @param properties Properties that the synthesized Petri net should satisfy.
 	 * @param onlyEventSeparation Should state separation be ignored? This means that two different states might get
 	 * the same marking.
+	 * @param stateMappingExtension An extension key that will be used to map States. All states in the input
+	 * transition system must have this extension and it must refer to a State object.
 	 */
-	SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation) throws MissingLocationException {
+	private SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation,
+			String stateMappingExtension) throws MissingLocationException {
 		this.ts = utility.getTransitionSystem();
 		this.utility = utility;
 		this.onlyEventSeparation = onlyEventSeparation;
 		this.properties = properties;
 		this.separation = SeparationUtility.createSeparationInstance(utility, properties);
+		this.stateMappingExtension = stateMappingExtension;
 
 		debug("Region basis: ", utility.getRegionBasis());
 
@@ -121,6 +129,17 @@ public class SynthesizePN extends DebugUtil {
 		minimizeRegions(utility, regions, onlyEventSeparation);
 
 		debug();
+	}
+
+	/**
+	 * Synthesize a Petri Net which generates the given transition system.
+	 * @param utility An instance of RegionUtility for the requested transition system.
+	 * @param properties Properties that the synthesized Petri net should satisfy.
+	 * @param onlyEventSeparation Should state separation be ignored? This means that two different states might get
+	 * the same marking.
+	 */
+	SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation) throws MissingLocationException {
+		this(utility, properties, onlyEventSeparation, null);
 	}
 
 	/**
@@ -155,6 +174,30 @@ public class SynthesizePN extends DebugUtil {
 	 */
 	public SynthesizePN(TransitionSystem ts) throws MissingLocationException {
 		this(ts, new PNProperties());
+	}
+
+	private State mapState(State state) {
+		if (stateMappingExtension == null)
+			return state;
+		return (State) state.getExtension(stateMappingExtension);
+	}
+
+	private Set<State> mapStates(Set<State> states) {
+		if (stateMappingExtension == null)
+			return states;
+		Set<State> result = new HashSet<>();
+		for (State state : states)
+			result.add(mapState(state));
+		return result;
+	}
+
+	private Collection<Set<State>> mapCollectionOfStates(Collection<Set<State>> states) {
+		if (stateMappingExtension == null)
+			return states;
+		Collection<Set<State>> result = new LinkedList<>();
+		for (Set<State> state : states)
+			result.add(mapStates(state));
+		return result;
 	}
 
 	/**
@@ -267,13 +310,15 @@ public class SynthesizePN extends DebugUtil {
 				stateToFailureGroup.put(state, problemGroup);
 			}
 		}
-		maximalFailedStateSeparationProblems.addAll(stateToFailureGroup.values());
+		maximalFailedStateSeparationProblems.addAll(mapCollectionOfStates(stateToFailureGroup.values()));
 	}
 
 	/**
 	 * Solve all instances of the event/state separation problem (ESSP).
 	 */
 	private void solveEventStateSeparation() {
+		Map<String, Set<State>> failedProblems = LazyMap.lazyMap(failedEventStateSeparationProblems,
+				FactoryUtils.prototypeFactory(new HashSet<State>()));
 		for (State state : ts.getNodes())
 			for (String event : ts.getAlphabet()) {
 				if (!SeparationUtility.isEventEnabled(state, event)) {
@@ -291,12 +336,7 @@ public class SynthesizePN extends DebugUtil {
 
 					r = separation.calculateSeparatingRegion(state, event);
 					if (r == null) {
-						Set<State> states = failedEventStateSeparationProblems.get(event);
-						if (states == null) {
-							states = new HashSet<>();
-							failedEventStateSeparationProblems.put(event, states);
-						}
-						states.add(state);
+						failedProblems.get(event).add(mapState(state));
 						debug("Failure!");
 					} else {
 						debug("Calculated region ", r);
