@@ -21,6 +21,7 @@ package uniol.apt.analysis.synthesize;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -144,7 +145,7 @@ public class SynthesizeWordModule extends AbstractModule {
 		return result.toString();
 	}
 
-	static public String formatSSPFailure(Word word, Set<Set<State>> separationFailures) {
+	static public String formatSSPFailure(Word word, Collection<Set<State>> separationFailures) {
 		// State separation can only fail due to boundedness. E.g. a safe Petri net cannot generate the word a,a.
 		if (separationFailures.isEmpty())
 			return null;
