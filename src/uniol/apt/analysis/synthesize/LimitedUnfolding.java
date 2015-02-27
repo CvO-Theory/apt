@@ -39,6 +39,7 @@ public class LimitedUnfolding  {
 	}
 
 	static final private String NEW_STATE_KEY = "NEW_STATE";
+	static final public String ORIGINAL_STATE_KEY = "ORIGINAL_STATE";
 
 	/**
 	 * Calculate a limited unfolding.
@@ -86,6 +87,7 @@ public class LimitedUnfolding  {
 	static private State createState(TransitionSystem unfolding, Deque<Pair<State, Iterator<Arc>>> stack, State next) {
 		State newState = unfolding.createState();
 		next.putExtension(NEW_STATE_KEY, newState);
+		newState.putExtension(ORIGINAL_STATE_KEY, next);
 		stack.addFirst(new Pair<>(next, next.getPostsetEdges().iterator()));
 		return newState;
 	}
