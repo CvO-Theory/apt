@@ -32,6 +32,7 @@ public class EquivalenceRelationTest {
 		EquivalenceRelation<String> relation = new EquivalenceRelation<>();
 
 		assertThat(relation, emptyIterable());
+		assertThat(relation, hasSize(0));
 		assertThat(relation.isEquivalent("a", "b"), is(false));
 		assertThat(relation.getClass("a"), contains("a"));
 	}
@@ -46,6 +47,7 @@ public class EquivalenceRelationTest {
 		assertThat(relation.getClass("c"), contains("c"));
 
 		assertThat(relation, emptyIterable());
+		assertThat(relation, hasSize(0));
 	}
 
 	@Test
@@ -67,6 +69,7 @@ public class EquivalenceRelationTest {
 		assertThat(relation.getClass("c"), contains("c"));
 		assertThat(relation.getClass("b"), sameInstance(relation.getClass("a")));
 		assertThat(relation, contains(containsInAnyOrder("a", "b")));
+		assertThat(relation, hasSize(1));
 	}
 
 	@Test
@@ -78,6 +81,7 @@ public class EquivalenceRelationTest {
 		assertThat(relation.isEquivalent("c", "b"), is(true));
 		assertThat(relation.getClass("a"), containsInAnyOrder("a", "b", "c"));
 		assertThat(relation, contains(containsInAnyOrder("a", "b", "c")));
+		assertThat(relation, hasSize(1));
 	}
 
 	@Test
@@ -91,6 +95,7 @@ public class EquivalenceRelationTest {
 		assertThat(relation, containsInAnyOrder(
 					containsInAnyOrder("a", "b"),
 					containsInAnyOrder("c", "d")));
+		assertThat(relation, hasSize(2));
 	}
 
 	@Test
@@ -103,6 +108,7 @@ public class EquivalenceRelationTest {
 		assertThat(relation.isEquivalent("c", "b"), is(true));
 		assertThat(relation.getClass("a"), containsInAnyOrder("a", "b", "c", "d"));
 		assertThat(relation, contains(containsInAnyOrder("a", "b", "c", "d")));
+		assertThat(relation, hasSize(1));
 	}
 }
 

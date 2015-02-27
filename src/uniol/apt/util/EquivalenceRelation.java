@@ -19,16 +19,18 @@
 
 package uniol.apt.util;
 
-import java.util.Set;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.HashMap;
+import java.util.AbstractCollection;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.collections4.map.LazyMap;
 import org.apache.commons.collections4.Transformer;
 import org.apache.commons.collections4.iterators.PeekingIterator;
+import org.apache.commons.collections4.map.LazyMap;
 import static org.apache.commons.collections4.iterators.PeekingIterator.peekingIterator;
 
 /**
@@ -36,7 +38,7 @@ import static org.apache.commons.collections4.iterators.PeekingIterator.peekingI
  * equivalent to themselves, but the equivalence classes of two elements can be joined.
  * @author Uli Schlachter
  */
-public class EquivalenceRelation<E> implements Iterable<Set<E>> {
+public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implements Collection<Set<E>> {
 	private class ToUnitSetTransformer implements Transformer<E, Set<E>> {
 		@Override
 		public Set<E> transform(E e) {
@@ -99,6 +101,20 @@ public class EquivalenceRelation<E> implements Iterable<Set<E>> {
 	 */
 	public boolean isEquivalent(E e1, E e2) {
 		return elementToClass.get(e1).contains(e2);
+	}
+
+	@Override
+	public int size() {
+		// Remove all classes which have only a single entry
+		Iterator<Set<E>> iter = allClasses.iterator();
+		while (iter.hasNext()) {
+			Set<E> klass = iter.next();
+			if (klass.size() == 1) {
+				elementToClass.remove(klass.iterator().next());
+				iter.remove();
+			}
+		}
+		return allClasses.size();
 	}
 
 	@Override
