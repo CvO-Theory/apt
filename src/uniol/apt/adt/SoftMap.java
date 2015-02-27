@@ -156,7 +156,11 @@ public class SoftMap<K, V> implements Map<K, V> {
 	public boolean equals(Object o) {
 		if (o instanceof SoftMap) {
 			SoftMap<?, ?> oMap = (SoftMap<?, ?>) o;
-			return map.equals(oMap.map);
+			return getMap().equals(oMap.getMap());
+		}
+		if (o instanceof Map) {
+			Map<?, ?> oMap = (Map<?, ?>) o;
+			return getMap().equals(oMap);
 		}
 		return false;
 	}
