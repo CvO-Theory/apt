@@ -52,6 +52,8 @@ import uniol.apt.analysis.tnet.TNet;
 import uniol.apt.util.DebugUtil;
 import uniol.apt.util.Pair;
 
+import static uniol.apt.analysis.synthesize.LimitedUnfolding.calculateLimitedUnfolding;
+
 /**
  * Synthesize a Petri Net from a transition system.
  * @author Uli Schlachter
@@ -67,13 +69,35 @@ public class SynthesizePN extends DebugUtil {
 	private final Separation separation;
 
 	/**
+	 * Create a SynthesizePN instance that synthesizes a given transition system up to language equivalence.
+	 * Internally, this function creates a limited unfolding. Please note that this means that any references to
+	 * states in the resulting SynthesizePN instance refers to states in the unfolding instead of the original ts.
+	 * @param ts The transition system to synthesize.
+	 * @param properties Properties that the synthesized Petri net should satisfy.
+	 * @see LimitedUnfolding#calculateLimitedUnfolding
+	 */
+	static public SynthesizePN createUpToLanguageEquivalence(TransitionSystem ts, PNProperties properties) throws MissingLocationException {
+		return new SynthesizePN(new RegionUtility(calculateLimitedUnfolding(ts)), properties, true);
+	}
+
+	/**
+	 * Create a SynthesizePN instance that synthesizes a given transition system up to language equivalence.
+	 * Internally, this function creates a limited unfolding.
+	 * @param ts The transition system to synthesize.
+	 * @see LimitedUnfolding#calculateLimitedUnfolding
+	 */
+	static public SynthesizePN createUpToLanguageEquivalence(TransitionSystem ts) throws MissingLocationException {
+		return createUpToLanguageEquivalence(ts, new PNProperties());
+	}
+
+	/**
 	 * Synthesize a Petri Net which generates the given transition system.
 	 * @param utility An instance of RegionUtility for the requested transition system.
 	 * @param properties Properties that the synthesized Petri net should satisfy.
 	 * @param onlyEventSeparation Should state separation be ignored? This means that two different states might get
 	 * the same marking.
 	 */
-	public SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation) throws MissingLocationException {
+	SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation) throws MissingLocationException {
 		this.ts = utility.getTransitionSystem();
 		this.utility = utility;
 		this.onlyEventSeparation = onlyEventSeparation;
@@ -114,17 +138,6 @@ public class SynthesizePN extends DebugUtil {
 	 */
 	public SynthesizePN(RegionUtility utility) throws MissingLocationException {
 		this(utility, new PNProperties());
-	}
-
-	/**
-	 * Synthesize a Petri Net which generates the given transition system.
-	 * @param ts The transition system to synthesize.
-	 * @param properties Properties that the synthesized Petri net should satisfy.
-	 * @param onlyEventSeparation Should state separation be ignored? This means that two different states might get
-	 * the same marking.
-	 */
-	public SynthesizePN(TransitionSystem ts, PNProperties properties, boolean onlyEventSeparation) throws MissingLocationException {
-		this(new RegionUtility(ts), properties, onlyEventSeparation);
 	}
 
 	/**

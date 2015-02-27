@@ -127,7 +127,7 @@ public class SynthesizePNTest {
 	@Test
 	public void testNonDeterministicTSNoSSP() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getNonDeterministicTS();
-		SynthesizePN synth = new SynthesizePN(ts, new PNProperties(), true);
+		SynthesizePN synth = new SynthesizePN(new RegionUtility(ts), new PNProperties(), true);
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		assertThat(synth.getSeparatingRegions(), contains(
@@ -258,7 +258,7 @@ public class SynthesizePNTest {
 	@Test
 	public void testABandBNoSSP() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getABandB();
-		SynthesizePN synth = new SynthesizePN(ts, new PNProperties(), true);
+		SynthesizePN synth = new SynthesizePN(new RegionUtility(ts), new PNProperties(), true);
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
 		assertThat(synth.getSeparatingRegions(), contains(

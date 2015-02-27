@@ -95,9 +95,11 @@ public class SynthesizeModule extends AbstractModule {
 
 		PNProperties properties = new PNProperties();
 		boolean uptoLanguageEquivalence = parseProperties(properties, input.getParameter("properties", String.class));
+		SynthesizePN synthesize;
 		if (uptoLanguageEquivalence)
-			ts = LimitedUnfolding.calculateLimitedUnfolding(ts);
-		SynthesizePN synthesize = new SynthesizePN(ts, properties, uptoLanguageEquivalence);
+			synthesize = SynthesizePN.createUpToLanguageEquivalence(ts, properties);
+		else
+			synthesize = new SynthesizePN(ts, properties);
 
 		PetriNet pn = synthesize.synthesizePetriNet();
 		if (pn != null)
