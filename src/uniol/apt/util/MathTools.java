@@ -44,6 +44,8 @@ public class MathTools {
 	 * @return the gcd of the BigIntegers of the given set.
 	 */
 	public static BigInteger gcdBigInteger(Collection<BigInteger> set) {
+		if (set.isEmpty())
+			return BigInteger.ZERO;
 		Iterator<BigInteger> iter = set.iterator();
 		BigInteger gcd = iter.next();
 		while (iter.hasNext()) {
@@ -61,6 +63,8 @@ public class MathTools {
 	 * @return the gcd of the integers of the given set.
 	 */
 	public static int gcd(Collection<Integer> set) {
+		if (set.isEmpty())
+			return 0;
 		Iterator<Integer> iter = set.iterator();
 		int gcd = iter.next();
 		while (iter.hasNext()) {
