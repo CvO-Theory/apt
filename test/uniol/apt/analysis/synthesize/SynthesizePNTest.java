@@ -37,7 +37,6 @@ import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.util.Pair;
 
-import org.hamcrest.collection.IsIterableWithSize;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -93,7 +92,7 @@ public class SynthesizePNTest {
 
 		PetriNet pn = SynthesizePN.synthesizePetriNet(utility, regions);
 
-		assertThat(pn.getPlaces(), IsIterableWithSize.<Place>iterableWithSize(1));
+		assertThat(pn.getPlaces(), hasSize(1));
 		assertThat(pn.getTransitions(), containsInAnyOrder(nodeWithID("a"), nodeWithID("b")));
 		assertThat(pn.getEdges(), containsInAnyOrder(
 					flowThatConnects(anything(), nodeWithID("a")),
@@ -180,7 +179,7 @@ public class SynthesizePNTest {
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// Can't really be more specific, way too many possibilities
-		assertThat(synth.getSeparatingRegions(), IsIterableWithSize.<Region>iterableWithSize(greaterThanOrEqualTo(3)));
+		assertThat(synth.getSeparatingRegions(), hasSize(greaterThanOrEqualTo(3)));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 

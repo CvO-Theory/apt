@@ -27,7 +27,6 @@ import java.util.List;
 import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.hamcrest.collection.IsIterableWithSize;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -44,7 +43,7 @@ public class InequalitySystemTest {
 			system.addInequality(0, ">=", 0, -1, -1);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
+			assertThat(solution, hasSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(x + z, is(0));
 			assertThat(y + z, is(0));
@@ -58,7 +57,7 @@ public class InequalitySystemTest {
 			system.addInequality(0, ">=", 1, 2, 3);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
+			assertThat(solution, hasSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(2 * x + 1 * y + 3 * z, lessThanOrEqualTo(0));
 			assertThat(1 * x + 1 * y + 2 * z, lessThanOrEqualTo(0));
@@ -74,7 +73,7 @@ public class InequalitySystemTest {
 			system.addInequality(4, ">=", 3, 3, 6);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
+			assertThat(solution, hasSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(2 * x + 1 * y + 3 * z, lessThanOrEqualTo(1));
 			assertThat(1 * x + 1 * y + 2 * z, lessThanOrEqualTo(2));
@@ -90,7 +89,7 @@ public class InequalitySystemTest {
 			system.addInequality(0, ">=", 1, 0, 1);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
+			assertThat(solution, hasSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(1 * x + 2 * y + 0 * z, lessThanOrEqualTo(0));
 			assertThat(0 * x + 1 * y + 1 * z, lessThanOrEqualTo(0));
@@ -105,7 +104,7 @@ public class InequalitySystemTest {
 			system.addInequality(10, ">=", 2, 4, 6);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
+			assertThat(solution, hasSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(4 * x + 2 * y + 6 * z, lessThanOrEqualTo(10));
 			assertThat(2 * x + 2 * y + 4 * z, lessThanOrEqualTo(10));
@@ -119,7 +118,7 @@ public class InequalitySystemTest {
 			system.addInequality(0, ">=", 2, 2, 4);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
+			assertThat(solution, hasSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(4 * x + 2 * y + 5 * z, lessThanOrEqualTo(0));
 			assertThat(2 * x + 2 * y + 4 * z, lessThanOrEqualTo(0));
@@ -139,7 +138,7 @@ public class InequalitySystemTest {
 			system.addInequality(0, ">=", 0, 42);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(2));
+			assertThat(solution, hasSize(2));
 			int y = solution.get(1);
 			assertThat(y, lessThanOrEqualTo(0));
 		}
@@ -153,7 +152,7 @@ public class InequalitySystemTest {
 			system.addInequality(1, "=", 0, 0, 1);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(3));
+			assertThat(solution, hasSize(3));
 			int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 			assertThat(x + y, is(1));
 			assertThat(x + z, greaterThan(1));
@@ -184,7 +183,7 @@ public class InequalitySystemTest {
 				system.addInequality(-1, ">=", i);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(1));
+			assertThat(solution, hasSize(1));
 			int x = solution.get(0);
 			assertThat(x, lessThanOrEqualTo(-1));
 		}
@@ -202,7 +201,7 @@ public class InequalitySystemTest {
 			system.addInequality(0, ">", -10, -200);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, IsIterableWithSize.<Integer>iterableWithSize(2));
+			assertThat(solution, hasSize(2));
 
 			int x = solution.get(0), y = solution.get(1);
 			assertThat(x, greaterThan(-20 * y));
