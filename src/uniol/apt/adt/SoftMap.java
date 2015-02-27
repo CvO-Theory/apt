@@ -171,6 +171,11 @@ public class SoftMap<K, V> implements Map<K, V> {
 	}
 
 	@Override
+	public String toString() {
+		return getMap().toString();
+	}
+
+	@Override
 	public Object clone() {
 		return new SoftMap<>(this);
 	}
