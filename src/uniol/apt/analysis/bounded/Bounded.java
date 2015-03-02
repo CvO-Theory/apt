@@ -69,7 +69,7 @@ public class Bounded {
 					// The net is unbounded, it can't get worse than this
 					CoverabilityGraphNode covered = n.getCoveredNode();
 					return new BoundedResult(pn, p, null, covered.getFiringSequence(),
-							n.getFiringSequenceFrom(covered));
+							n.getFiringSequenceFromCoveredNode());
 				}
 				if (k < val.getValue()) {
 					// We found a larger k, update our variables

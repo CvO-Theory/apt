@@ -31,8 +31,9 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.Transition;
 
 /**
- * This class represents a node in a coverability graph. A node is labeled with a marking which identifies it uniquele
- * and has a firing sequence which it can be reached with. Additionally, the postset of the node is available.
+ * This class represents a node in a coverability graph. A node is labeled with a marking which identifies it uniquely
+ * and has a firing sequence with which it can be reached from the initial marking of the underlying Petri net.
+ * Additionally, the postset of the node is available.
  * @author Uli Schlachter
  */
 public class CoverabilityGraphNode {
@@ -78,6 +79,7 @@ public class CoverabilityGraphNode {
 	/**
 	 * Get the node in the coverability graph that is covered by this node, if such a node exists.
 	 * @return the covered node or null
+	 * @see getFiringSequenceFromCoveredNode
 	 */
 	public CoverabilityGraphNode getCoveredNode() {
 		return this.covered;
@@ -95,20 +97,26 @@ public class CoverabilityGraphNode {
 	 * Get the firing sequence which reaches the marking represented by this instance from the initial marking of
 	 * the Petri net.
 	 * @return The firing sequence.
+	 * @see getFiringSequenceFromCoveredNode
 	 */
 	public List<Transition> getFiringSequence() {
 		return this.firingSequence;
 	}
 
 	/**
-	 * Get the firing sequence which reaches this node from some ancestor. The given ancestor must be a parent,
-	 * grandparent or "older" of us. The implementation does not check this requirement and might return bogus
-	 * results or thrown an exception if this is violated.
+	 * Get the firing sequence which reaches this node from the covered node, or null. This function can be used
+	 * together with getFiringSequence to describe a way to generate tokens in the Petri net. If the return value is
+	 * not null, the sequence returned from this function can be fired in an infinite loop in the marking described
+	 * by <code>getCoveredNode.getMarking()</code>, and will increase the number of token in the Petri net.
 	 * @return The firing sequence.
+	 * @see getCoveredNode
+	 * @see getFiringSequence
 	 */
-	public List<Transition> getFiringSequenceFrom(CoverabilityGraphNode ancestor) {
-		int ancestorSequenceLength = ancestor.getFiringSequence().size();
-		return this.firingSequence.subList(ancestorSequenceLength, this.firingSequence.size());
+	public List<Transition> getFiringSequenceFromCoveredNode() {
+		if (this.covered == null)
+			return null;
+		int coveredSequenceLength = this.covered.getFiringSequence().size();
+		return this.firingSequence.subList(coveredSequenceLength, this.firingSequence.size());
 	}
 
 	/**
