@@ -185,7 +185,7 @@ public class CoverabilityGraphTest {
 		PetriNet pn = getDeadlockNet();
 		Transition transitions[] = pn.getTransitions().toArray(new Transition[0]);
 		Marking initialMark = pn.getInitialMarkingCopy();
-		Marking aMark = transitions[0].fire(pn.getInitialMarkingCopy());
+		Marking aMark = transitions[0].fire(initialMark);
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
@@ -205,7 +205,7 @@ public class CoverabilityGraphTest {
 		PetriNet pn = getNonPersistentNet();
 		Marking initialMark = pn.getInitialMarkingCopy();
 		Transition ta = pn.getTransition("a");
-		Marking aMark = ta.fire(pn.getInitialMarkingCopy());
+		Marking aMark = ta.fire(initialMark);
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
@@ -227,11 +227,11 @@ public class CoverabilityGraphTest {
 		PetriNet pn = getPersistentBiCFNet();
 		Transition ta = pn.getTransition("a");
 		Transition tb = pn.getTransition("b");
+
 		Marking initialMark = pn.getInitialMarkingCopy();
-		Marking actM = pn.getInitialMarkingCopy();
-		Marking aMark = new Marking(actM.fire(ta));
-		Marking abMark = new Marking(actM.fire(tb));
-		Marking bMark = tb.fire(pn.getInitialMarkingCopy());
+		Marking aMark = ta.fire(initialMark);
+		Marking abMark = tb.fire(aMark);
+		Marking bMark = tb.fire(initialMark);
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
@@ -262,12 +262,11 @@ public class CoverabilityGraphTest {
 	public void testConcurrentDiamondNet() {
 		PetriNet pn = getConcurrentDiamondNet();
 		Transition transitions[] = pn.getTransitions().toArray(new Transition[0]);
-		Marking initialMark = pn.getInitialMarkingCopy();
-		Marking actMark = pn.getInitialMarkingCopy();
 
-		Marking aMark = new Marking(actMark.fire(transitions[0]));
-		Marking abMark = new Marking(actMark.fire(transitions[1]));
-		Marking bMark = new Marking(transitions[1].fire(pn.getInitialMarkingCopy()));
+		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking aMark = transitions[0].fire(initialMark);
+		Marking abMark = transitions[1].fire(aMark);
+		Marking bMark = transitions[1].fire(initialMark);
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
@@ -292,13 +291,11 @@ public class CoverabilityGraphTest {
 	public void testConflictingDiamondNet() {
 		PetriNet pn = getConflictingDiamondNet();
 		Transition transitions[] = pn.getTransitions().toArray(new Transition[0]);
-		Marking initialMark = pn.getInitialMarkingCopy();
-		Marking actMark = pn.getInitialMarkingCopy();
 
-		Marking aMark = new Marking(actMark.fire(transitions[0]));
-		Marking abMark = new Marking(actMark.fire(transitions[1]));
-		Marking bMark = pn.getInitialMarkingCopy();
-		bMark.fire(transitions[1]);
+		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking aMark = transitions[0].fire(initialMark);
+		Marking abMark = transitions[1].fire(aMark);
+		Marking bMark = transitions[1].fire(initialMark);
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
