@@ -243,7 +243,7 @@ public class Marking {
 		ensureConsistency();
 		Token val = getToken(id);
 		if (val != null) {
-			val.add(m);
+			map.put(id, val.add(m));
 		} else {
 			throw new NoSuchNodeException(net, id);
 		}
@@ -276,7 +276,7 @@ public class Marking {
 		ensureConsistency();
 		Token val = getToken(id);
 		if (val != null) {
-			val.add(m);
+			map.put(id, val.add(m));
 		} else {
 			throw new NoSuchNodeException(net, id);
 		}
@@ -379,7 +379,7 @@ public class Marking {
 		o.ensureConsistency();
 		assert map.keySet().equals(o.map.keySet());
 
-		Set<Map.Entry<String, Token>> covered = new HashSet<>();
+		Set<String> covered = new HashSet<>();
 		for (Map.Entry<String, Token> e : map.entrySet()) {
 			Token own = e.getValue();
 			Token other = o.map.get(e.getKey());
@@ -388,7 +388,7 @@ public class Marking {
 			if (comp < 0) {
 				return false;
 			} else if (comp > 0 && !own.isOmega()) {
-				covered.add(e);
+				covered.add(e.getKey());
 			}
 		}
 		if (covered.isEmpty()) {
@@ -397,8 +397,8 @@ public class Marking {
 		}
 
 		// We are covering the other marking, add the suitable omegas
-		for (Map.Entry<String, Token> e : covered) {
-			e.getValue().setOmega();
+		for (String id : covered) {
+			this.map.put(id, Token.OMEGA);
 		}
 
 		return true;

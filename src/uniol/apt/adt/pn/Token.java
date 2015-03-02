@@ -29,18 +29,21 @@ import java.util.Objects;
  */
 public class Token implements Comparable<Token> {
 
-	private int v = 0;
-	private static final int OMEGA_VALUE = -1;
-	public final static Token OMEGA = new Token();
+	private final int v;
+	public final static Token OMEGA = new Token(-1, false);
 
-	static {
-		OMEGA.setOmega();
+	private Token(int v, boolean checkValue) {
+		if (checkValue && v < 0) {
+			throw new IllegalArgumentException("v<0");
+		}
+		this.v = v;
 	}
 
 	/**
 	 * Constructor with count of token 0.
 	 */
 	public Token() {
+		this.v = 0;
 	}
 
 	/**
@@ -65,10 +68,7 @@ public class Token implements Comparable<Token> {
 	 * @throws IllegalArgumentException if the given value is less than zero.
 	 */
 	public Token(int v) {
-		if (v < 0) {
-			throw new IllegalArgumentException("v<0");
-		}
-		this.v = v;
+		this(v, true);
 	}
 
 	/**
@@ -78,15 +78,16 @@ public class Token implements Comparable<Token> {
 	 * <p/>
 	 * @throws IllegalArgumentException if the argument is null.
 	 */
-	void add(Token t) {
+	Token add(Token t) {
 		if (t == null) {
 			throw new IllegalArgumentException("v == null");
 		}
-		if (t.isOmega()) {
-			this.setOmega();
-		} else if (!this.isOmega()) {
-			this.v += t.v;
-		}
+		if (this.isOmega())
+			return this;
+		if (t.isOmega())
+			return t;
+		assert t.v >= 0;
+		return add(t.v);
 	}
 
 	/**
@@ -96,13 +97,13 @@ public class Token implements Comparable<Token> {
 	 * <p/>
 	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
 	 */
-	void add(int t) {
-		if (!this.isOmega()) {
-			if (this.v + t < 0) {
-				throw new IllegalArgumentException("this.v + v < 0");
-			}
-			this.v += t;
+	Token add(int t) {
+		if (this.isOmega())
+			return this;
+		if (this.v + t < 0) {
+			throw new IllegalArgumentException("this.v + v < 0");
 		}
+		return new Token(this.v + t);
 	}
 
 	/**
@@ -120,14 +121,7 @@ public class Token implements Comparable<Token> {
 	 * @return true, if this instance is representing OMEGA.
 	 */
 	public boolean isOmega() {
-		return this.v == Token.OMEGA_VALUE;
-	}
-
-	/**
-	 * Sets the value of this token to OMEGA.
-	 */
-	public void setOmega() {
-		this.v = Token.OMEGA_VALUE;
+		return this.equals(OMEGA);
 	}
 
 	@Override
