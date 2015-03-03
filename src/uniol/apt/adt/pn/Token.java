@@ -31,6 +31,7 @@ public class Token implements Comparable<Token> {
 
 	private final int v;
 	public final static Token OMEGA = new Token(-1, false);
+	public final static Token ZERO = new Token(0);
 
 	private Token(int v, boolean checkValue) {
 		if (checkValue && v < 0) {
