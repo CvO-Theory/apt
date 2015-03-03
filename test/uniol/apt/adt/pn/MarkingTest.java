@@ -211,6 +211,16 @@ public class MarkingTest {
 		// Verify that the two Markings aren't equal (=the copy constructor works correctly)
 		assertThat(mark, not(equalTo(other)));
 	}
+
+	@Test
+	public void testRemoveAddPlace() {
+		Place p1 = pn.createPlace("RemoveAddPlace");
+		p1.setInitialToken(1);
+		pn.removePlace(p1);
+
+		Place p2 = pn.createPlace("RemoveAddPlace");
+		assertThat(p2.getInitialToken(), equalTo(new Token(0)));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
