@@ -142,7 +142,7 @@ public class PnAnalysis {
 	/**
 	 * Check if the reachability graph of the given Petri net is isomorph to the reachability graph of a T-system.
 	 * <p/>
-	 * @param t1      the reachability graph of the given Petri ne
+	 * @param t1      the reachability graph of the given Petri net
 	 * @param tSystem the T-system, for which the reachability graph is checked for isomorphie
 	 * <p/>
 	 * @return true, if the reachability graphs are isomorph, otherwise false
