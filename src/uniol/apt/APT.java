@@ -154,7 +154,6 @@ import uniol.apt.pnanalysis.PnAnalysisModule;
 import uniol.apt.pnanalysis.RandomTNetGeneratorModule;
 import uniol.apt.ui.ParametersParser;
 import uniol.apt.ui.ParametersTransformer;
-import uniol.apt.ui.Printer;
 import uniol.apt.ui.ReturnValuesTransformer;
 import uniol.apt.ui.impl.DrawModule;
 import uniol.apt.ui.impl.DrawNetModule;
@@ -162,7 +161,6 @@ import uniol.apt.ui.impl.DrawTSModule;
 import uniol.apt.ui.impl.HelpModule;
 import uniol.apt.ui.impl.InternalsModule;
 import uniol.apt.ui.impl.SimpleParametersParser;
-import uniol.apt.ui.impl.TrimmedOutputStreamPrinter;
 import uniol.apt.ui.impl.parameter.CharacterParameterTransformation;
 import uniol.apt.ui.impl.parameter.ExtendModeParameterTransformation;
 import uniol.apt.ui.impl.parameter.GraphParameterTransformation;
@@ -294,7 +292,7 @@ public class APT {
 	private static final ReturnValuesTransformer returnValuesTransformer = new ReturnValuesTransformer();
 	private static final ModuleRegistry registry = new ModuleRegistry();
 
-	private static final Printer outPrinter = new TrimmedOutputStreamPrinter(System.out);
+	private static final PrintStream outPrinter = System.out;
 	private static final PrintStream errPrinter = System.err;
 
 	/**
@@ -508,6 +506,9 @@ public class APT {
 				}
 			}
 
+			// Buffer output so nothing is printed in case an error occurs later on
+			StringBuilder output = new StringBuilder();
+
 			// Print all return values for which the module produced values
 			for (int i = 0; i < values.size(); i++) {
 				int usedFileArgsCount = 0;
@@ -534,7 +535,8 @@ public class APT {
 						String filename = fileArgs[usedFileArgsCount];
 
 						if (filename.equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)) {
-							outPrinter.println(transformedValue);
+							output.append(transformedValue);
+							output.append(System.lineSeparator());
 						} else {
 							writeTransformedValueToString(transformedValue, filename);
 						}
@@ -549,19 +551,24 @@ public class APT {
 
 				// Print the return value without its name
 				if (isRawReturnValue) {
-					outPrinter.println(transformedValue);
+					output.append(transformedValue);
+					output.append(System.lineSeparator());
 					continue;
 				}
 
 				// Print this ordinary return value
-				outPrinter.println(returnValueName + ": " + transformedValue);
+				output.append(returnValueName + ": " + transformedValue);
+				output.append(System.lineSeparator());
 
 			}
 
 			ModuleExitStatusChecker statusChecker = new PropertyModuleExitStatusChecker();
 			ExitStatus status = statusChecker.check(module, values);
 
-			outPrinter.show();
+			String out = output.toString().trim();
+			if (!out.isEmpty())
+				outPrinter.println(out);
+			outPrinter.flush();
 			System.exit(status.getValue());
 		} catch (ModuleException e) {
 			errPrinter.println("Error while invoking module '" + module.getName() + "':\n" + "  " + e.getMessage());
@@ -628,24 +635,7 @@ public class APT {
 		errPrinter.println();
 
 		errPrinter.println("Available modules (starting with " + moduleName + "):");
-		printModuleList(foundModules, new Printer() {
-			@Override
-			public void print(String output) {
-				errPrinter.print(output);
-			}
-			@Override
-			public void println(String output) {
-				errPrinter.println(output);
-			}
-			@Override
-			public void println() {
-				errPrinter.println();
-			}
-			@Override
-			public void show() {
-				errPrinter.flush();
-			}
-		});
+		printModuleList(foundModules, errPrinter);
 
 		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
@@ -664,7 +654,7 @@ public class APT {
 		outPrinter.println("Available modules:");
 		printModuleList(registry.getModules(ModuleVisibility.SHOWN), outPrinter);
 
-		outPrinter.show();
+		outPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
@@ -674,7 +664,7 @@ public class APT {
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
-	private static void printModuleList(Collection<Module> modules, Printer printer) {
+	private static void printModuleList(Collection<Module> modules, PrintStream printer) {
 		for (Category category : Category.values()) {
 			List<Module> modulesByCategory = ModuleUtils.getModulesByCategory(modules, category);
 
