@@ -172,13 +172,7 @@ public class RegionUtilityTest {
 	@Test
 	public void testParikhVectorForChords() throws UnreachableException {
 		TransitionSystem ts = TestTSCollection.getPersistentTS();
-		State s0 = ts.getNode("s0");
-		State l = ts.getNode("l");
-		State r = ts.getNode("r");
-		State s1 = ts.getNode("s1");
-
 		RegionUtility utility = new RegionUtility(ts);
-		Arc chord = utility.getSpanningTree().getChords().iterator().next();
 
 		int a = utility.getEventIndex("a");
 		int b = utility.getEventIndex("b");

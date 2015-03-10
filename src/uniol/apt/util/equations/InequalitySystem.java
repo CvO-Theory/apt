@@ -122,7 +122,7 @@ public class InequalitySystem extends DebugUtil {
 		 */
 		static public Comparator fromString(String str) {
 			for (Comparator comp : values())
-				if (comp.toString() == str)
+				if (comp.toString().equals(str))
 					return comp;
 			throw new AssertionError("Unknown Comparator '" + str + "'");
 		}

@@ -46,7 +46,6 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	private final Set<E> chords;
 	private final N startNode;
 	private final G graph;
-	private final Map<N, List<N>> pathMap = new HashMap<>();
 
 	// TODO: Possible extensions: Spanning forest?
 
@@ -164,24 +163,16 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 			return Collections.emptyList();
 		}
 
-		// TODO: Optimization: This (indirectly) also calculates the paths for the previous nodes, it would be
-		// nice to save them
-		List<N> result = pathMap.get(node);
+		// Possible optimization: Cache the result
+		List<N> result = new ArrayList<>();
 
-		if (result == null) {
-			result = new ArrayList<>();
-
-			while (node != null) {
-				result.add(node);
-				node = getPredecessor(node);
-			}
-
-			Collections.reverse(result);
-			result = Collections.unmodifiableList(result);
-			pathMap.put(node, result);
+		while (node != null) {
+			result.add(node);
+			node = getPredecessor(node);
 		}
 
-		return result;
+		Collections.reverse(result);
+		return Collections.unmodifiableList(result);
 	}
 
 	/**

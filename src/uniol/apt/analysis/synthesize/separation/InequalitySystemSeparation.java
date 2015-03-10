@@ -175,8 +175,6 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 * @param k The limit for the bound.
 	 */
 	private void requireKBoundedness(int k) {
-		int inequalitySize = systemInitialMarking + 1;
-
 		// Require k >= r_S(s) = r_S(s0) + r_E(Psi_s)
 		for (State state : utility.getTransitionSystem().getNodes()) {
 			try {

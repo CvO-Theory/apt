@@ -90,9 +90,6 @@ public class SeparationTestHelper {
 		private final String skipEvent;
 		protected TransitionSystem ts;
 		protected RegionUtility utility;
-		protected Region region1;
-		protected Region region2;
-		protected Region region3;
 		protected Separation separation;
 
 		public Tester(SeparationFactory factory, String skipEvent) {
@@ -121,10 +118,6 @@ public class SeparationTestHelper {
 			assertThat(utility.getEventIndex("a"), is(0));
 			assertThat(utility.getEventIndex("b"), is(1));
 			assertThat(utility.getEventIndex("c"), is(2));
-
-			region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0, 0));
-			region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1, 0));
-			region3 = Region.createPureRegionFromVector(utility, Arrays.asList(0, 0, -1));
 
 			String[] locationMap = new String[3];
 			separation = factory.createSeparation(utility, locationMap);
@@ -159,7 +152,6 @@ public class SeparationTestHelper {
 
 		@Test(dataProvider = "stateEventPairs")
 		public void testEventSeparation(String stateName, String event) throws UnreachableException {
-			State state = utility.getTransitionSystem().getNode(stateName);
 			checkEventSeparation(factory, utility, stateName, event);
 		}
 	}

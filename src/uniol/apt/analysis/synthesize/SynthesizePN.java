@@ -388,7 +388,6 @@ public class SynthesizePN extends DebugUtil {
 	 * @param onlyEventSeparation Should state separation be ignored?
 	 */
 	static public void minimizeRegions(RegionUtility utility, Set<Region> requiredRegions, boolean onlyEventSeparation) {
-		TransitionSystem ts = utility.getTransitionSystem();
 		Set<Region> allRegions = Collections.unmodifiableSet(new HashSet<>(requiredRegions));
 		Set<Region> remainingRegions = new HashSet<>(requiredRegions);
 		requiredRegions.clear();

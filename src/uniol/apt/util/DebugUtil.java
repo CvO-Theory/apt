@@ -19,6 +19,7 @@
 
 package uniol.apt.util;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -28,10 +29,15 @@ import java.util.Date;
  */
 public class DebugUtil {
 	static final public boolean debugOutputEnabled = false;
-	static final private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+	static final private ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>() {
+		@Override
+		protected DateFormat initialValue() {
+			return new SimpleDateFormat("HH:mm:ss.SSS");
+		}
+	};
 
 	static private void printDebug(String prefix, String message) {
-		prefix = dateFormat.format(new Date()) + " " + prefix + ": ";
+		prefix = dateFormat.get().format(new Date()) + " " + prefix + ": ";
 		for (String line : message.split("\n"))
 			System.err.println(prefix + line);
 	}
