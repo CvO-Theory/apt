@@ -38,7 +38,7 @@ public class TSReturnValueTransformation implements ReturnValueTransformation<Tr
 
 	@Override
 	public void transform(Writer output, TransitionSystem arg) throws ModuleException, IOException {
-		output.write(new APTRenderer().render(arg));
+		new APTRenderer().render(output, arg);
 	}
 
 }

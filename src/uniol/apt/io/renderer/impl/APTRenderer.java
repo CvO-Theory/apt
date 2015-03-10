@@ -19,9 +19,13 @@
 
 package uniol.apt.io.renderer.impl;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.stringtemplate.v4.AutoIndentWriter;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
@@ -59,6 +63,25 @@ public class APTRenderer {
 	 * invalid identifiers are used or when the net has no places or no transitions.
 	 */
 	public String render(PetriNet pn) throws ModuleException {
+		StringWriter writer = new StringWriter();
+		try {
+			render(writer, pn);
+		}
+		catch (IOException e) {
+			// A StringWriter shouldn't throw IOExceptions
+			throw new RuntimeException(e);
+		}
+		return writer.toString();
+	}
+
+	/**
+	 * Render the given Petri net into the APT file format.
+	 * @param writer the writer to send the result to
+	 * @param pn the Petri net that should be represented as a string.
+	 * @throws ModuleException when the Petri net cannot be expressed in the LoLA file format, for example when
+	 * invalid identifiers are used or when the net has no places or no transitions.
+	 */
+	public void render(Writer output, PetriNet pn) throws ModuleException, IOException {
 		verifyNet(pn);
 
 		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/APTPN.stg");
@@ -79,7 +102,7 @@ public class APTRenderer {
 		// Handle transitions (and arcs)
 		pnTemplate.add("transitions", pn.getTransitions());
 
-		return pnTemplate.render();
+		pnTemplate.write(new AutoIndentWriter(output));
 	}
 
 	/**
@@ -88,17 +111,32 @@ public class APTRenderer {
 	 * @return the string representation of the net.
 	 */
 	public String render(TransitionSystem ts) {
-		StringBuilder header = new StringBuilder();
-		StringBuilder body = new StringBuilder();
+		StringWriter writer = new StringWriter();
+		try {
+			render(writer, ts);
+		}
+		catch (IOException e) {
+			// A StringWriter shouldn't throw IOExceptions
+			throw new RuntimeException(e);
+		}
+		return writer.toString();
+	}
 
-		header.append("\n.name \"").append(ts.getName()).append("\"\n");
-		header.append(".type LTS" + "\n");
+	/**
+	 * Render the given Petri net into the APT file format.
+	 * @param writer the writer to send the result to
+	 * @param ts transition system
+	 */
+	public void render(Writer output, TransitionSystem ts) throws IOException {
+		output.append("\n.name \"").append(ts.getName()).append("\"\n");
+		output.append(".type LTS" + "\n");
+		output.append("\n");
 
-		body.append(".states" + "\n");
+		output.append(".states" + "\n");
 		for (State s : ts.getNodes()) {
-			body.append(s.getId());
+			output.append(s.getId());
 			if (s.equals(ts.getInitialState())) {
-				body.append("[initial]");
+				output.append("[initial]");
 			}
 
 			/* If the "comment" extension is present, escape it properly and append it as a comment */
@@ -106,35 +144,33 @@ public class APTRenderer {
 				Object comment = s.getExtension("comment");
 				if (comment instanceof String) {
 					String c = (String) comment;
-					body.append(" /* ");
-					body.append(c.replace("*/", "* /"));
-					body.append(" */");
+					output.append(" /* ");
+					output.append(c.replace("*/", "* /"));
+					output.append(" */");
 				}
 			} catch (Exception e) {
 			}
-			body.append("\n");
+			output.append("\n");
 		}
-		body.append("\n");
+		output.append("\n");
 
-		body.append(".labels" + "\n");
+		output.append(".labels" + "\n");
 		Set<String> labels = new HashSet<>();
 		for (Arc e : ts.getEdges()) {
 			labels.add(e.getLabel());
 		}
 		for (String l : labels) {
-			body.append(l).append("\n");
+			output.append(l).append("\n");
 		}
-		body.append("\n");
+		output.append("\n");
 
-		body.append(".arcs" + "\n");
+		output.append(".arcs" + "\n");
 		for (Arc e : ts.getEdges()) {
-			body.append(e.getSource().getId()).append(" ");
-			body.append(e.getLabel()).append(" ");
-			body.append(e.getTarget().getId());
-			body.append("\n");
+			output.append(e.getSource().getId()).append(" ");
+			output.append(e.getLabel()).append(" ");
+			output.append(e.getTarget().getId());
+			output.append("\n");
 		}
-
-		return (header.toString() + "\n" + body.toString());
 	}
 }
 
