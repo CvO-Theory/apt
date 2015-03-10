@@ -19,6 +19,8 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Collection;
 
 import uniol.apt.adt.INode;
@@ -30,19 +32,18 @@ import uniol.apt.ui.ReturnValueTransformation;
  */
 public class INodeCollectionReturnValueTransformation<T extends Collection<? extends INode<?, ?, ?>>> implements ReturnValueTransformation<T> {
 	@Override
-	public String transform(T nodes) {
-		StringBuilder sb = new StringBuilder("[");
+	public void transform(Writer output, T nodes) throws IOException {
 		boolean first = true;
 
+		output.append("[");
 		for (INode<?, ?, ?> node : nodes) {
 			if (!first)
-				sb.append(", ");
-			sb.append(node.getId());
+				output.append(", ");
+			output.append(node.getId());
 			first = false;
 		}
 
-		sb.append("]");
-		return sb.toString();
+		output.append("]");
 	}
 }
 

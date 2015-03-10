@@ -19,6 +19,9 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.renderer.impl.APTRenderer;
 import uniol.apt.ui.ReturnValueTransformation;
@@ -34,9 +37,8 @@ import uniol.apt.module.exception.ModuleException;
 public class TSReturnValueTransformation implements ReturnValueTransformation<TransitionSystem> {
 
 	@Override
-	public String transform(TransitionSystem arg) throws ModuleException {
-		APTRenderer renderer = new APTRenderer();
-		return renderer.render(arg);
+	public void transform(Writer output, TransitionSystem arg) throws ModuleException, IOException {
+		output.write(new APTRenderer().render(arg));
 	}
 
 }

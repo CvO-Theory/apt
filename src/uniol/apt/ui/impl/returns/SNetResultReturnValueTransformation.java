@@ -19,6 +19,9 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import uniol.apt.analysis.snet.SNetResult;
 import uniol.apt.ui.ReturnValueTransformation;
 
@@ -29,22 +32,20 @@ import uniol.apt.ui.ReturnValueTransformation;
  */
 public class SNetResultReturnValueTransformation implements ReturnValueTransformation<SNetResult> {
 	@Override
-	public String transform(SNetResult result) {
-		StringBuilder sb = new StringBuilder("\n");
+	public void transform(Writer output, SNetResult result) throws IOException {
+		output.append("\n");
 
 		if (result.getSplittingLabels().isEmpty() && result.getSynchronizationLabels().isEmpty()) {
-			sb.append("  No synchronization and no splitting was found.\n");
+			output.append("  No synchronization and no splitting was found.\n");
 		}
 
 		for (String label : result.getSynchronizationLabels()) {
-			sb.append("  There is a synchronization before " + label + ".\n");
+			output.append("  There is a synchronization before " + label + ".\n");
 		}
 
 		for (String label : result.getSplittingLabels()) {
-			sb.append("  There is a splitting after " + label + ".\n");
+			output.append("  There is a splitting after " + label + ".\n");
 		}
-
-		return sb.toString();
 	}
 }
 

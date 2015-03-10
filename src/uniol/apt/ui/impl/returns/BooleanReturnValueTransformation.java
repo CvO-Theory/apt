@@ -19,6 +19,9 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
@@ -31,8 +34,8 @@ public class BooleanReturnValueTransformation implements
 		ReturnValueTransformation<Boolean> {
 
 	@Override
-	public String transform(Boolean arg) {
-		return arg ? "Yes" : "No";
+	public void transform(Writer output, Boolean arg) throws IOException {
+		output.append(arg ? "Yes" : "No");
 	}
 
 }

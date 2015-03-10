@@ -28,6 +28,7 @@ import static uniol.apt.adt.matcher.Matchers.*;
 import org.hamcrest.Matcher;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Arrays;
@@ -49,6 +50,11 @@ import static uniol.apt.TestNetCollection.*;
 
 /** @author Raffaela Ferrari */
 public class BisimulationTest {
+	private String transformErrorPath(NonBisimilarPath path) throws IOException {
+		StringWriter out = new StringWriter();
+		new NonBisimilarPathReturnValueTransformation().transform(out, path);
+		return out.toString();
+	}
 
 	private void testBisimulation(PetriNet pn1, PetriNet pn2) throws UnboundedException {
 		// The Petri nets should be bisimilar
@@ -56,13 +62,12 @@ public class BisimulationTest {
 			new PetriNetOrTransitionSystem(pn2)), "Testing Bisimulation");
 	}
 
-	private void testNoBisimulation(PetriNet pn1, PetriNet pn2, String errorPath) throws ModuleException {
+	private void testNoBisimulation(PetriNet pn1, PetriNet pn2, String errorPath) throws ModuleException, IOException {
 		// The Petri nets shouldn't be bisimilar
 		Bisimulation bisimulation = new Bisimulation();
 		assertFalse(bisimulation.checkBisimulation(new PetriNetOrTransitionSystem(pn1),
 			new PetriNetOrTransitionSystem(pn2)), "Testing no Bisimulation");
-		assertEquals(new NonBisimilarPathReturnValueTransformation().transform(bisimulation.getErrorPath()),
-			errorPath);
+		assertEquals(transformErrorPath(bisimulation.getErrorPath()), errorPath);
 	}
 
 	private void testNoBisimulation(PetriNet pn1, PetriNet pn2,
@@ -82,13 +87,12 @@ public class BisimulationTest {
 	}
 
 	private void testNoBisimulationForLTS(TransitionSystem lts1, TransitionSystem lts2, String errorPath)
-		throws ModuleException {
+		throws ModuleException, IOException {
 		// The LTSs shouldn't be bisimilar
 		Bisimulation bisimulation = new Bisimulation();
 		assertFalse(bisimulation.checkBisimulation(new PetriNetOrTransitionSystem(lts1),
 			new PetriNetOrTransitionSystem(lts2)), "Testing no Bisimulation");
-		assertEquals(new NonBisimilarPathReturnValueTransformation().transform(bisimulation.getErrorPath()),
-			errorPath);
+		assertEquals(transformErrorPath(bisimulation.getErrorPath()), errorPath);
 	}
 
 	private void testNoBisimilationForLtsAndPn(TransitionSystem lts1, PetriNet pn2,
@@ -141,7 +145,7 @@ public class BisimulationTest {
 		Bisimulation bisimulation = new Bisimulation();
 		assertFalse(bisimulation.checkBisimulation(new PetriNetOrTransitionSystem(getTestTS4A()),
 			new PetriNetOrTransitionSystem(getTestTS4C())), "Testing no Bisimulation");
-		String error = new NonBisimilarPathReturnValueTransformation().transform(bisimulation.getErrorPath());
+		String error = transformErrorPath(bisimulation.getErrorPath());
 		if (!error.equals(errorPath1) && !error.equals(errorPath2)) {
 			fail("Did not found the right error path. Expected: " + errorPath1 + " or " + errorPath2
 				+ "but found: " + error);

@@ -19,6 +19,8 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Collection;
 
 import org.apache.commons.collections4.MapIterator;
@@ -33,24 +35,23 @@ import uniol.apt.ui.ReturnValueTransformation;
  */
 public class IsomorphismReturnValueTransformation implements ReturnValueTransformation<Isomorphism> {
 	@Override
-	public String transform(Isomorphism isomorphism) {
-		StringBuilder sb = new StringBuilder("[");
+	public void transform(Writer output, Isomorphism isomorphism) throws IOException {
 		boolean first = true;
 
+		output.append("[");
 		MapIterator<State, State> iterator = isomorphism.mapIterator();
 		while (iterator.hasNext()) {
 			State n = iterator.next();
 			State m = iterator.getValue();
 			if (!first)
-				sb.append(", ");
-			sb.append(n.getId());
-			sb.append("=");
-			sb.append(m.getId());
+				output.append(", ");
+			output.append(n.getId());
+			output.append("=");
+			output.append(m.getId());
 			first = false;
 		}
 
-		sb.append("]");
-		return sb.toString();
+		output.append("]");
 	}
 }
 

@@ -19,6 +19,9 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import uniol.apt.analysis.tnet.TNetResult;
 import uniol.apt.ui.ReturnValueTransformation;
 
@@ -29,22 +32,20 @@ import uniol.apt.ui.ReturnValueTransformation;
  */
 public class TNetResultReturnValueTransformation implements ReturnValueTransformation<TNetResult> {
 	@Override
-	public String transform(TNetResult result) {
-		StringBuilder sb = new StringBuilder("\n");
+	public void transform(Writer output, TNetResult result) throws IOException {
+		output.append("\n");
 
 		if (result.getMergeIDs().isEmpty() && result.getConflictIDs().isEmpty()) {
-			sb.append("  No merge and no conflict was found.\n");
+			output.append("  No merge and no conflict was found.\n");
 		}
 
 		for (String id : result.getMergeIDs()) {
-			sb.append("  There is a merge before " + id + ".\n");
+			output.append("  There is a merge before " + id + ".\n");
 		}
 
 		for (String id : result.getConflictIDs()) {
-			sb.append("  There is a conflict after " + id + ".\n");
+			output.append("  There is a conflict after " + id + ".\n");
 		}
-
-		return sb.toString();
 	}
 }
 

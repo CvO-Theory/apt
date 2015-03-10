@@ -19,6 +19,9 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
@@ -28,8 +31,8 @@ import uniol.apt.ui.ReturnValueTransformation;
  */
 public class ToStringReturnValueTransformation<T> implements ReturnValueTransformation<T> {
 	@Override
-	public String transform(T object) {
-		return object.toString();
+	public void transform(Writer output, T object) throws IOException {
+		output.append(object.toString());
 	}
 }
 

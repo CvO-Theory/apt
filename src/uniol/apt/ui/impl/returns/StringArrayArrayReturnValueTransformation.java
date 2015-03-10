@@ -19,6 +19,9 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
@@ -26,19 +29,16 @@ import uniol.apt.ui.ReturnValueTransformation;
  */
 public class StringArrayArrayReturnValueTransformation implements ReturnValueTransformation<String[][]> {
 	@Override
-	public String transform(String[][] arrayArray) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("\n");
+	public void transform(Writer output, String[][] arrayArray) throws IOException {
+		output.append("\n");
 
 		for (String[] array : arrayArray) {
 			for (String str : array) {
-				sb.append(str);
-				sb.append("\t");
+				output.append(str);
+				output.append("\t");
 			}
-			sb.append("\n");
+			output.append("\n");
 		}
-
-		return sb.toString();
 	}
 }
 

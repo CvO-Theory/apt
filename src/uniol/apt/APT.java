@@ -22,6 +22,7 @@ package uniol.apt;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -568,7 +569,12 @@ public class APT {
 
 					if (outputWithName[i])
 						out.print(returnValues.get(i).getName() + ": ");
-					out.println(returnValuesTransformer.transform(values.get(i), returnValues.get(i).getKlass()));
+
+					OutputStreamWriter writer = new OutputStreamWriter(out);
+					returnValuesTransformer.transform(writer,
+							values.get(i), returnValues.get(i).getKlass());
+					writer.flush();
+					out.println();
 				}
 			}
 			catch (IOException e) {

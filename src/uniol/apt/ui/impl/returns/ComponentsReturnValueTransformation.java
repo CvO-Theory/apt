@@ -19,6 +19,9 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import uniol.apt.adt.INode;
 import uniol.apt.analysis.connectivity.Component;
 import uniol.apt.analysis.connectivity.Components;
@@ -31,20 +34,19 @@ import uniol.apt.ui.ReturnValueTransformation;
  */
 public class ComponentsReturnValueTransformation implements ReturnValueTransformation<Components> {
 	@Override
-	public String transform(Components components) throws ModuleException {
+	public void transform(Writer output, Components components) throws ModuleException, IOException {
 		ReturnValueTransformation<Component> transform = new INodeCollectionReturnValueTransformation<>();
-		StringBuilder sb = new StringBuilder("[");
 		boolean first = true;
 
+		output.append("[");
 		for (Component component : components) {
 			if (!first)
-				sb.append(", ");
-			sb.append(transform.transform(component));
+				output.append(", ");
+			transform.transform(output, component);
 			first = false;
 		}
 
-		sb.append("]");
-		return sb.toString();
+		output.append("]");
 	}
 }
 

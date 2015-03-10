@@ -19,6 +19,9 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import uniol.apt.adt.INode;
 import uniol.apt.ui.ReturnValueTransformation;
 
@@ -28,8 +31,8 @@ import uniol.apt.ui.ReturnValueTransformation;
  */
 public class INodeReturnValueTransformation<T extends INode<?, ?, ?>> implements ReturnValueTransformation<T> {
 	@Override
-	public String transform(T node) {
-		return node.getId();
+	public void transform(Writer output, T node) throws IOException {
+		output.append(node.getId());
 	}
 }
 

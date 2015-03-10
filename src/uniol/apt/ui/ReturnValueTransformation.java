@@ -19,6 +19,9 @@
 
 package uniol.apt.ui;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import uniol.apt.module.exception.ModuleException;
 
 /**
@@ -27,7 +30,7 @@ import uniol.apt.module.exception.ModuleException;
  * @param <T> the type of the object that is transformed into a string
  */
 public interface ReturnValueTransformation<T> {
-	public String transform(T arg) throws ModuleException;
+	public void transform(Writer output, T arg) throws ModuleException, IOException;
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

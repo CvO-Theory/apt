@@ -19,6 +19,8 @@
 
 package uniol.apt.ui;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,12 +46,13 @@ public class ReturnValuesTransformer {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> String transform(Object arg, Class<T> klass) throws ModuleException {
+	public <T> void transform(Writer output, Object arg, Class<T> klass) throws ModuleException, IOException {
 		// FIXME: Can these casts be avoided?
 		ReturnValueTransformation<T> transformation = (ReturnValueTransformation<T>) transformations.get(klass);
 		if (transformation == null)
-			return arg.toString();
-		return transformation.transform(klass.cast(arg));
+			output.write(arg.toString());
+		else
+			transformation.transform(output, klass.cast(arg));
 	}
 }
 

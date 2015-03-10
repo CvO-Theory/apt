@@ -19,6 +19,9 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
@@ -33,12 +36,8 @@ import uniol.apt.ui.ReturnValueTransformation;
 public class MarkingReturnValueTransformation implements ReturnValueTransformation<Marking> {
 
 	@Override
-	public String transform(Marking m) {
+	public void transform(Writer output, Marking m) throws IOException {
 		PetriNet pn = m.getNet();
-		StringBuilder output = new StringBuilder();
-
-
-		//output.append("{");
 
 		for (Place p : pn.getPlaces()) {
 			Token v = m.getToken(p);
@@ -48,15 +47,11 @@ public class MarkingReturnValueTransformation implements ReturnValueTransformati
 				if (v.isOmega()) {
 					output.append("OMEGA");
 				} else {
-					output.append(v.getValue());
+					output.append(Integer.toString(v.getValue()));
 				}
 				output.append(" ");
 			}
 		}
-
-		//output.append("}");
-
-		return output.toString();
 	}
 }
 

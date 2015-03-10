@@ -19,6 +19,8 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Set;
 
 import uniol.apt.adt.pn.Place;
@@ -31,30 +33,28 @@ import uniol.apt.ui.ReturnValueTransformation;
  */
 public class TrapsSiphonsListReturnValueTransformation implements ReturnValueTransformation<TrapsSiphonsList> {
 	@Override
-	public String transform(TrapsSiphonsList tsList) {
-		StringBuilder sb = new StringBuilder("{");
+	public void transform(Writer output, TrapsSiphonsList tsList) throws IOException {
 		boolean firstList = true;
 
+		output.append("{");
 		for (Set<Place> places : tsList) {
 			if (!firstList)
-				sb.append(", ");
+				output.append(", ");
 			firstList = false;
 
-			sb.append("{");
+			output.append("{");
 
 			boolean firstPlace = true;
 			for (Place place : places) {
 				if (!firstPlace)
-					sb.append(", ");
+					output.append(", ");
 				firstPlace = false;
-				sb.append(place.getId());
+				output.append(place.getId());
 			}
 
-			sb.append("}");
+			output.append("}");
 		}
-		sb.append("}");
-
-		return sb.toString();
+		output.append("}");
 	}
 }
 

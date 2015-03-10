@@ -19,6 +19,9 @@
 
 package uniol.apt.ui.impl.returns;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.bisimulation.NonBisimilarPath;
 import uniol.apt.module.exception.ModuleException;
@@ -35,21 +38,17 @@ import uniol.apt.util.Pair;
 public class NonBisimilarPathReturnValueTransformation implements ReturnValueTransformation<NonBisimilarPath> {
 
 	@Override
-	public String transform(NonBisimilarPath path) throws ModuleException {
-		StringBuilder sb = new StringBuilder("");
+	public void transform(Writer output, NonBisimilarPath path) throws IOException {
 		boolean first = true;
 
 		for (Pair<State, State> pair : path) {
 			if (!first) {
-				sb.append(";");
+				output.append(";");
 			}
 
-			sb.append("(" + pair.getFirst().getId() + "," + pair.getSecond().getId() + ")");
+			output.append("(" + pair.getFirst().getId() + "," + pair.getSecond().getId() + ")");
 			first = false;
 		}
-
-		// sb.append("\"");
-		return sb.toString();
 	}
 
 }
