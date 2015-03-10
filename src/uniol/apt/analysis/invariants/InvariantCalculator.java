@@ -294,19 +294,15 @@ public class InvariantCalculator {
         // Phase 3: Retrieve Invariants (the columns)
         Set<List<Integer>> result = new HashSet<>();
         for (int i = 0; i < matB.getColumnCount(); ++i) {
-            result.add(matB.getColumn(i));
-        }
-
-        // Phase 4: Make them minimal
-        for (List<Integer> invariants : result) {
+            List<Integer> invariants = matB.getColumn(i);
+            // Phase 4: Make them minimal
             int gcd = MathTools.gcd(invariants);
             if (gcd > 1) {
-                result.remove(invariants);
-                for (int i = 0; i < invariants.size(); ++i) {
-                    invariants.set(i, invariants.get(i) / gcd);
+                for (int j = 0; j < invariants.size(); ++j) {
+                    invariants.set(j, invariants.get(j) / gcd);
                 }
-                result.add(invariants);
             }
+            result.add(invariants);
         }
         return result;
     }
