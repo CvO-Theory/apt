@@ -19,9 +19,11 @@
 
 package uniol.apt;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -506,68 +508,78 @@ public class APT {
 				}
 			}
 
-			// Buffer output so nothing is printed in case an error occurs later on
-			StringBuilder output = new StringBuilder();
+			// Handle module output
+			try (CloseableCollection<PrintStream> outputs = new CloseableCollection<>()) {
+				boolean outputWithName[] = new boolean[values.size()];
 
-			// Print all return values for which the module produced values
-			for (int i = 0; i < values.size(); i++) {
-				int usedFileArgsCount = 0;
+				// Figure out where the values which the module produced should be printed to
+				for (int i = 0; i < values.size(); i++) {
+					int usedFileArgsCount = 0;
 
-				if (values.get(i) == null) {
-					continue;
-				}
-
-				String transformedValue =
-						returnValuesTransformer.transform(values.get(i), returnValues.get(i).getKlass());
-
-				String returnValueName = returnValues.get(i).getName();
-
-				boolean isRawReturnValue =
-						Arrays.asList(returnValues.get(i).getProperties()).contains(ModuleOutputSpec.PROPERTY_RAW);
-
-				boolean isFileReturnValue =
-						Arrays.asList(returnValues.get(i).getProperties()).contains(ModuleOutputSpec.PROPERTY_FILE);
-
-				// Print the return value to file without its name
-				if (isFileReturnValue) {
-					// Check if the user supplied a file name for this return value
-					if (fileArgs.length > usedFileArgsCount) {
-						String filename = fileArgs[usedFileArgsCount];
-
-						if (filename.equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)) {
-							output.append(transformedValue);
-							output.append(System.lineSeparator());
-						} else {
-							writeTransformedValueToString(transformedValue, filename);
-						}
-
-						usedFileArgsCount++;
+					if (values.get(i) == null) {
+						outputWithName[i] = false;
+						outputs.add(null, false);
 						continue;
 					}
+
+					String returnValueName = returnValues.get(i).getName();
+
+					boolean isRawReturnValue =
+							Arrays.asList(returnValues.get(i).getProperties()).contains(ModuleOutputSpec.PROPERTY_RAW);
+
+					boolean isFileReturnValue =
+							Arrays.asList(returnValues.get(i).getProperties()).contains(ModuleOutputSpec.PROPERTY_FILE);
+
+					// Print the return value to file without its name
+					if (isFileReturnValue) {
+						// Check if the user supplied a file name for this return value
+						if (fileArgs.length > usedFileArgsCount) {
+							String filename = fileArgs[usedFileArgsCount];
+
+							if (filename.equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)) {
+								outputs.add(outPrinter, false);
+							} else {
+								outputs.add(openOutput(filename), true);
+							}
+							outputWithName[i] = false;
+
+							usedFileArgsCount++;
+							continue;
+						}
+					}
+
+					// Only print the file return value when requested; skip the other return values
+					if (hasStandardOutputFileReturnValue) {
+						outputWithName[i] = false;
+						outputs.add(null, false);
+						continue;
+					}
+
+					// Print this ordinary return value, possibly with its name
+					outputs.add(outPrinter, false);
+					outputWithName[i] = !isRawReturnValue;
 				}
 
-				// Only print the file return value when requested; skip the other return values
-				if (hasStandardOutputFileReturnValue) continue;
+				// Print all return values for which the module produced values
+				for (int i = 0; i < values.size(); i++) {
+					PrintStream out = outputs.get(i);
+					if (out == null)
+						continue;
 
-				// Print the return value without its name
-				if (isRawReturnValue) {
-					output.append(transformedValue);
-					output.append(System.lineSeparator());
-					continue;
+					if (outputWithName[i])
+						out.print(returnValues.get(i).getName() + ": ");
+					out.println(returnValuesTransformer.transform(values.get(i), returnValues.get(i).getKlass()));
 				}
-
-				// Print this ordinary return value
-				output.append(returnValueName + ": " + transformedValue);
-				output.append(System.lineSeparator());
-
+			}
+			catch (IOException e) {
+				errPrinter.println("Error writing to file: " + e.getMessage());
+				errPrinter.flush();
+				System.exit(ExitStatus.ERROR.getValue());
 			}
 
 			ModuleExitStatusChecker statusChecker = new PropertyModuleExitStatusChecker();
 			ExitStatus status = statusChecker.check(module, values);
 
-			String out = output.toString().trim();
-			if (!out.isEmpty())
-				outPrinter.println(out);
 			outPrinter.flush();
 			System.exit(status.getValue());
 		} catch (ModuleException e) {
@@ -594,22 +606,12 @@ public class APT {
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
-	public static void writeTransformedValueToString(String value, String fileName) {
+	public static PrintStream openOutput(String fileName) throws IOException {
 		File file = new File(fileName);
 
-		if (!file.exists()) {
-			try {
-				FileUtils.write(new File(fileName), value);
-			} catch (IOException e) {
-				errPrinter.println("Error writing to file " + e.getMessage());
-				errPrinter.flush();
-				System.exit(ExitStatus.ERROR.getValue());
-			}
-		} else {
-			errPrinter.println("File already exists: " + file.getAbsolutePath());
-			errPrinter.flush();
-			System.exit(ExitStatus.ERROR.getValue());
-		}
+		if (file.exists())
+			throw new IOException("File '" + file + "' already exists");
+		return new PrintStream(FileUtils.openOutputStream(file));
 	}
 
 	private static void printTooManyArgumentsAndExit(Module module) {
@@ -702,6 +704,41 @@ public class APT {
 				printer.println(String.format(format, module.getName(), module.getShortDescription()));
 			}
 		}
+	}
+}
+
+class CloseableCollection<T extends Closeable> implements Closeable {
+	private final List<T> array = new ArrayList<>();
+	private final List<Boolean> needsClose = new ArrayList<>();
+
+	public T get(int idx) {
+		return array.get(idx);
+	}
+
+	public void add(T val, boolean needsClose) {
+		this.array.add(val);
+		this.needsClose.add(needsClose);
+	}
+
+	@Override
+	public void close() throws IOException {
+		IOException err = null;
+		while (!array.isEmpty()) {
+			Closeable c = array.remove(0);
+			boolean close = needsClose.remove(0);
+			if (close)
+				try {
+					c.close();
+				}
+				catch (IOException e) {
+					if (err == null)
+						err = e;
+					else
+						err.addSuppressed(e);
+				}
+		}
+		if (err != null)
+			throw err;
 	}
 }
 
