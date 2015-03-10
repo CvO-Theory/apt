@@ -128,7 +128,7 @@ public class APTRenderer {
 	 * @param ts transition system
 	 */
 	public void render(Writer output, TransitionSystem ts) throws IOException {
-		output.append("\n.name \"").append(ts.getName()).append("\"\n");
+		output.append(".name \"").append(ts.getName()).append("\"\n");
 		output.append(".type LTS" + "\n");
 		output.append("\n");
 
@@ -164,12 +164,12 @@ public class APTRenderer {
 		}
 		output.append("\n");
 
-		output.append(".arcs" + "\n");
+		output.append(".arcs");
 		for (Arc e : ts.getEdges()) {
+			output.append("\n");
 			output.append(e.getSource().getId()).append(" ");
 			output.append(e.getLabel()).append(" ");
 			output.append(e.getTarget().getId());
-			output.append("\n");
 		}
 	}
 }

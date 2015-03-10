@@ -41,7 +41,7 @@ public class APTRendererTest {
 	public void testTokenGeneratorNet() throws Exception {
 		assertEquals(render(getTokenGeneratorNet()), ".name \"TokenGeneratorNet\"\n.type LPN\n\n" +
 				".places\np1\n\n.transitions\nt1\n\n" +
-				".flows\nt1: {} -> {1*p1}\n\n.initial_marking {}\n");
+				".flows\nt1: {} -> {1*p1}\n\n.initial_marking {}");
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class APTRendererTest {
 		assertEquals(render(getDeadlockNet()), ".name \"DeadlockNet\"\n.type LPN\n\n" +
 				".places\np1\n\n.transitions\nt1\nt2\n\n" +
 				".flows\nt1: {1*p1} -> {}\nt2: {1*p1} -> {}\n\n" +
-				".initial_marking {1*p1}\n");
+				".initial_marking {1*p1}");
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class APTRendererTest {
 		assertEquals(render(getNonPersistentNet()), ".name \"NonPersistentNet\"\n.type LPN\n\n" +
 				".places\np1\np2\n\n.transitions\na\nb\nc\n\n" +
 				".flows\na: {1*p1} -> {1*p2}\nb: {1*p1} -> {1*p2}\n" +
-				"c: {1*p2} -> {1*p1}\n\n.initial_marking {1*p1}\n");
+				"c: {1*p2} -> {1*p1}\n\n.initial_marking {1*p1}");
 	}
 
 	@Test
@@ -69,7 +69,7 @@ public class APTRendererTest {
 				"b: {1*p3, 1*p5} -> {1*p4}\n" +
 				"c: {1*p2} -> {1*p1, 1*p3}\n" +
 				"d: {1*p4} -> {1*p3, 1*p5}\n\n" +
-				".initial_marking {1*p1, 2*p3, 1*p5}\n");
+				".initial_marking {1*p1, 2*p3, 1*p5}");
 	}
 
 	@Test
@@ -78,7 +78,7 @@ public class APTRendererTest {
 				".places\np1\np2\n\n" +
 				".transitions\nt1\nt2\n\n" +
 				".flows\nt1: {1*p1} -> {}\nt2: {1*p2} -> {}\n\n" +
-				".initial_marking {1*p1, 1*p2}\n");
+				".initial_marking {1*p1, 1*p2}");
 	}
 
 	@Test
@@ -88,7 +88,7 @@ public class APTRendererTest {
 				".transitions\nt1\nt2\n\n" +
 				".flows\nt1: {1*p1, 1*p3} -> {1*p3}\n" +
 				"t2: {1*p2, 1*p3} -> {1*p3}\n\n" +
-				".initial_marking {1*p1, 1*p2, 1*p3}\n");
+				".initial_marking {1*p1, 1*p2, 1*p3}");
 	}
 }
 

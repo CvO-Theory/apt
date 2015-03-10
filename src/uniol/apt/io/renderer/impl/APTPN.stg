@@ -44,7 +44,6 @@ pn(name,description,places,marking,transitions) ::= <<
 <transitions:transition()>
 
 .initial_marking {<marking:place_weight();separator=", ">}
-
 >>
 
 /**
