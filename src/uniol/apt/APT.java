@@ -21,6 +21,7 @@ package uniol.apt;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -294,7 +295,7 @@ public class APT {
 	private static final ModuleRegistry registry = new ModuleRegistry();
 
 	private static final Printer outPrinter = new TrimmedOutputStreamPrinter(System.out);
-	private static final Printer errPrinter = new TrimmedOutputStreamPrinter(System.err);
+	private static final PrintStream errPrinter = System.err;
 
 	/**
 	 * Hidden Constructor.
@@ -564,7 +565,7 @@ public class APT {
 			System.exit(status.getValue());
 		} catch (ModuleException e) {
 			errPrinter.println("Error while invoking module '" + module.getName() + "':\n" + "  " + e.getMessage());
-			errPrinter.show();
+			errPrinter.flush();
 			System.exit(ExitStatus.ERROR.getValue());
 		}
 	}
@@ -582,7 +583,7 @@ public class APT {
 			errPrinter.println();
 		}
 
-		errPrinter.show();
+		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
@@ -594,12 +595,12 @@ public class APT {
 				FileUtils.write(new File(fileName), value);
 			} catch (IOException e) {
 				errPrinter.println("Error writing to file " + e.getMessage());
-				errPrinter.show();
+				errPrinter.flush();
 				System.exit(ExitStatus.ERROR.getValue());
 			}
 		} else {
 			errPrinter.println("File already exists: " + file.getAbsolutePath());
-			errPrinter.show();
+			errPrinter.flush();
 			System.exit(ExitStatus.ERROR.getValue());
 		}
 	}
@@ -608,7 +609,7 @@ public class APT {
 		errPrinter.println("Too many arguments");
 		errPrinter.println();
 		errPrinter.println(ModuleUtils.getModuleUsage(module));
-		errPrinter.show();
+		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
@@ -616,7 +617,7 @@ public class APT {
 		errPrinter.println("Too few arguments");
 		errPrinter.println();
 		errPrinter.println(ModuleUtils.getModuleUsage(module));
-		errPrinter.show();
+		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
@@ -627,15 +628,32 @@ public class APT {
 		errPrinter.println();
 
 		errPrinter.println("Available modules (starting with " + moduleName + "):");
-		printModuleList(foundModules, errPrinter);
+		printModuleList(foundModules, new Printer() {
+			@Override
+			public void print(String output) {
+				errPrinter.print(output);
+			}
+			@Override
+			public void println(String output) {
+				errPrinter.println(output);
+			}
+			@Override
+			public void println() {
+				errPrinter.println();
+			}
+			@Override
+			public void show() {
+				errPrinter.flush();
+			}
+		});
 
-		errPrinter.show();
+		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
 	private static void printNoSuchModuleAndExit(String moduleName) {
 		errPrinter.println("No such module: " + moduleName);
-		errPrinter.show();
+		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
@@ -652,7 +670,7 @@ public class APT {
 
 	private static void printCanOnlyReadOneParameterFromStdInAndExit() {
 		errPrinter.println("Only one parameter can be read from standard input at the same time");
-		errPrinter.show();
+		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
