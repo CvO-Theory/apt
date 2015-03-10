@@ -78,7 +78,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 		@Override
 		public boolean equals(Object o) {
-			return o instanceof KBounded && ((KBounded)o).k == k;
+			return o instanceof KBounded && ((KBounded) o).k == k;
 		}
 
 		@Override
@@ -100,8 +100,8 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	private boolean pure = false;
 	private boolean plain = false;
 	private boolean tnet = false;
-	private boolean output_nonbranching = false;
-	private boolean conflict_free = false;
+	private boolean outputNonbranching = false;
+	private boolean conflictFree = false;
 
 	/**
 	 * Create a new, empty Petri net properties instance.
@@ -111,6 +111,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 	/**
 	 * Create a new Petri net properties instance from the given properties.
+	 * @param properties A list of properties to copy
 	 */
 	public PNProperties(PNProperty... properties) {
 		for (PNProperty property : properties)
@@ -119,6 +120,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 	/**
 	 * Create a new Petri net properties instance from the given collection.
+	 * @param properties A collection of properties to copy
 	 */
 	public PNProperties(Collection<? extends PNProperty> properties) {
 		addAll(properties);
@@ -126,6 +128,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 	/**
 	 * Return true if this property description requires k-boundedness for some k.
+	 * @return true if there is some k set for which we require k-boundedness
 	 */
 	public boolean isKBounded() {
 		return kBounded != KBOUNDED_DEFAULT;
@@ -133,6 +136,8 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 	/**
 	 * Return true if this property description requires k-boundedness.
+	 * @param k The k for k-boundedness
+	 * @return true if k-bounded
 	 */
 	public boolean isKBounded(int k) {
 		return isKBounded() && kBounded <= k;
@@ -140,6 +145,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 	/**
 	 * Return true if this property description requires safeness.
+	 * @return true if safe
 	 */
 	public boolean isSafe() {
 		return isKBounded(1);
@@ -147,6 +153,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 	/**
 	 * Return the k that for k-boundedness. This may only be called if isKBounded() returns true.
+	 * @return the k for k-boundedness
 	 */
 	public int getKForKBoundedness() {
 		assert isKBounded();
@@ -155,6 +162,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 	/**
 	 * Return true if this property description requires pureness.
+	 * @return true if pure
 	 */
 	public boolean isPure() {
 		return pure;
@@ -162,6 +170,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 	/**
 	 * Return true if this property description requires plainness.
+	 * @return true if plain
 	 */
 	public boolean isPlain() {
 		return plain;
@@ -169,6 +178,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 	/**
 	 * Return true if this property description requires a T-Net.
+	 * @return true if T-net
 	 */
 	public boolean isTNet() {
 		return tnet;
@@ -176,16 +186,18 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 	/**
 	 * Return true if this property description requires an output nonbranching PN.
+	 * @return true if output nonbranching
 	 */
 	public boolean isOutputNonbranching() {
-		return output_nonbranching;
+		return outputNonbranching;
 	}
 
 	/**
 	 * Return true if this property description requires a conflict free PN.
+	 * @return true if conflict free
 	 */
 	public boolean isConflictFree() {
-		return conflict_free;
+		return conflictFree;
 	}
 
 	@Override
@@ -195,7 +207,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 
 		PNProperty property = (PNProperty) o;
 		if (property instanceof KBounded) {
-			return isKBounded(((KBounded)property).k);
+			return isKBounded(((KBounded) property).k);
 		} else if (PURE.equals(property)) {
 			return pure;
 		} else if (PLAIN.equals(property)) {
@@ -203,9 +215,9 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 		} else if (TNET.equals(property)) {
 			return tnet;
 		} else if (OUTPUT_NONBRANCHING.equals(property)) {
-			return output_nonbranching;
+			return outputNonbranching;
 		} else if (CONFLICT_FREE.equals(property)) {
-			return conflict_free;
+			return conflictFree;
 		}
 		return false;
 	}
@@ -215,7 +227,7 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 		if (contains(property))
 			return false;
 		if (property instanceof KBounded) {
-			int k = ((KBounded)property).k;
+			int k = ((KBounded) property).k;
 			if (!isKBounded(k))
 				kBounded = k;
 		} else if (PURE.equals(property)) {
@@ -231,11 +243,11 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 			// changes its marking
 			pure = true;
 			// A T-Net is ON + the same condition on the presets.
-			output_nonbranching = true;
+			outputNonbranching = true;
 		} else if (OUTPUT_NONBRANCHING.equals(property)) {
-			output_nonbranching = true;
+			outputNonbranching = true;
 		} else if (CONFLICT_FREE.equals(property)) {
-			conflict_free = true;
+			conflictFree = true;
 			// Out definition of CF requires plainness
 			plain = true;
 		}
@@ -265,9 +277,9 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 					state++;
 				if (state == 3 && !tnet)
 					state++;
-				if (state == 4 && !output_nonbranching)
+				if (state == 4 && !outputNonbranching)
 					state++;
-				if (state == 5 && !conflict_free)
+				if (state == 5 && !conflictFree)
 					state++;
 				return state < 6;
 			}

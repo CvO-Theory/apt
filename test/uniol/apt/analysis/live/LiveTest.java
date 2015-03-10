@@ -30,8 +30,6 @@ import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.generator.philnet.TristatePhilNetGenerator;
 
-import static java.util.Collections.emptyList;
-
 /** @author Uli Schlachter, vsp */
 @Test
 public class LiveTest {

@@ -54,10 +54,12 @@ public class BoundedResult {
 	 * Construct a new BoundedResult instance.
 	 * @param pn The Petri net that was examined
 	 * @param place Place which serves as a counter-example
-	 * @param k The smallest k for which the Petri net is k-bounded.
-	 * @param sequence Firing sequence which produces too many token
+	 * @param k The smallest k for which the Petri net is k-bounded
+	 * @param sequenceToCovered Firing sequence reaching a special marking
+	 * @param cycle Firing sequence producing arbitrarily many tokens after sequenceToCovered
 	 */
-	public BoundedResult(PetriNet pn, Place place, Integer k, List<Transition> sequenceToCovered, List<Transition> cycle) {
+	public BoundedResult(PetriNet pn, Place place, Integer k, List<Transition> sequenceToCovered,
+			List<Transition> cycle) {
 		this.pn = pn;
 		this.unboundedPlace = place;
 		this.k = k;

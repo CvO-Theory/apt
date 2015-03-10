@@ -34,6 +34,8 @@ public class UnreachableException extends Exception {
 	 * Constructor that creates a UnreachableException for the given details.
 	 * @param graph The graph in which a node was unreachable.
 	 * @param node The unreachable node.
+	 * @param <G> The type of the graph in which some node was unreachable.
+	 * @param <N> The type of nodes in the graph.
 	 */
 	public <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>> UnreachableException(G graph, N node) {
 		super("Node " + node.toString() + " is unreachable in " + graph.toString());

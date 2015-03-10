@@ -24,15 +24,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections4.FactoryUtils;
 import org.apache.commons.collections4.map.LazyMap;
 
-import uniol.apt.adt.exception.NoSuchNodeException;
-import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
@@ -53,7 +50,6 @@ import uniol.apt.analysis.synthesize.separation.SeparationUtility;
 import uniol.apt.analysis.tnet.TNet;
 import uniol.apt.util.DebugUtil;
 import uniol.apt.util.EquivalenceRelation;
-import uniol.apt.util.Pair;
 
 import static uniol.apt.analysis.synthesize.LimitedUnfolding.ORIGINAL_STATE_KEY;
 import static uniol.apt.analysis.synthesize.LimitedUnfolding.calculateLimitedUnfolding;
@@ -79,16 +75,22 @@ public class SynthesizePN extends DebugUtil {
 	 * states in the resulting SynthesizePN instance refers to states in the unfolding instead of the original ts.
 	 * @param ts The transition system to synthesize.
 	 * @param properties Properties that the synthesized Petri net should satisfy.
+	 * @return A synthesizePN instance that synthesizes the input of to language equivalence.
+	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 * @see LimitedUnfolding#calculateLimitedUnfolding
 	 */
-	static public SynthesizePN createUpToLanguageEquivalence(TransitionSystem ts, PNProperties properties) throws MissingLocationException {
-		return new SynthesizePN(new RegionUtility(calculateLimitedUnfolding(ts)), properties, true, ORIGINAL_STATE_KEY);
+	static public SynthesizePN createUpToLanguageEquivalence(TransitionSystem ts, PNProperties properties)
+			throws MissingLocationException {
+		return new SynthesizePN(new RegionUtility(calculateLimitedUnfolding(ts)), properties, true,
+				ORIGINAL_STATE_KEY);
 	}
 
 	/**
 	 * Create a SynthesizePN instance that synthesizes a given transition system up to language equivalence.
 	 * Internally, this function creates a limited unfolding.
 	 * @param ts The transition system to synthesize.
+	 * @return A synthesizePN instance that synthesizes the input of to language equivalence.
+	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 * @see LimitedUnfolding#calculateLimitedUnfolding
 	 */
 	static public SynthesizePN createUpToLanguageEquivalence(TransitionSystem ts) throws MissingLocationException {
@@ -103,6 +105,7 @@ public class SynthesizePN extends DebugUtil {
 	 * the same marking.
 	 * @param stateMappingExtension An extension key that will be used to map States. All states in the input
 	 * transition system must have this extension and it must refer to a State object.
+	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
 	private SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation,
 			String stateMappingExtension) throws MissingLocationException {
@@ -138,8 +141,10 @@ public class SynthesizePN extends DebugUtil {
 	 * @param properties Properties that the synthesized Petri net should satisfy.
 	 * @param onlyEventSeparation Should state separation be ignored? This means that two different states might get
 	 * the same marking.
+	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
-	SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation) throws MissingLocationException {
+	SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation)
+			throws MissingLocationException {
 		this(utility, properties, onlyEventSeparation, null);
 	}
 
@@ -147,6 +152,7 @@ public class SynthesizePN extends DebugUtil {
 	 * Synthesize a Petri Net which generates the given transition system.
 	 * @param utility An instance of RegionUtility for the requested transition system.
 	 * @param properties Properties that the synthesized Petri net should satisfy.
+	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
 	public SynthesizePN(RegionUtility utility, PNProperties properties) throws MissingLocationException {
 		this(utility, properties, false);
@@ -155,6 +161,7 @@ public class SynthesizePN extends DebugUtil {
 	/**
 	 * Synthesize a Petri Net which generates the given transition system.
 	 * @param utility An instance of RegionUtility for the requested transition system.
+	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
 	public SynthesizePN(RegionUtility utility) throws MissingLocationException {
 		this(utility, new PNProperties());
@@ -164,6 +171,7 @@ public class SynthesizePN extends DebugUtil {
 	 * Synthesize a Petri Net which generates the given transition system.
 	 * @param ts The transition system to synthesize.
 	 * @param properties Properties that the synthesized Petri net should satisfy.
+	 * @throws MissingLocationException if the transition system has locations for only some events
 	 */
 	public SynthesizePN(TransitionSystem ts, PNProperties properties) throws MissingLocationException {
 		this(new RegionUtility(ts), properties);
@@ -172,6 +180,7 @@ public class SynthesizePN extends DebugUtil {
 	/**
 	 * Synthesize a Petri Net which generates the given transition system.
 	 * @param ts The transition system to synthesize.
+	 * @throws MissingLocationException if the transition system has locations for only some events
 	 */
 	public SynthesizePN(TransitionSystem ts) throws MissingLocationException {
 		this(ts, new PNProperties());
@@ -185,11 +194,14 @@ public class SynthesizePN extends DebugUtil {
 
 	/**
 	 * Calculate the set of states which aren't separated by the given regions.
+	 * @param states The states to separate
+	 * @param regions The regions that are used for separation
+	 * @return All states which have for at least one other state the same marking in all regions.
 	 */
-	static public Set<State> calculateUnseparatedStates(RegionUtility utility, Set<Region> regions) {
+	static public Set<State> calculateUnseparatedStates(Set<State> states, Set<Region> regions) {
 		Set<State> result = new HashSet<>();
 		Set<Set<State>> partition = new HashSet<>();
-		partition.add(new HashSet<>(utility.getTransitionSystem().getNodes()));
+		partition.add(new HashSet<>(states));
 
 		debug("Calculating unseparated states");
 		for (Region region : regions) {
@@ -203,8 +215,7 @@ public class SynthesizePN extends DebugUtil {
 				for (State state : family) {
 					try {
 						markings.get(region.getMarkingForState(state)).add(state);
-					}
-					catch (UnreachableException e) {
+					} catch (UnreachableException e) {
 						// Unreachable states cannot be separated, so add this to result
 						result.add(state);
 						continue;
@@ -221,7 +232,8 @@ public class SynthesizePN extends DebugUtil {
 			}
 
 			partition = newPartition;
-			debug("After region ", region, ", still have ", partition.size(), " families (", discarded, " resulting singular families discarded)");
+			debug("After region ", region, ", still have ", partition.size(), " families (",
+					discarded, " resulting singular families discarded)");
 		}
 
 		// All remaining states are not yet separated. Throw away the family information and return them all.
@@ -238,7 +250,8 @@ public class SynthesizePN extends DebugUtil {
 		if (onlyEventSeparation)
 			return;
 
-		Set<State> remainingStates = new HashSet<>(calculateUnseparatedStates(utility, regions));
+		Set<State> remainingStates = new HashSet<>(calculateUnseparatedStates(
+					utility.getTransitionSystem().getNodes(), regions));
 		Iterator<State> iterator = remainingStates.iterator();
 		while (iterator.hasNext()) {
 			State state = iterator.next();
@@ -259,7 +272,8 @@ public class SynthesizePN extends DebugUtil {
 
 				r = separation.calculateSeparatingRegion(state, otherState);
 				if (r == null) {
-					failedStateSeparationRelation.joinClasses(mapState(state), mapState(otherState));
+					failedStateSeparationRelation.joinClasses(mapState(state),
+							mapState(otherState));
 					debug("Failure!");
 				} else {
 					debug("Calculated region ", r);
@@ -281,7 +295,8 @@ public class SynthesizePN extends DebugUtil {
 					debug("Trying to separate ", state, " from event '", event, "'");
 					Region r = null;
 					for (Region region : regions)
-						if (SeparationUtility.isSeparatingRegion(utility, region, state, event)) {
+						if (SeparationUtility.isSeparatingRegion(utility, region,
+									state, event)) {
 							r = region;
 							break;
 						}
@@ -313,8 +328,9 @@ public class SynthesizePN extends DebugUtil {
 	 * requiredRegions.
 	 * @param onlyEventSeparation Should state separation be ignored?
 	 */
-	static private void calculateRequiredRegionsAndProblems(RegionUtility utility, Set<Set<Region>> separationProblems,
-			Set<Region> requiredRegions, Set<Region> remainingRegions, boolean onlyEventSeparation) {
+	static private void calculateRequiredRegionsAndProblems(RegionUtility utility,
+			Set<Set<Region>> separationProblems, Set<Region> requiredRegions, Set<Region> remainingRegions,
+			boolean onlyEventSeparation) {
 		TransitionSystem ts = utility.getTransitionSystem();
 		// Event separation
 		for (State state : ts.getNodes()) {
@@ -337,8 +353,7 @@ public class SynthesizePN extends DebugUtil {
 						Region r = sep.iterator().next();
 						requiredRegions.add(r);
 						remainingRegions.remove(r);
-					}
-					else if (!sep.isEmpty())
+					} else if (!sep.isEmpty())
 						separationProblems.add(sep);
 				}
 			}
@@ -350,7 +365,8 @@ public class SynthesizePN extends DebugUtil {
 		// State separation
 		// All regions which are already separated by our requiredRegions can be skipped, so use
 		// calculateUnseparatedStates() to look at the rest.
-		Set<State> remainingStates = new HashSet<>(calculateUnseparatedStates(utility, requiredRegions));
+		Set<State> remainingStates = new HashSet<>(calculateUnseparatedStates(
+					utility.getTransitionSystem().getNodes(), requiredRegions));
 		Iterator<State> iterator = remainingStates.iterator();
 		while (iterator.hasNext()) {
 			State state = iterator.next();
@@ -374,8 +390,7 @@ public class SynthesizePN extends DebugUtil {
 					Region r = sep.iterator().next();
 					requiredRegions.add(r);
 					remainingRegions.remove(r);
-				}
-				else if (!sep.isEmpty())
+				} else if (!sep.isEmpty())
 					separationProblems.add(sep);
 			}
 		}
@@ -387,7 +402,8 @@ public class SynthesizePN extends DebugUtil {
 	 * @param requiredRegions Set of regions to minimize. Redundant regions will be removed.
 	 * @param onlyEventSeparation Should state separation be ignored?
 	 */
-	static public void minimizeRegions(RegionUtility utility, Set<Region> requiredRegions, boolean onlyEventSeparation) {
+	static public void minimizeRegions(RegionUtility utility, Set<Region> requiredRegions,
+			boolean onlyEventSeparation) {
 		Set<Region> allRegions = Collections.unmodifiableSet(new HashSet<>(requiredRegions));
 		Set<Region> remainingRegions = new HashSet<>(requiredRegions);
 		requiredRegions.clear();
@@ -395,7 +411,8 @@ public class SynthesizePN extends DebugUtil {
 		// Build a list where each entry is generated from a separation problem and contains all regions that
 		// solve this problem.
 		Set<Set<Region>> separationProblems = new HashSet<>();
-		calculateRequiredRegionsAndProblems(utility, separationProblems, requiredRegions, remainingRegions, onlyEventSeparation);
+		calculateRequiredRegionsAndProblems(utility, separationProblems, requiredRegions, remainingRegions,
+				onlyEventSeparation);
 
 		debug("Required regions after first pass:");
 		debug(requiredRegions);
@@ -411,7 +428,8 @@ public class SynthesizePN extends DebugUtil {
 
 		debug("List of required regions:");
 		debug(requiredRegions);
-		debug("Picked ", requiredRegions.size(), " required regions out of ", allRegions.size(), " input regions");
+		debug("Picked ", requiredRegions.size(), " required regions out of ",
+				allRegions.size(), " input regions");
 	}
 
 	/**
@@ -451,12 +469,17 @@ public class SynthesizePN extends DebugUtil {
 		return utility;
 	}
 
+	/**
+	 * Check if the PetriNet is a distributed implementation
+	 * @param utility The region utility that defines the required distribution
+	 * @param pn The PetriNet to check
+	 * @return true if the pn is suitably distributed.
+	 */
 	static public boolean isDistributedImplementation(RegionUtility utility, PetriNet pn) {
 		String[] locationMap;
 		try {
 			locationMap = SeparationUtility.getLocationMap(utility);
-		}
-		catch (MissingLocationException e) {
+		} catch (MissingLocationException e) {
 			debug("Couldn't get location map");
 			return false;
 		}
@@ -473,7 +496,8 @@ public class SynthesizePN extends DebugUtil {
 					location = locationMap[event];
 					debug("Transition ", t, " sets location to ", location);
 				} else if (!location.equals(locationMap[event])) {
-					debug("Transition ", t, " would set location to ", locationMap[event], ", but this conflicts with earlier location");
+					debug("Transition ", t, " would set location to ", locationMap[event],
+							", but this conflicts with earlier location");
 					debug("PN is not a distributed implementation!");
 					return false;
 				}
@@ -500,8 +524,7 @@ public class SynthesizePN extends DebugUtil {
 		if (properties.isTNet())
 			try {
 				assert new TNet(pn).testPlainTNet() : regions;
-			}
-			catch (PreconditionFailedException e) {
+			} catch (PreconditionFailedException e) {
 				assert false : regions;
 			}
 		if (properties.isKBounded())
@@ -511,20 +534,21 @@ public class SynthesizePN extends DebugUtil {
 		if (properties.isConflictFree())
 			try {
 				assert new ConflictFree(pn).check() : regions;
-			}
-			catch (PreconditionFailedException e) {
+			} catch (PreconditionFailedException e) {
 				assert false : regions;
 			}
 
 		try {
 			if (!onlyEventSeparation)
-				// The resulting PN should always have a reachability graph isomorphic to what we started with
-				assert new IsomorphismLogic(new CoverabilityGraph(pn).toReachabilityLTS(), ts, true).isIsomorphic() : regions;
+				// The resulting PN should always have a reachability graph isomorphic to the ts
+				assert new IsomorphismLogic(new CoverabilityGraph(pn).toReachabilityLTS(), ts, true)
+					.isIsomorphic() : regions;
 			else
 				// The resulting PN should be language-equivalent to what we started with
-				assert LanguageEquivalence.checkLanguageEquivalence(new CoverabilityGraph(pn).toReachabilityLTS(), ts, false).isEmpty() : regions;
-		}
-		catch (UnboundedException e) {
+				assert LanguageEquivalence.checkLanguageEquivalence(
+						new CoverabilityGraph(pn).toReachabilityLTS(), ts, false).isEmpty()
+					: regions;
+		} catch (UnboundedException e) {
 			assert false : regions;
 		}
 

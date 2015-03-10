@@ -30,7 +30,8 @@ import uniol.apt.ui.ReturnValueTransformation;
  * @author Uli Schlachter
  * @param <T> the type of the node that is transformed into a string
  */
-public class INodeCollectionReturnValueTransformation<T extends Collection<? extends INode<?, ?, ?>>> implements ReturnValueTransformation<T> {
+public class INodeCollectionReturnValueTransformation<T extends Collection<? extends INode<?, ?, ?>>>
+	implements ReturnValueTransformation<T> {
 	@Override
 	public void transform(Writer output, T nodes) throws IOException {
 		boolean first = true;

@@ -34,7 +34,7 @@ import uniol.apt.module.exception.ModuleException;
 
 /**
  * Report some basic stats of the given PN.
- * 
+ *
  * @author Thomas Strathmann
  */
 public class InfoModule extends AbstractModule {
@@ -46,8 +46,8 @@ public class InfoModule extends AbstractModule {
 
 	@Override
 	public String getLongDescription() {
-		return "Report the number of places, transitions, different transition labels," + System.lineSeparator() +
-				"arcs, and tokens in the initial marking of the given Petri net.";
+		return "Report the number of places, transitions, different transition labels," + System.lineSeparator()
+			+ "arcs, and tokens in the initial marking of the given Petri net.";
 	}
 
 	@Override
@@ -81,11 +81,11 @@ public class InfoModule extends AbstractModule {
 			tokens += p.getInitialToken().getValue();
 		}
 		output.setReturnValue("num_tokens", Integer.class, tokens);
-		
+
 		HashSet<String> labels = new HashSet<>();
-		for(Transition t : pn.getTransitions()) {
+		for (Transition t : pn.getTransitions()) {
 			labels.add(t.getLabel());
-		}		
+		}
 		output.setReturnValue("num_labels", Integer.class, labels.size());
 	}
 

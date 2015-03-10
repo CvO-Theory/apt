@@ -27,7 +27,6 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.TestTSCollection;
 import static uniol.apt.adt.matcher.Matchers.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 /** @author Uli Schlachter */

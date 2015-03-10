@@ -53,7 +53,8 @@ public class TSParameterTransformation implements ParameterTransformation<Transi
 			if (fromStandardInput) {
 				throw new ModuleException("Cannot parse data: \n" + e.getLexerParserMessage());
 			} else {
-				throw new ModuleException("Cannot parse file '" + filename + "': \n" + e.getLexerParserMessage());
+				throw new ModuleException("Cannot parse file '" + filename + "': \n" +
+						e.getLexerParserMessage());
 			}
 		} catch (NodeNotExistException | TypeMismatchException ex) {
 			throw new ModuleException("Create data structure: " + ex.getMessage());

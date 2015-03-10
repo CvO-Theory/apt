@@ -23,19 +23,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import uniol.apt.TestNetCollection;
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
-import uniol.apt.util.Pair;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -51,8 +48,7 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 @SuppressWarnings("unchecked") // I hate generics
 public class SynthesizePNTest {
 	static private Region mockRegion(RegionUtility utility, int normalMarking,
-			List<Integer> backwardWeights, List<Integer> forwardWeights)
-	{
+			List<Integer> backwardWeights, List<Integer> forwardWeights) {
 		assert backwardWeights.size() == forwardWeights.size();
 
 		Region result = mock(Region.class);

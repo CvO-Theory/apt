@@ -20,10 +20,8 @@
 package uniol.apt.analysis.synthesize;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.NoSuchElementException;
 
-import org.hamcrest.Matcher;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

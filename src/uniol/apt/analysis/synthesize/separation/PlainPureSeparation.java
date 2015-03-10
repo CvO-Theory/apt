@@ -20,12 +20,8 @@
 package uniol.apt.analysis.synthesize.separation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
@@ -51,6 +47,7 @@ class PlainPureSeparation extends BasicPureSeparation implements Separation {
 	 * @param utility The region utility to use.
 	 * @param properties Properties that the calculated region should satisfy.
 	 * @param locationMap Mapping that describes the location of each event.
+	 * @throws UnsupportedPNPropertiesException If the requested properties are not supported.
 	 */
 	public PlainPureSeparation(RegionUtility utility, PNProperties properties,
 			String[] locationMap) throws UnsupportedPNPropertiesException {

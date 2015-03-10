@@ -19,7 +19,6 @@
 
 package uniol.apt.analysis.synthesize;
 
-import uniol.apt.analysis.synthesize.Matchers;
 import uniol.apt.module.exception.ModuleException;
 
 import org.testng.annotations.DataProvider;

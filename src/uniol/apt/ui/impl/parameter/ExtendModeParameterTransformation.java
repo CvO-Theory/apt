@@ -30,7 +30,7 @@ import uniol.apt.ui.ParameterTransformation;
 public class ExtendModeParameterTransformation implements ParameterTransformation<ExtendMode> {
 	@Override
 	public ExtendMode transform(String mode) throws ModuleException {
-		switch(mode) {
+		switch (mode) {
 		case("next"): return ExtendMode.Next;
 		case("next_valid"): return ExtendMode.NextValid;
 		case("next_minimal_valid"): return ExtendMode.NextMinimalValid;

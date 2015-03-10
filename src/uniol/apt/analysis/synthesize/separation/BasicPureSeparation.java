@@ -20,9 +20,6 @@
 package uniol.apt.analysis.synthesize.separation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import uniol.apt.adt.ts.State;
@@ -57,6 +54,7 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 	 * @param utility The region utility to use.
 	 * @param properties Properties that the calculated region should satisfy.
 	 * @param locationMap Mapping that describes the location of each event.
+	 * @throws UnsupportedPNPropertiesException If the requested properties are not supported.
 	 */
 	public BasicPureSeparation(RegionUtility utility, PNProperties properties,
 			String[] locationMap) throws UnsupportedPNPropertiesException {
@@ -106,7 +104,8 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 				for (Region region : utility.getRegionBasis())
 					inequality.add(region.getWeight(eventIndex));
 
-				system.addInequality(0, "<=", inequality, "Only events with same location as event " + event + " may consume tokens from this region");
+				system.addInequality(0, "<=", inequality, "Only events with same location as event "
+						+ event + " may consume tokens from this region");
 			}
 		}
 	}
@@ -121,7 +120,7 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 	public Region calculateSeparatingRegion(State state, String event) {
 		// The initial marking of a normal region is max { r_E(-Psi_s') | s' in states }. The marking in state s
 		// for a normal region is max { r_E(Psi_s - Psi_s') | s' in states }. We want 'event' to be disabled, so
-		// it would need to lead to a negative marking: 0 > max { r_E(Psi_s - Psi_s' + 1*event) | s' in states }.
+		// this means: 0 > max { r_E(Psi_s - Psi_s' + 1*event) | s' in states }.
 		// Since we are limiting the maximum from above, we can just require this for all states.
 		InequalitySystem system = prepareInequalitySystem();
 		int eventIndex = utility.getEventIndex(event);
@@ -140,15 +139,13 @@ class BasicPureSeparation extends DebugUtil implements Separation {
 				int stateValue, otherStateValue;
 				try {
 					stateValue = region.getMarkingForState(state);
-				}
-				catch (UnreachableException e) {
+				} catch (UnreachableException e) {
 					throw new AssertionError("Made sure that the state is reachable, but "
 							+ "apparently it isn't?!", e);
 				}
 				try {
 					otherStateValue = region.getMarkingForState(otherState);
-				}
-				catch (UnreachableException e) {
+				} catch (UnreachableException e) {
 					// Just ignore and skip unreachable states
 					continue stateLoop;
 				}

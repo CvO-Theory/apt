@@ -85,7 +85,8 @@ public class DebugUtil {
 
 	static protected void debug(Object obj1, Object obj2, Object obj3, Object obj4, Object obj5) {
 		if (debugOutputEnabled)
-			printDebug(getCaller(), obj1.toString() + obj2.toString() + obj3.toString() + obj4.toString() + obj5.toString());
+			printDebug(getCaller(), obj1.toString() + obj2.toString() + obj3.toString() + obj4.toString() +
+					obj5.toString());
 	}
 
 	static protected void debug(Object... objs) {

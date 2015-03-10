@@ -108,6 +108,7 @@ public class RegionUtility {
 	/**
 	 * @param node The node whose Parikh vector should be returned.
 	 * @return The Parikh vector that reaches the node from the initial state.
+	 * @throws UnreachableException if the given state is unreachable from the initial state
 	 */
 	public List<Integer> getReachingParikhVector(State node) throws UnreachableException {
 		List<Integer> result = parikhVectorMap.get(node);
@@ -139,6 +140,7 @@ public class RegionUtility {
 	 * t = s--[a_i]->s'.
 	 * @param edge The edge to examine.
 	 * @return The edge's Parikh vector or an empty list if none exists.
+	 * @throws UnreachableException if the given state is unreachable from the initial state
 	 */
 	public List<Integer> getParikhVectorForEdge(Arc edge) throws UnreachableException {
 		State source = edge.getSource();
@@ -167,13 +169,12 @@ public class RegionUtility {
 		if (this.regionBasis == null) {
 			EquationSystem system = new EquationSystem(this.getNumberOfEvents());
 
-			// The events on each fundamental circle must form a T-Invariant of a Petri Net which generates this
-			// transition system. Thus, each region must have zero effect on such a circle.
+			// The events on each fundamental circle must form a T-Invariant of a Petri Net which generates
+			// this transition system. Thus, each region must have zero effect on such a circle.
 			for (Arc chord : tree.getChords()) {
 				try {
 					system.addEquation(this.getParikhVectorForEdge(chord));
-				}
-				catch (UnreachableException e) {
+				} catch (UnreachableException e) {
 					throw new AssertionError("A chord by definition belongs to reachable nodes, "
 							+ "yet one of them was unreachable?", e);
 				}

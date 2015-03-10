@@ -19,12 +19,9 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.PNProperties;
@@ -54,6 +51,7 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 * Construct a new instance for solving separation problems.
 	 * @param utility The region utility to use.
 	 * @param properties Properties that the calculated region should satisfy.
+	 * @param locationMap Mapping that describes the location of each event.
 	 */
 	public InequalitySystemSeparation(RegionUtility utility, PNProperties properties, String[] locationMap) {
 		this.utility = utility;
@@ -115,7 +113,7 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 		final int events = utility.getNumberOfEvents();
 		final List<Region> basis = utility.getRegionBasis();
 		final int basisSize = basis.size();
-		InequalitySystem system = new InequalitySystem();
+		InequalitySystem sys = new InequalitySystem();
 
 		// The resulting region is a linear combination of the basis:
 		//   region = sum lambda_i * r^i
@@ -127,7 +125,8 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 			for (Region region : basis)
 				inequality[systemCoefficientsStart + basisEntry++] = region.getWeight(thisEvent);
 
-			system.addInequality(0, "=", inequality, "Resulting region is a linear combination of basis for event " + thisEvent);
+			sys.addInequality(0, "=", inequality, "Resulting region is a linear combination "
+					+ "of basis for event " + thisEvent);
 		}
 
 		// The weight is a combination of the forward and backward weight
@@ -138,17 +137,17 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 			inequality[systemWeightsStart + thisEvent] = -1;
 			inequality[systemForwardWeightsStart + thisEvent] = 1;
 			inequality[systemBackwardWeightsStart + thisEvent] = -1;
-			system.addInequality(0, "=", inequality, "weight = forward - backward for event " + thisEvent);
+			sys.addInequality(0, "=", inequality, "weight = forward - backward for event " + thisEvent);
 
 			// Forward weight must be non-negative
 			inequality = new int[inequalitySize];
 			inequality[systemForwardWeightsStart + thisEvent] = 1;
-			system.addInequality(0, "<=", inequality, "Forward weight must be positive");
+			sys.addInequality(0, "<=", inequality, "Forward weight must be positive");
 
 			// Backward weight must be non-negative
 			inequality = new int[inequalitySize];
 			inequality[systemBackwardWeightsStart + thisEvent] = 1;
-			system.addInequality(0, "<=", inequality, "Backward weight must be positive");
+			sys.addInequality(0, "<=", inequality, "Backward weight must be positive");
 		}
 
 		// Any enabled event really must be enabled in the calculated region
@@ -158,16 +157,16 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 			int[] inequality;
 			try {
 				inequality = coefficientsForStateMarking(state);
-			}
-			catch (UnreachableException e) {
+			} catch (UnreachableException e) {
 				continue;
 			}
 			inequality[systemBackwardWeightsStart + utility.getEventIndex(arc.getLabel())] += -1;
 
-			system.addInequality(0, "<=", inequality, "Event " + arc.getLabel() + " is enabled in state " + state);
+			sys.addInequality(0, "<=", inequality, "Event " + arc.getLabel()
+					+ " is enabled in state " + state);
 		}
 
-		return system;
+		return sys;
 	}
 
 	/**
@@ -180,9 +179,9 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 			try {
 				// k >= r_S(state)
 				int[] inequality = coefficientsForStateMarking(state);
-				system.addInequality(k, ">=", inequality, "State " + state + " must obey " + k + "-boundedness");
-			}
-			catch (UnreachableException e) {
+				system.addInequality(k, ">=", inequality, "State " + state
+						+ " must obey " + k + "-boundedness");
+			} catch (UnreachableException e) {
 				continue;
 			}
 		}
@@ -213,28 +212,29 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 		// The implementation (in PNProperties) makes sure that T-Net also requires output-nonbranching. So we
 		// only have to handle the postsets here.
 		int[] inequality = new int[systemNumberOfVariables];
-		Arrays.fill(inequality, systemForwardWeightsStart, systemForwardWeightsStart + utility.getNumberOfEvents(), 1);
+		Arrays.fill(inequality, systemForwardWeightsStart,
+				systemForwardWeightsStart + utility.getNumberOfEvents(), 1);
 		system.addInequality(1, ">=", inequality, "T-Net");
 	}
 
 	/**
 	 * Add the needed inequalities so that the system may only produce output-nonbranching regions.
-	 * @param system The inequality system to which the inequalities should be added.
+	 * @param sys The inequality system to which the inequalities should be added.
 	 */
-	private void requireOutputNonbranchingNet(InequalitySystem system) {
+	private void requireOutputNonbranchingNet(InequalitySystem sys) {
 		// A ON-net has at most one place that removes token from it.
 		int[] inequality = new int[systemNumberOfVariables];
-		Arrays.fill(inequality, systemBackwardWeightsStart, systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
-		system.addInequality(1, ">=", inequality, "Output-nonbranching");
+		Arrays.fill(inequality, systemBackwardWeightsStart,
+				systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
+		sys.addInequality(1, ">=", inequality, "Output-nonbranching");
 	}
 
 	/**
 	 * Add the needed inequalities to guarantee that a distributable Petri Net region is calculated.
 	 * @param system The inequality system to which the inequalities should be added.
-	 * @param locationMap Mapping that describes the location of each event.
 	 * @param event Only events with the same location as this event may consume tokens from this region.
 	 */
-	private void requireDistributableNet(InequalitySystem system, String[] locationMap, String event) {
+	private void requireDistributableNet(InequalitySystem sys, String event) {
 		int[] inequality = new int[systemNumberOfVariables];
 		String location = locationMap[utility.getEventIndex(event)];
 
@@ -247,26 +247,27 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 				inequality[systemBackwardWeightsStart + eventIndex] = 1;
 		}
 
-		system.addInequality(0, "=", inequality, "Only events with same location as event " + event + " may consume tokens from this region");
+		sys.addInequality(0, "=", inequality, "Only events with same location as event " + event
+				+ " may consume tokens from this region");
 	}
 
 	/**
 	 * Add the needed inequalities to guarantee that the preset is contained in the postset. This is used for
 	 * synthesizing conflict-free nets.
-	 * @param system The inequality system to which the inequalities should be added.
+	 * @param sys The inequality system to which the inequalities should be added.
 	 */
-	private void requirePostsetContainsPreset(InequalitySystem system) {
+	private void requirePostsetContainsPreset(InequalitySystem sys) {
 		for (int eventIndex = 0; eventIndex < utility.getNumberOfEvents(); eventIndex++) {
 			int[] inequality = new int[systemNumberOfVariables];
 			inequality[systemWeightsStart + eventIndex] = 1;
-			system.addInequality(0, "<=", inequality, "Preset contains postset for event " + eventIndex + " (No tokens are consumed)");
+			sys.addInequality(0, "<=", inequality, "Preset contains postset for event " + eventIndex
+					+ " (No tokens are consumed)");
 		}
 	}
 
 	/**
-	 * Try to calculate a pure region which separates some state and some event. This calculates a linear combination of
-	 * the given basis of abstract regions.
-	 * @param utility The region utility to use.
+	 * Try to calculate a pure region which separates some state and some event. This calculates a linear
+	 * combination of the given basis of abstract regions.
 	 * @param system An inequality system that is suitably prepared.
 	 * @param state The first state of the separation problem
 	 * @param otherState The second state of the separation problem
@@ -274,8 +275,7 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 * any side-conditions.
 	 * @return A separating region or null.
 	 */
-	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
-			State state, State otherState, boolean pure) {
+	private Region calculateSeparatingRegion(InequalitySystem sys, State state, State otherState, boolean pure) {
 		// We want r_S(s) != r_S(s'). Since for each region there exists a complementary region (we are only
 		// looking at the bounded case!), we can require r_S(s) < r_S(s')
 		int[] inequality;
@@ -283,8 +283,7 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 		try {
 			inequality = coefficientsForStateMarking(state);
 			otherInequality = coefficientsForStateMarking(otherState);
-		}
-		catch (UnreachableException e) {
+		} catch (UnreachableException e) {
 			// Unreachable states cannot be separated
 			return null;
 		}
@@ -292,16 +291,16 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 		for (int i = 0; i < inequality.length; i++)
 			inequality[i] -= otherInequality[i];
 
-		system.addInequality(-1, ">=", inequality, "Region should separate state " + state + " from state " + otherState);
+		sys.addInequality(-1, ">=", inequality, "Region should separate state " + state
+				+ " from state " + otherState);
 
-		return regionFromSolution(system, pure);
+		return regionFromSolution(sys, pure);
 	}
 
 
 	/**
-	 * Try to calculate a pure region which separates some state and some event. This calculates a linear combination of
-	 * the given basis of abstract regions.
-	 * @param utility The region utility to use.
+	 * Try to calculate a pure region which separates some state and some event. This calculates a linear
+	 * combination of the given basis of abstract regions.
 	 * @param system An inequality system that is suitably prepared.
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
@@ -309,8 +308,7 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 * any side-conditions.
 	 * @return A separating region or null.
 	 */
-	private Region calculateSeparatingRegion(RegionUtility utility, InequalitySystem system,
-			State state, String event, boolean pure) {
+	private Region calculateSeparatingRegion(InequalitySystem sys, State state, String event, boolean pure) {
 		final int eventIndex = utility.getEventIndex(event);
 
 		// Each state must be reachable in the resulting region, but event 'event' should be disabled in state.
@@ -318,8 +316,7 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 		int[] inequality;
 		try {
 			inequality = coefficientsForStateMarking(state);
-		}
-		catch (UnreachableException e) {
+		} catch (UnreachableException e) {
 			// Unreachable states cannot be separated
 			return null;
 		}
@@ -333,11 +330,12 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 			inequality[systemBackwardWeightsStart + eventIndex] += -1;
 		}
 
-		system.addInequality(-1, ">=", inequality, "Region should separate state " + state + " from event " + event);
+		sys.addInequality(-1, ">=", inequality, "Region should separate state " + state
+				+ " from event " + event);
 
 		// Calculate the resulting linear combination
 		debug("Solving the following system to separate ", state, " from ", event, ":");
-		return regionFromSolution(system, pure);
+		return regionFromSolution(sys, pure);
 	}
 
 	/**
@@ -347,8 +345,8 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 	 * any side-conditions.
 	 * @return A region or null.
 	 */
-	private Region regionFromSolution(InequalitySystem system, boolean pure) {
-		List<Integer> solution = system.findSolution();
+	private Region regionFromSolution(InequalitySystem sys, boolean pure) {
+		List<Integer> solution = sys.findSolution();
 		if (solution.isEmpty())
 			return null;
 
@@ -377,26 +375,26 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
 			return null;
 
-		InequalitySystem systemCopy = null;
-		InequalitySystem system = new InequalitySystem(this.system);
+		InequalitySystem systemLater = null;
+		InequalitySystem systemNow = new InequalitySystem(this.system);
 		// TODO: How can this be implemented?
-		//requireDistributableNet(system, locationMap, event);
+		//requireDistributableNet(system, event);
 
 		// TODO: Is this needed? Can this be optimized? Think about it
 		if (properties.isConflictFree() && !properties.isOutputNonbranching()) {
-			systemCopy = new InequalitySystem(system);
+			systemLater = new InequalitySystem(systemNow);
 
 			// Conflict free: Either the place is output-nonbranching or the preset is contained in
 			// the postset.
-			requireOutputNonbranchingNet(systemCopy);
-			requirePostsetContainsPreset(system);
+			requireOutputNonbranchingNet(systemLater);
+			requirePostsetContainsPreset(systemNow);
 		}
 
-		Region r = calculateSeparatingRegion(utility, system, state, otherState, properties.isPure());
+		Region r = calculateSeparatingRegion(systemNow, state, otherState, properties.isPure());
 
-		if (r == null && systemCopy != null) {
+		if (r == null && systemLater != null) {
 			debug("Trying again with output-nonbranching");
-			r = calculateSeparatingRegion(utility, systemCopy, state, otherState, properties.isPure());
+			r = calculateSeparatingRegion(systemLater, state, otherState, properties.isPure());
 		}
 		return r;
 	}
@@ -413,24 +411,24 @@ class InequalitySystemSeparation extends DebugUtil implements Separation {
 		if (!utility.getSpanningTree().isReachable(state))
 			return null;
 
-		InequalitySystem systemCopy = null;
-		InequalitySystem system = new InequalitySystem(this.system);
-		requireDistributableNet(system, locationMap, event);
+		InequalitySystem systemLater = null;
+		InequalitySystem systemNow = new InequalitySystem(this.system);
+		requireDistributableNet(systemNow, event);
 
 		if (properties.isConflictFree() && !properties.isOutputNonbranching()) {
-			systemCopy = new InequalitySystem(system);
+			systemLater = new InequalitySystem(systemNow);
 
 			// Conflict free: Either the place is output-nonbranching or the preset is contained in
 			// the postset.
-			requireOutputNonbranchingNet(systemCopy);
-			requirePostsetContainsPreset(system);
+			requireOutputNonbranchingNet(systemLater);
+			requirePostsetContainsPreset(systemNow);
 		}
 
-		Region r = calculateSeparatingRegion(utility, system, state, event, properties.isPure());
+		Region r = calculateSeparatingRegion(systemNow, state, event, properties.isPure());
 
-		if (r == null && systemCopy != null) {
+		if (r == null && systemLater != null) {
 			debug("Trying again with output-nonbranching");
-			r = calculateSeparatingRegion(utility, systemCopy, state, event, properties.isPure());
+			r = calculateSeparatingRegion(systemLater, state, event, properties.isPure());
 		}
 		return r;
 	}

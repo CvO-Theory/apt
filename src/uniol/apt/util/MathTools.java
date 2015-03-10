@@ -69,7 +69,7 @@ public class MathTools {
 		int gcd = iter.next();
 		while (iter.hasNext()) {
 			gcd = gcd(gcd, iter.next());
-			if(gcd == 1) return 1;
+			if (gcd == 1) return 1;
 		}
 		return gcd;
 	}

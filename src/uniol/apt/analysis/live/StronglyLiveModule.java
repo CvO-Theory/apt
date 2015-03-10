@@ -94,7 +94,8 @@ public class StronglyLiveModule extends AbstractModule {
 			List<Transition> killingSequence = Live.findKillingFireSequence(pn, transition);
 			output.setReturnValue("strongly_live", Boolean.class, killingSequence == null);
 			if (killingSequence != null)
-				output.setReturnValue("sample_witness_firing_sequence", FiringSequence.class, new FiringSequence(killingSequence));
+				output.setReturnValue("sample_witness_firing_sequence",
+						FiringSequence.class, new FiringSequence(killingSequence));
 		}
 	}
 

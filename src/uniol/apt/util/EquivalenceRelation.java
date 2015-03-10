@@ -36,6 +36,7 @@ import static org.apache.commons.collections4.iterators.PeekingIterator.peekingI
 /**
  * Instances of this class represent an equivalence relation over an unknown set. Initially, all elements are only
  * equivalent to themselves, but the equivalence classes of two elements can be joined.
+ * @param <E> The type of elements in the equivalence relation.
  * @author Uli Schlachter
  */
 public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implements Collection<Set<E>> {
@@ -49,7 +50,8 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 		}
 	}
 
-	private final Map<E, Set<E>> elementToClass = LazyMap.lazyMap(new HashMap<E, Set<E>>(), new ToUnitSetTransformer());
+	private final Map<E, Set<E>> elementToClass = LazyMap.lazyMap(new HashMap<E, Set<E>>(),
+			new ToUnitSetTransformer());
 	private final Set<Set<E>> allClasses = new HashSet<>();
 
 	/**

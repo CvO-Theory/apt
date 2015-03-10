@@ -90,7 +90,8 @@ public class SimplyLiveModule extends AbstractModule {
 			List<Transition> live = Live.checkSimplyLive(pn, transition);
 			output.setReturnValue("simply_live", Boolean.class, live != null);
 			if (live != null)
-				output.setReturnValue("sample_witness_firing_sequence", FiringSequence.class, new FiringSequence(live));
+				output.setReturnValue("sample_witness_firing_sequence",
+						FiringSequence.class, new FiringSequence(live));
 		}
 	}
 

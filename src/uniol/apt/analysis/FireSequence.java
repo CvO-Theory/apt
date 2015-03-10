@@ -80,12 +80,10 @@ public class FireSequence extends AbstractModule {
 			}
 			// Unset list in case everything worked successfully
 			fired = null;
-		}
-		catch (NoSuchNodeException e) {
+		} catch (NoSuchNodeException e) {
 			String msg = "No transition named '" + e.getNodeId() + "' exists";
 			throw new ModuleException(msg, e);
-		}
-		catch (TransitionFireException e) {
+		} catch (TransitionFireException e) {
 			success = false;
 		}
 

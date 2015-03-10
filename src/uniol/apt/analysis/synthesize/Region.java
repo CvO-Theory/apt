@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import uniol.apt.adt.ts.State;
-import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
 
 /**
@@ -47,7 +46,8 @@ public class Region {
 	 * @param forwardWeights List of weights for the forward weights of each event.
 	 * @param initialMarking Initial marking, or null if one should be calculated.
 	 */
-	private Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights, Integer initialMarking) {
+	private Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights,
+			Integer initialMarking) {
 		this.utility = utility;
 		this.backwardWeights = Collections.unmodifiableList(new ArrayList<>(backwardWeights));
 		this.forwardWeights = Collections.unmodifiableList(new ArrayList<>(forwardWeights));
@@ -70,8 +70,10 @@ public class Region {
 	 * @param utility The RegionUtility instance that supports this region.
 	 * @param backwardWeights List of weights for the backward weight of each event.
 	 * @param forwardWeights List of weights for the forward weights of each event.
+	 * @param initialMarking Initial marking for the region
 	 */
-	public Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights, int initialMarking) {
+	public Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights,
+			int initialMarking) {
 		this(utility, backwardWeights, forwardWeights, Integer.valueOf(initialMarking));
 	}
 
@@ -193,8 +195,7 @@ public class Region {
 			try {
 				marking = Math.max(marking, -evaluateParikhVector(
 							utility.getReachingParikhVector(state)));
-			}
-			catch (UnreachableException e) {
+			} catch (UnreachableException e) {
 				continue;
 			}
 		}
@@ -205,6 +206,7 @@ public class Region {
 	 * Get the marking that a normal region based on this abstract would assign to the given state.
 	 * @param state The state to evaluate. Must be reachable from the initial state.
 	 * @return The resulting number.
+	 * @throws UnreachableException if the given state is unreachable from the initial state
 	 */
 	public int getMarkingForState(State state) throws UnreachableException {
 		Integer i = stateMarkingCache.get(state);
@@ -273,11 +275,11 @@ public class Region {
 
 	/**
 	 * Create a new region that is a copy of this region, but with the specified initial marking.
-	 * @param initialMarking The initial marking for the new region.
+	 * @param initial The initial marking for the new region.
 	 * @return The new region.
 	 */
-	public Region withInitialMarking(int initialMarking) {
-		return new Region(utility, backwardWeights, forwardWeights, initialMarking);
+	public Region withInitialMarking(int initial) {
+		return new Region(utility, backwardWeights, forwardWeights, initial);
 	}
 
 	@Override

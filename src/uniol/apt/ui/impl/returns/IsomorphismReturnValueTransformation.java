@@ -21,7 +21,6 @@ package uniol.apt.ui.impl.returns;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collection;
 
 import org.apache.commons.collections4.MapIterator;
 
@@ -31,7 +30,6 @@ import uniol.apt.ui.ReturnValueTransformation;
 
 /**
  * @author Uli Schlachter
- * @param <T> the type of the node that is transformed into a string
  */
 public class IsomorphismReturnValueTransformation implements ReturnValueTransformation<Isomorphism> {
 	@Override

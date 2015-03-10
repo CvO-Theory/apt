@@ -22,7 +22,6 @@ package uniol.apt.ui.impl.returns;
 import java.io.IOException;
 import java.io.Writer;
 
-import uniol.apt.adt.INode;
 import uniol.apt.analysis.connectivity.Component;
 import uniol.apt.analysis.connectivity.Components;
 import uniol.apt.module.exception.ModuleException;

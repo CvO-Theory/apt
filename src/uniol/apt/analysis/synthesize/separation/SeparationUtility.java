@@ -21,7 +21,6 @@ package uniol.apt.analysis.synthesize.separation;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Arc;
@@ -78,8 +77,7 @@ public class SeparationUtility extends DebugUtil {
 			int stateValue = region.getMarkingForState(state);
 			int otherStateValue = region.getMarkingForState(otherState);
 			return stateValue != otherStateValue;
-		}
-		catch (UnreachableException e) {
+		} catch (UnreachableException e) {
 			return false;
 		}
 	}
@@ -96,8 +94,7 @@ public class SeparationUtility extends DebugUtil {
 		try {
 			// We need r(state) to be smaller than the event's backward weight in some region.
 			return region.getMarkingForState(state) < region.getBackwardWeight(event);
-		}
-		catch (UnreachableException e) {
+		} catch (UnreachableException e) {
 			return false;
 		}
 	}
@@ -106,6 +103,7 @@ public class SeparationUtility extends DebugUtil {
 	 * Calculate a mapping from events to their location.
 	 * @param utility The region utility that describes the events.
 	 * @return An array containing the location for each event.
+	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
 	static public String[] getLocationMap(RegionUtility utility) throws MissingLocationException {
 		// Build a mapping from events to locations. Yaaay. Need to iterate over all arcs...
@@ -134,8 +132,9 @@ public class SeparationUtility extends DebugUtil {
 		if (hadEventWithLocation) {
 			// Do all events have a location?
 			if (Arrays.asList(locationMap).contains(null))
-				throw new MissingLocationException("Trying to synthesize a Petri Net where some events have a "
-						+ "location and others do not. Either all or no event must have a location.");
+				throw new MissingLocationException("Trying to synthesize a Petri Net where some events "
+						+ " have a location and others do not. Either all or no event must"
+						+ " have a location.");
 
 			// Do all events have the same location?
 			if (Collections.frequency(Arrays.asList(locationMap), locationMap[0]) == locationMap.length) {
@@ -152,6 +151,7 @@ public class SeparationUtility extends DebugUtil {
 	 * @param utility The region utility to use.
 	 * @param properties Properties that the calculated region should satisfy.
 	 * @return A suitable Separation instance
+	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
 	static public Separation createSeparationInstance(RegionUtility utility, PNProperties properties)
 			throws MissingLocationException {
@@ -160,22 +160,19 @@ public class SeparationUtility extends DebugUtil {
 		try {
 			if (result == null)
 				result = new BasicPureSeparation(utility, properties, locationMap);
-		}
-		catch (UnsupportedPNPropertiesException e) {
+		} catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
 		}
 		try {
 			if (result == null)
 				result = new BasicImpureSeparation(utility, properties, locationMap);
-		}
-		catch (UnsupportedPNPropertiesException e) {
+		} catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
 		}
 		try {
 			if (result == null)
 				result = new PlainPureSeparation(utility, properties, locationMap);
-		}
-		catch (UnsupportedPNPropertiesException e) {
+		} catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
 		}
 		if (result == null)

@@ -75,9 +75,10 @@ public class CoverabilityGraph {
 	 * @return Number of nodes in the graph.
 	 */
 	public int calculateNodes() {
-		while (visitNode()) {
+		while (true) {
+			if (!visitNode())
+				return nodes.size();
 		}
-		return nodes.size();
 	}
 
 	private boolean visitNode() {
@@ -142,7 +143,8 @@ public class CoverabilityGraph {
 	 * @param from The marking from which the arc originates.
 	 * @param covered node whose marking is covered by the given marking (or null if none)
 	 */
-	private CoverabilityGraphEdge addArc(Transition transition, Marking cur, CoverabilityGraphNode from, CoverabilityGraphNode covered) {
+	private CoverabilityGraphEdge addArc(Transition transition, Marking cur, CoverabilityGraphNode from,
+			CoverabilityGraphNode covered) {
 		CoverabilityGraphNode state = states.get(cur);
 		if (state == null) {
 			state = addNode(transition, cur, from, covered);
@@ -159,7 +161,8 @@ public class CoverabilityGraph {
 	 * @param covered node whose marking is covered by the given marking (or null if none)
 	 * @return the new node.
 	 */
-	private CoverabilityGraphNode addNode(Transition transition, Marking mark, CoverabilityGraphNode parent, CoverabilityGraphNode covered) {
+	private CoverabilityGraphNode addNode(Transition transition, Marking mark, CoverabilityGraphNode parent,
+			CoverabilityGraphNode covered) {
 		assert states.get(mark) == null;
 
 		// Copy the marking to make sure no one else messes with it.

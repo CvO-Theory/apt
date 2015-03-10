@@ -21,7 +21,6 @@ package uniol.apt.analysis.synthesize.separation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import uniol.apt.TestTSCollection;

@@ -25,8 +25,8 @@ import java.util.Objects;
  * Represents a Pair of elements.
  * @author Raffaela Ferrari
  *
- * @param X class of the first element
- * @param Y class of the second element
+ * @param <X> class of the first element
+ * @param <Y> class of the second element
  */
 public class Pair<X, Y> {
 	private final X q1;

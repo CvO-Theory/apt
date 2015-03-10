@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import uniol.apt.analysis.synthesize.PNProperties;
-import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 
 import org.testng.annotations.Factory;

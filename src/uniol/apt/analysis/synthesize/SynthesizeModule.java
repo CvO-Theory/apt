@@ -65,7 +65,8 @@ public class SynthesizeModule extends AbstractModule {
 	static public void requireCommon(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("properties", String.class,
 				"Comma separated list of properties for the synthesized net,"
-				+ " can be none, safe, [k]-bounded, pure, plain, t-net, output-nonbranching (on), conflict-free (cf), upto-language-equivalence (language, le)");
+				+ " can be none, safe, [k]-bounded, pure, plain, t-net, output-nonbranching (on),"
+				+ " conflict-free (cf), upto-language-equivalence (language, le)");
 	}
 
 	@Override
@@ -90,11 +91,13 @@ public class SynthesizeModule extends AbstractModule {
 		outputSpec.addReturnValue("failedEventStateSeparationProblems", String.class);
 	}
 
-	static public SynthesizePN runSynthesis(TransitionSystem ts, ModuleInput input, ModuleOutput output) throws ModuleException {
+	static public SynthesizePN runSynthesis(TransitionSystem ts, ModuleInput input, ModuleOutput output)
+			throws ModuleException {
 		output.setReturnValue("warning", String.class, "THIS MODULE IS EXPERIMENTAL AND SHOULD NOT BE TRUSTED");
 
 		PNProperties properties = new PNProperties();
-		boolean uptoLanguageEquivalence = parseProperties(properties, input.getParameter("properties", String.class));
+		boolean uptoLanguageEquivalence = parseProperties(properties,
+				input.getParameter("properties", String.class));
 		SynthesizePN synthesize;
 		if (uptoLanguageEquivalence)
 			synthesize = SynthesizePN.createUpToLanguageEquivalence(ts, properties);
@@ -130,13 +133,15 @@ public class SynthesizeModule extends AbstractModule {
 			output.setReturnValue("failedStateSeparationProblems", String.class, failedSSP.toString());
 
 			Map<String, Set<String>> failedESSP = new TreeMap<>();
-			for (Map.Entry<String, Set<State>> entry : synthesize.getFailedEventStateSeparationProblems().entrySet()) {
+			for (Map.Entry<String, Set<State>> entry :
+					synthesize.getFailedEventStateSeparationProblems().entrySet()) {
 				Set<String> states = new TreeSet<>();
 				for (State state : entry.getValue())
 					states.add(state.getId());
 				failedESSP.put(entry.getKey(), states);
 			}
-			output.setReturnValue("failedEventStateSeparationProblems", String.class, failedESSP.toString());
+			output.setReturnValue("failedEventStateSeparationProblems",
+					String.class, failedESSP.toString());
 		}
 	}
 
@@ -145,6 +150,13 @@ public class SynthesizeModule extends AbstractModule {
 		return new Category[]{Category.LTS};
 	}
 
+	/**
+	 * Parse the given string into a PNProperties instance
+	 * @param result A collection of PNProperty where the properties found will be added
+	 * @param properties the string to parse
+	 * @return true if "up-to-language-equivalence" was requested
+	 * @throws ModuleException if the properties string is malformed
+	 */
 	static public boolean parseProperties(PNProperties result, String properties) throws ModuleException {
 		// Explicitly allow empty string
 		properties = properties.trim();
@@ -188,8 +200,7 @@ public class SynthesizeModule extends AbstractModule {
 						int k;
 						try {
 							k = Integer.parseInt(value);
-						}
-						catch (NumberFormatException e) {
+						} catch (NumberFormatException e) {
 							throw new ModuleException("Cannot parse '" + prop + "': "
 									+ "Invalid number for property 'k-bounded'");
 						}

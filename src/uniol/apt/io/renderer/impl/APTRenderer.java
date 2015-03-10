@@ -66,8 +66,7 @@ public class APTRenderer {
 		StringWriter writer = new StringWriter();
 		try {
 			render(writer, pn);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			// A StringWriter shouldn't throw IOExceptions
 			throw new RuntimeException(e);
 		}
@@ -76,10 +75,10 @@ public class APTRenderer {
 
 	/**
 	 * Render the given Petri net into the APT file format.
-	 * @param writer the writer to send the result to
+	 * @param output the writer to send the result to
 	 * @param pn the Petri net that should be represented as a string.
-	 * @throws ModuleException when the Petri net cannot be expressed in the LoLA file format, for example when
-	 * invalid identifiers are used or when the net has no places or no transitions.
+	 * @throws ModuleException when the Petri net cannot be expressed in the APT file format.
+	 * @throws IOException when writing to the output produces an exception.
 	 */
 	public void render(Writer output, PetriNet pn) throws ModuleException, IOException {
 		verifyNet(pn);
@@ -114,8 +113,7 @@ public class APTRenderer {
 		StringWriter writer = new StringWriter();
 		try {
 			render(writer, ts);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			// A StringWriter shouldn't throw IOExceptions
 			throw new RuntimeException(e);
 		}
@@ -124,8 +122,9 @@ public class APTRenderer {
 
 	/**
 	 * Render the given Petri net into the APT file format.
-	 * @param writer the writer to send the result to
+	 * @param output the writer to send the result to
 	 * @param ts transition system
+	 * @throws IOException when writing to the output produces an exception.
 	 */
 	public void render(Writer output, TransitionSystem ts) throws IOException {
 		output.append(".name \"").append(ts.getName()).append("\"\n");

@@ -20,7 +20,6 @@
 package uniol.apt.util.equations;
 
 import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -96,6 +95,14 @@ public class InequalitySystem extends DebugUtil {
 			return representation;
 		}
 
+		/**
+		 * Compare a value via this comparator. For example, GREATER_THAN.compare(3, 4) would check that 3 > 4
+		 * and thus return false.
+		 * @param left The left side
+		 * @param right The right side
+		 * @return true if this comparator is satisfied.
+		 * @param <T> the type of comparable to compare
+		 */
 		public <T> boolean compare(Comparable<T> left, T right) {
 			int result = left.compareTo(right);
 			switch (this) {
@@ -110,7 +117,8 @@ public class InequalitySystem extends DebugUtil {
 				case GREATER_THAN_OR_EQUAL:
 					return result >= 0;
 				default:
-					throw new AssertionError("Came across a Comparator with an invalid value: " + this.toString());
+					throw new AssertionError("Came across a Comparator with an invalid value: " +
+							this.toString());
 			}
 		}
 
@@ -144,7 +152,8 @@ public class InequalitySystem extends DebugUtil {
 		 * @param coefficients The coefficients of the unknowns on the right hand side.
 		 * @param comment A comment that describes the meaning of this inequality.
 		 */
-		public Inequality(BigInteger leftHandSide, Comparator comparator, List<BigInteger> coefficients, String comment) {
+		public Inequality(BigInteger leftHandSide, Comparator comparator, List<BigInteger> coefficients,
+				String comment) {
 			this.leftHandSide = leftHandSide;
 			this.comparator = comparator;
 			this.coefficients = Collections.unmodifiableList(coefficients);
@@ -231,11 +240,10 @@ public class InequalitySystem extends DebugUtil {
 		 * @return True if this inequality is homegenous.
 		 */
 		public boolean isHomogeneous() {
-			/*
-			 * Also, since we are looking at linear inequalities, if we
-			 * multiply an r >= 1 to x in x[0]*c[0]+...+x[n]*c[n], then the r can be be factored out and the whole result of
-			 * this line will be multiplied by r as well. Since r >= 1, this means that the following conditions
-			 * must hold (but only if we are looking at integer solutions, else > and < need to change!).
+			/* Also, since we are looking at linear inequalities, if we multiply an r >= 1 to the x in
+			 * x[0]*c[0]+...+x[n]*c[n], then the r can be be factored out and the whole result of this line
+			 * will be multiplied by r as well. Since r >= 1, this means that the following conditions must
+			 * hold (but only if we are looking at integer solutions, else > and < need to change!).
 			 */
 			switch (getComparator()) {
 				case LESS_THAN_OR_EQUAL:
@@ -258,6 +266,9 @@ public class InequalitySystem extends DebugUtil {
 					if (leftHandSide.signum() > 0)
 						return false;
 					break;
+				default:
+					throw new AssertionError("Came across a Comparator with an invalid value: " +
+							this.toString());
 			}
 
 			return true;
@@ -337,7 +348,8 @@ public class InequalitySystem extends DebugUtil {
 	 * @param comment A comment describing the inequality.
 	 */
 	public void addInequality(int lhs, Comparator comparator, int[] coefficients, String comment) {
-		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients), comment));
+		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients),
+					comment));
 	}
 
 	/**
@@ -383,7 +395,8 @@ public class InequalitySystem extends DebugUtil {
 	 * @param comment A comment describing the inequality.
 	 */
 	public void addInequality(int lhs, Comparator comparator, Collection<Integer> coefficients, String comment) {
-		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients), comment));
+		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients),
+					comment));
 	}
 
 	/**
@@ -490,7 +503,8 @@ public class InequalitySystem extends DebugUtil {
 			else {
 				Term terms[] = new Term[coefficients.size()];
 				for (int i = 0; i < coefficients.size(); i++)
-					terms[i] = script.term("*", script.numeral(coefficients.get(i)), script.term("var" + i));
+					terms[i] = script.term("*",
+							script.numeral(coefficients.get(i)), script.term("var" + i));
 				if (coefficients.size() == 1)
 					rhs = terms[0];
 				else

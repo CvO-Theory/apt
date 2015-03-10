@@ -20,9 +20,6 @@
 package uniol.apt.analysis.synthesize.separation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import uniol.apt.adt.ts.State;
@@ -52,6 +49,7 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 	 * @param utility The region utility to use.
 	 * @param properties Properties that the calculated region should satisfy.
 	 * @param locationMap Mapping that describes the location of each event.
+	 * @throws UnsupportedPNPropertiesException If the requested properties are not supported.
 	 */
 	public BasicImpureSeparation(RegionUtility utility, PNProperties properties,
 			String[] locationMap) throws UnsupportedPNPropertiesException {
@@ -95,15 +93,13 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 				int stateValue, otherStateValue;
 				try {
 					stateValue = region.getMarkingForState(state);
-				}
-				catch (UnreachableException e) {
+				} catch (UnreachableException e) {
 					throw new AssertionError("Made sure that the state is reachable, but "
 							+ "apparently it isn't?!", e);
 				}
 				try {
 					otherStateValue = region.getMarkingForState(otherState);
-				}
-				catch (UnreachableException e) {
+				} catch (UnreachableException e) {
 					// Just ignore and skip unreachable states
 					continue stateLoop;
 				}
@@ -143,8 +139,7 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 				int stateMarking = result.getMarkingForState(otherState);
 				if (min == null || min > stateMarking)
 					min = stateMarking;
-			}
-			catch (UnreachableException e) {
+			} catch (UnreachableException e) {
 				// Silently ignore unreachable states
 				continue;
 			}

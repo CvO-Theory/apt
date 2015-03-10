@@ -84,7 +84,8 @@ public class LimitedUnfolding  {
 		return unfolding;
 	}
 
-	static private State createState(TransitionSystem unfolding, Deque<Pair<State, Iterator<Arc>>> stack, State next) {
+	static private State createState(TransitionSystem unfolding, Deque<Pair<State, Iterator<Arc>>> stack,
+			State next) {
 		State newState = unfolding.createState();
 		next.putExtension(NEW_STATE_KEY, newState);
 		newState.putExtension(ORIGINAL_STATE_KEY, next);
@@ -95,8 +96,7 @@ public class LimitedUnfolding  {
 	static private State getNewState(State state) {
 		try {
 			return (State) state.getExtension(NEW_STATE_KEY);
-		}
-		catch (StructureException e) {
+		} catch (StructureException e) {
 			// No such extension
 			return null;
 		}

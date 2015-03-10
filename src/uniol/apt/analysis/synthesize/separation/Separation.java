@@ -19,8 +19,6 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
-import java.util.Collection;
-
 import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.Region;
 

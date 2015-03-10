@@ -33,7 +33,7 @@ public class Isomorphism extends DualHashBidiMap<State, State> {
 
 	/**
 	 * Construct a Isomorphism from the given map.
-	 * @param c The map to copy.
+	 * @param m The map to copy.
 	 */
 	public Isomorphism(BidiMap<? extends State, ? extends State> m) {
 		super(m);
