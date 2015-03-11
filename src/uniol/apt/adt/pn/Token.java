@@ -41,27 +41,6 @@ public class Token implements Comparable<Token> {
 	}
 
 	/**
-	 * Constructor with count of token 0.
-	 */
-	public Token() {
-		this.v = 0;
-	}
-
-	/**
-	 * Constructor copying the value of the given token.
-	 * <p/>
-	 * @param v The token from which it should be copied.
-	 * <p/>
-	 * @throws IllegalArgumentException if the argument is null.
-	 */
-	public Token(Token v) {
-		if (v == null) {
-			throw new IllegalArgumentException("v == null");
-		}
-		this.v = v.v;
-	}
-
-	/**
 	 * Constructor initialising a token with a given value.
 	 * <p/>
 	 * @param v the initial value.
