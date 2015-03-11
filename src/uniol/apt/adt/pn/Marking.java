@@ -40,7 +40,7 @@ import uniol.apt.adt.exception.StructureException;
  */
 public class Marking {
 
-	private final HashMap<String, Token> map = new HashMap<>();
+	private final HashMap<Place, Token> map = new HashMap<>();
 	private final PetriNet net;
 	private long rev = -1;
 
@@ -52,7 +52,7 @@ public class Marking {
 	public Marking(PetriNet net) {
 		this.net = net;
 		for (Place place : net.getPlaces()) {
-			map.put(place.getId(), Token.ZERO);
+			map.put(place, Token.ZERO);
 		}
 		this.rev = net.getPlaceRev();
 	}
@@ -113,7 +113,7 @@ public class Marking {
 		int count = -1;
 		for (Iterator<Place> it = places.iterator(); it.hasNext();) {
 			Place place = it.next();
-			this.map.put(place.getId(), new Token(orderedTokenCounts[++count]));
+			this.map.put(place, new Token(orderedTokenCounts[++count]));
 		}
 	}
 
@@ -136,13 +136,13 @@ public class Marking {
 	 * @throws StructureException if the places of the given net and tokenmap do not fit.
 	 */
 	private void setMarking(Map<String, Token> m) {
-		for (String id : m.keySet()) {
-			if (!this.net.containsPlace(id)) {
-				throw new StructureException("place '" + id + "' does not belong to net '"
+		for (Map.Entry<String, Token> entry : m.entrySet()) {
+			if (!this.net.containsPlace(entry.getKey())) {
+				throw new StructureException("place '" + entry.getKey() + "' does not belong to net '"
 					+ this.net.getName() + "'.");
 			}
+			this.map.put(this.net.getPlace(entry.getKey()), entry.getValue());
 		}
-		this.map.putAll(m);
 		ensureConsistency();
 	}
 
@@ -206,11 +206,11 @@ public class Marking {
 	public void setToken(Place p, Token m) {
 		assert p != null && m != null;
 		ensureConsistency();
-		if (net != p.getGraph() || !map.containsKey(p.getId())) {
+		if (net != p.getGraph() || !map.containsKey(p)) {
 			throw new StructureException("place '" + p.getId() + "' does not belong to net '"
 				+ this.net.getName() + "'.");
 		}
-		map.put(p.getId(), m);
+		map.put(p, m);
 	}
 
 	/**
@@ -236,13 +236,7 @@ public class Marking {
 	 */
 	public void addToken(String id, Token m) {
 		assert id != null && m != null;
-		ensureConsistency();
-		Token val = getToken(id);
-		if (val != null) {
-			map.put(id, val.add(m));
-		} else {
-			throw new NoSuchNodeException(net, id);
-		}
+		addToken(this.net.getPlace(id), m);
 	}
 
 	/**
@@ -255,7 +249,9 @@ public class Marking {
 	 */
 	public void addToken(Place p, Token m) {
 		assert p != null && m != null;
-		addToken(p.getId(), m);
+		ensureConsistency();
+		Token val = getToken(p);
+		map.put(p, val.add(m));
 	}
 
 	/**
@@ -269,13 +265,7 @@ public class Marking {
 	 */
 	public void addToken(String id, int m) {
 		assert id != null;
-		ensureConsistency();
-		Token val = getToken(id);
-		if (val != null) {
-			map.put(id, val.add(m));
-		} else {
-			throw new NoSuchNodeException(net, id);
-		}
+		addToken(this.net.getPlace(id), m);
 	}
 
 	/**
@@ -289,7 +279,9 @@ public class Marking {
 	 */
 	public void addToken(Place p, int m) {
 		assert p != null;
-		addToken(p.getId(), m);
+		ensureConsistency();
+		Token val = getToken(p);
+		map.put(p, val.add(m));
 	}
 
 	/**
@@ -303,12 +295,7 @@ public class Marking {
 	 */
 	public Token getToken(String id) {
 		assert id != null;
-		ensureConsistency();
-		Token val = map.get(id);
-		if (val == null) {
-			throw new NoSuchNodeException(net, id);
-		}
-		return val;
+		return getToken(this.net.getPlace(id));
 	}
 
 	/**
@@ -327,7 +314,12 @@ public class Marking {
 			throw new StructureException("place '" + p.getId() + "' does not belong to net '"
 				+ this.net.getName() + "'.");
 		}
-		return getToken(p.getId());
+		ensureConsistency();
+		Token val = map.get(p);
+		if (val == null) {
+			throw new NoSuchNodeException(net, p.getId());
+		}
+		return val;
 	}
 
 	/**
@@ -336,24 +328,18 @@ public class Marking {
 	 */
 	final void ensureConsistency() {
 		if (rev != net.getPlaceRev()) {
-			Collection<String> toRemove = null;
-			for (String key : this.map.keySet()) {
-				if (!this.net.containsPlace(key)) {
-					if (toRemove == null) {
-						toRemove = new LinkedList<>();
-					}
-					toRemove.add(key);
-				}
-			}
-			if (toRemove != null) {
-				for (String key : toRemove) {
-					this.map.remove(key);
-				}
-			}
 			Collection<Place> places = this.net.getPlaces();
+			Iterator<Map.Entry<Place, Token>> iter = this.map.entrySet().iterator();
+			while (iter.hasNext()) {
+				Map.Entry<Place, Token> entry = iter.next();
+				Place place = entry.getKey();
+				if (!places.contains(place)) {
+					iter.remove();
+				}
+			}
 			for (Place p : places) {
-				if (!this.map.containsKey(p.getId())) {
-					map.put(p.getId(), Token.ZERO);
+				if (!this.map.containsKey(p)) {
+					map.put(p, Token.ZERO);
 				}
 			}
 			rev = net.getPlaceRev();
@@ -375,8 +361,8 @@ public class Marking {
 		o.ensureConsistency();
 		assert map.keySet().equals(o.map.keySet());
 
-		Set<String> covered = new HashSet<>();
-		for (Map.Entry<String, Token> e : map.entrySet()) {
+		Set<Place> covered = new HashSet<>();
+		for (Map.Entry<Place, Token> e : map.entrySet()) {
 			Token own = e.getValue();
 			Token other = o.map.get(e.getKey());
 
@@ -393,8 +379,8 @@ public class Marking {
 		}
 
 		// We are covering the other marking, add the suitable omegas
-		for (String id : covered) {
-			this.map.put(id, Token.OMEGA);
+		for (Place place : covered) {
+			this.map.put(place, Token.OMEGA);
 		}
 
 		return true;
@@ -428,7 +414,7 @@ public class Marking {
 		// Loop over all entries in our map and calculate a hash code. For two different Markings that "are
 		// logically the same" (according to equals()), this must produce the same hash code. Since the
 		// iteration of a map is unstable, this must use an associative operation like plus inside the loop.
-		for (Map.Entry<String, Token> entry : map.entrySet()) {
+		for (Map.Entry<Place, Token> entry : map.entrySet()) {
 			// Mix the hash codes more so that hopefully all bits of the resulting hash code are influenced.
 			int keyCode = entry.getKey().hashCode();
 			int valCode = entry.getValue().hashCode();
@@ -465,8 +451,8 @@ public class Marking {
 	public String toString() {
 		ensureConsistency();
 		StringBuilder strBuilder = new StringBuilder("[ ");
-		for (String pid : map.keySet()) {
-			strBuilder.append("[").append(pid).append(":").append(map.get(pid).toString()).append("] ");
+		for (Place place : map.keySet()) {
+			strBuilder.append("[").append(place.getId()).append(":").append(map.get(place).toString()).append("] ");
 		}
 		strBuilder.append("]");
 		return strBuilder.toString();
