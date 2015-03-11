@@ -27,14 +27,15 @@ import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
-import uniol.apt.util.DebugUtil;
 import uniol.apt.util.equations.InequalitySystem;
+
+import static uniol.apt.util.DebugUtil.debug;
 
 /**
  * This class finds pure solutions to separation problems without any other properties.
  * @author Uli Schlachter
  */
-class BasicPureSeparation extends DebugUtil implements Separation {
+class BasicPureSeparation implements Separation {
 	protected final RegionUtility utility;
 	protected final String[] locationMap;
 

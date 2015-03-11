@@ -29,6 +29,8 @@ import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.util.equations.InequalitySystem;
 
+import static uniol.apt.util.DebugUtil.debug;
+
 /**
  * This class finds impure solutions to separation problems without any other properties.
  * @author Uli Schlachter

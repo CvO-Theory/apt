@@ -27,7 +27,7 @@ import java.util.Date;
  * Helper functions for having debug output.
  * @author Uli Schlachter
  */
-public class DebugUtil {
+final public class DebugUtil {
 	static final public boolean debugOutputEnabled = false;
 	static final private ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>() {
 		@Override
@@ -35,6 +35,12 @@ public class DebugUtil {
 			return new SimpleDateFormat("HH:mm:ss.SSS");
 		}
 	};
+
+	/**
+	 * Private constructor, don't create instances of this.
+	 */
+	private DebugUtil() {
+	}
 
 	static private void printDebug(String prefix, String message) {
 		prefix = dateFormat.get().format(new Date()) + " " + prefix + ": ";
@@ -53,43 +59,43 @@ public class DebugUtil {
 		return klass.substring(index + 1);
 	}
 
-	static protected void debug(String message) {
+	static public void debug(String message) {
 		if (debugOutputEnabled)
 			printDebug(getCaller(), message);
 	}
 
-	static protected void debug() {
+	static public void debug() {
 		if (debugOutputEnabled)
 			printDebug(getCaller(), "");
 	}
 
-	static protected void debug(Object obj) {
+	static public void debug(Object obj) {
 		if (debugOutputEnabled)
 			printDebug(getCaller(), obj.toString());
 	}
 
-	static protected void debug(Object obj1, Object obj2) {
+	static public void debug(Object obj1, Object obj2) {
 		if (debugOutputEnabled)
 			printDebug(getCaller(), obj1.toString() + obj2.toString());
 	}
 
-	static protected void debug(Object obj1, Object obj2, Object obj3) {
+	static public void debug(Object obj1, Object obj2, Object obj3) {
 		if (debugOutputEnabled)
 			printDebug(getCaller(), obj1.toString() + obj2.toString() + obj3.toString());
 	}
 
-	static protected void debug(Object obj1, Object obj2, Object obj3, Object obj4) {
+	static public void debug(Object obj1, Object obj2, Object obj3, Object obj4) {
 		if (debugOutputEnabled)
 			printDebug(getCaller(), obj1.toString() + obj2.toString() + obj3.toString() + obj4.toString());
 	}
 
-	static protected void debug(Object obj1, Object obj2, Object obj3, Object obj4, Object obj5) {
+	static public void debug(Object obj1, Object obj2, Object obj3, Object obj4, Object obj5) {
 		if (debugOutputEnabled)
 			printDebug(getCaller(), obj1.toString() + obj2.toString() + obj3.toString() + obj4.toString() +
 					obj5.toString());
 	}
 
-	static protected void debug(Object... objs) {
+	static public void debug(Object... objs) {
 		if (debugOutputEnabled) {
 			StringBuilder sb = new StringBuilder();
 			for (Object o : objs)

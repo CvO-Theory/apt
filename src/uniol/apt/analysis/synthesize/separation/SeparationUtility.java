@@ -30,13 +30,14 @@ import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
-import uniol.apt.util.DebugUtil;
+
+import static uniol.apt.util.DebugUtil.debug;
 
 /**
  * Helper functions for solving separation problems.
  * @author Uli Schlachter
  */
-public class SeparationUtility extends DebugUtil {
+public final class SeparationUtility {
 	private SeparationUtility() {
 	}
 

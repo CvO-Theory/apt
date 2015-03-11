@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import uniol.apt.util.DebugUtil;
+import static uniol.apt.util.DebugUtil.debug;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.varia.NullAppender;
@@ -45,7 +45,7 @@ import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.SMTInterpol;
  * Representation of an inequality system.
  * @author Uli Schlachter
  */
-public class InequalitySystem extends DebugUtil {
+public class InequalitySystem {
 	private final List<Inequality> inequalities = new ArrayList<>();
 
 	private static List<BigInteger> toBigIntegerList(Collection<Integer> collection) {

@@ -27,13 +27,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import uniol.apt.util.DebugUtil;
+import static uniol.apt.util.DebugUtil.debug;
 
 /**
  * Representation of an equation system.
  * @author Uli Schlachter
  */
-public class EquationSystem extends DebugUtil {
+public class EquationSystem {
 	private final int numVariables;
 	private final List<List<Integer>> equations = new ArrayList<>();
 

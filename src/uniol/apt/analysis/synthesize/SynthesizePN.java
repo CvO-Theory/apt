@@ -48,17 +48,17 @@ import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.synthesize.separation.Separation;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
 import uniol.apt.analysis.tnet.TNet;
-import uniol.apt.util.DebugUtil;
 import uniol.apt.util.EquivalenceRelation;
 
 import static uniol.apt.analysis.synthesize.LimitedUnfolding.ORIGINAL_STATE_KEY;
 import static uniol.apt.analysis.synthesize.LimitedUnfolding.calculateLimitedUnfolding;
+import static uniol.apt.util.DebugUtil.debug;
 
 /**
  * Synthesize a Petri Net from a transition system.
  * @author Uli Schlachter
  */
-public class SynthesizePN extends DebugUtil {
+public class SynthesizePN {
 	private final TransitionSystem ts;
 	private final RegionUtility utility;
 	private final boolean onlyEventSeparation;
