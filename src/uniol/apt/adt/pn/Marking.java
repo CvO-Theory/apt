@@ -418,7 +418,24 @@ public class Marking {
 	@Override
 	public int hashCode() {
 		ensureConsistency();
-		return this.map.hashCode();
+
+		// Previously this used return this.map.hashCode() which did sum(key.hashCode() ^ value.hashCode).
+		// Sadly, we had lots of hash collisions due to this, because all the keys were the same (the IDs of
+		// places) and the values are the number of token on a place. Since these are small integers, only the
+		// low-order bits of their hash code differed, making hash collisions in the addition easy.
+
+		int hashCode = 0;
+		// Loop over all entries in our map and calculate a hash code. For two different Markings that "are
+		// logically the same" (according to equals()), this must produce the same hash code. Since the
+		// iteration of a map is unstable, this must use an associative operation like plus inside the loop.
+		for (Map.Entry<String, Token> entry : map.entrySet()) {
+			// Mix the hash codes more so that hopefully all bits of the resulting hash code are influenced.
+			int keyCode = entry.getKey().hashCode();
+			int valCode = entry.getValue().hashCode();
+			hashCode += Integer.rotateLeft(valCode, keyCode);
+			hashCode += Integer.rotateLeft(keyCode, valCode);
+		}
+		return hashCode;
 	}
 
 	@Override
