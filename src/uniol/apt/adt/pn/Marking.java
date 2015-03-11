@@ -66,8 +66,7 @@ public class Marking {
 		this.net = m.net;
 		this.setMarking(m);
 	}
-        
-        
+
 	/**
 	 * Constructor.
 	 * <p/>
@@ -124,11 +123,11 @@ public class Marking {
 	 * @param m The marking that serves as template for copying the marking.
 	 */
 	private void setMarking(Marking m) {
-		m.ensureConsistency();
+		this.map.clear();
 		for (Map.Entry<String, Token> entry : m.map.entrySet()) {
 			this.map.put(entry.getKey(), new Token(entry.getValue()));
 		}
-		ensureConsistency();
+		this.rev = m.rev;
 	}
 
 	/**
