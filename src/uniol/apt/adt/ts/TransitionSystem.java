@@ -179,10 +179,22 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		this.arcs.put(key, a);
 		this.addLabel(label);
 		//update pre- and postsets
-		calcPresetNodes(targetId).add(this.getNode(sourceId));
-		calcPostsetNodes(sourceId).add(this.getNode(targetId));
-		calcPresetEdges(targetId).add(a);
-		calcPostsetEdges(sourceId).add(a);
+		Set<State> preNodes = presetNodes.get(targetId);
+		if (preNodes != null) {
+			preNodes.add(this.getNode(sourceId));
+		}
+		Set<State> postNodes = postsetNodes.get(sourceId);
+		if (postNodes != null) {
+			postNodes.add(this.getNode(targetId));
+		}
+		Set<Arc> preEdges = presetEdges.get(targetId);
+		if (preEdges != null) {
+			preEdges.add(a);
+		}
+		Set<Arc> postEdges = postsetEdges.get(sourceId);
+		if (postEdges != null) {
+			postEdges.add(a);
+		}
 		invokeListeners();
 		return a;
 	}
