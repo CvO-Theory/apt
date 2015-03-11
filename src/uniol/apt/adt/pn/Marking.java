@@ -52,7 +52,7 @@ public class Marking {
 	public Marking(PetriNet net) {
 		this.net = net;
 		for (Place place : net.getPlaces()) {
-			map.put(place.getId(), new Token(0));
+			map.put(place.getId(), Token.ZERO);
 		}
 		this.rev = net.getPlaceRev();
 	}
@@ -124,9 +124,7 @@ public class Marking {
 	 */
 	private void setMarking(Marking m) {
 		this.map.clear();
-		for (Map.Entry<String, Token> entry : m.map.entrySet()) {
-			this.map.put(entry.getKey(), new Token(entry.getValue()));
-		}
+		this.map.putAll(m.map);
 		this.rev = m.rev;
 	}
 
@@ -144,9 +142,7 @@ public class Marking {
 					+ this.net.getName() + "'.");
 			}
 		}
-		for (Map.Entry<String, Token> entry : m.entrySet()) {
-			this.map.put(entry.getKey(), new Token(entry.getValue()));
-		}
+		this.map.putAll(m);
 		ensureConsistency();
 	}
 
@@ -357,7 +353,7 @@ public class Marking {
 			Collection<Place> places = this.net.getPlaces();
 			for (Place p : places) {
 				if (!this.map.containsKey(p.getId())) {
-					map.put(p.getId(), new Token(0));
+					map.put(p.getId(), Token.ZERO);
 				}
 			}
 			rev = net.getPlaceRev();
