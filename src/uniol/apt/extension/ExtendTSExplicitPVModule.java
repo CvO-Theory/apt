@@ -47,12 +47,8 @@ public class ExtendTSExplicitPVModule extends ExtendTSModule {
 	}
 
 	@Override
-	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addParameter("lts", TransitionSystem.class, "The LTS that is extended");
+	public void addRequire(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pv", ParikhVector.class, "The Parikh vector");
-		inputSpec.addParameter("g", Integer.class, "Maximum number of new nodes");
-		inputSpec.addParameter("mode", ExtendMode.class, "The mode (next, next_valid, next_minimal_valid)");
-		inputSpec.addParameter("state_file", String.class, "The file to load/save the state from/to");
 	}
 
 	@Override

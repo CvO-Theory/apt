@@ -59,6 +59,7 @@ public class ExtendTSModule extends AbstractModule {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("lts", TransitionSystem.class, "The LTS that is extended");
+		addRequire(inputSpec);
 		inputSpec.addParameter("g", Integer.class, "Maximum number of new nodes");
 		inputSpec.addParameter("mode", ExtendMode.class, "The mode (next, next_valid, next_minimal_valid)");
 		// TODO: Maybe use File.class and create a transformation
@@ -166,6 +167,7 @@ public class ExtendTSModule extends AbstractModule {
 		}
 	}
 
+	protected void addRequire(ModuleInputSpec inputSpec) {}
 	protected void initExtender(ExtendTransitionSystem extender, ModuleInput input) {}
 
 	@Override
