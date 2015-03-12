@@ -53,13 +53,12 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	private String name;
 	private int nextStateId = 0;
-	private final Map<ArcKey, Arc> arcs = new HashMap<>();
 	private final SortedMap<String, State> states = new TreeMap<>();
 	private final SortedBag<String> alphabet = new TreeBag<>();
 	private final Map<String, Set<State>> presetNodes = new SoftMap<>();
 	private final Map<String, Set<State>> postsetNodes = new SoftMap<>();
-	private final Map<String, Set<Arc>> presetEdges = new SoftMap<>();
-	private final Map<String, Set<Arc>> postsetEdges = new SoftMap<>();
+	private final Map<String, Map<ArcKey, Arc>> presetEdges = new HashMap<>();
+	private final Map<String, Map<ArcKey, Arc>> postsetEdges = new HashMap<>();
 	private State initialState = null;
 	private long labelRev = 0;
 
@@ -90,8 +89,11 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		for (String key : ts.states.keySet()) {
 			addState(key, new State(this, ts.states.get(key)));
 		}
-		for (ArcKey key : ts.arcs.keySet()) {
-			addArc(key, new Arc(this, ts.arcs.get(key)));
+		// Iterate over all ArcKey instances
+		for (Map<ArcKey, Arc> postsets : ts.postsetEdges.values()) {
+			for (Map.Entry<ArcKey, Arc> entry : postsets.entrySet()) {
+				addArc(entry.getKey(), new Arc(this, entry.getValue()));
+			}
 		}
 		this.labelRev = ts.labelRev;
 		this.initialState = states.get(ts.getInitialState().getId());
@@ -155,7 +157,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	private Arc addArc(ArcKey key, Arc arc) {
 		String targetId = key.getTargetId();
 		String sourceId = key.getSourceId();
-		this.arcs.put(key, arc);
+		this.presetEdges.get(targetId).put(key, arc);
+		this.postsetEdges.get(sourceId).put(key, arc);
 		this.addLabel(key.getLabel());
 		//update pre- and postsets
 		Set<State> preNodes = presetNodes.get(targetId);
@@ -165,14 +168,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		Set<State> postNodes = postsetNodes.get(sourceId);
 		if (postNodes != null) {
 			postNodes.add(this.getNode(targetId));
-		}
-		Set<Arc> preEdges = presetEdges.get(targetId);
-		if (preEdges != null) {
-			preEdges.add(arc);
-		}
-		Set<Arc> postEdges = postsetEdges.get(sourceId);
-		if (postEdges != null) {
-			postEdges.add(arc);
 		}
 		invokeListeners();
 		return arc;
@@ -204,7 +199,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		}
 		Arc a = new Arc(this, sourceId, targetId, label);
 		ArcKey key = createArcKey(sourceId, targetId, label);
-		if (this.arcs.containsKey(key)) {
+		if (postsetEdges.get(sourceId).containsKey(key)) {
 			throw new ArcExistsException(this, key);
 		}
 		return addArc(key, a);
@@ -268,8 +263,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		// update pre- and postsets
 		presetNodes.put(id, new HashSet<State>());
 		postsetNodes.put(id, new HashSet<State>());
-		presetEdges.put(id, new HashSet<Arc>());
-		postsetEdges.put(id, new HashSet<Arc>());
+		presetEdges.put(id, new HashMap<ArcKey, Arc>());
+		postsetEdges.put(id, new HashMap<ArcKey, Arc>());
 		invokeListeners();
 		return state;
 	}
@@ -411,8 +406,9 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (label == null) {
 			throw new IllegalArgumentException("label == null");
 		}
+		// createArcKey() makes sure the node exists
 		ArcKey key = createArcKey(sourceId, targetId, label);
-		Arc a = this.arcs.get(key);
+		Arc a = this.postsetEdges.get(sourceId).get(key);
 		if (a == null) {
 			throw new NoSuchEdgeException(this, sourceId, targetId);
 		}
@@ -425,16 +421,12 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (postNodes != null) {
 			postNodes.remove(states.get(targetId));
 		}
-		Set<Arc> preEdges = presetEdges.get(targetId);
-		if (preEdges != null) {
-			preEdges.remove(a);
-		}
-		Set<Arc> postEdges = postsetEdges.get(sourceId);
-		if (postEdges != null) {
-			postEdges.remove(a);
-		}
 
-		arcs.remove(key);
+		Arc old;
+		old = presetEdges.get(targetId).remove(key);
+		assert old == a;
+		old = postsetEdges.get(sourceId).remove(key);
+		assert old == a;
 		removeLabel(label);
 		invokeListeners();
 	}
@@ -549,7 +541,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (label == null) {
 			throw new IllegalArgumentException("label == null");
 		}
-		Arc a = this.arcs.get(createArcKey(sourceId, targetId, label));
+		// createArcKey() makes sure the node exists
+		Arc a = postsetEdges.get(sourceId).get(createArcKey(sourceId, targetId, label));
 		if (a == null) {
 			throw new NoSuchEdgeException(this, sourceId, targetId, label);
 		}
@@ -645,16 +638,22 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 			throw new IllegalArgumentException("label == null");
 		}
 		if (!oldLabel.equals(newLabel)) {
+			// createArcKey() makes sure the node exists
 			ArcKey oldKey = createArcKey(sourceId, targetId, oldLabel);
 			ArcKey newKey = createArcKey(sourceId, targetId, newLabel);
-			if (this.arcs.containsKey(newKey)) {
+			Map<ArcKey, Arc> postEdges = postsetEdges.get(sourceId);
+			Map<ArcKey, Arc> preEdges = presetEdges.get(targetId);
+			if (postEdges.containsKey(newKey)) {
 				throw new ArcExistsException(this, newKey);
 			}
-			Arc a = this.arcs.remove(oldKey);
+			Arc a = postEdges.remove(oldKey);
+			Arc a2 = preEdges.remove(oldKey);
+			assert a == a2;
 			a.label = newLabel;
 			removeLabel(oldLabel);
 			addLabel(newLabel);
-			this.arcs.put(newKey, a);
+			preEdges.put(newKey, a);
+			postEdges.put(newKey, a);
 			invokeListeners();
 		}
 	}
@@ -722,7 +721,10 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	@Override
 	public Set<Arc> getEdges() {
-		return Collections.unmodifiableSet(new HashSet<>(this.arcs.values()));
+		Set<Arc> result = new HashSet<>();
+		for (Map<ArcKey, Arc> map : this.postsetEdges.values())
+			result.addAll(map.values());
+		return Collections.unmodifiableSet(result);
 	}
 
 	@Override
@@ -764,48 +766,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 				post.add(a.getTarget());
 			}
 			postsetNodes.put(id, post);
-		}
-		return post;
-	}
-
-	/**
-	 * Calculates the preset edges of a node with the given id.
-	 * <p/>
-	 * @param id - the id of the node
-	 * <p/>
-	 * @return the preset edges of the given node.
-	 */
-	private Set<Arc> calcPresetEdges(String id) {
-		Set<Arc> pre = presetEdges.get(id);
-		if (pre == null) {
-			pre = new HashSet<>();
-			for (Arc a : this.getEdges()) {
-				if (a.getTarget().getId().equals(id)) {
-					pre.add(a);
-				}
-			}
-			presetEdges.put(id, pre);
-		}
-		return pre;
-	}
-
-	/**
-	 * Calculates the postset edges of a node with the given id.
-	 * <p/>
-	 * @param id - the id of the node
-	 * <p/>
-	 * @return the postset edges of the given node.
-	 */
-	private Set<Arc> calcPostsetEdges(String id) {
-		Set<Arc> post = postsetEdges.get(id);
-		if (post == null) {
-			post = new HashSet<>();
-			for (Arc a : this.getEdges()) {
-				if (a.getSource().getId().equals(id)) {
-					post.add(a);
-				}
-			}
-			postsetEdges.put(id, post);
 		}
 		return post;
 	}
@@ -870,7 +830,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (!states.containsKey(id)) {
 			throw new NoSuchNodeException(this, id);
 		}
-		return Collections.unmodifiableSet(calcPresetEdges(id));
+		return Collections.unmodifiableSet(new HashSet<>(presetEdges.get(id).values()));
 	}
 
 	/**
@@ -891,7 +851,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (!states.containsKey(id)) {
 			throw new NoSuchNodeException(this, id);
 		}
-		return Collections.unmodifiableSet(calcPostsetEdges(id));
+		return Collections.unmodifiableSet(new HashSet<>(postsetEdges.get(id).values()));
 	}
 
 	/**
