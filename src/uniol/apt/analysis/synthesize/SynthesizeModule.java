@@ -63,8 +63,8 @@ public class SynthesizeModule extends AbstractModule {
 	}
 
 	static public void requireCommon(ModuleInputSpec inputSpec) {
-		inputSpec.addParameter("properties", String.class,
-				"Comma separated list of properties for the synthesized net,"
+		inputSpec.addParameter("options", String.class,
+				"Comma separated list of options,"
 				+ " can be none, safe, [k]-bounded, pure, plain, t-net, output-nonbranching (on),"
 				+ " conflict-free (cf), upto-language-equivalence (language, le)");
 	}
@@ -95,14 +95,12 @@ public class SynthesizeModule extends AbstractModule {
 			throws ModuleException {
 		output.setReturnValue("warning", String.class, "THIS MODULE IS EXPERIMENTAL AND SHOULD NOT BE TRUSTED");
 
-		PNProperties properties = new PNProperties();
-		boolean uptoLanguageEquivalence = parseProperties(properties,
-				input.getParameter("properties", String.class));
+		Options options = Options.parseProperties(input.getParameter("options", String.class));
 		SynthesizePN synthesize;
-		if (uptoLanguageEquivalence)
-			synthesize = SynthesizePN.createUpToLanguageEquivalence(ts, properties);
+		if (options.upToLanguageEquivalence)
+			synthesize = SynthesizePN.createUpToLanguageEquivalence(ts, options.properties);
 		else
-			synthesize = new SynthesizePN(ts, properties);
+			synthesize = new SynthesizePN(ts, options.properties);
 
 		PetriNet pn = synthesize.synthesizePetriNet();
 		if (pn != null)
@@ -151,69 +149,83 @@ public class SynthesizeModule extends AbstractModule {
 	}
 
 	/**
-	 * Parse the given string into a PNProperties instance
-	 * @param result A collection of PNProperty where the properties found will be added
-	 * @param properties the string to parse
-	 * @return true if "up-to-language-equivalence" was requested
-	 * @throws ModuleException if the properties string is malformed
+	 * Instances of this class hold options that can be specified for synthesis.
 	 */
-	static public boolean parseProperties(PNProperties result, String properties) throws ModuleException {
-		// Explicitly allow empty string
-		properties = properties.trim();
-		if (properties.isEmpty())
-			return false;
+	static public class Options {
+		public final PNProperties properties;
+		public final boolean upToLanguageEquivalence;
 
-		boolean uptoLanguageEquivalence = false;
-		for (String prop : properties.split(",")) {
-			prop = prop.trim().toLowerCase();
-			switch (prop) {
-				case "none":
-					break;
-				case "safe":
-					result.add(PNProperties.SAFE);
-					break;
-				case "pure":
-					result.add(PNProperties.PURE);
-					break;
-				case "plain":
-					result.add(PNProperties.PLAIN);
-					break;
-				case "tnet":
-					result.add(PNProperties.TNET);
-					break;
-				case "output-nonbranching":
-				case "on":
-					result.add(PNProperties.OUTPUT_NONBRANCHING);
-					break;
-				case "conflict-free":
-				case "cf":
-					result.add(PNProperties.CONFLICT_FREE);
-					break;
-				case "upto-language-equivalence":
-				case "language":
-				case "le":
-					uptoLanguageEquivalence = true;
-					break;
-				default:
-					if (prop.endsWith("-bounded")) {
-						String value = prop.substring(0, prop.length() - "-bounded".length());
-						int k;
-						try {
-							k = Integer.parseInt(value);
-						} catch (NumberFormatException e) {
-							throw new ModuleException("Cannot parse '" + prop + "': "
-									+ "Invalid number for property 'k-bounded'");
-						}
-						if (k < 1)
-							throw new ModuleException("Cannot parse '" + prop + "': "
-									+ "Bound must be positive");
-						result.add(PNProperties.kBounded(k));
-					} else
-						throw new ModuleException("Cannot parse '" + prop
-								+ "': Unknown property");
-			}
+		public Options(PNProperties properties, boolean upToLanguageEquivalence) {
+			this.properties = properties;
+			this.upToLanguageEquivalence = upToLanguageEquivalence;
 		}
-		return uptoLanguageEquivalence;
+
+		/**
+		 * Parse the given string into an Options instance
+		 * @param properties the string to parse
+		 * @return A representation of the requested options
+		 * @throws ModuleException if the properties string is malformed
+		 */
+		static public Options parseProperties(String properties) throws ModuleException {
+			PNProperties result = new PNProperties();
+			boolean upToLanguageEquivalence = false;
+
+			// Explicitly allow empty string
+			properties = properties.trim();
+			if (properties.isEmpty())
+				return new Options(result, upToLanguageEquivalence);
+
+			for (String prop : properties.split(",")) {
+				prop = prop.trim().toLowerCase();
+				switch (prop) {
+					case "none":
+						break;
+					case "safe":
+						result.add(PNProperties.SAFE);
+						break;
+					case "pure":
+						result.add(PNProperties.PURE);
+						break;
+					case "plain":
+						result.add(PNProperties.PLAIN);
+						break;
+					case "tnet":
+						result.add(PNProperties.TNET);
+						break;
+					case "output-nonbranching":
+					case "on":
+						result.add(PNProperties.OUTPUT_NONBRANCHING);
+						break;
+					case "conflict-free":
+					case "cf":
+						result.add(PNProperties.CONFLICT_FREE);
+						break;
+					case "upto-language-equivalence":
+					case "language":
+					case "le":
+						upToLanguageEquivalence = true;
+						break;
+					default:
+						if (prop.endsWith("-bounded")) {
+							String value = prop.substring(0, prop.length() - "-bounded".length());
+							int k;
+							try {
+								k = Integer.parseInt(value);
+							} catch (NumberFormatException e) {
+								throw new ModuleException("Cannot parse '" + prop + "': "
+										+ "Invalid number for property 'k-bounded'");
+							}
+							if (k < 1)
+								throw new ModuleException("Cannot parse '" + prop + "': "
+										+ "Bound must be positive");
+							result.add(PNProperties.kBounded(k));
+						} else
+							throw new ModuleException("Cannot parse '" + prop
+									+ "': Unknown property");
+				}
+			}
+			return new Options(result, upToLanguageEquivalence);
+		}
 	}
 }
 

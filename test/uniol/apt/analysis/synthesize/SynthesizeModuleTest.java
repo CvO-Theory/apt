@@ -20,6 +20,7 @@
 package uniol.apt.analysis.synthesize;
 
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.analysis.synthesize.SynthesizeModule.Options;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -32,9 +33,9 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 public class SynthesizeModuleTest {
 	// I'm too lazy to type
 	private PNProperties parse(String arg) throws ModuleException {
-		PNProperties properties = new PNProperties();
-		assertThat(SynthesizeModule.parseProperties(properties, arg), equalTo(false));
-		return properties;
+		Options options = Options.parseProperties(arg);
+		assertThat(options.upToLanguageEquivalence, equalTo(false));
+		return options.properties;
 	}
 
 	@Test
@@ -89,23 +90,23 @@ public class SynthesizeModuleTest {
 
 	@Test
 	public void testLanguageEquivalence1() throws Exception {
-		PNProperties properties = new PNProperties();
-		assertThat(SynthesizeModule.parseProperties(properties, "upto-language-equivalence"), equalTo(true));
-		assertThat(properties, equalTo(new PNProperties()));
+		Options options = Options.parseProperties("upto-language-equivalence");
+		assertThat(options.upToLanguageEquivalence, equalTo(true));
+		assertThat(options.properties, equalTo(new PNProperties()));
 	}
 
 	@Test
 	public void testLanguageEquivalence2() throws Exception {
-		PNProperties properties = new PNProperties();
-		assertThat(SynthesizeModule.parseProperties(properties, "language"), equalTo(true));
-		assertThat(properties, equalTo(new PNProperties()));
+		Options options = Options.parseProperties("language");
+		assertThat(options.upToLanguageEquivalence, equalTo(true));
+		assertThat(options.properties, equalTo(new PNProperties()));
 	}
 
 	@Test
 	public void testLanguageEquivalence3() throws Exception {
-		PNProperties properties = new PNProperties();
-		assertThat(SynthesizeModule.parseProperties(properties, "le"), equalTo(true));
-		assertThat(properties, equalTo(new PNProperties()));
+		Options options = Options.parseProperties("le");
+		assertThat(options.upToLanguageEquivalence, equalTo(true));
+		assertThat(options.properties, equalTo(new PNProperties()));
 	}
 
 	@Test
