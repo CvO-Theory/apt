@@ -56,14 +56,13 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	private long nextPlaceId = 0;
 	private long nextTransitionId = 0;
 	private long placeRev = 0;
-	private final Map<EdgeKey, Flow> flows = new HashMap<>();
 	private final SortedMap<String, Node> nodes = new TreeMap<>();
 	private final SortedMap<String, Place> places = new TreeMap<>();
 	private final SortedMap<String, Transition> transitions = new TreeMap<>();
 	private final Map<String, Set<Node>> presetNodes = new SoftMap<>();
 	private final Map<String, Set<Node>> postsetNodes = new SoftMap<>();
-	private final Map<String, Set<Flow>> presetEdges = new SoftMap<>();
-	private final Map<String, Set<Flow>> postsetEdges = new SoftMap<>();
+	private final Map<String, Map<EdgeKey, Flow>> presetEdges = new HashMap<>();
+	private final Map<String, Map<EdgeKey, Flow>> postsetEdges = new HashMap<>();
 	private Marking initialMarking = new Marking(this);
 	private final Set<Marking> finalMarkings = new HashSet<>();
 
@@ -98,8 +97,11 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		for (String key : pn.transitions.keySet()) {
 			this.addTransition(key, new Transition(this, pn.transitions.get(key)));
 		}
-		for (EdgeKey key : pn.flows.keySet()) {
-			this.addFlow(key, new Flow(this, pn.flows.get(key)));
+		// Iterate over all EdgeKey instances
+		for (Map<EdgeKey, Flow> postsets : pn.postsetEdges.values()) {
+			for (Map.Entry<EdgeKey, Flow> entry : postsets.entrySet()) {
+				this.addFlow(entry.getKey(), new Flow(this, entry.getValue()));
+			}
 		}
 		for (Marking m : pn.finalMarkings) {
 			this.finalMarkings.add(new Marking(m));
@@ -135,7 +137,8 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	private Flow addFlow(EdgeKey key, Flow f) {
 		String targetId = key.getTargetId();
 		String sourceId = key.getSourceId();
-		this.flows.put(key, f);
+		this.presetEdges.get(targetId).put(key, f);
+		this.postsetEdges.get(sourceId).put(key, f);
 		//update pre- and postsets
 		Set<Node> preNodes = presetNodes.get(targetId);
 		if (preNodes != null) {
@@ -144,14 +147,6 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		Set<Node> postNodes = postsetNodes.get(sourceId);
 		if (postNodes != null) {
 			postNodes.add(this.getNode(targetId));
-		}
-		Set<Flow> preEdges = presetEdges.get(targetId);
-		if (preEdges != null) {
-			preEdges.add(f);
-		}
-		Set<Flow> postEdges = postsetEdges.get(sourceId);
-		if (postEdges != null) {
-			postEdges.add(f);
 		}
 		invokeListeners();
 		return f;
@@ -183,7 +178,8 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		}
 
 		final EdgeKey key = this.createEdgeKey(sourceId, targetId);
-		if (this.flows.containsKey(key)) {
+		// createEdgeKey() makes sure the node exists
+		if (this.postsetEdges.get(sourceId).containsKey(key)) {
 			throw new FlowExistsException(this, key);
 		}
 		Flow f = new Flow(this, sourceId, targetId, weight);
@@ -268,8 +264,8 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		// update pre- and postsets
 		presetNodes.put(id, new HashSet<Node>());
 		postsetNodes.put(id, new HashSet<Node>());
-		presetEdges.put(id, new HashSet<Flow>());
-		postsetEdges.put(id, new HashSet<Flow>());
+		presetEdges.put(id, new HashMap<EdgeKey, Flow>());
+		postsetEdges.put(id, new HashMap<EdgeKey, Flow>());
 		++placeRev;
 		invokeListeners();
 		return p;
@@ -415,8 +411,8 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		// update pre- and postsets
 		presetNodes.put(id, new HashSet<Node>());
 		postsetNodes.put(id, new HashSet<Node>());
-		presetEdges.put(id, new HashSet<Flow>());
-		postsetEdges.put(id, new HashSet<Flow>());
+		presetEdges.put(id, new HashMap<EdgeKey, Flow>());
+		postsetEdges.put(id, new HashMap<EdgeKey, Flow>());
 		invokeListeners();
 		return t;
 	}
@@ -559,8 +555,9 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		if (targetId == null) {
 			throw new IllegalArgumentException("targetId == null");
 		}
+		// createEdgeKey() makes sure the node exists
 		final EdgeKey key = this.createEdgeKey(sourceId, targetId);
-		Flow f = flows.get(key);
+		Flow f = postsetEdges.get(sourceId).get(key);
 		if (f == null) {
 			throw new NoSuchEdgeException(this, sourceId, targetId);
 		}
@@ -573,15 +570,11 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		if (postNodes != null) {
 			postNodes.remove(nodes.get(targetId));
 		}
-		Set<Flow> preEdges = presetEdges.get(targetId);
-		if (preEdges != null) {
-			preEdges.remove(f);
-		}
-		Set<Flow> postEdges = postsetEdges.get(sourceId);
-		if (postEdges != null) {
-			postEdges.remove(f);
-		}
-		this.flows.remove(key);
+		Flow old;
+		old = presetEdges.get(targetId).remove(key);
+		assert old == f;
+		old = postsetEdges.get(sourceId).remove(key);
+		assert old == f;
 		invokeListeners();
 	}
 
@@ -784,8 +777,9 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		if (targetId == null) {
 			throw new IllegalArgumentException("targetId == null");
 		}
+		// createEdgeKey() makes sure the node exists
 		EdgeKey key = this.createEdgeKey(sourceId, targetId);
-		Flow f = flows.get(key);
+		Flow f = this.postsetEdges.get(sourceId).get(key);
 		if (f == null) {
 			throw new NoSuchEdgeException(this, sourceId, targetId);
 		}
@@ -1095,8 +1089,9 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		if (targetId == null) {
 			throw new IllegalArgumentException("targetId == null");
 		}
+		// createEdgeKey() makes sure the node exists
 		EdgeKey key = createEdgeKey(sourceId, targetId);
-		Flow f = flows.get(key);
+		Flow f = postsetEdges.get(sourceId).get(key);
 		if (f == null) {
 			throw new NoSuchEdgeException(this, sourceId, targetId);
 		}
@@ -1237,8 +1232,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 */
 	public int[][] getIncidenceMatrix() {
 		int[][] incidenceMatrix = new int[this.places.size()][this.transitions.size()];
-		final Collection<Flow> aset = this.flows.values();
-		for (Flow a : aset) {
+		for (Flow a : getEdges()) {
 			Transition t = a.getTransition();
 			final int row = this.indexOfPlace(a.getPlace());
 			final int col = this.indexOfTransition(t);
@@ -1318,7 +1312,10 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 
 	@Override
 	public Set<Flow> getEdges() {
-		return Collections.unmodifiableSet(new HashSet<>(this.flows.values()));
+		Set<Flow> result = new HashSet<>();
+		for (Map<EdgeKey, Flow> map : this.postsetEdges.values())
+			result.addAll(map.values());
+		return Collections.unmodifiableSet(result);
 	}
 
 	@Override
@@ -1360,48 +1357,6 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 				post.add(a.getTarget());
 			}
 			postsetNodes.put(id, post);
-		}
-		return post;
-	}
-
-	/**
-	 * Calculates the preset edges of a node with the given id.
-	 * <p/>
-	 * @param id - the id of the node
-	 * <p/>
-	 * @return the preset edges of the given node.
-	 */
-	private Set<Flow> calcPresetEdges(String id) {
-		Set<Flow> pre = presetEdges.get(id);
-		if (pre == null) {
-			pre = new HashSet<>();
-			for (Flow a : this.getEdges()) {
-				if (a.getTarget().getId().equals(id)) {
-					pre.add(a);
-				}
-			}
-			presetEdges.put(id, pre);
-		}
-		return pre;
-	}
-
-	/**
-	 * Calculates the postset edges of a node with the given id.
-	 * <p/>
-	 * @param id - the id of the node
-	 * <p/>
-	 * @return the postset edges of the given node.
-	 */
-	private Set<Flow> calcPostsetEdges(String id) {
-		Set<Flow> post = postsetEdges.get(id);
-		if (post == null) {
-			post = new HashSet<>();
-			for (Flow a : this.getEdges()) {
-				if (a.getSource().getId().equals(id)) {
-					post.add(a);
-				}
-			}
-			postsetEdges.put(id, post);
 		}
 		return post;
 	}
@@ -1467,7 +1422,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 			throw new NoSuchNodeException(this, id);
 		}
 
-		return Collections.unmodifiableSet(calcPresetEdges(id));
+		return Collections.unmodifiableSet(new LinkedHashSet<>(presetEdges.get(id).values()));
 	}
 
 	/**
@@ -1488,7 +1443,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		if (!nodes.containsKey(id)) {
 			throw new NoSuchNodeException(this, id);
 		}
-		return Collections.unmodifiableSet(calcPostsetEdges(id));
+		return Collections.unmodifiableSet(new LinkedHashSet<>(postsetEdges.get(id).values()));
 	}
 
 	/**
