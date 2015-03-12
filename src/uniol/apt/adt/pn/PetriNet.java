@@ -92,23 +92,19 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		this.name = pn.name;
 		this.nextPlaceId = pn.nextPlaceId;
 		this.nextTransitionId = pn.nextTransitionId;
-		this.placeRev = pn.placeRev;
 		for (String key : pn.places.keySet()) {
-			Place p = new Place(this, pn.places.get(key));
-			this.places.put(key, p);
-			this.nodes.put(key, p);
+			this.addPlace(key, new Place(this, pn.places.get(key)));
 		}
 		for (String key : pn.transitions.keySet()) {
-			Transition t = new Transition(this, pn.transitions.get(key));
-			this.transitions.put(key, t);
-			this.nodes.put(key, t);
+			this.addTransition(key, new Transition(this, pn.transitions.get(key)));
 		}
 		for (EdgeKey key : pn.flows.keySet()) {
-			this.flows.put(key, new Flow(this, pn.flows.get(key)));
+			this.addFlow(key, new Flow(this, pn.flows.get(key)));
 		}
 		for (Marking m : pn.finalMarkings) {
 			this.finalMarkings.add(new Marking(m));
 		}
+		this.placeRev = pn.placeRev;
 		this.initialMarking = new Marking(this, pn.initialMarking);
 		copyExtensions(pn);
 	}
@@ -128,6 +124,37 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 */
 	public Flow createFlow(String sourceId, String targetId) {
 		return createFlow(sourceId, targetId, 1);
+	}
+
+	/**
+	 * Add a given flow directly without any checks.
+	 * @param key the EdgeKey of the flow
+	 * @param f the flow to add
+	 * @return the flow
+	 */
+	private Flow addFlow(EdgeKey key, Flow f) {
+		String targetId = key.getTargetId();
+		String sourceId = key.getSourceId();
+		this.flows.put(key, f);
+		//update pre- and postsets
+		Set<Node> preNodes = presetNodes.get(targetId);
+		if (preNodes != null) {
+			preNodes.add(this.getNode(sourceId));
+		}
+		Set<Node> postNodes = postsetNodes.get(sourceId);
+		if (postNodes != null) {
+			postNodes.add(this.getNode(targetId));
+		}
+		Set<Flow> preEdges = presetEdges.get(targetId);
+		if (preEdges != null) {
+			preEdges.add(f);
+		}
+		Set<Flow> postEdges = postsetEdges.get(sourceId);
+		if (postEdges != null) {
+			postEdges.add(f);
+		}
+		invokeListeners();
+		return f;
 	}
 
 	/**
@@ -161,13 +188,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		}
 		Flow f = new Flow(this, sourceId, targetId, weight);
 		if (weight > 0) {
-			this.flows.put(key, f);
-			//update pre- and postsets
-			calcPresetNodes(targetId).add(this.getNode(sourceId));
-			calcPostsetNodes(sourceId).add(this.getNode(targetId));
-			calcPresetEdges(targetId).add(f);
-			calcPostsetEdges(sourceId).add(f);
-			invokeListeners();
+			addFlow(key, f);
 		}
 		return f;
 	}
@@ -236,6 +257,25 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	}
 
 	/**
+	 * Add a given place directly without any checks.
+	 * @param id the id of the place
+	 * @param p the place to add
+	 * @return the place
+	 */
+	private Place addPlace(String id, Place p) {
+		this.places.put(id, p);
+		this.nodes.put(id, p);
+		// update pre- and postsets
+		presetNodes.put(id, new HashSet<Node>());
+		postsetNodes.put(id, new HashSet<Node>());
+		presetEdges.put(id, new HashSet<Flow>());
+		postsetEdges.put(id, new HashSet<Flow>());
+		++placeRev;
+		invokeListeners();
+		return p;
+	}
+
+	/**
 	 * Creates a new place to the petri net with the given id.
 	 * <p/>
 	 * @param id the id of the new place.
@@ -251,21 +291,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		}
 
 		if (!this.nodes.containsKey(id)) {
-			final Place p = new Place(this, id);
-			this.places.put(id, p);
-			this.nodes.put(id, p);
-			// update pre- and postsets
-			Set<Node> pre = new HashSet<>();
-			presetNodes.put(id, pre);
-			Set<Node> post = new HashSet<>();
-			postsetNodes.put(id, post);
-			Set<Flow> preE = new HashSet<>();
-			presetEdges.put(id, preE);
-			Set<Flow> postE = new HashSet<>();
-			postsetEdges.put(id, postE);
-			++placeRev;
-			invokeListeners();
-			return p;
+			return addPlace(id, new Place(this, id));
 		} else {
 			throw new NodeExistsException(this, id);
 		}
@@ -378,6 +404,24 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	}
 
 	/**
+	 * Add a given transition directly without any checks.
+	 * @param id the id of the transition
+	 * @param t the transition to add
+	 * @return the transition
+	 */
+	private Transition addTransition(String id, Transition t) {
+		this.transitions.put(id, t);
+		this.nodes.put(id, t);
+		// update pre- and postsets
+		presetNodes.put(id, new HashSet<Node>());
+		postsetNodes.put(id, new HashSet<Node>());
+		presetEdges.put(id, new HashSet<Flow>());
+		postsetEdges.put(id, new HashSet<Flow>());
+		invokeListeners();
+		return t;
+	}
+
+	/**
 	 * Creates a new transition to the petri net with the given id and label.
 	 * <p/>
 	 * @param id    the id of the new transition.
@@ -399,19 +443,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		if (!this.nodes.containsKey(id)) {
 			final Transition t = new Transition(this, id);
 			t.label = label;
-			this.transitions.put(id, t);
-			this.nodes.put(id, t);
-			// update pre- and postsets
-			Set<Node> pre = new HashSet<>();
-			presetNodes.put(id, pre);
-			Set<Node> post = new HashSet<>();
-			postsetNodes.put(id, post);
-			Set<Flow> preE = new HashSet<>();
-			presetEdges.put(id, preE);
-			Set<Flow> postE = new HashSet<>();
-			postsetEdges.put(id, postE);
-			invokeListeners();
-			return t;
+			return addTransition(id, t);
 		} else {
 			throw new NodeExistsException(this, id);
 		}
