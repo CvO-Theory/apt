@@ -29,6 +29,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.synthesize.separation.SeparationUtility;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -79,7 +80,7 @@ public class SynthesizeModule extends AbstractModule {
 
 	static public void provideCommon(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("success", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
-		outputSpec.addReturnValue("separatingRegions", RegionCollection.class);
+		outputSpec.addReturnValue("solvedEventStateSeparationProblems", String.class);
 		outputSpec.addReturnValue("pn", PetriNet.class,
 			ModuleOutputSpec.PROPERTY_FILE, ModuleOutputSpec.PROPERTY_RAW);
 	}
@@ -107,9 +108,10 @@ public class SynthesizeModule extends AbstractModule {
 
 		output.setReturnValue("success", Boolean.class, synthesize.wasSuccessfullySeparated());
 		output.setReturnValue("pn", PetriNet.class, pn);
-		if (options.verbose)
-			output.setReturnValue("separatingRegions", RegionCollection.class,
-					new RegionCollection(synthesize.getSeparatingRegions()));
+		if (options.verbose) {
+			output.setReturnValue("solvedEventStateSeparationProblems", String.class,
+					getSolvedEventStateSeparationProblems(synthesize));
+		}
 
 		return synthesize;
 	}
@@ -132,10 +134,7 @@ public class SynthesizeModule extends AbstractModule {
 			Map<String, Set<String>> failedESSP = new TreeMap<>();
 			for (Map.Entry<String, Set<State>> entry :
 					synthesize.getFailedEventStateSeparationProblems().entrySet()) {
-				Set<String> states = new TreeSet<>();
-				for (State state : entry.getValue())
-					states.add(state.getId());
-				failedESSP.put(entry.getKey(), states);
+				failedESSP.put(entry.getKey(), getStateIDs(entry.getValue()));
 			}
 			output.setReturnValue("failedEventStateSeparationProblems",
 					String.class, failedESSP.toString());
@@ -145,6 +144,53 @@ public class SynthesizeModule extends AbstractModule {
 	@Override
 	public Category[] getCategories() {
 		return new Category[]{Category.LTS};
+	}
+
+	/**
+	 * Get the IDs of a set of states.
+	 * @param states The states to look at
+	 * @return The set of state IDs.
+	 */
+	static public Set<String> getStateIDs(Set<State> states) {
+		Set<String> result = new TreeSet<>();
+		for (State state : states)
+			result.add(state.getId());
+		return result;
+	}
+
+	/**
+	 * Get a string representation that describes for each region which Event/State Separation Problems it solves.
+	 * @param synthesize The synthesize instance to print from.
+	 * @return A string representation of the solved problems.
+	 */
+	static public String getSolvedEventStateSeparationProblems(SynthesizePN synthesize) {
+		StringBuilder result = new StringBuilder("");
+		RegionUtility utility = synthesize.getUtility();
+		TransitionSystem ts = utility.getTransitionSystem();
+
+		for (Region region : synthesize.getSeparatingRegions()) {
+			result.append("\nRegion ").append(region).append(":");
+			for (String event : ts.getAlphabet()) {
+				Set<State> states = new HashSet<>();
+				for (State state : ts.getNodes()) {
+					if (!SeparationUtility.isEventEnabled(state, event)
+							&& SeparationUtility.isSeparatingRegion(utility, region,
+								state, event))
+						states.add(state);
+				}
+				if (!states.isEmpty()) {
+					result.append("\n\tseparates event ");
+					result.append(event);
+					result.append(" at states ");
+					result.append(getStateIDs(states));
+				}
+			}
+		}
+
+		String ret = result.toString();
+		if (ret.isEmpty())
+			return "none";
+		return ret;
 	}
 
 	/**
