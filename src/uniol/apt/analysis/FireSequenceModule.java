@@ -39,7 +39,7 @@ import uniol.apt.module.exception.ModuleException;
  *
  * @author Uli Schlachter
  */
-public class FireSequence extends AbstractModule {
+public class FireSequenceModule extends AbstractModule {
 
 	@Override
 	public String getShortDescription() {
