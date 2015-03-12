@@ -65,8 +65,9 @@ public class SynthesizeModule extends AbstractModule {
 	static public void requireCommon(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("options", String.class,
 				"Comma separated list of options,"
-				+ " can be none, safe, [k]-bounded, pure, plain, t-net, output-nonbranching (on),"
-				+ " conflict-free (cf), upto-language-equivalence (language, le)");
+				+ " can be verbose, none, safe, [k]-bounded, pure, plain, t-net,"
+				+ " output-nonbranching (on), conflict-free (cf),"
+				+ " upto-language-equivalence (language, le)");
 	}
 
 	@Override
@@ -77,7 +78,6 @@ public class SynthesizeModule extends AbstractModule {
 	}
 
 	static public void provideCommon(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("warning", String.class);
 		outputSpec.addReturnValue("success", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("separatingRegions", RegionCollection.class);
 		outputSpec.addReturnValue("pn", PetriNet.class,
@@ -93,8 +93,6 @@ public class SynthesizeModule extends AbstractModule {
 
 	static public SynthesizePN runSynthesis(TransitionSystem ts, ModuleInput input, ModuleOutput output)
 			throws ModuleException {
-		output.setReturnValue("warning", String.class, "THIS MODULE IS EXPERIMENTAL AND SHOULD NOT BE TRUSTED");
-
 		Options options = Options.parseProperties(input.getParameter("options", String.class));
 		SynthesizePN synthesize;
 		if (options.upToLanguageEquivalence)
@@ -109,8 +107,9 @@ public class SynthesizeModule extends AbstractModule {
 
 		output.setReturnValue("success", Boolean.class, synthesize.wasSuccessfullySeparated());
 		output.setReturnValue("pn", PetriNet.class, pn);
-		output.setReturnValue("separatingRegions", RegionCollection.class,
-				new RegionCollection(synthesize.getSeparatingRegions()));
+		if (options.verbose)
+			output.setReturnValue("separatingRegions", RegionCollection.class,
+					new RegionCollection(synthesize.getSeparatingRegions()));
 
 		return synthesize;
 	}
@@ -153,10 +152,12 @@ public class SynthesizeModule extends AbstractModule {
 	 */
 	static public class Options {
 		public final PNProperties properties;
+		public final boolean verbose;
 		public final boolean upToLanguageEquivalence;
 
-		public Options(PNProperties properties, boolean upToLanguageEquivalence) {
+		public Options(PNProperties properties, boolean verbose, boolean upToLanguageEquivalence) {
 			this.properties = properties;
+			this.verbose = verbose;
 			this.upToLanguageEquivalence = upToLanguageEquivalence;
 		}
 
@@ -168,12 +169,13 @@ public class SynthesizeModule extends AbstractModule {
 		 */
 		static public Options parseProperties(String properties) throws ModuleException {
 			PNProperties result = new PNProperties();
+			boolean verbose = false;
 			boolean upToLanguageEquivalence = false;
 
 			// Explicitly allow empty string
 			properties = properties.trim();
 			if (properties.isEmpty())
-				return new Options(result, upToLanguageEquivalence);
+				return new Options(result, verbose, upToLanguageEquivalence);
 
 			for (String prop : properties.split(",")) {
 				prop = prop.trim().toLowerCase();
@@ -200,6 +202,9 @@ public class SynthesizeModule extends AbstractModule {
 					case "cf":
 						result.add(PNProperties.CONFLICT_FREE);
 						break;
+					case "verbose":
+						verbose = true;
+						break;
 					case "upto-language-equivalence":
 					case "language":
 					case "le":
@@ -224,7 +229,7 @@ public class SynthesizeModule extends AbstractModule {
 									+ "': Unknown property");
 				}
 			}
-			return new Options(result, upToLanguageEquivalence);
+			return new Options(result, verbose, upToLanguageEquivalence);
 		}
 	}
 }

@@ -35,6 +35,7 @@ public class SynthesizeModuleTest {
 	private PNProperties parse(String arg) throws ModuleException {
 		Options options = Options.parseProperties(arg);
 		assertThat(options.upToLanguageEquivalence, equalTo(false));
+		assertThat(options.verbose, equalTo(false));
 		return options.properties;
 	}
 
@@ -92,6 +93,7 @@ public class SynthesizeModuleTest {
 	public void testLanguageEquivalence1() throws Exception {
 		Options options = Options.parseProperties("upto-language-equivalence");
 		assertThat(options.upToLanguageEquivalence, equalTo(true));
+		assertThat(options.verbose, equalTo(false));
 		assertThat(options.properties, equalTo(new PNProperties()));
 	}
 
@@ -99,6 +101,7 @@ public class SynthesizeModuleTest {
 	public void testLanguageEquivalence2() throws Exception {
 		Options options = Options.parseProperties("language");
 		assertThat(options.upToLanguageEquivalence, equalTo(true));
+		assertThat(options.verbose, equalTo(false));
 		assertThat(options.properties, equalTo(new PNProperties()));
 	}
 
@@ -106,6 +109,15 @@ public class SynthesizeModuleTest {
 	public void testLanguageEquivalence3() throws Exception {
 		Options options = Options.parseProperties("le");
 		assertThat(options.upToLanguageEquivalence, equalTo(true));
+		assertThat(options.verbose, equalTo(false));
+		assertThat(options.properties, equalTo(new PNProperties()));
+	}
+
+	@Test
+	public void testVerbose() throws Exception {
+		Options options = Options.parseProperties("verbose");
+		assertThat(options.upToLanguageEquivalence, equalTo(false));
+		assertThat(options.verbose, equalTo(true));
 		assertThat(options.properties, equalTo(new PNProperties()));
 	}
 
