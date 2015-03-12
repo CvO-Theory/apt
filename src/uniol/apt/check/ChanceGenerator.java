@@ -19,6 +19,9 @@
 
 package uniol.apt.check;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
@@ -234,13 +237,18 @@ public class ChanceGenerator {
 	private void removeTransition() {
 		double deleteChance = 1.0 / pn.getTransitions().size();
 
+		Collection<Transition> toRemove = new HashSet<>();
 		for (Transition transition : pn.getTransitions()) {
 			double randomDelete = Math.random();
 
 			if (randomDelete < deleteChance) {
-				pn.removeTransition(transition);
+				toRemove.add(transition);
 			}
 
+		}
+
+		for (Transition transition : toRemove) {
+			pn.removeTransition(transition);
 		}
 	}
 }
