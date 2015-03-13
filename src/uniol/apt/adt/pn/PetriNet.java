@@ -109,7 +109,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		for (Marking m : pn.finalMarkings) {
 			this.finalMarkings.add(new Marking(m));
 		}
-		this.initialMarking = new Marking(pn.initialMarking);
+		this.initialMarking = new Marking(this, pn.initialMarking);
 		copyExtensions(pn);
 	}
 
