@@ -124,7 +124,13 @@ public class Marking {
 	 */
 	private void setMarking(Marking m) {
 		this.map.clear();
-		this.map.putAll(m.map);
+		if (this.net == m.net) {
+			this.map.putAll(m.map);
+		} else {
+			for (Map.Entry<Place, Token> entry : m.map.entrySet()) {
+				this.map.put(this.net.getPlace(entry.getKey().getId()), entry.getValue());
+			}
+		}
 		this.rev = m.rev;
 	}
 
