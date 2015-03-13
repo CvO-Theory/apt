@@ -53,8 +53,8 @@ import uniol.apt.analysis.exception.UnboundedException;
  * @author Uli Schlachter, vsp
  */
 public class CoverabilityGraph {
-	// The Petri net that we are handling
 
+	// The Petri net that we are handling
 	private final PetriNet pn;
 	// Map from visited markings to the corresponding nodes
 	private final Map<Marking, CoverabilityGraphNode> states = new HashMap<>();
@@ -62,6 +62,8 @@ public class CoverabilityGraph {
 	private final Deque<CoverabilityGraphNode> unvisited = new LinkedList<>();
 	// List of nodes that were already visited, this is a list to implement iterators.
 	private final List<CoverabilityGraphNode> nodes = new ArrayList<>();
+	// Are we generating a coverability or a reachability graph?
+	private final boolean reachabilityGraph;
 
 	/**
 	 * Construct the coverability graph for a given Petri net. If a coverability graph for this Petri net is already
@@ -70,7 +72,31 @@ public class CoverabilityGraph {
 	 * @return A coverability graph.
 	 */
 	static public CoverabilityGraph get(PetriNet pn) {
+		return get(pn, false);
+	}
+
+	/**
+	 * Construct the reachability graph for a given Petri net. If a reachability graph for this Petri net is already
+	 * known, that instance is re-used instead of creating a new one. Keep in mind that the reachability graph of a
+	 * Petri net can be infinite!
+	 * @param pn The Petri net whose coverability graph is wanted.
+	 * @return A coverability graph.
+	 */
+	static public CoverabilityGraph getReachabilityGraph(PetriNet pn) {
+		return get(pn, true);
+	}
+
+	/**
+	 * Construct the coverability graph for a given Petri net. If a coverability graph for this Petri net is already
+	 * known, that instance is re-used instead of creating a new one.
+	 * @param pn The Petri net whose coverability graph is wanted.
+	 * @param reachabilityGraph Should just reachability be checked and coverability be ignored?
+	 * @return A coverability graph.
+	 */
+	static private CoverabilityGraph get(PetriNet pn, boolean reachabilityGraph) {
 		String key = CoverabilityGraph.class.getName();
+		if (reachabilityGraph)
+			key = key + "-reachability";
 
 		Object extension = null;
 		try {
@@ -83,7 +109,7 @@ public class CoverabilityGraph {
 		if (extension != null && extension instanceof CoverabilityGraph)
 			return (CoverabilityGraph) extension;
 
-		CoverabilityGraph result = new CoverabilityGraph(pn);
+		CoverabilityGraph result = new CoverabilityGraph(pn, reachabilityGraph);
 		// Save this coverability graph as an extension, but make sure that it is removed if the structure of
 		// the Petri net is changed in any way.
 		pn.putExtension(key, result);
@@ -96,9 +122,11 @@ public class CoverabilityGraph {
 	 * graph is constructed on-demand when needed. If you want to force full calculation of the graph, use the
 	 * {@link #calculateNodes() calculateNodes} method.
 	 * @param pn The Petri net whose coverability graph is wanted.
+	 * @param reachabilityGraph Should just reachability be checked and coverability be ignored?
 	 */
-	private CoverabilityGraph(PetriNet pn) {
+	private CoverabilityGraph(PetriNet pn, boolean reachabilityGraph) {
 		this.pn = pn;
+		this.reachabilityGraph = reachabilityGraph;
 		addNode(null, pn.getInitialMarkingCopy(), null, null);
 	}
 
@@ -156,6 +184,8 @@ public class CoverabilityGraph {
 	 * @return null if no covering occurred, else the node that is covered.
 	 */
 	private CoverabilityGraphNode checkCover(Marking cur, CoverabilityGraphNode parent) {
+		if (reachabilityGraph)
+			return null;
 		assert parent != null;
 		while (parent != null) {
 			Marking m = parent.getMarking();
@@ -289,6 +319,11 @@ public class CoverabilityGraph {
 	 * @see #toReachabilityLTS() For a version of this which rejects unbounded nets.  */
 	public TransitionSystem toCoverabilityLTS() {
 		try {
+			// If this is a reachability graph, we can just use that code (this gets the name of the result
+			// right and skips the Omega-check in toLTS(); no UnboundedException can occur since covering is
+			// not checked).
+			if (reachabilityGraph)
+				return toReachabilityLTS();
 			return toLTS(false);
 		} catch (UnboundedException e) {
 			// This should never happen, because we used "false" as the parameter!

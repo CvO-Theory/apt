@@ -102,16 +102,37 @@ public class CoverabilityGraphTest {
 	}
 
 	@Test
+	public void testCacheReachability() {
+		PetriNet pn = getEmptyNet();
+
+		CoverabilityGraph cov1 = CoverabilityGraph.getReachabilityGraph(pn);
+		CoverabilityGraph cov2 = CoverabilityGraph.getReachabilityGraph(pn);
+		assertThat(cov2, sameInstance(cov1));
+	}
+
+	@Test
+	public void testCacheMixup() {
+		PetriNet pn = getEmptyNet();
+
+		CoverabilityGraph cov1 = CoverabilityGraph.get(pn);
+		CoverabilityGraph cov2 = CoverabilityGraph.getReachabilityGraph(pn);
+		assertThat(cov2, not(sameInstance(cov1)));
+	}
+
+	@Test
 	public void testCacheClear() {
 		PetriNet pn = getEmptyNet();
 
 		CoverabilityGraph cov1 = CoverabilityGraph.get(pn);
+		CoverabilityGraph re1 = CoverabilityGraph.getReachabilityGraph(pn);
 
 		pn.createPlace();
 
 		CoverabilityGraph cov2 = CoverabilityGraph.get(pn);
+		CoverabilityGraph re2 = CoverabilityGraph.getReachabilityGraph(pn);
 
 		assertThat(cov2, not(sameInstance(cov1)));
+		assertThat(re2, not(sameInstance(re1)));
 	}
 
 	@Test

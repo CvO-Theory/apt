@@ -67,6 +67,7 @@ import uniol.apt.analysis.connectivity.WeakComponentsModule;
 import uniol.apt.analysis.connectivity.WeakConnectivityModule;
 import uniol.apt.analysis.conpres.ConcurrencyPreservingModule;
 import uniol.apt.analysis.coverability.CoverabilityModule;
+import uniol.apt.analysis.coverability.ReachabilityModule;
 import uniol.apt.analysis.cycles.CheckAllCyclePropertiesModule;
 import uniol.apt.analysis.cycles.lts.CycleCounterExample;
 import uniol.apt.analysis.cycles.lts.CyclesHaveSameOrMutallyDisjointPVModule;
@@ -251,6 +252,7 @@ public class APT {
 		new PureModule(),
 		new QuadstatePhilNetGeneratorModule(),
 		new RandomTNetGeneratorModule(),
+		new ReachabilityModule(),
 		new ReversibleModule(),
 		new SNetModule(),
 		new SafeModule(),

@@ -58,10 +58,19 @@ public class CoverabilityModule extends AbstractModule {
 		outputSpec.addReturnValue("reachability_graph", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 	}
 
+	/**
+	 * Get the graph for a given net
+	 * @param pn The Petri net to look at
+	 * @return The coverability graph.
+	 */
+	protected CoverabilityGraph getGraph(PetriNet pn) {
+		return CoverabilityGraph.get(pn);
+	}
+
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
-		TransitionSystem result = CoverabilityGraph.get(pn).toCoverabilityLTS();
+		TransitionSystem result = getGraph(pn).toCoverabilityLTS();
 		boolean isReachability = true;
 		for (State node : result.getNodes()) {
 			CoverabilityGraphNode coverNode =
