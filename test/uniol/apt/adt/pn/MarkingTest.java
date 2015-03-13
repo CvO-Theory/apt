@@ -221,6 +221,20 @@ public class MarkingTest {
 		Place p2 = pn.createPlace("RemoveAddPlace");
 		assertThat(p2.getInitialToken(), equalTo(new Token(0)));
 	}
+
+	@Test
+	public void testNetCopy() {
+		Place p = pn.createPlace();
+		p.setInitialToken(1);
+
+		PetriNet pn2 = new PetriNet(pn);
+		Place p2 = pn2.getPlace(p.getId());
+
+		// The bug that we are testing for: initial is a marking on pn2, but contains Token for places from net
+		// pn. Thus, we must explicitly call getToken(Place) to test for this bug.
+		Marking initial = pn2.getInitialMarkingCopy();
+		assertThat(initial.getToken(p2).getValue(), equalTo(1));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
