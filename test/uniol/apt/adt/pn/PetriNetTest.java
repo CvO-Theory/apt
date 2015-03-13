@@ -24,8 +24,9 @@ import java.util.Objects;
 import java.util.Set;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 import uniol.apt.CrashCourseNets;
 import uniol.apt.adt.EdgeKey;
@@ -148,7 +149,7 @@ public class PetriNetTest {
 	static void petriNetEquals(PetriNet pn1, PetriNet pn2) {
 		assertEquals(pn1.getName(), pn2.getName());
 		assertEquals(pn1.getPlaceRev(), pn2.getPlaceRev());
-		assertEquals(pn1.getInitialMarkingCopy(), pn2.getInitialMarkingCopy());
+		assertNotEquals(pn1.getInitialMarkingCopy(), pn2.getInitialMarkingCopy());
 		Set<Marking> finalMarkings1 = pn1.getFinalMarkings();
 		Set<Marking> finalMarkings2 = pn2.getFinalMarkings();
 		for (Marking marking : finalMarkings2) {
@@ -160,6 +161,7 @@ public class PetriNetTest {
 		assertEquals(pn1.getEdges().size(), pn2.getEdges().size());
 		for (Place obj : pn1.getPlaces()) {
 			assertTrue(pn2.containsPlace(obj.getId()));
+			assertEquals(obj.getInitialToken(), pn2.getPlace(obj.getId()).getInitialToken());
 		}
 		for (Transition obj : pn1.getTransitions()) {
 			assertTrue(pn2.containsTransition(obj.getId()));
