@@ -19,86 +19,42 @@
 
 package uniol.apt.analysis.reversible;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.SpanningTree;
 
 /**
  * An LTS is reversible if the initial state can be reached from every state that is reachable within the system.
- *
- *
- * @author Vincent Göbel
- *
+ * @author Vincent Göbel, Uli Schlachter
  */
 public class ReversibleTS {
-
 	private final TransitionSystem ts;
-	private boolean reversible_ = false;
-	private State node_ = null;
+	private final Set<State> unreversibleStates;
 
 	public ReversibleTS(TransitionSystem ts) {
 		this.ts = ts;
-		check();
+		SpanningTree<TransitionSystem, Arc, State> forwardTree
+			= SpanningTree.<TransitionSystem, Arc, State>get(ts, ts.getInitialState());
+		SpanningTree<TransitionSystem, Arc, State> backwardTree
+			= SpanningTree.<TransitionSystem, Arc, State>getReversed(ts, ts.getInitialState());
+
+		// Calculate reachable states
+		unreversibleStates = new HashSet<>(ts.getNodes());
+		unreversibleStates.removeAll(forwardTree.getUnreachableNodes());
+
+		// Keep only those which cannot reach the initial state again
+		unreversibleStates.retainAll(backwardTree.getUnreachableNodes());
 	}
 
 	/**
 	 * Checks the system for reversibility. If it is not reversible a counterexample is saved in the variable node_.
 	 */
 	public final void check() {
-		for (State node : ts.getNodes()) {
-			if (!reaches(ts.getInitialState(), node)) {
-				continue;
-			}
-			boolean rec = reaches(node, ts.getInitialState());
-			if (!rec) {
-				reversible_ = false;
-				node_ = node;
-				return;
-			}
-		}
-		reversible_ = true;
-		node_ = null;
-	}
-
-	/**
-	 * Checks whether a path from one node to another exists in the LTS
-	 *
-	 * @param start The starting node
-	 * @param goal The target node
-	 * @return true iff a path exists
-	 */
-	private boolean reaches(State start, State goal) {
-		Set<State> all = new HashSet<>();
-		Set<State> now = new HashSet<>();
-		Set<State> next = new HashSet<>();
-
-		if (start.equals(goal)) {
-			return true;
-		}
-		now.add(start);
-		next.addAll(start.getPostsetNodes());
-
-		while (next.size() > 0) {
-			all.addAll(now);
-			now = next;
-			next = new HashSet<>();
-			if (now.contains(goal)) {
-				return true;
-			}
-
-			for (State node : now) {
-				Set<State> candidates = node.getPostsetNodes();
-				for (State cand : candidates) {
-					if (!all.contains(cand) && !now.contains(cand)) {
-						next.add(cand);
-					}
-				}
-			}
-		}
-
-		return false;
 	}
 
 	/**
@@ -107,34 +63,30 @@ public class ReversibleTS {
 	 */
 	public boolean check(String id) {
 		State node = ts.getNode(id);
-		return !reaches(ts.getInitialState(), node) || reaches(node, ts.getInitialState());
+		return unreversibleStates.contains(node);
 	}
 
 	/**
-	 * @return A Set of all reversible states in the LTS
+	 * @return A Set of all unreversible states in the LTS
 	 */
-	public Set<String> getAllReversibleStates() {
-		Set<String> revStates = new HashSet<>();
-		for (State n : ts.getNodes()) {
-			if (check(n.getId())) {
-				revStates.add(n.getId());
-			}
-		}
-		return revStates;
+	public Set<State> getUnreversibleStates() {
+		return Collections.unmodifiableSet(unreversibleStates);
 	}
 
 	/**
 	 * @return true, if the LTS is reversible, or false, if it is not
 	 */
 	public boolean isReversible() {
-		return reversible_;
+		return unreversibleStates.isEmpty();
 	}
 
 	/**
 	 * @return A non-reversible state, if one exists.
 	 */
 	public State getNode() {
-		return node_;
+		if (unreversibleStates.isEmpty())
+			return null;
+		return unreversibleStates.iterator().next();
 	}
 }
 
