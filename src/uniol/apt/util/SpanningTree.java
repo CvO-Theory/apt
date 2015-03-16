@@ -43,6 +43,7 @@ import uniol.apt.adt.exception.StructureException;
  * @author Uli Schlachter
  */
 public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>> {
+	private final boolean forwardDirection;
 	private final Map<N, E> predecessorMap;
 	private final Set<N> unreachableNodes;
 	private final Set<E> chords;
@@ -61,6 +62,17 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	}
 
 	/**
+	 * Construct a spanning tree for the given graph with arcs reversed. If a spanning tree was already computed,
+	 * it is re-used instead of creating a new one. This spanning tree will follow arcs backwards.
+	 * @param graph The graph for which a spanning tree should be constructed.
+	 * @return A spanning tree.
+	 */
+	static public <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
+			SpanningTree<G, E, N> getReversed(G graph) {
+		return getReversed(graph, graph.getNodes().isEmpty() ? null : graph.getNodes().iterator().next());
+	}
+
+	/**
 	 * Construct a spanning tree for the given graph. If a spanning tree was already computed, it is re-used instead
 	 * of creating a new one.
 	 * @param graph The graph for which a spanning tree should be constructed.
@@ -69,7 +81,34 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	 */
 	static public <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
 			SpanningTree<G, E, N> get(G graph, N startNode) {
+		return get(graph, startNode, true);
+	}
+
+	/**
+	 * Construct a spanning tree for the given graph with arcs reversed. If a spanning tree was already computed, it
+	 * is re-used instead of creating a new one. This spanning tree will follow arcs backwards.
+	 * @param graph The graph for which a spanning tree should be constructed.
+	 * @param startNode The start node for the spanning tree.
+	 * @return A spanning tree.
+	 */
+	static public <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
+			SpanningTree<G, E, N> getReversed(G graph, N startNode) {
+		return get(graph, startNode, false);
+	}
+
+	/**
+	 * Construct a spanning tree for the given graph. If a spanning tree was already computed, it is re-used instead
+	 * of creating a new one.
+	 * @param graph The graph for which a spanning tree should be constructed.
+	 * @param startNode The start node for the spanning tree.
+	 * @param forwardDirection If true, arcs are followed in forward direction, else backward direction.
+	 * @return A spanning tree.
+	 */
+	static private <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
+			SpanningTree<G, E, N> get(G graph, N startNode, boolean forwardDirection) {
 		String key = SpanningTree.class.getName();
+		if (!forwardDirection)
+			key = key + "-backwards";
 
 		Object extension = null;
 		try {
@@ -99,7 +138,7 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 			return result;
 		}
 
-		SpanningTree<G, E, N> result = new SpanningTree<>(graph, startNode);
+		SpanningTree<G, E, N> result = new SpanningTree<>(graph, startNode, forwardDirection);
 		map.put(startNode, result);
 		return result;
 	}
@@ -108,8 +147,9 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	 * Construct a new spanning tree
 	 * @param graph The graph for which a spanning tree should be constructed.
 	 * @param startNode The start node for the spanning tree.
+	 * @param forwardDirection If true, arcs are followed in forward direction, else backward direction.
 	 */
-	private SpanningTree(G graph, N startNode) {
+	private SpanningTree(G graph, N startNode, boolean forwardDirection) {
 		// Calculate the spanning tree: For each node we remember its predecessor in the tree and we keep a set
 		// of unvisited nodes. We visit unvisited nodes in turn, look at all their children which we haven't
 		// visited yet and enlarge the spanning tree by the path from the current node to the children.
@@ -126,8 +166,12 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 
 		while (node != null) {
 			// For each child of the current node...
-			for (E edge : node.getPostsetEdges()) {
-				N child = edge.getTarget();
+			for (E edge : forwardDirection ? node.getPostsetEdges() : node.getPresetEdges()) {
+				N child;
+				if (forwardDirection)
+					child = edge.getTarget();
+				else
+					child = edge.getSource();
 
 				// ...if it was not yet reached, mark it as reachable and...
 				if (unvisitedNodes.remove(child)) {
@@ -145,6 +189,7 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 			node = stillToVisit.pollFirst();
 		}
 
+		this.forwardDirection = forwardDirection;
 		this.predecessorMap = Collections.unmodifiableMap(predecessorMap);
 		this.unreachableNodes = Collections.unmodifiableSet(unvisitedNodes);
 		this.chords = Collections.unmodifiableSet(chords);
@@ -184,8 +229,12 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	 */
 	public N getPredecessor(N node) {
 		E e = getPredecessorEdge(node);
-		if (e != null)
-			return e.getSource();
+		if (e != null) {
+			if (forwardDirection)
+				return e.getSource();
+			else
+				return e.getTarget();
+		}
 		return null;
 	}
 

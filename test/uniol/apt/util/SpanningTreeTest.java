@@ -30,6 +30,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 
 import org.testng.annotations.Test;
+import uniol.apt.adt.matcher.Matchers;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.adt.matcher.Matchers.*;
 
@@ -44,6 +45,14 @@ public class SpanningTreeTest {
 		return SpanningTree.<TransitionSystem, Arc, State>get(ts, init);
 	}
 
+	static private SpanningTree<TransitionSystem, Arc, State> getReversed(TransitionSystem ts) {
+		return SpanningTree.<TransitionSystem, Arc, State>getReversed(ts);
+	}
+
+	static private SpanningTree<TransitionSystem, Arc, State> getReversed(TransitionSystem ts, State init) {
+		return SpanningTree.<TransitionSystem, Arc, State>getReversed(ts, init);
+	}
+
 	@Test
 	public void testCache() {
 		TransitionSystem ts = new TransitionSystem();
@@ -55,16 +64,39 @@ public class SpanningTreeTest {
 	}
 
 	@Test
-	public void testCacheClear() {
+	public void testCacheReverse() {
+		TransitionSystem ts = new TransitionSystem();
+
+		SpanningTree<TransitionSystem, Arc, State> tree1 = getReversed(ts);
+		SpanningTree<TransitionSystem, Arc, State> tree2 = getReversed(ts);
+
+		assertThat(tree2, sameInstance(tree1));
+	}
+
+	@Test
+	public void testCacheMixed() {
 		TransitionSystem ts = new TransitionSystem();
 
 		SpanningTree<TransitionSystem, Arc, State> tree1 = get(ts);
+		SpanningTree<TransitionSystem, Arc, State> tree2 = getReversed(ts);
+
+		assertThat(tree2, not(sameInstance(tree1)));
+	}
+
+	@Test
+	public void testCacheClear() {
+		TransitionSystem ts = new TransitionSystem();
+
+		SpanningTree<TransitionSystem, Arc, State> tree1f = get(ts);
+		SpanningTree<TransitionSystem, Arc, State> tree1r = getReversed(ts);
 
 		ts.createState();
 
-		SpanningTree<TransitionSystem, Arc, State> tree2 = get(ts);
+		SpanningTree<TransitionSystem, Arc, State> tree2f = get(ts);
+		SpanningTree<TransitionSystem, Arc, State> tree2r = getReversed(ts);
 
-		assertThat(tree2, not(sameInstance(tree1)));
+		assertThat(tree2f, not(sameInstance(tree1f)));
+		assertThat(tree2r, not(sameInstance(tree1r)));
 	}
 
 	@Test
@@ -72,6 +104,17 @@ public class SpanningTreeTest {
 		TransitionSystem ts = new TransitionSystem();
 
 		SpanningTree<TransitionSystem, Arc, State> tree = get(ts);
+
+		assertThat(tree.getStartNode(), is(equalTo(null)));
+		assertThat(tree.getUnreachableNodes(), is(empty()));
+		assertThat(tree.getChords(), is(empty()));
+	}
+
+	@Test
+	public void testEmptyTSReversed() {
+		TransitionSystem ts = new TransitionSystem();
+
+		SpanningTree<TransitionSystem, Arc, State> tree = getReversed(ts);
 
 		assertThat(tree.getStartNode(), is(equalTo(null)));
 		assertThat(tree.getUnreachableNodes(), is(empty()));
@@ -105,27 +148,53 @@ public class SpanningTreeTest {
 	}
 
 	@Test
-	public void testcc1LTS() {
+	public void testSingleStateTSReversed() {
+		TransitionSystem ts = TestTSCollection.getSingleStateTS();
+		verifySingleStateTS(getReversed(ts, ts.getInitialState()));
+	}
+
+	@Test
+	public void testSingleStateTS2Reversed() {
+		TransitionSystem ts = TestTSCollection.getSingleStateTS();
+		verifySingleStateTS(getReversed(ts));
+	}
+
+	static private Matcher<? super Arc> arcThatConnects(String source, String target) {
+		return Matchers.arcThatConnects(source, target);
+	}
+
+	static private Matcher<? super Arc> arcThatConnects(boolean forward, String source, String target) {
+		if (forward)
+			return Matchers.arcThatConnects(source, target);
+		else
+			return Matchers.arcThatConnects(target, source);
+	}
+
+	static private void doCC1LTS(boolean forward) {
 		TransitionSystem ts = TestTSCollection.getcc1LTS();
 		State s0 = ts.getNode("s0");
 		State s1 = ts.getNode("s1");
 		State s2 = ts.getNode("s2");
 		State s3 = ts.getNode("s3");
 
-		SpanningTree<TransitionSystem, Arc, State> tree = get(ts, ts.getInitialState());
+		SpanningTree<TransitionSystem, Arc, State> tree;
+		if (forward)
+			tree = get(ts, ts.getInitialState());
+		else
+			tree = getReversed(ts, ts.getInitialState());
 
 		assertThat(tree.getStartNode(), is(equalTo(ts.getInitialState())));
 		assertThat(tree.getUnreachableNodes(), is(empty()));
 
 		List<Matcher<? super Arc>> edgeMatchers = new ArrayList<>();
-		edgeMatchers.add(arcThatConnects("s1", "s0"));
-		edgeMatchers.add(arcThatConnects("s2", "s0"));
-		edgeMatchers.add(arcThatConnects("s3", "s1"));
-		edgeMatchers.add(arcThatConnects("s3", "s2"));
+		edgeMatchers.add(arcThatConnects(forward, "s1", "s0"));
+		edgeMatchers.add(arcThatConnects(forward, "s2", "s0"));
+		edgeMatchers.add(arcThatConnects(forward, "s3", "s1"));
+		edgeMatchers.add(arcThatConnects(forward, "s3", "s2"));
 		if (tree.getPredecessor(s3).equals(s1))
-			edgeMatchers.add(arcThatConnects("s2", "s3"));
+			edgeMatchers.add(arcThatConnects(forward, "s2", "s3"));
 		else
-			edgeMatchers.add(arcThatConnects("s1", "s3"));
+			edgeMatchers.add(arcThatConnects(forward, "s1", "s3"));
 
 		assertThat(tree.getChords(), containsInAnyOrder(edgeMatchers));
 
@@ -135,16 +204,26 @@ public class SpanningTreeTest {
 		assertThat(tree.getPredecessor(s3), is(anyOf(equalTo(s1), equalTo(s2))));
 
 		assertThat(tree.getPredecessorEdge(s0), is(equalTo(null)));
-		assertThat(tree.getPredecessorEdge(s1), is(arcThatConnects("s0", "s1")));
-		assertThat(tree.getPredecessorEdge(s2), is(arcThatConnects("s0", "s2")));
+		assertThat(tree.getPredecessorEdge(s1), is(arcThatConnects(forward, "s0", "s1")));
+		assertThat(tree.getPredecessorEdge(s2), is(arcThatConnects(forward, "s0", "s2")));
 		assertThat(tree.getPredecessorEdge(s3), is(anyOf(
-					arcThatConnects("s1", "s3"),
-					arcThatConnects("s2", "s3"))));
+					arcThatConnects(forward, "s1", "s3"),
+					arcThatConnects(forward, "s2", "s3"))));
 
 		assertThat(tree.getPathFromStart(s0), contains(s0));
 		assertThat(tree.getPathFromStart(s1), contains(s0, s1));
 		assertThat(tree.getPathFromStart(s2), contains(s0, s2));
 		assertThat(tree.getPathFromStart(s3), anyOf(contains(s0, s1, s3), contains(s0, s2, s3)));
+	}
+
+	@Test
+	public void testcc1LTS() {
+		doCC1LTS(true);
+	}
+
+	@Test
+	public void testcc1LTSReversed() {
+		doCC1LTS(false);
 	}
 
 	@Test
@@ -171,6 +250,32 @@ public class SpanningTreeTest {
 		assertThat(tree.getPathFromStart(s), contains(s));
 		assertThat(tree.getPathFromStart(t), contains(s, t));
 		assertThat(tree.getPathFromStart(v), contains(s, v));
+	}
+
+	@Test
+	public void testThreeStatesTwoEdgesTSReversed() {
+		TransitionSystem ts = TestTSCollection.getThreeStatesTwoEdgesTS();
+		State s = ts.getNode("s");
+		State t = ts.getNode("t");
+		State v = ts.getNode("v");
+
+		SpanningTree<TransitionSystem, Arc, State> tree = getReversed(ts, ts.getInitialState());
+
+		assertThat(tree.getStartNode(), is(equalTo(ts.getInitialState())));
+		assertThat(tree.getUnreachableNodes(), is(containsInAnyOrder(t, v)));
+		assertThat(tree.getChords(), is(empty()));
+
+		assertThat(tree.getPredecessor(s), is(equalTo(null)));
+		assertThat(tree.getPredecessor(t), is(equalTo(null)));
+		assertThat(tree.getPredecessor(v), is(equalTo(null)));
+
+		assertThat(tree.getPredecessorEdge(s), is(equalTo(null)));
+		assertThat(tree.getPredecessorEdge(t), is(equalTo(null)));
+		assertThat(tree.getPredecessorEdge(v), is(equalTo(null)));
+
+		assertThat(tree.getPathFromStart(s), contains(s));
+		assertThat(tree.getPathFromStart(t), empty());
+		assertThat(tree.getPathFromStart(v), empty());
 	}
 
 	@Test
