@@ -35,7 +35,7 @@ import static uniol.apt.util.DebugUtil.debug;
  */
 public class EquationSystem {
 	private final int numVariables;
-	private final List<List<Integer>> equations = new ArrayList<>();
+	private final Collection<List<Integer>> equations = new HashSet<>();
 
 	private static class EquationSystemSolver {
 		// Algorithm 4 from "Petri Net Synthesis" by Badouel, Bernardinello and Darondeau, page 190
@@ -48,7 +48,7 @@ public class EquationSystem {
 
 		private final int numVariables;
 
-		EquationSystemSolver(int numVariables, List<List<Integer>> equations) {
+		EquationSystemSolver(int numVariables, Collection<List<Integer>> equations) {
 			this.numVariables = numVariables;
 
 			// Input equations, but x_i is substituted with y_i
@@ -298,8 +298,7 @@ public class EquationSystem {
 	public String toString() {
 		StringWriter buffer = new StringWriter();
 		buffer.write("[\n");
-		for (int i = 0; i < equations.size(); i++) {
-			List<Integer> equation = equations.get(i);
+		for (List<Integer> equation : equations) {
 			boolean first = true;
 			for (int j = 0; j < numVariables; j++) {
 				if (equation.get(j) == 0)
