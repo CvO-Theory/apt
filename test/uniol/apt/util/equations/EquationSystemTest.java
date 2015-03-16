@@ -36,6 +36,13 @@ public class EquationSystemTest {
 	// be a correct result for the code under tests. However, testing if two basis are (in some sense) equal isn't
 	// completely trivial.
 
+	static Matcher<? super Iterable<? extends Integer>> equation(Integer... equation) {
+		Matcher<? super Iterable<? extends Integer>> first = contains(equation);
+		for (int i = 0; i < equation.length; i++)
+			equation[i] *= -1;
+		return either(first).or(contains(equation));
+	}
+
 	@Test
 	public void testSimpleSystem0() {
 		EquationSystem system = new EquationSystem(3);
@@ -44,7 +51,7 @@ public class EquationSystemTest {
 
 		Set<List<Integer>> basis = system.findBasis();
 		List<Matcher<? super Iterable<? extends Integer>>> matchers = new ArrayList<>();
-		matchers.add(contains(-1, -1, 1));
+		matchers.add(equation(-1, -1, 1));
 		assertThat(basis, containsInAnyOrder(matchers));
 	}
 
@@ -57,7 +64,7 @@ public class EquationSystemTest {
 
 		Set<List<Integer>> basis = system.findBasis();
 		List<Matcher<? super Iterable<? extends Integer>>> matchers = new ArrayList<>();
-		matchers.add(contains(1, 1, -1));
+		matchers.add(equation(1, 1, -1));
 		assertThat(basis, containsInAnyOrder(matchers));
 	}
 
@@ -71,7 +78,7 @@ public class EquationSystemTest {
 
 		Set<List<Integer>> basis = system.findBasis();
 		List<Matcher<? super Iterable<? extends Integer>>> matchers = new ArrayList<>();
-		matchers.add(contains(1, 1, -1));
+		matchers.add(equation(1, 1, -1));
 		assertThat(basis, containsInAnyOrder(matchers));
 	}
 
@@ -95,7 +102,7 @@ public class EquationSystemTest {
 
 		Set<List<Integer>> basis = system.findBasis();
 		List<Matcher<? super Iterable<? extends Integer>>> matchers = new ArrayList<>();
-		matchers.add(contains(1, 1, -1));
+		matchers.add(equation(1, 1, -1));
 		assertThat(basis, containsInAnyOrder(matchers));
 	}
 
@@ -107,7 +114,7 @@ public class EquationSystemTest {
 
 		Set<List<Integer>> basis = system.findBasis();
 		List<Matcher<? super Iterable<? extends Integer>>> matchers = new ArrayList<>();
-		matchers.add(contains(1, 3, -2));
+		matchers.add(equation(1, 3, -2));
 		assertThat(basis, containsInAnyOrder(matchers));
 	}
 
@@ -117,9 +124,9 @@ public class EquationSystemTest {
 
 		Set<List<Integer>> basis = system.findBasis();
 		List<Matcher<? super Iterable<? extends Integer>>> matchers = new ArrayList<>();
-		matchers.add(contains(1, 0, 0));
-		matchers.add(contains(0, 1, 0));
-		matchers.add(contains(0, 0, 1));
+		matchers.add(equation(1, 0, 0));
+		matchers.add(equation(0, 1, 0));
+		matchers.add(equation(0, 0, 1));
 		assertThat(basis, containsInAnyOrder(matchers));
 	}
 
@@ -130,8 +137,8 @@ public class EquationSystemTest {
 
 		Set<List<Integer>> basis = system.findBasis();
 		List<Matcher<? super Iterable<? extends Integer>>> matchers = new ArrayList<>();
-		matchers.add(contains(1, 0, 0));
-		matchers.add(contains(0, 0, 1));
+		matchers.add(equation(1, 0, 0));
+		matchers.add(equation(0, 0, 1));
 		assertThat(basis, containsInAnyOrder(matchers));
 	}
 
@@ -142,8 +149,8 @@ public class EquationSystemTest {
 
 		Set<List<Integer>> basis = system.findBasis();
 		List<Matcher<? super Iterable<? extends Integer>>> matchers = new ArrayList<>();
-		matchers.add(contains(1, 0, 0));
-		matchers.add(contains(0, 5, -42));
+		matchers.add(equation(1, 0, 0));
+		matchers.add(equation(0, 5, -42));
 		assertThat(basis, containsInAnyOrder(matchers));
 	}
 
@@ -185,7 +192,9 @@ public class EquationSystemTest {
 		system.addEquation(1, 0, 1);
 		system.addEquation(0, 1, 1);
 
-		assertThat(system, hasToString("[\n1*x[0] + 1*x[2] = 0\n1*x[1] + 1*x[2] = 0\n]"));
+		assertThat(system, anyOf(
+					hasToString("[\n1*x[0] + 1*x[2] = 0\n1*x[1] + 1*x[2] = 0\n]"),
+					hasToString("[\n1*x[1] + 1*x[2] = 0\n1*x[0] + 1*x[2] = 0\n]")));
 	}
 
 	@Test
