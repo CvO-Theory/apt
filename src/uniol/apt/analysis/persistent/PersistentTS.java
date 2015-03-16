@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.persistent;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,27 +72,7 @@ public class PersistentTS {
 			Set<String> labels = getPostLabels(node);
 			for (String label1 : labels) {
 				for (String label2 : labels) {
-					if (label1.equals(label2)) {
-						continue;
-					}
-					Set<State> post1 = getDirectlyReachableNodes(node, label1);
-					Set<State> post2 = getDirectlyReachableNodes(node, label2);
-					Set<State> r1 = new HashSet<State>();
-					Set<State> r2 = new HashSet<State>();
-					for (State n : post1) {
-						r1.addAll(getDirectlyReachableNodes(n, label2));
-					}
-					for (State n : post2) {
-						r2.addAll(getDirectlyReachableNodes(n, label1));
-					}
-					boolean exists = false;
-					for (State n : r1) {
-						if (r2.contains(n)) {
-							exists = true;
-							break;
-						}
-					}
-					if (!exists) {
+					if (!checkPersistent(node, label1, label2)) {
 						this.persistent = false;
 						node_ = node;
 						label1_ = label1;
@@ -108,14 +89,33 @@ public class PersistentTS {
 		label2_ = null;
 	}
 
+	private boolean checkPersistent(State node, String label1, String label2) {
+		if (label1.equals(label2))
+			return true;
+
+		Set<State> post1 = getDirectlyReachableNodes(node, label1);
+		Set<State> post2 = getDirectlyReachableNodes(node, label2);
+		Set<State> r1 = new HashSet<State>();
+		Set<State> r2 = new HashSet<State>();
+		for (State n : post1) {
+			r1.addAll(getDirectlyReachableNodes(n, label2));
+		}
+		for (State n : post2) {
+			r2.addAll(getDirectlyReachableNodes(n, label1));
+		}
+		return !Collections.disjoint(r1, r2);
+	}
+
+	private Set<Arc> getPostsetEdges(State n) {
+		if (!backwards)
+			return n.getPostsetEdges();
+		else
+			return n.getPresetEdges();
+	}
+
 	private Set<String> getPostLabels(State n) {
 		Set<String> labels = new HashSet<String>();
-		Set<Arc> post;
-		if (!backwards)
-			post = n.getPostsetEdges();
-		else
-			post = n.getPresetEdges();
-		for (Arc e : post) {
+		for (Arc e : getPostsetEdges(n)) {
 			labels.add(e.getLabel());
 		}
 		return labels;
@@ -130,12 +130,7 @@ public class PersistentTS {
 	 */
 	private Set<State> getDirectlyReachableNodes(State n, String l) {
 		Set<State> nodes = new HashSet<State>();
-		Set<Arc> post;
-		if (!backwards)
-			post = n.getPostsetEdges();
-		else
-			post = n.getPresetEdges();
-		for (Arc e : post) {
+		for (Arc e : getPostsetEdges(n)) {
 			if (e.getLabel().equals(l)) {
 				if (!backwards)
 					nodes.add(e.getTarget());

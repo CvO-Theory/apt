@@ -47,6 +47,20 @@ public class PersistentTSTest {
 	}
 
 	@Test
+	public void testPersistentNonDeterministicTS() {
+		TransitionSystem ts = TestTSCollection.getPersistentNonDeterministicTS();
+		PersistentTS det = new PersistentTS(ts, false);
+		assertTrue(det.isPersistent());
+	}
+
+	@Test
+	public void testNonPersistentNonDeterministicTS() {
+		TransitionSystem ts = TestTSCollection.getNonPersistentNonDeterministicTS();
+		PersistentTS det = new PersistentTS(ts, false);
+		assertFalse(det.isPersistent());
+	}
+
+	@Test
 	public void testNonPersistentTS() {
 		TransitionSystem ts = TestTSCollection.getNonPersistentTS();
 		PersistentTS det = new PersistentTS(ts, false);
@@ -79,6 +93,17 @@ public class PersistentTSTest {
 		assertTrue(det.getLabel1().equals("fail") || det.getLabel2().equals("fail"));
 		assertTrue(det.getLabel2().equals("a") || det.getLabel1().equals("a"));
 	}
+
+	@Test
+	public void testNonPersistentButActivatedTS() {
+		TransitionSystem ts = TestTSCollection.getNonPersistentButActivatedTS();
+		PersistentTS det = new PersistentTS(ts, false);
+		assertFalse(det.isPersistent());
+		assertEquals(det.getNode().getId(), "r");
+		assertTrue(det.getLabel1().equals("fail") || det.getLabel2().equals("fail"));
+		assertTrue(det.getLabel2().equals("a") || det.getLabel1().equals("a"));
+	}
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

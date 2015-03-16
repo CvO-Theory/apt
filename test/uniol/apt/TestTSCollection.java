@@ -182,6 +182,37 @@ public class TestTSCollection {
 		return ts;
 	}
 
+	public static TransitionSystem getPersistentNonDeterministicTS() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s0 = ts.createState("s0");
+		State left = ts.createState("l");
+		State middle = ts.createState("m");
+		State right = ts.createState("r");
+		State s1 = ts.createState("s1");
+		State s2 = ts.createState("s2");
+
+		ts.setInitialState(s0);
+
+		ts.createArc(s0, left, "a");
+		ts.createArc(s0, middle, "b");
+		ts.createArc(s0, right, "a");
+		ts.createArc(left, s1, "c");
+		ts.createArc(middle, s2, "a");
+		ts.createArc(right, s2, "b");
+
+		return ts;
+	}
+
+	public static TransitionSystem getNonPersistentNonDeterministicTS() {
+		TransitionSystem ts = getPersistentNonDeterministicTS();
+
+		State r2 = ts.createState("r2");
+		ts.createArc("s0", "r2", "c");
+
+		return ts;
+	}
+
 	public static TransitionSystem getNonPersistentTS() {
 		TransitionSystem ts = new TransitionSystem();
 
@@ -217,6 +248,27 @@ public class TestTSCollection {
 		ts.createArc(s1, left, "b");
 		ts.createArc(s1, right, "a");
 		ts.createArc(right2, right, "fail");
+		return ts;
+	}
+
+	public static TransitionSystem getNonPersistentButActivatedTS() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s0 = ts.createState("s0");
+		State left = ts.createState("l");
+		State right = ts.createState("r");
+		State s1 = ts.createState("s1");
+		State right2 = ts.createState("r2");
+
+		ts.setInitialState(s0);
+
+		ts.createArc(s0, left, "a");
+		ts.createArc(s0, right, "b");
+		ts.createArc(left, s1, "b");
+		ts.createArc(right, s1, "a");
+		ts.createArc(right, right2, "fail");
+		ts.createArc(right2, right, "a");
+		ts.createArc(s1, left, "fail");
 		return ts;
 	}
 
