@@ -206,8 +206,8 @@ public class SpanningTreeTest {
 		assertThat(tree.getPredecessorEdge(s0), is(equalTo(null)));
 		assertThat(tree.getPredecessorEdge(s1), is(arcThatConnects(forward, "s0", "s1")));
 		assertThat(tree.getPredecessorEdge(s2), is(arcThatConnects(forward, "s0", "s2")));
-		assertThat(tree.getPredecessorEdge(s3), is(anyOf(
-					arcThatConnects(forward, "s1", "s3"),
+		assertThat(tree.getPredecessorEdge(s3), is(either(
+					arcThatConnects(forward, "s1", "s3")).or(
 					arcThatConnects(forward, "s2", "s3"))));
 
 		assertThat(tree.getPathFromStart(s0), contains(s0));
@@ -305,7 +305,7 @@ public class SpanningTreeTest {
 		assertThat(tree.getPredecessorEdge(l), is(arcThatConnects("s0", "l")));
 		assertThat(tree.getPredecessorEdge(r), is(arcThatConnects("s0", "r")));
 		assertThat(tree.getPredecessorEdge(s1),
-				is(anyOf(arcThatConnects("l", "s1"), arcThatConnects("r", "s1"))));
+				is(either(arcThatConnects("l", "s1")).or(arcThatConnects("r", "s1"))));
 
 		assertThat(tree.getPathFromStart(s0), contains(s0));
 		assertThat(tree.getPathFromStart(l), contains(s0, l));
