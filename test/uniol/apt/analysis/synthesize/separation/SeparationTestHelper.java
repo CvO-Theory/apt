@@ -58,11 +58,17 @@ public class SeparationTestHelper {
 	}
 
 	static public Object[] factory(SeparationFactory factory, boolean includeWord) {
+		return factory(factory, includeWord, true);
+	}
+
+	static public Object[] factory(SeparationFactory factory, boolean includeWord, boolean includeNonReversible) {
 		List<Object> pairs = new ArrayList<>();
 		pairs.add(new SeparationTestHelper(factory));
-		pairs.add(new PureSynthesizablePathTS(factory));
-		pairs.add(new ImpureSynthesizablePathTS(factory));
-		pairs.add(new CrashkursCC2Tests(factory));
+		if (includeNonReversible) {
+			pairs.add(new PureSynthesizablePathTS(factory));
+			pairs.add(new ImpureSynthesizablePathTS(factory));
+			pairs.add(new CrashkursCC2Tests(factory));
+		}
 		if (includeWord)
 			pairs.add(new TestWordB2AB5AB6AB6(factory));
 		return pairs.toArray(new Object[pairs.size()]);
@@ -182,6 +188,18 @@ public class SeparationTestHelper {
 		RegionUtility utility = new RegionUtility(TestTSCollection.getOneCycleLTS());
 
 		checkEventSeparation(factory, utility, "s1", "c");
+	}
+
+	@Test
+	public void testCalculatePlainTNnetReachabilityTS() throws UnreachableException {
+		RegionUtility utility = new RegionUtility(TestTSCollection.getPlainTNetReachabilityTS());
+
+		checkEventSeparation(factory, utility, "s2", "a");
+		checkEventSeparation(factory, utility, "s5", "a");
+		checkEventSeparation(factory, utility, "s3", "b");
+		checkEventSeparation(factory, utility, "s5", "b");
+		checkEventSeparation(factory, utility, "s0", "c");
+		checkEventSeparation(factory, utility, "s3", "c");
 	}
 
 	static public class CrashkursCC2Tests {

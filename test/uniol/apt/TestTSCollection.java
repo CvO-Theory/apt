@@ -566,6 +566,42 @@ public class TestTSCollection {
 		ts.createArc(s, u, "b");
 		return ts;
 	}
+
+	/**
+	 * The transitions system:
+	 * <pre>
+	 *      b
+	 * [0] ---> [3]
+	 * a| ^----c |a
+	 *  v   b  \\ v
+	 * [1] ---> [4]
+	 * a| ^----c |a
+	 *  v   b  \\ v
+	 * [2] ---> [5]
+	 * </pre>
+	 */
+	public static TransitionSystem getPlainTNetReachabilityTS() {
+		TransitionSystem ts = new TransitionSystem();
+
+		ts.createState("s0");
+		ts.createState("s1");
+		ts.createState("s2");
+		ts.createState("s3");
+		ts.createState("s4");
+		ts.createState("s5");
+
+		ts.setInitialState("s0");
+
+		for (int i = 0; i < 2; i++) {
+			ts.createArc("s" + i, "s" + (i+1), "a");
+			ts.createArc("s" + (i+3), "s" + (i+4), "a");
+			ts.createArc("s" + (i+4), "s" + i, "c");
+		}
+		for (int i = 0; i < 3; i++) {
+			ts.createArc("s" + i, "s" + (i+3), "b");
+		}
+		return ts;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
