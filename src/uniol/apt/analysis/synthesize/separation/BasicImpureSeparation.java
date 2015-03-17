@@ -86,7 +86,7 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 
 		stateLoop:
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			if (SeparationUtility.getFollowingState(otherState, event) == null)
+			if (!SeparationUtility.isEventEnabled(otherState, event))
 				continue;
 
 			List<Integer> inequality = new ArrayList<>(basis.size());
@@ -134,7 +134,7 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 		// For each state in which 'event' is enabled...
 		Integer min = null;
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			if (SeparationUtility.getFollowingState(otherState, event) == null)
+			if (!SeparationUtility.isEventEnabled(otherState, event))
 				continue;
 
 			try {
