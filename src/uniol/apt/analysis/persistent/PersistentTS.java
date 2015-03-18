@@ -22,6 +22,10 @@ package uniol.apt.analysis.persistent;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Deque;
+import java.util.LinkedList;
 
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
@@ -42,13 +46,14 @@ import uniol.apt.adt.ts.TransitionSystem;
  *
  *Above: Mini-example of an persistent LTS
  *
- * @author Vincent Göbel
+ * @author Vincent Göbel, Uli Schlachter
  */
 public class PersistentTS {
 	private final TransitionSystem ts;
 	private final boolean backwards;
+	private final Map<State, Map<String, Set<State>>> statePostsetsCache = new HashMap<>();
 
-	private boolean persistent = false;
+	private boolean persistent = true;
 	private State node_ = null;
 	private String label1_ = null;
 	private String label2_ = null;
@@ -67,12 +72,32 @@ public class PersistentTS {
 	 * Checks whether or not the LTS is persistent. If it is not, a counterexample is saved in the variables
 	 * node, label1 and label2.
 	 */
-	public void check() {
+	private void check() {
+		// Go through all states
 		for (State node : ts.getNodes()) {
-			Set<String> labels = getPostLabels(node);
-			for (String label1 : labels) {
-				for (String label2 : labels) {
-					if (!checkPersistent(node, label1, label2)) {
+			Map<String, Set<State>> postset = getStatePostset(node);
+			Deque<String> unhandledLabels = new LinkedList<>(postset.keySet());
+			// Go through all pairs of (enabled) labels
+			while (!unhandledLabels.isEmpty()) {
+				String label1 = unhandledLabels.removeFirst();
+				Set<State> statesAfterLabel1 = postset.get(label1);
+				for (String label2 : unhandledLabels) {
+					// Calculate states reached by first following label1 then label2
+					Set<State> statesAfter12 = new HashSet<>();
+					for (State node1 : statesAfterLabel1) {
+						statesAfter12.addAll(getStatePostsetViaLabel(node1, label2));
+					}
+
+					// Check if any of these is also reached by label2, then label1
+					boolean foundSharedState = false;
+					for (State node2 : postset.get(label2)) {
+						if (!Collections.disjoint(statesAfter12, getStatePostsetViaLabel(node2, label1))) {
+							foundSharedState = true;
+							break;
+						}
+					}
+
+					if (!foundSharedState) {
 						this.persistent = false;
 						node_ = node;
 						label1_ = label1;
@@ -81,31 +106,38 @@ public class PersistentTS {
 					}
 				}
 			}
-
 		}
-		this.persistent = true;
-		node_ = null;
-		label1_ = null;
-		label2_ = null;
 	}
 
-	private boolean checkPersistent(State node, String label1, String label2) {
-		if (label1.equals(label2))
-			return true;
+	// Get the postset of a state as a Map which maps a label to a set of states
+	private Map<String, Set<State>> getStatePostset(State node) {
+		Map<String, Set<State>> result = statePostsetsCache.get(node);
+		if (result != null)
+			return result;
 
-		Set<State> post1 = getDirectlyReachableNodes(node, label1);
-		Set<State> post2 = getDirectlyReachableNodes(node, label2);
-		Set<State> r1 = new HashSet<State>();
-		Set<State> r2 = new HashSet<State>();
-		for (State n : post1) {
-			r1.addAll(getDirectlyReachableNodes(n, label2));
+		result = new HashMap<>();
+		for (Arc arc : getPostsetEdges(node)) {
+			Set<State> set = result.get(arc.getLabel());
+			if (set == null) {
+				set = new HashSet<>();
+				result.put(arc.getLabel(), set);
+			}
+			set.add(getTarget(arc));
 		}
-		for (State n : post2) {
-			r2.addAll(getDirectlyReachableNodes(n, label1));
-		}
-		return !Collections.disjoint(r1, r2);
+		result = Collections.unmodifiableMap(result);
+		statePostsetsCache.put(node, result);
+		return result;
 	}
 
+	// Get the set of states that is reached via "label" from "state"
+	private Set<State> getStatePostsetViaLabel(State node, String label) {
+		Set<State> result = getStatePostset(node).get(label);
+		if (result == null)
+			return Collections.emptySet();
+		return result;
+	}
+
+	// Get the postset or the preset of an arc, depending on the "backwards" variable
 	private Set<Arc> getPostsetEdges(State n) {
 		if (!backwards)
 			return n.getPostsetEdges();
@@ -113,32 +145,12 @@ public class PersistentTS {
 			return n.getPresetEdges();
 	}
 
-	private Set<String> getPostLabels(State n) {
-		Set<String> labels = new HashSet<String>();
-		for (Arc e : getPostsetEdges(n)) {
-			labels.add(e.getLabel());
-		}
-		return labels;
-	}
-
-	/**
-	 * Calculates the set of all nodes n' with  a transition (n,l,n')
-	 *
-	 * @param n The starting node
-	 * @param l A label
-	 * @return A set containing the nodes that can are targets of the postset edges of n
-	 */
-	private Set<State> getDirectlyReachableNodes(State n, String l) {
-		Set<State> nodes = new HashSet<State>();
-		for (Arc e : getPostsetEdges(n)) {
-			if (e.getLabel().equals(l)) {
-				if (!backwards)
-					nodes.add(e.getTarget());
-				else
-					nodes.add(e.getSource());
-			}
-		}
-		return nodes;
+	// Get the target or the source of an arc, depending on the "backwards" variable
+	private State getTarget(Arc arc) {
+		if (!backwards)
+			return arc.getTarget();
+		else
+			return arc.getSource();
 	}
 
 	public boolean isPersistent() {
