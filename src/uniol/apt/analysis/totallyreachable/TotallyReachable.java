@@ -90,7 +90,7 @@ public class TotallyReachable {
 	 * @param ts Transition system
 	 */
 	public TotallyReachable(TransitionSystem ts) {
-		this(ts, Algorithm.SEARCH);
+		this(ts, Algorithm.SPANNING_TREE);
 	}
 
 	/**
