@@ -28,7 +28,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author Dennis-Michael Borde, Uli Schlachter, vsp
@@ -234,6 +234,22 @@ public class MarkingTest {
 		// pn. Thus, we must explicitly call getToken(Place) to test for this bug.
 		Marking initial = pn2.getInitialMarkingCopy();
 		assertThat(initial.getToken(p2).getValue(), equalTo(1));
+	}
+
+	@Test
+	public void testToString() {
+		PetriNet pn = new PetriNet();
+		// Many places to increase changes of reordering
+		Place places[] = pn.createPlaces("p42", "p1", "a", "z", "b", "y", "j", "k");
+		places[0].setInitialToken(42);
+		places[1].setInitialToken(Token.OMEGA);
+		places[2].setInitialToken(0);
+		places[3].setInitialToken(5);
+		places[4].setInitialToken(1);
+		places[5].setInitialToken(4);
+		places[6].setInitialToken(2);
+		places[7].setInitialToken(3);
+		assertThat(pn.getInitialMarkingCopy(), hasToString("[ [a:0] [b:1] [j:2] [k:3] [p1:OMEGA] [p42:42] [y:4] [z:5] ]"));
 	}
 }
 

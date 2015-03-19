@@ -457,7 +457,7 @@ public class Marking {
 	public String toString() {
 		ensureConsistency();
 		StringBuilder strBuilder = new StringBuilder("[ ");
-		for (Place place : map.keySet()) {
+		for (Place place : net.getPlaces()) {
 			strBuilder.append("[").append(place.getId()).append(":").append(map.get(place).toString()).append("] ");
 		}
 		strBuilder.append("]");
