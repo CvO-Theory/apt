@@ -243,7 +243,7 @@ public class GenerateStepNet {
 	 */
 	public String renderCoverabilityGraphAsDot() {
 		CoverabilityGraph graph = CoverabilityGraph.get(getStepNet());
-		String TS_NODE_TEMPLATE         = "%1$s[label=\"%2$s\"];\n";
+		String TS_NODE_TEMPLATE         = "%1$s[label=\"%2$s\"]; // node for marking %3$s\n";
 		String TS_INITIAL_NODE_TEMPLATE = "%1$s[label=\"%2$s\", shape=circle];\n";
 		String TS_EDGE_TEMPLATE = "%1$s -> %2$s[label=\"%3$s\"];\n";
 
@@ -257,13 +257,13 @@ public class GenerateStepNet {
 
 		Map<CoverabilityGraphNode, String> nodeLabels = new HashMap<>();
 		nodeLabels.put(graph.getInitialNode(), "s0");
-		format.format(TS_INITIAL_NODE_TEMPLATE, "s0", "s0");
+		format.format(TS_INITIAL_NODE_TEMPLATE, "s0", "s0", graph.getInitialNode().getMarking().toString());
 		int nextState = 1;
 		for (CoverabilityGraphNode node : graph.getNodes()) {
 			if (!graph.getInitialNode().equals(node)) {
 				String name = "s" + (nextState++);
 				nodeLabels.put(node, name);
-				format.format(TS_NODE_TEMPLATE, name, name);
+				format.format(TS_NODE_TEMPLATE, name, name, node.getMarking().toString());
 			}
 		}
 
