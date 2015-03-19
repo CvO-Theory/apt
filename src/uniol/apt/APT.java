@@ -47,6 +47,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.ExamineLTSModule;
 import uniol.apt.analysis.ExaminePNModule;
 import uniol.apt.analysis.FireSequenceModule;
+import uniol.apt.analysis.GenerateStepNetModule;
 import uniol.apt.analysis.InfoModule;
 import uniol.apt.analysis.algebra.MatrixFileFormat;
 import uniol.apt.analysis.algebra.MatrixModule;
@@ -229,6 +230,7 @@ public class APT {
 		new FCModule(),
 		new FCNetModule(),
 		new FireSequenceModule(),
+		new GenerateStepNetModule(),
 		new InfoModule(),
 		new InverseNetGeneratorModule(),
 		new IsolatedElementsModule(),

@@ -385,12 +385,28 @@ public class TestNetCollection {
 	 * </pre>
 	 */
 	public static PetriNet getDeadTransitionNet() {
-		PetriNet pn = new PetriNet("DeadTransitionNet");
+		PetriNet pn = getDeadNet();
+		pn.setName("DeadTransitionNet");
+
+		pn.createTransition("tl");
+
+		return pn;
+	}
+
+	/**
+	 * Construct a Petri net with a all transitions dead.
+	 *
+	 * @return PN:
+	 * <pre>
+	 * 0 -> td
+	 * </pre>
+	 */
+	public static PetriNet getDeadNet() {
+		PetriNet pn = new PetriNet("DeadNet");
 
 		Place p1 = pn.createPlace("p1");
 
 		Transition td = pn.createTransition("td");
-		pn.createTransition("tl");
 
 		pn.createFlow(p1, td);
 
