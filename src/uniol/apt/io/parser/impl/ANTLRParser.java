@@ -56,8 +56,12 @@ public class ANTLRParser implements IParser {
 				LexerParserException exception = new LexerParserException(ctx.getParser(),
 					ctx.getLexer(), exi);
 				throw exception;
-			} else if (ex instanceof StructureException) {
-				throw (StructureException) ex;
+			} else if (ex instanceof FormatException) {
+				throw (FormatException) ex;
+			} else if (ex instanceof Error) {
+				throw (Error) ex;
+			} else if (ex instanceof RuntimeException) {
+				throw (RuntimeException) ex;
 			} else {
 				throw new RuntimeException(ex);
 			}
