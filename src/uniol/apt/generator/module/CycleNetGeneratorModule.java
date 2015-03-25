@@ -37,7 +37,7 @@ public class CycleNetGeneratorModule extends AbstractModule {
 
 	@Override
 	public String getShortDescription() {
-		return "Construct a Petri net for a cycle of a given size.";
+		return "Construct a Petri net for a cycle of a given size with a given number of initial token.";
 	}
 
 	@Override
@@ -48,6 +48,7 @@ public class CycleNetGeneratorModule extends AbstractModule {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("n", Integer.class, "The argument for the Petri net generator");
+		inputSpec.addOptionalParameter("init", Integer.class, 1, "The number of token in the initial marking");
 	}
 
 	@Override
@@ -59,7 +60,8 @@ public class CycleNetGeneratorModule extends AbstractModule {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		Integer n = input.getParameter("n", Integer.class);
-		PetriNet pn = new CycleGenerator().generateNet(n);
+		Integer init = input.getParameter("init", Integer.class);
+		PetriNet pn = new CycleGenerator().generateNet(n, init);
 		output.setReturnValue("pn", PetriNet.class, pn);
 	}
 
