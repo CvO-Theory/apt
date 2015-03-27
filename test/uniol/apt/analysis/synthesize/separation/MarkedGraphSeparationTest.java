@@ -42,6 +42,12 @@ public class MarkedGraphSeparationTest {
 		public boolean supportsImpure() {
 			return true;
 		}
+
+		@Override
+		public Separation createSeparation(RegionUtility utility, PNProperties properties,
+				String[] locationMap) throws UnsupportedPNPropertiesException {
+			return new MarkedGraphSeparation(utility, properties, locationMap);
+		}
 	}
 
 	@Factory

@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
+import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.RegionUtility;
 
 import org.testng.annotations.Factory;
@@ -36,6 +37,12 @@ public class BasicPureSeparationTest {
 		@Override
 		public boolean supportsImpure() {
 			return false;
+		}
+
+		@Override
+		public Separation createSeparation(RegionUtility utility, PNProperties properties,
+				String[] locationMap) throws UnsupportedPNPropertiesException {
+			return new BasicPureSeparation(utility, properties, locationMap);
 		}
 	}
 

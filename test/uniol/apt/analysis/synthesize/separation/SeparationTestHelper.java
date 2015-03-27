@@ -27,6 +27,7 @@ import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.SynthesizeWordModule;
@@ -45,6 +46,9 @@ public class SeparationTestHelper {
 	public interface SeparationFactory {
 		Separation createSeparation(RegionUtility utility, String[] locationMap);
 		boolean supportsImpure();
+
+		Separation createSeparation(RegionUtility utility, PNProperties properties, String[] locationMap)
+			throws UnsupportedPNPropertiesException;
 	}
 
 	final private SeparationFactory factory;
@@ -281,6 +285,39 @@ public class SeparationTestHelper {
 							r.getMarkingForState(s), greaterThanOrEqualTo(backwards));
 				}
 		}
+	}
+
+	@Test
+	public void testStateSeparationSatisfiesProperties() {
+		// This transition system leads to a region basis with a:1 and b:2. This region is not plain, but the
+		// code would add it for state separation anyway! Since this is the only entry in the basis and all
+		// regions must be a linear combination of the basis, there are no plain regions at all for this TS.
+		TransitionSystem ts = TestTSCollection.getTwoBThreeATS();
+		State s = ts.getNode("s");
+		State t = ts.getNode("t");
+		State u = ts.getNode("u");
+
+		// Jump through some hoops to get a Separation instance, if possible (this really wants to test
+		// PlainPureSeparation and something "really old" which now lives in InequalitySystemSeparation, see
+		// commit 6c3a08be97a3e2e9499ee3ea5c73029891a54960).
+		// TODO: Handle this in a nicer way. Perhaps SeparationTestHelper was a mistake and should be split up
+		// into multiple "things"?
+		Separation sep = null;
+		try {
+			sep = factory.createSeparation(new RegionUtility(ts), new PNProperties(PNProperties.PLAIN), null);
+		} catch (UnsupportedPNPropertiesException e) {
+			try {
+				sep = factory.createSeparation(new RegionUtility(ts),
+						new PNProperties(PNProperties.PLAIN, PNProperties.PURE), null);
+			}
+			catch (UnsupportedPNPropertiesException f) {
+				// This test cannot be applied to the factory under test
+				return;
+			}
+		}
+
+		assertThat(sep.calculateSeparatingRegion(s, t), nullValue());
+		assertThat(sep.calculateSeparatingRegion(s, u), nullValue());
 	}
 }
 
