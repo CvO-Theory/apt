@@ -517,6 +517,32 @@ public class TestTSCollection {
 	/**
 	 * The transitions system:
 	 * <pre>
+	 *      a
+	 * [s] ---> [u]
+	 *  \\       ^
+	 * a \\   b /
+	 *    v   /
+	 *     [t]
+	 * </pre>
+	 */
+	public static TransitionSystem getABandA() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s = ts.createState("s");
+		State t = ts.createState("t");
+		State u = ts.createState("u");
+
+		ts.setInitialState(s);
+
+		ts.createArc(s, t, "a");
+		ts.createArc(t, u, "b");
+		ts.createArc(s, u, "a");
+		return ts;
+	}
+
+	/**
+	 * The transitions system:
+	 * <pre>
 	 *      b
 	 * [s] ---> [u]
 	 *  \\       ^

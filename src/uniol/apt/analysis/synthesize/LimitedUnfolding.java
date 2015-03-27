@@ -27,6 +27,8 @@ import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.deterministic.Deterministic;
+import uniol.apt.analysis.exception.NonDeterministicException;
 import uniol.apt.util.Pair;
 
 /**
@@ -48,8 +50,12 @@ public class LimitedUnfolding  {
 	 * corresponding loop is created in the unfolding. Else, the postset of this new state is examined.
 	 * @param ts The transition system to unfold.
 	 * @return The limited unfolding.
+	 * @throws NonDeterministicException When the input ts is non-deterministic.
 	 */
-	static public TransitionSystem calculateLimitedUnfolding(TransitionSystem ts) {
+	static public TransitionSystem calculateLimitedUnfolding(TransitionSystem ts) throws NonDeterministicException {
+		if (!new Deterministic(ts).isDeterministic())
+			throw new NonDeterministicException(ts);
+
 		TransitionSystem unfolding = new TransitionSystem("Limited unfolding of " + ts.getName());
 		Deque<Pair<State, Iterator<Arc>>> stack = new LinkedList<>();
 		unfolding.setInitialState(createState(unfolding, stack, ts.getInitialState()));

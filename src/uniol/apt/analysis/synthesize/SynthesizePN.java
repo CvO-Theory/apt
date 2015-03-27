@@ -38,6 +38,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.bounded.Bounded;
 import uniol.apt.analysis.cf.ConflictFree;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
+import uniol.apt.analysis.exception.NonDeterministicException;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
@@ -77,10 +78,11 @@ public class SynthesizePN {
 	 * @param properties Properties that the synthesized Petri net should satisfy.
 	 * @return A synthesizePN instance that synthesizes the input of to language equivalence.
 	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
+	 * @throws NonDeterministicException if the transition system is non-deterministic
 	 * @see LimitedUnfolding#calculateLimitedUnfolding
 	 */
 	static public SynthesizePN createUpToLanguageEquivalence(TransitionSystem ts, PNProperties properties)
-			throws MissingLocationException {
+			throws MissingLocationException, NonDeterministicException {
 		return new SynthesizePN(new RegionUtility(calculateLimitedUnfolding(ts)), properties, true,
 				ORIGINAL_STATE_KEY);
 	}
@@ -91,9 +93,11 @@ public class SynthesizePN {
 	 * @param ts The transition system to synthesize.
 	 * @return A synthesizePN instance that synthesizes the input of to language equivalence.
 	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
+	 * @throws NonDeterministicException if the transition system is non-deterministic
 	 * @see LimitedUnfolding#calculateLimitedUnfolding
 	 */
-	static public SynthesizePN createUpToLanguageEquivalence(TransitionSystem ts) throws MissingLocationException {
+	static public SynthesizePN createUpToLanguageEquivalence(TransitionSystem ts)
+			throws MissingLocationException, NonDeterministicException {
 		return createUpToLanguageEquivalence(ts, new PNProperties());
 	}
 

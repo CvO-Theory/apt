@@ -25,6 +25,8 @@ import static uniol.apt.adt.matcher.Matchers.*;
 
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.deterministic.Deterministic;
+import uniol.apt.analysis.exception.NonDeterministicException;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.analysis.language.LanguageEquivalence;
 
@@ -32,78 +34,98 @@ import uniol.apt.analysis.language.LanguageEquivalence;
 @Test
 public class LimitedUnfoldingTest {
 	@Test
-	public void testEmptyTS() {
+	public void testEmptyTS() throws Exception {
 		TransitionSystem originalSystem = TestTSCollection.getSingleStateTS();
 		TransitionSystem unfold = LimitedUnfolding.calculateLimitedUnfolding(originalSystem);
 
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(1));
+		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
 		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(true));
 	}
 
 	@Test
-	public void testcc1LTS() {
+	public void testcc1LTS() throws Exception {
 		TransitionSystem originalSystem = TestTSCollection.getcc1LTS();
 		TransitionSystem unfold = LimitedUnfolding.calculateLimitedUnfolding(originalSystem);
 
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(7));
+		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
 		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(false));
 	}
 
 	@Test
-	public void testThreeStatesTwoEdgesTS() {
+	public void testThreeStatesTwoEdgesTS() throws Exception {
 		TransitionSystem originalSystem = TestTSCollection.getThreeStatesTwoEdgesTS();
 		TransitionSystem unfold = LimitedUnfolding.calculateLimitedUnfolding(originalSystem);
 
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(3));
+		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
 		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(true));
 	}
 
 	@Test
-	public void testPersistentTS() {
+	public void testPersistentTS() throws Exception {
 		TransitionSystem originalSystem = TestTSCollection.getPersistentTS();
 		TransitionSystem unfold = LimitedUnfolding.calculateLimitedUnfolding(originalSystem);
 
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(5));
+		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
 		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(false));
 	}
 
 	@Test
-	public void testNotTotallyReachableTS() {
+	public void testNotTotallyReachableTS() throws Exception {
 		TransitionSystem originalSystem = TestTSCollection.getNotTotallyReachableTS();
 		TransitionSystem unfold = LimitedUnfolding.calculateLimitedUnfolding(originalSystem);
 
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(2));
+		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
 		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(false));
 	}
 
 	@Test
-	public void testImpureSynthesizablePathTS() {
+	public void testImpureSynthesizablePathTS() throws Exception {
 		TransitionSystem originalSystem = TestTSCollection.getImpureSynthesizablePathTS();
 		TransitionSystem unfold = LimitedUnfolding.calculateLimitedUnfolding(originalSystem);
 
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(5));
+		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
 		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(true));
 	}
 
 	@Test
-	public void testTwoBThreeATS() {
+	public void testTwoBThreeATS() throws Exception {
 		TransitionSystem originalSystem = TestTSCollection.getTwoBThreeATS();
 		TransitionSystem unfold = LimitedUnfolding.calculateLimitedUnfolding(originalSystem);
 
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(7));
+		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
+		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
+		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(false));
+	}
+
+	@Test(expectedExceptions = { NonDeterministicException.class })
+	public void testABAndA() throws Exception {
+		TransitionSystem originalSystem = TestTSCollection.getABandA();
+		TransitionSystem unfold = LimitedUnfolding.calculateLimitedUnfolding(originalSystem);
+
+		// These are the results that would be calculated *if* non-deterministic inputs were supported
+		assertThat(unfold.getInitialState(), not(nullValue()));
+		assertThat(unfold.getNodes(), hasSize(3));
+		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
 		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(false));
 	}
