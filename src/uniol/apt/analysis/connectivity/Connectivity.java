@@ -72,18 +72,20 @@ public class Connectivity {
 	 * @return A partition of the graph's nodes into components.
 	 */
 	public static Components getWeaklyConnectedComponents(IGraph<?, ?, ?> graph) {
-		Collection<INode<?, ?, ?>> nodes = new HashSet<>();
+		Collection<INode<?, ?, ?>> unhandled = new HashSet<>();
 		Components result = new Components();
 
-		nodes.addAll(graph.getNodes());
 		// As long as not all of the graph's nodes were visited...
-		while (!nodes.isEmpty()) {
+		unhandled.addAll(graph.getNodes());
+		while (!unhandled.isEmpty()) {
 			// ...get a random node and handle its component
-			Iterator<INode<?, ?, ?>> it = nodes.iterator();
+			Iterator<INode<?, ?, ?>> it = unhandled.iterator();
 			INode<?, ?, ?> node = it.next();
 			it.remove();
 
-			result.add(getWeaklyConnectedComponent(node, nodes));
+			Component component = getWeaklyConnectedComponent(node);
+			unhandled.removeAll(component);
+			result.add(component);
 		}
 		return result;
 	}
@@ -91,29 +93,29 @@ public class Connectivity {
 	/**
 	 * Get the weakly connected component of a given node.
 	 * @param node The node whose component should be calculated.
-	 * @param nodes A collection of nodes which were not yet handled. The calculated component will be removed from
-	 * this collection.
 	 * @return The node's component.
 	 */
-	private static Component getWeaklyConnectedComponent(INode<?, ?, ?> node, Collection<INode<?, ?, ?>> nodes) {
+	private static Component getWeaklyConnectedComponent(INode<?, ?, ?> node) {
 		Component result = new Component();
+		Deque<INode<?, ?, ?>> unvisited = new LinkedList<>();
+		unvisited.add(node);
 		result.add(node);
 
-		// Handle the node's preset. All of those nodes belong to this node's component.
-		for (INode<?, ?, ?> curNode : node.getPresetNodes()) {
-			result.add(curNode);
-			// We have to recursively handles nodes. However, to avoid endless loops, just handle nodes that
-			// were not yet visited before.
-			if (nodes.remove(curNode)) {
-				result.addAll(getWeaklyConnectedComponent(curNode, nodes));
-			}
-		}
+		while (!unvisited.isEmpty()) {
+			node = unvisited.removeLast();
 
-		// Handle the node's postset in the same way.
-		for (INode<?, ?, ?> curNode : node.getPostsetNodes()) {
-			result.add(curNode);
-			if (nodes.remove(curNode)) {
-				result.addAll(getWeaklyConnectedComponent(curNode, nodes));
+			// Handle the node's preset. All of those nodes belong to this node's component.
+			for (INode<?, ?, ?> curNode : node.getPresetNodes()) {
+				// If this was not yet already handled, add to unvisited
+				if (result.add(curNode))
+					unvisited.add(curNode);
+			}
+
+			// Handle the node's postset in the same way.
+			for (INode<?, ?, ?> curNode : node.getPostsetNodes()) {
+				// If this was not yet already handled, add to unvisited
+				if (result.add(curNode))
+					unvisited.add(curNode);
 			}
 		}
 
