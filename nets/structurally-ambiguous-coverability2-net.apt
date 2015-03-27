@@ -1,0 +1,25 @@
+.name "structurally ambiguous coverability 2"
+.type LPN
+.description "PN with two structurally different coverability graphs. Due to the deterministic order that the PetriNet
+class implements (e.g. in getTransitions), the generated coverability graph is actually deterministic. We use different
+transition names to generate the different graphs. See structurally-ambiguous-coverability1-net.apt"
+
+.places
+p1
+p2
+p3
+p4 // Needed so that acd and b reach different markings and we get "the paths we want" in the coverability graph
+
+.transitions
+a
+B
+c
+d
+
+.flows
+a: {2*p1} -> {p2}
+B: {p1} -> {p3}
+c: {p2} -> {2*p3}
+d: {2*p3} -> {p3, p1, p4}
+
+.initial_marking {2*p1}
