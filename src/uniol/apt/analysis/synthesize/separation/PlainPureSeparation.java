@@ -22,10 +22,14 @@ package uniol.apt.analysis.synthesize.separation;
 import java.util.ArrayList;
 import java.util.List;
 
+import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
+import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.util.equations.InequalitySystem;
+
+import static uniol.apt.util.DebugUtil.debug;
 
 /**
  * This class finds impure solutions to separation problems without any other properties.
@@ -54,6 +58,38 @@ class PlainPureSeparation extends BasicPureSeparation implements Separation {
 		this(utility, locationMap);
 		if (!properties.equals(new PNProperties(PNProperties.PURE, PNProperties.PLAIN)))
 			throw new UnsupportedPNPropertiesException();
+	}
+
+	/**
+	 * Calculate a region solving some state separation problem.
+	 * @param state The first state of the separation problem
+	 * @param otherState The second state of the separation problem
+	 * @return A region solving the problem or null.
+	 */
+	@Override
+	public Region calculateSeparatingRegion(State state, State otherState) {
+		final List<Region> basis = utility.getRegionBasis();
+		InequalitySystem system = prepareInequalitySystem();
+
+		List<Integer> inequality = new ArrayList<>(basis.size());
+		for (Region region : basis) {
+			int stateValue, otherStateValue;
+			try {
+				stateValue = region.getMarkingForState(state);
+				otherStateValue = region.getMarkingForState(otherState);
+			} catch (UnreachableException e) {
+				// Unreachable states cannot be separated
+				return null;
+			}
+			inequality.add(stateValue - otherStateValue);
+		}
+		// We want r_E(Psi_s - Psi_{s'}) != 0. Since we are in a finite LTS, we can just use ">".
+		system.addInequality(0, ">", inequality, "Region should separate state " + state
+				+ " from state " + otherState);
+
+		// Calculate the resulting linear combination
+		debug("Solving an inequality system to separate ", state, " from ", otherState, ":");
+		return findRegionFromSystem(system, basis);
 	}
 
 	/**

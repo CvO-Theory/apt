@@ -158,6 +158,16 @@ class BasicPureSeparation implements Separation {
 
 		// Calculate the resulting linear combination
 		debug("Solving an inequality system to separate ", state, " from ", event, ":");
+		return findRegionFromSystem(system, basis);
+	}
+
+	/**
+	 * Get a region by solving an inequality system.
+	 * @param system The inequality system to solve. Variables must be weights of the entries of the basis.
+	 * @param basis The region basis in which the solution of the system should be interpreted.
+	 * @return A pure region from a solution of the system or null if the system was unsolvable.
+	 */
+	protected Region findRegionFromSystem(InequalitySystem system, List<Region> basis) {
 		List<Integer> solution = system.findSolution();
 		if (solution.isEmpty())
 			return null;
