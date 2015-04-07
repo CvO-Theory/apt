@@ -132,6 +132,21 @@ public class SynthesizePNTest {
 	}
 
 	@Test
+	public void testACBCCLoopTS() throws MissingLocationException {
+		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
+		SynthesizePN synth = new SynthesizePN(new RegionUtility(ts), new PNProperties(PNProperties.OUTPUT_NONBRANCHING));
+
+		assertThat(synth.wasSuccessfullySeparated(), is(true));
+		// We know that there is a solution with three regions. Test that this really found an ON feasible set.
+		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
+					allOf(pureRegionWithWeightThat("b", greaterThanOrEqualTo(0)), pureRegionWithWeightThat("c", greaterThanOrEqualTo(0))),
+					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(0)), pureRegionWithWeightThat("c", greaterThanOrEqualTo(0))),
+					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(0)), pureRegionWithWeightThat("b", greaterThanOrEqualTo(0)))));
+		assertThat(synth.getFailedStateSeparationProblems(), empty());
+		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
+	}
+
+	@Test
 	public void testPathTSPure() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
@@ -460,7 +475,7 @@ public class SynthesizePNTest {
 		public void testConcurrentDiamond() {
 			PetriNet pn = setupPN(TestNetCollection.getConcurrentDiamondNet());
 
-			assertThat(SynthesizePN.isDistributedImplementation(utility, pn), is(true));
+			assertThat(SynthesizePN.isDistributedImplementation(utility, new PNProperties(), pn), is(true));
 		}
 
 		@Test
@@ -473,14 +488,14 @@ public class SynthesizePNTest {
 			pn.createFlow("t1", "post");
 			pn.createFlow("t2", "post");
 
-			assertThat(SynthesizePN.isDistributedImplementation(utility, pn), is(true));
+			assertThat(SynthesizePN.isDistributedImplementation(utility, new PNProperties(), pn), is(true));
 		}
 
 		@Test
 		public void testConflictingDiamond() {
 			PetriNet pn = setupPN(TestNetCollection.getConflictingDiamondNet());
 
-			assertThat(SynthesizePN.isDistributedImplementation(utility, pn), is(false));
+			assertThat(SynthesizePN.isDistributedImplementation(utility, new PNProperties(), pn), is(false));
 		}
 	}
 }

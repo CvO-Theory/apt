@@ -200,6 +200,19 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 		return conflictFree;
 	}
 
+	/**
+	 * Return a copy of this PNProperties instance without some property.
+	 * @param skip The property to skip.
+	 * @return A new PNProperties instance without the skipped property
+	 */
+	public PNProperties without(PNProperty skip) {
+		PNProperties result = new PNProperties();
+		for (PNProperty property : this)
+			if (!property.equals(skip))
+				result.add(property);
+		return result;
+	}
+
 	@Override
 	public boolean contains(Object o) {
 		if (!(o instanceof PNProperty))

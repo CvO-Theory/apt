@@ -27,6 +27,7 @@ import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.synthesize.MissingLocationException;
+import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 
@@ -38,6 +39,7 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
 @Test
+@SuppressWarnings("unchecked") // I hate generics
 public class SeparationUtilityTest {
 	public static abstract class Tester {
 		protected TransitionSystem ts;
@@ -142,6 +144,14 @@ public class SeparationUtilityTest {
 	}
 
 	@Test
+	public void testNoLocations() throws Exception {
+		TransitionSystem ts = TestTSCollection.getPersistentTS();
+
+		assertThat(SeparationUtility.getLocationMap(new RegionUtility(ts), new PNProperties()),
+				arrayContaining(nullValue(), nullValue()));
+	}
+
+	@Test
 	public void testLocations() throws Exception {
 		TransitionSystem ts = TestTSCollection.getPersistentTS();
 		ts.getArc("s0", "l", "a").putExtension("location", "X");
@@ -149,7 +159,8 @@ public class SeparationUtilityTest {
 		ts.getArc("l", "s1", "b").putExtension("location", "Y");
 		ts.getArc("r", "s1", "a").putExtension("location", "X");
 
-		assertThat(SeparationUtility.getLocationMap(new RegionUtility(ts)), arrayContaining("X", "Y"));
+		assertThat(SeparationUtility.getLocationMap(new RegionUtility(ts), new PNProperties()),
+				arrayContaining("X", "Y"));
 	}
 
 	@Test(expectedExceptions = MissingLocationException.class)
@@ -158,7 +169,26 @@ public class SeparationUtilityTest {
 		ts.getArc("s0", "l", "a").putExtension("location", "X");
 		ts.getArc("r", "s1", "a").putExtension("location", "X");
 
-		SeparationUtility.getLocationMap(new RegionUtility(ts));
+		SeparationUtility.getLocationMap(new RegionUtility(ts), new PNProperties());
+	}
+
+	@Test(expectedExceptions = MissingLocationException.class)
+	public void testMissingLocationON() throws Exception {
+		TransitionSystem ts = TestTSCollection.getPersistentTS();
+		PNProperties properties = new PNProperties(PNProperties.OUTPUT_NONBRANCHING);
+		ts.getArc("s0", "l", "a").putExtension("location", "X");
+		ts.getArc("r", "s1", "a").putExtension("location", "X");
+
+		SeparationUtility.getLocationMap(new RegionUtility(ts), properties);
+	}
+
+	@Test
+	public void testOutputNonbranching() throws Exception {
+		TransitionSystem ts = TestTSCollection.getPersistentTS();
+		PNProperties properties = new PNProperties(PNProperties.OUTPUT_NONBRANCHING);
+
+		assertThat(SeparationUtility.getLocationMap(new RegionUtility(ts), properties),
+				arrayContaining("0", "1"));
 	}
 }
 

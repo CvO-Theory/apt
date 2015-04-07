@@ -134,6 +134,13 @@ public class PNPropertiesTest {
 		assertThat(properties.add(PNProperties.SAFE), equalTo(true));
 		assertThat(properties.add(PNProperties.kBounded(7)), equalTo(false));
 	}
+
+	@Test
+	public void testWithout() {
+		properties.add(PNProperties.SAFE);
+		properties.add(PNProperties.PLAIN);
+		assertThat(properties.without(PNProperties.PLAIN), equalTo(new PNProperties(PNProperties.SAFE)));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

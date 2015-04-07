@@ -94,10 +94,11 @@ public final class SeparationUtility {
 	/**
 	 * Calculate a mapping from events to their location.
 	 * @param utility The region utility that describes the events.
+	 * @param properties Properties that may influence the location map.
 	 * @return An array containing the location for each event.
 	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
-	static public String[] getLocationMap(RegionUtility utility) throws MissingLocationException {
+	static public String[] getLocationMap(RegionUtility utility, PNProperties properties) throws MissingLocationException {
 		// Build a mapping from events to locations. Yaaay. Need to iterate over all arcs...
 		String[] locationMap = new String[utility.getNumberOfEvents()];
 		boolean hadEventWithLocation = false;
@@ -135,6 +136,12 @@ public final class SeparationUtility {
 			}
 		}
 
+		// We used the above as sanity checks, now handle output-nonbranching, if specified
+		if (properties.isOutputNonbranching()) {
+			for (int i = 0; i < locationMap.length; i++)
+				locationMap[i] = String.valueOf(i);
+		}
+
 		return locationMap;
 	}
 
@@ -147,8 +154,11 @@ public final class SeparationUtility {
 	 */
 	static public Separation createSeparationInstance(RegionUtility utility, PNProperties properties)
 			throws MissingLocationException {
-		String[] locationMap = getLocationMap(utility);
+		String[] locationMap = getLocationMap(utility, properties);
 		Separation result = null;
+		// Output-nonbranching is handled by getLocationMap()
+		properties = properties.without(PNProperties.OUTPUT_NONBRANCHING);
+
 		try {
 			if (result == null)
 				result = new MarkedGraphSeparation(utility, properties, locationMap);

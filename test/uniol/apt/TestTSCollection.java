@@ -609,13 +609,7 @@ public class TestTSCollection {
 	public static TransitionSystem getPlainTNetReachabilityTS() {
 		TransitionSystem ts = new TransitionSystem();
 
-		ts.createState("s0");
-		ts.createState("s1");
-		ts.createState("s2");
-		ts.createState("s3");
-		ts.createState("s4");
-		ts.createState("s5");
-
+		ts.createStates("s0", "s1", "s2", "s3", "s4", "s5");
 		ts.setInitialState("s0");
 
 		for (int i = 0; i < 2; i++) {
@@ -626,6 +620,21 @@ public class TestTSCollection {
 		for (int i = 0; i < 3; i++) {
 			ts.createArc("s" + i, "s" + (i+3), "b");
 		}
+		return ts;
+	}
+
+	public static TransitionSystem getACBCCLoopTS() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State[] states = ts.createStates("s0", "s1", "s2", "s3", "s4");
+		ts.setInitialState("s0");
+
+		ts.createArc("s0", "s1", "a");
+		ts.createArc("s1", "s2", "c");
+		ts.createArc("s2", "s3", "b");
+		ts.createArc("s3", "s4", "c");
+		ts.createArc("s4", "s0", "c");
+
 		return ts;
 	}
 }

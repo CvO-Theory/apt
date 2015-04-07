@@ -479,10 +479,10 @@ public class SynthesizePN {
 	 * @param pn The PetriNet to check
 	 * @return true if the pn is suitably distributed.
 	 */
-	static public boolean isDistributedImplementation(RegionUtility utility, PetriNet pn) {
+	static public boolean isDistributedImplementation(RegionUtility utility, PNProperties properties, PetriNet pn) {
 		String[] locationMap;
 		try {
-			locationMap = SeparationUtility.getLocationMap(utility);
+			locationMap = SeparationUtility.getLocationMap(utility, properties);
 		} catch (MissingLocationException e) {
 			debug("Couldn't get location map");
 			return false;
@@ -556,7 +556,7 @@ public class SynthesizePN {
 			assert false : regions;
 		}
 
-		assert isDistributedImplementation(utility, pn) : regions;
+		assert isDistributedImplementation(utility, properties, pn) : regions;
 
 		return pn;
 	}
