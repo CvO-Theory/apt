@@ -19,8 +19,11 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
@@ -224,23 +227,23 @@ class InequalitySystemSeparation implements Separation {
 	 * Add the needed inequalitites so that the system may only produce solutions where a single transition consumes
 	 * tokens from the place described by the region.
 	 */
-	private void requireOnlySingleConsumer(InequalitySystem sys, String event) {
+	private void requireOnlySingleConsumer(InequalitySystem sys, int event) {
 		int[] inequality = new int[systemNumberOfVariables];
 		Arrays.fill(inequality, 0);
 		Arrays.fill(inequality, systemBackwardWeightsStart,
 					systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
-		inequality[systemBackwardWeightsStart + utility.getEventIndex(event)] = 0;
-		sys.addInequality(0, "=", inequality, "Only event " + event + " may consume tokens");
+		inequality[systemBackwardWeightsStart + event] = 0;
+		sys.addInequality(0, "=", inequality, "Only event " + utility.getEventList().get(event)
+				+ " may consume tokens");
 	}
 
 	/**
 	 * Add the needed inequalities to guarantee that a distributable Petri Net region is calculated.
 	 * @param system The inequality system to which the inequalities should be added.
-	 * @param event Only events with the same location as this event may consume tokens from this region.
+	 * @param location The location that should be allowed from this region.
 	 */
-	private void requireDistributableNet(InequalitySystem sys, String event) {
+	private void requireDistributableNet(InequalitySystem sys, String location) {
 		int[] inequality = new int[systemNumberOfVariables];
-		String location = locationMap[utility.getEventIndex(event)];
 
 		if (location == null)
 			return;
@@ -251,7 +254,7 @@ class InequalitySystemSeparation implements Separation {
 				inequality[systemBackwardWeightsStart + eventIndex] = 1;
 		}
 
-		sys.addInequality(0, "=", inequality, "Only events with same location as event " + event
+		sys.addInequality(0, "=", inequality, "Only events with location " + location
 				+ " may consume tokens from this region");
 	}
 
@@ -302,21 +305,62 @@ class InequalitySystemSeparation implements Separation {
 	 * @return An array of more inequality systems of which at least one must be satisfied.
 	 */
 	private InequalitySystem[] prepareInequalitySystem(InequalitySystem systemNow, String event) {
-		InequalitySystem systemLater = null;
-		requireDistributableNet(systemNow, event);
+		List<InequalitySystem> ret = new ArrayList<>();
 
-		if (!properties.isConflictFree())
-			return new InequalitySystem[0];
+		if (event != null) {
+			int index = utility.getEventIndex(event);
+			String location = locationMap[index];
+			if (!properties.isConflictFree())
+				requireDistributableNet(systemNow, location);
+			else {
+				// Conflict free: Either there is just a single transition consuming token...
+				// (And thus this automatically satisfies any distribution)
+				InequalitySystem tmp = new InequalitySystem();
+				requireOnlySingleConsumer(tmp, index);
+				ret.add(tmp);
 
-		InequalitySystem[] ret = new InequalitySystem[] { new InequalitySystem(), new InequalitySystem() };
+				// ...or the preset is contained in the postset.
+				tmp = new InequalitySystem();
+				requireDistributableNet(tmp, location);
+				requirePostsetContainsPreset(tmp);
+				ret.add(tmp);
+			}
+		} else {
+			Set<String> locations = new HashSet<>(Arrays.asList(locationMap));
+			locations.remove(null);
+			if (!properties.isConflictFree()) {
+				// The solution must satisfy (some) distribution, add all of them as possible ones
+				for (String location : locations) {
+					InequalitySystem newSystem = new InequalitySystem();
+					requireDistributableNet(newSystem, location);
+					ret.add(newSystem);
+				}
+			} else {
+				// Conflict free: Either there is just a single transition consuming token...
+				// (And thus this automatically satisfies any distribution)
+				for (int index = 0; index < utility.getNumberOfEvents(); index++) {
+					InequalitySystem tmp = new InequalitySystem();
+					requireOnlySingleConsumer(tmp, index);
+					ret.add(tmp);
+				}
 
-		// Conflict free: Either there is just a single transition consuming token...
-		requireOnlySingleConsumer(ret[0], event);
+				// ...or the preset is contained in the postset (plus some distribution is satisfied,
+				// which requires lots of possible systems).
+				for (String location : locations) {
+					InequalitySystem newSystem = new InequalitySystem();
+					requireDistributableNet(newSystem, location);
+					requirePostsetContainsPreset(newSystem);
+					ret.add(newSystem);
+				}
+				if (locations.isEmpty()) {
+					InequalitySystem newSystem = new InequalitySystem();
+					requirePostsetContainsPreset(newSystem);
+					ret.add(newSystem);
+				}
+			}
+		}
 
-		// or the preset is contained in the postset.
-		requirePostsetContainsPreset(ret[1]);
-
-		return ret;
+		return ret.toArray(new InequalitySystem[ret.size()]);
 	}
 
 	/**
