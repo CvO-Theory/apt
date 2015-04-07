@@ -19,7 +19,6 @@
 
 package uniol.apt.util.equations;
 
-import java.io.StringWriter;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -276,9 +275,9 @@ public class InequalitySystem {
 
 		@Override
 		public String toString() {
-			StringWriter buffer = new StringWriter();
-			buffer.write("" + leftHandSide);
-			buffer.write(" " + comparator.toString() + " ");
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(leftHandSide).append(' ');
+			buffer.append(comparator.toString()).append(' ');
 			boolean first = true;
 			for (int j = 0; j < coefficients.size(); j++) {
 				BigInteger c = coefficients.get(j);
@@ -286,19 +285,19 @@ public class InequalitySystem {
 					continue;
 
 				if (!first)
-					buffer.write(" + ");
-				buffer.write("" + c);
-				buffer.write("*x[");
-				buffer.write("" + j);
-				buffer.write("]");
+					buffer.append(" + ");
+				buffer.append(c);
+				buffer.append("*x[");
+				buffer.append(j);
+				buffer.append("]");
 				first = false;
 			}
 			if (first)
-				buffer.write("0");
+				buffer.append("0");
 			if (!comment.isEmpty()) {
-				buffer.write("\t(");
-				buffer.write(comment);
-				buffer.write(")");
+				buffer.append("\t(");
+				buffer.append(comment);
+				buffer.append(")");
 			}
 			return buffer.toString();
 		}
@@ -545,13 +544,13 @@ public class InequalitySystem {
 
 	@Override
 	public String toString() {
-		StringWriter buffer = new StringWriter();
-		buffer.write("[\n");
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[\n");
 		for (Inequality inequality : inequalities) {
-			buffer.write(inequality.toString());
-			buffer.write("\n");
+			buffer.append(inequality.toString());
+			buffer.append("\n");
 		}
-		buffer.write("]");
+		buffer.append("]");
 		return buffer.toString();
 	}
 }
