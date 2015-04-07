@@ -207,6 +207,29 @@ public class InequalitySystemTest {
 			assertThat(y, lessThan(0));
 			assertThat(system.fulfilledBy(solution), is(true));
 		}
+
+		@Test
+		public void testAnyOf() {
+			InequalitySystem system = new InequalitySystem();
+			system.addInequality(42, "=", 1);
+
+			InequalitySystem[] anyOf = new InequalitySystem[] {
+				new InequalitySystem(), new InequalitySystem()
+			};
+
+			anyOf[0].addInequality(21, "=", 1);
+			anyOf[1].addInequality(21, "=", 1, -1);
+
+			List<Integer> solution = InequalitySystem.findSolution(system, anyOf);
+			assertThat(solution, hasSize(2));
+
+			int x = solution.get(0), y = solution.get(1);
+			assertThat(x, equalTo(42));
+			assertThat(y, equalTo(21));
+			assertThat(system.fulfilledBy(solution), is(true));
+			assertThat(anyOf[0].fulfilledBy(solution), is(false));
+			assertThat(anyOf[1].fulfilledBy(solution), is(true));
+		}
 	}
 
 	@Test

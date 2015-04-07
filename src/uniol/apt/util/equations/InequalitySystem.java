@@ -462,38 +462,72 @@ public class InequalitySystem {
 	 * @return A solution to the system or an empty list
 	 */
 	public List<Integer> findSolution() {
-		List<Integer> solution = findSolutionSMTInterpol();
+		return findSolution(this);
+	}
+
+	/**
+	 * Calculate a solution to an inequality system where at least one out of some optional systems must be
+	 * satisfied as well.
+	 * @param required The system that must be satisfied by any solution
+	 * @param anyOf Some systems where at least one of these must be satisfied by a solution.
+	 * @return A solution to the system or an empty list.
+	 */
+	static public List<Integer> findSolution(InequalitySystem required, InequalitySystem... anyOf) {
+		int numVariables = required.getNumberOfVariables();
+		for (int i = 0; i < anyOf.length; i++)
+			numVariables = Math.max(numVariables, anyOf[i].getNumberOfVariables());
+
+		Script script = createScript(numVariables);
+		script.assertTerm(toTerm(script, required.inequalities));
+		if (anyOf.length > 0) {
+			Term[] anyOfTerms = new Term[anyOf.length];
+			for (int i = 0; i < anyOf.length; i++)
+				anyOfTerms[i] = toTerm(script, anyOf[i].inequalities);
+			if (anyOfTerms.length == 1)
+				script.assertTerm(anyOfTerms[0]);
+			else
+				script.assertTerm(script.term("or", anyOfTerms));
+		}
+		List<Integer> solution = handleSolution(script, numVariables);
+
 		if (solution.isEmpty()) {
 			debug("No solution found for:");
-			debug(this);
+			debug(required);
+			if (anyOf.length > 0) {
+				debug("Plus at least one of the following systems:");
+				for (int i = 0; i < anyOf.length; i++)
+					debug(anyOf[i]);
+			}
 		} else {
 			debug("Solution:");
 			debug(solution);
-			assert fulfilledBy(solution) : solution + " should solve this system but does not";
+			assert required.fulfilledBy(solution) : solution + " should solve this system but does not";
 		}
 		return Collections.unmodifiableList(solution);
 	}
 
-	private List<Integer> findSolutionSMTInterpol() {
+	static private Script createScript(int numVariables) {
 		// Set up SMTInterpol in a way that it doesn't produce debug output
 		Logger logger = Logger.getRootLogger();
 		logger.addAppender(new NullAppender());
 		Script script = new SMTInterpol(logger, false);
-
-		// If we have a homogeneous system, we can produce a rational solution and easily lift it to integer
-		final boolean homogeneous = isHomogeneous() && false; // TODO: Implement this correctly
-		if (homogeneous)
-			script.setLogic(Logics.QF_LRA);
-		else
-			script.setLogic(Logics.QF_LIA);
+		script.setLogic(Logics.QF_LIA);
 
 		// Create variables
-		final int numVariables = getNumberOfVariables();
-		Sort sort = homogeneous ? script.sort("Real") : script.sort("Int");
+		Sort sort = script.sort("Int");
 		for (int i = 0; i < numVariables; i++)
 			script.declareFun("var" + i, new Sort[0], sort);
 
-		// Assert each inequality
+		return script;
+	}
+
+	static private Term toTerm(Script script, Collection<Inequality> inequalities) {
+		if (inequalities.isEmpty())
+			return script.term("true");
+
+		// Handle each inequality
+		Term[] system = new Term[inequalities.size()];
+		int nextSystemEntry = 0;
 		for (Inequality inequality : inequalities) {
 			List<BigInteger> coefficients = inequality.getCoefficients();
 			Term rhs;
@@ -512,9 +546,15 @@ public class InequalitySystem {
 
 			Term lhs = script.numeral(inequality.getLeftHandSide());
 			String comparator = inequality.getComparator().toString();
-			script.assertTerm(script.term(comparator, lhs, rhs));
+			system[nextSystemEntry++] = script.term(comparator, lhs, rhs);
 		}
 
+		if (nextSystemEntry == 1)
+			return system[0];
+		return script.term("and", system);
+	}
+
+	static private List<Integer> handleSolution(Script script, int numVariables) {
 		LBool isSat = script.checkSat();
 		if (isSat != LBool.SAT) {
 			debug("SMTInterpol produced unsat: " + isSat.toString());
@@ -523,7 +563,7 @@ public class InequalitySystem {
 
 		// Transform the solution
 		Model model = script.getModel();
-		List<Integer> solution = new ArrayList<>();
+		List<Integer> solution = new ArrayList<>(numVariables);
 		for (int i = 0; i < numVariables; i++) {
 			Term term = model.evaluate(script.term("var" + i));
 			assert term instanceof ConstantTerm : term;
@@ -533,11 +573,7 @@ public class InequalitySystem {
 
 			Rational rat = (Rational) value;
 			solution.add(rat.numerator().intValue());
-			if (!homogeneous)
-				assert rat.denominator().equals(BigInteger.ONE) : value;
-			else {
-				assert false : "Still need to handle the denominators correctly";
-			}
+			assert rat.denominator().equals(BigInteger.ONE) : value;
 		}
 		return solution;
 	}
