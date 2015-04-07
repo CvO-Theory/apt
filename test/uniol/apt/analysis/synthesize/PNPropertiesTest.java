@@ -22,9 +22,13 @@ package uniol.apt.analysis.synthesize;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.analysis.synthesize.Matchers.*;
 
@@ -34,112 +38,109 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 public class PNPropertiesTest {
 	private PNProperties properties;
 
+	static private Matcher<? super PNProperties> containsAll(PNProperties expected) {
+		final PNProperties copy = new PNProperties(expected);
+		return new TypeSafeDiagnosingMatcher<PNProperties>() {
+			@Override
+			public void describeTo(Description description) {
+				description.appendText(copy.toString());
+			}
+
+			@Override
+			public boolean matchesSafely(PNProperties properties, Description description) {
+				return properties.containsAll(copy);
+			}
+		};
+	}
+
 	@BeforeMethod
 	public void setup() {
 		properties = new PNProperties();
 	}
 
 	@Test
-	public void emptyPropertiesTest() {
-		assertThat(properties.size(), equalTo(0));
-		assertThat(properties.iterator().hasNext(), equalTo(false));
-	}
-
-	@Test(expectedExceptions = NoSuchElementException.class)
-	public void emptyPropertiesIterationTest() {
-		properties.iterator().next();
-	}
-
-	@DataProvider(name = "properties")
-	private Object[][] createProperties() {
-		return new Object[][] {
-			{ PNProperties.kBounded(42) },
-			{ PNProperties.SAFE },
-			{ PNProperties.PURE },
-			{ PNProperties.PLAIN },
-			{ PNProperties.TNET },
-			{ PNProperties.OUTPUT_NONBRANCHING },
-			{ PNProperties.CONFLICT_FREE },
-		};
+	public void testNotKBounded() {
+		assertThat(properties.isKBounded(), is(false));
 	}
 
 	@Test
-	public void addAllTest() {
-		properties.addAll(Arrays.asList(PNProperties.SAFE, PNProperties.kBounded(7), PNProperties.PURE,
-					PNProperties.PLAIN, PNProperties.TNET, PNProperties.OUTPUT_NONBRANCHING,
-					PNProperties.CONFLICT_FREE));
-		assertThat(properties, containsInAnyOrder(PNProperties.SAFE, PNProperties.PURE, PNProperties.PLAIN,
-					PNProperties.TNET, PNProperties.OUTPUT_NONBRANCHING,
-					PNProperties.CONFLICT_FREE));
-	}
-
-	@Test(dataProvider = "properties")
-	public void notContainsTest(PNProperties.PNProperty property) {
-		assertThat(properties.contains(property), equalTo(false));
-	}
-
-	@Test(dataProvider = "properties")
-	public void addTest(PNProperties.PNProperty property) {
-		assertThat(properties.add(property), equalTo(true));
+	public void testAddKBoundedAndSafe() {
+		properties.requireKBounded(7);
+		properties.requireSafe();
+		assertThat(properties.isKBounded(), is(true));
+		assertThat(properties.getKForKBounded(), is(1));
 	}
 
 	@Test
-	public static class SingletonListTest {
-		private Object[] makeSimpleProperty(PNProperties.PNProperty prop) {
-			return new Object[] {
-				new PNProperties(prop), new PNProperties.PNProperty[] { prop }
-			};
-		}
-
-		@DataProvider(name = "propertiesAndMatchers")
-		private Object[][] createProperties() {
-			return new Object[][] {
-				makeSimpleProperty(PNProperties.kBounded(42)),
-				makeSimpleProperty(PNProperties.SAFE),
-				makeSimpleProperty(PNProperties.PURE),
-				makeSimpleProperty(PNProperties.PLAIN),
-				{ new PNProperties(PNProperties.TNET),
-					new PNProperties.PNProperty[] { PNProperties.TNET, PNProperties.PLAIN,
-						PNProperties.PURE, PNProperties.OUTPUT_NONBRANCHING } },
-				makeSimpleProperty(PNProperties.OUTPUT_NONBRANCHING),
-				{ new PNProperties(PNProperties.CONFLICT_FREE),
-					new PNProperties.PNProperty[] { PNProperties.CONFLICT_FREE, PNProperties.PLAIN } },
-			};
-		}
-
-		@Test(dataProvider = "propertiesAndMatchers")
-		public void containsTest(PNProperties properties, PNProperties.PNProperty[] property) {
-			assertThat(properties.contains(property[0]), equalTo(true));
-		}
-
-		@Test(dataProvider = "propertiesAndMatchers")
-		public void iterateTest(PNProperties properties, PNProperties.PNProperty[] property) {
-			assertThat(properties, containsInAnyOrder(property));
-		}
-
-		@Test(dataProvider = "propertiesAndMatchers")
-		public void sizeTest(PNProperties properties, PNProperties.PNProperty[] property) {
-			assertThat(properties.size(), equalTo(property.length));
-		}
+	public void testAddSafeAndKBounded() {
+		properties.requireSafe();
+		properties.requireKBounded(7);
+		assertThat(properties.isKBounded(), is(true));
+		assertThat(properties.getKForKBounded(), is(1));
 	}
 
 	@Test
-	public void addKBoundedAndSafeTest() {
-		assertThat(properties.add(PNProperties.kBounded(7)), equalTo(true));
-		assertThat(properties.add(PNProperties.SAFE), equalTo(true));
+	public void testContainsAll() {
+		PNProperties properties2 = new PNProperties();
+		assertThat(properties, containsAll(properties2));
+
+		properties2.requireSafe();
+		assertThat(properties, not(containsAll(properties2)));
+
+		properties2 = new PNProperties();
+		properties.requireSafe();
+		assertThat(properties, containsAll(properties2));
+
+		properties2.requireKBounded(42);
+		assertThat(properties, containsAll(properties2));
+
+		properties.setPlain(true);
+		assertThat(properties, containsAll(properties2));
+
+		properties2.setPure(true);
+		assertThat(properties, not(containsAll(properties2)));
+
+		properties.setPure(true);
+		assertThat(properties, containsAll(properties2));
 	}
 
 	@Test
-	public void addSafeAndKBoundedTest() {
-		assertThat(properties.add(PNProperties.SAFE), equalTo(true));
-		assertThat(properties.add(PNProperties.kBounded(7)), equalTo(false));
+	public void testEquals() {
+		PNProperties properties2 = new PNProperties();
+		assertThat(properties, equalTo(properties2));
+		assertThat(properties.hashCode(), equalTo(properties2.hashCode()));
+
+		properties2.requireSafe();
+		assertThat(properties, not(equalTo(properties2)));
+
+		properties.requireSafe();
+		assertThat(properties.hashCode(), equalTo(properties2.hashCode()));
+
+		properties.setPlain(true);
+		assertThat(properties, not(equalTo(properties2)));
+
+		properties2.setPlain(true);
+		assertThat(properties.hashCode(), equalTo(properties2.hashCode()));
 	}
 
 	@Test
-	public void testWithout() {
-		properties.add(PNProperties.SAFE);
-		properties.add(PNProperties.PLAIN);
-		assertThat(properties.without(PNProperties.PLAIN), equalTo(new PNProperties(PNProperties.SAFE)));
+	public void testToString() {
+		assertThat(properties, hasToString("[]"));
+
+		properties.requireKBounded(42);
+		assertThat(properties, hasToString("[42-bounded]"));
+
+		properties.requireSafe();
+		assertThat(properties, hasToString("[safe]"));
+
+		properties.setConflictFree(true);
+		assertThat(properties, hasToString("[safe, conflict-free]"));
+
+		properties.setOutputNonbranching(true);
+		assertThat(properties, hasToString("[safe, output-nonbranching, conflict-free]"));
+
+		properties.setConflictFree(false);
+		assertThat(properties, hasToString("[safe, output-nonbranching]"));
 	}
 }
 

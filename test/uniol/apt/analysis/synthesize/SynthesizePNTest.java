@@ -134,7 +134,9 @@ public class SynthesizePNTest {
 	@Test
 	public void testACBCCLoopTS() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
-		SynthesizePN synth = new SynthesizePN(new RegionUtility(ts), new PNProperties(PNProperties.OUTPUT_NONBRANCHING));
+		PNProperties properties = new PNProperties();
+		properties.setOutputNonbranching(true);
+		SynthesizePN synth = new SynthesizePN(new RegionUtility(ts), properties);
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// We know that there is a solution with three regions. Test that this really found an ON feasible set.
@@ -150,7 +152,9 @@ public class SynthesizePNTest {
 	public void testPathTSPure() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
-		SynthesizePN synth = new SynthesizePN(utility, new PNProperties(PNProperties.PURE));
+		PNProperties properties = new PNProperties();
+		properties.setPure(true);
+		SynthesizePN synth = new SynthesizePN(utility, properties);
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
 		// Can't really be more specific, way too many possibilities
@@ -208,7 +212,10 @@ public class SynthesizePNTest {
 		State t = ts.getNode("t");
 		State u = ts.getNode("u");
 		State v = ts.getNode("v");
-		SynthesizePN synth = new SynthesizePN(ts, new PNProperties(PNProperties.PLAIN));
+
+		PNProperties properties = new PNProperties();
+		properties.setPlain(true);
+		SynthesizePN synth = new SynthesizePN(ts, properties);
 
 		assertThat(synth.getSeparatingRegions(), everyItem(plainRegion()));
 		assertThat(synth.getFailedEventStateSeparationProblems().toString(),
@@ -238,7 +245,9 @@ public class SynthesizePNTest {
 	public void testWordB2AB5AB6AB6Pure() throws MissingLocationException, UnboundedException {
 		TransitionSystem ts = SynthesizeWordModule.makeTS(Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b",
 					"a", "b", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b"));
-		SynthesizePN synth = new SynthesizePN(ts, new PNProperties(PNProperties.PURE));
+		PNProperties properties = new PNProperties();
+		properties.setPure(true);
+		SynthesizePN synth = new SynthesizePN(ts, properties);
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 

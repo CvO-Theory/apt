@@ -532,7 +532,7 @@ public class SynthesizePN {
 				assert false : regions;
 			}
 		if (properties.isKBounded())
-			assert new Bounded().checkBounded(pn).k <= properties.getKForKBoundedness() : regions;
+			assert new Bounded().checkBounded(pn).k <= properties.getKForKBounded() : regions;
 		if (properties.isOutputNonbranching())
 			assert new OutputNonBranching(pn).check() : regions;
 		if (properties.isConflictFree())

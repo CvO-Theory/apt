@@ -46,7 +46,7 @@ public class InequalitySystemSeparationTest {
 
 		@Override
 		public boolean supportsImpure() {
-			return !properties.contains(PNProperties.PURE);
+			return !properties.isPure();
 		}
 
 		@Override
@@ -59,12 +59,20 @@ public class InequalitySystemSeparationTest {
 	@Factory
 	public Object[] factory() {
 		List<Object> tests = new ArrayList<>();
-		tests.addAll(Arrays.asList(SeparationTestHelper.factory(new InequalitySystemSeparationFactory(
-							new PNProperties()))));
-		tests.addAll(Arrays.asList(SeparationTestHelper.factory(new InequalitySystemSeparationFactory(
-							new PNProperties(PNProperties.PURE)))));
-		tests.addAll(Arrays.asList(SeparationTestHelper.factory(new InequalitySystemSeparationFactory(
-							new PNProperties(PNProperties.kBounded(19))))));
+		PNProperties properties;
+		
+		properties = new PNProperties();
+		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
+						new InequalitySystemSeparationFactory(properties))));
+
+		properties = new PNProperties();
+		properties.setPure(true);
+		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
+						new InequalitySystemSeparationFactory(properties))));
+
+		properties = new PNProperties();
+		properties.requireKBounded(19);
+
 		return tests.toArray(new Object[tests.size()]);
 	}
 }

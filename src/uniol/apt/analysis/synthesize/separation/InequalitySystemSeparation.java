@@ -75,8 +75,9 @@ class InequalitySystemSeparation implements Separation {
 		this.system = makeInequalitySystem();
 
 		if (properties.isKBounded())
-			requireKBoundedness(properties.getKForKBoundedness());
-		if (properties.isPlain())
+			requireKBounded(properties.getKForKBounded());
+		// Our definition of conflict-free requires plainness
+		if (properties.isPlain() || properties.isConflictFree())
 			requirePlainness();
 		if (properties.isTNet())
 			requireTNet();
@@ -174,14 +175,14 @@ class InequalitySystemSeparation implements Separation {
 	 * Add the needed inequalities so that the system may only produce k-bounded regions.
 	 * @param k The limit for the bound.
 	 */
-	private void requireKBoundedness(int k) {
+	private void requireKBounded(int k) {
 		// Require k >= r_S(s) = r_S(s0) + r_E(Psi_s)
 		for (State state : utility.getTransitionSystem().getNodes()) {
 			try {
 				// k >= r_S(state)
 				int[] inequality = coefficientsForStateMarking(state);
 				system.addInequality(k, ">=", inequality, "State " + state
-						+ " must obey " + k + "-boundedness");
+						+ " must obey " + k + "-bounded");
 			} catch (UnreachableException e) {
 				continue;
 			}
@@ -210,11 +211,11 @@ class InequalitySystemSeparation implements Separation {
 	 * This requires plainness as a pre-condition!
 	 */
 	private void requireTNet() {
-		// The implementation (in PNProperties) makes sure that T-Net also requires output-nonbranching. So we
-		// only have to handle the postsets here.
 		int[] inequality = new int[systemNumberOfVariables];
 		Arrays.fill(inequality, systemForwardWeightsStart,
 				systemForwardWeightsStart + utility.getNumberOfEvents(), 1);
+		Arrays.fill(inequality, systemBackwardWeightsStart,
+				systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
 		system.addInequality(1, ">=", inequality, "T-Net");
 	}
 

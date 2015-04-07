@@ -229,24 +229,24 @@ public class SynthesizeModule extends AbstractModule {
 					case "none":
 						break;
 					case "safe":
-						result.add(PNProperties.SAFE);
+						result.requireSafe();
 						break;
 					case "pure":
-						result.add(PNProperties.PURE);
+						result.setPure(true);
 						break;
 					case "plain":
-						result.add(PNProperties.PLAIN);
+						result.setPlain(true);
 						break;
 					case "tnet":
-						result.add(PNProperties.TNET);
+						result.setTNet(true);
 						break;
 					case "output-nonbranching":
 					case "on":
-						result.add(PNProperties.OUTPUT_NONBRANCHING);
+						result.setOutputNonbranching(true);
 						break;
 					case "conflict-free":
 					case "cf":
-						result.add(PNProperties.CONFLICT_FREE);
+						result.setConflictFree(true);
 						break;
 					case "verbose":
 						verbose = true;
@@ -269,7 +269,7 @@ public class SynthesizeModule extends AbstractModule {
 							if (k < 1)
 								throw new ModuleException("Cannot parse '" + prop + "': "
 										+ "Bound must be positive");
-							result.add(PNProperties.kBounded(k));
+							result.requireKBounded(k);
 						} else
 							throw new ModuleException("Cannot parse '" + prop
 									+ "': Unknown property");

@@ -19,81 +19,15 @@
 
 package uniol.apt.analysis.synthesize;
 
-import java.util.AbstractSet;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.List;
 
 /**
- * Collection of properties that a (synthesized) Petri Net can/should satisfy.
+ * Properties that a (synthesized) Petri Net can/should satisfy.
  * @author Uli Schlachter
  */
-public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
-	static public KBounded kBounded(int k) {
-		return new KBounded(k);
-	}
-
-	public final static KBounded SAFE = kBounded(1);
-	public final static PNProperty PURE = new PNProperty() {
-		@Override
-		public String toString() {
-			return "PURE";
-		}
-	};
-	public final static PNProperty PLAIN = new PNProperty() {
-		@Override
-		public String toString() {
-			return "PLAIN";
-		}
-	};
-	public final static PNProperty TNET = new PNProperty() {
-		@Override
-		public String toString() {
-			return "TNET";
-		}
-	};
-	public final static PNProperty OUTPUT_NONBRANCHING = new PNProperty() {
-		@Override
-		public String toString() {
-			return "OUTPUT_NONBRANCHING";
-		}
-	};
-	public final static PNProperty CONFLICT_FREE = new PNProperty() {
-		@Override
-		public String toString() {
-			return "CONFLICT_FREE";
-		}
-	};
-
-	static public interface PNProperty {
-	}
-
-	static public class KBounded implements PNProperty {
-		final public int k;
-
-		public KBounded(int k) {
-			assert k >= 1;
-			this.k = k;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			return o instanceof KBounded && ((KBounded) o).k == k;
-		}
-
-		@Override
-		public int hashCode() {
-			return k;
-		}
-
-		@Override
-		public String toString() {
-			if (k == 1)
-				return "SAFE";
-			return k + "-BOUNDED";
-		}
-	}
-
+public class PNProperties {
 	// -1 means no k specified
 	final static private int KBOUNDED_DEFAULT = -1;
 	private int kBounded = KBOUNDED_DEFAULT;
@@ -110,20 +44,15 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	}
 
 	/**
-	 * Create a new Petri net properties instance from the given properties.
-	 * @param properties A list of properties to copy
+	 * Create a copy of a PNProperties instance.
 	 */
-	public PNProperties(PNProperty... properties) {
-		for (PNProperty property : properties)
-			add(property);
-	}
-
-	/**
-	 * Create a new Petri net properties instance from the given collection.
-	 * @param properties A collection of properties to copy
-	 */
-	public PNProperties(Collection<? extends PNProperty> properties) {
-		addAll(properties);
+	public PNProperties(PNProperties other) {
+		kBounded = other.kBounded;
+		pure = other.pure;
+		plain = other.plain;
+		tnet = other.tnet;
+		outputNonbranching = other.outputNonbranching;
+		conflictFree = other.conflictFree;
 	}
 
 	/**
@@ -152,12 +81,38 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	}
 
 	/**
-	 * Return the k that for k-boundedness. This may only be called if isKBounded() returns true.
-	 * @return the k for k-boundedness
+	 * Make sure that that this instance requires safeness.
 	 */
-	public int getKForKBoundedness() {
+	public void requireSafe() {
+		requireKBounded(1);
+	}
+
+	/**
+	 * Return the k for k-bounded. This may only be called if isKBounded() returns true.
+	 * @return the k for k-bounded
+	 */
+	public int getKForKBounded() {
 		assert isKBounded();
 		return kBounded;
+	}
+
+	/**
+	 * Make sure this instance requires at least k-boundedness.
+	 * @param k the k for k-bounded
+	 */
+	public void requireKBounded(int k) {
+		assert k >= 0;
+		if (!isKBounded(k))
+			kBounded = k;
+	}
+
+	/**
+	 * Set the k for k-bounded.
+	 * @param k The new value
+	 */
+	public void setKBounded(int k) {
+		assert k >= 0;
+		kBounded = k;
 	}
 
 	/**
@@ -169,11 +124,27 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	}
 
 	/**
+	 * Set the pureness value of this property description.
+	 * @param value whether pureness should be required.
+	 */
+	public void setPure(boolean value) {
+		pure = value;
+	}
+
+	/**
 	 * Return true if this property description requires plainness.
 	 * @return true if plain
 	 */
 	public boolean isPlain() {
 		return plain;
+	}
+
+	/**
+	 * Set the plainness value of this property description.
+	 * @param value whether plainness should be required.
+	 */
+	public void setPlain(boolean value) {
+		plain = value;
 	}
 
 	/**
@@ -185,11 +156,27 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	}
 
 	/**
+	 * Set the TNet value of this property description.
+	 * @param value whether TNet should be required.
+	 */
+	public void setTNet(boolean value) {
+		tnet = value;
+	}
+
+	/**
 	 * Return true if this property description requires an output nonbranching PN.
 	 * @return true if output nonbranching
 	 */
 	public boolean isOutputNonbranching() {
 		return outputNonbranching;
+	}
+
+	/**
+	 * Set the output-nonbranching value of this property description.
+	 * @param value whether output-nonbranching should be required.
+	 */
+	public void setOutputNonbranching(boolean value) {
+		outputNonbranching = value;
 	}
 
 	/**
@@ -201,129 +188,105 @@ public class PNProperties extends AbstractSet<PNProperties.PNProperty> {
 	}
 
 	/**
-	 * Return a copy of this PNProperties instance without some property.
-	 * @param skip The property to skip.
-	 * @return A new PNProperties instance without the skipped property
+	 * Set the conflict freeness value of this property description.
+	 * @param value whether conflict freeness should be required.
 	 */
-	public PNProperties without(PNProperty skip) {
-		PNProperties result = new PNProperties();
-		for (PNProperty property : this)
-			if (!property.equals(skip))
-				result.add(property);
-		return result;
+	public void setConflictFree(boolean value) {
+		conflictFree = value;
 	}
 
-	@Override
-	public boolean contains(Object o) {
-		if (!(o instanceof PNProperty))
-			return false;
-
-		PNProperty property = (PNProperty) o;
-		if (property instanceof KBounded) {
-			return isKBounded(((KBounded) property).k);
-		} else if (PURE.equals(property)) {
-			return pure;
-		} else if (PLAIN.equals(property)) {
-			return plain;
-		} else if (TNET.equals(property)) {
-			return tnet;
-		} else if (OUTPUT_NONBRANCHING.equals(property)) {
-			return outputNonbranching;
-		} else if (CONFLICT_FREE.equals(property)) {
-			return conflictFree;
+	/**
+	 * Test if this properties instance a superset of another instance.
+	 */
+	public boolean containsAll(PNProperties other) {
+		if (other.isKBounded()) {
+			if (!isKBounded() || getKForKBounded() > other.getKForKBounded())
+				return false;
 		}
-		return false;
-	}
-
-	@Override
-	public boolean add(PNProperty property) {
-		if (contains(property))
+		if (other.isPure() && !isPure())
 			return false;
-		if (property instanceof KBounded) {
-			int k = ((KBounded) property).k;
-			if (!isKBounded(k))
-				kBounded = k;
-		} else if (PURE.equals(property)) {
-			pure = true;
-		} else if (PLAIN.equals(property)) {
-			plain = true;
-		} else if (TNET.equals(property)) {
-			tnet = true;
-			// Our definition of TNet includes plainness
-			plain = true;
-			// An impure TNet (while technically possible) makes no sense, because if a transition has a
-			// place as a side-condition, the place cannot be connected to anything else and thus never
-			// changes its marking
-			pure = true;
-			// A T-Net is ON + the same condition on the presets.
-			outputNonbranching = true;
-		} else if (OUTPUT_NONBRANCHING.equals(property)) {
-			outputNonbranching = true;
-		} else if (CONFLICT_FREE.equals(property)) {
-			conflictFree = true;
-			// Out definition of CF requires plainness
-			plain = true;
-		}
+		if (other.isPlain() && !isPlain())
+			return false;
+		if (other.isTNet() && !isTNet())
+			return false;
+		if (other.isOutputNonbranching() && !isOutputNonbranching())
+			return false;
+		if (other.isConflictFree() && !isConflictFree())
+			return false;
 		return true;
 	}
 
 	@Override
-	public int size() {
-		int size = 0;
-		for (Iterator<?> it = iterator(); it.hasNext(); it.next())
-			size++;
-		return size;
+	public int hashCode() {
+		int hashCode = 0;
+		if (pure)
+			hashCode |= 1 << 0;
+		if (plain)
+			hashCode |= 1 << 1;
+		if (tnet)
+			hashCode |= 1 << 2;
+		if (outputNonbranching)
+			hashCode |= 1 << 3;
+		if (conflictFree)
+			hashCode |= 1 << 4;
+		if (isKBounded())
+			hashCode |= getKForKBounded() << 5;
+		return hashCode;
 	}
 
 	@Override
-	public Iterator<PNProperty> iterator() {
-		return new Iterator<PNProperty>() {
-			int state = 0;
+	public boolean equals(Object o) {
+		if (!(o instanceof PNProperties))
+			return false;
+		PNProperties other = (PNProperties) o;
+		if (kBounded != other.kBounded)
+			return false;
+		if (pure != other.pure)
+			return false;
+		if (plain != other.plain)
+			return false;
+		if (tnet != other.tnet)
+			return false;
+		if (outputNonbranching != other.outputNonbranching)
+			return false;
+		if (conflictFree != other.conflictFree)
+			return false;
+		return true;
+	}
 
-			@Override
-			public boolean hasNext() {
-				if (state == 0 && !isKBounded())
-					state++;
-				if (state == 1 && !pure)
-					state++;
-				if (state == 2 && !plain)
-					state++;
-				if (state == 3 && !tnet)
-					state++;
-				if (state == 4 && !outputNonbranching)
-					state++;
-				if (state == 5 && !conflictFree)
-					state++;
-				return state < 6;
-			}
+	@Override
+	public String toString() {
+		List<String> tmpList = new ArrayList<>();
 
-			@Override
-			public PNProperty next() {
-				// update state member variable
-				hasNext();
-				switch (state++) {
-					case 0:
-						return kBounded(kBounded);
-					case 1:
-						return PURE;
-					case 2:
-						return PLAIN;
-					case 3:
-						return TNET;
-					case 4:
-						return OUTPUT_NONBRANCHING;
-					case 5:
-						return CONFLICT_FREE;
-					default:
-						throw new NoSuchElementException();
-				}
-			}
+		if (isSafe())
+			tmpList.add("safe");
+		else if (isKBounded())
+			tmpList.add(getKForKBounded() + "-bounded");
+		if (isPure())
+			tmpList.add("pure");
+		if (isPlain())
+			tmpList.add("plain");
+		if (isTNet())
+			tmpList.add("tnet");
+		if (isOutputNonbranching())
+			tmpList.add("output-nonbranching");
+		if (isConflictFree())
+			tmpList.add("conflict-free");
 
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
+		if (tmpList.isEmpty())
+			return "[]";
+
+		Iterator<String> iter = tmpList.iterator();
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		sb.append(iter.next());
+		while (iter.hasNext()) {
+			sb.append(", ");
+			sb.append(iter.next());
+		}
+
+		sb.append(']');
+		return sb.toString();
 	}
 }
 

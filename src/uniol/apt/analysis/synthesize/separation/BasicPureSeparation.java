@@ -60,7 +60,10 @@ class BasicPureSeparation implements Separation {
 	public BasicPureSeparation(RegionUtility utility, PNProperties properties,
 			String[] locationMap) throws UnsupportedPNPropertiesException {
 		this(utility, locationMap);
-		if (!properties.equals(new PNProperties(PNProperties.PURE)))
+
+		PNProperties required = new PNProperties();
+		required.setPure(true);
+		if (!properties.equals(required))
 			throw new UnsupportedPNPropertiesException();
 	}
 

@@ -22,6 +22,7 @@ package uniol.apt.analysis.synthesize;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.analysis.synthesize.SynthesizeModule.Options;
 
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -31,6 +32,13 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 /** @author Uli Schlachter */
 @Test
 public class SynthesizeModuleTest {
+	private PNProperties properties;
+
+	@BeforeMethod
+	public void setup() {
+		properties = new PNProperties();
+	}
+
 	// I'm too lazy to type
 	private PNProperties parse(String arg) throws ModuleException {
 		Options options = Options.parseProperties(arg);
@@ -41,52 +49,61 @@ public class SynthesizeModuleTest {
 
 	@Test
 	public void testNone() throws Exception {
-		assertThat(parse("none"), equalTo(new PNProperties()));
+		assertThat(parse("none"), equalTo(properties));
 	}
 
 	@Test
 	public void testPure() throws Exception {
-		assertThat(parse("pure"), equalTo(new PNProperties(PNProperties.PURE)));
+		properties.setPure(true);
+		assertThat(parse("pure"), equalTo(properties));
 	}
 
 	@Test
 	public void testSafe() throws Exception {
-		assertThat(parse("Safe"), equalTo(new PNProperties(PNProperties.SAFE)));
+		properties.requireSafe();
+		assertThat(parse("Safe"), equalTo(properties));
 	}
 
 	@Test
 	public void testPlain() throws Exception {
-		assertThat(parse("PLAIN"), equalTo(new PNProperties(PNProperties.PLAIN)));
+		properties.setPlain(true);
+		assertThat(parse("PLAIN"), equalTo(properties));
 	}
 
 	@Test
 	public void testTNet() throws Exception {
-		assertThat(parse("tNeT"), equalTo(new PNProperties(PNProperties.TNET)));
+		properties.setTNet(true);
+		assertThat(parse("tNeT"), equalTo(properties));
 	}
 
 	@Test
 	public void test3Bounded() throws Exception {
-		assertThat(parse("3-bounded"), equalTo(new PNProperties(PNProperties.kBounded(3))));
+		properties.requireKBounded(3);
+		assertThat(parse("3-bounded"), equalTo(properties));
 	}
 
 	@Test
 	public void testOutputNonbranching() throws Exception {
-		assertThat(parse("output-nonbranching"), equalTo(new PNProperties(PNProperties.OUTPUT_NONBRANCHING)));
+		properties.setOutputNonbranching(true);
+		assertThat(parse("output-nonbranching"), equalTo(properties));
 	}
 
 	@Test
 	public void testON() throws Exception {
-		assertThat(parse("ON"), equalTo(new PNProperties(PNProperties.OUTPUT_NONBRANCHING)));
+		properties.setOutputNonbranching(true);
+		assertThat(parse("ON"), equalTo(properties));
 	}
 
 	@Test
 	public void testConflictFree() throws Exception {
-		assertThat(parse("Conflict-Free"), equalTo(new PNProperties(PNProperties.CONFLICT_FREE)));
+		properties.setConflictFree(true);
+		assertThat(parse("Conflict-Free"), equalTo(properties));
 	}
 
 	@Test
 	public void testCF() throws Exception {
-		assertThat(parse("CF"), equalTo(new PNProperties(PNProperties.CONFLICT_FREE)));
+		properties.setConflictFree(true);
+		assertThat(parse("CF"), equalTo(properties));
 	}
 
 	@Test
@@ -94,7 +111,7 @@ public class SynthesizeModuleTest {
 		Options options = Options.parseProperties("upto-language-equivalence");
 		assertThat(options.upToLanguageEquivalence, equalTo(true));
 		assertThat(options.verbose, equalTo(false));
-		assertThat(options.properties, equalTo(new PNProperties()));
+		assertThat(options.properties, equalTo(properties));
 	}
 
 	@Test
@@ -102,7 +119,7 @@ public class SynthesizeModuleTest {
 		Options options = Options.parseProperties("language");
 		assertThat(options.upToLanguageEquivalence, equalTo(true));
 		assertThat(options.verbose, equalTo(false));
-		assertThat(options.properties, equalTo(new PNProperties()));
+		assertThat(options.properties, equalTo(properties));
 	}
 
 	@Test
@@ -110,7 +127,7 @@ public class SynthesizeModuleTest {
 		Options options = Options.parseProperties("le");
 		assertThat(options.upToLanguageEquivalence, equalTo(true));
 		assertThat(options.verbose, equalTo(false));
-		assertThat(options.properties, equalTo(new PNProperties()));
+		assertThat(options.properties, equalTo(properties));
 	}
 
 	@Test
@@ -118,17 +135,19 @@ public class SynthesizeModuleTest {
 		Options options = Options.parseProperties("verbose");
 		assertThat(options.upToLanguageEquivalence, equalTo(false));
 		assertThat(options.verbose, equalTo(true));
-		assertThat(options.properties, equalTo(new PNProperties()));
+		assertThat(options.properties, equalTo(properties));
 	}
 
 	@Test
 	public void testComma() throws Exception {
-		assertThat(parse("safe,none,pure"), equalTo(new PNProperties(PNProperties.SAFE, PNProperties.PURE)));
+		properties.requireSafe();
+		properties.setPure(true);
+		assertThat(parse("safe,none,pure"), equalTo(properties));
 	}
 
 	@Test
 	public void testSpaces() throws Exception {
-		assertThat(parse(" none "), equalTo(new PNProperties()));
+		assertThat(parse(" none "), equalTo(properties));
 	}
 
 	@DataProvider(name = "unparsable")

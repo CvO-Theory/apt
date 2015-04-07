@@ -157,7 +157,8 @@ public final class SeparationUtility {
 		String[] locationMap = getLocationMap(utility, properties);
 		Separation result = null;
 		// Output-nonbranching is handled by getLocationMap()
-		properties = properties.without(PNProperties.OUTPUT_NONBRANCHING);
+		properties = new PNProperties(properties);
+		properties.setOutputNonbranching(false);
 
 		try {
 			if (result == null)
