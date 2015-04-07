@@ -306,11 +306,11 @@ public class SeparationTestHelper {
 		PNProperties properties = new PNProperties();
 		properties.setPlain(true);
 		try {
-			sep = factory.createSeparation(new RegionUtility(ts), properties, null);
+			sep = factory.createSeparation(new RegionUtility(ts), properties, new String[2]);
 		} catch (UnsupportedPNPropertiesException e) {
 			properties.setPure(true);
 			try {
-				sep = factory.createSeparation(new RegionUtility(ts), properties, null);
+				sep = factory.createSeparation(new RegionUtility(ts), properties, new String[2]);
 			}
 			catch (UnsupportedPNPropertiesException f) {
 				// This test cannot be applied to the factory under test
