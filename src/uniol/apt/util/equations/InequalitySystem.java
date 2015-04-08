@@ -462,48 +462,66 @@ public class InequalitySystem {
 	 * @return A solution to the system or an empty list
 	 */
 	public List<Integer> findSolution() {
-		return findSolution(this);
+		return findSolution(new InequalitySystem[] { this });
 	}
 
 	/**
-	 * Calculate a solution to an inequality system where at least one out of some optional systems must be
-	 * satisfied as well.
-	 * @param required The system that must be satisfied by any solution
-	 * @param anyOf Some systems where at least one of these must be satisfied by a solution.
-	 * @return A solution to the system or an empty list.
+	 * Calculate a solution to a conjunction of disjunctions of inequality systems.
+	 * When called with a parameter like <pre>{ { A, B }, { C }, { B, D, E } }</pre> where A to E are inequality
+	 * systems, this tries to find a solution for <pre>(A or B) and C and (B or D or E)</pre>.
+	 * @param systems Contains a hierarchy of systems where individual systems are connected by disjunctions and the
+	 * disjunctions are connected by conjunctions.
+	 * @return A solution to the systems or an empty list if unsolvable.
 	 */
-	static public List<Integer> findSolution(InequalitySystem required, InequalitySystem... anyOf) {
-		int numVariables = required.getNumberOfVariables();
-		for (int i = 0; i < anyOf.length; i++)
-			numVariables = Math.max(numVariables, anyOf[i].getNumberOfVariables());
+	static public List<Integer> findSolution(InequalitySystem[]... systems) {
+		int numVariables = 0;
+		for (int i = 0; i < systems.length; i++)
+			for (int j = 0; j < systems[i].length; j++)
+				numVariables = Math.max(numVariables, systems[i][j].getNumberOfVariables());
 
 		Script script = createScript(numVariables);
-		script.assertTerm(toTerm(script, required.inequalities));
-		if (anyOf.length > 0) {
-			Term[] anyOfTerms = new Term[anyOf.length];
-			for (int i = 0; i < anyOf.length; i++)
-				anyOfTerms[i] = toTerm(script, anyOf[i].inequalities);
-			if (anyOfTerms.length == 1)
-				script.assertTerm(anyOfTerms[0]);
-			else
-				script.assertTerm(script.term("or", anyOfTerms));
+		for (int i = 0; i < systems.length; i++) {
+			Term[] orTerms = new Term[systems[i].length];
+			for (int j = 0; j < systems[i].length; j++)
+				orTerms[j] = toTerm(script, systems[i][j].inequalities);
+			if (orTerms.length == 1)
+				script.assertTerm(orTerms[0]);
+			else if (orTerms.length > 1)
+				script.assertTerm(script.term("or", orTerms));
 		}
-		List<Integer> solution = handleSolution(script, numVariables);
 
+		List<Integer> solution = handleSolution(script, numVariables);
 		if (solution.isEmpty()) {
 			debug("No solution found for:");
-			debug(required);
-			if (anyOf.length > 0) {
-				debug("Plus at least one of the following systems:");
-				for (int i = 0; i < anyOf.length; i++)
-					debug(anyOf[i]);
+			for (int i = 0; i < systems.length; i++) {
+				if (i == 0)
+					debug("at least one of:");
+				else
+					debug("and at least one of:");
+
+				for (int j = 0; j < systems[i].length; j++)
+					debug(systems[i][j]);
 			}
 		} else {
 			debug("Solution:");
 			debug(solution);
-			assert required.fulfilledBy(solution) : solution + " should solve this system but does not";
+			assert isSolution(solution, systems) : solution + " should solve this system but does not";
 		}
 		return Collections.unmodifiableList(solution);
+	}
+
+	static private boolean isSolution(List<Integer> solution, InequalitySystem[][] systems) {
+		for (int i = 0; i < systems.length; i++) {
+			boolean foundSolution = false;
+			for (int j = 0; j < systems[i].length; j++)
+				if (foundSolution = systems[i][j].fulfilledBy(solution))
+					break;
+			if (!foundSolution && systems[i].length > 0) {
+				debug("Not a valid solution for sub-system with index ", i);
+				return false;
+			}
+		}
+		return true;
 	}
 
 	static private Script createScript(int numVariables) {

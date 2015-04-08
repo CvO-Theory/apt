@@ -210,25 +210,65 @@ public class InequalitySystemTest {
 
 		@Test
 		public void testAnyOf() {
-			InequalitySystem system = new InequalitySystem();
-			system.addInequality(42, "=", 1);
+			InequalitySystem[] required = new InequalitySystem[] { new InequalitySystem() };
+			required[0].addInequality(42, "=", 1);
 
 			InequalitySystem[] anyOf = new InequalitySystem[] {
 				new InequalitySystem(), new InequalitySystem()
 			};
-
 			anyOf[0].addInequality(21, "=", 1);
 			anyOf[1].addInequality(21, "=", 1, -1);
 
-			List<Integer> solution = InequalitySystem.findSolution(system, anyOf);
+			List<Integer> solution = InequalitySystem.findSolution(required, anyOf);
 			assertThat(solution, hasSize(2));
 
 			int x = solution.get(0), y = solution.get(1);
 			assertThat(x, equalTo(42));
 			assertThat(y, equalTo(21));
-			assertThat(system.fulfilledBy(solution), is(true));
+			assertThat(required[0].fulfilledBy(solution), is(true));
 			assertThat(anyOf[0].fulfilledBy(solution), is(false));
 			assertThat(anyOf[1].fulfilledBy(solution), is(true));
+		}
+
+		@Test
+		public void testAnyOfUnsat() {
+			// x[0] is either 10 or 20
+			InequalitySystem[] first = new InequalitySystem[] {
+				new InequalitySystem(), new InequalitySystem()
+			};
+			first[0].addInequality(10, "=", 1);
+			first[1].addInequality(20, "=", 1);
+
+			// 0 = x[0] + x[1] or 0 = x[0] - x[1]
+			InequalitySystem[] second = new InequalitySystem[] {
+				new InequalitySystem(), new InequalitySystem()
+			};
+			second[0].addInequality(0, "=", 1, 1);
+			second[1].addInequality(0, "=", 1, -1);
+
+			// x[1] is either 1 or 2
+			InequalitySystem[] third = new InequalitySystem[] {
+				new InequalitySystem(), new InequalitySystem()
+			};
+			third[0].addInequality(1, "=", 0, 1);
+			third[1].addInequality(2, "=", 0, 1);
+
+			List<Integer> solution = InequalitySystem.findSolution(first, second, third);
+			assertThat(solution, empty());
+		}
+
+		@Test
+		public void testAnyOfEmpty() {
+			InequalitySystem[] required = new InequalitySystem[] { new InequalitySystem() };
+			required[0].addInequality(42, "=", 1);
+
+			InequalitySystem[] empty = new InequalitySystem[0];
+
+			List<Integer> solution = InequalitySystem.findSolution(empty, required, empty);
+			assertThat(solution, hasSize(1));
+
+			int x = solution.get(0);
+			assertThat(x, equalTo(42));
 		}
 	}
 

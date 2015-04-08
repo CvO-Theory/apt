@@ -281,7 +281,7 @@ class InequalitySystemSeparation implements Separation {
 	 * @return A region or null.
 	 */
 	private Region regionFromSolution(InequalitySystem sys, InequalitySystem[] anyOf, boolean pure) {
-		List<Integer> solution = InequalitySystem.findSolution(sys, anyOf);
+		List<Integer> solution = InequalitySystem.findSolution(new InequalitySystem[] { sys }, anyOf);
 		if (solution.isEmpty())
 			return null;
 
