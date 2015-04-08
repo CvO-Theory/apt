@@ -60,11 +60,6 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 			throw new UnsupportedPNPropertiesException();
 	}
 
-	@Override
-	protected InequalitySystem prepareInequalitySystem() {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Get a region solving some event/state separation problem.
 	 * @param state The state of the separation problem
@@ -81,8 +76,6 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 		if (!utility.getSpanningTree().isReachable(state))
 			// Unreachable states cannot be separated
 			return null;
-
-		requireDistributableNet(system, event);
 
 		stateLoop:
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
@@ -113,18 +106,9 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 
 		// Calculate the resulting linear combination
 		debug("Solving an inequality system to separate ", state, " from ", event, ":");
-		List<Integer> solution = system.findSolution();
-		if (solution.isEmpty())
+		Region result = findRegionFromSystem(system, basis, event);
+		if (result == null)
 			return null;
-
-		assert solution.size() == basis.size();
-		Region result = Region.createTrivialRegion(utility);
-		int i = 0;
-		for (Region region : basis) {
-			result = result.addRegionWithFactor(region, solution.get(i++));
-		}
-		result = result.makePure();
-		debug("region: ", result);
 
 		// If this already is a separating region, return it
 		if (SeparationUtility.isSeparatingRegion(utility, result, state, event))

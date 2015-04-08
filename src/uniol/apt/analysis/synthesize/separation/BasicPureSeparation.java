@@ -20,7 +20,11 @@
 package uniol.apt.analysis.synthesize.separation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.PNProperties;
@@ -68,21 +72,6 @@ class BasicPureSeparation implements Separation {
 	}
 
 	/**
-	 * Calculate a region solving some state separation problem.
-	 * @param state The first state of the separation problem
-	 * @param otherState The second state of the separation problem
-	 * @return A region solving the problem or null.
-	 */
-	@Override
-	public Region calculateSeparatingRegion(State state, State otherState) {
-		for (Region region : utility.getRegionBasis())
-			if (SeparationUtility.isSeparatingRegion(utility, region, state, otherState))
-				return region;
-
-		return null;
-	}
-
-	/**
 	 * Prepare an inequality system for use by this class.
 	 * @return A new inequality system.
 	 */
@@ -91,27 +80,46 @@ class BasicPureSeparation implements Separation {
 	}
 
 	/**
-	 * Add the needed inequalities to guarantee that a distributable Petri Net region is calculated.
-	 * @param system The inequality system to which the inequalities should be added.
-	 * @param event Only events with the same location as this event may consume tokens from this region.
+	 * Calculate a region solving some state separation problem.
+	 * @param state The first state of the separation problem
+	 * @param otherState The second state of the separation problem
+	 * @return A region solving the problem or null.
 	 */
-	protected void requireDistributableNet(InequalitySystem system, String event) {
-		String location = locationMap[utility.getEventIndex(event)];
+	@Override
+	public Region calculateSeparatingRegion(State state, State otherState) {
+		/*
+		 * More clever approach if no locationMap is necessary and no further properties are needed (eg plain):
+		for (Region region : utility.getRegionBasis())
+			if (SeparationUtility.isSeparatingRegion(utility, region, state, otherState))
+				return region;
+		*/
 
-		if (location == null)
-			return;
+		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
+			// Unreachable states cannot be separated
+			return null;
 
-		// Only events having the same location as 'event' may consume token from this region.
-		for (int eventIndex = 0; eventIndex < utility.getNumberOfEvents(); eventIndex++) {
-			if (locationMap[eventIndex] != null && !locationMap[eventIndex].equals(location)) {
-				List<Integer> inequality = new ArrayList<>();
-				for (Region region : utility.getRegionBasis())
-					inequality.add(region.getWeight(eventIndex));
+		final List<Region> basis = utility.getRegionBasis();
+		InequalitySystem system = prepareInequalitySystem();
 
-				system.addInequality(0, "<=", inequality, "Only events with same location as event "
-						+ event + " may consume tokens from this region");
+		List<Integer> inequality = new ArrayList<>(basis.size());
+		for (Region region : basis) {
+			int stateValue, otherStateValue;
+			try {
+				stateValue = region.getMarkingForState(state);
+				otherStateValue = region.getMarkingForState(otherState);
+			} catch (UnreachableException e) {
+				throw new AssertionError("Made sure that the state is reachable, but "
+						+ "apparently it isn't?!", e);
 			}
+			inequality.add(stateValue - otherStateValue);
 		}
+		// We want r_E(Psi_s - Psi_{s'}) != 0. Since we are in a finite LTS, we can just use ">".
+		system.addInequality(0, ">", inequality, "Region should separate state " + state
+				+ " from state " + otherState);
+
+		// Calculate the resulting linear combination
+		debug("Solving an inequality system to separate ", state, " from ", otherState, ":");
+		return findRegionFromSystem(system, basis, null);
 	}
 
 	/**
@@ -132,8 +140,6 @@ class BasicPureSeparation implements Separation {
 		if (!utility.getSpanningTree().isReachable(state))
 			// Unreachable states cannot be separated
 			return null;
-
-		requireDistributableNet(system, event);
 
 		stateLoop:
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
@@ -161,26 +167,71 @@ class BasicPureSeparation implements Separation {
 
 		// Calculate the resulting linear combination
 		debug("Solving an inequality system to separate ", state, " from ", event, ":");
-		return findRegionFromSystem(system, basis);
+		return findRegionFromSystem(system, basis, event);
+	}
+
+	/**
+	 * Generate the needed inequalities to guarantee that some distribution requirement is obeyed.
+	 * @param utility Utility instance for which a separation problem is being solved.
+	 * @param locationMap Mapping describing how events should be distributed to locations.
+	 * @param event Optional event that surely consumes tokens from this region, or null.
+	 */
+	static private InequalitySystem[] requireDistributableNet(RegionUtility utility, String[] locationMap, String event) {
+		Set<String> locations;
+		if (event == null) {
+			locations = new HashSet<>(Arrays.asList(locationMap));
+			locations.remove(null);
+		} else {
+			String location = locationMap[utility.getEventIndex(event)];
+			if (location == null)
+				return new InequalitySystem[0];
+
+			locations = Collections.singleton(location);
+		}
+
+		InequalitySystem[] result = new InequalitySystem[locations.size()];
+		int index = 0;
+		for (String location : locations) {
+			result[index] = new InequalitySystem();
+
+			// Only events having location "location" may consume token.
+			for (int eventIndex = 0; eventIndex < utility.getNumberOfEvents(); eventIndex++) {
+				if (locationMap[eventIndex] != null && !locationMap[eventIndex].equals(location)) {
+					// Require that 0 <= r_E(event)
+					List<Integer> inequality = new ArrayList<>();
+					for (Region region : utility.getRegionBasis())
+						inequality.add(region.getWeight(eventIndex));
+
+					result[index].addInequality(0, "<=", inequality, "Only events with location "
+							+ location + " may consume tokens from this region");
+				}
+			}
+			index++;
+		}
+
+		return result;
 	}
 
 	/**
 	 * Get a region by solving an inequality system.
 	 * @param system The inequality system to solve. Variables must be weights of the entries of the basis.
 	 * @param basis The region basis in which the solution of the system should be interpreted.
+	 * @param event Optional event that surely consumes tokens from this region, or null.
 	 * @return A pure region from a solution of the system or null if the system was unsolvable.
 	 */
-	protected Region findRegionFromSystem(InequalitySystem system, List<Region> basis) {
-		List<Integer> solution = system.findSolution();
+	protected Region findRegionFromSystem(InequalitySystem system, List<Region> basis, String event) {
+		InequalitySystem[][] systems = new InequalitySystem[2][];
+		systems[0] = new InequalitySystem[] { system };
+		systems[1] = requireDistributableNet(utility, locationMap, event);
+		List<Integer> solution = InequalitySystem.findSolution(systems);
 		if (solution.isEmpty())
 			return null;
 
 		assert solution.size() == basis.size();
 		Region result = Region.createTrivialRegion(utility);
 		int i = 0;
-		for (Region region : basis) {
+		for (Region region : basis)
 			result = result.addRegionWithFactor(region, solution.get(i++));
-		}
 
 		result = result.makePure();
 		debug("region: ", result);
