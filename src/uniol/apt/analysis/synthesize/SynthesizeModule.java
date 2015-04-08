@@ -66,7 +66,7 @@ public class SynthesizeModule extends AbstractModule {
 	static public void requireCommon(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("options", String.class,
 				"Comma separated list of options,"
-				+ " can be verbose, none, safe, [k]-bounded, pure, plain, t-net,"
+				+ " can be verbose, none, safe, [k]-bounded, pure, plain, tnet,"
 				+ " output-nonbranching (on), conflict-free (cf),"
 				+ " upto-language-equivalence (language, le)");
 	}

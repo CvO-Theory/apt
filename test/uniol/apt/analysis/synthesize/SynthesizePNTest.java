@@ -132,7 +132,7 @@ public class SynthesizePNTest {
 	}
 
 	@Test
-	public void testACBCCLoopTS() throws MissingLocationException {
+	public void testACBCCLoopTSOutputNonbranching() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
 		PNProperties properties = new PNProperties();
 		properties.setOutputNonbranching(true);
@@ -144,6 +144,24 @@ public class SynthesizePNTest {
 					allOf(pureRegionWithWeightThat("b", greaterThanOrEqualTo(0)), pureRegionWithWeightThat("c", greaterThanOrEqualTo(0))),
 					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(0)), pureRegionWithWeightThat("c", greaterThanOrEqualTo(0))),
 					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(0)), pureRegionWithWeightThat("b", greaterThanOrEqualTo(0)))));
+		assertThat(synth.getFailedStateSeparationProblems(), empty());
+		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
+	}
+
+	@Test
+	public void testACBCCLoopTSTNet() throws MissingLocationException {
+		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
+		PNProperties properties = new PNProperties();
+		properties.setTNet(true);
+		SynthesizePN synth = new SynthesizePN(new RegionUtility(ts), properties);
+
+		assertThat(synth.wasSuccessfullySeparated(), is(true));
+		// We know that there is a solution with four regions. Test that this really found an T-Net feasible set.
+		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
+					allOf(pureRegionWithWeightThat("a", equalTo(0)), pureRegionWithWeightThat("b", greaterThan(0)), pureRegionWithWeightThat("c", lessThan(0))),
+					allOf(pureRegionWithWeightThat("a", equalTo(0)), pureRegionWithWeightThat("b", lessThan(0)), pureRegionWithWeightThat("c", greaterThan(0))),
+					allOf(pureRegionWithWeightThat("b", equalTo(0)), pureRegionWithWeightThat("a", greaterThan(0)), pureRegionWithWeightThat("c", lessThan(0))),
+					allOf(pureRegionWithWeightThat("b", equalTo(0)), pureRegionWithWeightThat("a", lessThan(0)), pureRegionWithWeightThat("c", greaterThan(0)))));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}

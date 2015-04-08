@@ -48,7 +48,6 @@ import uniol.apt.analysis.plain.Plain;
 import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.synthesize.separation.Separation;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
-import uniol.apt.analysis.tnet.TNet;
 import uniol.apt.util.EquivalenceRelation;
 
 import static uniol.apt.analysis.synthesize.LimitedUnfolding.ORIGINAL_STATE_KEY;
@@ -512,6 +511,28 @@ public class SynthesizePN {
 	}
 
 	/**
+	 * Check if the PetriNet is a generalized T-Net. In a T-Net, every place has a preset and postset with at most
+	 * one entry. In a generalized T-Net, arc weights are allowed.
+	 * @param PetriNet The Petri net to check
+	 * @return true if the pn is a generalized T-Net.
+	 */
+	static public boolean isGeneralizedTNet(PetriNet pn) {
+		for (Place place : pn.getPlaces()) {
+			// is here a merge?
+			if (place.getPreset().size() > 1) {
+				debug("T-Net check: There is a merge at ", place.getId());
+				return false;
+			}
+			// is here a conflict?
+			if (place.getPostset().size() > 1) {
+				debug("T-Net check: There is a conflict at ", place.getId());
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Synthesize a Petri Net from the separating regions that were calculated.
 	 * @return The synthesized PetriNet
 	 */
@@ -526,11 +547,7 @@ public class SynthesizePN {
 		if (properties.isPlain())
 			assert new Plain().checkPlain(pn) : regions;
 		if (properties.isTNet())
-			try {
-				assert new TNet(pn).testPlainTNet() : regions;
-			} catch (PreconditionFailedException e) {
-				assert false : regions;
-			}
+			assert isGeneralizedTNet(pn) : regions;
 		if (properties.isKBounded())
 			assert new Bounded().checkBounded(pn).k <= properties.getKForKBounded() : regions;
 		if (properties.isOutputNonbranching())

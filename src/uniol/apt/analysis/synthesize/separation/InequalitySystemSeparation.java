@@ -88,20 +88,26 @@ class InequalitySystemSeparation implements Separation {
 		// Our definition of conflict-free requires plainness
 		if (properties.isPlain() || properties.isConflictFree())
 			requirePlainness();
-		if (properties.isTNet())
-			requireTNet();
 		
 		// ON is handled in SeparationUtility by messing with the locationMap
 		assert !properties.isOutputNonbranching();
 
-		if (properties.isConflictFree()) {
-			additionalSystems = new InequalitySystem[2][];
-			additionalSystems[1] = requireConflictFree();
-		} else {
-			additionalSystems = new InequalitySystem[1][];
+		int additional = 1;
+		if (properties.isTNet())
+			additional += 2;
+		if (properties.isConflictFree())
+			additional++;
+
+		int index = 0;
+		additionalSystems = new InequalitySystem[additional][];
+		additionalSystems[index++] = requireDistributableNet();
+		if (properties.isConflictFree())
+			additionalSystems[index++] = requireConflictFree();
+		if (properties.isTNet()) {
+			additionalSystems[index++] = requireTNetPostset();
+			additionalSystems[index++] = requireTNetPreset();
 		}
 
-		additionalSystems[0] = requireDistributableNet();
 	}
 
 	/**
@@ -226,16 +232,47 @@ class InequalitySystemSeparation implements Separation {
 	}
 
 	/**
-	 * Add the needed inequalities so that the system may only produce T-Net regions.
-	 * This requires plainness as a pre-condition!
+	 * Add the needed inequalities so that the system may only produce T-Net regions - postset part.
 	 */
-	private void requireTNet() {
-		int[] inequality = new int[systemNumberOfVariables];
-		Arrays.fill(inequality, systemForwardWeightsStart,
-				systemForwardWeightsStart + utility.getNumberOfEvents(), 1);
-		Arrays.fill(inequality, systemBackwardWeightsStart,
-				systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
-		system.addInequality(1, ">=", inequality, "T-Net");
+	private InequalitySystem[] requireTNetPostset() {
+		final int numberEvents = utility.getNumberOfEvents();
+		InequalitySystem[] result = new InequalitySystem[numberEvents];
+		int index = 0;
+		for (int event = 0; event < numberEvents; event++) {
+			int[] inequality = new int[systemNumberOfVariables];
+			Arrays.fill(inequality, systemForwardWeightsStart,
+					systemForwardWeightsStart + utility.getNumberOfEvents(), 1);
+			inequality[systemForwardWeightsStart + event] = 0;
+
+			result[index] = new InequalitySystem();
+			result[index].addInequality(0, "=", inequality, "Only event" + utility.getEventList().get(event)
+					+ " produces");
+			index++;
+		}
+
+		return result;
+	}
+
+	/**
+	 * Add the needed inequalities so that the system may only produce T-Net regions - preset part.
+	 */
+	private InequalitySystem[] requireTNetPreset() {
+		final int numberEvents = utility.getNumberOfEvents();
+		InequalitySystem[] result = new InequalitySystem[numberEvents];
+		int index = 0;
+		for (int event = 0; event < numberEvents; event++) {
+			int[] inequality = new int[systemNumberOfVariables];
+			Arrays.fill(inequality, systemBackwardWeightsStart,
+					systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
+			inequality[systemBackwardWeightsStart + event] = 0;
+
+			result[index] = new InequalitySystem();
+			result[index].addInequality(0, "=", inequality, "Only event" + utility.getEventList().get(event)
+					+ " consumes");
+			index++;
+		}
+
+		return result;
 	}
 
 	/**
