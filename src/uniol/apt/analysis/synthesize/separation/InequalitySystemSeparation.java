@@ -43,7 +43,13 @@ class InequalitySystemSeparation implements Separation {
 	private final RegionUtility utility;
 	private final PNProperties properties;
 	private final String[] locationMap;
+
+	// These must be satisfied
 	private final InequalitySystem system;
+
+	// Out of these, only one from each entry is required
+	private final InequalitySystem[][] additionalSystems;
+
 	private final int systemWeightsStart;
 	private final int systemCoefficientsStart;
 	private final int systemForwardWeightsStart;
@@ -87,6 +93,15 @@ class InequalitySystemSeparation implements Separation {
 		
 		// ON is handled in SeparationUtility by messing with the locationMap
 		assert !properties.isOutputNonbranching();
+
+		if (properties.isConflictFree()) {
+			additionalSystems = new InequalitySystem[2][];
+			additionalSystems[1] = requireConflictFree();
+		} else {
+			additionalSystems = new InequalitySystem[1][];
+		}
+
+		additionalSystems[0] = requireDistributableNet();
 	}
 
 	/**
@@ -224,52 +239,68 @@ class InequalitySystemSeparation implements Separation {
 	}
 
 	/**
-	 * Add the needed inequalitites so that the system may only produce solutions where a single transition consumes
-	 * tokens from the place described by the region.
-	 */
-	private void requireOnlySingleConsumer(InequalitySystem sys, int event) {
-		int[] inequality = new int[systemNumberOfVariables];
-		Arrays.fill(inequality, 0);
-		Arrays.fill(inequality, systemBackwardWeightsStart,
-					systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
-		inequality[systemBackwardWeightsStart + event] = 0;
-		sys.addInequality(0, "=", inequality, "Only event " + utility.getEventList().get(event)
-				+ " may consume tokens");
-	}
-
-	/**
 	 * Add the needed inequalities to guarantee that a distributable Petri Net region is calculated.
-	 * @param system The inequality system to which the inequalities should be added.
-	 * @param location The location that should be allowed from this region.
+	 * @return A set of inequality systems of which at least one has to be satisfied.
 	 */
-	private void requireDistributableNet(InequalitySystem sys, String location) {
-		int[] inequality = new int[systemNumberOfVariables];
+	private InequalitySystem[] requireDistributableNet() {
+		Set<String> locations = new HashSet<>(Arrays.asList(locationMap));
+		locations.remove(null);
+		if (locations.isEmpty())
+			// No locations specified
+			return new InequalitySystem[0];
 
-		if (location == null)
-			return;
+		InequalitySystem[] result = new InequalitySystem[locations.size()];
+		int index = 0;
+		for (String location : locations) {
+			int[] inequality = new int[systemNumberOfVariables];
 
-		// Only events having the same location as 'event' may consume token from this region.
-		for (int eventIndex = 0; eventIndex < utility.getNumberOfEvents(); eventIndex++) {
-			if (locationMap[eventIndex] != null && !locationMap[eventIndex].equals(location))
-				inequality[systemBackwardWeightsStart + eventIndex] = 1;
+			// Only events having location "location" may consume token.
+			for (int eventIndex = 0; eventIndex < utility.getNumberOfEvents(); eventIndex++) {
+				if (locationMap[eventIndex] != null && !locationMap[eventIndex].equals(location))
+					inequality[systemBackwardWeightsStart + eventIndex] = 1;
+			}
+
+			result[index] = new InequalitySystem();
+			result[index].addInequality(0, "=", inequality, "Only events with location " + location
+					+ " may consume tokens from this region");
+			index++;
 		}
 
-		sys.addInequality(0, "=", inequality, "Only events with location " + location
-				+ " may consume tokens from this region");
+		return result;
 	}
 
 	/**
-	 * Add the needed inequalities to guarantee that the preset is contained in the postset. This is used for
-	 * synthesizing conflict-free nets.
-	 * @param sys The inequality system to which the inequalities should be added.
+	 * Generate the necessary inequalities for a conflict free solution.
 	 */
-	private void requirePostsetContainsPreset(InequalitySystem sys) {
-		for (int eventIndex = 0; eventIndex < utility.getNumberOfEvents(); eventIndex++) {
+	private InequalitySystem[] requireConflictFree() {
+		InequalitySystem[] result = new InequalitySystem[utility.getNumberOfEvents() + 1];
+		int index = 0;
+
+		// Conflict free: Either there is just a single transition consuming token...
+		// (And thus this automatically satisfies any distribution)
+		for (int event = 0; event < utility.getNumberOfEvents(); event++) {
 			int[] inequality = new int[systemNumberOfVariables];
-			inequality[systemWeightsStart + eventIndex] = 1;
-			sys.addInequality(0, "<=", inequality, "Preset contains postset for event " + eventIndex
-					+ " (No tokens are consumed)");
+			Arrays.fill(inequality, 0);
+			Arrays.fill(inequality, systemBackwardWeightsStart,
+						systemBackwardWeightsStart + utility.getNumberOfEvents(), 1);
+			inequality[systemBackwardWeightsStart + event] = 0;
+
+			result[index] = new InequalitySystem();
+			result[index].addInequality(0, "=", inequality, "Only event "
+					+ utility.getEventList().get(event) + " may consume tokens");
+			index++;
 		}
+
+		// ...or the preset is contained in the postset
+		result[index] = new InequalitySystem();
+		for (int event = 0; event < utility.getNumberOfEvents(); event++) {
+			int[] inequality = new int[systemNumberOfVariables];
+			inequality[systemWeightsStart + event] = 1;
+			result[index].addInequality(0, "<=", inequality, "Preset contains postset for event "
+					+ utility.getEventList().get(event) + " (No tokens are consumed)");
+		}
+
+		return result;
 	}
 
 	/**
@@ -280,8 +311,12 @@ class InequalitySystemSeparation implements Separation {
 	 * any side-conditions.
 	 * @return A region or null.
 	 */
-	private Region regionFromSolution(InequalitySystem sys, InequalitySystem[] anyOf, boolean pure) {
-		List<Integer> solution = InequalitySystem.findSolution(new InequalitySystem[] { sys }, anyOf);
+	private Region regionFromSolution(InequalitySystem sys, boolean pure) {
+		InequalitySystem[][] systemToSolve = Arrays.copyOf(additionalSystems, additionalSystems.length + 2);
+		systemToSolve[additionalSystems.length] = new InequalitySystem[] { sys };
+		systemToSolve[additionalSystems.length + 1] = new InequalitySystem[] { system };
+
+		List<Integer> solution = InequalitySystem.findSolution(systemToSolve);
 		if (solution.isEmpty())
 			return null;
 
@@ -299,71 +334,6 @@ class InequalitySystemSeparation implements Separation {
 	}
 
 	/**
-	 * Prepare inequality systems for solving a separation problem.
-	 * @param systemNow System to add inequalities to
-	 * @param event Event that should be separated
-	 * @return An array of more inequality systems of which at least one must be satisfied.
-	 */
-	private InequalitySystem[] prepareInequalitySystem(InequalitySystem systemNow, String event) {
-		List<InequalitySystem> ret = new ArrayList<>();
-
-		if (event != null) {
-			int index = utility.getEventIndex(event);
-			String location = locationMap[index];
-			if (!properties.isConflictFree())
-				requireDistributableNet(systemNow, location);
-			else {
-				// Conflict free: Either there is just a single transition consuming token...
-				// (And thus this automatically satisfies any distribution)
-				InequalitySystem tmp = new InequalitySystem();
-				requireOnlySingleConsumer(tmp, index);
-				ret.add(tmp);
-
-				// ...or the preset is contained in the postset.
-				tmp = new InequalitySystem();
-				requireDistributableNet(tmp, location);
-				requirePostsetContainsPreset(tmp);
-				ret.add(tmp);
-			}
-		} else {
-			Set<String> locations = new HashSet<>(Arrays.asList(locationMap));
-			locations.remove(null);
-			if (!properties.isConflictFree()) {
-				// The solution must satisfy (some) distribution, add all of them as possible ones
-				for (String location : locations) {
-					InequalitySystem newSystem = new InequalitySystem();
-					requireDistributableNet(newSystem, location);
-					ret.add(newSystem);
-				}
-			} else {
-				// Conflict free: Either there is just a single transition consuming token...
-				// (And thus this automatically satisfies any distribution)
-				for (int index = 0; index < utility.getNumberOfEvents(); index++) {
-					InequalitySystem tmp = new InequalitySystem();
-					requireOnlySingleConsumer(tmp, index);
-					ret.add(tmp);
-				}
-
-				// ...or the preset is contained in the postset (plus some distribution is satisfied,
-				// which requires lots of possible systems).
-				for (String location : locations) {
-					InequalitySystem newSystem = new InequalitySystem();
-					requireDistributableNet(newSystem, location);
-					requirePostsetContainsPreset(newSystem);
-					ret.add(newSystem);
-				}
-				if (locations.isEmpty()) {
-					InequalitySystem newSystem = new InequalitySystem();
-					requirePostsetContainsPreset(newSystem);
-					ret.add(newSystem);
-				}
-			}
-		}
-
-		return ret.toArray(new InequalitySystem[ret.size()]);
-	}
-
-	/**
 	 * Get a region solving some separation problem.
 	 * @param state The first state of the separation problem
 	 * @param otherState The second state of the separation problem
@@ -375,7 +345,7 @@ class InequalitySystemSeparation implements Separation {
 		if (!utility.getSpanningTree().isReachable(state) || !utility.getSpanningTree().isReachable(otherState))
 			return null;
 
-		InequalitySystem systemNow = new InequalitySystem(this.system);
+		InequalitySystem solveSeparation = new InequalitySystem();
 		try {
 			// We want r_S(s) != r_S(s'). Since for each region there exists a complementary region (we are
 			// only looking at the bounded case!), we can require r_S(s) < r_S(s')
@@ -385,14 +355,13 @@ class InequalitySystemSeparation implements Separation {
 			for (int i = 0; i < inequality.length; i++)
 				inequality[i] -= otherInequality[i];
 
-			systemNow.addInequality(-1, ">=", inequality, "Region should separate state " + state
+			solveSeparation.addInequality(-1, ">=", inequality, "Region should separate state " + state
 					+ " from state " + otherState);
 		} catch (UnreachableException e) {
 			throw new AssertionError("Made sure state is reachable, but still it isn't?!", e);
 		}
 
-		InequalitySystem anyOf[] = prepareInequalitySystem(systemNow, null);
-		return regionFromSolution(systemNow, anyOf, properties.isPure());
+		return regionFromSolution(solveSeparation, properties.isPure());
 	}
 
 	/**
@@ -407,12 +376,12 @@ class InequalitySystemSeparation implements Separation {
 		if (!utility.getSpanningTree().isReachable(state))
 			return null;
 
-		InequalitySystem systemNow = new InequalitySystem(this.system);
+		InequalitySystem solveSeparation = new InequalitySystem(this.system);
 		try {
 			final int eventIndex = utility.getEventIndex(event);
 
-			// Each state must be reachable in the resulting region, but event 'event' should be disabled in state.
-			// We want -1 >= r_S(s) - r_B(event)
+			// Each state must be reachable in the resulting region, but event 'event' should be disabled
+			// in state. We want -1 >= r_S(s) - r_B(event)
 			int[] inequality = coefficientsForStateMarking(state);
 
 			if (properties.isPure()) {
@@ -424,14 +393,13 @@ class InequalitySystemSeparation implements Separation {
 				inequality[systemBackwardWeightsStart + eventIndex] += -1;
 			}
 
-			systemNow.addInequality(-1, ">=", inequality, "Region should separate state " + state
+			solveSeparation.addInequality(-1, ">=", inequality, "Region should separate state " + state
 					+ " from event " + event);
 		} catch (UnreachableException e) {
 			throw new AssertionError("Made sure state is reachable, but still it isn't?!", e);
 		}
 
-		InequalitySystem anyOf[] = prepareInequalitySystem(systemNow, event);
-		return regionFromSolution(systemNow, anyOf, properties.isPure());
+		return regionFromSolution(solveSeparation, properties.isPure());
 	}
 }
 
