@@ -21,6 +21,7 @@ package uniol.apt.util.equations;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -549,19 +550,26 @@ public class InequalitySystem {
 		int nextSystemEntry = 0;
 		for (Inequality inequality : inequalities) {
 			List<BigInteger> coefficients = inequality.getCoefficients();
-			Term rhs;
-			if (coefficients.isEmpty())
-				rhs = script.numeral(BigInteger.ZERO);
-			else {
-				Term terms[] = new Term[coefficients.size()];
-				for (int i = 0; i < coefficients.size(); i++)
-					terms[i] = script.term("*",
-							script.numeral(coefficients.get(i)), script.term("var" + i));
-				if (coefficients.size() == 1)
-					rhs = terms[0];
+			Term terms[] = new Term[coefficients.size()];
+			int nextEntry = 0;
+			for (int i = 0; i < coefficients.size(); i++) {
+				BigInteger coeff = coefficients.get(i);
+				if (coeff.equals(BigInteger.ZERO))
+					continue;
+				if (coeff.equals(BigInteger.ONE))
+					terms[nextEntry++] = script.term("var" + i);
 				else
-					rhs = script.term("+", terms);
+					terms[nextEntry++] = script.term("*",
+							script.numeral(coeff), script.term("var" + i));
 			}
+
+			Term rhs;
+			if (nextEntry == 0)
+				rhs = script.numeral(BigInteger.ZERO);
+			else if (nextEntry == 1)
+				rhs = terms[0];
+			else
+				rhs = script.term("+", Arrays.copyOf(terms, nextEntry));
 
 			Term lhs = script.numeral(inequality.getLeftHandSide());
 			String comparator = inequality.getComparator().toString();
