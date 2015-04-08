@@ -270,6 +270,20 @@ public class InequalitySystemTest {
 			int x = solution.get(0);
 			assertThat(x, equalTo(42));
 		}
+
+		@Test
+		public void testAnyOfEmpty2() {
+			InequalitySystem[] required = new InequalitySystem[] { new InequalitySystem(), new InequalitySystem() };
+			required[0].addInequality(42, "=", 1);
+
+			InequalitySystem[] empty = new InequalitySystem[0];
+
+			List<Integer> solution = InequalitySystem.findSolution(empty, required, empty);
+			assertThat(solution, hasSize(1));
+
+			int x = solution.get(0);
+			assertThat(x, equalTo(42));
+		}
 	}
 
 	@Test

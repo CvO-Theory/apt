@@ -480,10 +480,11 @@ public class InequalitySystem {
 				numVariables = Math.max(numVariables, systems[i][j].getNumberOfVariables());
 
 		Script script = createScript(numVariables);
+		Term defTerm = script.term("false");
 		for (int i = 0; i < systems.length; i++) {
 			Term[] orTerms = new Term[systems[i].length];
 			for (int j = 0; j < systems[i].length; j++)
-				orTerms[j] = toTerm(script, systems[i][j].inequalities);
+				orTerms[j] = toTerm(script, systems[i][j].inequalities, defTerm);
 			if (orTerms.length == 1)
 				script.assertTerm(orTerms[0]);
 			else if (orTerms.length > 1)
@@ -539,9 +540,9 @@ public class InequalitySystem {
 		return script;
 	}
 
-	static private Term toTerm(Script script, Collection<Inequality> inequalities) {
+	static private Term toTerm(Script script, Collection<Inequality> inequalities, Term defTerm) {
 		if (inequalities.isEmpty())
-			return script.term("true");
+			return defTerm;
 
 		// Handle each inequality
 		Term[] system = new Term[inequalities.size()];
