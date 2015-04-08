@@ -35,6 +35,7 @@ import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -524,6 +525,38 @@ public class SynthesizePNTest {
 
 			assertThat(SynthesizePN.isDistributedImplementation(utility, new PNProperties(), pn), is(false));
 		}
+	}
+
+	@DataProvider(name = "TNets")
+	private Object[][] createTNets() {
+		return new Object[][]{
+				{TestNetCollection.getEmptyNet()},
+				{TestNetCollection.getNoTransitionOnePlaceNet()},
+				{TestNetCollection.getOneTransitionNoPlaceNet()},
+				{TestNetCollection.getTokenGeneratorNet()},
+				{TestNetCollection.getConcurrentDiamondNet()},
+				{TestNetCollection.getDeadTransitionNet()},
+				{TestNetCollection.getACBCCLoopNet()}};
+	}
+
+	@DataProvider(name = "NonTNets")
+	private Object[][] createNonTNets() {
+		return new Object[][]{
+				{TestNetCollection.getDeadlockNet()},
+				{TestNetCollection.getNonPersistentNet()},
+				{TestNetCollection.getPersistentBiCFNet()},
+				{TestNetCollection.getConflictingDiamondNet()},
+				{TestNetCollection.getABCLanguageNet()}};
+	}
+
+	@Test(dataProvider = "TNets")
+	public void testGoodNet(PetriNet pn) {
+		assertThat(SynthesizePN.isGeneralizedTNet(pn), is(true));
+	}
+
+	@Test(dataProvider = "NonTNets")
+	public void testBadNet(PetriNet pn) {
+		assertThat(SynthesizePN.isGeneralizedTNet(pn), is(false));
 	}
 }
 

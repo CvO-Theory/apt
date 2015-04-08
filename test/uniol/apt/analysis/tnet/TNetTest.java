@@ -124,7 +124,7 @@ public class TNetTest {
 				{getNonPersistentNet()},
 				{getPersistentBiCFNet()},
 				{getConflictingDiamondNet()},
-				{getABCLanguageNet()}, };
+				{getABCLanguageNet()}};
 	}
 
 	@Test(dataProvider = "goodNets")
@@ -135,6 +135,11 @@ public class TNetTest {
 	@Test(dataProvider = "badNets")
 	public void testBadNet(PetriNet pn) throws PreconditionFailedException {
 		assertFalse(testNet(pn), "Examining PN " + pn.getName() + " which should fail");
+	}
+
+	@Test(expectedExceptions = PreconditionFailedException.class)
+	public void testPreconditionFailedNet() throws PreconditionFailedException {
+		testNet(getACBCCLoopNet());
 	}
 }
 

@@ -430,6 +430,34 @@ public class TestNetCollection {
 
 		return pn;
 	}
+
+	/**
+	 * Construct a Petri net whose reachability graph is a circle that is labelled with transitions a, c, b, c, c.
+	 */
+	public static PetriNet getACBCCLoopNet() {
+		PetriNet pn = new PetriNet("ACBCCLoopNet");
+
+		Transition a = pn.createTransition("a");
+		Transition b = pn.createTransition("b");
+		Transition c = pn.createTransition("c");
+		Place[] places = pn.createPlaces(4);
+
+		pn.createFlow(places[1], a, 3);
+		pn.createFlow(a, places[3], 3);
+		pn.createFlow(places[2], b, 3);
+		pn.createFlow(b, places[0], 3);
+		pn.createFlow(places[0], c, 1);
+		pn.createFlow(places[3], c, 1);
+		pn.createFlow(c, places[1], 1);
+		pn.createFlow(c, places[2], 1);
+
+		places[0].setInitialToken(1);
+		places[1].setInitialToken(3);
+		places[2].setInitialToken(2);
+		places[2].setInitialToken(0);
+
+		return pn;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
