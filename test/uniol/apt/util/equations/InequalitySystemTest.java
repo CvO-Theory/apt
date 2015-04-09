@@ -126,9 +126,10 @@ public class InequalitySystemTest {
 		@Test
 		public void testSimpleSystem6() {
 			InequalitySystem system = new InequalitySystem();
+			system.addInequality(0, ">=", 0, 0);
 
 			List<Integer> solution = system.findSolution();
-			assertThat(solution, empty());
+			assertThat(solution, hasSize(2));
 		}
 
 		@Test
