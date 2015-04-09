@@ -27,7 +27,7 @@ import static org.testng.Assert.assertEquals;
  * @author Manuel Gieseking
  */
 @Test
-public class TestMathtools {
+public class MathToolsTest {
 
 	@Test
 	public void testGGT() {
