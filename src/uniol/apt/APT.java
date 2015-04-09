@@ -112,7 +112,6 @@ import uniol.apt.analysis.sideconditions.SideConditions;
 import uniol.apt.analysis.snet.SNetModule;
 import uniol.apt.analysis.snet.SNetResult;
 import uniol.apt.analysis.synet.SynthesizeDistributedLTSModule;
-import uniol.apt.analysis.synthesize.RegionCollection;
 import uniol.apt.analysis.synthesize.LimitedUnfoldingModule;
 import uniol.apt.analysis.synthesize.SynthesizeModule;
 import uniol.apt.analysis.synthesize.SynthesizeWordModule;
@@ -375,8 +374,6 @@ public class APT {
 			new ToStringReturnValueTransformation<ParikhVector>());
 		returnValuesTransformer.addTransformation(PetriNet.class, new NetReturnValueTransformation());
 		returnValuesTransformer.addTransformation(Place.class, new INodeReturnValueTransformation<Place>());
-		returnValuesTransformer.addTransformation(RegionCollection.class,
-				new ToStringReturnValueTransformation<RegionCollection>());
 		returnValuesTransformer.addTransformation(SideConditions.class,
 			new ToStringReturnValueTransformation<SideConditions>());
 		returnValuesTransformer.addTransformation(SNetResult.class, new SNetResultReturnValueTransformation());
