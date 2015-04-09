@@ -19,6 +19,7 @@
 
 package uniol.tests;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,13 @@ public class TestUtils {
 		while (true) {
 			list.add(new byte[size]);
 		}
+	}
+
+	/* Set a private field of an object */
+	static public void setField(Object obj, String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {
+		Field field = obj.getClass().getDeclaredField(fieldName);
+		field.setAccessible(true);
+		field.set(obj, value);
 	}
 }
 
