@@ -81,9 +81,9 @@ public class SeparationUtilityTest {
 		public void testStateSelfSeparation() {
 			// A state cannot be separated from itself
 			for (State state : utility.getTransitionSystem().getNodes()) {
-				assertThat(SeparationUtility.isSeparatingRegion(utility, region1, state, state), is(false));
-				assertThat(SeparationUtility.isSeparatingRegion(utility, region2, state, state), is(false));
-				assertThat(SeparationUtility.isSeparatingRegion(utility, region3, state, state), is(false));
+				assertThat(SeparationUtility.isSeparatingRegion(region1, state, state), is(false));
+				assertThat(SeparationUtility.isSeparatingRegion(region2, state, state), is(false));
+				assertThat(SeparationUtility.isSeparatingRegion(region3, state, state), is(false));
 			}
 		}
 
@@ -91,39 +91,39 @@ public class SeparationUtilityTest {
 		public void testStateSeparation() {
 			State s = utility.getTransitionSystem().getNode("s");
 			State w = utility.getTransitionSystem().getNode("w");
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region1, s, w), is(true));
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region2, s, w), is(false));
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region3, s, w), is(true));
+			assertThat(SeparationUtility.isSeparatingRegion(region1, s, w), is(true));
+			assertThat(SeparationUtility.isSeparatingRegion(region2, s, w), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region3, s, w), is(true));
 		}
 
 		@Test
 		public void testEventSeparation1() {
 			State w = utility.getTransitionSystem().getNode("w");
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region1, w, "c"), is(false));
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region2, w, "c"), is(false));
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region3, w, "c"), is(true));
+			assertThat(SeparationUtility.isSeparatingRegion(region1, w, "c"), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region2, w, "c"), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region3, w, "c"), is(true));
 		}
 
 		@Test
 		public void testEventSeparation2() {
 			State s = utility.getTransitionSystem().getNode("s");
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region1, s, "c"), is(false));
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region2, s, "c"), is(false));
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region3, s, "c"), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region1, s, "c"), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region2, s, "c"), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region3, s, "c"), is(false));
 		}
 
 		@Test
 		public void testStateSeparationUnreachable() {
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region1, ts.getNode("unreachable"), ts.getInitialState()), is(false));
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region2, ts.getNode("unreachable"), ts.getInitialState()), is(false));
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region3, ts.getNode("unreachable"), ts.getInitialState()), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region1, ts.getNode("unreachable"), ts.getInitialState()), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region2, ts.getNode("unreachable"), ts.getInitialState()), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region3, ts.getNode("unreachable"), ts.getInitialState()), is(false));
 		}
 
 		@Test
 		public void testEventSeparationUnreachable() {
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region1, ts.getNode("unreachable"), "a"), is(false));
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region2, ts.getNode("unreachable"), "a"), is(false));
-			assertThat(SeparationUtility.isSeparatingRegion(utility, region3, ts.getNode("unreachable"), "a"), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region1, ts.getNode("unreachable"), "a"), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region2, ts.getNode("unreachable"), "a"), is(false));
+			assertThat(SeparationUtility.isSeparatingRegion(region3, ts.getNode("unreachable"), "a"), is(false));
 		}
 	}
 

@@ -57,13 +57,12 @@ public final class SeparationUtility {
 
 	/**
 	 * Check if the given region separates the two given states.
-	 * @param utility The region utility to use.
 	 * @param region The region to examine.
 	 * @param state The first state of the separation problem
 	 * @param otherState The second state of the separation problem
 	 * @return A separating region or null.
 	 */
-	static public boolean isSeparatingRegion(RegionUtility utility, Region region, State state, State otherState) {
+	static public boolean isSeparatingRegion(Region region, State state, State otherState) {
 		try {
 			// We need a region which assigns different values to these two states.
 			int stateValue = region.getMarkingForState(state);
@@ -76,13 +75,12 @@ public final class SeparationUtility {
 
 	/**
 	 * Check if the given region separates the state from the event.
-	 * @param utility The region utility to use.
 	 * @param region The region to examine.
 	 * @param state The state of the separation problem
 	 * @param event The event of the separation problem
 	 * @return A separating region or null.
 	 */
-	static public boolean isSeparatingRegion(RegionUtility utility, Region region, State state, String event) {
+	static public boolean isSeparatingRegion(Region region, State state, String event) {
 		try {
 			// We need r(state) to be smaller than the event's backward weight in some region.
 			return region.getMarkingForState(state) < region.getBackwardWeight(event);

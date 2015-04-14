@@ -264,7 +264,7 @@ public class SynthesizePN {
 				debug("Trying to separate ", state,  " from ", otherState);
 				Region r = null;
 				for (Region region : regions)
-					if (SeparationUtility.isSeparatingRegion(utility, region, state, otherState)) {
+					if (SeparationUtility.isSeparatingRegion(region, state, otherState)) {
 						r = region;
 						break;
 					}
@@ -298,8 +298,7 @@ public class SynthesizePN {
 					debug("Trying to separate ", state, " from event '", event, "'");
 					Region r = null;
 					for (Region region : regions)
-						if (SeparationUtility.isSeparatingRegion(utility, region,
-									state, event)) {
+						if (SeparationUtility.isSeparatingRegion(region, state, event)) {
 							r = region;
 							break;
 						}
@@ -342,13 +341,13 @@ public class SynthesizePN {
 				if (!SeparationUtility.isEventEnabled(state, event)) {
 					// Does one of our required regions already solve ESSP? If so, skip
 					for (Region r : requiredRegions) {
-						if (SeparationUtility.isSeparatingRegion(utility, r, state, event))
+						if (SeparationUtility.isSeparatingRegion(r, state, event))
 							continue innerStatesLoop;
 					}
 					// Calculate which of the remaining regions solves this ESSP instance
 					Set<Region> sep = new HashSet<>();
 					for (Region r : remainingRegions) {
-						if (SeparationUtility.isSeparatingRegion(utility, r, state, event))
+						if (SeparationUtility.isSeparatingRegion(r, state, event))
 							sep.add(r);
 					}
 					if (sep.size() == 1) {
@@ -379,13 +378,13 @@ public class SynthesizePN {
 			for (State otherState : remainingStates) {
 				// Does one of our required regions already solve SSP? If so, skip
 				for (Region r : requiredRegions) {
-					if (SeparationUtility.isSeparatingRegion(utility, r, state, otherState))
+					if (SeparationUtility.isSeparatingRegion(r, state, otherState))
 						continue innerStatesLoop;
 				}
 				// Calculate which of the remaining regions solves SSP for this instance
 				Set<Region> sep = new HashSet<>();
 				for (Region r : remainingRegions) {
-					if (SeparationUtility.isSeparatingRegion(utility, r, state, otherState))
+					if (SeparationUtility.isSeparatingRegion(r, state, otherState))
 						sep.add(r);
 				}
 				if (sep.size() == 1) {

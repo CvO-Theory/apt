@@ -111,7 +111,7 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 			return null;
 
 		// If this already is a separating region, return it
-		if (SeparationUtility.isSeparatingRegion(utility, result, state, event))
+		if (SeparationUtility.isSeparatingRegion(result, state, event))
 			return result;
 
 		// Calculate m = min { r_S(s') | delta(s', event) defined }:

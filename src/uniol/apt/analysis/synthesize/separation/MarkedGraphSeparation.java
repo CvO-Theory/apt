@@ -168,7 +168,7 @@ class MarkedGraphSeparation implements Separation {
 	@Override
 	public Region calculateSeparatingRegion(State state, State otherState) {
 		for (Region region : regions)
-			if (SeparationUtility.isSeparatingRegion(utility, region, state, otherState))
+			if (SeparationUtility.isSeparatingRegion(region, state, otherState))
 				return region;
 
 		assert !utility.getSpanningTree().isReachable(state)
@@ -185,7 +185,7 @@ class MarkedGraphSeparation implements Separation {
 	@Override
 	public Region calculateSeparatingRegion(State state, String event) {
 		for (Region region : regions)
-			if (SeparationUtility.isSeparatingRegion(utility, region, state, event))
+			if (SeparationUtility.isSeparatingRegion(region, state, event))
 				return region;
 
 		assert !utility.getSpanningTree().isReachable(state) || SeparationUtility.isEventEnabled(state, event);

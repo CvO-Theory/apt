@@ -174,8 +174,7 @@ public class SynthesizeModule extends AbstractModule {
 				Set<State> states = new HashSet<>();
 				for (State state : ts.getNodes()) {
 					if (!SeparationUtility.isEventEnabled(state, event)
-							&& SeparationUtility.isSeparatingRegion(utility, region,
-								state, event))
+							&& SeparationUtility.isSeparatingRegion(region, state, event))
 						states.add(state);
 				}
 				if (!states.isEmpty()) {
