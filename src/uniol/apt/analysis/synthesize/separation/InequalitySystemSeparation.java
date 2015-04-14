@@ -413,7 +413,7 @@ class InequalitySystemSeparation implements Separation {
 		if (!utility.getSpanningTree().isReachable(state))
 			return null;
 
-		InequalitySystem solveSeparation = new InequalitySystem(this.system);
+		InequalitySystem solveSeparation = new InequalitySystem();
 		try {
 			final int eventIndex = utility.getEventIndex(event);
 
