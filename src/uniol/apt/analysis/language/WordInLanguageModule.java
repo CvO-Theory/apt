@@ -27,6 +27,7 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.impl.parameter.WordParameterTransformation;
 
 /**
  * Provide the word-in-prefix-language check as a module.
@@ -40,6 +41,11 @@ public class WordInLanguageModule extends AbstractModule {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return WordParameterTransformation.getDescription();
+	}
+
+	@Override
 	public String getName() {
 		return "word";
 	}
@@ -48,7 +54,7 @@ public class WordInLanguageModule extends AbstractModule {
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
 		inputSpec.addParameter("word", Word.class,
-			"The word which should be checked; individual symbols are comma-separated");
+			"The word which should be checked");
 	}
 
 	@Override

@@ -37,6 +37,7 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.impl.parameter.WordParameterTransformation;
 
 /**
  * Provide the net synthesis from a word as a module.
@@ -60,20 +61,19 @@ public class SynthesizeWordModule extends AbstractModule {
 			+ "This also prints a Petri net\n\n\n"
 			+ " apt " + getName() + " none a,b,b,a,a\n\n"
 			+ "The above produces the following output:\n\n"
-			+ " separatingRegions: [{ init=1, 1:a:0, 0:b:1 }, { init=2, 0:a:0, 1:b:0 }, "
-			+ "{ init=0, 0:a:1, 1:b:1 }]\n"
 			+ " separationFailurePoints: a, b, [a] b, a, a\n\n"
-			+ "Here three places where calculated. For Example, the first one of them has an initial "
+			+ "Here three places where calculated. For example, the first one of them has an initial "
 			+ "marking of one, transition 'a' consumes a token on this place and 'b' produces one. "
 			+ "However, these three places are not enough for producing the requested word, because after "
 			+ "firing 'a' and 'b' once, transition 'a' is enabled, but shouldn't. The module also could "
 			+ "not calculate any place which would prevent 'a' from occurring in this state without also "
 			+ "restricting 'a' in some state where it must occur.\n\n\n"
-			+ " apt " + getName() + " 3-bounded a,a,a,a\n\n"
+			+ " apt " + getName() + " 2-bounded a,a,a\n\n"
 			+ "The above produces the following output:\n\n"
-			+ " separationFailurePoints: a, a, a, a [a]\n\n"
-			+ "This means that there is no 3-bounded Petri Net where three a's are firable in sequence, "
-			+ "but not also a fourth one can occur.";
+			+ " separationFailurePoints: a, a, a [a]\n\n"
+			+ "This means that there is no 2-bounded Petri Net where three a's are firable in sequence, "
+			+ "but not also a fourth one can occur.\n\n\n"
+			+ WordParameterTransformation.getDescription();
 	}
 
 	@Override

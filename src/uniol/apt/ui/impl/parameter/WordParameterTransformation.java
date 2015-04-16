@@ -28,10 +28,16 @@ import uniol.apt.ui.ParameterTransformation;
  * @author Uli Schlachter, Daniel
  */
 public class WordParameterTransformation implements ParameterTransformation<Word> {
+	static final public String SIGN_FOR_SINGLE_CHARACTERS = ":";
+
 	@Override
 	public Word transform(String arg) throws ModuleException {
 		String[] tokens;
-		if (arg.contains(";")) {
+		if (arg.startsWith(SIGN_FOR_SINGLE_CHARACTERS)
+				&& arg.endsWith(SIGN_FOR_SINGLE_CHARACTERS)) {
+			arg = arg.substring(SIGN_FOR_SINGLE_CHARACTERS.length(), arg.length() - 1);
+			tokens = arg.split("");
+		} else if (arg.contains(";")) {
 			// with ; --> "a;b;c"/ "a; b ; c" possible
 			tokens = arg.split(";", -1);
 		} else if (arg.contains(",")) {
@@ -49,6 +55,21 @@ public class WordParameterTransformation implements ParameterTransformation<Word
 			word.add(t);
 		}
 		return word;
+	}
+
+	/**
+	 * Get a description on the accepted format for words that this class can parse.
+	 * @return A human readable description.
+	 */
+	static public String getDescription() {
+		return "Words can be specified in two different forms.\n" +
+			"The first format includes explicit delimiters between events. " +
+			"For delimiters, either commas, semicolons or spaces are allowed. " +
+			"An example of this format would be 'a, b, c'. " +
+			"Note that leading and trailing spaces are skipped.\n" +
+			"The second format expects events to be individual letters. " +
+			"The special prefix " + SIGN_FOR_SINGLE_CHARACTERS + " is used to indicate this format. " +
+			"An example would be '" + SIGN_FOR_SINGLE_CHARACTERS + "abc'.";
 	}
 }
 
