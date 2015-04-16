@@ -96,10 +96,11 @@ public class SynthesizeModule extends AbstractModule {
 			throws ModuleException {
 		Options options = Options.parseProperties(input.getParameter("options", String.class));
 		SynthesizePN synthesize;
+		SynthesizePN.Builder builder = new SynthesizePN.Builder(ts).setProperties(options.properties);
 		if (options.upToLanguageEquivalence)
-			synthesize = SynthesizePN.createUpToLanguageEquivalence(ts, options.properties);
+			synthesize = builder.buildForLanguageEquivalence();
 		else
-			synthesize = new SynthesizePN(ts, options.properties);
+			synthesize = builder.buildForIsomorphicBehavior();
 
 		PetriNet pn = synthesize.synthesizePetriNet();
 		if (pn != null)

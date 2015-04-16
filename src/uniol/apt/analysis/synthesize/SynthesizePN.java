@@ -70,34 +70,74 @@ public class SynthesizePN {
 	private final String stateMappingExtension;
 
 	/**
-	 * Create a SynthesizePN instance that synthesizes a given transition system up to language equivalence.
-	 * Internally, this function creates a limited unfolding. Please note that this means that any references to
-	 * states in the resulting SynthesizePN instance refers to states in the unfolding instead of the original ts.
-	 * @param ts The transition system to synthesize.
-	 * @param properties Properties that the synthesized Petri net should satisfy.
-	 * @return A synthesizePN instance that synthesizes the input of to language equivalence.
-	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
-	 * @throws NonDeterministicException if the transition system is non-deterministic
-	 * @see LimitedUnfolding#calculateLimitedUnfolding
+	 * Builder class for creating instances of SynthesizePN. You create an instance of this class, give it all the
+	 * state that you want and then use the {@link build()} method to create a SynthesizePN instance.
 	 */
-	static public SynthesizePN createUpToLanguageEquivalence(TransitionSystem ts, PNProperties properties)
-			throws MissingLocationException, NonDeterministicException {
-		return new SynthesizePN(new RegionUtility(calculateLimitedUnfolding(ts)), properties, true,
-				ORIGINAL_STATE_KEY);
-	}
+	static public class Builder {
+		private RegionUtility utility;
+		private TransitionSystem ts;
+		private PNProperties properties = new PNProperties();
 
-	/**
-	 * Create a SynthesizePN instance that synthesizes a given transition system up to language equivalence.
-	 * Internally, this function creates a limited unfolding.
-	 * @param ts The transition system to synthesize.
-	 * @return A synthesizePN instance that synthesizes the input of to language equivalence.
-	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
-	 * @throws NonDeterministicException if the transition system is non-deterministic
-	 * @see LimitedUnfolding#calculateLimitedUnfolding
-	 */
-	static public SynthesizePN createUpToLanguageEquivalence(TransitionSystem ts)
+		/**
+		 * Create a builder that targets the given RegionUtility.
+		 * @param utility The region utility whose transition system should be synthesized.
+		 */
+		public Builder(RegionUtility utility) {
+			this.utility = utility;
+			this.ts = utility.getTransitionSystem();
+		}
+
+		/**
+		 * Create a builder that targets the given TransitionSystem.
+		 * @param ts The transition system that should be synthesized.
+		 */
+		public Builder(TransitionSystem ts) {
+			this.utility = null;
+			this.ts = ts;
+		}
+
+		/**
+		 * Set required properties for the synthesized Petri net.
+		 * @param properties the properties to satisfy.
+		 * @return this
+		 */
+		public Builder setProperties(PNProperties properties) {
+			this.properties = new PNProperties(properties);
+			return this;
+		}
+
+		/**
+		 * Get the required properties for the synthesized Petri net. The instance returned by this method may
+		 * be modified directly and the modifications will apply to this builder.
+		 * @return The properties that the synthesized net should currently satisfy.
+		 */
+		public PNProperties getProperties() {
+			return this.properties;
+		}
+
+		/**
+		 * Create a SynthesizePN instance that synthesizes the given state up to language equivalence.
+		 * @return A synthesizePN instance that synthesizes the input up to language equivalence.
+		 * @throws MissingLocationException if the transition system for the utility has locations for only some events
+		 * @throws NonDeterministicException if the transition system is non-deterministic
+		 * @see LimitedUnfolding#calculateLimitedUnfolding
+		 */
+		public SynthesizePN buildForLanguageEquivalence()
 			throws MissingLocationException, NonDeterministicException {
-		return createUpToLanguageEquivalence(ts, new PNProperties());
+			return new SynthesizePN(new RegionUtility(calculateLimitedUnfolding(ts)),
+					this.properties, true, ORIGINAL_STATE_KEY);
+		}
+
+		/**
+		 * Create a SynthesizePN instance that synthesizes the given state up to isomorphism.
+		 * @return A SynthesizePN instance that synthesizes the input up to isomorphism.
+		 * @throws MissingLocationException if the transition system for the utility has locations for only some events
+		 */
+		public SynthesizePN buildForIsomorphicBehavior() throws MissingLocationException {
+			if (this.utility == null)
+				this.utility = new RegionUtility(this.ts);
+			return new SynthesizePN(this.utility, this.properties, false, null);
+		}
 	}
 
 	/**
@@ -110,7 +150,7 @@ public class SynthesizePN {
 	 * transition system must have this extension and it must refer to a State object.
 	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
-	private SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation,
+	SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation,
 			String stateMappingExtension) throws MissingLocationException {
 		this.ts = utility.getTransitionSystem();
 		this.utility = utility;
@@ -136,57 +176,6 @@ public class SynthesizePN {
 		minimizeRegions(utility, regions, onlyEventSeparation);
 
 		debug();
-	}
-
-	/**
-	 * Synthesize a Petri Net which generates the given transition system.
-	 * @param utility An instance of RegionUtility for the requested transition system.
-	 * @param properties Properties that the synthesized Petri net should satisfy.
-	 * @param onlyEventSeparation Should state separation be ignored? This means that two different states might get
-	 * the same marking.
-	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
-	 */
-	SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation)
-			throws MissingLocationException {
-		this(utility, properties, onlyEventSeparation, null);
-	}
-
-	/**
-	 * Synthesize a Petri Net which generates the given transition system.
-	 * @param utility An instance of RegionUtility for the requested transition system.
-	 * @param properties Properties that the synthesized Petri net should satisfy.
-	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
-	 */
-	public SynthesizePN(RegionUtility utility, PNProperties properties) throws MissingLocationException {
-		this(utility, properties, false);
-	}
-
-	/**
-	 * Synthesize a Petri Net which generates the given transition system.
-	 * @param utility An instance of RegionUtility for the requested transition system.
-	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
-	 */
-	public SynthesizePN(RegionUtility utility) throws MissingLocationException {
-		this(utility, new PNProperties());
-	}
-
-	/**
-	 * Synthesize a Petri Net which generates the given transition system.
-	 * @param ts The transition system to synthesize.
-	 * @param properties Properties that the synthesized Petri net should satisfy.
-	 * @throws MissingLocationException if the transition system has locations for only some events
-	 */
-	public SynthesizePN(TransitionSystem ts, PNProperties properties) throws MissingLocationException {
-		this(new RegionUtility(ts), properties);
-	}
-
-	/**
-	 * Synthesize a Petri Net which generates the given transition system.
-	 * @param ts The transition system to synthesize.
-	 * @throws MissingLocationException if the transition system has locations for only some events
-	 */
-	public SynthesizePN(TransitionSystem ts) throws MissingLocationException {
-		this(ts, new PNProperties());
 	}
 
 	private State mapState(State state) {
