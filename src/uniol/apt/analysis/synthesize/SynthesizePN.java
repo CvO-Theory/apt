@@ -68,6 +68,7 @@ public class SynthesizePN {
 	private final PNProperties properties;
 	private final Separation separation;
 	private final String stateMappingExtension;
+	private final boolean quickFail;
 
 	/**
 	 * Builder class for creating instances of SynthesizePN. You create an instance of this class, give it all the
@@ -77,6 +78,7 @@ public class SynthesizePN {
 		private RegionUtility utility;
 		private TransitionSystem ts;
 		private PNProperties properties = new PNProperties();
+		private boolean quickFail = false;
 
 		/**
 		 * Create a builder that targets the given RegionUtility.
@@ -116,6 +118,19 @@ public class SynthesizePN {
 		}
 
 		/**
+		 * Set the quick fail mode for the SynthesizePN instance. Use quick fail mode if only the result from
+		 * {@link SynthesizePN.wasSuccessfullySeparated()} is interesting for you. In this case, SynthesizePN
+		 * will stop after the first failure instead of going through all separation problems and trying to
+		 * solve them.
+		 * The quick fail mode default to false.
+		 * @param quickFail the new value for the quick fail mode.
+		 */
+		public Builder setQuickFail(boolean quickFail) {
+			this.quickFail = quickFail;
+			return this;
+		}
+
+		/**
 		 * Create a SynthesizePN instance that synthesizes the given state up to language equivalence.
 		 * @return A synthesizePN instance that synthesizes the input up to language equivalence.
 		 * @throws MissingLocationException if the transition system for the utility has locations for only some events
@@ -125,7 +140,7 @@ public class SynthesizePN {
 		public SynthesizePN buildForLanguageEquivalence()
 			throws MissingLocationException, NonDeterministicException {
 			return new SynthesizePN(new RegionUtility(calculateLimitedUnfolding(ts)),
-					this.properties, true, ORIGINAL_STATE_KEY);
+					this.properties, true, ORIGINAL_STATE_KEY, quickFail);
 		}
 
 		/**
@@ -136,7 +151,7 @@ public class SynthesizePN {
 		public SynthesizePN buildForIsomorphicBehavior() throws MissingLocationException {
 			if (this.utility == null)
 				this.utility = new RegionUtility(this.ts);
-			return new SynthesizePN(this.utility, this.properties, false, null);
+			return new SynthesizePN(this.utility, this.properties, false, null, quickFail);
 		}
 	}
 
@@ -151,13 +166,14 @@ public class SynthesizePN {
 	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
 	SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation,
-			String stateMappingExtension) throws MissingLocationException {
+			String stateMappingExtension, boolean quickFail) throws MissingLocationException {
 		this.ts = utility.getTransitionSystem();
 		this.utility = utility;
 		this.onlyEventSeparation = onlyEventSeparation;
 		this.properties = properties;
 		this.separation = SeparationUtility.createSeparationInstance(utility, properties);
 		this.stateMappingExtension = stateMappingExtension;
+		this.quickFail = quickFail;
 
 		debug("Region basis: ", utility.getRegionBasis());
 
@@ -167,9 +183,15 @@ public class SynthesizePN {
 		debug("Solving event-state separation");
 		solveEventStateSeparation();
 
+		if (quickFail && !wasSuccessfullySeparated())
+			return;
+
 		debug();
 		debug("Solving state separation");
 		solveStateSeparation();
+
+		if (quickFail && !wasSuccessfullySeparated())
+			return;
 
 		debug();
 		debug("Minimizing regions");
@@ -267,6 +289,8 @@ public class SynthesizePN {
 					failedStateSeparationRelation.joinClasses(mapState(state),
 							mapState(otherState));
 					debug("Failure!");
+					if (quickFail)
+						return;
 				} else {
 					debug("Calculated region ", r);
 					regions.add(r);
@@ -300,6 +324,8 @@ public class SynthesizePN {
 					if (r == null) {
 						failedProblems.get(event).add(mapState(state));
 						debug("Failure!");
+						if (quickFail)
+							return;
 					} else {
 						debug("Calculated region ", r);
 						regions.add(r);
