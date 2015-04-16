@@ -126,18 +126,18 @@ public final class SeparationUtility {
 				throw new MissingLocationException("Trying to synthesize a Petri Net where some events "
 						+ " have a location and others do not. Either all or no event must"
 						+ " have a location.");
-
-			// Do all events have the same location?
-			if (Collections.frequency(Arrays.asList(locationMap), locationMap[0]) == locationMap.length) {
-				// No location handling needed, discard the map
-				locationMap = new String[locationMap.length];
-			}
 		}
 
 		// We used the above as sanity checks, now handle output-nonbranching, if specified
 		if (properties.isOutputNonbranching()) {
 			for (int i = 0; i < locationMap.length; i++)
 				locationMap[i] = String.valueOf(i);
+		}
+
+		// Do all events have the same location?
+		if (Collections.frequency(Arrays.asList(locationMap), locationMap[0]) == locationMap.length) {
+			// No location handling needed, discard the map
+			locationMap = new String[locationMap.length];
 		}
 
 		return locationMap;

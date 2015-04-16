@@ -193,6 +193,17 @@ public class SeparationUtilityTest {
 		assertThat(SeparationUtility.getLocationMap(new RegionUtility(ts), properties),
 				arrayContaining("0", "1"));
 	}
+
+	@Test
+	public void testOutputNonbranchingOnlyOneEvent() throws Exception {
+		TransitionSystem ts = TestTSCollection.getNonDeterministicTS();
+		PNProperties properties = new PNProperties();
+		properties.setOutputNonbranching(true);
+
+		String nullStr = null;
+		assertThat(SeparationUtility.getLocationMap(new RegionUtility(ts), properties),
+				arrayContaining(nullStr));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
