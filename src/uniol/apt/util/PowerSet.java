@@ -93,6 +93,32 @@ public class PowerSet<E> extends AbstractCollection<Collection<E>> {
 	}
 
 	/**
+	 * Iterable that creates BitSetIterator instances.
+	 * @author Uli Schlachter
+	 */
+	static public class BitSetIterable extends AbstractCollection<BitSet> {
+		final private int size;
+
+		/**
+		 * Constructor
+		 * @param size The number of bits that should be in each BitSet
+		 */
+		public BitSetIterable(int size) {
+			this.size = size;
+		}
+
+		@Override
+		public int size() {
+			return (int) Math.pow(2, size);
+		}
+
+		@Override
+		public Iterator<BitSet> iterator() {
+			return new BitSetIterator(size);
+		}
+	}
+
+	/**
 	 * Iterator that iterates through all possible BitSets of a given length.
 	 * @author Uli Schlachter
 	 */

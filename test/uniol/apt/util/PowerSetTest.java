@@ -73,18 +73,11 @@ public class PowerSetTest {
 
 	@Test
 	public void testBitSetThree() {
-		Iterator<BitSet> iter = new PowerSet.BitSetIterator(3);
-		Set<BitSet> set = new HashSet<>();
+		Collection<BitSet> collection = new PowerSet.BitSetIterable(3);
 
-		int numElements = 0;
-		while (iter.hasNext()) {
-			set.add(iter.next());
-			numElements++;
-		}
-
-		assertThat(numElements, is(8));
+		assertThat(collection, hasSize(8));
 		// Cheap check that all elements are really different:
-		assertThat(set, hasSize(8));
+		assertThat(new HashSet<>(collection), hasSize(8));
 	}
 
 	@Test
