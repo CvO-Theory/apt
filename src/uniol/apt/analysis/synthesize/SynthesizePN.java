@@ -556,22 +556,16 @@ public class SynthesizePN {
 		PetriNet pn = synthesizePetriNet(utility, regions);
 
 		// Test if the synthesized PN really satisfies all the properties that it should
-		if (properties.isPure())
-			assert Pure.checkPure(pn) : regions;
-		if (properties.isPlain())
-			assert new Plain().checkPlain(pn) : regions;
-		if (properties.isTNet())
-			assert isGeneralizedTNet(pn) : regions;
-		if (properties.isKBounded())
-			assert new Bounded().checkBounded(pn).k <= properties.getKForKBounded() : regions;
-		if (properties.isOutputNonbranching())
-			assert new OutputNonBranching(pn).check() : regions;
-		if (properties.isConflictFree())
-			try {
-				assert new ConflictFree(pn).check() : regions;
-			} catch (PreconditionFailedException e) {
-				assert false : regions;
-			}
+		assert !properties.isPure() || Pure.checkPure(pn) : regions;
+		assert !properties.isPlain() || new Plain().checkPlain(pn) : regions;
+		assert !properties.isTNet() || isGeneralizedTNet(pn) : regions;
+		assert !properties.isKBounded() || new Bounded().checkBounded(pn).k <= properties.getKForKBounded() : regions;
+		assert !properties.isOutputNonbranching() || new OutputNonBranching(pn).check() : regions;
+		try {
+			assert !properties.isConflictFree() || new ConflictFree(pn).check() : regions;
+		} catch (PreconditionFailedException e) {
+			assert false : regions;
+		}
 
 		try {
 			if (!onlyEventSeparation)
