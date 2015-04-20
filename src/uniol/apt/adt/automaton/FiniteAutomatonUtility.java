@@ -49,6 +49,22 @@ public class FiniteAutomatonUtility {
 		};
 	}
 
+	// Get an automaton with the given initial state
+	static private DeterministicFiniteAutomaton getAutomaton(DFAState state) {
+		final DFAState s = state;
+		return new DeterministicFiniteAutomaton() {
+			@Override
+			public DFAState getInitialState() {
+				return s;
+			}
+
+			@Override
+			public Set<Symbol> getAlphabet() {
+				return s.getDefinedSymbols();
+			}
+		};
+	}
+
 	/**
 	 * Get a finite automaton accepting the empty language.
 	 * @return The automaton
@@ -88,7 +104,7 @@ public class FiniteAutomatonUtility {
 	 * Get a finite automaton accepting the union of the languages of two automatons. A word is in the union of the
 	 * languages if it is in at least one of the individual languages.
 	 * @param a1 The first automaton of the union.
-	 * @param a1 The second automaton of the union.
+	 * @param a2 The second automaton of the union.
 	 * @return An automaton accepting the union.
 	 */
 	static public FiniteAutomaton union(FiniteAutomaton a1, FiniteAutomaton a2) {
@@ -109,6 +125,16 @@ public class FiniteAutomatonUtility {
 
 			}
 		});
+	}
+
+	/**
+	 * Get a finite automaton accepting the negation of the language of the given automaton. A word is in the
+	 * negation of the language if is is not in the language itself.
+	 * @param a The automaton whose language is to negate.
+	 * @return An automaton accepting the negation.
+	 */
+	static public DeterministicFiniteAutomaton negate(DeterministicFiniteAutomaton a) {
+		return getAutomaton(new NegationState(a.getInitialState()));
 	}
 
 	/**
@@ -576,6 +602,45 @@ public class FiniteAutomatonUtility {
 				states[i] = new MinimalState(this, transitions.get(i), isFinalState.get(i));
 
 			return states;
+		}
+	}
+
+	static private class NegationState extends DFAState {
+		private final DFAState originalState;
+
+		public NegationState(DFAState originalState) {
+			this.originalState = originalState;
+		}
+
+		@Override
+		public boolean isFinalState() {
+			return !originalState.isFinalState();
+		}
+
+		@Override
+		public Set<Symbol> getDefinedSymbols() {
+			return originalState.getDefinedSymbols();
+		}
+
+		@Override
+		public DFAState getFollowingState(Symbol symbol) {
+			DFAState state = originalState.getFollowingState(symbol);
+			if (state == null)
+				return null;
+			return new NegationState(state);
+		}
+
+		@Override
+		public int hashCode() {
+			return originalState.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (!(o instanceof NegationState))
+				return false;
+			NegationState other = (NegationState) o;
+			return originalState.equals(other.originalState);
 		}
 	}
 }

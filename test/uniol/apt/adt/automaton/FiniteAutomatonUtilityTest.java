@@ -293,6 +293,22 @@ public class FiniteAutomatonUtilityTest {
 		assertThat(constructDFA(dfa), sameInstance(dfa));
 		assertThat(minimize(dfa), sameInstance(dfa));
 	}
+
+	@Test
+	public void testConstructNegation() {
+		DeterministicFiniteAutomaton dfa = negate(getTestDFA());
+
+		assertThat(dfa.getAlphabet(), containsInAnyOrder(new Symbol("a"), new Symbol("b")));
+		assertThat(dfa.getInitialState(), equalTo(dfa.getInitialState()));
+		wordInLanguage(dfa, false);
+		wordInLanguage(dfa, true, "a");
+		wordInLanguage(dfa, false, "a", "b");
+		wordInLanguage(dfa, true, "a", "b", "a");
+		wordInLanguage(dfa, false, "a", "b", "a", "b");
+		wordInLanguage(dfa, false, "b", "a", "b", "a", "b", "a");
+	}
+
+	// fromPrefixLanguageLTS() is tested through analysis.language
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
