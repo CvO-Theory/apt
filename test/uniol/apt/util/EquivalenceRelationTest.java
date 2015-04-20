@@ -110,6 +110,24 @@ public class EquivalenceRelationTest {
 		assertThat(relation, contains(containsInAnyOrder("a", "b", "c", "d")));
 		assertThat(relation, hasSize(1));
 	}
+
+	@Test
+	public void testEqualsEmpty() {
+		EquivalenceRelation<String> relation1 = new EquivalenceRelation<>();
+		EquivalenceRelation<String> relation2 = new EquivalenceRelation<>();
+		assertThat(relation1, equalTo(relation2));
+		assertThat(relation1.hashCode(), equalTo(relation2.hashCode()));
+	}
+
+	@Test
+	public void testEqualsNonEmpty() {
+		EquivalenceRelation<String> relation1 = new EquivalenceRelation<>();
+		EquivalenceRelation<String> relation2 = new EquivalenceRelation<>();
+		relation1.joinClasses("a", "b");
+		relation2.joinClasses("b", "a");
+		assertThat(relation1, equalTo(relation2));
+		assertThat(relation1.hashCode(), equalTo(relation2.hashCode()));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

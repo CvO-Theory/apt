@@ -130,6 +130,7 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 				Set<E> next = iter.peek();
 				while (next != null && next.size() == 1) {
 					iter.next();
+					iter.remove();
 					next = iter.peek();
 				}
 				return iter.hasNext();
@@ -146,6 +147,26 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 				throw new UnsupportedOperationException();
 			}
 		};
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		if (!(o instanceof EquivalenceRelation))
+			return false;
+		EquivalenceRelation<?> rel = (EquivalenceRelation<?>) o;
+		if (rel.size() != size())
+			return false;
+		return containsAll(rel);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = 0;
+		for (Set<E> set : this)
+			result += set.hashCode();
+		return result;
 	}
 }
 
