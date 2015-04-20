@@ -28,9 +28,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections4.Transformer;
 import org.apache.commons.collections4.iterators.PeekingIterator;
-import org.apache.commons.collections4.map.LazyMap;
 import static org.apache.commons.collections4.iterators.PeekingIterator.peekingIterator;
 
 /**
@@ -40,18 +38,7 @@ import static org.apache.commons.collections4.iterators.PeekingIterator.peekingI
  * @author Uli Schlachter
  */
 public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implements Collection<Set<E>>, IEquivalenceRelation<E> {
-	private class ToUnitSetTransformer implements Transformer<E, Set<E>> {
-		@Override
-		public Set<E> transform(E e) {
-			Set<E> result = new HashSet<>();
-			result.add(e);
-			EquivalenceRelation.this.allClasses.add(result);
-			return result;
-		}
-	}
-
-	private final Map<E, Set<E>> elementToClass = LazyMap.lazyMap(new HashMap<E, Set<E>>(),
-			new ToUnitSetTransformer());
+	private final Map<E, Set<E>> elementToClass = new HashMap<E, Set<E>>();
 	private final Set<Set<E>> allClasses = new HashSet<>();
 
 	/**
@@ -62,7 +49,7 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 	 * @param relation The relation to use for refinement.
 	 * @return The refined equivalence relation or this relation if no refinement was necessary.
 	 */
-	public EquivalenceRelation<E> refine(IEquivalenceRelation<E> relation) {
+	public EquivalenceRelation<E> refine(IEquivalenceRelation<? super E> relation) {
 		EquivalenceRelation<E> newRelation = new EquivalenceRelation<>();
 		boolean hadSplit = false;
 		for (Set<E> klass : allClasses) {
@@ -96,8 +83,8 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 	 * @return the new class containing both elements
 	 */
 	public Set<E> joinClasses(E e1, E e2) {
-		Set<E> class1 = elementToClass.get(e1);
-		Set<E> class2 = elementToClass.get(e2);
+		Set<E> class1 = getClass(e1);
+		Set<E> class2 = getClass(e2);
 
 		if (class1.contains(e2))
 			// Already in same class
@@ -127,12 +114,22 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 	 * @return The element's equivalence class
 	 */
 	public Set<E> getClass(E e) {
-		return elementToClass.get(e);
+		Set<E> result = elementToClass.get(e);
+		if (result == null) {
+			result = new HashSet<>();
+			result.add(e);
+			elementToClass.put(e, result);
+			allClasses.add(result);
+		}
+		return result;
 	}
 
 	@Override
 	public boolean isEquivalent(E e1, E e2) {
-		return elementToClass.get(e1).contains(e2);
+		if (e1.equals(e2))
+			return true;
+		Set<E> klass = elementToClass.get(e1);
+		return klass != null && klass.contains(e2);
 	}
 
 	@Override
