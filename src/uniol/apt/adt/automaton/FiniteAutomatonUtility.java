@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import java.util.Set;
 
 import uniol.apt.util.EquivalenceRelation;
 import uniol.apt.util.IEquivalenceRelation;
+import uniol.apt.util.Pair;
 
 /**
  * Utility functions for constructing and working with {@link FiniteAutomaton} instances.
@@ -282,6 +284,65 @@ public class FiniteAutomatonUtility {
 		if (a instanceof MinimalDeterministicFiniteAutomaton)
 			return (DeterministicFiniteAutomaton) a;
 		return new MinimalDeterministicFiniteAutomaton(a);
+	}
+
+	/**
+	 * Test if two automaton are language equivalent. Automatons are language equivalent if they accept the same
+	 * language.
+	 * @param a1 The first automaton to test with
+	 * @param a2 The second automaton to test with
+	 * @return true if and only if both automaton accept the same language.
+	 */
+	static public boolean languageEquivalent(FiniteAutomaton a1, FiniteAutomaton a2) {
+		return findWordDifference(a1, a2) == null;
+	}
+
+	/**
+	 * Find a word that is only accepted by one of the automatons.
+	 * @param a1 The first automaton to test with
+	 * @param a2 The second automaton to test with
+	 * @return true if and only if both automaton accept the same language.
+	 * @return A word that is only accepted by one of the automatons
+	 */
+	static public List<Symbol> findWordDifference(FiniteAutomaton a1, FiniteAutomaton a2) {
+		DeterministicFiniteAutomaton dfa1 = constructDFA(a1);
+		DeterministicFiniteAutomaton dfa2 = constructDFA(a2);
+		// We are looking for words that dfa1 accepts and dfa2 does not accept or that dfa1 does not accept and
+		// dfa2 accepts. This can be expressed as an automaton which accepts the empty language iff the two
+		// input automaton are language equivalent
+		DeterministicFiniteAutomaton dfa = union(intersection(dfa1, negate(dfa2)), intersection(negate(dfa1), dfa2));
+		return findAcceptedWord(minimize(dfa));
+	}
+
+	// Find a word that the given automaton accepts
+	static private List<Symbol> findAcceptedWord(DeterministicFiniteAutomaton dfa) {
+		Set<DFAState> statesSeen = new HashSet<>();
+		LinkedList<Symbol> word = new LinkedList<>();
+		Deque<Pair<DFAState, Iterator<Symbol>>> trace = new LinkedList<>();
+		DFAState initial = dfa.getInitialState();
+		trace.add(new Pair<>(initial, initial.getDefinedSymbols().iterator()));
+
+		while (!trace.isEmpty()) {
+			Pair<DFAState, Iterator<Symbol>> pair = trace.peekLast();
+			if (!pair.getSecond().hasNext()) {
+				trace.removeLast();
+				word.pollLast();
+			} else {
+				Symbol symbol = pair.getSecond().next();
+				DFAState nextState = pair.getFirst().getFollowingState(symbol);
+
+				// Only follow this state if we haven't followed it yet before
+				if (statesSeen.add(nextState)) {
+					trace.add(new Pair<>(nextState, nextState.getDefinedSymbols().iterator()));
+					word.add(symbol);
+
+					if (nextState.isFinalState())
+						return word;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	static private abstract class AbstractState implements State {

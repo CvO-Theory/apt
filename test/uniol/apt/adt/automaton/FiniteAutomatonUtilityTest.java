@@ -344,6 +344,29 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(dfa, true, "a", "b", "a", "a", "b", "a");
 	}
 
+	@Test
+	public void testFindWordDifference() {
+		Symbol a = new Symbol("a");
+		Symbol b = new Symbol("b");
+		FiniteAutomaton autA = getAtomicLanguage(a);
+		FiniteAutomaton autB = getAtomicLanguage(b);
+		FiniteAutomaton automaton1 = kleeneStar(concatenate(autA, concatenate(autB, autA)));
+		FiniteAutomaton automaton2 = kleeneStar(concatenate(autA, optional(union(autA, autB))));
+
+		assertThat(findWordDifference(automaton1, automaton2), contains(a));
+	}
+
+	@Test
+	public void testFindWordDifferenceSame() {
+		Symbol a = new Symbol("a");
+		Symbol b = new Symbol("b");
+		FiniteAutomaton autA = getAtomicLanguage(a);
+		FiniteAutomaton autB = getAtomicLanguage(b);
+		FiniteAutomaton automaton = kleeneStar(concatenate(autA, optional(union(autA, autB))));
+
+		assertThat(findWordDifference(automaton, automaton), nullValue());
+	}
+
 	// fromPrefixLanguageLTS() is tested through analysis.language
 }
 
