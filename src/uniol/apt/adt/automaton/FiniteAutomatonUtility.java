@@ -20,9 +20,16 @@
 package uniol.apt.adt.automaton;
 
 import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import uniol.apt.util.EquivalenceRelation;
+import uniol.apt.util.IEquivalenceRelation;
 
 /**
  * Utility functions for constructing and working with {@link FiniteAutomaton} instances.
@@ -197,6 +204,29 @@ public class FiniteAutomatonUtility {
 		return false;
 	}
 
+	/**
+	 * Construct a deterministic finite automaton from a general finite automaton via the powerset construction.
+	 * @param a the automaton to determinize
+	 * @return A deterministic finite automaton accepting the same language
+	 */
+	static public DeterministicFiniteAutomaton constructDFA(FiniteAutomaton a) {
+		if (a instanceof DeterministicFiniteAutomaton)
+			return (DeterministicFiniteAutomaton) a;
+		return new PowerSetConstruction(a);
+	}
+
+	/**
+	 * Get the unique deterministic automaton with the minimal number of states that accepts the same language as
+	 * the given automaton.
+	 * @param a the automaton to minimize
+	 * @return The minimal automaton for the language
+	 */
+	static public DeterministicFiniteAutomaton minimize(FiniteAutomaton a) {
+		if (a instanceof MinimalDeterministicFiniteAutomaton)
+			return (DeterministicFiniteAutomaton) a;
+		return new MinimalDeterministicFiniteAutomaton(a);
+	}
+
 	static private abstract class AbstractState implements State {
 		private final boolean isFinalState;
 
@@ -307,6 +337,245 @@ public class FiniteAutomatonUtility {
 				return false;
 			KleeneDecoratorState other = (KleeneDecoratorState) o;
 			return currentState.equals(other.currentState) && targetState.equals(other.targetState);
+		}
+	}
+
+	// Implementation of the power set construction used by constructDFA().
+	static private class PowerSetConstruction implements DeterministicFiniteAutomaton {
+		private final Set<Symbol> alphabet;
+		private final DFAState initialState;
+
+		PowerSetConstruction(FiniteAutomaton a) {
+			// Calculate some alphabet
+			Set<Symbol> alphabet = new HashSet<>();
+			Deque<State> unhandled = new LinkedList<>();
+			Set<State> states = new HashSet<>();
+
+			unhandled.add(a.getInitialState());
+			states.add(a.getInitialState());
+
+			while (!unhandled.isEmpty()) {
+				State state = unhandled.removeFirst();
+				alphabet.addAll(state.getDefinedSymbols());
+
+				Set<State> nextStates = new HashSet<>(state.getFollowingStates(Symbol.EPSILON));
+				for (Symbol symbol : state.getDefinedSymbols())
+					nextStates.addAll(state.getFollowingStates(symbol));
+				for (State next : nextStates)
+					if (states.add(next))
+						unhandled.add(next);
+			}
+			assert !alphabet.contains(Symbol.EPSILON);
+
+			// Remember the alphabet for later and construct an initial state
+			this.alphabet = Collections.unmodifiableSet(alphabet);
+			this.initialState = new PowerSetState(Collections.singleton(a.getInitialState()));
+		}
+
+		@Override
+		public Set<Symbol> getAlphabet() {
+			return alphabet;
+		}
+
+		@Override
+		public DFAState getInitialState() {
+			return initialState;
+		}
+
+		private class PowerSetState extends DFAState {
+			private final Set<State> states;
+
+			public PowerSetState(Set<State> states) {
+				this.states = followEpsilons(states);
+			}
+
+			@Override
+			public Set<Symbol> getDefinedSymbols() {
+				return getAlphabet();
+			}
+
+			@Override
+			public boolean isFinalState() {
+				for (State state : states)
+					if (state.isFinalState())
+						return true;
+				return false;
+			}
+
+			@Override
+			public DFAState getFollowingState(Symbol atom) {
+				if (!getAlphabet().contains(atom))
+					return null;
+
+				Set<State> newStates = new HashSet<>();
+				for (State state : states)
+					newStates.addAll(state.getFollowingStates(atom));
+
+				return new PowerSetState(newStates);
+			}
+
+			@Override
+			public int hashCode() {
+				return states.hashCode();
+			}
+
+			@Override
+			public boolean equals(Object o) {
+				if (!(o instanceof PowerSetState))
+					return false;
+				PowerSetState other = (PowerSetState) o;
+				return states.equals(other.states);
+			}
+		}
+	}
+
+	// Implementation of the table filing algorithm used by minimize().
+	static private class MinimalDeterministicFiniteAutomaton implements DeterministicFiniteAutomaton {
+		private final Set<Symbol> alphabet;
+		private final MinimalState[] states;
+
+		public MinimalDeterministicFiniteAutomaton(FiniteAutomaton a) {
+			DeterministicFiniteAutomaton dfa = constructDFA(a);
+			this.alphabet = Collections.unmodifiableSet(dfa.getAlphabet());
+
+			// Calculate equivalent states via the table filling algorithm
+			EquivalenceRelation<DFAState> partition = getInitialPartitionForMinimize(dfa);
+			partition = refinePartition(partition, alphabet);
+			this.states = constructStates(partition, dfa.getInitialState());
+		}
+
+		@Override
+		public DFAState getInitialState() {
+			return states[0];
+		}
+
+		@Override
+		public Set<Symbol> getAlphabet() {
+			return alphabet;
+		}
+
+		static private class MinimalState extends DFAState {
+			private final MinimalDeterministicFiniteAutomaton automaton;
+			private final Map<Symbol, Integer> postset;
+			private final boolean isFinalState;
+
+			public MinimalState(MinimalDeterministicFiniteAutomaton automaton, Map<Symbol, Integer> postset, boolean isFinalState) {
+				this.automaton = automaton;
+				this.isFinalState = isFinalState;
+				this.postset = postset;
+			}
+
+			@Override
+			public boolean isFinalState() {
+				return isFinalState;
+			}
+
+			@Override
+			public Set<Symbol> getDefinedSymbols() {
+				return automaton.getAlphabet();
+			}
+
+			@Override
+			public DFAState getFollowingState(Symbol atom) {
+				if (!automaton.getAlphabet().contains(atom))
+					return null;
+				return automaton.states[postset.get(atom)];
+			}
+		}
+
+		static private EquivalenceRelation<DFAState> getInitialPartitionForMinimize(DeterministicFiniteAutomaton a) {
+			DFAState finalState = null;
+			DFAState nonFinalState = null;
+			EquivalenceRelation<DFAState> relation = new EquivalenceRelation<>();
+			Deque<DFAState> unhandled = new LinkedList<>();
+			Set<State> states = new HashSet<>();
+
+			// Go through all states
+			unhandled.add(a.getInitialState());
+			states.add(a.getInitialState());
+			while (!unhandled.isEmpty()) {
+				DFAState state = unhandled.removeFirst();
+
+				// Add this state to the correct set
+				if (state.isFinalState()) {
+					if (finalState == null)
+						finalState = state;
+					relation.joinClasses(finalState, state);
+				} else {
+					if (nonFinalState == null)
+						nonFinalState = state;
+					relation.joinClasses(nonFinalState, state);
+				}
+
+				// Calculate all post-set states
+				for (Symbol symbol : state.getDefinedSymbols()) {
+					DFAState next = state.getFollowingState(symbol);
+					if (states.add(next))
+						unhandled.add(next);
+				}
+			}
+
+			return relation;
+		}
+
+		static private EquivalenceRelation<DFAState> refinePartition(EquivalenceRelation<DFAState> partition, Set<Symbol> alphabet) {
+			EquivalenceRelation<DFAState> lastPartition;
+			do {
+				lastPartition = partition;
+				for (final Symbol symbol : alphabet) {
+					// If there are two states in the same equivalence class and they have a
+					// transition with symbol 'symbol' going to different classes, then this class
+					// must be split.
+					final IEquivalenceRelation<DFAState> current = partition;
+					IEquivalenceRelation<DFAState> predicate = new IEquivalenceRelation<DFAState>() {
+						@Override
+						public boolean isEquivalent(DFAState state1, DFAState state2) {
+							DFAState follow1 = state1.getFollowingState(symbol);
+							DFAState follow2 = state2.getFollowingState(symbol);
+							return current.isEquivalent(follow1, follow2);
+						}
+					};
+					partition = partition.refine(predicate);
+				}
+			} while (lastPartition != partition);
+			return partition;
+		}
+
+		private MinimalState[] constructStates(EquivalenceRelation<DFAState> partition, DFAState initialState) {
+			Map<Set<DFAState>, Integer> stateIndex = new HashMap<>();
+			Map<Integer, Boolean> isFinalState = new HashMap<>();
+			stateIndex.put(partition.getClass(initialState), 0);
+			isFinalState.put(0, initialState.isFinalState());
+			int nextIndex = 1;
+			Map<Integer, Map<Symbol, Integer>> transitions = new HashMap<>();
+			Deque<Set<DFAState>> unhandled = new LinkedList<>();
+
+			unhandled.add(partition.getClass(initialState));
+			while (!unhandled.isEmpty()) {
+				Set<DFAState> state = unhandled.removeFirst();
+
+				DFAState representingState = state.iterator().next();
+				Map<Symbol, Integer> postset = new HashMap<>();
+				for (Symbol symbol : getAlphabet()) {
+					DFAState followingState = representingState.getFollowingState(symbol);
+					Set<DFAState> next = partition.getClass(followingState);
+					if (!stateIndex.containsKey(next)) {
+						isFinalState.put(nextIndex, followingState.isFinalState());
+						stateIndex.put(next, nextIndex++);
+						unhandled.add(next);
+					}
+
+					postset.put(symbol, stateIndex.get(next));
+				}
+				transitions.put(stateIndex.get(state), postset);
+			}
+
+			int numStates = nextIndex;
+			MinimalState[] states = new MinimalState[numStates];
+			for (int i = 0; i < numStates; i++)
+				states[i] = new MinimalState(this, transitions.get(i), isFinalState.get(i));
+
+			return states;
 		}
 	}
 }

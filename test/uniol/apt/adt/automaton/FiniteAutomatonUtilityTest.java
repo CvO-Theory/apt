@@ -19,22 +19,12 @@
 
 package uniol.apt.adt.automaton;
 
-import java.util.HashSet;
-import java.util.Collections;
 import java.util.Arrays;
-import java.util.Set;
-import org.testng.annotations.Test;
-import uniol.apt.adt.SoftMap;
-import uniol.apt.adt.exception.ArcExistsException;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
-import uniol.tests.TestUtils;
-import uniol.tests.TestUtils;
-import uniol.tests.TestUtils;
-import uniol.tests.TestUtils;
 
-import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
+import org.testng.annotations.Test;
+
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
 import static uniol.apt.adt.matcher.Matchers.*;
 
 /**
@@ -63,6 +53,8 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(automaton, false);
 		wordInLanguage(automaton, false, "a");
 		wordInLanguage(automaton, false, "a", "b");
+
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
 	}
 
 	@Test
@@ -77,6 +69,8 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(automaton, true);
 		wordInLanguage(automaton, false, "a");
 		wordInLanguage(automaton, false, "a", "b");
+
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
 	}
 
 	@Test
@@ -98,6 +92,20 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(automaton, true, "a");
 		wordInLanguage(automaton, false, "c");
 		wordInLanguage(automaton, false, "a", "b");
+
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
+	}
+
+	@Test
+	public void testUnion1() {
+		FiniteAutomaton automaton = union(getAtomicLanguage(new Symbol("a")), getAtomicLanguage(Symbol.EPSILON));
+
+		wordInLanguage(automaton, true);
+		wordInLanguage(automaton, true, "a");
+		wordInLanguage(automaton, false, "c");
+		wordInLanguage(automaton, false, "a", "b");
+
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
 	}
 
 	@Test
@@ -110,16 +118,8 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(automaton, false, "c");
 		wordInLanguage(automaton, false, "a", "b");
 		wordInLanguage(automaton, false, "b", "b");
-	}
 
-	@Test
-	public void testUnion1() {
-		FiniteAutomaton automaton = union(getAtomicLanguage(new Symbol("a")), getAtomicLanguage(Symbol.EPSILON));
-
-		wordInLanguage(automaton, true);
-		wordInLanguage(automaton, true, "a");
-		wordInLanguage(automaton, false, "c");
-		wordInLanguage(automaton, false, "a", "b");
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
 	}
 
 	@Test
@@ -131,6 +131,8 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(automaton, false, "c");
 		wordInLanguage(automaton, true, "a", "b");
 		wordInLanguage(automaton, false, "a", "b", "c");
+
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
 	}
 
 	@Test
@@ -141,6 +143,8 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(automaton, true, "a");
 		wordInLanguage(automaton, false, "c");
 		wordInLanguage(automaton, false, "a", "b");
+
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
 	}
 
 	@Test
@@ -154,6 +158,8 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(automaton, false, "a", "a", "a", "b", "a", "a");
 		wordInLanguage(automaton, false, "c");
 		wordInLanguage(automaton, false, "a", "b");
+
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
 	}
 
 	@Test
@@ -167,6 +173,8 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(automaton, false, "a", "a", "a", "b", "a", "a");
 		wordInLanguage(automaton, false, "c");
 		wordInLanguage(automaton, false, "a", "b");
+
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
 	}
 
 	@Test
@@ -180,6 +188,8 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(automaton, false, "a", "a", "a", "b", "a", "a");
 		wordInLanguage(automaton, false, "c");
 		wordInLanguage(automaton, false, "a", "b");
+
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
 	}
 
 	@Test
@@ -193,6 +203,8 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(automaton, false, "a", "a", "a", "b", "a", "a");
 		wordInLanguage(automaton, false, "c");
 		wordInLanguage(automaton, false, "a", "b");
+
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
 	}
 
 	@Test
@@ -204,7 +216,83 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(automaton, false, "a", "a");
 		wordInLanguage(automaton, false, "c");
 		wordInLanguage(automaton, false, "a", "b");
+
+		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
+	}
+
+	private DeterministicFiniteAutomaton getTestDFA() {
+		// Construct the minimal dfa for ((ab)^* | (ba)^* | (ab)^+)
+		FiniteAutomaton ab = concatenate(getAtomicLanguage(new Symbol("a")),
+				getAtomicLanguage(new Symbol("b")));
+		FiniteAutomaton ab2 = concatenate(getAtomicLanguage(new Symbol("a")),
+				getAtomicLanguage(new Symbol("b")));
+		FiniteAutomaton ba = concatenate(getAtomicLanguage(new Symbol("b")),
+				getAtomicLanguage(new Symbol("a")));
+		FiniteAutomaton automaton = union(union(kleeneStar(ab), kleeneStar(ba)), kleenePlus(ab2));
+		wordInLanguage(automaton, true);
+		wordInLanguage(automaton, false, "a");
+		wordInLanguage(automaton, true, "a", "b");
+		wordInLanguage(automaton, false, "a", "b", "a");
+		wordInLanguage(automaton, true, "a", "b", "a", "b");
+		wordInLanguage(automaton, true, "b", "a", "b", "a", "b", "a");
+		return constructDFA(automaton);
+	}
+
+	@Test
+	public void testConstructDFA() {
+		DeterministicFiniteAutomaton dfa = getTestDFA();
+
+		assertThat(dfa.getAlphabet(), containsInAnyOrder(new Symbol("a"), new Symbol("b")));
+		assertThat(dfa.getInitialState(), equalTo(dfa.getInitialState()));
+		wordInLanguage(dfa, true);
+		wordInLanguage(dfa, false, "a");
+		wordInLanguage(dfa, true, "a", "b");
+		wordInLanguage(dfa, false, "a", "b", "a");
+		wordInLanguage(dfa, true, "a", "b", "a", "b");
+		wordInLanguage(dfa, true, "b", "a", "b", "a", "b", "a");
+
+		assertThat(constructDFA(dfa), sameInstance(dfa));
+	}
+
+	@Test
+	public void testConstructMinimalDFA() {
+		DeterministicFiniteAutomaton dfa = minimize(getTestDFA());
+
+		assertThat(dfa.getAlphabet(), containsInAnyOrder(new Symbol("a"), new Symbol("b")));
+		assertThat(dfa.getInitialState(), equalTo(dfa.getInitialState()));
+		wordInLanguage(dfa, true);
+		wordInLanguage(dfa, false, "a");
+		wordInLanguage(dfa, true, "a", "b");
+		wordInLanguage(dfa, false, "a", "b", "a");
+		wordInLanguage(dfa, true, "a", "b", "a", "b");
+		wordInLanguage(dfa, true, "b", "a", "b", "a", "b", "a");
+
+		// The minimal dfa has six states represented by the words epsilon, a, ab, b, ba and bb
+		Symbol symA = new Symbol("a");
+		Symbol symB = new Symbol("b");
+		DFAState stateEps = dfa.getInitialState();
+		DFAState stateA = stateEps.getFollowingState(symA);
+		DFAState stateAB = stateA.getFollowingState(symB);
+		DFAState stateB = stateEps.getFollowingState(symB);
+		DFAState stateBA = stateB.getFollowingState(symA);
+		DFAState stateBB = stateB.getFollowingState(symB);
+
+		assertThat(stateEps.getFollowingState(symA), equalTo(stateA));
+		assertThat(stateEps.getFollowingState(symB), equalTo(stateB));
+		assertThat(stateA.getFollowingState(symA), equalTo(stateBB));
+		assertThat(stateA.getFollowingState(symB), equalTo(stateAB));
+		assertThat(stateAB.getFollowingState(symA), equalTo(stateA));
+		assertThat(stateAB.getFollowingState(symB), equalTo(stateBB));
+		assertThat(stateB.getFollowingState(symA), equalTo(stateBA));
+		assertThat(stateB.getFollowingState(symB), equalTo(stateBB));
+		assertThat(stateBA.getFollowingState(symA), equalTo(stateBB));
+		assertThat(stateBA.getFollowingState(symB), equalTo(stateB));
+		assertThat(stateBB.getFollowingState(symA), equalTo(stateBB));
+		assertThat(stateBB.getFollowingState(symB), equalTo(stateBB));
+
+		assertThat(constructDFA(dfa), sameInstance(dfa));
+		assertThat(minimize(dfa), sameInstance(dfa));
 	}
 }
-// vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
 
+// vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
