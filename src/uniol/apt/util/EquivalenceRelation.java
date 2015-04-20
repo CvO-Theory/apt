@@ -39,7 +39,7 @@ import static org.apache.commons.collections4.iterators.PeekingIterator.peekingI
  * @param <E> The type of elements in the equivalence relation.
  * @author Uli Schlachter
  */
-public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implements Collection<Set<E>> {
+public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implements Collection<Set<E>>, IEquivalenceRelation<E> {
 	private class ToUnitSetTransformer implements Transformer<E, Set<E>> {
 		@Override
 		public Set<E> transform(E e) {
@@ -53,6 +53,41 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 	private final Map<E, Set<E>> elementToClass = LazyMap.lazyMap(new HashMap<E, Set<E>>(),
 			new ToUnitSetTransformer());
 	private final Set<Set<E>> allClasses = new HashSet<>();
+
+	/**
+	 * Refine this equivalence relation via another relation. This function splits classes in this equivalence
+	 * relation where not all elements are in the same class in the given relation. The result will be the
+	 * equivalence relation where two elements are in the same class iff they are in the same class in this and in
+	 * the given relation.
+	 * @param relation The relation to use for refinement.
+	 * @return The refined equivalence relation or this relation if no refinement was necessary.
+	 */
+	public EquivalenceRelation<E> refine(IEquivalenceRelation<E> relation) {
+		EquivalenceRelation<E> newRelation = new EquivalenceRelation<>();
+		boolean hadSplit = false;
+		for (Set<E> klass : allClasses) {
+			Set<E> unhandled = new HashSet<>(klass);
+			while (!unhandled.isEmpty()) {
+				// Pick some element and figure out its equivalence class
+				Iterator<E> it = unhandled.iterator();
+				E e1 = it.next();
+				it.remove();
+
+				while (it.hasNext()) {
+					E e2 = it.next();
+					if (relation.isEquivalent(e1, e2)) {
+						it.remove();
+						newRelation.joinClasses(e1, e2);
+					} else
+						hadSplit = true;
+				}
+			}
+		}
+
+		if (!hadSplit)
+			return this;
+		return newRelation;
+	}
 
 	/**
 	 * Join the equivalence classes of two elements.
@@ -95,12 +130,7 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 		return elementToClass.get(e);
 	}
 
-	/**
-	 * Check if the given elements are in the same equivalence class.
-	 * @param e1 The first element to check
-	 * @param e2 The other element to check
-	 * @return true if both elements are equivalent
-	 */
+	@Override
 	public boolean isEquivalent(E e1, E e2) {
 		return elementToClass.get(e1).contains(e2);
 	}

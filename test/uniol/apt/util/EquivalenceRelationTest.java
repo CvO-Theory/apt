@@ -19,6 +19,8 @@
 
 package uniol.apt.util;
 
+import java.util.Arrays;
+
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.adt.matcher.Matchers.*;
@@ -27,6 +29,24 @@ import static uniol.apt.adt.matcher.Matchers.*;
 @Test
 @SuppressWarnings("unchecked") // I hate generics
 public class EquivalenceRelationTest {
+	EquivalenceRelation<Integer> getOddEven(int limit) {
+		EquivalenceRelation<Integer> result = new EquivalenceRelation<>();
+		for (int i = 2; i <= limit; i++)
+			result.joinClasses(i % 2, i);
+		return result;
+	}
+
+	EquivalenceRelation<Integer> getSomePrimes() {
+		int[] primes = { 2, 3, 5, 7, 11, 13, 17, 19 };
+		EquivalenceRelation<Integer> result = new EquivalenceRelation<>();
+		for (int i = 0; i <= 20; i++)
+			if (Arrays.binarySearch(primes, i) >= 0)
+				result.joinClasses(2, i);
+			else
+				result.joinClasses(1, i);
+		return result;
+	}
+
 	@Test
 	public void testEmptyRelation() {
 		EquivalenceRelation<String> relation = new EquivalenceRelation<>();
@@ -127,6 +147,39 @@ public class EquivalenceRelationTest {
 		relation2.joinClasses("b", "a");
 		assertThat(relation1, equalTo(relation2));
 		assertThat(relation1.hashCode(), equalTo(relation2.hashCode()));
+	}
+
+	@Test
+	public void testRefineEmpty() {
+		EquivalenceRelation<Integer> primes = getSomePrimes();
+		EquivalenceRelation<Integer> empty = new EquivalenceRelation<>();
+		assertThat(primes.refine(empty), equalTo(empty));
+	}
+
+	@Test
+	public void testEmptyRefine() {
+		EquivalenceRelation<Integer> primes = getSomePrimes();
+		EquivalenceRelation<Integer> empty = new EquivalenceRelation<>();
+		assertThat(empty.refine(primes), sameInstance(empty));
+	}
+
+	@Test
+	public void testRefineSelf() {
+		EquivalenceRelation<Integer> primes = getSomePrimes();
+		assertThat(primes.refine(primes), sameInstance(primes));
+	}
+
+	@Test
+	public void testRefine() {
+		EquivalenceRelation<Integer> primes = getSomePrimes();
+		EquivalenceRelation<Integer> numbers = getOddEven(20);
+		EquivalenceRelation<Integer> refined = primes.refine(numbers);
+
+		assertThat(primes.isEquivalent(3, 7), is(true));
+		assertThat(primes.isEquivalent(1, 5), is(false));
+		assertThat(primes.isEquivalent(11, 9), is(false));
+		assertThat(primes.isEquivalent(11, 13), is(true));
+		assertThat(primes.isEquivalent(15, 9), is(true));
 	}
 }
 
