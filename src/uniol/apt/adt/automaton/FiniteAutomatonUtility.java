@@ -58,6 +58,9 @@ public class FiniteAutomatonUtility {
 	static public FiniteAutomaton getAtomicLanguage(Symbol atom) {
 		if (atom.isEpsilon())
 			return getAutomaton(new StateWithoutArcs(true));
+		// Since we do not implement equals(), we must always return the same state and make use of equals() by
+		// object identity.
+		final State endState = new StateWithoutArcs(true);
 		final Symbol a = atom;
 		return getAutomaton(new AbstractState(false) {
 			@Override
@@ -68,7 +71,7 @@ public class FiniteAutomatonUtility {
 			@Override
 			public Set<State> getFollowingStates(Symbol arg) {
 				if (arg.equals(a))
-					return Collections.<State>singleton(new StateWithoutArcs(true));
+					return Collections.<State>singleton(endState);
 				return Collections.emptySet();
 			}
 		});
