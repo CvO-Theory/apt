@@ -320,8 +320,27 @@ public class FiniteAutomatonUtilityTest {
 		assertThat(dfa.getInitialState(), equalTo(dfa.getInitialState()));
 		wordInLanguage(dfa, true);
 		wordInLanguage(dfa, false, "a");
+		wordInLanguage(dfa, false, "b");
 		wordInLanguage(dfa, true, "a", "b", "a");
 		wordInLanguage(dfa, false, "a", "a", "a");
+		wordInLanguage(dfa, true, "a", "b", "a", "a", "b", "a");
+	}
+
+	@Test
+	public void testConstructUnion() {
+		FiniteAutomaton a = getAtomicLanguage(new Symbol("a"));
+		FiniteAutomaton b = getAtomicLanguage(new Symbol("b"));
+		DeterministicFiniteAutomaton dfa1 = constructDFA(kleeneStar(concatenate(a, concatenate(b, a))));
+		DeterministicFiniteAutomaton dfa2 = constructDFA(kleeneStar(concatenate(a, optional(union(a, b)))));
+		DeterministicFiniteAutomaton dfa = union(dfa1, dfa2);
+
+		assertThat(dfa.getAlphabet(), containsInAnyOrder(new Symbol("a"), new Symbol("b")));
+		assertThat(dfa.getInitialState(), equalTo(dfa.getInitialState()));
+		wordInLanguage(dfa, true);
+		wordInLanguage(dfa, true, "a");
+		wordInLanguage(dfa, false, "b");
+		wordInLanguage(dfa, true, "a", "b", "a");
+		wordInLanguage(dfa, true, "a", "a", "a");
 		wordInLanguage(dfa, true, "a", "b", "a", "a", "b", "a");
 	}
 

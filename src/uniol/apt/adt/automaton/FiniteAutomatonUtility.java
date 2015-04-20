@@ -129,6 +129,21 @@ public class FiniteAutomatonUtility {
 	}
 
 	/**
+	 * Get a finite automaton accepting the union of the languages of two automatons. A word is in the union of the
+	 * languages if it is in at least one of the individual languages.
+	 * @param a1 The first automaton of the union.
+	 * @param a2 The second automaton of the union.
+	 * @return An automaton accepting the union.
+	 */
+	static public DeterministicFiniteAutomaton union(DeterministicFiniteAutomaton a1,
+			DeterministicFiniteAutomaton a2) {
+		Set<Symbol> alphabet = new HashSet<>(a1.getAlphabet());
+		alphabet.retainAll(a2.getAlphabet());
+		return getAutomaton(new SynchronousParallelComposition(alphabet, a1.getInitialState(),
+					a2.getInitialState(), SynchronousParallelComposition.Mode.UNION));
+	}
+
+	/**
 	 * Get a finite automaton accepting the intersection of the languages of two automatons. A word is in the
 	 * intersection of the languages if it is in all of the individual languages.
 	 * @param a1 The first automaton of the intersection.
@@ -139,8 +154,8 @@ public class FiniteAutomatonUtility {
 			DeterministicFiniteAutomaton a2) {
 		Set<Symbol> alphabet = new HashSet<>(a1.getAlphabet());
 		alphabet.retainAll(a2.getAlphabet());
-		return getAutomaton(new SynchronousParallelComposition(alphabet,
-					a1.getInitialState(), a2.getInitialState()));
+		return getAutomaton(new SynchronousParallelComposition(alphabet, a1.getInitialState(),
+					a2.getInitialState(), SynchronousParallelComposition.Mode.INTERSECTION));
 	}
 
 	/**
@@ -664,16 +679,29 @@ public class FiniteAutomatonUtility {
 		private final Set<Symbol> alphabet;
 		private final DFAState state1;
 		private final DFAState state2;
+		private final Mode mode;
 
-		public SynchronousParallelComposition(Set<Symbol> alphabet, DFAState state1, DFAState state2) {
+		static public enum Mode { UNION, INTERSECTION };
+
+		public SynchronousParallelComposition(Set<Symbol> alphabet, DFAState state1, DFAState state2,
+				Mode mode) {
 			this.alphabet = alphabet;
 			this.state1 = state1;
 			this.state2 = state2;
+			this.mode = mode;
 		}
 
 		@Override
 		public boolean isFinalState() {
-			return state1 != null && state2 != null && state1.isFinalState() && state2.isFinalState();
+			boolean state1Final = state1 != null && state1.isFinalState();
+			boolean state2Final = state2 != null && state2.isFinalState();
+			switch (mode) {
+				case INTERSECTION:
+					return state1Final && state2Final;
+				case UNION:
+					return state1Final || state2Final;
+			}
+			throw new AssertionError("Unknown mode for SynchronousParallelComposition");
 		}
 
 		@Override
@@ -686,7 +714,7 @@ public class FiniteAutomatonUtility {
 			if (!alphabet.contains(symbol))
 				return null;
 			return new SynchronousParallelComposition(alphabet, state1.getFollowingState(symbol),
-					state2.getFollowingState(symbol));
+					state2.getFollowingState(symbol), mode);
 		}
 
 		@Override
