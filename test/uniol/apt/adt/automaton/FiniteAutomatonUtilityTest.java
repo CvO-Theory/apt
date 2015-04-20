@@ -308,6 +308,23 @@ public class FiniteAutomatonUtilityTest {
 		wordInLanguage(dfa, false, "b", "a", "b", "a", "b", "a");
 	}
 
+	@Test
+	public void testConstructIntersection() {
+		FiniteAutomaton a = getAtomicLanguage(new Symbol("a"));
+		FiniteAutomaton b = getAtomicLanguage(new Symbol("b"));
+		DeterministicFiniteAutomaton dfa1 = constructDFA(kleeneStar(concatenate(a, concatenate(b, a))));
+		DeterministicFiniteAutomaton dfa2 = constructDFA(kleeneStar(concatenate(a, optional(union(a, b)))));
+		DeterministicFiniteAutomaton dfa = intersection(dfa1, dfa2);
+
+		assertThat(dfa.getAlphabet(), containsInAnyOrder(new Symbol("a"), new Symbol("b")));
+		assertThat(dfa.getInitialState(), equalTo(dfa.getInitialState()));
+		wordInLanguage(dfa, true);
+		wordInLanguage(dfa, false, "a");
+		wordInLanguage(dfa, true, "a", "b", "a");
+		wordInLanguage(dfa, false, "a", "a", "a");
+		wordInLanguage(dfa, true, "a", "b", "a", "a", "b", "a");
+	}
+
 	// fromPrefixLanguageLTS() is tested through analysis.language
 }
 

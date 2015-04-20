@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import uniol.apt.util.EquivalenceRelation;
@@ -125,6 +126,21 @@ public class FiniteAutomatonUtility {
 
 			}
 		});
+	}
+
+	/**
+	 * Get a finite automaton accepting the intersection of the languages of two automatons. A word is in the
+	 * intersection of the languages if it is in all of the individual languages.
+	 * @param a1 The first automaton of the intersection.
+	 * @param a2 The second automaton of the intersection.
+	 * @return An automaton accepting the intersection.
+	 */
+	static public DeterministicFiniteAutomaton intersection(DeterministicFiniteAutomaton a1,
+			DeterministicFiniteAutomaton a2) {
+		Set<Symbol> alphabet = new HashSet<>(a1.getAlphabet());
+		alphabet.retainAll(a2.getAlphabet());
+		return getAutomaton(new SynchronousParallelComposition(alphabet,
+					a1.getInitialState(), a2.getInitialState()));
 	}
 
 	/**
@@ -641,6 +657,49 @@ public class FiniteAutomatonUtility {
 				return false;
 			NegationState other = (NegationState) o;
 			return originalState.equals(other.originalState);
+		}
+	}
+
+	static private class SynchronousParallelComposition extends DFAState {
+		private final Set<Symbol> alphabet;
+		private final DFAState state1;
+		private final DFAState state2;
+
+		public SynchronousParallelComposition(Set<Symbol> alphabet, DFAState state1, DFAState state2) {
+			this.alphabet = alphabet;
+			this.state1 = state1;
+			this.state2 = state2;
+		}
+
+		@Override
+		public boolean isFinalState() {
+			return state1 != null && state2 != null && state1.isFinalState() && state2.isFinalState();
+		}
+
+		@Override
+		public Set<Symbol> getDefinedSymbols() {
+			return Collections.unmodifiableSet(alphabet);
+		}
+
+		@Override
+		public DFAState getFollowingState(Symbol symbol) {
+			if (!alphabet.contains(symbol))
+				return null;
+			return new SynchronousParallelComposition(alphabet, state1.getFollowingState(symbol),
+					state2.getFollowingState(symbol));
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(state1) ^ Objects.hashCode(state2);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (!(o instanceof SynchronousParallelComposition))
+				return false;
+			SynchronousParallelComposition other = (SynchronousParallelComposition) o;
+			return Objects.equals(state1, other.state1) && Objects.equals(state2, other.state2);
 		}
 	}
 }
