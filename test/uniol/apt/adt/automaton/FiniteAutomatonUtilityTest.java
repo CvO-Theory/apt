@@ -560,6 +560,14 @@ public class FiniteAutomatonUtilityTest {
 				TestTSCollection.getNonDeterministicTS()));
 		assertThat(findWordDifference(a, b), contains("a"));
 	}
+
+	@Test
+	public void testRenderToGraphviz() {
+		assertThat(renderToGraphviz(getAtomicLanguage(new Symbol("a"))),
+				is("digraph G {\n  s1 [peripheries=2];\n" +
+					"  start [shape=point, color=white, fontcolor=white];\n  start -> s0;\n" +
+					"  s0 -> s1 [label=\"[a]\"];\n}\n"));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

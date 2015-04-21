@@ -419,6 +419,40 @@ public class FiniteAutomatonUtility {
 	}
 
 	/**
+	 * Render a finite automaton in the Graphviz file format.
+	 * @param aut The automaton to render
+	 * @return The automaton in the Graphviz file format.
+	 */
+	static public String renderToGraphviz(FiniteAutomaton aut) {
+		StringBuffer result = new StringBuffer("digraph G {\n");
+		Map<State, String> identifier = new HashMap<>();
+
+		int id = 0;
+		for (State state : statesIterable(aut)) {
+			if (state.isFinalState())
+				result.append("  s" + id + " [peripheries=2];\n");
+			identifier.put(state, "s" + id++);
+		}
+
+		result.append("  start [shape=point, color=white, fontcolor=white];\n");
+		result.append("  start -> " + identifier.get(aut.getInitialState()) + ";\n");
+		for (State state : statesIterable(aut)) {
+			String stateId = identifier.get(state);
+			Set<Symbol> symbols = new HashSet<>(state.getDefinedSymbols());
+			symbols.add(Symbol.EPSILON);
+			for (Symbol sym : symbols) {
+				for (State next : state.getFollowingStates(sym)) {
+					String nextId = identifier.get(next);
+					result.append("  " + stateId + " -> " + nextId + " [label=\"" + sym.toString() + "\"];\n");
+				}
+			}
+		}
+
+		result.append("}\n");
+		return result.toString();
+	}
+
+	/**
 	 * Get an Iterable iterating over all of the automaton's states. The initial state will be the first state
 	 * returned by the iterable's iterators.
 	 * @param a The automaton whose states should be iterated
