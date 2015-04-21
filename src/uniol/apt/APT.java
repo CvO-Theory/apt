@@ -37,6 +37,7 @@ import org.apache.commons.io.FileUtils;
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.INode;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
+import uniol.apt.adt.automaton.FiniteAutomaton;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
@@ -167,6 +168,7 @@ import uniol.apt.ui.impl.InternalsModule;
 import uniol.apt.ui.impl.SimpleParametersParser;
 import uniol.apt.ui.impl.parameter.CharacterParameterTransformation;
 import uniol.apt.ui.impl.parameter.ExtendModeParameterTransformation;
+import uniol.apt.ui.impl.parameter.FiniteAutomatonParameterTransformation;
 import uniol.apt.ui.impl.parameter.GraphParameterTransformation;
 import uniol.apt.ui.impl.parameter.IntegerParameterTransformation;
 import uniol.apt.ui.impl.parameter.MatrixFileFormatParameterTransformation;
@@ -344,6 +346,7 @@ public class APT {
 		parametersTransformer.addTransformation((Class<IGraph<?, ?, ?>>) (Class<?>) IGraph.class,
 			new GraphParameterTransformation());
 		parametersTransformer.addTransformation(MatrixFileFormat.class, new MatrixFileFormatParameterTransformation());
+		parametersTransformer.addTransformation(FiniteAutomaton.class, new FiniteAutomatonParameterTransformation());
 	}
 
 	/**
