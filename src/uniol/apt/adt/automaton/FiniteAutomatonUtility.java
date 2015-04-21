@@ -142,7 +142,7 @@ public class FiniteAutomatonUtility {
 	static public DeterministicFiniteAutomaton union(DeterministicFiniteAutomaton a1,
 			DeterministicFiniteAutomaton a2) {
 		Set<Symbol> alphabet = new HashSet<>(a1.getAlphabet());
-		alphabet.retainAll(a2.getAlphabet());
+		alphabet.addAll(a2.getAlphabet());
 		return getAutomaton(new SynchronousParallelComposition(alphabet, a1.getInitialState(),
 					a2.getInitialState(), SynchronousParallelComposition.Mode.UNION));
 	}
