@@ -50,6 +50,7 @@ import uniol.apt.analysis.ExaminePNModule;
 import uniol.apt.analysis.FireSequenceModule;
 import uniol.apt.analysis.GenerateStepNetModule;
 import uniol.apt.analysis.InfoModule;
+import uniol.apt.analysis.RegularLanguageToLTSModule;
 import uniol.apt.analysis.algebra.MatrixFileFormat;
 import uniol.apt.analysis.algebra.MatrixModule;
 import uniol.apt.analysis.bcf.BCFModule;
@@ -245,8 +246,8 @@ public class APT {
 		new MatrixModule(),
 		new NonPureModule(),
 		new OutputNonBranchingModule(),
-		new PVsOfSmallestCyclesModule(),
 		new PNMLRendererModule(),
+		new PVsOfSmallestCyclesModule(),
 		new PersistentModule(),
 		new Petrify2AptModule(),
 		new PetrifySynthesizeModule(),
@@ -256,6 +257,7 @@ public class APT {
 		new QuadstatePhilNetGeneratorModule(),
 		new RandomTNetGeneratorModule(),
 		new ReachabilityModule(),
+		new RegularLanguageToLTSModule(),
 		new ReversibleModule(),
 		new SNetModule(),
 		new SafeModule(),
