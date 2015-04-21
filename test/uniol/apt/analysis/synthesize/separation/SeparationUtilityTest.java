@@ -204,6 +204,15 @@ public class SeparationUtilityTest {
 		assertThat(SeparationUtility.getLocationMap(new RegionUtility(ts), properties),
 				arrayContaining(nullStr));
 	}
+
+	@Test
+	public void testNoEvents() throws Exception {
+		TransitionSystem ts = TestTSCollection.getSingleStateTS();
+		PNProperties properties = new PNProperties();
+
+		assertThat(SeparationUtility.getLocationMap(new RegionUtility(ts), properties),
+				emptyArray());
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

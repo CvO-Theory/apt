@@ -101,6 +101,10 @@ public final class SeparationUtility {
 		String[] locationMap = new String[utility.getNumberOfEvents()];
 		boolean hadEventWithLocation = false;
 
+		// If there are no events, there is nothing to do
+		if (locationMap.length == 0)
+			return locationMap;
+
 		for (Arc arc : utility.getTransitionSystem().getEdges()) {
 			String location;
 			try {
