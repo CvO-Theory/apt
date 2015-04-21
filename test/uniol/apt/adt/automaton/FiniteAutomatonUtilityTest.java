@@ -20,6 +20,11 @@
 package uniol.apt.adt.automaton;
 
 import java.util.Arrays;
+import java.util.List;
+
+import uniol.apt.TestTSCollection;
+import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.TransitionSystem;
 
 import org.testng.annotations.Test;
 
@@ -30,6 +35,7 @@ import static uniol.apt.adt.matcher.Matchers.*;
 /**
  * @author Uli Schlachter
  */
+@SuppressWarnings("unchecked")
 @Test
 public class FiniteAutomatonUtilityTest {
 	private void noWordInLanguage(FiniteAutomaton aut) {
@@ -353,7 +359,7 @@ public class FiniteAutomatonUtilityTest {
 		FiniteAutomaton automaton1 = kleeneStar(concatenate(autA, concatenate(autB, autA)));
 		FiniteAutomaton automaton2 = kleeneStar(concatenate(autA, optional(union(autA, autB))));
 
-		assertThat(findWordDifference(automaton1, automaton2), contains(a));
+		assertThat(findWordDifference(automaton1, automaton2), contains("a"));
 	}
 
 	@Test
@@ -367,7 +373,191 @@ public class FiniteAutomatonUtilityTest {
 		assertThat(findWordDifference(automaton, automaton), nullValue());
 	}
 
-	// fromPrefixLanguageLTS() is tested through analysis.language
+	private void newEdge(TransitionSystem ts, String source, String target, String label) {
+		ts.createArc(source, target, label);
+	}
+
+	// Test if the given DFA is the minimal DFA for (abc)^*(ab?)?
+	private void testABCNet(FiniteAutomaton fa) {
+		DeterministicFiniteAutomaton dfa = minimize(fa);
+
+		DFAState stateInit = dfa.getInitialState();
+		assertThat(stateInit, is(not(nullValue())));
+		assertThat(stateInit.isFinalState(), equalTo(true));
+
+		DFAState stateA = stateInit.getFollowingState(new Symbol("a"));
+		assertThat(stateA, is(not(nullValue())));
+		assertThat(stateA.isFinalState(), equalTo(true));
+		assertThat(stateA, is(not(equalTo(stateInit))));
+
+		DFAState stateB = stateA.getFollowingState(new Symbol("b"));
+		assertThat(stateB, is(not(nullValue())));
+		assertThat(stateB.isFinalState(), equalTo(true));
+		assertThat(stateB, is(not(equalTo(stateInit))));
+		assertThat(stateB, is(not(equalTo(stateA))));
+
+		DFAState stateErr = stateB.getFollowingState(new Symbol("a"));
+		assertThat(stateErr, is(not(nullValue())));
+		assertThat(stateErr.isFinalState(), equalTo(false));
+		assertThat(stateErr, is(not(equalTo(stateInit))));
+		assertThat(stateErr, is(not(equalTo(stateA))));
+		assertThat(stateErr, is(not(equalTo(stateB))));
+
+		assertThat(stateInit.getFollowingState(new Symbol("a")), equalTo(stateA));
+		assertThat(stateInit.getFollowingState(new Symbol("b")), equalTo(stateErr));
+		assertThat(stateInit.getFollowingState(new Symbol("c")), equalTo(stateErr));
+		assertThat(stateA.getFollowingState(new Symbol("a")), equalTo(stateErr));
+		assertThat(stateA.getFollowingState(new Symbol("b")), equalTo(stateB));
+		assertThat(stateA.getFollowingState(new Symbol("c")), equalTo(stateErr));
+		assertThat(stateB.getFollowingState(new Symbol("a")), equalTo(stateErr));
+		assertThat(stateB.getFollowingState(new Symbol("b")), equalTo(stateErr));
+		assertThat(stateB.getFollowingState(new Symbol("c")), equalTo(stateInit));
+		assertThat(stateErr.getFollowingState(new Symbol("a")), equalTo(stateErr));
+		assertThat(stateErr.getFollowingState(new Symbol("b")), equalTo(stateErr));
+		assertThat(stateErr.getFollowingState(new Symbol("c")), equalTo(stateErr));
+
+		// Kids, the above is why I will not write more tests for the TS -> DFA transformation
+	}
+
+	private TransitionSystem getABCSystem() {
+		// Construct the DEA that accepts (abc)*(\epsilon|a|ab)
+		TransitionSystem ts = new TransitionSystem();
+		ts.createState("init");
+		ts.createState("a");
+		ts.createState("ab");
+		ts.setInitialState("init");
+
+		newEdge(ts, "init", "a", "a");
+		newEdge(ts, "a", "ab", "b");
+		newEdge(ts, "ab", "init", "c");
+
+		return ts;
+	}
+
+	@Test
+	public void testDEADeterminisation() {
+		// This DFA should be identical to the above DFA (plus an error state)
+		testABCNet(fromPrefixLanguageLTS(getABCSystem()));
+	}
+
+	@Test
+	public void testDEAMinimsation() {
+		// Construct the DEA that accepts (abc)*(\epsilon|a|ab), but construct it twice, so that we get
+		// unnecessary states
+		TransitionSystem ts = getABCSystem();
+		ts.createState("init2");
+		ts.createState("a2");
+		ts.createState("ab2");
+		newEdge(ts, "init", "a2", "a");
+		newEdge(ts, "init2", "a2", "a");
+		newEdge(ts, "a2", "ab2", "b");
+		newEdge(ts, "ab2", "init2", "c");
+
+		testABCNet(fromPrefixLanguageLTS(ts));
+	}
+
+	@Test
+	public void testWordDifference() {
+		TransitionSystem ts = getABCSystem();
+		DeterministicFiniteAutomaton dfa1 = minimize(fromPrefixLanguageLTS(ts));
+
+		// Now modify the transition system a little
+		ts.createState("foo");
+		newEdge(ts, "init", "foo", "b");
+		DeterministicFiniteAutomaton dfa2 = minimize(fromPrefixLanguageLTS(ts));
+
+		// dfa1 accepts the prefix language of (abc)^*. dfa2 accepts the prefix language of (abc)^*b. Due to the
+		// way the algorithm is implemented (read: iteration order over the set of labels), we can reach the
+		// state that describes the difference either via abcb (if we start in the root with label a) or b (if
+		// we start with label b). So either result is fine.
+
+		List<String> list = findWordDifference(dfa1, dfa2);
+		assertThat(list, anyOf(contains("b"), contains("a", "b", "c", "b")));
+	}
+
+	private void testTS(TransitionSystem ts) {
+		DeterministicFiniteAutomaton automaton = minimize(fromPrefixLanguageLTS(ts));
+		assertThat(findWordDifference(automaton, automaton), is(nullValue()));
+		assertThat(languageEquivalent(automaton, automaton), is(true));
+
+		if (ts.getNodes().size() == 1)
+			return;
+
+		// Compare to a single state TS
+		DeterministicFiniteAutomaton automaton2 = minimize(fromPrefixLanguageLTS(
+				TestTSCollection.getSingleStateTS()));
+		assertThat(findWordDifference(automaton, automaton2), is(not(nullValue())));
+	}
+
+	@Test
+	public void testSingleStateTS() {
+		testTS(TestTSCollection.getSingleStateTS());
+	}
+
+	@Test
+	public void testNonDeterministicTS() {
+		testTS(TestTSCollection.getNonDeterministicTS());
+	}
+
+	@Test
+	public void testPersistentTS() {
+		testTS(TestTSCollection.getPersistentTS());
+	}
+
+	@Test
+	public void testNonPersistentTS() {
+		testTS(TestTSCollection.getNonPersistentTS());
+	}
+
+	@Test
+	public void testNonTotallyReachableTS() {
+		testTS(TestTSCollection.getNotTotallyReachableTS());
+	}
+
+	@Test
+	public void testReversibleTS() {
+		testTS(TestTSCollection.getReversibleTS());
+	}
+
+	@Test
+	public void testCircleTS() {
+		TransitionSystem lts = new TransitionSystem();
+		lts.createState("a");
+		lts.createState("b");
+		lts.createArc("a", "b", "t");
+		lts.createArc("b", "a", "t");
+		lts.setInitialState("a");
+		testTS(lts);
+	}
+
+	@Test
+	public void testNonEqualTS() {
+		DeterministicFiniteAutomaton a = minimize(fromPrefixLanguageLTS(
+				TestTSCollection.getPersistentTS()));
+		DeterministicFiniteAutomaton b = minimize(fromPrefixLanguageLTS(
+				TestTSCollection.getNotTotallyReachableTS()));
+		assertThat(findWordDifference(a, b), anyOf(contains("b"), contains("a", "b")));
+	}
+
+	@Test
+	public void testDifferentLabelSets() {
+		// The second DFA has a label "c" while the first one doesn't. Thus, they obviously can't be equivalent.
+		DeterministicFiniteAutomaton a = minimize(fromPrefixLanguageLTS(
+				TestTSCollection.getNonDeterministicTS()));
+		DeterministicFiniteAutomaton b = minimize(fromPrefixLanguageLTS(
+				TestTSCollection.getSingleStateSingleTransitionTS()));
+		assertThat(findWordDifference(a, b), anyOf(contains("NotA"), contains("a")));
+	}
+
+	@Test
+	public void testDifferentLabelSetsErrorState() {
+		// The second DFA has a label "c" while the first one doesn't. Thus, they obviously can't be equivalent.
+		DeterministicFiniteAutomaton a = minimize(fromPrefixLanguageLTS(
+				TestTSCollection.getSingleStateWithUnreachableTS()));
+		DeterministicFiniteAutomaton b = minimize(fromPrefixLanguageLTS(
+				TestTSCollection.getNonDeterministicTS()));
+		assertThat(findWordDifference(a, b), contains("a"));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

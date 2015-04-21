@@ -41,7 +41,7 @@ public class LimitedUnfoldingTest {
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(1));
 		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
-		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
+		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem), is(nullValue()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(true));
 	}
 
@@ -53,7 +53,7 @@ public class LimitedUnfoldingTest {
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(7));
 		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
-		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
+		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem), is(nullValue()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(false));
 	}
 
@@ -65,7 +65,7 @@ public class LimitedUnfoldingTest {
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(3));
 		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
-		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
+		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem), is(nullValue()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(true));
 	}
 
@@ -77,7 +77,7 @@ public class LimitedUnfoldingTest {
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(5));
 		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
-		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
+		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem), is(nullValue()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(false));
 	}
 
@@ -89,7 +89,7 @@ public class LimitedUnfoldingTest {
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(2));
 		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
-		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
+		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem), is(nullValue()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(false));
 	}
 
@@ -101,7 +101,7 @@ public class LimitedUnfoldingTest {
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(5));
 		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
-		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
+		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem), is(nullValue()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(true));
 	}
 
@@ -113,7 +113,7 @@ public class LimitedUnfoldingTest {
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(7));
 		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
-		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
+		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem), is(nullValue()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(false));
 	}
 
@@ -126,7 +126,7 @@ public class LimitedUnfoldingTest {
 		assertThat(unfold.getInitialState(), not(nullValue()));
 		assertThat(unfold.getNodes(), hasSize(3));
 		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
-		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem, false), is(empty()));
+		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem), is(nullValue()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(false));
 	}
 }

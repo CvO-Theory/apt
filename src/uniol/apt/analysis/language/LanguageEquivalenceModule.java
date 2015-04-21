@@ -54,13 +54,11 @@ public class LanguageEquivalenceModule extends AbstractModule {
 			"The first Petri net or transition system that should be examined");
 		inputSpec.addParameter("pn_or_ts2", PetriNetOrTransitionSystem.class,
 			"The second Petri net or transition system that should be examined");
-		inputSpec.addOptionalParameter("verbose", String.class, "", "Optionally more output");
 	}
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("language_equivalent", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
-		outputSpec.addReturnValue("witness_words", WordList.class);
 		outputSpec.addReturnValue("witness_word", Word.class);
 	}
 
@@ -68,13 +66,6 @@ public class LanguageEquivalenceModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem arg1 = input.getParameter("pn_or_ts1", PetriNetOrTransitionSystem.class);
 		PetriNetOrTransitionSystem arg2 = input.getParameter("pn_or_ts2", PetriNetOrTransitionSystem.class);
-
-		// interpret verbose
-		boolean all = false;
-		String stringVerbose = input.getParameter("verbose", String.class);
-		if (stringVerbose.equals("verbose")) {
-			all = true;
-		}
 
 		TransitionSystem lts1 = arg1.getTs();
 		TransitionSystem lts2 = arg2.getTs();
@@ -85,13 +76,9 @@ public class LanguageEquivalenceModule extends AbstractModule {
 			lts2 = CoverabilityGraph.get(arg2.getNet()).toReachabilityLTS();
 		}
 
-		List<Word> words = LanguageEquivalence.checkLanguageEquivalence(lts1, lts2, all);
-		if (all) {
-			output.setReturnValue("witness_words", WordList.class, new WordList(words));
-		} else if (!words.isEmpty()) {
-			output.setReturnValue("witness_word", Word.class, words.iterator().next());
-		}
-		output.setReturnValue("language_equivalent", Boolean.class, words.isEmpty());
+		Word word = LanguageEquivalence.checkLanguageEquivalence(lts1, lts2);
+		output.setReturnValue("witness_word", Word.class, word);
+		output.setReturnValue("language_equivalent", Boolean.class, word == null);
 	}
 
 	@Override

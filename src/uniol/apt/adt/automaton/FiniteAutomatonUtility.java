@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.util.EquivalenceRelation;
 import uniol.apt.util.IEquivalenceRelation;
 import uniol.apt.util.Pair;
@@ -304,7 +306,7 @@ public class FiniteAutomatonUtility {
 	 * @return true if and only if both automaton accept the same language.
 	 * @return A word that is only accepted by one of the automatons
 	 */
-	static public List<Symbol> findWordDifference(FiniteAutomaton a1, FiniteAutomaton a2) {
+	static public List<String> findWordDifference(FiniteAutomaton a1, FiniteAutomaton a2) {
 		DeterministicFiniteAutomaton dfa1 = constructDFA(a1);
 		DeterministicFiniteAutomaton dfa2 = constructDFA(a2);
 		// We are looking for words that dfa1 accepts and dfa2 does not accept or that dfa1 does not accept and
@@ -315,9 +317,9 @@ public class FiniteAutomatonUtility {
 	}
 
 	// Find a word that the given automaton accepts
-	static private List<Symbol> findAcceptedWord(DeterministicFiniteAutomaton dfa) {
+	static private List<String> findAcceptedWord(DeterministicFiniteAutomaton dfa) {
 		Set<DFAState> statesSeen = new HashSet<>();
-		LinkedList<Symbol> word = new LinkedList<>();
+		LinkedList<String> word = new LinkedList<>();
 		Deque<Pair<DFAState, Iterator<Symbol>>> trace = new LinkedList<>();
 		DFAState initial = dfa.getInitialState();
 		trace.add(new Pair<>(initial, initial.getDefinedSymbols().iterator()));
@@ -334,7 +336,7 @@ public class FiniteAutomatonUtility {
 				// Only follow this state if we haven't followed it yet before
 				if (statesSeen.add(nextState)) {
 					trace.add(new Pair<>(nextState, nextState.getDefinedSymbols().iterator()));
-					word.add(symbol);
+					word.add(symbol.getEvent());
 
 					if (nextState.isFinalState())
 						return word;
@@ -343,6 +345,14 @@ public class FiniteAutomatonUtility {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Construct a finite automaton from a transition system. Each sequence that reaches at least some state will be
+	 * accepted by the automaton. Each sequence which reaches no state will be rejected.
+	 */
+	static public FiniteAutomaton fromPrefixLanguageLTS(TransitionSystem lts) {
+		return getAutomaton(new LTSAdaptorState(lts.getInitialState()));
 	}
 
 	static private abstract class AbstractState implements State {
@@ -455,6 +465,57 @@ public class FiniteAutomatonUtility {
 				return false;
 			KleeneDecoratorState other = (KleeneDecoratorState) o;
 			return currentState.equals(other.currentState) && targetState.equals(other.targetState);
+		}
+	}
+
+	// Adaptor used by fromPrefixLanguageLTS(). Turns a LTS into a FiniteAutomaton
+	static private class LTSAdaptorState implements State {
+		final private Map<Symbol, Set<uniol.apt.adt.ts.State>> transitions;
+
+		public LTSAdaptorState(uniol.apt.adt.ts.State state) {
+			Map<Symbol, Set<uniol.apt.adt.ts.State>> transitions = new HashMap<>();
+			for (Arc arc : state.getPostsetEdges()) {
+				Symbol symbol = new Symbol(arc.getLabel());
+				Set<uniol.apt.adt.ts.State> states = transitions.get(symbol);
+				if (states == null) {
+					states = new HashSet<>();
+					transitions.put(symbol, states);
+				}
+				states.add(arc.getTarget());
+			}
+			this.transitions = Collections.unmodifiableMap(transitions);
+		}
+
+		@Override
+		public boolean isFinalState() {
+			return true;
+		}
+
+		@Override
+		public Set<Symbol> getDefinedSymbols() {
+			return transitions.keySet();
+		}
+
+		@Override
+		public Set<State> getFollowingStates(Symbol atom) {
+			Set<State> result = new HashSet<>();
+			if (transitions.containsKey(atom))
+				for (uniol.apt.adt.ts.State state : transitions.get(atom))
+					result.add(new LTSAdaptorState(state));
+			return result;
+		}
+
+		@Override
+		public int hashCode() {
+			return transitions.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (!(o instanceof LTSAdaptorState))
+				return false;
+			LTSAdaptorState other = (LTSAdaptorState) o;
+			return transitions.equals(other.transitions);
 		}
 	}
 
