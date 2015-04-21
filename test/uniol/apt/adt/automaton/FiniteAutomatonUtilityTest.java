@@ -492,6 +492,11 @@ public class FiniteAutomatonUtilityTest {
 	}
 
 	@Test
+	public void testEmptyLanguageTS() {
+		testTS(prefixLanguageLTS(getEmptyLanguage()));
+	}
+
+	@Test
 	public void testSingleStateTS() {
 		testTS(TestTSCollection.getSingleStateTS());
 	}

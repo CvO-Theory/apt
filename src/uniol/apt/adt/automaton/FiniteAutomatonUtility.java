@@ -380,11 +380,16 @@ public class FiniteAutomatonUtility {
 			// The sink state is not a final state and all arcs go back to itself
 			if (state.isFinalState())
 				continue;
+			boolean sink = true;
 			for (Symbol sym : dfa.getAlphabet())
-				if (!state.getFollowingState(sym).equals(state))
-					continue;
-			sinkState = state;
-			break;
+				if (!state.getFollowingState(sym).equals(state)) {
+					sink = false;
+					break;
+				}
+			if (sink) {
+				sinkState = state;
+				break;
+			}
 		}
 
 		// Now create the transition system, but skip the sink state (if there is one)
@@ -406,7 +411,10 @@ public class FiniteAutomatonUtility {
 			}
 		}
 
-		result.setInitialState(stateMap.get(dfa.getInitialState()));
+		if (stateMap.isEmpty())
+			result.setInitialState(result.createState());
+		else
+			result.setInitialState(stateMap.get(dfa.getInitialState()));
 		return result;
 	}
 
