@@ -21,6 +21,7 @@ package uniol.apt.adt.automaton;
 
 import java.util.Collections;
 import java.util.Deque;
+import java.util.NoSuchElementException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -371,6 +372,67 @@ public class FiniteAutomatonUtility {
 		return getAutomaton(new LTSAdaptorState(lts.getInitialState()));
 	}
 
+	/**
+	 * Get an Iterable iterating over all of the automaton's states. The initial state will be the first state
+	 * returned by the iterable's iterators.
+	 * @param a The automaton whose states should be iterated
+	 * @return An iterable over the automaton's states.
+	 */
+	static public Iterable<State> statesIterable(FiniteAutomaton a) {
+		return statesIterable(a.getInitialState());
+	}
+
+	/**
+	 * Get an Iterable iterating over all of the automaton's states. The initial state will be the first state
+	 * returned by the iterable's iterators.
+	 * @param a The automaton whose states should be iterated
+	 * @return An iterable over the automaton's states.
+	 */
+	static public Iterable<DFAState> statesIterable(DeterministicFiniteAutomaton a) {
+		return statesIterable(a.getInitialState());
+	}
+
+	// Get an iterable iterating recursively over a state's postset.
+	static private <S extends State> Iterable<S> statesIterable(final S initialState) {
+		return new Iterable<S>() {
+			@Override
+			public Iterator<S> iterator() {
+				final Deque<State> unhandled = new LinkedList<>();
+				final Set<State> seen = new HashSet<>();
+				unhandled.add(initialState);
+				seen.add(initialState);
+				return new Iterator<S>() {
+					@Override
+					public boolean hasNext() {
+						return !unhandled.isEmpty();
+					}
+
+					@Override
+					public S next() {
+						State state = unhandled.pollFirst();
+						if (state == null)
+							throw new NoSuchElementException();
+						for (State next : state.getFollowingStates(Symbol.EPSILON))
+							if (seen.add(next))
+								unhandled.add(next);
+						for (Symbol symbol : state.getDefinedSymbols())
+							for (State next : state.getFollowingStates(symbol))
+								if (seen.add(next))
+									unhandled.add(next);
+						@SuppressWarnings("unchecked")
+						S ret = (S) state;
+						return ret;
+					}
+
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
+				};
+			}
+		};
+	}
+
 	static private abstract class AbstractState implements State {
 		private final boolean isFinalState;
 
@@ -543,23 +605,8 @@ public class FiniteAutomatonUtility {
 		PowerSetConstruction(FiniteAutomaton a) {
 			// Calculate some alphabet
 			Set<Symbol> alphabet = new HashSet<>();
-			Deque<State> unhandled = new LinkedList<>();
-			Set<State> states = new HashSet<>();
-
-			unhandled.add(a.getInitialState());
-			states.add(a.getInitialState());
-
-			while (!unhandled.isEmpty()) {
-				State state = unhandled.removeFirst();
+			for (State state : statesIterable(a))
 				alphabet.addAll(state.getDefinedSymbols());
-
-				Set<State> nextStates = new HashSet<>(state.getFollowingStates(Symbol.EPSILON));
-				for (Symbol symbol : state.getDefinedSymbols())
-					nextStates.addAll(state.getFollowingStates(symbol));
-				for (State next : nextStates)
-					if (states.add(next))
-						unhandled.add(next);
-			}
 			assert !alphabet.contains(Symbol.EPSILON);
 
 			// Remember the alphabet for later and construct an initial state
@@ -682,16 +729,7 @@ public class FiniteAutomatonUtility {
 			DFAState finalState = null;
 			DFAState nonFinalState = null;
 			EquivalenceRelation<DFAState> relation = new EquivalenceRelation<>();
-			Deque<DFAState> unhandled = new LinkedList<>();
-			Set<State> states = new HashSet<>();
-
-			// Go through all states
-			unhandled.add(a.getInitialState());
-			states.add(a.getInitialState());
-			while (!unhandled.isEmpty()) {
-				DFAState state = unhandled.removeFirst();
-
-				// Add this state to the correct set
+			for (DFAState state : statesIterable(a)) {
 				if (state.isFinalState()) {
 					if (finalState == null)
 						finalState = state;
@@ -700,13 +738,6 @@ public class FiniteAutomatonUtility {
 					if (nonFinalState == null)
 						nonFinalState = state;
 					relation.joinClasses(nonFinalState, state);
-				}
-
-				// Calculate all post-set states
-				for (Symbol symbol : state.getDefinedSymbols()) {
-					DFAState next = state.getFollowingState(symbol);
-					if (states.add(next))
-						unhandled.add(next);
 				}
 			}
 
