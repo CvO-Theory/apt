@@ -526,10 +526,19 @@ public class InequalitySystem {
 		return true;
 	}
 
+	private static class Log4JInitializationHelper {
+		public static final Log4JInitializationHelper INSTANCE = new Log4JInitializationHelper();
+		public final Logger logger = Logger.getRootLogger();
+
+		public Log4JInitializationHelper() {
+			// Set up SMTInterpol in a way that it doesn't produce debug output
+			logger.addAppender(new NullAppender());
+		}
+	}
+
 	static private Script createScript(int numVariables) {
-		// Set up SMTInterpol in a way that it doesn't produce debug output
-		Logger logger = Logger.getRootLogger();
-		logger.addAppender(new NullAppender());
+		// Java lazily initializes classes, so the helper will only be created on first use
+		Logger logger = Log4JInitializationHelper.INSTANCE.logger;
 		Script script = new SMTInterpol(logger, false);
 		script.setLogic(Logics.QF_LIA);
 
