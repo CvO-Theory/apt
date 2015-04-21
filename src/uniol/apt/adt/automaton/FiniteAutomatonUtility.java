@@ -855,8 +855,9 @@ public class FiniteAutomatonUtility {
 		public DFAState getFollowingState(Symbol symbol) {
 			if (!alphabet.contains(symbol))
 				return null;
-			return new SynchronousParallelComposition(alphabet, state1.getFollowingState(symbol),
-					state2.getFollowingState(symbol), mode);
+			DFAState follow1 = state1 == null ? null : state1.getFollowingState(symbol);
+			DFAState follow2 = state2 == null ? null : state2.getFollowingState(symbol);
+			return new SynchronousParallelComposition(alphabet, follow1, follow2, mode);
 		}
 
 		@Override
