@@ -480,6 +480,8 @@ public class FiniteAutomatonUtilityTest {
 		assertThat(findWordDifference(automaton, automaton), is(nullValue()));
 		assertThat(languageEquivalent(automaton, automaton), is(true));
 
+		assertThat(languageEquivalent(automaton, fromPrefixLanguageLTS(prefixLanguageLTS(automaton))), is(true));
+
 		if (ts.getNodes().size() == 1)
 			return;
 

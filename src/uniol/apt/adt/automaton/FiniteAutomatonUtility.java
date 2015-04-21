@@ -365,6 +365,52 @@ public class FiniteAutomatonUtility {
 	}
 
 	/**
+	 * Construct a transition system that describes the prefix language of the given finite automaton. For this, the
+	 * minimal DFA is calculated and transformed.
+	 * @param a The automaton whose prefix language should be generated.
+	 * @return A transition system where sequences are enabled that correspond to prefixes of words which are
+	 * accepted by a.
+	 */
+	static public TransitionSystem prefixLanguageLTS(FiniteAutomaton a) {
+		DeterministicFiniteAutomaton dfa = minimize(a);
+		// A minimal DFA can have at most one "sink state". All words which cannot be extended into words of the
+		// language will reach that sink state. Let's find that sink state and skip it in our translation.
+		DFAState sinkState = null;
+		for (DFAState state : statesIterable(dfa)) {
+			// The sink state is not a final state and all arcs go back to itself
+			if (state.isFinalState())
+				continue;
+			for (Symbol sym : dfa.getAlphabet())
+				if (!state.getFollowingState(sym).equals(state))
+					continue;
+			sinkState = state;
+			break;
+		}
+
+		// Now create the transition system, but skip the sink state (if there is one)
+		Map<DFAState, uniol.apt.adt.ts.State> stateMap = new HashMap<>();
+		TransitionSystem result = new TransitionSystem();
+
+		for (DFAState dfaState : statesIterable(dfa))
+			if (!dfaState.equals(sinkState))
+				stateMap.put(dfaState, result.createState());
+		for (DFAState dfaState : statesIterable(dfa)) {
+			if (dfaState.equals(sinkState))
+				continue;
+
+			uniol.apt.adt.ts.State tsState = stateMap.get(dfaState);
+			for (Symbol sym : dfa.getAlphabet()) {
+				DFAState next = dfaState.getFollowingState(sym);
+				if (!next.equals(sinkState))
+					result.createArc(tsState, stateMap.get(next), sym.getEvent());
+			}
+		}
+
+		result.setInitialState(stateMap.get(dfa.getInitialState()));
+		return result;
+	}
+
+	/**
 	 * Construct a finite automaton from a transition system. Each sequence that reaches at least some state will be
 	 * accepted by the automaton. Each sequence which reaches no state will be rejected.
 	 */
