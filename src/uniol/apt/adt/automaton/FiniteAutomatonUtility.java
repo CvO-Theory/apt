@@ -169,7 +169,18 @@ public class FiniteAutomatonUtility {
 	 * @return An automaton accepting the negation.
 	 */
 	static public DeterministicFiniteAutomaton negate(DeterministicFiniteAutomaton a) {
-		return getAutomaton(new NegationState(a.getInitialState()));
+		return negate(a, a.getAlphabet());
+	}
+
+	/**
+	 * Get a finite automaton accepting the negation of the language of the given automaton. A word is in the
+	 * negation of the language if is is not in the language itself.
+	 * @param a The automaton whose language is to negate.
+	 * @param alphabet The alphabet of the negation
+	 * @return An automaton accepting the negation.
+	 */
+	static public DeterministicFiniteAutomaton negate(DeterministicFiniteAutomaton a, Set<Symbol> alphabet) {
+		return getAutomaton(new NegationState(a.getInitialState(), new HashSet<>(alphabet)));
 	}
 
 	/**
@@ -309,10 +320,15 @@ public class FiniteAutomatonUtility {
 	static public List<String> findWordDifference(FiniteAutomaton a1, FiniteAutomaton a2) {
 		DeterministicFiniteAutomaton dfa1 = constructDFA(a1);
 		DeterministicFiniteAutomaton dfa2 = constructDFA(a2);
+
+		Set<Symbol> alphabet = new HashSet<>(dfa1.getAlphabet());
+		alphabet.addAll(dfa2.getAlphabet());
 		// We are looking for words that dfa1 accepts and dfa2 does not accept or that dfa1 does not accept and
 		// dfa2 accepts. This can be expressed as an automaton which accepts the empty language iff the two
 		// input automaton are language equivalent
-		DeterministicFiniteAutomaton dfa = union(intersection(dfa1, negate(dfa2)), intersection(negate(dfa1), dfa2));
+		DeterministicFiniteAutomaton notDfa1 = negate(dfa1, alphabet);
+		DeterministicFiniteAutomaton notDfa2 = negate(dfa2, alphabet);
+		DeterministicFiniteAutomaton dfa = union(intersection(dfa1, notDfa2), intersection(notDfa1, dfa2));
 		return findAcceptedWord(minimize(dfa));
 	}
 
@@ -759,33 +775,37 @@ public class FiniteAutomatonUtility {
 	}
 
 	static private class NegationState extends DFAState {
+		private final Set<Symbol> alphabet;
 		private final DFAState originalState;
 
-		public NegationState(DFAState originalState) {
+		public NegationState(DFAState originalState, Set<Symbol> alphabet) {
+			this.alphabet = Collections.unmodifiableSet(alphabet);
 			this.originalState = originalState;
 		}
 
 		@Override
 		public boolean isFinalState() {
-			return !originalState.isFinalState();
+			return originalState == null || !originalState.isFinalState();
 		}
 
 		@Override
 		public Set<Symbol> getDefinedSymbols() {
-			return originalState.getDefinedSymbols();
+			return alphabet;
 		}
 
 		@Override
 		public DFAState getFollowingState(Symbol symbol) {
-			DFAState state = originalState.getFollowingState(symbol);
-			if (state == null)
+			if (!alphabet.contains(symbol))
 				return null;
-			return new NegationState(state);
+			if (originalState == null)
+				return this;
+			DFAState state = originalState.getFollowingState(symbol);
+			return new NegationState(state, alphabet);
 		}
 
 		@Override
 		public int hashCode() {
-			return originalState.hashCode();
+			return Objects.hashCode(originalState);
 		}
 
 		@Override
@@ -793,7 +813,7 @@ public class FiniteAutomatonUtility {
 			if (!(o instanceof NegationState))
 				return false;
 			NegationState other = (NegationState) o;
-			return originalState.equals(other.originalState);
+			return Objects.equals(originalState, other.originalState);
 		}
 	}
 
