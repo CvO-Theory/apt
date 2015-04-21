@@ -575,7 +575,7 @@ public class SynthesizePN {
 			else
 				// The resulting PN should be language-equivalent to what we started with
 				assert LanguageEquivalence.checkLanguageEquivalence(
-						CoverabilityGraph.get(pn).toReachabilityLTS(), ts).isEmpty()
+						CoverabilityGraph.get(pn).toReachabilityLTS(), ts) == null
 					: regions;
 		} catch (UnboundedException e) {
 			assert false : regions;
