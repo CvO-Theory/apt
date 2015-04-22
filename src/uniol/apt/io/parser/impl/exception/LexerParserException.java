@@ -56,6 +56,20 @@ public class LexerParserException extends FormatException {
     }
 
     /**
+     * Creates a exception by creating a message from the information of the lexer.
+     * <p/>
+     * @param lexer  - the lexer found the error.
+     * @param e      - the RecognitionException thrown by the parser.
+     */
+    public LexerParserException(Lexer lexer, RecognitionException e) {
+        exception = e;
+        String hdr = lexer.getErrorHeader(e);
+        String lmsg = lexer.getErrorMessage(e, lexer.getTokenNames());
+        String msg = (lmsg == null) ? e.getCause().getMessage() : lmsg;
+        lexerMsg += hdr + " " + msg;
+    }
+
+    /**
      * Sets the lexer error message to this exception.
      * <p/>
      * @param lexerMsg - the lexer error message to set.

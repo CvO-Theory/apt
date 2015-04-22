@@ -49,6 +49,8 @@ tokens {
 		AptRegexFormatParser parser = new AptRegexFormatParser(tokens);
 		try {
 			return parser.start();
+		} catch (AptRegexFormatLexer.LexerRuntimeException ex) {
+			throw new LexerParserException(lexer, ex.getCause());
 		} catch (RecognitionException ex) {
 			throw new LexerParserException(parser, lexer, ex);
 		}
@@ -61,6 +63,25 @@ tokens {
 
 @rulecatch {
 	// This disables ANTLR's default error handling
+}
+
+@lexer::members {
+	static public class LexerRuntimeException extends RuntimeException {
+		static public final long serialVersionUID = 0;
+
+		LexerRuntimeException(RecognitionException e) {
+			super(e);
+		}
+
+		@Override
+		public RecognitionException getCause() {
+			return (RecognitionException) super.getCause();
+		}
+	}
+	@Override
+	public void recover(RecognitionException e) {
+		throw new LexerRuntimeException(e);
+	}
 }
 
 start       returns [FiniteAutomaton aut]	: expr EOF { $aut = $expr.aut; };
