@@ -38,6 +38,32 @@ public class FiniteAutomatonParameterTransformation implements ParameterTransfor
 			throw new ModuleException(e.getMessage(), e);
 		}
 	}
+
+	/**
+	 * Get a description on the accepted format for words that this class can parse.
+	 * @return A human readable description.
+	 */
+	static public String getDescription() {
+		return "Let's start with an example: (abc?)*\nThis regular expression describes the language where"
+			+ " every word consists of a sequence of 'a', then 'b', then an optional 'c'. This sequence can"
+			+ " be repeated infinitely often or never at all.\n\n"
+			+ "As this example demonstrates, single letter events are just entered as is. White space is"
+			+ " not significant and gets ignored. Concatenation is expressed by writing some"
+			+ " sub-expressions next to each other. If you need an event consisting of more than just a"
+			+ " single letter, enclose it in angle brackets like this: <event>\n\n"
+			+ "Supported operations are:\n"
+			+ " - a* is the Kleene closure of 'a', including the empty word. This means any sequence"
+			+ " of 'a' is allowed.\n"
+			+ " - a+ is the Kleene plus of 'a' (without explicitly including the empty word).\n"
+			+ " - a? matches either 'a' or nothing, meaning that 'a' is made optional.\n"
+			+ " - a|b matches either 'a' or 'b'.\n"
+			+ " - ~ describes the empty language\n"
+			+ " - $ is the language containing only the empty word\n\n"
+			+ "The precedence of the operators is:\n"
+			+ " * + and ? bind the strongest, then concatenation and then the union operator. Parentheses"
+			+ " can be used to influence the precedence, for example in (a(bc?)+)*.\n\n"
+			+ "Finally, comments of the form\n  /* comment */\nand\n  // comment\nare supported.";
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

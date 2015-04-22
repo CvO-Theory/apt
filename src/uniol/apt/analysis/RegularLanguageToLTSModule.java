@@ -29,6 +29,7 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.impl.parameter.FiniteAutomatonParameterTransformation;
 
 /**
  * Represent a regular language into a transition system.
@@ -39,6 +40,12 @@ public class RegularLanguageToLTSModule extends AbstractModule {
 	@Override
 	public String getShortDescription() {
 		return "Represent a regular language as a transition system";
+	}
+
+	@Override
+	public String getLongDescription() {
+		return "Languages are specified as regular expressions in the following format:\n\n"
+			+ FiniteAutomatonParameterTransformation.getDescription();
 	}
 
 	@Override
