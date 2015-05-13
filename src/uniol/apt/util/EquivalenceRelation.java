@@ -38,8 +38,13 @@ import static org.apache.commons.collections4.iterators.PeekingIterator.peekingI
  * @author Uli Schlachter
  */
 public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implements Collection<Set<E>>, IEquivalenceRelation<E> {
-	private final Map<E, Set<E>> elementToClass = new HashMap<E, Set<E>>();
-	private final Set<Set<E>> allClasses = new HashSet<>();
+	// All equivalence classes have a "leader" which all other elements refer to. This leader is found by
+	// recursively following parents. The leader itself does not have a parent. This approach is used to speed up
+	// joinClasses(). This map contains the parents.
+	private final Map<E, E> elementToParent = new HashMap<>();
+
+	// A leader refers to a set containing its equivalence class via this map. Non-leaders aren't contained.
+	private final Map<E, Set<E>> leaderToClass = new HashMap<>();
 
 	/**
 	 * Refine this equivalence relation via another relation. This function splits classes in this equivalence
@@ -52,7 +57,7 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 	public EquivalenceRelation<E> refine(IEquivalenceRelation<? super E> relation) {
 		EquivalenceRelation<E> newRelation = new EquivalenceRelation<>();
 		boolean hadSplit = false;
-		for (Set<E> klass : allClasses) {
+		for (Set<E> klass : this) {
 			Set<E> unhandled = new HashSet<>(klass);
 			while (!unhandled.isEmpty()) {
 				// Pick some element and figure out its equivalence class
@@ -83,6 +88,10 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 	 * @return the new class containing both elements
 	 */
 	public Set<E> joinClasses(E e1, E e2) {
+		// Identify all elements by their leader
+		e1 = getLeader(e1);
+		e2 = getLeader(e2);
+
 		Set<E> class1 = getClass(e1);
 		Set<E> class2 = getClass(e2);
 
@@ -92,20 +101,51 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 
 		// Make class1 refer to the smaller of the two classes.
 		if (class1.size() > class2.size()) {
-			Set<E> tmp = class1;
+			Set<E> classTmp = class1;
 			class1 = class2;
-			class2 = tmp;
+			class2 = classTmp;
+
+			E eTmp = e1;
+			e1 = e2;
+			e2 = eTmp;
 		}
 
-		allClasses.remove(class1);
-		allClasses.remove(class2);
+		// Now actually merge the classes. e1 is no longer a leader!
 		class2.addAll(class1);
-		allClasses.add(class2);
-
-		for (E e : class1)
-			elementToClass.put(e, class2);
+		leaderToClass.remove(e1);
+		elementToParent.put(e1, e2);
 
 		return class2;
+	}
+
+	/**
+	 * Get the leader of the element's equivalence class or the element itself. Each equivalence class has a leader
+	 * that uniquely identifies it. This method finds the leader.
+	 * @param e The element whose leader should be returned
+	 * @return The leader of the element or the element itself if it doesn't have an equivalence class.
+	 */
+	private E getLeader(E e) {
+		E parent = e;
+		E next = elementToParent.get(parent);
+		while (next != null) {
+			parent = next;
+			next = elementToParent.get(parent);
+		}
+
+		// Remember this result to speed up following lookups
+		if (e != parent)
+			elementToParent.put(e, parent);
+
+		return parent;
+	}
+
+	/**
+	 * Get the equivalence class of the given element if it exists.
+	 * @param e the element whose class is needed
+	 * @return The element's equivalence class or null if it doesn't have one.
+	 */
+	private Set<E> getClassIfExists(E e) {
+		return leaderToClass.get(getLeader(e));
 	}
 
 	/**
@@ -114,12 +154,11 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 	 * @return The element's equivalence class
 	 */
 	public Set<E> getClass(E e) {
-		Set<E> result = elementToClass.get(e);
+		Set<E> result = getClassIfExists(e);
 		if (result == null) {
 			result = new HashSet<>();
 			result.add(e);
-			elementToClass.put(e, result);
-			allClasses.add(result);
+			leaderToClass.put(e, result);
 		}
 		return result;
 	}
@@ -128,28 +167,27 @@ public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implement
 	public boolean isEquivalent(E e1, E e2) {
 		if (e1.equals(e2))
 			return true;
-		Set<E> klass = elementToClass.get(e1);
+		Set<E> klass = getClassIfExists(e1);
 		return klass != null && klass.contains(e2);
 	}
 
 	@Override
 	public int size() {
 		// Remove all classes which have only a single entry
-		Iterator<Set<E>> iter = allClasses.iterator();
+		Iterator<Set<E>> iter = leaderToClass.values().iterator();
 		while (iter.hasNext()) {
 			Set<E> klass = iter.next();
 			if (klass.size() == 1) {
-				elementToClass.remove(klass.iterator().next());
 				iter.remove();
 			}
 		}
-		return allClasses.size();
+		return leaderToClass.size();
 	}
 
 	@Override
 	public Iterator<Set<E>> iterator() {
 		return new Iterator<Set<E>>() {
-			private PeekingIterator<Set<E>> iter = peekingIterator(allClasses.iterator());
+			private PeekingIterator<Set<E>> iter = peekingIterator(leaderToClass.values().iterator());
 
 			@Override
 			public boolean hasNext() {
