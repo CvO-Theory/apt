@@ -715,6 +715,7 @@ public class FiniteAutomatonUtility {
 		private class PowerSetState extends DFAState {
 			private final Set<State> states;
 			private final int hashCode;
+			private final Map<Symbol, DFAState> transitions = new HashMap<>();
 
 			public PowerSetState(Set<State> states) {
 				this.states = followEpsilons(states);
@@ -739,11 +740,17 @@ public class FiniteAutomatonUtility {
 				if (!getAlphabet().contains(atom))
 					return null;
 
+				DFAState result = transitions.get(atom);
+				if (result != null)
+					return result;
+
 				Set<State> newStates = new HashSet<>();
 				for (State state : states)
 					newStates.addAll(state.getFollowingStates(atom));
 
-				return new PowerSetState(newStates);
+				result = new PowerSetState(newStates);
+				transitions.put(atom, result);
+				return result;
 			}
 
 			@Override
