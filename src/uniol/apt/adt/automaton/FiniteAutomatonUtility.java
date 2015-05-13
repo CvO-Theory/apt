@@ -690,6 +690,24 @@ public class FiniteAutomatonUtility {
 		private final Set<Symbol> alphabet;
 		private final DFAState initialState;
 
+		// Speed up PowerSetState.equals() by having a canonical version of each state so that this == o hits.
+		private final Map<Set<State>, PowerSetState> stateIdentityCache = new HashMap<>();
+
+		private PowerSetState getState(Set<State> states) {
+			PowerSetState canonical = stateIdentityCache.get(states);
+			if (canonical != null)
+				return canonical;
+
+			PowerSetState result = new PowerSetState(states);
+			canonical = stateIdentityCache.get(result.states);
+			if (canonical != null)
+				result = canonical;
+
+			stateIdentityCache.put(states, result);
+			stateIdentityCache.put(result.states, result);
+			return result;
+		}
+
 		PowerSetConstruction(FiniteAutomaton a) {
 			// Calculate some alphabet
 			Set<Symbol> alphabet = new HashSet<>();
@@ -699,7 +717,7 @@ public class FiniteAutomatonUtility {
 
 			// Remember the alphabet for later and construct an initial state
 			this.alphabet = Collections.unmodifiableSet(alphabet);
-			this.initialState = new PowerSetState(Collections.singleton(a.getInitialState()));
+			this.initialState = getState(Collections.singleton(a.getInitialState()));
 		}
 
 		@Override
@@ -717,7 +735,7 @@ public class FiniteAutomatonUtility {
 			private final int hashCode;
 			private final Map<Symbol, DFAState> transitions = new HashMap<>();
 
-			public PowerSetState(Set<State> states) {
+			private PowerSetState(Set<State> states) {
 				this.states = followEpsilons(states);
 				this.hashCode = states.hashCode();
 			}
@@ -748,7 +766,7 @@ public class FiniteAutomatonUtility {
 				for (State state : states)
 					newStates.addAll(state.getFollowingStates(atom));
 
-				result = new PowerSetState(newStates);
+				result = getState(newStates);
 				transitions.put(atom, result);
 				return result;
 			}
