@@ -19,6 +19,8 @@
 
 package uniol.apt.adt.automaton;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.NoSuchElementException;
@@ -193,7 +195,7 @@ public class FiniteAutomatonUtility {
 	 * @return An automaton accepting the concatenation.
 	 */
 	static public FiniteAutomaton concatenate(FiniteAutomaton a1, FiniteAutomaton a2) {
-		return getAutomaton(new ConcatenateDecoratorState(a1.getInitialState(), a2.getInitialState()));
+		return getAutomaton(ConcatenateDecoratorState.getState(a1.getInitialState(), a2.getInitialState()));
 	}
 
 	/**
@@ -551,15 +553,52 @@ public class FiniteAutomatonUtility {
 	}
 
 	// Decorator used by concatenate(). It adds epsilon-transitions from final states of the first automaton to the
-	// initial state of the second automaton.
+	// initial state of the second automaton. Internally, this is generalized to concatenation a list of automaton.
 	static private class ConcatenateDecoratorState extends AbstractState {
 		final private State currentState;
-		final private State targetState;
+		final private List<State> targetStates;
 
-		public ConcatenateDecoratorState(State currentState, State targetState) {
+		// Get a new ConcatenateDecoratorState, but avoid nesting such states for performance reason
+		static public ConcatenateDecoratorState getState(State currentState, State targetState) {
+			if (targetState instanceof ConcatenateDecoratorState) {
+				ConcatenateDecoratorState target = (ConcatenateDecoratorState) targetState;
+				List<State> targets = new ArrayList<>();
+				targets.add(target.currentState);
+				targets.addAll(target.targetStates);
+				return getState(currentState, targets);
+			}
+			return getState(currentState, Collections.singletonList(targetState));
+		}
+
+		// Get a new ConcatenateDecoratorState, but avoid nesting such states for performance reason
+		static private ConcatenateDecoratorState getState(State currentState, List<State> targetStates) {
+			if (currentState instanceof ConcatenateDecoratorState) {
+				ConcatenateDecoratorState current = (ConcatenateDecoratorState) currentState;
+				List<State> targets = new ArrayList<>();
+				targets.addAll(current.targetStates);
+				targets.addAll(targetStates);
+				return new ConcatenateDecoratorState(current.currentState, targets);
+			}
+			return new ConcatenateDecoratorState(currentState, targetStates);
+		}
+
+		// Use getState() instead of this constructor
+		private ConcatenateDecoratorState(State currentState, List<State> targetStates) {
 			super(false);
+
+			assert !targetStates.isEmpty();
+			assert noConcatenationStates(Collections.singleton(currentState));
+			assert noConcatenationStates(targetStates);
+
 			this.currentState = currentState;
-			this.targetState = targetState;
+			this.targetStates = targetStates;
+		}
+
+		static private boolean noConcatenationStates(Collection<State> states) {
+			for (State state : states)
+				if (state instanceof ConcatenateDecoratorState)
+					return false;
+			return true;
 		}
 
 		@Override
@@ -571,16 +610,20 @@ public class FiniteAutomatonUtility {
 		public Set<State> getFollowingStates(Symbol atom) {
 			Set<State> result = new HashSet<>();
 			for (State state : currentState.getFollowingStates(atom))
-				result.add(new ConcatenateDecoratorState(state, targetState));
+				result.add(getState(state, targetStates));
 			if (currentState.isFinalState() && atom.isEpsilon()) {
-				result.add(targetState);
+				if (targetStates.size() == 1)
+					result.add(targetStates.get(0));
+				else
+					result.add(new ConcatenateDecoratorState(targetStates.get(0),
+								targetStates.subList(1, targetStates.size())));
 			}
-			return result;
+			return Collections.unmodifiableSet(result);
 		}
 
 		@Override
 		public int hashCode() {
-			return currentState.hashCode() + 31 * targetState.hashCode();
+			return currentState.hashCode() + 31 * targetStates.hashCode();
 		}
 
 		@Override
@@ -588,7 +631,7 @@ public class FiniteAutomatonUtility {
 			if (!(o instanceof ConcatenateDecoratorState))
 				return false;
 			ConcatenateDecoratorState other = (ConcatenateDecoratorState) o;
-			return currentState.equals(other.currentState) && targetState.equals(other.targetState);
+			return currentState.equals(other.currentState) && targetStates.equals(other.targetStates);
 		}
 	}
 
