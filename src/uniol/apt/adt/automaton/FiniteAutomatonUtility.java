@@ -714,9 +714,11 @@ public class FiniteAutomatonUtility {
 
 		private class PowerSetState extends DFAState {
 			private final Set<State> states;
+			private final int hashCode;
 
 			public PowerSetState(Set<State> states) {
 				this.states = followEpsilons(states);
+				this.hashCode = states.hashCode();
 			}
 
 			@Override
@@ -746,7 +748,7 @@ public class FiniteAutomatonUtility {
 
 			@Override
 			public int hashCode() {
-				return states.hashCode();
+				return hashCode;
 			}
 
 			@Override
