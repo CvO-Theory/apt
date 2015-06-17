@@ -136,6 +136,7 @@ import uniol.apt.generator.module.TNetGeneratorModule;
 import uniol.apt.generator.module.TristatePhilNetGeneratorModule;
 import uniol.apt.io.converter.Apt2PetrifyModule;
 import uniol.apt.io.converter.Apt2SynetModule;
+import uniol.apt.io.converter.PNML2AptModule;
 import uniol.apt.io.converter.Petrify2AptModule;
 import uniol.apt.io.converter.Synet2AptModule;
 import uniol.apt.io.renderer.impl.BagginsRendererModule;
@@ -246,6 +247,7 @@ public class APT {
 		new MatrixModule(),
 		new NonPureModule(),
 		new OutputNonBranchingModule(),
+		new PNML2AptModule(),
 		new PNMLRendererModule(),
 		new PVsOfSmallestCyclesModule(),
 		new PersistentModule(),
