@@ -98,6 +98,7 @@ public class ParsableTask extends Task {
 					new SynetLTSParserTester(outputdir),
 					new SynetPNParserTester(outputdir),
 					new APTRegexParserTester(outputdir),
+					new PNMLParserTester(outputdir),
 				};
 			} catch (FileNotFoundException | UnsupportedEncodingException e) {
 				throw new BuildException(e);
