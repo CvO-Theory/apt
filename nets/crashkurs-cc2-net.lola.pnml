@@ -1,0 +1,76 @@
+<pnml xmlns="http://www.informatik.hu-berlin.de/top/pnml/ptNetb">
+	<net id="LoLA_Ausgabe" type="http://www.informatik.hu-berlin.de/top/pntd/ptNetb">
+		<place id="p1">
+			<name>
+				<text>p1</text>
+			</name>
+			<initialMarking>
+				<text>0</text>
+			</initialMarking>
+		</place>
+		<place id="p2">
+			<name>
+				<text>p2</text>
+			</name>
+			<initialMarking>
+				<text>1</text>
+			</initialMarking>
+		</place>
+		<place id="p3">
+			<name>
+				<text>p3</text>
+			</name>
+			<initialMarking>
+				<text>2</text>
+			</initialMarking>
+		</place>
+		<transition id="t1">
+			<name>
+				<text>t1</text>
+			</name>
+		</transition>
+		<transition id="t2">
+			<name>
+				<text>t2</text>
+			</name>
+		</transition>
+		<transition id="t3">
+			<name>
+				<text>t3</text>
+			</name>
+		</transition>
+		<arc id="a0" source="t1" target="p3">
+			<inscription>
+				<text>1</text>
+			</inscription>
+		</arc>
+		<arc id="a1" source="t2" target="p3">
+			<inscription>
+				<text>2</text>
+			</inscription>
+		</arc>
+		<arc id="a2" source="t3" target="p1">
+			<inscription>
+				<text>1</text>
+			</inscription>
+		</arc>
+		<arc id="a4" source="p1" target="t1">
+			<inscription>
+				<text>1</text>
+			</inscription>
+		</arc>
+		<arc id="a5" source="p2" target="t2">
+			<inscription>
+				<text>1</text>
+			</inscription>
+		</arc>
+		<arc id="a6" source="p3" target="t3">
+			<inscription>
+				<text>1</text>
+			</inscription>
+		</arc>
+		<name>
+			<text>/tmp/cc2-net.lola</text>
+		</name>
+	</net>
+</pnml>
