@@ -19,10 +19,12 @@
 
 package uniol.apt.io.parser.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
@@ -199,6 +201,13 @@ public class APTParserTest {
 		} catch (StructureException ex) {
 			assertEquals("'.type' - identifier not specified", ex.getMessage());
 		}
+	}
+
+	@Test
+	public void testMissingNewlineAfterComment() throws Exception {
+		String string = ".type PN// Comment without newline after";
+		InputStream stream = new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8));
+		APTPNParser.getPetriNet(stream);
 	}
 }
 

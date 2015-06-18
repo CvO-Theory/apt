@@ -102,7 +102,7 @@ label       returns [FiniteAutomaton aut]	: ATOM { $aut = getAutomaton($ATOM.tex
 
 ATOM		: SYMBOL;
 ID		: '<' SYMBOL+ '>';
-COMMENT		: '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
+COMMENT		: '//' ~('\n'|'\r')* {$channel=HIDDEN;}
 			|   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;};
 WS		: ( ' ' | '\n' | '\r' | '\t')+ {$channel=HIDDEN;};
 

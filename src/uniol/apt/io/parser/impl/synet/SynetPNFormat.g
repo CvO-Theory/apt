@@ -112,7 +112,7 @@ INT	     : '0'..'9'+;
 
 ID	     : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*;
 
-COMMENT	     : '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
+COMMENT	     : '//' ~('\n'|'\r')* {$channel=HIDDEN;}
 		  |   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;};
 
 WS	     : ( ' ' | '\n' | '\r' | '\t') {$channel=HIDDEN;};

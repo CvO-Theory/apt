@@ -93,6 +93,11 @@ public class AptRegexFormatParserTest {
 		AptRegexFormatParser.parseString("/a");
 	}
 
+	@Test
+	static void testComment5() throws Exception {
+		test("a // Missing newline after comment", getAtomic("a"));
+	}
+
 	@Test(expectedExceptions = { LexerParserException.class })
 	static void testClosingParen() throws Exception {
 		AptRegexFormatParser.parseString(")");
