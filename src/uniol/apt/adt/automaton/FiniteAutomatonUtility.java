@@ -429,6 +429,15 @@ public class FiniteAutomatonUtility {
 	}
 
 	/**
+	 * Construct a finite automaton from a transition system. Each sequence that reaches at least some state will be
+	 * accepted by the automaton. Each sequence which reaches no state will be rejected.
+	 */
+	static public FiniteAutomaton fromLTS(TransitionSystem lts, Collection<uniol.apt.adt.ts.State> finalStates) {
+		finalStates = new HashSet<>(finalStates);
+		return getAutomaton(new LTSAdaptorState(lts.getInitialState(), finalStates));
+	}
+
+	/**
 	 * Render a finite automaton in the Graphviz file format.
 	 * @param aut The automaton to render
 	 * @return The automaton in the Graphviz file format.
@@ -680,8 +689,17 @@ public class FiniteAutomatonUtility {
 	// Adaptor used by fromPrefixLanguageLTS(). Turns a LTS into a FiniteAutomaton
 	static private class LTSAdaptorState implements State {
 		final private Map<Symbol, Set<uniol.apt.adt.ts.State>> transitions;
+		final private Collection<uniol.apt.adt.ts.State> finalStates;
+		final private boolean isFinal;
 
 		public LTSAdaptorState(uniol.apt.adt.ts.State state) {
+			this(state, null);
+		}
+
+		public LTSAdaptorState(uniol.apt.adt.ts.State state, Collection<uniol.apt.adt.ts.State> finalStates) {
+			this.finalStates = finalStates;
+			this.isFinal = finalStates == null || finalStates.contains(state);
+
 			Map<Symbol, Set<uniol.apt.adt.ts.State>> transitions = new HashMap<>();
 			for (Arc arc : state.getPostsetEdges()) {
 				Symbol symbol = new Symbol(arc.getLabel());
@@ -697,7 +715,7 @@ public class FiniteAutomatonUtility {
 
 		@Override
 		public boolean isFinalState() {
-			return true;
+			return isFinal;
 		}
 
 		@Override
@@ -710,7 +728,7 @@ public class FiniteAutomatonUtility {
 			Set<State> result = new HashSet<>();
 			if (transitions.containsKey(atom))
 				for (uniol.apt.adt.ts.State state : transitions.get(atom))
-					result.add(new LTSAdaptorState(state));
+					result.add(new LTSAdaptorState(state, finalStates));
 			return result;
 		}
 
@@ -724,7 +742,7 @@ public class FiniteAutomatonUtility {
 			if (!(o instanceof LTSAdaptorState))
 				return false;
 			LTSAdaptorState other = (LTSAdaptorState) o;
-			return transitions.equals(other.transitions);
+			return transitions.equals(other.transitions) && Objects.equals(finalStates, other.finalStates);
 		}
 	}
 

@@ -475,6 +475,20 @@ public class FiniteAutomatonUtilityTest {
 		assertThat(list, anyOf(contains("b"), contains("a", "b", "c", "b")));
 	}
 
+	@Test
+	public void testWordDifference2() {
+		TransitionSystem ts = getABCSystem();
+		FiniteAutomaton dfa1 = fromLTS(ts, Arrays.asList(ts.getNode("init")));
+		FiniteAutomaton dfa2 = fromLTS(ts, Arrays.asList(ts.getNode("a")));
+
+		// dfa1 accepts (abc)^*, dfa2 accepts (abc)^*a
+
+		assertThat(dfa1.getInitialState(), not(equalTo(dfa2.getInitialState())));
+
+		List<String> list = findWordDifference(dfa1, dfa2);
+		assertThat(list, anyOf(contains("a"), contains("a", "b", "c", "a")));
+	}
+
 	private void testTS(TransitionSystem ts) {
 		DeterministicFiniteAutomaton automaton = minimize(fromPrefixLanguageLTS(ts));
 		assertThat(findWordDifference(automaton, automaton), is(nullValue()));
