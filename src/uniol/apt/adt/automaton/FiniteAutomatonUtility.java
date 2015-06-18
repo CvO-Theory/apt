@@ -690,7 +690,7 @@ public class FiniteAutomatonUtility {
 	static private class LTSAdaptorState implements State {
 		final private Map<Symbol, Set<uniol.apt.adt.ts.State>> transitions;
 		final private Collection<uniol.apt.adt.ts.State> finalStates;
-		final private boolean isFinal;
+		final private uniol.apt.adt.ts.State currentState;
 
 		public LTSAdaptorState(uniol.apt.adt.ts.State state) {
 			this(state, null);
@@ -698,7 +698,7 @@ public class FiniteAutomatonUtility {
 
 		public LTSAdaptorState(uniol.apt.adt.ts.State state, Collection<uniol.apt.adt.ts.State> finalStates) {
 			this.finalStates = finalStates;
-			this.isFinal = finalStates == null || finalStates.contains(state);
+			this.currentState = state;
 
 			Map<Symbol, Set<uniol.apt.adt.ts.State>> transitions = new HashMap<>();
 			for (Arc arc : state.getPostsetEdges()) {
@@ -715,7 +715,7 @@ public class FiniteAutomatonUtility {
 
 		@Override
 		public boolean isFinalState() {
-			return isFinal;
+			return finalStates == null || finalStates.contains(currentState);
 		}
 
 		@Override
@@ -734,7 +734,7 @@ public class FiniteAutomatonUtility {
 
 		@Override
 		public int hashCode() {
-			return transitions.hashCode();
+			return currentState.hashCode() + Objects.hashCode(finalStates);
 		}
 
 		@Override
@@ -742,7 +742,11 @@ public class FiniteAutomatonUtility {
 			if (!(o instanceof LTSAdaptorState))
 				return false;
 			LTSAdaptorState other = (LTSAdaptorState) o;
-			return transitions.equals(other.transitions) && Objects.equals(finalStates, other.finalStates);
+			boolean result = currentState.equals(other.currentState) &&
+				Objects.equals(finalStates, other.finalStates);
+			if (result)
+				assert transitions.equals(other.transitions);
+			return result;
 		}
 	}
 
