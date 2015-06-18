@@ -87,6 +87,7 @@ import uniol.apt.analysis.isomorphism.Isomorphism;
 import uniol.apt.analysis.isomorphism.IsomorphismModule;
 import uniol.apt.analysis.language.FiringSequence;
 import uniol.apt.analysis.language.LanguageEquivalenceModule;
+import uniol.apt.analysis.language.ToRegularExpressionModule;
 import uniol.apt.analysis.language.Word;
 import uniol.apt.analysis.language.WordInLanguageModule;
 import uniol.apt.analysis.language.WordList;
@@ -276,6 +277,7 @@ public class APT {
 		new SynthesizeWordModule(),
 		new TNetGeneratorModule(),
 		new TNetModule(),
+		new ToRegularExpressionModule(),
 		new TotallyReachableModule(),
 		new TrapsModule(),
 		new TristatePhilNetGeneratorModule(),
