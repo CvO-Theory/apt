@@ -104,6 +104,11 @@ public class AptRegexFormatParserTest {
 	}
 
 	@Test(expectedExceptions = { LexerParserException.class })
+	static void testClosingParenAfterExpr() throws Exception {
+		AptRegexFormatParser.parseString("(ab)*)");
+	}
+
+	@Test(expectedExceptions = { LexerParserException.class })
 	static void testMissingClosingParen() throws Exception {
 		AptRegexFormatParser.parseString("(a*|b+");
 	}

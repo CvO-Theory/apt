@@ -59,6 +59,17 @@ tokens {
 	public static FiniteAutomaton getAutomaton(String atom) {
 		return getAtomicLanguage(new Symbol(atom));
 	}
+
+	// Throw some type of exception even though we are not allowed to
+	private static <T extends Throwable> T sneakyThrow(Throwable ex) throws T {
+		throw (T) ex;
+	}
+
+	// Instead of reporting any kind of error, always throw the corresponding exception
+	@Override
+	public void reportError(RecognitionException e) {
+		AptRegexFormatParser.<RuntimeException>sneakyThrow(e);
+	}
 }
 
 @rulecatch {
@@ -78,6 +89,7 @@ tokens {
 			return (RecognitionException) super.getCause();
 		}
 	}
+
 	@Override
 	public void recover(RecognitionException e) {
 		throw new LexerRuntimeException(e);
