@@ -581,6 +581,24 @@ public class FiniteAutomatonUtilityTest {
 	}
 
 	@Test
+	public void testLanguageEquivalentStates() {
+		TransitionSystem ts = new TransitionSystem();
+		ts.createState("end");
+		ts.createState("init");
+		ts.createState("a");
+		ts.setInitialState("init");
+
+		ts.createArc("init", "a", "a");
+		ts.createArc("end", "a", "a");
+		ts.createArc("a", "end", "b");
+
+		FiniteAutomaton aut = fromLTS(ts, Arrays.asList(ts.getNode("end")));
+		wordInLanguage(aut, true, "a", "b");
+		aut = minimize(aut);
+		wordInLanguage(aut, true, "a", "b");
+	}
+
+	@Test
 	public void testRenderToGraphviz() {
 		assertThat(renderToGraphviz(getAtomicLanguage(new Symbol("a"))),
 				is("digraph G {\n  s1 [peripheries=2];\n" +
