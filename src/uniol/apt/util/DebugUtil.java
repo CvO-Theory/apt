@@ -28,7 +28,7 @@ import java.util.Date;
  * @author Uli Schlachter
  */
 final public class DebugUtil {
-	static final public boolean debugOutputEnabled = false;
+	static final public boolean debugOutputEnabled = false || Boolean.getBoolean("apt.debug");
 	static final private ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>() {
 		@Override
 		protected DateFormat initialValue() {
