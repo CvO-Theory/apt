@@ -68,7 +68,9 @@ public class SynthesizeModule extends AbstractModule {
 				"Comma separated list of options,"
 				+ " can be verbose, none, safe, [k]-bounded, pure, plain, tnet,"
 				+ " output-nonbranching (on), conflict-free (cf),"
-				+ " upto-language-equivalence (language, le)");
+				+ " upto-language-equivalence (language, le)."
+				+ " Special options are verbose (print detail information about the regions) and
+				+ " quick-fail (fail quickly when the result 'success: No' is known).");
 	}
 
 	@Override
@@ -96,7 +98,9 @@ public class SynthesizeModule extends AbstractModule {
 			throws ModuleException {
 		Options options = Options.parseProperties(input.getParameter("options", String.class));
 		SynthesizePN synthesize;
-		SynthesizePN.Builder builder = new SynthesizePN.Builder(ts).setProperties(options.properties);
+		SynthesizePN.Builder builder = new SynthesizePN.Builder(ts)
+			.setProperties(options.properties)
+			.setQuickFail(options.quickFail);
 		if (options.upToLanguageEquivalence)
 			synthesize = builder.buildForLanguageEquivalence();
 		else
@@ -200,11 +204,13 @@ public class SynthesizeModule extends AbstractModule {
 		public final PNProperties properties;
 		public final boolean verbose;
 		public final boolean upToLanguageEquivalence;
+		public final boolean quickFail;
 
-		public Options(PNProperties properties, boolean verbose, boolean upToLanguageEquivalence) {
+		public Options(PNProperties properties, boolean verbose, boolean upToLanguageEquivalence, boolean quickFail) {
 			this.properties = properties;
 			this.verbose = verbose;
 			this.upToLanguageEquivalence = upToLanguageEquivalence;
+			this.quickFail = quickFail;
 		}
 
 		/**
@@ -217,11 +223,12 @@ public class SynthesizeModule extends AbstractModule {
 			PNProperties result = new PNProperties();
 			boolean verbose = false;
 			boolean upToLanguageEquivalence = false;
+			boolean quickFail = false;
 
 			// Explicitly allow empty string
 			properties = properties.trim();
 			if (properties.isEmpty())
-				return new Options(result, verbose, upToLanguageEquivalence);
+				return new Options(result, verbose, upToLanguageEquivalence, quickFail);
 
 			for (String prop : properties.split(",")) {
 				prop = prop.trim().toLowerCase();
@@ -256,6 +263,9 @@ public class SynthesizeModule extends AbstractModule {
 					case "le":
 						upToLanguageEquivalence = true;
 						break;
+					case "quick-fail":
+						quickFail = true;
+						break;
 					default:
 						if (prop.endsWith("-bounded")) {
 							String value = prop.substring(0, prop.length() - "-bounded".length());
@@ -275,7 +285,7 @@ public class SynthesizeModule extends AbstractModule {
 									+ "': Unknown property");
 				}
 			}
-			return new Options(result, verbose, upToLanguageEquivalence);
+			return new Options(result, verbose, upToLanguageEquivalence, quickFail);
 		}
 	}
 }
