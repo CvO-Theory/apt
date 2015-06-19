@@ -19,10 +19,13 @@
 
 package uniol.apt.analysis.bounded;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
+import uniol.apt.adt.pn.Token;
 import uniol.apt.adt.pn.Transition;
 
 /**
@@ -90,6 +93,37 @@ public class BoundedResult {
 	 */
 	public boolean isKBounded(int checkK) {
 		return this.k != null && this.k <= checkK;
+	}
+
+	/**
+	 * Return a sequence which is a counter-example to n-boundedness, if such a sequence exists.
+	 * @param n The bound to disprove. Must be a non-negative integer.
+	 * @return A suitable firing sequence or null if no such sequence exists.
+	 */
+	public List<Transition> getSequenceExceeding(int n) {
+		if (isKBounded(n) || n < 0)
+			return null;
+
+		Token target = new Token(n);
+		Marking m = pn.getInitialMarkingCopy();
+		List<Transition> result = new ArrayList<>();
+		// Does the initial marking already exceed bound n?
+		if (m.getToken(unboundedPlace).compareTo(target) > 0)
+			return result;
+
+		// Fire sequence once...
+		Transition[] array = sequence.toArray(new Transition[0]);
+		m = m.fire(array);
+		result.addAll(sequence);
+
+		// ...and then go through the cycle until we exceed the target bound
+		array = cycle.toArray(new Transition[0]);
+		while (m.getToken(unboundedPlace).compareTo(target) <= 0) {
+			result.addAll(cycle);
+			m = m.fire(array);
+		}
+
+		return result;
 	}
 }
 

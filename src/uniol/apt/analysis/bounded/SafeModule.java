@@ -74,7 +74,7 @@ public class SafeModule extends AbstractModule {
 		if (!result.isSafe()) {
 			output.setReturnValue("witness_place", Place.class, result.unboundedPlace);
 			output.setReturnValue("witness_firing_sequence", FiringSequence.class,
-				new FiringSequence(result.sequence));
+					new FiringSequence(result.getSequenceExceeding(1)));
 		}
 	}
 

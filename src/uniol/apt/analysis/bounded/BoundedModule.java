@@ -82,11 +82,17 @@ public class BoundedModule extends AbstractModule {
 		output.setReturnValue("bounded", Boolean.class, boundedResult);
 		if (!boundedResult) {
 			output.setReturnValue("witness_place", Place.class, result.unboundedPlace);
-			output.setReturnValue("witness_firing_sequence", FiringSequence.class,
-				new FiringSequence(result.sequence));
-			if (!result.isBounded())
+			if (k != null) {
+				// If a specific bound was given, return a sequence which exceeds this bound
+				output.setReturnValue("witness_firing_sequence", FiringSequence.class,
+					new FiringSequence(result.getSequenceExceeding(k)));
+			} else {
+				assert !result.isBounded();
+				output.setReturnValue("witness_firing_sequence", FiringSequence.class,
+					new FiringSequence(result.sequence));
 				output.setReturnValue("witness_firing_sequence_cycle", FiringSequence.class,
 					new FiringSequence(result.cycle));
+			}
 		}
 	}
 

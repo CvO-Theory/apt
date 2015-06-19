@@ -20,25 +20,43 @@
 package uniol.apt.analysis.bounded;
 
 import org.testng.annotations.Test;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
+import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.pn.Transition;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.TestNetCollection.*;
+import static uniol.apt.adt.matcher.Matchers.*;
 
 /** @author Uli Schlachter, vsp */
 @Test
 public class BoundedTest {
 	private void testUnbounded(PetriNet pn) {
 		BoundedResult result = new Bounded().checkBounded(pn);
-		assertEquals(result.k, null);
+		assertThat(result.k, is(nullValue()));
+		assertThat(result.isKBounded(42), is(false));
+		assertThat(pn.getInitialMarkingCopy().fire(
+					result.getSequenceExceeding(42).toArray(new Transition[0]))
+				.getToken(result.unboundedPlace).getValue(),
+				greaterThan(42));
 	}
 
 	private void testBounded(PetriNet pn, int k) {
 		BoundedResult result = new Bounded().checkBounded(pn);
-		assertNotNull(result.k);
-		assertEquals(result.k, Integer.valueOf(k));
+		assertThat(result.k, equalTo(Integer.valueOf(k)));
+		assertThat(result.isSafe(), equalTo(k <= 1));
+		assertThat(result.isKBounded(k), is(true));
+		assertThat(result.getSequenceExceeding(k), is(nullValue()));
+		assertThat(result.getSequenceExceeding(-1), is(nullValue()));
+
+		if (k > 0) {
+			assertThat(result.isKBounded(k - 1), is(false));
+			assertThat(pn.getInitialMarkingCopy().fire(
+						result.getSequenceExceeding(k - 1).toArray(new Transition[0]))
+					.getToken(result.unboundedPlace).getValue(),
+					greaterThan(k-1));
+		}
 	}
 
 	@Test
@@ -89,6 +107,41 @@ public class BoundedTest {
 	@Test
 	public void testABCLanguageNet() {
 		testUnbounded(getABCLanguageNet());
+	}
+
+	@Test
+	public void testABCLanguageNetFiringSequences() {
+		PetriNet pn = getABCLanguageNet();
+		Node ta1 = pn.getNode("ta1");
+		BoundedResult result = new Bounded().checkBounded(pn);
+
+		assertThat(result.pn, is(pn));
+		assertThat(result.unboundedPlace, is(pn.getNode("p2")));
+		assertThat(result.k, nullValue());
+		assertThat(result.sequence, is(empty()));
+		assertThat(result.cycle, contains(ta1));
+
+		assertThat(result.getSequenceExceeding(0), contains(ta1));
+		assertThat(result.getSequenceExceeding(1), contains(ta1, ta1));
+	}
+
+	@Test
+	public void testUnsafeNetFiringSequences() {
+		PetriNet pn = new PetriNet();
+		Node s = pn.createPlace("s");
+		Node t = pn.createTransition("t");
+		pn.createFlow("t", "s");
+
+		BoundedResult result = new Bounded().checkBounded(pn);
+
+		assertThat(result.pn, is(pn));
+		assertThat(result.unboundedPlace, is(s));
+		assertThat(result.k, nullValue());
+		assertThat(result.sequence, is(empty()));
+		assertThat(result.cycle, contains(t));
+
+		assertThat(result.getSequenceExceeding(0), contains(t));
+		assertThat(result.getSequenceExceeding(1), contains(t, t));
 	}
 }
 
