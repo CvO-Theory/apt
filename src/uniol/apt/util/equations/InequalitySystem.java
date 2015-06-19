@@ -68,26 +68,16 @@ public class InequalitySystem {
 	 * An enumeration of comparators on numbers.
 	 */
 	public static enum Comparator {
-		LESS_THAN_OR_EQUAL("<=", ">="),
-		LESS_THAN("<", ">"),
-		EQUAL("=", "="),
-		GREATER_THAN(">", "<"),
-		GREATER_THAN_OR_EQUAL(">=", "<=");
+		LESS_THAN_OR_EQUAL("<="),
+		LESS_THAN("<"),
+		EQUAL("="),
+		GREATER_THAN(">"),
+		GREATER_THAN_OR_EQUAL(">=");
 
 		private final String representation;
-		private final String opposite;
 
-		private Comparator(String representation, String opposite) {
+		private Comparator(String representation) {
 			this.representation = representation;
-			this.opposite = opposite;
-		}
-
-		/**
-		 * Return the opposite comparator
-		 * @return The opposite.
-		 */
-		public Comparator getOpposite() {
-			return fromString(opposite);
 		}
 
 		@Override
@@ -232,46 +222,6 @@ public class InequalitySystem {
 			}
 
 			return comparator.compare(leftHandSide, rhs);
-		}
-
-		/**
-		 * Test if this inequality is homogeneous. A homogeneous inequality has the special property that if x
-		 * is a solution, then so is r*x for any r >= 1. Please note that r is required to be at least one!
-		 * @return True if this inequality is homegenous.
-		 */
-		public boolean isHomogeneous() {
-			/* Also, since we are looking at linear inequalities, if we multiply an r >= 1 to the x in
-			 * x[0]*c[0]+...+x[n]*c[n], then the r can be be factored out and the whole result of this line
-			 * will be multiplied by r as well. Since r >= 1, this means that the following conditions must
-			 * hold (but only if we are looking at integer solutions, else > and < need to change!).
-			 */
-			switch (getComparator()) {
-				case LESS_THAN_OR_EQUAL:
-					if (leftHandSide.signum() < 0)
-						return false;
-					break;
-				case LESS_THAN:
-					if (leftHandSide.compareTo(BigInteger.ONE.negate()) < 0)
-						return false;
-					break;
-				case EQUAL:
-					if (leftHandSide.signum() != 0)
-						return false;
-					break;
-				case GREATER_THAN:
-					if (leftHandSide.compareTo(BigInteger.ONE) > 0)
-						return false;
-					break;
-				case GREATER_THAN_OR_EQUAL:
-					if (leftHandSide.signum() > 0)
-						return false;
-					break;
-				default:
-					throw new AssertionError("Came across a Comparator with an invalid value: " +
-							this.toString());
-			}
-
-			return true;
 		}
 
 		@Override
@@ -447,18 +397,6 @@ public class InequalitySystem {
 	}
 
 	/**
-	 * Test if this inequality system is homogeneous. A homogeneous inequality system has the special property that
-	 * if x is a solution, then so is r*x for any r >= 1. Please note that r is required to be at least one!
-	 * @return True if this inequality is homegenous.
-	 */
-	public boolean isHomogeneous() {
-		for (Inequality inequality : inequalities)
-			if (!inequality.isHomogeneous())
-				return false;
-		return true;
-	}
-
-	/**
 	 * Calculate a solution of the inequality system.
 	 * @return A solution to the system or an empty list
 	 */
@@ -530,7 +468,7 @@ public class InequalitySystem {
 		public static final Log4JInitializationHelper INSTANCE = new Log4JInitializationHelper();
 		public final Logger logger = Logger.getRootLogger();
 
-		public Log4JInitializationHelper() {
+		private Log4JInitializationHelper() {
 			// Set up SMTInterpol in a way that it doesn't produce debug output
 			logger.addAppender(new NullAppender());
 		}
