@@ -115,6 +115,7 @@ import uniol.apt.analysis.sideconditions.SideConditions;
 import uniol.apt.analysis.snet.SNetModule;
 import uniol.apt.analysis.snet.SNetResult;
 import uniol.apt.analysis.synet.SynthesizeDistributedLTSModule;
+import uniol.apt.analysis.synthesize.FindWordsModule;
 import uniol.apt.analysis.synthesize.LimitedUnfoldingModule;
 import uniol.apt.analysis.synthesize.SynthesizeModule;
 import uniol.apt.analysis.synthesize.SynthesizeWordModule;
@@ -233,6 +234,7 @@ public class APT {
 		new ExtendTSModule(),
 		new FCModule(),
 		new FCNetModule(),
+		new FindWordsModule(),
 		new FireSequenceModule(),
 		new GenerateStepNetModule(),
 		new InfoModule(),
