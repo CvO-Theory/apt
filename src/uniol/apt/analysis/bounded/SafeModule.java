@@ -69,7 +69,7 @@ public class SafeModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 		// An unsafe place is one which isn't 1-bounded
-		BoundedResult result = new Bounded().checkBounded(pn);
+		BoundedResult result = Bounded.checkBounded(pn);
 		output.setReturnValue("safe", Boolean.class, result.isSafe());
 		if (!result.isSafe()) {
 			output.setReturnValue("witness_place", Place.class, result.unboundedPlace);

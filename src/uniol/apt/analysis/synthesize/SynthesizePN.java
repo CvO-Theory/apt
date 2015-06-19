@@ -559,7 +559,7 @@ public class SynthesizePN {
 		assert !properties.isPure() || Pure.checkPure(pn) : regions;
 		assert !properties.isPlain() || new Plain().checkPlain(pn) : regions;
 		assert !properties.isTNet() || isGeneralizedTNet(pn) : regions;
-		assert !properties.isKBounded() || new Bounded().checkBounded(pn).k <= properties.getKForKBounded() : regions;
+		assert !properties.isKBounded() || Bounded.checkBounded(pn).k <= properties.getKForKBounded() : regions;
 		assert !properties.isOutputNonbranching() || new OutputNonBranching(pn).check() : regions;
 		try {
 			assert !properties.isConflictFree() || new ConflictFree(pn).check() : regions;

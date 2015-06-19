@@ -71,7 +71,7 @@ public class KBoundedModule extends AbstractModule {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
-		BoundedResult result = new Bounded().checkBounded(pn);
+		BoundedResult result = Bounded.checkBounded(pn);
 		output.setReturnValue("k", Integer.class, result.k);
 		output.setReturnValue("bounded", Boolean.class, result.isBounded());
 		output.setReturnValue("witness_place", Place.class, result.unboundedPlace);

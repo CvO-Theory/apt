@@ -327,8 +327,7 @@ public class CheckAttributes {
 	 * @return bool
 	 */
 	private boolean checkBounded() {
-		Bounded bounded = new Bounded();
-		return bounded.isBounded(this.petriNet);
+		return Bounded.isBounded(this.petriNet);
 	}
 
 	/**

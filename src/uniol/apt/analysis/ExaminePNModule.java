@@ -99,7 +99,7 @@ public class ExaminePNModule extends AbstractModule {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
-		BoundedResult result = new Bounded().checkBounded(pn);
+		BoundedResult result = Bounded.checkBounded(pn);
 		PersistentNet persistent = new PersistentNet(pn);
 		ReversibleNet reversible = new ReversibleNet(pn);
 		persistent.check();

@@ -72,7 +72,7 @@ public class BoundedModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 		Integer k = input.getParameter("k", Integer.class);
-		BoundedResult result = new Bounded().checkBounded(pn);
+		BoundedResult result = Bounded.checkBounded(pn);
 		boolean boundedResult;
 		if (k == null) {
 			boundedResult = result.isBounded();

@@ -43,7 +43,7 @@ public class Bounded {
 	 * @param pn The Petri net to check.
 	 * @return true if all places in the Petri net are bounded.
 	 */
-	public boolean isBounded(PetriNet pn) {
+	static public boolean isBounded(PetriNet pn) {
 		return checkBounded(pn).isBounded();
 	}
 
@@ -52,7 +52,7 @@ public class Bounded {
 	 * @param pn The Petri net to check.
 	 * @return An instance of BoundedResult describing the result. This function never returns null.
 	 */
-	public BoundedResult checkBounded(PetriNet pn) {
+	static public BoundedResult checkBounded(PetriNet pn) {
 		Collection<Place> places = pn.getPlaces();
 		CoverabilityGraph cover = CoverabilityGraph.get(pn);
 		List<Transition> sequence = new FiringSequence();

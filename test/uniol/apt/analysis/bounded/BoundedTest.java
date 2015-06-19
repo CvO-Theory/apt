@@ -33,7 +33,7 @@ import static uniol.apt.adt.matcher.Matchers.*;
 @Test
 public class BoundedTest {
 	private void testUnbounded(PetriNet pn) {
-		BoundedResult result = new Bounded().checkBounded(pn);
+		BoundedResult result = Bounded.checkBounded(pn);
 		assertThat(result.k, is(nullValue()));
 		assertThat(result.isKBounded(42), is(false));
 		assertThat(pn.getInitialMarkingCopy().fire(
@@ -43,7 +43,7 @@ public class BoundedTest {
 	}
 
 	private void testBounded(PetriNet pn, int k) {
-		BoundedResult result = new Bounded().checkBounded(pn);
+		BoundedResult result = Bounded.checkBounded(pn);
 		assertThat(result.k, equalTo(Integer.valueOf(k)));
 		assertThat(result.isSafe(), equalTo(k <= 1));
 		assertThat(result.isKBounded(k), is(true));
@@ -113,7 +113,7 @@ public class BoundedTest {
 	public void testABCLanguageNetFiringSequences() {
 		PetriNet pn = getABCLanguageNet();
 		Node ta1 = pn.getNode("ta1");
-		BoundedResult result = new Bounded().checkBounded(pn);
+		BoundedResult result = Bounded.checkBounded(pn);
 
 		assertThat(result.pn, is(pn));
 		assertThat(result.unboundedPlace, is(pn.getNode("p2")));
@@ -132,7 +132,7 @@ public class BoundedTest {
 		Node t = pn.createTransition("t");
 		pn.createFlow("t", "s");
 
-		BoundedResult result = new Bounded().checkBounded(pn);
+		BoundedResult result = Bounded.checkBounded(pn);
 
 		assertThat(result.pn, is(pn));
 		assertThat(result.unboundedPlace, is(s));

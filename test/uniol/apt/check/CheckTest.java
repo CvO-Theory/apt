@@ -195,8 +195,7 @@ public class CheckTest {
 			assertTrue(true);
 		} else {
 			// check if net is bounded
-			Bounded bounded = new Bounded();
-			assertTrue(bounded.isBounded(pn));
+			assertTrue(Bounded.isBounded(pn));
 		}
 	}
 
