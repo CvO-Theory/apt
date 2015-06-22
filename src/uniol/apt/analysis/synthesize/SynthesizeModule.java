@@ -69,7 +69,7 @@ public class SynthesizeModule extends AbstractModule {
 				+ " can be verbose, none, safe, [k]-bounded, pure, plain, tnet,"
 				+ " output-nonbranching (on), conflict-free (cf),"
 				+ " upto-language-equivalence (language, le)."
-				+ " Special options are verbose (print detail information about the regions) and
+				+ " Special options are verbose (print detail information about the regions) and"
 				+ " quick-fail (fail quickly when the result 'success: No' is known).");
 	}
 
