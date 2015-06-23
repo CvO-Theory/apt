@@ -20,32 +20,20 @@
 package uniol.apt.util.equations;
 
 import java.math.BigInteger;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
-import static uniol.apt.util.DebugUtil.debug;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.varia.NullAppender;
-
-import de.uni_freiburg.informatik.ultimate.logic.ConstantTerm;
-import de.uni_freiburg.informatik.ultimate.logic.Logics;
-import de.uni_freiburg.informatik.ultimate.logic.Model;
-import de.uni_freiburg.informatik.ultimate.logic.Rational;
-import de.uni_freiburg.informatik.ultimate.logic.Script.LBool;
-import de.uni_freiburg.informatik.ultimate.logic.Script;
-import de.uni_freiburg.informatik.ultimate.logic.Sort;
-import de.uni_freiburg.informatik.ultimate.logic.Term;
-import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.SMTInterpol;
+import static org.apache.commons.collections4.iterators.UnmodifiableIterator.unmodifiableIterator;
 
 /**
  * Representation of an inequality system.
  * @author Uli Schlachter
  */
-public class InequalitySystem {
+public class InequalitySystem extends AbstractCollection<InequalitySystem.Inequality> {
 	private final List<Inequality> inequalities = new ArrayList<>();
 
 	private static List<BigInteger> toBigIntegerList(Collection<Integer> collection) {
@@ -255,14 +243,6 @@ public class InequalitySystem {
 	}
 
 	/**
-	 * Construct a new inequality system as a copy of another system.
-	 * @param system The inequality system to copy from.
-	 */
-	public InequalitySystem(InequalitySystem system) {
-		inequalities.addAll(system.inequalities);
-	}
-
-	/**
 	 * Construct a new inequality system.
 	 */
 	public InequalitySystem() {
@@ -396,160 +376,14 @@ public class InequalitySystem {
 		return true;
 	}
 
-	/**
-	 * Calculate a solution of the inequality system.
-	 * @return A solution to the system or an empty list
-	 */
-	public List<Integer> findSolution() {
-		return findSolution(new InequalitySystem[] { this });
+	@Override
+	public int size() {
+		return inequalities.size();
 	}
 
-	/**
-	 * Calculate a solution to a conjunction of disjunctions of inequality systems.
-	 * When called with a parameter like <pre>{ { A, B }, { C }, { B, D, E } }</pre> where A to E are inequality
-	 * systems, this tries to find a solution for <pre>(A or B) and C and (B or D or E)</pre>.
-	 * @param systems Contains a hierarchy of systems where individual systems are connected by disjunctions and the
-	 * disjunctions are connected by conjunctions.
-	 * @return A solution to the systems or an empty list if unsolvable.
-	 */
-	static public List<Integer> findSolution(InequalitySystem[]... systems) {
-		int numVariables = 0;
-		for (int i = 0; i < systems.length; i++)
-			for (int j = 0; j < systems[i].length; j++)
-				numVariables = Math.max(numVariables, systems[i][j].getNumberOfVariables());
-
-		Script script = createScript(numVariables);
-		Term defTerm = script.term("false");
-		for (int i = 0; i < systems.length; i++) {
-			Term[] orTerms = new Term[systems[i].length];
-			for (int j = 0; j < systems[i].length; j++)
-				orTerms[j] = toTerm(script, systems[i][j].inequalities, defTerm);
-			if (orTerms.length == 1)
-				script.assertTerm(orTerms[0]);
-			else if (orTerms.length > 1)
-				script.assertTerm(script.term("or", orTerms));
-		}
-
-		List<Integer> solution = handleSolution(script, numVariables);
-		if (solution.isEmpty()) {
-			debug("No solution found for:");
-			for (int i = 0; i < systems.length; i++) {
-				if (i == 0)
-					debug("at least one of:");
-				else
-					debug("and at least one of:");
-
-				for (int j = 0; j < systems[i].length; j++)
-					debug(systems[i][j]);
-			}
-		} else {
-			debug("Solution:");
-			debug(solution);
-			assert isSolution(solution, systems) : solution + " should solve this system but does not";
-		}
-		return Collections.unmodifiableList(solution);
-	}
-
-	static private boolean isSolution(List<Integer> solution, InequalitySystem[][] systems) {
-		for (int i = 0; i < systems.length; i++) {
-			boolean foundSolution = false;
-			for (int j = 0; j < systems[i].length; j++)
-				if (foundSolution = systems[i][j].fulfilledBy(solution))
-					break;
-			if (!foundSolution && systems[i].length > 0) {
-				debug("Not a valid solution for sub-system with index ", i);
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private static class Log4JInitializationHelper {
-		public static final Log4JInitializationHelper INSTANCE = new Log4JInitializationHelper();
-		public final Logger logger = Logger.getRootLogger();
-
-		private Log4JInitializationHelper() {
-			// Set up SMTInterpol in a way that it doesn't produce debug output
-			logger.addAppender(new NullAppender());
-		}
-	}
-
-	static private Script createScript(int numVariables) {
-		// Java lazily initializes classes, so the helper will only be created on first use
-		Logger logger = Log4JInitializationHelper.INSTANCE.logger;
-		Script script = new SMTInterpol(logger, false);
-		script.setLogic(Logics.QF_LIA);
-
-		// Create variables
-		Sort sort = script.sort("Int");
-		for (int i = 0; i < numVariables; i++)
-			script.declareFun("var" + i, new Sort[0], sort);
-
-		return script;
-	}
-
-	static private Term toTerm(Script script, Collection<Inequality> inequalities, Term defTerm) {
-		if (inequalities.isEmpty())
-			return defTerm;
-
-		// Handle each inequality
-		Term[] system = new Term[inequalities.size()];
-		int nextSystemEntry = 0;
-		for (Inequality inequality : inequalities) {
-			List<BigInteger> coefficients = inequality.getCoefficients();
-			Term terms[] = new Term[coefficients.size()];
-			int nextEntry = 0;
-			for (int i = 0; i < coefficients.size(); i++) {
-				BigInteger coeff = coefficients.get(i);
-				if (coeff.equals(BigInteger.ZERO))
-					continue;
-				if (coeff.equals(BigInteger.ONE))
-					terms[nextEntry++] = script.term("var" + i);
-				else
-					terms[nextEntry++] = script.term("*",
-							script.numeral(coeff), script.term("var" + i));
-			}
-
-			Term rhs;
-			if (nextEntry == 0)
-				rhs = script.numeral(BigInteger.ZERO);
-			else if (nextEntry == 1)
-				rhs = terms[0];
-			else
-				rhs = script.term("+", Arrays.copyOf(terms, nextEntry));
-
-			Term lhs = script.numeral(inequality.getLeftHandSide());
-			String comparator = inequality.getComparator().toString();
-			system[nextSystemEntry++] = script.term(comparator, lhs, rhs);
-		}
-
-		if (nextSystemEntry == 1)
-			return system[0];
-		return script.term("and", system);
-	}
-
-	static private List<Integer> handleSolution(Script script, int numVariables) {
-		LBool isSat = script.checkSat();
-		if (isSat != LBool.SAT) {
-			debug("SMTInterpol produced unsat: " + isSat.toString());
-			return Collections.emptyList();
-		}
-
-		// Transform the solution
-		Model model = script.getModel();
-		List<Integer> solution = new ArrayList<>(numVariables);
-		for (int i = 0; i < numVariables; i++) {
-			Term term = model.evaluate(script.term("var" + i));
-			assert term instanceof ConstantTerm : term;
-
-			Object value = ((ConstantTerm) term).getValue();
-			assert value instanceof Rational : value;
-
-			Rational rat = (Rational) value;
-			solution.add(rat.numerator().intValue());
-			assert rat.denominator().equals(BigInteger.ONE) : value;
-		}
-		return solution;
+	@Override
+	public Iterator<Inequality> iterator() {
+		return unmodifiableIterator(inequalities.iterator());
 	}
 
 	@Override

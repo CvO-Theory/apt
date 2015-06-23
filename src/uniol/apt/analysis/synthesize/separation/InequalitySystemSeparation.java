@@ -32,6 +32,7 @@ import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.util.equations.InequalitySystem;
+import uniol.apt.util.equations.InequalitySystemSolver;
 
 import static uniol.apt.util.DebugUtil.debug;
 
@@ -349,11 +350,13 @@ class InequalitySystemSeparation implements Separation {
 	 * @return A region or null.
 	 */
 	private Region regionFromSolution(InequalitySystem sys, boolean pure) {
-		InequalitySystem[][] systemToSolve = Arrays.copyOf(additionalSystems, additionalSystems.length + 2);
-		systemToSolve[additionalSystems.length] = new InequalitySystem[] { sys };
-		systemToSolve[additionalSystems.length + 1] = new InequalitySystem[] { system };
+		InequalitySystemSolver solver = new InequalitySystemSolver();
+		for (InequalitySystem[] systems : additionalSystems)
+			solver.assertDisjunction(systems);
+		solver.assertDisjunction(sys);
+		solver.assertDisjunction(system);
 
-		List<Integer> solution = InequalitySystem.findSolution(systemToSolve);
+		List<Integer> solution = solver.findSolution();
 		if (solution.isEmpty())
 			return null;
 

@@ -32,6 +32,7 @@ import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.util.equations.InequalitySystem;
+import uniol.apt.util.equations.InequalitySystemSolver;
 
 import static uniol.apt.util.DebugUtil.debug;
 
@@ -220,10 +221,10 @@ class BasicPureSeparation implements Separation {
 	 * @return A pure region from a solution of the system or null if the system was unsolvable.
 	 */
 	protected Region findRegionFromSystem(InequalitySystem system, List<Region> basis, String event) {
-		InequalitySystem[][] systems = new InequalitySystem[2][];
-		systems[0] = new InequalitySystem[] { system };
-		systems[1] = requireDistributableNet(utility, locationMap, event);
-		List<Integer> solution = InequalitySystem.findSolution(systems);
+		List<Integer> solution = new InequalitySystemSolver()
+			.assertDisjunction(system)
+			.assertDisjunction(requireDistributableNet(utility, locationMap, event))
+			.findSolution();
 		if (solution.isEmpty())
 			return null;
 
