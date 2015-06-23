@@ -140,6 +140,8 @@ public class FindWordsModule extends AbstractModule {
 			int currentLength = currentLevel.iterator().next().size() + 1;
 			for (List<String> currentWord : currentLevel) {
 				for (String c : alphabet) {
+					boolean newLetter = !currentWord.contains(c);
+
 					// If "currentWord" is unsolvable, then "word" must also be unsolvable.
 					// Otherwise we get a contradiction: The net solving "word" will solve
 					// "currentWord" after firing "c" once.
@@ -184,6 +186,18 @@ public class FindWordsModule extends AbstractModule {
 						if (printUnsolvable)
 							printWord(System.out, word);
 					}
+
+					if (newLetter)
+						// The alphabet is a sorted set. We only extend words in the order that
+						// they appear in the alphabet. So if the current letter was new, then
+						// all the following ones will be new, too.
+						// When extending "ba", "cab" is solvable if and only if "dab" is
+						// solvable. So trying other new letters won't produce really "new"
+						// words, but only words that are symmetric in the sense that they can
+						// be transformed into each other by replacing one letter with another.
+						// Avoiding these symmetries in the words we generate helps speeding up
+						// this algorithm.
+						break;
 				}
 			}
 
