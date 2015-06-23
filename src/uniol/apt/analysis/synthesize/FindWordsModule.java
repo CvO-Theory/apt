@@ -23,8 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -158,7 +162,8 @@ public class FindWordsModule extends AbstractModule {
 						// word.
 						// For our purpose this means: If the prefix isn't solvable, then we
 						// already know that the word itself isn't solvable either.
-						if (!currentLevel.contains(word.subList(0, word.size() - 1)))
+						// This is also important for the definition of "minimally unsolvable".
+						if (!currentLevel.contains(normalizeWord(word.subList(0, word.size() - 1), alphabet)))
 							continue;
 					}
 
@@ -208,6 +213,28 @@ public class FindWordsModule extends AbstractModule {
 				System.out.println("Done with length " + currentLength + ". There were " + numUnsolvable
 						+ " unsolvable words and " + currentLevel.size() + " solvable words.");
 		}
+	}
+
+	// Normalize a word into the form that the above loop would generate it in. This means e.g. that the word ends
+	// with the first letter of the alphabet.
+	static public List<String> normalizeWord(List<String> word, SortedSet<String> alphabet)
+	{
+		List<String> result = new ArrayList<>();
+		Map<String, String> morphism = new HashMap<>();
+		Iterator<String> alphabetIter = alphabet.iterator();
+		ListIterator<String> wordIter = word.listIterator(word.size());
+
+		while (wordIter.hasPrevious()) {
+			String letter = wordIter.previous();
+			String replacement = morphism.get(letter);
+			if (replacement == null) {
+				assert alphabetIter.hasNext();
+				replacement = alphabetIter.next();
+				morphism.put(letter, replacement);
+			}
+			result.add(0, replacement);
+		}
+		return result;
 	}
 
 	static public void printWord(PrintStream stream, Collection<String> word) {
