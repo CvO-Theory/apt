@@ -83,6 +83,21 @@ public class FindWordsModule extends AbstractModule {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + ".\n\n"
+			+ "This module only prints a subset of all words. For this, an equivalence relation on words "
+			+ "is used were two words are equivalent if one can be created from the other by replacing "
+			+ "letters with other letters. For example, 'abc' and 'abd' are equivalent in this sense, since "
+			+ "c->d turns one into the other.\n"
+			+ "More concretely, words are generated so that the last letter of the word is the first letter "
+			+ "of the alphabet. Then, the next new letter from the end is the second letter of the alphabet, "
+			+ "and so on.\n"
+			+ "\nExample calls:\n\n"
+			+ " apt " + getName() + " safe solvable abc: Print all words solvable by safe Petri nets over the alphabet {a,b,c}\n"
+			+ " apt " + getName() + " none unsolvable ab: Print all minimally unsolvable words over the alphabet {a,b}\n";
+	}
+
+	@Override
 	public String getName() {
 		return "find_words";
 	}
