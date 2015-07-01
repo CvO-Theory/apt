@@ -114,7 +114,7 @@ public class CheckTest {
 	}
 
 	@Test
-	private void testCheckSnetTnetgen() throws
+	public void testCheckSnetTnetgen() throws
 		UnsupportedAttributeException, AttributeFormatException, UnsupportedGeneratorException {
 		Check c = new Check();
 
