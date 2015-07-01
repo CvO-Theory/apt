@@ -320,7 +320,6 @@ public class SynthesizePNTest {
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}
 
-	@Test
 	static public class MinimizeRegions {
 		private TransitionSystem ts;
 		private RegionUtility utility;
@@ -476,7 +475,6 @@ public class SynthesizePNTest {
 		}
 	}
 
-	@Test
 	static public class DistributedImplementation {
 		private TransitionSystem ts;
 		private RegionUtility utility;

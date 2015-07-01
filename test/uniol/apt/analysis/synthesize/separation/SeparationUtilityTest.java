@@ -126,7 +126,6 @@ public class SeparationUtilityTest {
 		}
 	}
 
-	@Test
 	public static class PureSynthesizablePathTSTest extends Tester {
 		@Override
 		protected TransitionSystem getTS() {
@@ -134,7 +133,6 @@ public class SeparationUtilityTest {
 		}
 	}
 
-	@Test
 	public static class ImpureSynthesizablePathTSTest extends Tester {
 		@Override
 		protected TransitionSystem getTS() {
