@@ -38,7 +38,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
-@Test
 @SuppressWarnings("unchecked") // I hate generics
 public class SeparationUtilityTest {
 	public static abstract class Tester {

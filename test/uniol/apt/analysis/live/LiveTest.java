@@ -31,7 +31,6 @@ import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.generator.philnet.TristatePhilNetGenerator;
 
 /** @author Uli Schlachter, vsp */
-@Test
 public class LiveTest {
 
 	private void testLiveness(PetriNet pn, Transition transition, boolean simply,

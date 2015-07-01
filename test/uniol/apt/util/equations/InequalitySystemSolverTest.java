@@ -26,7 +26,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 /** @author Uli Schlachter */
-@Test
 public class InequalitySystemSolverTest {
 	@Test
 	public void testSimpleSystem0() {

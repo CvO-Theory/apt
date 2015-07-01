@@ -35,7 +35,6 @@ import uniol.apt.module.exception.ModuleInvocationException;
  * @author Renke Grunwald
  *
  */
-@Test
 public class ModuleInvokerTest {
 
 	@Test

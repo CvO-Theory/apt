@@ -37,7 +37,6 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 import static uniol.apt.analysis.synthesize.SynthesizeWordModule.*;
 
 /** @author Uli Schlachter */
-@Test
 public class SynthesizeWordModuleTest {
 	@Test
 	public void testFormatESSPFailureEmpty() {

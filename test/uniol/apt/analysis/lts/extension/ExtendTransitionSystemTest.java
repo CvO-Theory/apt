@@ -29,7 +29,6 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 
 /** @author Vincent Göbel */
-@Test
 public class ExtendTransitionSystemTest {
 
 	String persistentOne = "{2, 14, 19, 25, 28}";

@@ -41,7 +41,6 @@ import uniol.tests.dataprovider.annotations.IntRangeParameter;
 /**
  * @author vsp
  */
-@Test
 public class PureTest {
 
 	private CycleGenerator cycleGenerator;

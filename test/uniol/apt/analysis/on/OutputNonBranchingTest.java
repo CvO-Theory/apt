@@ -46,7 +46,6 @@ import uniol.tests.dataprovider.annotations.IntRangeParameter;
 /**
  * @author Manuel Gieseking
  */
-@Test
 public class OutputNonBranchingTest {
 
 	private CycleGenerator cycleGenerator;

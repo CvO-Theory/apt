@@ -35,7 +35,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.adt.matcher.Matchers.*;
 
 /** @author Uli Schlachter */
-@Test
 public class SpanningTreeTest {
 	static private SpanningTree<TransitionSystem, Arc, State> get(TransitionSystem ts) {
 		return SpanningTree.<TransitionSystem, Arc, State>get(ts);

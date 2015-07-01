@@ -41,7 +41,6 @@ import static uniol.apt.adt.matcher.Matchers.*;
 import static uniol.apt.adt.pn.Token.OMEGA;
 
 /** @author Uli Schlachter */
-@Test
 public class GenerateStepNetTest {
 	@Test
 	public void testEmptyStepLabel() {

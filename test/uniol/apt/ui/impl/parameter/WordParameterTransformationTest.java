@@ -26,7 +26,6 @@ import uniol.apt.analysis.language.Word;
 import uniol.apt.module.exception.ModuleException;
 
 /** @author Uli Schlachter */
-@Test
 public class WordParameterTransformationTest {
 	@Test(expectedExceptions = ModuleException.class)
 	public void testEmptyWord() throws Exception {

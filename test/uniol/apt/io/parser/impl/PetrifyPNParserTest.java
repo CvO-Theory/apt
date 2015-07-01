@@ -44,7 +44,6 @@ import uniol.apt.module.exception.NetIsNotParsableException;
  * @author Sören
  * <p/>
  */
-@Test
 public class PetrifyPNParserTest {
 
 	@Test

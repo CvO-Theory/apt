@@ -35,7 +35,6 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Marking;
 
 /** @author Uli Schlachter */
-@Test
 public class MarkingIterableTest {
 	@Test
 	public void testEmptyNets() {

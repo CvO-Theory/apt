@@ -54,7 +54,6 @@ import uniol.apt.module.impl.ModuleInvoker;
  * @author Manuel Gieseking
  * <p/>
  */
-@Test
 public class APTParserTest {
 
 	@Test

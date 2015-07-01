@@ -45,7 +45,6 @@ import static uniol.apt.adt.matcher.Matchers.nodeWithID;
 import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
-@Test
 @SuppressWarnings("unchecked") // I hate generics
 public class SynthesizePNTest {
 	static private Region mockRegion(RegionUtility utility, int normalMarking,

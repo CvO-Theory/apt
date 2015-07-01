@@ -40,7 +40,6 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 
 /** @author Uli Schlachter */
-@Test
 public class MarkingNetGeneratorTest {
 
 	private void test(MarkingNetGenerator generator, PetriNet pn, Iterable<Matcher<? super Marking>> marks) {

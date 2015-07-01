@@ -35,7 +35,6 @@ import static org.testng.Assert.assertTrue;
  * @author Renke Grunwald
  *
  */
-@Test
 public class ModuleRegistryTest {
 
 	@Test

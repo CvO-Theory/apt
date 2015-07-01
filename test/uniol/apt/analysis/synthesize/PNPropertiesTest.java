@@ -33,7 +33,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
-@Test
 @SuppressWarnings("unchecked")
 public class PNPropertiesTest {
 	private PNProperties properties;

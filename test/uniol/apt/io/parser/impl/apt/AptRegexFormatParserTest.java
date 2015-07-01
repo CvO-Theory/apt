@@ -32,7 +32,6 @@ import static uniol.apt.adt.matcher.Matchers.*;
 /**
  * @author Uli Schlachter
  */
-@Test
 public class AptRegexFormatParserTest {
 	static private void test(String regex, FiniteAutomaton expected) throws Exception {
 		FiniteAutomaton aut = AptRegexFormatParser.parseString(regex);

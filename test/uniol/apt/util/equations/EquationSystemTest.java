@@ -30,7 +30,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 /** @author Uli Schlachter */
-@Test
 public class EquationSystemTest {
 	// TODO: Technically, all these tests are too specific. A module has more than one basis and any of them would
 	// be a correct result for the code under tests. However, testing if two basis are (in some sense) equal isn't

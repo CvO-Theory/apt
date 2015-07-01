@@ -30,7 +30,6 @@ import static uniol.apt.TestNetCollection.*;
 import static uniol.apt.adt.matcher.Matchers.*;
 
 /** @author Uli Schlachter, vsp */
-@Test
 public class BoundedTest {
 	private void testUnbounded(PetriNet pn) {
 		BoundedResult result = Bounded.checkBounded(pn);

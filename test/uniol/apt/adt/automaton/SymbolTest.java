@@ -27,7 +27,6 @@ import static uniol.apt.adt.matcher.Matchers.*;
 /**
  * @author Uli Schlachter
  */
-@Test
 public class SymbolTest {
 	@Test
 	public void testEpsilon() {

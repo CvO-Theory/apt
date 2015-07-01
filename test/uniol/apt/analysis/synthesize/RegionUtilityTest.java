@@ -33,7 +33,6 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked") // I hate generics
-@Test
 public class RegionUtilityTest {
 	private Matcher<Iterable<? extends Integer>> parikhVector(int... args) {
 		assert args.length % 2 == 0;

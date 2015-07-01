@@ -52,7 +52,6 @@ import uniol.tests.dataprovider.IntRangeDataProvider;
 import uniol.tests.dataprovider.annotations.IntRangeParameter;
 
 /** @author Uli Schlachter */
-@Test
 public class InverseNetGeneratorTest {
 	private void testNet(PetriNet pn) {
 		PetriNet inverse = InverseNetGenerator.invert(pn);

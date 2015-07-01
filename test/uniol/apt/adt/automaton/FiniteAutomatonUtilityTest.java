@@ -36,7 +36,6 @@ import static uniol.apt.adt.matcher.Matchers.*;
  * @author Uli Schlachter
  */
 @SuppressWarnings("unchecked")
-@Test
 public class FiniteAutomatonUtilityTest {
 	private void noWordInLanguage(FiniteAutomaton aut) {
 		assertThat(isWordInLanguage(aut, Arrays.asList("c")), is(false));

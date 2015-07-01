@@ -30,7 +30,6 @@ import uniol.apt.adt.ts.TransitionSystem;
  * @author Vincent Göbel
  *
  */
-@Test
 public class ReversibleTSTest {
 
 	@Test

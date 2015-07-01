@@ -33,7 +33,6 @@ import uniol.apt.adt.ts.TransitionSystem;
  * @author Renke Grunwald
  *
  */
-@Test
 public class DeterministicTest {
 
 	@Test

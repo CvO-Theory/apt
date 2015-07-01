@@ -50,7 +50,6 @@ import uniol.tests.dataprovider.annotations.IntRangeParameter;
 
 /** @author Uli Schlachter, vsp */
 @SuppressWarnings("unchecked") // I hate generics
-@Test
 public class CoverabilityTest {
 
 	private CycleGenerator cycleGenerator;

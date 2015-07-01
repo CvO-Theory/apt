@@ -26,7 +26,6 @@ import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
 /** @author Uli Schlachter */
-@Test
 public class BasicPureSeparationTest {
 	static public class BasicPureSeparationFactory implements SeparationTestHelper.SeparationFactory {
 		@Override

@@ -31,7 +31,6 @@ import static org.testng.Assert.assertFalse;
  * @author CS
  *
  */
-@Test
 public class NonPureTest {
 	@Test
 	public void testNonPure() {

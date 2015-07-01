@@ -30,7 +30,6 @@ import static org.testng.Assert.assertTrue;
  * @author CS
  *
  */
-@Test
 public class SideconditionsTest {
 
 	@Test

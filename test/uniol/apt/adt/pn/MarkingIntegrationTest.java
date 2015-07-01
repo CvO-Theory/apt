@@ -28,7 +28,6 @@ import static uniol.apt.TestNetCollection.*;
  *
  * @author vsp
  */
-@Test
 public class MarkingIntegrationTest {
 
 	@Test

@@ -32,7 +32,6 @@ import static uniol.apt.TestNetCollection.*;
  *
  * @author Daniel
  */
-@Test
 public class LargestKTest {
 
 	@BeforeClass

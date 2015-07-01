@@ -28,7 +28,6 @@ import uniol.apt.ui.ParametersParser;
  * @author Renke Grunwald
  *
  */
-@Test
 public class SimpleArgumentsParserTest {
 
 	@Test

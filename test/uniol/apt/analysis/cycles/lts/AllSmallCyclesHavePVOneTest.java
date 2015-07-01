@@ -36,7 +36,6 @@ import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
  * @author Uli Schlachter, (Manuel Gieseking)
  */
 @SuppressWarnings("unchecked") // I hate generics
-@Test
 public class AllSmallCyclesHavePVOneTest {
 	static List<Arc> checkCycles(TransitionSystem ts) throws PreconditionFailedException {
 		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);

@@ -26,7 +26,6 @@ import static org.testng.Assert.assertFalse;
 /**
  * @author Uli Schlachter
  */
-@Test
 public class AbstractTransitionTest {
 
 	@Test

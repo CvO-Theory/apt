@@ -31,7 +31,6 @@ import static uniol.apt.io.parser.ParserTestUtils.getAptPN;
  * @author CS
  *
  */
-@Test
 public class IsolatedTest {
 	@Test
 	public void testIsolated() {

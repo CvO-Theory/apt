@@ -37,7 +37,6 @@ import static uniol.apt.TestNetCollection.*;
 import uniol.tests.dataprovider.IntRangeDataProvider;
 import uniol.tests.dataprovider.annotations.IntRangeParameter;
 
-@Test
 /**
  *  @author Bjoern von der Linde
  */

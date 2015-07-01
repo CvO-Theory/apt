@@ -32,7 +32,6 @@ import org.hamcrest.Matcher;
 import org.testng.annotations.Test;
 
 /** @author Uli Schlachter */
-@Test
 public class TransitionPresetSizeListIteratorTest {
 	private void test(int[][] expected, final int maxPlaces, final int maxTransitions) {
 		List<Matcher<? super Iterable<Integer>>> matchers = new LinkedList<>();

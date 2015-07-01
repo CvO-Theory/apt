@@ -37,7 +37,6 @@ import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
  *
  * @author Manuel Gieseking
  */
-@Test
 public class ComputeCyclesTest {
 
 	@Test

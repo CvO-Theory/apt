@@ -35,7 +35,6 @@ import static uniol.apt.io.parser.ParserTestUtils.getAptPN;
 /**
  * @author Manuel Gieseking
  */
-@Test
 public class InvariantCalculatorTest {
 
 	private void testSInvariant(PetriNet pn, Set<List<Integer>> expected) {

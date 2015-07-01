@@ -45,7 +45,6 @@ import uniol.tests.dataprovider.annotations.IntRangeParameter;
  *
  * @author Manuel Gieseking
  */
-@Test
 public class ConflictFreeTest {
 
 	private CycleGenerator cycleGenerator;

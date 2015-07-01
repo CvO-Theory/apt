@@ -46,7 +46,6 @@ import uniol.apt.io.renderer.impl.APTRenderer;
  * <p/>
  * @author Manuel Gieseking
  */
-@Test
 public class Synet2AptTest {
 
 	@Test

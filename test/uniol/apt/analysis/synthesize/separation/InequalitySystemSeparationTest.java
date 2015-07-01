@@ -30,7 +30,6 @@ import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
 /** @author Uli Schlachter */
-@Test
 public class InequalitySystemSeparationTest {
 	static public class InequalitySystemSeparationFactory implements SeparationTestHelper.SeparationFactory {
 		private final PNProperties properties;

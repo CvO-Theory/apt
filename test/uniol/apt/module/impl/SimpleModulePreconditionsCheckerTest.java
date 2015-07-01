@@ -37,7 +37,6 @@ import uniol.apt.module.exception.ModuleException;
  * @author Renke Grunwald
  *
  */
-@Test
 public class SimpleModulePreconditionsCheckerTest {
 
 	@Test

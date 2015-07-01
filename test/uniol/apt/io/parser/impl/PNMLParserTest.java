@@ -31,7 +31,6 @@ import static uniol.apt.adt.matcher.Matchers.*;
 /**
  * @author Manuel Gieseking
  */
-@Test
 public class PNMLParserTest {
 	@Test
 	public void testCCNet2Pipe() throws Exception {

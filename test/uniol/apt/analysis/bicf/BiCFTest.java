@@ -38,7 +38,6 @@ import uniol.tests.dataprovider.IntRangeDataProvider;
 import uniol.tests.dataprovider.annotations.IntRangeParameter;
 
 /** @author Uli Schlachter, vsp */
-@Test
 public class BiCFTest {
 	private BiCF bicf;
 	private CycleGenerator cycleGenerator;

@@ -39,7 +39,6 @@ import uniol.tests.TestUtils;
  *
  * @author Manuel Gieseking
  */
-@Test
 public class PetriNetTest {
 
 	@Test

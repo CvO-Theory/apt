@@ -31,7 +31,6 @@ import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.analysis.language.LanguageEquivalence;
 
 /** @author Uli Schlachter */
-@Test
 public class LimitedUnfoldingTest {
 	@Test
 	public void testEmptyTS() throws Exception {

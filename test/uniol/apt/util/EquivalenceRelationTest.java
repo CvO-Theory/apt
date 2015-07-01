@@ -26,7 +26,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.adt.matcher.Matchers.*;
 
 /** @author Uli Schlachter */
-@Test
 @SuppressWarnings("unchecked") // I hate generics
 public class EquivalenceRelationTest {
 	EquivalenceRelation<Integer> getOddEven(int limit) {

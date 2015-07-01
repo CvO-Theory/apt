@@ -30,7 +30,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
-@Test
 public class SynthesizeModuleTest {
 	private PNProperties properties;
 

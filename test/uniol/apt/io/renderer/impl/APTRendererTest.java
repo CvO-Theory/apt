@@ -29,7 +29,6 @@ import static uniol.apt.TestNetCollection.*;
 import uniol.apt.module.exception.ModuleException;
 
 /** @author vsp */
-@Test
 public class APTRendererTest {
 	// Please only add tests to this class after you verified that our parser can actually parse them!
 

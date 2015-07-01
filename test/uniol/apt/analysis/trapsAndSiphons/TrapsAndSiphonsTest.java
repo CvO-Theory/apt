@@ -41,7 +41,6 @@ import static uniol.apt.adt.matcher.Matchers.*;
  *
  * @author Maike Schwammberger, Uli Schlachter
  */
-@Test
 public class TrapsAndSiphonsTest {
 
 	TrapsAndSiphonsLogic logic1;

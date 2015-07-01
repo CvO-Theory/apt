@@ -40,7 +40,6 @@ import java.util.Arrays;
 import java.util.List;
 
 /** @author Uli Schlachter */
-@Test
 public class WordInLanguageTest {
 	private void checkExpectedSequence(List<Transition> sequence, String[][] expectedSequences) {
 		Collection<Matcher<? super Iterable<? extends INode<?, ?, ?>>>> matchers

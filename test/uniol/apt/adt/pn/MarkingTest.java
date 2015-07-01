@@ -33,7 +33,6 @@ import static org.hamcrest.Matchers.*;
 /**
  * @author Dennis-Michael Borde, Uli Schlachter, vsp
  */
-@Test
 public class MarkingTest {
 
 	static private final Integer OMEGA = null;

@@ -41,7 +41,6 @@ import static org.testng.Assert.assertTrue;
  *
  * @author Daniel
  */
-@Test
 public class CheckTest {
 
 	@BeforeClass

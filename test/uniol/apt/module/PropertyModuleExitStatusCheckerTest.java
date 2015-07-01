@@ -33,7 +33,6 @@ import uniol.apt.module.impl.ModuleInvoker;
  * @author Renke Grunwald
  *
  */
-@Test
 public class PropertyModuleExitStatusCheckerTest {
 
 	@Test

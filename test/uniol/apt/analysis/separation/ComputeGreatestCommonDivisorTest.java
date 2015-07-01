@@ -30,7 +30,6 @@ import static org.testng.Assert.assertEquals;
  * @author Daniel
  * @version 1.0
  */
-@Test
 public class ComputeGreatestCommonDivisorTest {
 
 	@BeforeClass

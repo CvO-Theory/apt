@@ -32,7 +32,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
-@Test
 public class RegionTest {
 	private List<Integer> makeVector(int... args) {
 		assert args.length % 2 == 0;

@@ -45,7 +45,6 @@ import uniol.tests.dataprovider.annotations.IntRangeParameter;
  * @author Manuel Gieseking
  *
  * */
-@Test
 public class FCNetTest {
 
 	private CycleGenerator cycleGenerator;

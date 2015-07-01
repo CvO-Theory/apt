@@ -33,7 +33,6 @@ import uniol.tests.dataprovider.annotations.IntRangeParameter;
 import uniol.apt.adt.pn.PetriNet;
 
 /** @author Uli Schlachter */
-@Test
 public class IsolatedTransitionsGeneratorTest {
 	private void testNet(PetriNet pn, int maxSize) {
 		int transitions = pn.getTransitions().size();

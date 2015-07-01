@@ -44,7 +44,6 @@ import uniol.tests.dataprovider.annotations.IntRangeParameter;
  * @author Valentin, Daniel
  * @version 1.0
  */
-@Test
 public class TNetTest {
 
 	private CycleGenerator cycleGenerator;

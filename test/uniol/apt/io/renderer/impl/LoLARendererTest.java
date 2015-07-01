@@ -29,7 +29,6 @@ import static uniol.apt.TestNetCollection.*;
 import uniol.apt.module.exception.ModuleException;
 
 /** @author Uli Schlachter, vsp */
-@Test
 public class LoLARendererTest {
 	// Please only add tests to this class after you verified that LoLA can actually parse them!
 

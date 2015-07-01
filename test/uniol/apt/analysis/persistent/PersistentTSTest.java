@@ -30,7 +30,6 @@ import uniol.apt.adt.ts.TransitionSystem;
 /**
  * @author Vincent Göbel, Uli Schlachter
  */
-@Test
 public class PersistentTSTest {
 	@Test
 	public void testPersistentTS() {

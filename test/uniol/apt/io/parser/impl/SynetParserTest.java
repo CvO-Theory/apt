@@ -47,7 +47,6 @@ import uniol.apt.module.exception.ModuleException;
  * @author Manuel Gieseking
  * <p/>
  */
-@Test
 public class SynetParserTest {
 
 	@Test
