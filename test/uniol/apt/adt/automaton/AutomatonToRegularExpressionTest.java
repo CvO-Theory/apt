@@ -19,19 +19,19 @@
 
 package uniol.apt.adt.automaton;
 
-import uniol.apt.TestTSCollection;
-
 import org.testng.annotations.Test;
 
+import uniol.apt.TestTSCollection;
+import uniol.apt.io.parser.impl.apt.AptRegexFormatParser;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
 import static uniol.apt.adt.automaton.AutomatonToRegularExpression.automatonToRegularExpression;
+import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
 import static uniol.apt.adt.matcher.Matchers.*;
 
 /**
  * @author Uli Schlachter
  */
-import uniol.apt.io.parser.impl.apt.AptRegexFormatParser;
 public class AutomatonToRegularExpressionTest {
 	private FiniteAutomaton parse(String str) {
 		try {
