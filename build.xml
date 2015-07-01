@@ -169,18 +169,30 @@
 		</module-verify>
 	</target>
 
-	<target name="test" depends="javac.tests" description="Run tests">
-		<testng outputdir="reports/testng" verbose="2"
-			listeners="uniol.tests.listener.PackageNameAsTestNameListener">
+	<target name="xml.tests" depends="javac.ant">
+		<taskdef name="xml-tests" classname="uniol.apt.tasks.WriteTestsXML">
+			<classpath>
+				<path refid="project.class.path" />
+				<path refid="ant.class.path" />
+			</classpath>
+		</taskdef>
+
+		<xml-tests output="testng.xml">
+			<classfileset dir="test-classes" >
+				<include name="**/*Test.class" />
+			</classfileset>
+		</xml-tests>
+	</target>
+
+	<target name="test" depends="javac.tests,xml.tests" description="Run tests">
+		<testng outputdir="reports/testng" verbose="2">
 			<!-- enable assertions -->
 			<jvmarg value="-ea" />
 			<classpath>
 				<path refid="test.class.path" />
 				<path refid="project.class.path" />
 			</classpath>
-			<classfileset dir="test-classes" >
-				<include name="**/*Test.class" />
-			</classfileset>
+			<xmlfileset file="testng.xml" />
 		</testng>
 	</target>
 
@@ -199,8 +211,7 @@
 				<filter token="CLASS" value="${class.name}"/>
 			</filterset>
 		</copy>
-		<testng outputDir="reports/testng-single-class-${class.name}"
-			verbose="2" listeners="uniol.tests.listener.PackageNameAsTestNameListener">
+		<testng outputDir="reports/testng-single-class-${class.name}" verbose="2">
 			<!-- enable assertions -->
 			<jvmarg value="-ea" />
 			<classpath>
@@ -228,8 +239,7 @@
 				<filter token="TEST" value="${test.name}"/>
 			</filterset>
 		</copy>
-		<testng outputDir="reports/testng-single-method-${class.name}-${test.name}"
-			verbose="2" listeners="uniol.tests.listener.PackageNameAsTestNameListener">
+		<testng outputDir="reports/testng-single-method-${class.name}-${test.name}" verbose="2">
 			<!-- enable assertions -->
 			<jvmarg value="-ea" />
 			<classpath>
