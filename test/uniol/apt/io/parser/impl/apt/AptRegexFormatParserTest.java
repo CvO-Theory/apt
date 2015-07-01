@@ -34,102 +34,102 @@ import static uniol.apt.adt.matcher.Matchers.*;
  */
 @Test
 public class AptRegexFormatParserTest {
-	static void test(String regex, FiniteAutomaton expected) throws Exception {
+	static private void test(String regex, FiniteAutomaton expected) throws Exception {
 		FiniteAutomaton aut = AptRegexFormatParser.parseString(regex);
 		assertThat(findWordDifference(aut, expected), nullValue());
 	}
 
-	static FiniteAutomaton getAtomic(String symbol) {
+	static private FiniteAutomaton getAtomic(String symbol) {
 		return getAtomicLanguage(new Symbol(symbol));
 	}
 
 	@Test
-	static void testEmptyLanguage() throws Exception {
+	public void testEmptyLanguage() throws Exception {
 		test("~", getEmptyLanguage());
 	}
 
 	@Test
-	static void testEpsilonLanguage() throws Exception {
+	public void testEpsilonLanguage() throws Exception {
 		test("$", getAtomicLanguage(Symbol.EPSILON));
 	}
 
 	@Test
-	static void testALanguage() throws Exception {
+	public void testALanguage() throws Exception {
 		test("a1$_", concatenate(getAtomic("a"), concatenate(getAtomic("1"), getAtomic("_"))));
 	}
 
 	@Test
-	static void testALanguage2() throws Exception {
+	public void testALanguage2() throws Exception {
 		test("<a1_>", getAtomic("a1_"));
 	}
 
 	@Test
-	static void testComplicatedLanguage() throws Exception {
+	public void testComplicatedLanguage() throws Exception {
 		FiniteAutomaton autA = getAtomic("a");
 		FiniteAutomaton autB = getAtomic("b");
 		test("(a+\r(a\t|\nb)?$)*", kleeneStar(concatenate(kleenePlus(autA), optional(union(autA, autB)))));
 	}
 
 	@Test
-	static void testComment1() throws Exception {
+	public void testComment1() throws Exception {
 		test("a /* and then later we have */ b",
 				concatenate(getAtomic("a"), getAtomic("b")));
 	}
 
 	@Test
-	static void testComment2() throws Exception {
+	public void testComment2() throws Exception {
 		test("a /* and then / later * we have */b",
 				concatenate(getAtomic("a"), getAtomic("b")));
 	}
 
 	@Test
-	static void testComment3() throws Exception {
+	public void testComment3() throws Exception {
 		test("a // and then later\n//we have \r\nb",
 				concatenate(getAtomic("a"), getAtomic("b")));
 	}
 
 	@Test(expectedExceptions = { LexerParserException.class })
-	static void testComment4() throws Exception {
+	public void testComment4() throws Exception {
 		AptRegexFormatParser.parseString("/a");
 	}
 
 	@Test
-	static void testComment5() throws Exception {
+	public void testComment5() throws Exception {
 		test("a // Missing newline after comment", getAtomic("a"));
 	}
 
 	@Test(expectedExceptions = { LexerParserException.class })
-	static void testClosingParen() throws Exception {
+	public void testClosingParen() throws Exception {
 		AptRegexFormatParser.parseString(")");
 	}
 
 	@Test(expectedExceptions = { LexerParserException.class })
-	static void testClosingParenAfterExpr() throws Exception {
+	public void testClosingParenAfterExpr() throws Exception {
 		AptRegexFormatParser.parseString("(ab)*)");
 	}
 
 	@Test(expectedExceptions = { LexerParserException.class })
-	static void testMissingClosingParen() throws Exception {
+	public void testMissingClosingParen() throws Exception {
 		AptRegexFormatParser.parseString("(a*|b+");
 	}
 
 	@Test(expectedExceptions = { LexerParserException.class })
-	static void testNotAllowedCharacter() throws Exception {
+	public void testNotAllowedCharacter() throws Exception {
 		AptRegexFormatParser.parseString("ab?@d");
 	}
 
 	@Test(expectedExceptions = { LexerParserException.class })
-	static void testBrokenID() throws Exception {
+	public void testBrokenID() throws Exception {
 		AptRegexFormatParser.parseString("<ab");
 	}
 
 	@Test(expectedExceptions = { LexerParserException.class })
-	static void testBrokenID2() throws Exception {
+	public void testBrokenID2() throws Exception {
 		AptRegexFormatParser.parseString("<a<");
 	}
 
 	@Test(expectedExceptions = { LexerParserException.class })
-	static void testBrokenID3() throws Exception {
+	public void testBrokenID3() throws Exception {
 		AptRegexFormatParser.parseString("<");
 	}
 }
