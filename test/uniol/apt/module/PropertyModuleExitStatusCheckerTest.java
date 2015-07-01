@@ -36,6 +36,7 @@ import uniol.apt.module.impl.ModuleInvoker;
 @Test
 public class PropertyModuleExitStatusCheckerTest {
 
+	@Test
 	public void testNoReturnValues() throws ModuleException {
 		Module module = new NoReturnValuesModule();
 
@@ -68,6 +69,7 @@ public class PropertyModuleExitStatusCheckerTest {
 		}
 	}
 
+	@Test
 	public void testNoSuccessProperties() throws ModuleException {
 		Module module = new NoSuccessPropertiesModule();
 
@@ -104,6 +106,7 @@ public class PropertyModuleExitStatusCheckerTest {
 		}
 	}
 
+	@Test
 	public void testSingleSuccessProperty() throws ModuleException {
 		Module successModule = new SingleSuccessPropertyModule(true);
 		Module failureModule = new SingleSuccessPropertyModule(false);
@@ -149,6 +152,7 @@ public class PropertyModuleExitStatusCheckerTest {
 		}
 	}
 
+	@Test
 	public void testMultipleSuccessProperties() throws ModuleException {
 		Module allSuccessModule = new MultipleSuccessPropertiesModule(true, true);
 		Module allFailureModule = new MultipleSuccessPropertiesModule(false, false);
@@ -200,6 +204,7 @@ public class PropertyModuleExitStatusCheckerTest {
 		}
 	}
 
+	@Test
 	public void testNullReturnValues() throws ModuleException {
 		Module module = new NullReturnValuesModule();
 
