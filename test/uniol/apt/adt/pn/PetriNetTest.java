@@ -33,7 +33,6 @@ import uniol.apt.adt.EdgeKey;
 import uniol.apt.adt.SoftMap;
 import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.module.exception.ModuleException;
-import uniol.tests.TestUtils;
 
 /**
  *
@@ -186,29 +185,6 @@ public class PetriNetTest {
 	@Test
 	public void testDeleting() throws ModuleException {
 		PetriNet pn = getTestNet();
-		Node p0 = pn.getNode("p0");
-		assertTrue(p0.getPostsetNodes().isEmpty());
-		assertTrue(p0.getPostsetEdges().isEmpty());
-		assertEquals(p0.getPresetEdges().size(), 1);
-		assertEquals(p0.getPresetNodes().size(), 1);
-		assertEquals(p0.getPresetNodes().iterator().next(), pn.getNode("t3"));
-		assertTrue(pn.getNode("p1").getPostsetNodes().isEmpty());
-		assertTrue(pn.getNode("p1").getPresetNodes().isEmpty());
-		assertTrue(pn.getNode("p1").getPresetEdges().isEmpty());
-		assertTrue(pn.getNode("p1").getPostsetEdges().isEmpty());
-		assertTrue(pn.getNode("t1").getPostsetEdges().isEmpty());
-		assertTrue(pn.getNode("t2").getPresetEdges().isEmpty());
-	}
-
-	@Test
-	public void testSoftReferences() throws Exception {
-		PetriNet pn = getTestNet();
-
-		TestUtils.setField(pn, "presetNodes", new SoftMap<Object, Object>());
-		TestUtils.setField(pn, "postsetNodes", new SoftMap<Object, Object>());
-		TestUtils.setField(pn, "presetEdges", new SoftMap<Object, Object>());
-		TestUtils.setField(pn, "postsetEdges", new SoftMap<Object, Object>());
-
 		Node p0 = pn.getNode("p0");
 		assertTrue(p0.getPostsetNodes().isEmpty());
 		assertTrue(p0.getPostsetEdges().isEmpty());
