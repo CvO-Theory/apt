@@ -572,6 +572,15 @@ public class SynthesizePN {
 	public PetriNet synthesizePetriNet() {
 		if (!wasSuccessfullySeparated())
 			return null;
+		return synthesizePetriNet(regions);
+	}
+
+	/**
+	 * Synthesize a Petri net from the given regions, checking that it is indeed a valid solution.
+	 * @param regions The regions that should be used for synthesis.
+	 * @return The synthesized PetriNet
+	 */
+	public PetriNet synthesizePetriNet(Set<Region> regions) {
 		PetriNet pn = synthesizePetriNet(utility, regions);
 
 		// Test if the synthesized PN really satisfies all the properties that it should
