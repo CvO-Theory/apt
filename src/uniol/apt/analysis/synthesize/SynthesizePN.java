@@ -25,10 +25,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.commons.collections4.FactoryUtils;
+import org.apache.commons.collections4.iterators.PeekingIterator;
 import org.apache.commons.collections4.map.LazyMap;
+
+import static org.apache.commons.collections4.iterators.PeekingIterator.peekingIterator;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
@@ -49,6 +53,7 @@ import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.synthesize.separation.Separation;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
 import uniol.apt.util.EquivalenceRelation;
+import uniol.apt.util.Pair;
 
 import static uniol.apt.analysis.synthesize.LimitedUnfolding.ORIGINAL_STATE_KEY;
 import static uniol.apt.analysis.synthesize.LimitedUnfolding.calculateLimitedUnfolding;
@@ -307,33 +312,32 @@ public class SynthesizePN {
 	private void solveEventStateSeparation() {
 		Map<String, Set<State>> failedProblems = LazyMap.lazyMap(failedEventStateSeparationProblems,
 				FactoryUtils.prototypeFactory(new HashSet<State>()));
-		for (State state : ts.getNodes())
-			for (String event : ts.getAlphabet()) {
-				if (!SeparationUtility.isEventEnabled(state, event)) {
-					debug("Trying to separate ", state, " from event '", event, "'");
-					Region r = null;
-					for (Region region : regions)
-						if (SeparationUtility.isSeparatingRegion(region, state, event)) {
-							r = region;
-							break;
-						}
-					if (r != null) {
-						debug("Found region ", r);
-						continue;
-					}
-
-					r = separation.calculateSeparatingRegion(state, event);
-					if (r == null) {
-						failedProblems.get(event).add(mapState(state));
-						debug("Failure!");
-						if (quickFail)
-							return;
-					} else {
-						debug("Calculated region ", r);
-						regions.add(r);
-					}
+		for (Pair<State, String> problem : new EventStateSeparationProblems(ts)) {
+			State state = problem.getFirst();
+			String event = problem.getSecond();
+			debug("Trying to separate ", state, " from event '", event, "'");
+			Region r = null;
+			for (Region region : regions)
+				if (SeparationUtility.isSeparatingRegion(region, state, event)) {
+					r = region;
+					break;
 				}
+			if (r != null) {
+				debug("Found region ", r);
+				continue;
 			}
+
+			r = separation.calculateSeparatingRegion(state, event);
+			if (r == null) {
+				failedProblems.get(event).add(mapState(state));
+				debug("Failure!");
+				if (quickFail)
+					return;
+			} else {
+				debug("Calculated region ", r);
+				regions.add(r);
+			}
+		}
 	}
 
 	/**
@@ -352,30 +356,28 @@ public class SynthesizePN {
 			boolean onlyEventSeparation) {
 		TransitionSystem ts = utility.getTransitionSystem();
 		// Event separation
-		for (State state : ts.getNodes()) {
-			innerStatesLoop:
-			for (String event : ts.getAlphabet()) {
-				if (!SeparationUtility.isEventEnabled(state, event)) {
-					// Does one of our required regions already solve ESSP? If so, skip
-					for (Region r : requiredRegions) {
-						if (SeparationUtility.isSeparatingRegion(r, state, event))
-							continue innerStatesLoop;
-					}
-					// Calculate which of the remaining regions solves this ESSP instance
-					Set<Region> sep = new HashSet<>();
-					for (Region r : remainingRegions) {
-						if (SeparationUtility.isSeparatingRegion(r, state, event))
-							sep.add(r);
-					}
-					if (sep.size() == 1) {
-						// If only one region solves this problem, that region is required
-						Region r = sep.iterator().next();
-						requiredRegions.add(r);
-						remainingRegions.remove(r);
-					} else if (!sep.isEmpty())
-						separationProblems.add(sep);
-				}
+		problemLoop:
+		for (Pair<State, String> problem : new EventStateSeparationProblems(ts)) {
+			State state = problem.getFirst();
+			String event = problem.getSecond();
+			// Does one of our required regions already solve ESSP? If so, skip
+			for (Region r : requiredRegions) {
+				if (SeparationUtility.isSeparatingRegion(r, state, event))
+					continue problemLoop;
 			}
+			// Calculate which of the remaining regions solves this ESSP instance
+			Set<Region> sep = new HashSet<>();
+			for (Region r : remainingRegions) {
+				if (SeparationUtility.isSeparatingRegion(r, state, event))
+					sep.add(r);
+			}
+			if (sep.size() == 1) {
+				// If only one region solves this problem, that region is required
+				Region r = sep.iterator().next();
+				requiredRegions.add(r);
+				remainingRegions.remove(r);
+			} else if (!sep.isEmpty())
+				separationProblems.add(sep);
 		}
 
 		if (onlyEventSeparation)
@@ -624,6 +626,60 @@ public class SynthesizePN {
 		}
 
 		return pn;
+	}
+
+	/**
+	 * Iterable for iterating over all event/state separation problems of a transition system. An event/state
+	 * separation problem consists of a state and an event that is not enabled in this state.
+	 */
+	static public class EventStateSeparationProblems implements Iterable<Pair<State, String>> {
+		private final TransitionSystem ts;
+
+		/**
+		 * Construct a new instance of this iterable for the given transition system.
+		 * @param ts The transition system whose ESSP instances should be returned.
+		 */
+		public EventStateSeparationProblems(TransitionSystem ts) {
+			this.ts = ts;
+		}
+
+		@Override
+		public Iterator<Pair<State, String>> iterator() {
+			return new Iterator<Pair<State, String>>() {
+				private Iterator<State> states = ts.getNodes().iterator();
+				private State currentState = null;
+				private PeekingIterator<String> alphabet = null;
+
+				@Override
+				public boolean hasNext() {
+					while (true) {
+						if (alphabet == null || !alphabet.hasNext()) {
+							if (!states.hasNext())
+								return false;
+
+							currentState = states.next();
+							alphabet = peekingIterator(ts.getAlphabet().iterator());
+						} else {
+							if (!SeparationUtility.isEventEnabled(currentState, alphabet.peek()))
+								return true;
+							alphabet.next();
+						}
+					}
+				}
+
+				@Override
+				public Pair<State, String> next() {
+					if (!hasNext())
+						throw new NoSuchElementException();
+					return new Pair<>(currentState, alphabet.next());
+				}
+
+				@Override
+				public void remove() {
+					throw new UnsupportedOperationException();
+				}
+			};
+		}
 	}
 }
 

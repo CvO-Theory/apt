@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,7 +34,9 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
+import uniol.apt.util.Pair;
 
+import org.hamcrest.Matcher;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -42,6 +45,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uniol.apt.adt.matcher.Matchers.flowThatConnects;
 import static uniol.apt.adt.matcher.Matchers.nodeWithID;
+import static uniol.apt.adt.matcher.Matchers.pairWith;
 import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
@@ -554,6 +558,42 @@ public class SynthesizePNTest {
 	@Test(dataProvider = "NonTNets")
 	public void testBadNet(PetriNet pn) {
 		assertThat(SynthesizePN.isGeneralizedTNet(pn), is(false));
+	}
+
+	@DataProvider(name = "ESSPInstances")
+	private Object[][] createESSPInstances() {
+		TransitionSystem ts1 = TestTSCollection.getThreeStatesTwoEdgesTS();
+		List<Pair<State, String>> instances1 = new ArrayList<>();
+		instances1.add(new Pair<>(ts1.getNode("t"), "a"));
+		instances1.add(new Pair<>(ts1.getNode("t"), "b"));
+		instances1.add(new Pair<>(ts1.getNode("v"), "a"));
+		instances1.add(new Pair<>(ts1.getNode("v"), "b"));
+
+		TransitionSystem ts2 = new TransitionSystem();
+		ts2.setInitialState(ts2.createState("s0"));
+		ts2.createState("s1");
+		ts2.createState("s2");
+		ts2.createArc("s0", "s1", "a");
+		ts2.createArc("s1", "s2", "b");
+		List<Pair<State, String>> instances2 = new ArrayList<>();
+		instances2.add(new Pair<>(ts2.getNode("s0"), "b"));
+		instances2.add(new Pair<>(ts2.getNode("s1"), "a"));
+		instances2.add(new Pair<>(ts2.getNode("s2"), "a"));
+		instances2.add(new Pair<>(ts2.getNode("s2"), "b"));
+
+		return new Object[][] {
+			{ ts1, instances1 },
+			{ ts2, instances2 }
+		};
+	}
+
+	@Test(dataProvider = "ESSPInstances")
+	public void testESSPInstances(TransitionSystem ts, List<Pair<State, String>> instances) {
+		List<Matcher<? super Pair<State, String>>> matchers = new ArrayList<>();
+		for (Pair<State, String> pair : instances)
+			matchers.add(pairWith(is(pair.getFirst()), is(pair.getSecond())));
+
+		assertThat(new SynthesizePN.EventStateSeparationProblems(ts), containsInAnyOrder(matchers));
 	}
 }
 
