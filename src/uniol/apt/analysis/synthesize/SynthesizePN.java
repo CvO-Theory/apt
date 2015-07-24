@@ -32,6 +32,7 @@ import org.apache.commons.collections4.FactoryUtils;
 import org.apache.commons.collections4.iterators.PeekingIterator;
 import org.apache.commons.collections4.map.LazyMap;
 
+import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
 import static org.apache.commons.collections4.iterators.PeekingIterator.peekingIterator;
 
 import uniol.apt.adt.pn.PetriNet;
@@ -271,37 +272,32 @@ public class SynthesizePN {
 		if (onlyEventSeparation)
 			return;
 
-		Set<State> remainingStates = new HashSet<>(calculateUnseparatedStates(
-					utility.getTransitionSystem().getNodes(), regions));
-		Iterator<State> iterator = remainingStates.iterator();
-		while (iterator.hasNext()) {
-			State state = iterator.next();
-			iterator.remove();
-
-			for (State otherState : remainingStates) {
-				debug("Trying to separate ", state,  " from ", otherState);
-				Region r = null;
-				for (Region region : regions)
-					if (SeparationUtility.isSeparatingRegion(region, state, otherState)) {
-						r = region;
-						break;
-					}
-				if (r != null) {
-					debug("Found region ", r);
-					continue;
+		for (Pair<State, State> problem : new DifferentPairsIterable<State>(
+					calculateUnseparatedStates(ts.getNodes(), regions))) {
+			State state = problem.getFirst();
+			State otherState = problem.getSecond();
+			debug("Trying to separate ", state,  " from ", otherState);
+			Region r = null;
+			for (Region region : regions)
+				if (SeparationUtility.isSeparatingRegion(region, state, otherState)) {
+					r = region;
+					break;
 				}
+			if (r != null) {
+				debug("Found region ", r);
+				continue;
+			}
 
-				r = separation.calculateSeparatingRegion(state, otherState);
-				if (r == null) {
-					failedStateSeparationRelation.joinClasses(mapState(state),
-							mapState(otherState));
-					debug("Failure!");
-					if (quickFail)
-						return;
-				} else {
-					debug("Calculated region ", r);
-					regions.add(r);
-				}
+			r = separation.calculateSeparatingRegion(state, otherState);
+			if (r == null) {
+				failedStateSeparationRelation.joinClasses(mapState(state),
+						mapState(otherState));
+				debug("Failure!");
+				if (quickFail)
+					return;
+			} else {
+				debug("Calculated region ", r);
+				regions.add(r);
 			}
 		}
 	}
@@ -672,6 +668,59 @@ public class SynthesizePN {
 					if (!hasNext())
 						throw new NoSuchElementException();
 					return new Pair<>(currentState, alphabet.next());
+				}
+
+				@Override
+				public void remove() {
+					throw new UnsupportedOperationException();
+				}
+			};
+		}
+	}
+
+	/**
+	 * Iterable for iterating over all pairs of different elements of a given set. Note that it is assumed that the
+	 * order of the elements does not matter, so only one of (a, b) and (b, a) will be returned.
+	 */
+	static public class DifferentPairsIterable<E> implements Iterable<Pair<E, E>> {
+		private final Set<E> set;
+
+		/**
+		 * Construct a new instance of this iterable for the given base set.
+		 * @param set The set whose pairs should be returned.
+		 */
+		public DifferentPairsIterable(Set<E> set) {
+			this.set = set;
+		}
+
+		@Override
+		public Iterator<Pair<E, E>> iterator() {
+			return new Iterator<Pair<E, E>>() {
+				private Set<E> remainingElements = new HashSet<>(set);
+				private Iterator<E> iter = emptyIterator();
+				private E currentElement = null;
+
+				@Override
+				public boolean hasNext() {
+					while (!iter.hasNext()) {
+						if (remainingElements.isEmpty())
+							return false;
+
+						Iterator<E> nextElement = remainingElements.iterator();
+						currentElement = nextElement.next();
+						nextElement.remove();
+
+						iter = remainingElements.iterator();
+					}
+
+					return true;
+				}
+
+				@Override
+				public Pair<E, E> next() {
+					if (!hasNext())
+						throw new NoSuchElementException();
+					return new Pair<>(currentElement, iter.next());
 				}
 
 				@Override

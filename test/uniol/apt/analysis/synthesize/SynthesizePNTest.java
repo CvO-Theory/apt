@@ -595,6 +595,21 @@ public class SynthesizePNTest {
 
 		assertThat(new SynthesizePN.EventStateSeparationProblems(ts), containsInAnyOrder(matchers));
 	}
+
+	@Test
+	public void testDifferentPairsIterableNonEmpty() {
+		Set<String> set = new HashSet<>(Arrays.asList("a", "b", "c"));
+		assertThat(new SynthesizePN.DifferentPairsIterable<String>(set), containsInAnyOrder(
+					either(pairWith(is("a"), is("b"))).or(pairWith(is("b"), is("a"))),
+					either(pairWith(is("a"), is("c"))).or(pairWith(is("c"), is("a"))),
+					either(pairWith(is("b"), is("c"))).or(pairWith(is("c"), is("b")))));
+	}
+
+	@Test
+	public void testDifferentPairsIterableEmpty() {
+		Set<String> set = new HashSet<>();
+		assertThat(new SynthesizePN.DifferentPairsIterable<>(set), emptyIterable());
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
