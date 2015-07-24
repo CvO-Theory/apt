@@ -22,6 +22,7 @@ package uniol.apt.util;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Helper functions for having debug output.
@@ -71,35 +72,36 @@ final public class DebugUtil {
 
 	static public void debug(Object obj) {
 		if (debugOutputEnabled)
-			printDebug(getCaller(), obj.toString());
+			printDebug(getCaller(), Objects.toString(obj));
 	}
 
 	static public void debug(Object obj1, Object obj2) {
 		if (debugOutputEnabled)
-			printDebug(getCaller(), obj1.toString() + obj2.toString());
+			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2));
 	}
 
 	static public void debug(Object obj1, Object obj2, Object obj3) {
 		if (debugOutputEnabled)
-			printDebug(getCaller(), obj1.toString() + obj2.toString() + obj3.toString());
+			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3));
 	}
 
 	static public void debug(Object obj1, Object obj2, Object obj3, Object obj4) {
 		if (debugOutputEnabled)
-			printDebug(getCaller(), obj1.toString() + obj2.toString() + obj3.toString() + obj4.toString());
+			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3)
+					+ Objects.toString(obj4));
 	}
 
 	static public void debug(Object obj1, Object obj2, Object obj3, Object obj4, Object obj5) {
 		if (debugOutputEnabled)
-			printDebug(getCaller(), obj1.toString() + obj2.toString() + obj3.toString() + obj4.toString() +
-					obj5.toString());
+			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3)
+					+ Objects.toString(obj4) + Objects.toString(obj5));
 	}
 
 	static public void debug(Object... objs) {
 		if (debugOutputEnabled) {
 			StringBuilder sb = new StringBuilder();
 			for (Object o : objs)
-				sb.append(o);
+				sb.append(Objects.toString(o));
 			printDebug(getCaller(), sb.toString());
 		}
 	}
