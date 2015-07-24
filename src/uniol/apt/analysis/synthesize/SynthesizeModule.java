@@ -68,9 +68,10 @@ public class SynthesizeModule extends AbstractModule {
 				"Comma separated list of options,"
 				+ " can be verbose, none, safe, [k]-bounded, pure, plain, tnet,"
 				+ " output-nonbranching (on), conflict-free (cf),"
-				+ " upto-language-equivalence (language, le)."
-				+ " Special options are verbose (print detail information about the regions) and"
-				+ " quick-fail (fail quickly when the result 'success: No' is known).");
+				+ " upto-language-equivalence (language, le), minimize."
+				+ " Special options are verbose (print detail information about the regions),"
+				+ " quick-fail (fail quickly when the result 'success: No' is known) and"
+				+ " minimize (minimize the number of places in the solution).");
 	}
 
 	@Override
@@ -106,7 +107,11 @@ public class SynthesizeModule extends AbstractModule {
 		else
 			synthesize = builder.buildForIsomorphicBehavior();
 
-		PetriNet pn = synthesize.synthesizePetriNet();
+		PetriNet pn;
+		if (synthesize.wasSuccessfullySeparated() && options.minimize)
+			pn = new MinimizePN(synthesize).synthesizePetriNet();
+		else
+			pn = synthesize.synthesizePetriNet();
 		if (pn != null)
 			for (Place p : pn.getPlaces())
 				p.removeExtension(Region.class.getName());
@@ -205,12 +210,15 @@ public class SynthesizeModule extends AbstractModule {
 		public final boolean verbose;
 		public final boolean upToLanguageEquivalence;
 		public final boolean quickFail;
+		public final boolean minimize;
 
-		public Options(PNProperties properties, boolean verbose, boolean upToLanguageEquivalence, boolean quickFail) {
+		public Options(PNProperties properties, boolean verbose, boolean upToLanguageEquivalence,
+				boolean quickFail, boolean minimize) {
 			this.properties = properties;
 			this.verbose = verbose;
 			this.upToLanguageEquivalence = upToLanguageEquivalence;
 			this.quickFail = quickFail;
+			this.minimize = minimize;
 		}
 
 		/**
@@ -224,11 +232,12 @@ public class SynthesizeModule extends AbstractModule {
 			boolean verbose = false;
 			boolean upToLanguageEquivalence = false;
 			boolean quickFail = false;
+			boolean minimize = false;
 
 			// Explicitly allow empty string
 			properties = properties.trim();
 			if (properties.isEmpty())
-				return new Options(result, verbose, upToLanguageEquivalence, quickFail);
+				return new Options(result, verbose, upToLanguageEquivalence, quickFail, minimize);
 
 			for (String prop : properties.split(",")) {
 				prop = prop.trim().toLowerCase();
@@ -266,6 +275,11 @@ public class SynthesizeModule extends AbstractModule {
 					case "quick-fail":
 						quickFail = true;
 						break;
+					case "minimize":
+					case "minimise":
+					case "minimal":
+						minimize = true;
+						break;
 					default:
 						if (prop.endsWith("-bounded")) {
 							String value = prop.substring(0, prop.length() - "-bounded".length());
@@ -285,7 +299,7 @@ public class SynthesizeModule extends AbstractModule {
 									+ "': Unknown property");
 				}
 			}
-			return new Options(result, verbose, upToLanguageEquivalence, quickFail);
+			return new Options(result, verbose, upToLanguageEquivalence, quickFail, minimize);
 		}
 	}
 }
