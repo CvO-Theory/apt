@@ -482,8 +482,20 @@ public class SynthesizePN {
 		return Collections.unmodifiableMap(failedEventStateSeparationProblems);
 	}
 
+	/**
+	 * Get the RegionUtility instance used for synthesis.
+	 * @return The region utility.
+	 */
 	public RegionUtility getUtility() {
 		return utility;
+	}
+
+	/**
+	 * Get the properties that were requested from synthesis.
+	 * @return The properties.
+	 */
+	public PNProperties getProperties() {
+		return new PNProperties(properties);
 	}
 
 	/**
