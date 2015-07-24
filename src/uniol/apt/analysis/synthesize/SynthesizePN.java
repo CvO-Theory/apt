@@ -499,6 +499,13 @@ public class SynthesizePN {
 	}
 
 	/**
+	 * Was only event/state separation solved or also state separation?
+	 */
+	public boolean onlyEventSeparation() {
+		return onlyEventSeparation;
+	}
+
+	/**
 	 * Check if the PetriNet is a distributed implementation
 	 * @param utility The region utility that defines the required distribution
 	 * @param pn The PetriNet to check
