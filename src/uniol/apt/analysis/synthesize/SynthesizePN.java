@@ -248,6 +248,8 @@ public class SynthesizePN {
 			partition = newPartition;
 			debug("After region ", region, ", still have ", partition.size(), " families (",
 					discarded, " resulting singular families discarded)");
+			if (partition.isEmpty())
+				break;
 		}
 
 		// All remaining states are not yet separated. Throw away the family information and return them all.
