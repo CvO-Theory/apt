@@ -207,17 +207,17 @@ public class SMTInterpolHelper {
 		Term zero = script.numeral(BigInteger.ZERO);
 
 		// Cycles must reach the same marking again
+		Set<List<Integer>> parikhVectorsOfCycles = new HashSet<>();
 		for (Arc chord : utility.getSpanningTree().getChords()) {
 			try {
-				List<Integer> pv = utility.getParikhVectorForEdge(chord);
-				Term term = evaluateParikhVector(weight, pv);
-				term = script.term("=", zero, term);
-				result.add(term);
+				parikhVectorsOfCycles.add(utility.getParikhVectorForEdge(chord));
 			} catch (UnreachableException e) {
 				throw new RuntimeException("Chords of a spanning tree cannot belong to "
 						+ "unreachable states?!", e);
 			}
 		}
+		for (List<Integer> pv : parikhVectorsOfCycles)
+			result.add(script.term("=", zero, evaluateParikhVector(weight, pv)));
 
 		// Each arc must be enabled
 		for (Arc arc : utility.getTransitionSystem().getEdges()) {
