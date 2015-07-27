@@ -514,7 +514,7 @@ public class SynthesizePN {
 	static public boolean isDistributedImplementation(RegionUtility utility, PNProperties properties, PetriNet pn) {
 		String[] locationMap;
 		try {
-			locationMap = SeparationUtility.getLocationMap(utility, properties);
+			locationMap = SeparationUtility.getLocationMap(utility, new PNProperties(properties));
 		} catch (MissingLocationException e) {
 			debug("Couldn't get location map");
 			return false;

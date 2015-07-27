@@ -58,7 +58,6 @@ import static uniol.apt.util.DebugUtil.debug;
 public class MinimizePN {
 	private final SynthesizePN synthesize;
 	private final RegionUtility utility;
-	private final PNProperties properties;
 	private final Set<Region> regions;
 	private final boolean onlyEventSeparation;
 	private SMTInterpolHelper helper;
@@ -67,7 +66,6 @@ public class MinimizePN {
 	public MinimizePN(SynthesizePN synthesize) {
 		this.synthesize = synthesize;
 		this.utility = synthesize.getUtility();
-		this.properties = synthesize.getProperties();
 		this.onlyEventSeparation = synthesize.onlyEventSeparation();
 
 		if (!synthesize.wasSuccessfullySeparated())
@@ -133,6 +131,7 @@ public class MinimizePN {
 		TransitionSystem ts = utility.getTransitionSystem();
 		List<String> eventList = utility.getEventList();
 		int numberEvents = utility.getNumberOfEvents();
+		PNProperties properties = synthesize.getProperties();
 		boolean pure = properties.isPure();
 
 		try {
