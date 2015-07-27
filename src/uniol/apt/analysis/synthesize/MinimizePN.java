@@ -21,6 +21,7 @@ package uniol.apt.analysis.synthesize;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -153,6 +154,7 @@ public class MinimizePN {
 
 
 			// Define separation problems and require all of them to be solved
+			boolean firstProblem = true;
 			for (Pair<State, String> problem : new SynthesizePN.EventStateSeparationProblems(ts)) {
 				Term[] problemSolved = new Term[limit];
 				for (int i = 0; i < limit; i++) {
@@ -162,6 +164,13 @@ public class MinimizePN {
 					else
 						term = script.term("-", term, script.term("b-" + problem.getSecond() + "-" + i));
 					problemSolved[i] = script.term(">", script.numeral(BigInteger.ZERO), term);
+
+					if (firstProblem) {
+						// Force the first region to solve the first ESSP instance
+						firstProblem = false;
+						problemSolved = Arrays.copyOfRange(problemSolved, 0, 1);
+						break;
+					}
 				}
 				script.assertTerm(collectTerms("or", problemSolved, script.term("false")));
 			}
