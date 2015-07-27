@@ -19,6 +19,8 @@
 
 package uniol.apt.ui.impl.parameter;
 
+import java.util.Arrays;
+
 import uniol.apt.analysis.language.Word;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.ParameterTransformation;
@@ -37,6 +39,9 @@ public class WordParameterTransformation implements ParameterTransformation<Word
 				&& arg.endsWith(SIGN_FOR_SINGLE_CHARACTERS)) {
 			arg = arg.substring(SIGN_FOR_SINGLE_CHARACTERS.length(), arg.length() - 1);
 			tokens = arg.split("");
+			// I don't know why, but apparently some Java versions generate an empty first entry
+			if (tokens.length > 0 && tokens[0].isEmpty())
+				tokens = Arrays.copyOfRange(tokens, 1, tokens.length);
 		} else if (arg.contains(";")) {
 			// with ; --> "a;b;c"/ "a; b ; c" possible
 			tokens = arg.split(";", -1);
