@@ -116,6 +116,29 @@ public class MinimizePN {
 	}
 
 	private Set<Region> synthesizeWithLimit(int limit) throws UnreachableException {
+		Set<Region> result = synthesizeWithLimit(limit, Collections.<State>emptySet());
+		if (result == null || onlyEventSeparation)
+			// We don't have to look at state separation
+			return result;
+
+		Set<State> statesToSeparate = new HashSet<>();
+		while (true) {
+			Set<State> unseparated = SynthesizePN.calculateUnseparatedStates(
+					utility.getTransitionSystem().getNodes(), result);
+			if (unseparated.isEmpty())
+				// All states were separated, return the result
+				return result;
+
+			// Try again, but also force these unseparated states to be separated
+			statesToSeparate.addAll(unseparated);
+			result = synthesizeWithLimit(limit, statesToSeparate);
+			if (result == null)
+				// We need more than <limit> places
+				return result;
+		}
+	}
+
+	private Set<Region> synthesizeWithLimit(int limit, Set<State> statesToSeparate) throws UnreachableException {
 		TransitionSystem ts = utility.getTransitionSystem();
 		List<String> eventList = utility.getEventList();
 		int numberEvents = utility.getNumberOfEvents();
@@ -174,8 +197,10 @@ public class MinimizePN {
 				}
 				script.assertTerm(collectTerms("or", problemSolved, script.term("false")));
 			}
-			if (!onlyEventSeparation)
-				for (Pair<State, State> problem : new SynthesizePN.DifferentPairsIterable<>(ts.getNodes())) {
+			if (onlyEventSeparation)
+				assert statesToSeparate.isEmpty();
+			else
+				for (Pair<State, State> problem : new SynthesizePN.DifferentPairsIterable<>(statesToSeparate)) {
 					Term[] problemSolved = new Term[limit];
 					State state1 = problem.getFirst();
 					State state2 = problem.getSecond();
