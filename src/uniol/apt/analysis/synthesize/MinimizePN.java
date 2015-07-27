@@ -59,10 +59,10 @@ public class MinimizePN {
 	private final SynthesizePN synthesize;
 	private final RegionUtility utility;
 	private final PNProperties properties;
-	private final SMTInterpolHelper helper;
-	private final Script script;
 	private final Set<Region> regions;
 	private final boolean onlyEventSeparation;
+	private SMTInterpolHelper helper;
+	private Script script;
 
 	public MinimizePN(SynthesizePN synthesize) {
 		this.synthesize = synthesize;
@@ -73,15 +73,6 @@ public class MinimizePN {
 		if (!synthesize.wasSuccessfullySeparated())
 			throw new UnsupportedOperationException("Net was not successfully synthesized "
 					+ "and thus cannot be minimized");
-
-		try {
-			this.helper = new SMTInterpolHelper(utility, properties,
-					SeparationUtility.getLocationMap(utility, properties));
-		} catch (MissingLocationException e) {
-			throw new RuntimeException("Previous synthesis was successful "
-					+ "and now we have a missing location!?", e);
-		}
-		this.script = helper.getScript();
 
 		try {
 			Set<Region> separatingRegions = synthesize.getSeparatingRegions();
@@ -144,7 +135,15 @@ public class MinimizePN {
 		int numberEvents = utility.getNumberOfEvents();
 		boolean pure = properties.isPure();
 
-		script.push(1);
+		try {
+			this.helper = new SMTInterpolHelper(utility, properties,
+					SeparationUtility.getLocationMap(utility, properties));
+		} catch (MissingLocationException e) {
+			throw new RuntimeException("Previous synthesis was successful "
+					+ "and now we have a missing location!?", e);
+		}
+		this.script = helper.getScript();
+
 		try {
 			// Declare all regions
 			Term[][] effects = new Term[limit][];
@@ -174,7 +173,6 @@ public class MinimizePN {
 				region[0] = script.term("m0-" + i);
 				script.assertTerm(script.term("isRegion", region));
 			}
-
 
 			// Define separation problems and require all of them to be solved
 			boolean firstProblem = true;
@@ -243,7 +241,8 @@ public class MinimizePN {
 
 			return regions;
 		} finally {
-			script.pop(1);
+			this.script = null;
+			this.helper = null;
 		}
 	}
 
