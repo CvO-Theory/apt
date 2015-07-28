@@ -114,12 +114,15 @@ public class MinimizePN {
 		while (true) {
 			Set<State> unseparated = SynthesizePN.calculateUnseparatedStates(
 					utility.getTransitionSystem().getNodes(), result);
+			debug("Current solution: ", result);
+			debug("Unseparated states: ", unseparated);
 			if (unseparated.isEmpty())
 				// All states were separated, return the result
 				return result;
 
 			// Try again, but also force these unseparated states to be separated
 			statesToSeparate.addAll(unseparated);
+			debug("Trying again, now separating ", statesToSeparate);
 			result = synthesizeWithLimit(limit, statesToSeparate);
 			if (result == null)
 				// We need more than <limit> places
