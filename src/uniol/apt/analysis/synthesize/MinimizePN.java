@@ -214,8 +214,10 @@ public class MinimizePN {
 
 			// Is there a model?
 			LBool isSat = script.checkSat();
-			if (isSat != LBool.SAT)
+			if (isSat != LBool.SAT) {
+				assert isSat == LBool.UNSAT;
 				return null;
+			}
 
 			// Extract all regions
 			Model model = script.getModel();

@@ -120,8 +120,10 @@ class InequalitySystemSeparation implements Separation {
 	 */
 	private Region regionFromSolution() {
 		LBool isSat = script.checkSat();
-		if (isSat != LBool.SAT)
+		if (isSat != LBool.SAT) {
+			assert isSat == LBool.UNSAT;
 			return null;
+		}
 
 		Model model = script.getModel();
 		Region r;

@@ -209,6 +209,7 @@ public class InequalitySystemSolver {
 		LBool isSat = script.checkSat();
 		if (isSat != LBool.SAT) {
 			debug("SMTInterpol produced unsat: " + isSat.toString());
+			assert isSat == LBool.UNSAT;
 			return Collections.emptyList();
 		}
 
