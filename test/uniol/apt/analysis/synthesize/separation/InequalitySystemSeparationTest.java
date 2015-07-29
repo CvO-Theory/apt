@@ -71,6 +71,8 @@ public class InequalitySystemSeparationTest {
 
 		properties = new PNProperties();
 		properties.requireKBounded(19);
+		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
+						new InequalitySystemSeparationFactory(properties))));
 
 		return tests.toArray(new Object[tests.size()]);
 	}
