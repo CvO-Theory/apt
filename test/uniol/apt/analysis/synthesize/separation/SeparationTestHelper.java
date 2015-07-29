@@ -72,6 +72,7 @@ public class SeparationTestHelper {
 			pairs.add(new PureSynthesizablePathTS(factory));
 			pairs.add(new ImpureSynthesizablePathTS(factory));
 			pairs.add(new CrashkursCC2Tests(factory));
+			pairs.add(new TestWordCBADCBA(factory));
 		}
 		if (includeWord)
 			pairs.add(new TestWordB2AB5AB6AB6(factory));
@@ -284,6 +285,60 @@ public class SeparationTestHelper {
 					assertThat(r.getInitialMarking() + " : " + r + " : " + s.toString() + " : " + label,
 							r.getMarkingForState(s), greaterThanOrEqualTo(backwards));
 				}
+			assertThat(r.getMarkingForState(ts.getNode(state)), is(lessThan(r.getBackwardWeight(event))));
+		}
+	}
+
+	static public class TestWordCBADCBA {
+		final private SeparationFactory factory;
+
+		protected List<String> word;
+		protected TransitionSystem ts;
+		protected RegionUtility utility;
+		protected String[] locationMap;
+
+		public TestWordCBADCBA(SeparationFactory factory) {
+			this.factory = factory;
+		}
+
+		@BeforeClass
+		public void setup() throws Exception {
+			word = Arrays.asList("c", "b", "a", "d", "c", "b", "a");
+			ts = SynthesizeWordModule.makeTS(word);
+			utility = new RegionUtility(ts);
+			locationMap = new String[4];
+			locationMap[0] = "a";
+			locationMap[1] = "b";
+			locationMap[2] = "c";
+			locationMap[3] = "d";
+		}
+
+		@DataProvider(name = "stateDisabledEventPairs")
+		private Object[][] createStateEventPairs() {
+			List<Object[]> pairs = new ArrayList<>();
+			for (State state : ts.getNodes())
+				for (String event : ts.getAlphabet())
+					if (!SeparationUtility.isEventEnabled(state, event))
+						pairs.add(new Object[] { state.getId(), event });
+			return pairs.toArray(new Object[][] {});
+		}
+
+		@Test(dataProvider = "stateDisabledEventPairs")
+		public void testEventSeparation(String state, String event) throws UnreachableException {
+			Separation separation = factory.createSeparation(utility, locationMap);
+			Region r = separation.calculateSeparatingRegion(ts.getNode(state), event);
+
+			assertThat(r, notNullValue());
+			assertThat(r.getInitialMarking(), greaterThanOrEqualTo(0));
+
+			for (State s : ts.getNodes())
+				for (Arc arc : s.getPostsetEdges()) {
+					String label = arc.getLabel();
+					int backwards = r.getBackwardWeight(label);
+					assertThat(r.getInitialMarking() + " : " + r + " : " + s.toString() + " : " + label,
+							r.getMarkingForState(s), greaterThanOrEqualTo(backwards));
+				}
+			assertThat(r.getMarkingForState(ts.getNode(state)), is(lessThan(r.getBackwardWeight(event))));
 		}
 	}
 
