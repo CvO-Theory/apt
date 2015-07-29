@@ -78,6 +78,7 @@ public class SeparationTestHelper {
 			pairs.add(new ImpureSynthesizablePathTS(factory));
 			pairs.add(new CrashkursCC2Tests(factory));
 			pairs.add(new TestWordCBADCBA(factory));
+			pairs.add(new TestStateSeparation(factory));
 		}
 		if (includeWord)
 			pairs.add(new TestWordB2AB5AB6AB6(factory));
@@ -346,6 +347,44 @@ public class SeparationTestHelper {
 							r.getMarkingForState(s), greaterThanOrEqualTo(backwards));
 				}
 			assertThat(r.getMarkingForState(ts.getNode(state)), is(lessThan(r.getBackwardWeight(event))));
+		}
+	}
+
+	static public class TestStateSeparation {
+		final private SeparationFactory factory;
+
+		private TransitionSystem ts;
+		private RegionUtility utility;
+		private String[] locationMap;
+
+		public TestStateSeparation(SeparationFactory factory) {
+			this.factory = factory;
+		}
+
+		@BeforeClass
+		public void setup() throws Exception {
+			ts = TestTSCollection.getStateSeparationFailureTS();
+			utility = new RegionUtility(ts);
+			locationMap = new String[2];
+		}
+
+		@Test
+		public void testStateSeparationSuccess() throws UnreachableException {
+			State s0 = ts.getNode("s0"), s1 = ts.getNode("s1");
+			Separation separation = factory.createSeparation(utility, locationMap);
+			Region r = separation.calculateSeparatingRegion(s0, s1);
+
+			assertThat(r, is(notNullValue()));
+			assertThat(r.getMarkingForState(s0), not(equalTo(r.getMarkingForState(s1))));
+		}
+
+		@Test
+		public void testStateSeparationFailure() throws UnreachableException {
+			State s0 = ts.getNode("fail0"), s1 = ts.getNode("fail1");
+			Separation separation = factory.createSeparation(utility, locationMap);
+			Region r = separation.calculateSeparatingRegion(s0, s1);
+
+			assertThat(r, is(nullValue()));
 		}
 	}
 

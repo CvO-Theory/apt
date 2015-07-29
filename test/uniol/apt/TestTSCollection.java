@@ -651,6 +651,23 @@ public class TestTSCollection {
 
 		return ts;
 	}
+
+	public static TransitionSystem getStateSeparationFailureTS() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State[] states = ts.createStates("s0", "s1", "fail0", "fail1");
+		ts.setInitialState("s0");
+
+		// The following two arcs mean that a and b must have the same effects
+		ts.createArc("s0", "s1", "a");
+		ts.createArc("s0", "s1", "b");
+
+		// Thus s2 and s3 must always have the same marking
+		ts.createArc("s1", "fail0", "a");
+		ts.createArc("s1", "fail1", "b");
+
+		return ts;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
