@@ -66,10 +66,15 @@ public class SeparationTestHelper {
 	}
 
 	static public Object[] factory(SeparationFactory factory, boolean includeWord, boolean includeNonReversible) {
+		return factory(factory, includeWord, includeNonReversible, true);
+	}
+
+	static public Object[] factory(SeparationFactory factory, boolean includeWord, boolean includeNonReversible, boolean includePurePathTS) {
 		List<Object> pairs = new ArrayList<>();
 		pairs.add(new SeparationTestHelper(factory));
 		if (includeNonReversible) {
-			pairs.add(new PureSynthesizablePathTS(factory));
+			if (includePurePathTS)
+				pairs.add(new PureSynthesizablePathTS(factory));
 			pairs.add(new ImpureSynthesizablePathTS(factory));
 			pairs.add(new CrashkursCC2Tests(factory));
 			pairs.add(new TestWordCBADCBA(factory));
