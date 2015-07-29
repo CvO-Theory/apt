@@ -637,6 +637,20 @@ public class TestTSCollection {
 
 		return ts;
 	}
+
+	public static TransitionSystem getNeedsRegionForStateSeperationTS() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State[] states = ts.createStates("s0", "s1", "s2", "s3", "s4");
+		ts.setInitialState("s0");
+
+		ts.createArc("s0", "s1", "a");
+		ts.createArc("s1", "s2", "c");
+		ts.createArc("s0", "s3", "b");
+		ts.createArc("s3", "s4", "c");
+
+		return ts;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
