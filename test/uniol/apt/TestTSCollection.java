@@ -359,8 +359,8 @@ public class TestTSCollection {
 		ts.createArc(ts.getNode("s0"), ts.getNode("s2"), "b");
 		ts.createArc(ts.getNode("s1"), ts.getNode("s0"), "c");
 		ts.createArc(ts.getNode("s1"), ts.getNode("s3"), "b");
-		ts.createArc(ts.getNode("s2"), ts.getNode("s0"), "a");
-		ts.createArc(ts.getNode("s2"), ts.getNode("s3"), "d");
+		ts.createArc(ts.getNode("s2"), ts.getNode("s3"), "a");
+		ts.createArc(ts.getNode("s2"), ts.getNode("s0"), "d");
 		ts.createArc(ts.getNode("s3"), ts.getNode("s1"), "d");
 		ts.createArc(ts.getNode("s3"), ts.getNode("s2"), "c");
 

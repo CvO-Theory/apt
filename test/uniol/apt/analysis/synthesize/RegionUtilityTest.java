@@ -75,10 +75,7 @@ public class RegionUtilityTest {
 		assertThat(utility.getReachingParikhVector(s0), is(parikhVector(a, 0, b, 0, c, 0, d, 0)));
 		assertThat(utility.getReachingParikhVector(s1), is(parikhVector(a, 1, b, 0, c, 0, d, 0)));
 		assertThat(utility.getReachingParikhVector(s2), is(parikhVector(a, 0, b, 1, c, 0, d, 0)));
-		if (utility.getSpanningTree().getPredecessor(s3).equals(s1))
-			assertThat(utility.getReachingParikhVector(s3), is(parikhVector(a, 1, b, 1, c, 0, d, 0)));
-		else
-			assertThat(utility.getReachingParikhVector(s3), is(parikhVector(a, 0, b, 1, c, 0, d, 1)));
+		assertThat(utility.getReachingParikhVector(s3), is(parikhVector(a, 1, b, 1, c, 0, d, 0)));
 	}
 
 	@Test
@@ -194,11 +191,16 @@ public class RegionUtilityTest {
 	public void testRegionBasiscc1LTS() {
 		RegionUtility utility = new RegionUtility(TestTSCollection.getcc1LTS());
 
-		assertThat(utility.getRegionBasis(), contains(anyOf(
+		assertThat(utility.getRegionBasis(), containsInAnyOrder(anyOf(
 						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
-							Arrays.asList(1, -1, -1, 1)),
+							Arrays.asList(1, 0, -1, 0)),
 						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
-							Arrays.asList(-1, 1, 1, -1)))));
+							Arrays.asList(-1, 0, 1, 0))),
+					anyOf(
+						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
+							Arrays.asList(0, 1, 0, -1)),
+						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
+							Arrays.asList(0, -1, 0, 1)))));
 	}
 
 	@Test
