@@ -310,14 +310,15 @@ public class SMTInterpolHelper {
 	 * @return The needed terms.
 	 */
 	private List<Term> requireDistributableNet(Term[] backwardWeight) {
-		List<Term> result = new ArrayList<>();
 		Set<String> locations = new HashSet<>(Arrays.asList(locationMap));
 		locations.remove(null);
 		if (locations.isEmpty())
 			// No locations specified
-			return result;
+			return Collections.emptyList();
 
 		Term zero = script.numeral(BigInteger.ZERO);
+		Term[] terms = new Term[locations.size()];
+		int index = 0;
 		for (String location : locations) {
 			Term term = zero;
 
@@ -327,10 +328,10 @@ public class SMTInterpolHelper {
 					term = script.term("+", backwardWeight[eventIndex], term);
 			}
 
-			result.add(script.term("=", zero, term));
+			terms[index++] = script.term("=", zero, term);
 		}
 
-		return result;
+		return Collections.singletonList(collectTerms("or", terms, script.term("true")));
 	}
 
 	/**
