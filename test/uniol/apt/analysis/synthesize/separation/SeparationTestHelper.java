@@ -85,6 +85,8 @@ public class SeparationTestHelper {
 		String[] locationMap = new String[utility.getNumberOfEvents()];
 		Region r = factory.createSeparation(utility, locationMap).calculateSeparatingRegion(state, event);
 
+		assertThat(r, notNullValue());
+
 		// "event" must have a non-zero backwards weight
 		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));
 
