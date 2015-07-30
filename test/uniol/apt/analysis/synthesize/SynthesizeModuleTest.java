@@ -19,6 +19,12 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.analysis.synthesize.SynthesizeModule.Options;
 
@@ -40,9 +46,15 @@ public class SynthesizeModuleTest {
 
 	// I'm too lazy to type
 	private PNProperties parse(String arg) throws ModuleException {
-		Options options = Options.parseProperties(arg);
-		assertThat(options.upToLanguageEquivalence, equalTo(false));
-		assertThat(options.verbose, equalTo(false));
+		return parse(arg, Collections.<String>emptyList(), Collections.<String>emptyList());
+	}
+
+	// I'm too lazy to type
+	private PNProperties parse(String arg, Collection<String> supportedExtraOptions,
+			Collection<String> expectedExtraOptions) throws ModuleException {
+		Set<String> extra = new HashSet<>(expectedExtraOptions);
+		Options options = Options.parseProperties(arg, supportedExtraOptions);
+		assertThat(options.extraOptions, is(extra));
 		return options.properties;
 	}
 
@@ -106,35 +118,11 @@ public class SynthesizeModuleTest {
 	}
 
 	@Test
-	public void testLanguageEquivalence1() throws Exception {
-		Options options = Options.parseProperties("upto-language-equivalence");
-		assertThat(options.upToLanguageEquivalence, equalTo(true));
-		assertThat(options.verbose, equalTo(false));
-		assertThat(options.properties, equalTo(properties));
-	}
-
-	@Test
-	public void testLanguageEquivalence2() throws Exception {
-		Options options = Options.parseProperties("language");
-		assertThat(options.upToLanguageEquivalence, equalTo(true));
-		assertThat(options.verbose, equalTo(false));
-		assertThat(options.properties, equalTo(properties));
-	}
-
-	@Test
-	public void testLanguageEquivalence3() throws Exception {
-		Options options = Options.parseProperties("le");
-		assertThat(options.upToLanguageEquivalence, equalTo(true));
-		assertThat(options.verbose, equalTo(false));
-		assertThat(options.properties, equalTo(properties));
-	}
-
-	@Test
-	public void testVerbose() throws Exception {
-		Options options = Options.parseProperties("verbose");
-		assertThat(options.upToLanguageEquivalence, equalTo(false));
-		assertThat(options.verbose, equalTo(true));
-		assertThat(options.properties, equalTo(properties));
+	public void testExtraArgs() throws Exception {
+		properties.setOutputNonbranching(true);
+		assertThat(parse("foo,bAr,on,baz", Arrays.asList("foo", "bar", "foobar", "baz"),
+					Arrays.asList("foo", "bar", "baz")),
+				equalTo(properties));
 	}
 
 	@Test

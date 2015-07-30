@@ -19,6 +19,9 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -97,18 +100,30 @@ public class SynthesizeModule extends AbstractModule {
 
 	static public SynthesizePN runSynthesis(TransitionSystem ts, ModuleInput input, ModuleOutput output)
 			throws ModuleException {
-		Options options = Options.parseProperties(input.getParameter("options", String.class));
+		String quickFailStr = "quick-fail", verboseStr = "verbose";
+		Collection<String> languageEquivalenceStr = Arrays.asList("upto-language-equivalence", "language", "le");
+		Collection<String> minimizeStr = Arrays.asList("minimize", "minimise", "minimal");
+		Set<String> supportedExtraOptions = new HashSet<>(Arrays.asList(quickFailStr, verboseStr));
+		supportedExtraOptions.addAll(languageEquivalenceStr);
+		supportedExtraOptions.addAll(minimizeStr);
+
+		Options options = Options.parseProperties(input.getParameter("options", String.class), supportedExtraOptions);
+		boolean quickFail = options.extraOptions.contains(quickFailStr);
+		boolean verbose = options.extraOptions.contains(verboseStr);
+		boolean languageEquivalence = !Collections.disjoint(options.extraOptions, languageEquivalenceStr);
+		boolean minimize = !Collections.disjoint(options.extraOptions, minimizeStr);
+
 		SynthesizePN synthesize;
 		SynthesizePN.Builder builder = new SynthesizePN.Builder(ts)
 			.setProperties(options.properties)
-			.setQuickFail(options.quickFail);
-		if (options.upToLanguageEquivalence)
+			.setQuickFail(quickFail);
+		if (languageEquivalence)
 			synthesize = builder.buildForLanguageEquivalence();
 		else
 			synthesize = builder.buildForIsomorphicBehavior();
 
 		PetriNet pn;
-		if (synthesize.wasSuccessfullySeparated() && options.minimize)
+		if (synthesize.wasSuccessfullySeparated() && minimize)
 			pn = new MinimizePN(synthesize).synthesizePetriNet();
 		else
 			pn = synthesize.synthesizePetriNet();
@@ -118,7 +133,7 @@ public class SynthesizeModule extends AbstractModule {
 
 		output.setReturnValue("success", Boolean.class, synthesize.wasSuccessfullySeparated());
 		output.setReturnValue("pn", PetriNet.class, pn);
-		if (options.verbose) {
+		if (verbose) {
 			output.setReturnValue("solvedEventStateSeparationProblems", String.class,
 					getSolvedEventStateSeparationProblems(synthesize));
 		}
@@ -207,18 +222,11 @@ public class SynthesizeModule extends AbstractModule {
 	 */
 	static public class Options {
 		public final PNProperties properties;
-		public final boolean verbose;
-		public final boolean upToLanguageEquivalence;
-		public final boolean quickFail;
-		public final boolean minimize;
+		public final Set<String> extraOptions;
 
-		public Options(PNProperties properties, boolean verbose, boolean upToLanguageEquivalence,
-				boolean quickFail, boolean minimize) {
+		public Options(PNProperties properties, Collection<String> extraOptions) {
 			this.properties = properties;
-			this.verbose = verbose;
-			this.upToLanguageEquivalence = upToLanguageEquivalence;
-			this.quickFail = quickFail;
-			this.minimize = minimize;
+			this.extraOptions = Collections.unmodifiableSet(new HashSet<>(extraOptions));
 		}
 
 		/**
@@ -228,19 +236,33 @@ public class SynthesizeModule extends AbstractModule {
 		 * @throws ModuleException if the properties string is malformed
 		 */
 		static public Options parseProperties(String properties) throws ModuleException {
+			return parseProperties(properties, Collections.<String>emptySet());
+		}
+
+		/**
+		 * Parse the given string into an Options instance
+		 * @param properties the string to parse
+		 * @param supportedExtraOptions extra options which should also be supported
+		 * @return A representation of the requested options
+		 * @throws ModuleException if the properties string is malformed
+		 */
+		static public Options parseProperties(String properties, Collection<String> supportedExtraOptions) throws ModuleException {
 			PNProperties result = new PNProperties();
-			boolean verbose = false;
-			boolean upToLanguageEquivalence = false;
-			boolean quickFail = false;
-			boolean minimize = false;
 
 			// Explicitly allow empty string
 			properties = properties.trim();
 			if (properties.isEmpty())
-				return new Options(result, verbose, upToLanguageEquivalence, quickFail, minimize);
+				return new Options(result, Collections.<String>emptySet());
 
+			Set<String> extraOptions = new HashSet<>();
 			for (String prop : properties.split(",")) {
 				prop = prop.trim().toLowerCase();
+
+				if (supportedExtraOptions.contains(prop)) {
+					extraOptions.add(prop);
+					continue;
+				}
+
 				switch (prop) {
 					case "none":
 						break;
@@ -264,22 +286,6 @@ public class SynthesizeModule extends AbstractModule {
 					case "cf":
 						result.setConflictFree(true);
 						break;
-					case "verbose":
-						verbose = true;
-						break;
-					case "upto-language-equivalence":
-					case "language":
-					case "le":
-						upToLanguageEquivalence = true;
-						break;
-					case "quick-fail":
-						quickFail = true;
-						break;
-					case "minimize":
-					case "minimise":
-					case "minimal":
-						minimize = true;
-						break;
 					default:
 						if (prop.endsWith("-bounded")) {
 							String value = prop.substring(0, prop.length() - "-bounded".length());
@@ -299,7 +305,7 @@ public class SynthesizeModule extends AbstractModule {
 									+ "': Unknown property");
 				}
 			}
-			return new Options(result, verbose, upToLanguageEquivalence, quickFail, minimize);
+			return new Options(result, extraOptions);
 		}
 	}
 }
