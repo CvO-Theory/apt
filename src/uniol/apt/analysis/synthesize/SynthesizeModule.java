@@ -67,13 +67,17 @@ public class SynthesizeModule extends AbstractModule {
 	}
 
 	static public void requireCommon(ModuleInputSpec inputSpec) {
+		requireCommon(inputSpec, "", "");
+	}
+
+	static public void requireCommon(ModuleInputSpec inputSpec, String extra1, String extra2) {
 		inputSpec.addParameter("options", String.class,
 				"Comma separated list of options,"
 				+ " can be verbose, none, safe, [k]-bounded, pure, plain, tnet,"
 				+ " output-nonbranching (on), conflict-free (cf),"
-				+ " upto-language-equivalence (language, le), minimize."
+				+ " upto-language-equivalence (language, le), minimize" + extra1 + "."
 				+ " Special options are verbose (print detail information about the regions),"
-				+ " quick-fail (fail quickly when the result 'success: No' is known) and"
+				+ " quick-fail (fail quickly when the result 'success: No' is known)" + extra2 + " and"
 				+ " minimize (minimize the number of places in the solution).");
 	}
 

@@ -83,7 +83,8 @@ public class SynthesizeWordModule extends AbstractModule {
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
-		SynthesizeModule.requireCommon(inputSpec);
+		SynthesizeModule.requireCommon(inputSpec, " ,cycle",
+				", cycle (form a cyclic word w^* from the input instead of solving w directly)");
 		inputSpec.addParameter("word", Word.class, "The word that should be synthesized");
 	}
 
@@ -184,8 +185,7 @@ public class SynthesizeWordModule extends AbstractModule {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		Word word = input.getParameter("word", Word.class);
-		TransitionSystem ts = makeTS(word);
-		SynthesizePN synthesize = SynthesizeModule.runSynthesis(new SynthesizeModule.ReturnTS(ts), input, output);
+		SynthesizePN synthesize = SynthesizeModule.runSynthesis(new TSForWord(word), input, output);
 		output.setReturnValue("stateSeparationFailurePoints", String.class,
 				formatSSPFailure(word, synthesize.getFailedStateSeparationProblems()));
 		output.setReturnValue("separationFailurePoints", String.class,
@@ -198,6 +198,10 @@ public class SynthesizeWordModule extends AbstractModule {
 	}
 
 	static public TransitionSystem makeTS(List<String> word) {
+		return makeTS(word, false);
+	}
+
+	static public TransitionSystem makeTS(List<String> word, boolean cycle) {
 		TransitionSystem ts = new TransitionSystem();
 		State state = ts.createState();
 		state.putExtension("index", 0);
@@ -205,8 +209,13 @@ public class SynthesizeWordModule extends AbstractModule {
 
 		int index = 1;
 		for (String label : word) {
-			State nextState = ts.createState();
-			nextState.putExtension("index", index);
+			State nextState;
+			if (cycle && index == word.size())
+				nextState = ts.getInitialState();
+			else {
+				nextState = ts.createState();
+				nextState.putExtension("index", index);
+			}
 			ts.createArc(state, nextState, label);
 
 			state = nextState;
@@ -214,6 +223,28 @@ public class SynthesizeWordModule extends AbstractModule {
 		}
 
 		return ts;
+	}
+
+	static private class TSForWord implements SynthesizeModule.TransitionSystemForOptions {
+		final private List<String> word;
+
+		public TSForWord(List<String> word) {
+			this.word = word;
+		}
+
+		@Override
+		public Collection<String> supportedExtraOptions() {
+			Set<String> options = new HashSet<>();
+			options.add("cyclic");
+			options.add("cycle");
+			return options;
+		}
+
+		@Override
+		public TransitionSystem getTS(Collection<String> enabledOptions) {
+			boolean cycle = enabledOptions.contains("cyclic") || enabledOptions.contains("cycle");
+			return makeTS(word, cycle);
+		}
 	}
 }
 
