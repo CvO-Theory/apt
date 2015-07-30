@@ -98,7 +98,30 @@ public class SynthesizeModule extends AbstractModule {
 		outputSpec.addReturnValue("failedEventStateSeparationProblems", String.class);
 	}
 
-	static public SynthesizePN runSynthesis(TransitionSystem ts, ModuleInput input, ModuleOutput output)
+	static protected interface TransitionSystemForOptions {
+		public Collection<String> supportedExtraOptions();
+		public TransitionSystem getTS(Collection<String> enabledOptions);
+	}
+
+	static protected class ReturnTS implements TransitionSystemForOptions {
+		final private TransitionSystem ts;
+
+		public ReturnTS(TransitionSystem ts) {
+			this.ts = ts;
+		}
+
+		@Override
+		public Collection<String> supportedExtraOptions() {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public TransitionSystem getTS(Collection<String> enabledOptions) {
+			return ts;
+		}
+	}
+
+	static public SynthesizePN runSynthesis(TransitionSystemForOptions tsForOpts, ModuleInput input, ModuleOutput output)
 			throws ModuleException {
 		String quickFailStr = "quick-fail", verboseStr = "verbose";
 		Collection<String> languageEquivalenceStr = Arrays.asList("upto-language-equivalence", "language", "le");
@@ -106,6 +129,7 @@ public class SynthesizeModule extends AbstractModule {
 		Set<String> supportedExtraOptions = new HashSet<>(Arrays.asList(quickFailStr, verboseStr));
 		supportedExtraOptions.addAll(languageEquivalenceStr);
 		supportedExtraOptions.addAll(minimizeStr);
+		supportedExtraOptions.addAll(tsForOpts.supportedExtraOptions());
 
 		Options options = Options.parseProperties(input.getParameter("options", String.class), supportedExtraOptions);
 		boolean quickFail = options.extraOptions.contains(quickFailStr);
@@ -114,7 +138,7 @@ public class SynthesizeModule extends AbstractModule {
 		boolean minimize = !Collections.disjoint(options.extraOptions, minimizeStr);
 
 		SynthesizePN synthesize;
-		SynthesizePN.Builder builder = new SynthesizePN.Builder(ts)
+		SynthesizePN.Builder builder = new SynthesizePN.Builder(tsForOpts.getTS(options.extraOptions))
 			.setProperties(options.properties)
 			.setQuickFail(quickFail);
 		if (languageEquivalence)
@@ -151,7 +175,7 @@ public class SynthesizeModule extends AbstractModule {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		TransitionSystem ts = input.getParameter("lts", TransitionSystem.class);
-		SynthesizePN synthesize = runSynthesis(ts, input, output);
+		SynthesizePN synthesize = runSynthesis(new ReturnTS(ts), input, output);
 
 		if (!synthesize.wasSuccessfullySeparated()) {
 			Set<Set<String>> failedSSP = new HashSet<>();

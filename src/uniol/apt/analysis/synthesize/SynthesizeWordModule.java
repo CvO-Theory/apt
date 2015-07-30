@@ -185,7 +185,7 @@ public class SynthesizeWordModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		Word word = input.getParameter("word", Word.class);
 		TransitionSystem ts = makeTS(word);
-		SynthesizePN synthesize = SynthesizeModule.runSynthesis(ts, input, output);
+		SynthesizePN synthesize = SynthesizeModule.runSynthesis(new SynthesizeModule.ReturnTS(ts), input, output);
 		output.setReturnValue("stateSeparationFailurePoints", String.class,
 				formatSSPFailure(word, synthesize.getFailedStateSeparationProblems()));
 		output.setReturnValue("separationFailurePoints", String.class,
