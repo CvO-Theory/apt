@@ -123,10 +123,15 @@ public class SynthesizeModule extends AbstractModule {
 			synthesize = builder.buildForIsomorphicBehavior();
 
 		PetriNet pn;
-		if (synthesize.wasSuccessfullySeparated() && minimize)
-			pn = new MinimizePN(synthesize).synthesizePetriNet();
-		else
+		Collection<Region> regions;
+		if (synthesize.wasSuccessfullySeparated() && minimize) {
+			MinimizePN min = new MinimizePN(synthesize);
+			regions = min.getSeparatingRegions();
+			pn = min.synthesizePetriNet();
+		} else {
+			regions = synthesize.getSeparatingRegions();
 			pn = synthesize.synthesizePetriNet();
+		}
 		if (pn != null)
 			for (Place p : pn.getPlaces())
 				p.removeExtension(Region.class.getName());
@@ -135,7 +140,9 @@ public class SynthesizeModule extends AbstractModule {
 		output.setReturnValue("pn", PetriNet.class, pn);
 		if (verbose) {
 			output.setReturnValue("solvedEventStateSeparationProblems", String.class,
-					getSolvedEventStateSeparationProblems(synthesize));
+					getSolvedEventStateSeparationProblems(
+						synthesize.getUtility().getTransitionSystem(),
+						regions));
 		}
 
 		return synthesize;
@@ -185,15 +192,14 @@ public class SynthesizeModule extends AbstractModule {
 
 	/**
 	 * Get a string representation that describes for each region which Event/State Separation Problems it solves.
-	 * @param synthesize The synthesize instance to print from.
+	 * @param ts The transition system that should be solved.
+	 * @param regions The regions that solve (part of) the transition system.
 	 * @return A string representation of the solved problems.
 	 */
-	static public String getSolvedEventStateSeparationProblems(SynthesizePN synthesize) {
+	static public String getSolvedEventStateSeparationProblems(TransitionSystem ts, Collection<Region> regions) {
 		StringBuilder result = new StringBuilder("");
-		RegionUtility utility = synthesize.getUtility();
-		TransitionSystem ts = utility.getTransitionSystem();
 
-		for (Region region : synthesize.getSeparatingRegions()) {
+		for (Region region : regions) {
 			result.append("\nRegion ").append(region).append(":");
 			for (String event : ts.getAlphabet()) {
 				Set<State> states = new HashSet<>();
