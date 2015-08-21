@@ -183,8 +183,12 @@ case is directed to /dev/null/ to hide it from the user) the user
 is presented with the phrase "The Petri net is bounded" if the Petri
 net is indeed bounded or "The Petri net is not bounded" otherwise.
 
-There are two modules which use external programs. These are the "use-synet" and "use-petrify" modules.
-If you want to use these modules, you need to make sure that your PATH variable contains the directory where those programs are located.
+There are two modules which use external programs. These are the "use-synet" and
+"use-petrify" modules.  If you want to use these modules, you need to make sure
+that your PATH variable contains the directory where those programs are located.
+
+Please note that there is now a "synthesize" module which offers all the
+possibilities of "use-synet" and "use-petrify" and can even do more.
 
 Synet and Petrify can be downloaded here:
 
@@ -230,6 +234,11 @@ Providing feedback
 More information about APT can be found on our homepage:
 
 http://pg-apt.informatik.uni-oldenburg.de/
+
+This project is supervised by the ParSys group at Oldenburg University:
+
+http://www.uni-oldenburg.de/informatik/parsys/
+http://www.uni-oldenburg.de/informatik/parsys/projekte/
 
 If you have any problems when using this software, if you think that you found a
 bug or if you want to suggest improvements, don't hesitate to contact us. You
