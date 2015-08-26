@@ -404,12 +404,11 @@ public class SeparationTestHelper {
 		// TODO: Handle this in a nicer way. Perhaps SeparationTestHelper was a mistake and should be split up
 		// into multiple "things"?
 		Separation sep = null;
-		PNProperties properties = new PNProperties();
-		properties.setPlain(true);
+		PNProperties properties = new PNProperties().setPlain(true);
 		try {
 			sep = factory.createSeparation(new RegionUtility(ts), properties, new String[2]);
 		} catch (UnsupportedPNPropertiesException e) {
-			properties.setPure(true);
+			properties = properties.setPure(true);
 			try {
 				sep = factory.createSeparation(new RegionUtility(ts), properties, new String[2]);
 			}

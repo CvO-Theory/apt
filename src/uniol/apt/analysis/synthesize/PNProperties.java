@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Properties that a (synthesized) Petri Net can/should satisfy.
+ * Properties that a (synthesized) Petri Net can/should satisfy. Instances of this class are immutable
  * @author Uli Schlachter
  */
 public class PNProperties {
@@ -44,9 +44,10 @@ public class PNProperties {
 	}
 
 	/**
-	 * Create a copy of a PNProperties instance.
+	 * Create a copy of a PNProperties instance. This is not public because this class is immutable and thus doesn't
+	 * need a public copy constructor.
 	 */
-	public PNProperties(PNProperties other) {
+	private PNProperties(PNProperties other) {
 		kBounded = other.kBounded;
 		pure = other.pure;
 		plain = other.plain;
@@ -81,10 +82,11 @@ public class PNProperties {
 	}
 
 	/**
-	 * Make sure that that this instance requires safeness.
+	 * Make sure that safeness is required.
+	 * @return A new PNProperties which expresses the same properties as this instance, plus safeness.
 	 */
-	public void requireSafe() {
-		requireKBounded(1);
+	public PNProperties requireSafe() {
+		return requireKBounded(1);
 	}
 
 	/**
@@ -97,22 +99,17 @@ public class PNProperties {
 	}
 
 	/**
-	 * Make sure this instance requires at least k-boundedness.
+	 * Make sure that at least k-boundedness is required.
 	 * @param k the k for k-bounded
+	 * @return A new PNProperties which expresses the same properties as this instance, plus k-boundedness.
 	 */
-	public void requireKBounded(int k) {
+	public PNProperties requireKBounded(int k) {
 		assert k >= 0;
-		if (!isKBounded(k))
-			kBounded = k;
-	}
-
-	/**
-	 * Set the k for k-bounded.
-	 * @param k The new value
-	 */
-	public void setKBounded(int k) {
-		assert k >= 0;
-		kBounded = k;
+		if (isKBounded(k))
+			return this;
+		PNProperties result = new PNProperties(this);
+		result.kBounded = k;
+		return result;
 	}
 
 	/**
@@ -124,11 +121,14 @@ public class PNProperties {
 	}
 
 	/**
-	 * Set the pureness value of this property description.
+	 * Create a new instance which differs from this one in the specified pureness requirement.
 	 * @param value whether pureness should be required.
+	 * @return A new PNProperties which expresses the same properties as this instance, plus pureness.
 	 */
-	public void setPure(boolean value) {
-		pure = value;
+	public PNProperties setPure(boolean value) {
+		PNProperties result = new PNProperties(this);
+		result.pure = value;
+		return result;
 	}
 
 	/**
@@ -140,11 +140,14 @@ public class PNProperties {
 	}
 
 	/**
-	 * Set the plainness value of this property description.
+	 * Create a new instance which differs from this one in the specified plainness requirement.
 	 * @param value whether plainness should be required.
+	 * @return A new PNProperties which expresses the same properties as this instance, plus plainess.
 	 */
-	public void setPlain(boolean value) {
-		plain = value;
+	public PNProperties setPlain(boolean value) {
+		PNProperties result = new PNProperties(this);
+		result.plain = value;
+		return result;
 	}
 
 	/**
@@ -156,11 +159,14 @@ public class PNProperties {
 	}
 
 	/**
-	 * Set the TNet value of this property description.
+	 * Create a new instance which differs from this one in the specified T-Net requirement.
 	 * @param value whether TNet should be required.
+	 * @return A new PNProperties which expresses the same properties as this instance, plus T-Net.
 	 */
-	public void setTNet(boolean value) {
-		tnet = value;
+	public PNProperties setTNet(boolean value) {
+		PNProperties result = new PNProperties(this);
+		result.tnet = value;
+		return result;
 	}
 
 	/**
@@ -172,11 +178,14 @@ public class PNProperties {
 	}
 
 	/**
-	 * Set the output-nonbranching value of this property description.
+	 * Create a new instance which differs from this one in the specified output-nonbranching requirement.
 	 * @param value whether output-nonbranching should be required.
+	 * @return A new PNProperties which expresses the same properties as this instance, plus ON.
 	 */
-	public void setOutputNonbranching(boolean value) {
-		outputNonbranching = value;
+	public PNProperties setOutputNonbranching(boolean value) {
+		PNProperties result = new PNProperties(this);
+		result.outputNonbranching = value;
+		return result;
 	}
 
 	/**
@@ -188,11 +197,14 @@ public class PNProperties {
 	}
 
 	/**
-	 * Set the conflict freeness value of this property description.
+	 * Create a new instance which differs from this one in the specified conflict-freeness requirement.
 	 * @param value whether conflict freeness should be required.
+	 * @return A new PNProperties which expresses the same properties as this instance, plus CF.
 	 */
-	public void setConflictFree(boolean value) {
-		conflictFree = value;
+	public PNProperties setConflictFree(boolean value) {
+		PNProperties result = new PNProperties(this);
+		result.conflictFree = value;
+		return result;
 	}
 
 	/**

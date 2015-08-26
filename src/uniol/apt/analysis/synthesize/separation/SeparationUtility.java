@@ -135,7 +135,6 @@ public final class SeparationUtility {
 
 		// We used the above as sanity checks, now handle output-nonbranching, if specified
 		if (properties.isOutputNonbranching()) {
-			properties.setOutputNonbranching(false);
 			for (int i = 0; i < locationMap.length; i++)
 				locationMap[i] = String.valueOf(i);
 		}
@@ -158,10 +157,11 @@ public final class SeparationUtility {
 	 */
 	static public Separation createSeparationInstance(RegionUtility utility, PNProperties properties)
 			throws MissingLocationException {
-		// getLocationMap() modifies the properties
-		properties = new PNProperties(properties);
 		String[] locationMap = getLocationMap(utility, properties);
 		Separation result = null;
+
+		// getLocationMap() handled ON
+		properties = properties.setOutputNonbranching(false);
 
 		try {
 			if (result == null)

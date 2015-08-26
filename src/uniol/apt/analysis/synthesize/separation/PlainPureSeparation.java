@@ -56,9 +56,7 @@ class PlainPureSeparation extends BasicPureSeparation implements Separation {
 	public PlainPureSeparation(RegionUtility utility, PNProperties properties,
 			String[] locationMap) throws UnsupportedPNPropertiesException {
 		this(utility, locationMap);
-		PNProperties supported = new PNProperties();
-		supported.setPure(true);
-		supported.setPlain(true);
+		PNProperties supported = new PNProperties().setPure(true).setPlain(true);
 		if (!properties.equals(supported))
 			throw new UnsupportedPNPropertiesException();
 	}

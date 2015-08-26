@@ -138,8 +138,7 @@ public class SynthesizePNTest {
 	@Test
 	public void testACBCCLoopTSOutputNonbranching() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
-		PNProperties properties = new PNProperties();
-		properties.setOutputNonbranching(true);
+		PNProperties properties = new PNProperties().setOutputNonbranching(true);
 		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
@@ -155,8 +154,7 @@ public class SynthesizePNTest {
 	@Test
 	public void testACBCCLoopTSTNet() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
-		PNProperties properties = new PNProperties();
-		properties.setTNet(true);
+		PNProperties properties = new PNProperties().setTNet(true);
 		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
@@ -174,8 +172,7 @@ public class SynthesizePNTest {
 	public void testPathTSPure() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
-		PNProperties properties = new PNProperties();
-		properties.setPure(true);
+		PNProperties properties = new PNProperties().setPure(true);
 		SynthesizePN synth = new SynthesizePN.Builder(utility).setProperties(properties).buildForIsomorphicBehavior();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
@@ -235,8 +232,7 @@ public class SynthesizePNTest {
 		State u = ts.getNode("u");
 		State v = ts.getNode("v");
 
-		PNProperties properties = new PNProperties();
-		properties.setPlain(true);
+		PNProperties properties = new PNProperties().setPlain(true);
 		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
 
 		assertThat(synth.getSeparatingRegions(), everyItem(plainRegion()));
@@ -267,8 +263,7 @@ public class SynthesizePNTest {
 	public void testWordB2AB5AB6AB6Pure() throws MissingLocationException, UnboundedException {
 		TransitionSystem ts = SynthesizeWordModule.makeTS(Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b",
 					"a", "b", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b"));
-		PNProperties properties = new PNProperties();
-		properties.setPure(true);
+		PNProperties properties = new PNProperties().setPure(true);
 		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));

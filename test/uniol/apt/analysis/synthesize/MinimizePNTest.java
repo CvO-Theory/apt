@@ -54,7 +54,7 @@ public class MinimizePNTest {
 		SynthesizePN synth = mock(SynthesizePN.class);
 		when(synth.wasSuccessfullySeparated()).thenReturn(true);
 		when(synth.getUtility()).thenReturn(utility);
-		when(synth.getProperties()).thenReturn(new PNProperties(properties));
+		when(synth.getProperties()).thenReturn(properties);
 		when(synth.onlyEventSeparation()).thenReturn(onlyEventSeparation);
 		when(synth.getSeparatingRegions()).thenReturn(createRegions(utility, numRegions));
 		return synth;
@@ -110,15 +110,13 @@ public class MinimizePNTest {
 
 	@Test
 	public void testCC1LTSSafe() throws Exception {
-		PNProperties properties = new PNProperties();
-		properties.requireSafe();
+		PNProperties properties = new PNProperties().requireSafe();
 		doTestCC1LTS(properties, 4);
 	}
 
 	@Test
 	public void testCC1LTSPure() throws Exception {
-		PNProperties properties = new PNProperties();
-		properties.setPure(true);
+		PNProperties properties = new PNProperties().setPure(true);
 		doTestCC1LTS(properties, 3);
 	}
 

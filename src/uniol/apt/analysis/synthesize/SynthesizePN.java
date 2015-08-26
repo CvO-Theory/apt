@@ -110,7 +110,7 @@ public class SynthesizePN {
 		 * @return this
 		 */
 		public Builder setProperties(PNProperties properties) {
-			this.properties = new PNProperties(properties);
+			this.properties = properties;
 			return this;
 		}
 
@@ -495,7 +495,7 @@ public class SynthesizePN {
 	 * @return The properties.
 	 */
 	public PNProperties getProperties() {
-		return new PNProperties(properties);
+		return properties;
 	}
 
 	/**
@@ -514,7 +514,7 @@ public class SynthesizePN {
 	static public boolean isDistributedImplementation(RegionUtility utility, PNProperties properties, PetriNet pn) {
 		String[] locationMap;
 		try {
-			locationMap = SeparationUtility.getLocationMap(utility, new PNProperties(properties));
+			locationMap = SeparationUtility.getLocationMap(utility, properties);
 		} catch (MissingLocationException e) {
 			debug("Couldn't get location map");
 			return false;

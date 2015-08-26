@@ -64,18 +64,15 @@ public class InequalitySystemSeparationTest {
 		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
 						new InequalitySystemSeparationFactory(properties))));
 
-		properties = new PNProperties();
-		properties.setPure(true);
+		properties = new PNProperties().setPure(true);
 		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
 						new InequalitySystemSeparationFactory(properties))));
 
-		properties = new PNProperties();
-		properties.requireKBounded(19);
+		properties = new PNProperties().requireKBounded(19);
 		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
 						new InequalitySystemSeparationFactory(properties))));
 
-		properties = new PNProperties();
-		properties.setConflictFree(true);
+		properties = new PNProperties().setConflictFree(true);
 		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
 						new InequalitySystemSeparationFactory(properties), false, true, false)));
 

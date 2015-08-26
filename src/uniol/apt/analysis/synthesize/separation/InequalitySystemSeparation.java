@@ -74,7 +74,7 @@ class InequalitySystemSeparation implements Separation {
 		final int numberEvents = utility.getNumberOfEvents();
 		final List<String> eventList = utility.getEventList();
 		this.utility = utility;
-		this.properties = new PNProperties(properties);
+		this.properties = properties;
 		this.helper = new SMTInterpolHelper(utility, properties, locationMap);
 		this.script = helper.getScript();
 

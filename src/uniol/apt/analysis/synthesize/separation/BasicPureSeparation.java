@@ -66,8 +66,7 @@ class BasicPureSeparation implements Separation {
 			String[] locationMap) throws UnsupportedPNPropertiesException {
 		this(utility, locationMap);
 
-		PNProperties required = new PNProperties();
-		required.setPure(true);
+		PNProperties required = new PNProperties().setPure(true);
 		if (!properties.equals(required))
 			throw new UnsupportedPNPropertiesException();
 	}

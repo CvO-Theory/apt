@@ -28,7 +28,6 @@ import java.util.Set;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.analysis.synthesize.SynthesizeModule.Options;
 
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -37,13 +36,6 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
 public class SynthesizeModuleTest {
-	private PNProperties properties;
-
-	@BeforeMethod
-	public void setup() {
-		properties = new PNProperties();
-	}
-
 	// I'm too lazy to type
 	private PNProperties parse(String arg) throws ModuleException {
 		return parse(arg, Collections.<String>emptyList(), Collections.<String>emptyList());
@@ -60,66 +52,66 @@ public class SynthesizeModuleTest {
 
 	@Test
 	public void testNone() throws Exception {
-		assertThat(parse("none"), equalTo(properties));
+		assertThat(parse("none"), equalTo(new PNProperties()));
 	}
 
 	@Test
 	public void testPure() throws Exception {
-		properties.setPure(true);
+		PNProperties properties = new PNProperties().setPure(true);
 		assertThat(parse("pure"), equalTo(properties));
 	}
 
 	@Test
 	public void testSafe() throws Exception {
-		properties.requireSafe();
+		PNProperties properties = new PNProperties().requireSafe();
 		assertThat(parse("Safe"), equalTo(properties));
 	}
 
 	@Test
 	public void testPlain() throws Exception {
-		properties.setPlain(true);
+		PNProperties properties = new PNProperties().setPlain(true);
 		assertThat(parse("PLAIN"), equalTo(properties));
 	}
 
 	@Test
 	public void testTNet() throws Exception {
-		properties.setTNet(true);
+		PNProperties properties = new PNProperties().setTNet(true);
 		assertThat(parse("tNeT"), equalTo(properties));
 	}
 
 	@Test
 	public void test3Bounded() throws Exception {
-		properties.requireKBounded(3);
+		PNProperties properties = new PNProperties().requireKBounded(3);
 		assertThat(parse("3-bounded"), equalTo(properties));
 	}
 
 	@Test
 	public void testOutputNonbranching() throws Exception {
-		properties.setOutputNonbranching(true);
+		PNProperties properties = new PNProperties().setOutputNonbranching(true);
 		assertThat(parse("output-nonbranching"), equalTo(properties));
 	}
 
 	@Test
 	public void testON() throws Exception {
-		properties.setOutputNonbranching(true);
+		PNProperties properties = new PNProperties().setOutputNonbranching(true);
 		assertThat(parse("ON"), equalTo(properties));
 	}
 
 	@Test
 	public void testConflictFree() throws Exception {
-		properties.setConflictFree(true);
+		PNProperties properties = new PNProperties().setConflictFree(true);
 		assertThat(parse("Conflict-Free"), equalTo(properties));
 	}
 
 	@Test
 	public void testCF() throws Exception {
-		properties.setConflictFree(true);
+		PNProperties properties = new PNProperties().setConflictFree(true);
 		assertThat(parse("CF"), equalTo(properties));
 	}
 
 	@Test
 	public void testExtraArgs() throws Exception {
-		properties.setOutputNonbranching(true);
+		PNProperties properties = new PNProperties().setOutputNonbranching(true);
 		assertThat(parse("foo,bAr,on,baz", Arrays.asList("foo", "bar", "foobar", "baz"),
 					Arrays.asList("foo", "bar", "baz")),
 				equalTo(properties));
@@ -127,14 +119,13 @@ public class SynthesizeModuleTest {
 
 	@Test
 	public void testComma() throws Exception {
-		properties.requireSafe();
-		properties.setPure(true);
+		PNProperties properties = new PNProperties().requireSafe().setPure(true);
 		assertThat(parse("safe,none,pure"), equalTo(properties));
 	}
 
 	@Test
 	public void testSpaces() throws Exception {
-		assertThat(parse(" none "), equalTo(properties));
+		assertThat(parse(" none "), equalTo(new PNProperties()));
 	}
 
 	@DataProvider(name = "unparsable")
