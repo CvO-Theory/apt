@@ -210,7 +210,7 @@ public class MinimizePN {
 			// Is there a model?
 			LBool isSat = script.checkSat();
 			if (isSat != LBool.SAT) {
-				assert isSat == LBool.UNSAT;
+				assert isSat == LBool.UNSAT : script.getInfo(":reason-unknown");
 				return null;
 			}
 
