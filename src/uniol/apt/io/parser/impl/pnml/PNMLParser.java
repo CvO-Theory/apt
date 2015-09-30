@@ -115,7 +115,7 @@ public class PNMLParser {
 	}
 
 	// Get a (unique!) child node with a tag from "tags"
-	private Element getChildNode(Element element, String... tags) throws PNMLParserException {
+	private Element getOptionalChildNode(Element element, String... tags) throws PNMLParserException {
 		List<String> tagsList = Arrays.asList(tags);
 		Element cur = nextElement(element.getFirstChild());
 		Element result = null;
@@ -128,8 +128,13 @@ public class PNMLParser {
 			}
 			cur = nextElement(cur.getNextSibling());
 		}
+		return result;
+	}
+
+	private Element getChildNode(Element element, String... tags) throws PNMLParserException {
+		Element result = getOptionalChildNode(element, tags);
 		if (result == null)
-			throw new PNMLParserException(errPrefix + "Did not find any children with a tag from " + tagsList);
+			throw new PNMLParserException(errPrefix + "Did not find any children with a tag from " + Arrays.toString(tags));
 		return result;
 	}
 
@@ -180,8 +185,11 @@ public class PNMLParser {
 	// Create an arc for the given <arc> element
 	private void createArc(Element element) throws PNMLParserException {
 		Flow flow = pn.createFlow(getAttribute(element, "source"), getAttribute(element, "target"));
-		String value = getText(getChildNode(getChildNode(element, "inscription"), "value", "text"));
-		flow.setWeight(parseIntegerWithComma(value));
+		Element insc = getOptionalChildNode(element, "inscription");
+		if (insc != null) {
+			String value = getText(getChildNode(insc, "value", "text"));
+			flow.setWeight(parseIntegerWithComma(value));
+		}
 	}
 
 	// Create all arcs for the given <net> tag
