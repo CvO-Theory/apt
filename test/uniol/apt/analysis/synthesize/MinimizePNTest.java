@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -118,6 +119,18 @@ public class MinimizePNTest {
 	public void testCC1LTSPure() throws Exception {
 		PNProperties properties = new PNProperties().setPure(true);
 		doTestCC1LTS(properties, 3);
+	}
+
+	@Test
+	public void testA() throws Exception {
+		PNProperties properties = new PNProperties();
+		TransitionSystem ts = SynthesizeWordModule.makeTS(Arrays.asList("a"));
+		SynthesizePN synth = mockSynthesize(ts, properties, 2);
+		MinimizePN min = new MinimizePN(synth);
+
+		// This tests the code for a solution with 0 regions
+		assertThat(min.getSeparatingRegions(), hasSize(1));
+		testSolution(properties, synth, min);
 	}
 
 	@Test
