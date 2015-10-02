@@ -178,6 +178,12 @@ public class MinimizePN {
 			// Define separation problems and require all of them to be solved
 			boolean firstProblem = true;
 			for (Pair<State, String> problem : new SynthesizePN.EventStateSeparationProblems(ts)) {
+				if (limit == 0) {
+					// No regions do not solve anything
+					script.assertTerm(script.term("false"));
+					break;
+				}
+
 				// We require the first region to solve the first separation problem
 				int candidateRegions = firstProblem ? 1 : limit;
 				Term[] problemSolved = new Term[candidateRegions];
