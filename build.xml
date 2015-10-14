@@ -33,6 +33,7 @@
 	<target name="antlr.checkforchanges">
 		<uptodate property="antlr.nochanges" targetfile="generated-src/antlr.stamp">
 			<srcfiles dir="src/uniol/apt/io/parser/" includes="**/*.g"/>
+			<srcfiles dir="src/uniol/apt/io/parser/" includes="**/*.g4"/>
 		</uptodate>
 	</target>
 
@@ -75,12 +76,19 @@
 			<arg path="generated-src/uniol/apt/io/parser/impl/petrify/"/>
 			<arg path="src/uniol/apt/io/parser/impl/petrify/PetrifyLTSFormat.g"/>
 		</java>
-		<java classpathref="project.class.path" classname="org.antlr.Tool" fork="true" failonerror="true">
-			<arg value="-verbose"/>
-			<arg value="-make"/>
+		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
 			<arg value="-o"/>
-			<arg path="generated-src/uniol/apt/io/parser/impl/apt/"/>
-			<arg path="src/uniol/apt/io/parser/impl/apt/AptRegexFormat.g"/>
+			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg value="-package"/>
+			<arg value="uniol.apt.io.parser.impl"/>
+			<arg line="${basedir}/src/uniol/apt/io/parser/impl/RegexFormatLexer.g4"/>
+		</java>
+		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
+			<arg value="-o"/>
+			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg value="-package"/>
+			<arg value="uniol.apt.io.parser.impl"/>
+			<arg line="${basedir}/src/uniol/apt/io/parser/impl/RegexFormatParser.g4"/>
 		</java>
 		<!-- Touch the time stamp file which antlr.checkforchanges checks for -->
 		<touch file="generated-src/antlr.stamp" mkdirs="true"/>

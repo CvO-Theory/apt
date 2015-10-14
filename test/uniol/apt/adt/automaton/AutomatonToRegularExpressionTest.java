@@ -22,7 +22,7 @@ package uniol.apt.adt.automaton;
 import org.testng.annotations.Test;
 
 import uniol.apt.TestTSCollection;
-import uniol.apt.io.parser.impl.apt.AptRegexFormatParser;
+import uniol.apt.io.parser.impl.RegexParser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.adt.automaton.AutomatonToRegularExpression.automatonToRegularExpression;
@@ -35,7 +35,7 @@ import static uniol.apt.adt.matcher.Matchers.*;
 public class AutomatonToRegularExpressionTest {
 	private FiniteAutomaton parse(String str) {
 		try {
-			return AptRegexFormatParser.parseString(str);
+			return RegexParser.parseRegex(str);
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -24,25 +24,25 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import org.apache.commons.io.FileUtils;
-import uniol.apt.io.parser.impl.apt.AptRegexFormatParser;
-import uniol.apt.io.parser.impl.exception.FormatException;
+import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.impl.RegexParser;
 
 /**
- * A tester for the AptRegexFormatParser.
+ * A tester for the RegexParser.
  * @author Uli Schlachter
  */
-public class APTRegexParserTester extends ParserTester {
+public class RegexParserTester extends ParserTester {
 
 	/** Construct a new tester */
-	public APTRegexParserTester(File outputDir) throws FileNotFoundException, UnsupportedEncodingException {
-		super(outputDir, "APTRegexParserTester");
+	public RegexParserTester(File outputDir) throws FileNotFoundException, UnsupportedEncodingException {
+		super(outputDir, "RegexParserTester");
 	}
 
 	@Override
 	public void parse(File file) throws Exception, UnparsableException {
 		try {
-			AptRegexFormatParser.parseString(FileUtils.readFileToString(file));
-		} catch (FormatException | IOException e) {
+			RegexParser.parseRegex(FileUtils.readFileToString(file));
+		} catch (ParseException|IOException e) {
 			throw new UnparsableException(e);
 		}
 	}

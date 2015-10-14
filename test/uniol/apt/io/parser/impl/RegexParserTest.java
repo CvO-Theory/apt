@@ -17,11 +17,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.io.parser.impl.apt;
+package uniol.apt.io.parser.impl;
 
 import uniol.apt.adt.automaton.FiniteAutomaton;
 import uniol.apt.adt.automaton.Symbol;
-import uniol.apt.io.parser.impl.exception.LexerParserException;
+import uniol.apt.io.parser.ParseException;
 
 import org.testng.annotations.Test;
 
@@ -32,9 +32,9 @@ import static uniol.apt.adt.matcher.Matchers.*;
 /**
  * @author Uli Schlachter
  */
-public class AptRegexFormatParserTest {
+public class RegexParserTest {
 	static private void test(String regex, FiniteAutomaton expected) throws Exception {
-		FiniteAutomaton aut = AptRegexFormatParser.parseString(regex);
+		FiniteAutomaton aut = RegexParser.parseRegex(regex);
 		assertThat(findWordDifference(aut, expected), nullValue());
 	}
 
@@ -87,9 +87,9 @@ public class AptRegexFormatParserTest {
 				concatenate(getAtomic("a"), getAtomic("b")));
 	}
 
-	@Test(expectedExceptions = { LexerParserException.class })
+	@Test(expectedExceptions = { ParseException.class })
 	public void testComment4() throws Exception {
-		AptRegexFormatParser.parseString("/a");
+		RegexParser.parseRegex("/a");
 	}
 
 	@Test
@@ -97,39 +97,39 @@ public class AptRegexFormatParserTest {
 		test("a // Missing newline after comment", getAtomic("a"));
 	}
 
-	@Test(expectedExceptions = { LexerParserException.class })
+	@Test(expectedExceptions = { ParseException.class })
 	public void testClosingParen() throws Exception {
-		AptRegexFormatParser.parseString(")");
+		RegexParser.parseRegex(")");
 	}
 
-	@Test(expectedExceptions = { LexerParserException.class })
+	@Test(expectedExceptions = { ParseException.class })
 	public void testClosingParenAfterExpr() throws Exception {
-		AptRegexFormatParser.parseString("(ab)*)");
+		RegexParser.parseRegex("(ab)*)");
 	}
 
-	@Test(expectedExceptions = { LexerParserException.class })
+	@Test(expectedExceptions = { ParseException.class })
 	public void testMissingClosingParen() throws Exception {
-		AptRegexFormatParser.parseString("(a*|b+");
+		RegexParser.parseRegex("(a*|b+");
 	}
 
-	@Test(expectedExceptions = { LexerParserException.class })
+	@Test(expectedExceptions = { ParseException.class })
 	public void testNotAllowedCharacter() throws Exception {
-		AptRegexFormatParser.parseString("ab?@d");
+		RegexParser.parseRegex("ab?@d");
 	}
 
-	@Test(expectedExceptions = { LexerParserException.class })
+	@Test(expectedExceptions = { ParseException.class })
 	public void testBrokenID() throws Exception {
-		AptRegexFormatParser.parseString("<ab");
+		RegexParser.parseRegex("<ab");
 	}
 
-	@Test(expectedExceptions = { LexerParserException.class })
+	@Test(expectedExceptions = { ParseException.class })
 	public void testBrokenID2() throws Exception {
-		AptRegexFormatParser.parseString("<a<");
+		RegexParser.parseRegex("<a<");
 	}
 
-	@Test(expectedExceptions = { LexerParserException.class })
+	@Test(expectedExceptions = { ParseException.class })
 	public void testBrokenID3() throws Exception {
-		AptRegexFormatParser.parseString("<");
+		RegexParser.parseRegex("<");
 	}
 }
 

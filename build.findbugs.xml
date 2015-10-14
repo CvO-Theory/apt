@@ -22,6 +22,7 @@
 			<fileset dir="classes">
 				<include name="**/*.class" />
 				<exclude name="uniol/apt/io/parser/impl/apt/*.class" />
+				<exclude name="uniol/apt/io/parser/impl/RegexFormat*.class" />
 			</fileset>
 			<fileset dir="test-classes">
 				<include name="**/*.class" />

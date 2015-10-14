@@ -20,8 +20,8 @@
 package uniol.apt.ui.impl.parameter;
 
 import uniol.apt.adt.automaton.FiniteAutomaton;
-import uniol.apt.io.parser.impl.apt.AptRegexFormatParser;
-import uniol.apt.io.parser.impl.exception.FormatException;
+import uniol.apt.io.parser.impl.RegexParser;
+import uniol.apt.io.parser.ParseException;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.ParameterTransformation;
 
@@ -33,9 +33,9 @@ public class FiniteAutomatonParameterTransformation implements ParameterTransfor
 	@Override
 	public FiniteAutomaton transform(String regularExpression) throws ModuleException {
 		try {
-			return AptRegexFormatParser.parseString(regularExpression);
-		} catch (FormatException e) {
-			throw new ModuleException(e.getMessage(), e);
+			return RegexParser.parseRegex(regularExpression);
+		} catch (ParseException ex) {
+			throw new ModuleException(ex.getMessage(), ex);
 		}
 	}
 
