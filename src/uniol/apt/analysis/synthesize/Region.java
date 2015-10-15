@@ -51,18 +51,21 @@ public class Region {
 		this.utility = utility;
 		this.backwardWeights = Collections.unmodifiableList(new ArrayList<>(backwardWeights));
 		this.forwardWeights = Collections.unmodifiableList(new ArrayList<>(forwardWeights));
-
-		assert backwardWeights.size() == utility.getNumberOfEvents();
-		assert forwardWeights.size() == utility.getNumberOfEvents();
-
-		for (int i : backwardWeights)
-			assert i >= 0;
-		for (int i : forwardWeights)
-			assert i >= 0;
-
 		this.initialMarking = initialMarking;
 
-		assert this.initialMarking == null || this.initialMarking >= 0;
+		int numberEvents = utility.getNumberOfEvents();
+		if (backwardWeights.size() != numberEvents)
+			throw new IllegalArgumentException("There must be as many backward weights as events");
+		if (forwardWeights.size() != numberEvents)
+			throw new IllegalArgumentException("There must be as many forward weights as events");
+		for (int i : backwardWeights)
+			if (i < 0)
+				throw new IllegalArgumentException("Backward weight i=" + i + " must not be negative");
+		for (int i : forwardWeights)
+			if (i < 0)
+				throw new IllegalArgumentException("Forward weight i=" + i + " must not be negative");
+		if (initialMarking != null && initialMarking < 0)
+			throw new IllegalArgumentException("Initial marking must not be negative");
 	}
 
 	/**
