@@ -64,6 +64,9 @@ class InequalitySystemSeparation implements Separation {
 	private final Term[] regionBackwardWeights;
 	private final Term[] regionForwardWeights;
 
+	private final static BigInteger INTEGER_MIN_VALUE = BigInteger.valueOf(Integer.MIN_VALUE);
+	private final static BigInteger INTEGER_MAX_VALUE = BigInteger.valueOf(Integer.MAX_VALUE);
+
 	/**
 	 * Construct a new instance for solving separation problems.
 	 * @param utility The region utility to use.
@@ -216,15 +219,20 @@ class InequalitySystemSeparation implements Separation {
 	}
 
 	private int getIntValue(Model model, Term term) {
-		term = model.evaluate(term);
-		assert term instanceof ConstantTerm : term;
+		Term evald = model.evaluate(term);
+		assert evald instanceof ConstantTerm : evald;
 
-		Object value = ((ConstantTerm) term).getValue();
+		Object value = ((ConstantTerm) evald).getValue();
 		assert value instanceof Rational : value;
 
 		Rational rat = (Rational) value;
 		assert rat.denominator().equals(BigInteger.ONE) : value;
-		return rat.numerator().intValue();
+
+		BigInteger num = rat.numerator();
+		if (num.compareTo(INTEGER_MAX_VALUE) > 0 || num.compareTo(INTEGER_MIN_VALUE) < 0)
+			throw new ArithmeticException("Value for term " + term.toString()
+					+ " not representable as int: " + num.toString());
+		return num.intValue();
 	}
 }
 
