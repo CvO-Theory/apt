@@ -97,6 +97,20 @@ public class PetriNetTest {
 	}
 
 	@Test
+	public void testFireOverflow() {
+		int weight = Integer.MAX_VALUE / 2;
+		PetriNet pn = new PetriNet();
+		Place p = pn.createPlace();
+		Transition t = pn.createTransition();
+		pn.createFlow(t, p, weight);
+
+		Marking m = pn.getInitialMarkingCopy();
+		for (int i = 0; i < 8; i++)
+			m = t.fire(m);
+		assertEquals(m.getToken(p).getValue(), 8 * (long) weight);
+	}
+
+	@Test
 	public void testCopying() {
 		PetriNet pn = new PetriNet("testCopying");
 		assertEquals(0, pn.getPlaceRev());
