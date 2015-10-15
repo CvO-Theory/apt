@@ -38,12 +38,12 @@ public class BoundedTest {
 		assertThat(pn.getInitialMarkingCopy().fire(
 					result.getSequenceExceeding(42).toArray(new Transition[0]))
 				.getToken(result.unboundedPlace).getValue(),
-				greaterThan(42));
+				greaterThan(42l));
 	}
 
 	private void testBounded(PetriNet pn, int k) {
 		BoundedResult result = Bounded.checkBounded(pn);
-		assertThat(result.k, equalTo(Integer.valueOf(k)));
+		assertThat(result.k, equalTo(Long.valueOf(k)));
 		assertThat(result.isSafe(), equalTo(k <= 1));
 		assertThat(result.isKBounded(k), is(true));
 		assertThat(result.getSequenceExceeding(k), is(nullValue()));
@@ -54,7 +54,7 @@ public class BoundedTest {
 			assertThat(pn.getInitialMarkingCopy().fire(
 						result.getSequenceExceeding(k - 1).toArray(new Transition[0]))
 					.getToken(result.unboundedPlace).getValue(),
-					greaterThan(k-1));
+					greaterThan(k-1l));
 		}
 	}
 

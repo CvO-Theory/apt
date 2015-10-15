@@ -48,11 +48,11 @@ public class Separation {
 	 * @param verbose if true method will not stop after first counterexample
 	 * @throws UnboundedException Unbounded exception
 	 */
-	public Separation(PetriNet petriNet, boolean stronglyCheck, int initK,
+	public Separation(PetriNet petriNet, boolean stronglyCheck, long initK,
 			ArrayList<String> chosenFiringSequence, boolean verbose) throws UnboundedException {
 		// calculate the largest k
 		LargestK kCalculator = new LargestK(petriNet);
-		int kMax = kCalculator.computeLargestK();
+		long kMax = kCalculator.computeLargestK();
 		boolean foundNonSeparableExample = false;
 
 		// auto set if initK <= 0:
@@ -81,7 +81,7 @@ public class Separation {
 				result.setNoSequenceOfNet(true);
 				result.setSeparable(false);
 			} else { // is a sequence
-				for (int i = initK; i > 1; i--) {  // test k and all divisor of k
+				for (long i = initK; i > 1; i--) {  // test k and all divisor of k
 					if ((initK % i) == 0) { // is it a divisor of k?
 						SeparationLogic separation = new SeparationLogic(
 							petriNet, stronglyCheck, i, chosenFiringSequence, 0, true);
@@ -118,11 +118,11 @@ public class Separation {
 	 * @param verbose outputs every firing sequence
 	 * @throws UnboundedException Unbounded exception
 	 */
-	public Separation(PetriNet petriNet, boolean stronglyCheck, int initK,
+	public Separation(PetriNet petriNet, boolean stronglyCheck, long initK,
 			int maxLength, boolean verbose) throws UnboundedException {
 		// calculate the largest k
 		LargestK kCalculator = new LargestK(petriNet);
-		int kMax = kCalculator.computeLargestK();
+		long kMax = kCalculator.computeLargestK();
 		boolean foundNonSeparableExample = false;
 
 		// auto set if initK == 0:
@@ -147,7 +147,7 @@ public class Separation {
 			result.setkNoDivisorOfKMax(true);
 			result.setSeparable(false);
 		} else { // k is ok
-			for (int i = initK; i > 1; i--) { // test k and all divisor of k
+			for (long i = initK; i > 1; i--) { // test k and all divisor of k
 				if ((initK % i) == 0) { // is it a divisor of k?
 					SeparationLogic separation = new SeparationLogic(
 						petriNet, stronglyCheck, i, null, maxLength, false);

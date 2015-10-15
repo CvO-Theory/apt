@@ -61,7 +61,7 @@ public class KBoundedModule extends AbstractModule {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("k", Integer.class);
+		outputSpec.addReturnValue("k", Long.class);
 		outputSpec.addReturnValue("bounded", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("witness_place", Place.class);
 		outputSpec.addReturnValue("witness_firing_sequence", FiringSequence.class);
@@ -72,7 +72,7 @@ public class KBoundedModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 		BoundedResult result = Bounded.checkBounded(pn);
-		output.setReturnValue("k", Integer.class, result.k);
+		output.setReturnValue("k", Long.class, result.k);
 		output.setReturnValue("bounded", Boolean.class, result.isBounded());
 		output.setReturnValue("witness_place", Place.class, result.unboundedPlace);
 		output.setReturnValue("witness_firing_sequence", FiringSequence.class,

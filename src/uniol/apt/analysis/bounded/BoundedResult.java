@@ -41,7 +41,7 @@ public class BoundedResult {
 	public final Place unboundedPlace;
 
 	// The smallest k for which the Petri net is k-bounded, or null if the net is unbounded.
-	public final Integer k;
+	public final Long k;
 
 	// If the Petri net is bounded, this contains the firing sequence reaching the state where the unboundedPlace
 	// has k tokens (the maximum). If the net is unbounded (k is null), then this contains the firing sequence that
@@ -61,7 +61,7 @@ public class BoundedResult {
 	 * @param sequenceToCovered Firing sequence reaching a special marking
 	 * @param cycle Firing sequence producing arbitrarily many tokens after sequenceToCovered
 	 */
-	public BoundedResult(PetriNet pn, Place place, Integer k, List<Transition> sequenceToCovered,
+	public BoundedResult(PetriNet pn, Place place, Long k, List<Transition> sequenceToCovered,
 			List<Transition> cycle) {
 		this.pn = pn;
 		this.unboundedPlace = place;

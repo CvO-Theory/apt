@@ -378,9 +378,9 @@ public class CheckAttributes {
 	 * @param k k
 	 * @return bool
 	 */
-	private boolean checkKMarking(int k) {
+	private boolean checkKMarking(long k) {
 		LargestK largestK = new LargestK(this.petriNet);
-		Integer maxK = largestK.computeLargestK();
+		long maxK = largestK.computeLargestK();
 
 		if ((maxK % k) == 0) {
 			return true;
@@ -397,10 +397,10 @@ public class CheckAttributes {
 	 *              true: is not separable
 	 *              false: is separable OR unbounded OR k not ok OR do not know
 	 */
-	private boolean checkNotkSeparable(boolean stronglyCheck, int k, int maxLength) {
+	private boolean checkNotkSeparable(boolean stronglyCheck, long k, int maxLength) {
 		try {
 			LargestK largestK = new LargestK(this.petriNet);
-			Integer maxK = largestK.computeLargestK();
+			long maxK = largestK.computeLargestK();
 
 			// is k "ok"?
 			if ((maxK % k) != 0) {

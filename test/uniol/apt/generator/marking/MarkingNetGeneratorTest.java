@@ -82,19 +82,19 @@ public class MarkingNetGeneratorTest {
 	@Test
 	public void testNoTransitionOnePlaceNet() {
 		PetriNet pn = getNoTransitionOnePlaceNet();
-		Map<String, Integer> marking = new HashMap<>();
+		Map<String, Long> marking = new HashMap<>();
 		Collection<Matcher<? super Marking>> markings = new LinkedList<>();
 
-		marking.put("p1", 0);
+		marking.put("p1", 0l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 1);
+		marking.put("p1", 1l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 2);
+		marking.put("p1", 2l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 3);
+		marking.put("p1", 3l);
 		markings.add(markingThatIs(marking));
 
 		testNet(pn, 3, markings);
@@ -112,48 +112,48 @@ public class MarkingNetGeneratorTest {
 	@Test
 	public void testNonPersistentNet() {
 		PetriNet pn = getNonPersistentNet();
-		Map<String, Integer> marking = new HashMap<>();
+		Map<String, Long> marking = new HashMap<>();
 		Collection<Matcher<? super Marking>> markings = new LinkedList<>();
 
 		// As you see, the number of possible initial markings gets quite large quite fast
-		marking.put("p1", 0);
-		marking.put("p2", 0);
+		marking.put("p1", 0l);
+		marking.put("p2", 0l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 1);
-		marking.put("p2", 0);
+		marking.put("p1", 1l);
+		marking.put("p2", 0l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 2);
-		marking.put("p2", 0);
+		marking.put("p1", 2l);
+		marking.put("p2", 0l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 3);
-		marking.put("p2", 0);
+		marking.put("p1", 3l);
+		marking.put("p2", 0l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 0);
-		marking.put("p2", 1);
+		marking.put("p1", 0l);
+		marking.put("p2", 1l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 1);
-		marking.put("p2", 1);
+		marking.put("p1", 1l);
+		marking.put("p2", 1l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 2);
-		marking.put("p2", 1);
+		marking.put("p1", 2l);
+		marking.put("p2", 1l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 0);
-		marking.put("p2", 2);
+		marking.put("p1", 0l);
+		marking.put("p2", 2l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 1);
-		marking.put("p2", 2);
+		marking.put("p1", 1l);
+		marking.put("p2", 2l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 0);
-		marking.put("p2", 3);
+		marking.put("p1", 0l);
+		marking.put("p2", 3l);
 		markings.add(markingThatIs(marking));
 
 		testNet(pn, 3, markings);
@@ -162,50 +162,50 @@ public class MarkingNetGeneratorTest {
 	@Test
 	public void testPersistentBiCFNet() {
 		PetriNet pn = getPersistentBiCFNet();
-		Map<String, Integer> marking = new HashMap<>();
+		Map<String, Long> marking = new HashMap<>();
 		Collection<Matcher<? super Marking>> markings = new LinkedList<>();
 
 		// As you see, the number of possible initial markings gets quite large quite fast
-		marking.put("p1", 0);
-		marking.put("p2", 0);
-		marking.put("p3", 0);
-		marking.put("p4", 0);
-		marking.put("p5", 0);
+		marking.put("p1", 0l);
+		marking.put("p2", 0l);
+		marking.put("p3", 0l);
+		marking.put("p4", 0l);
+		marking.put("p5", 0l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 1);
-		marking.put("p2", 0);
-		marking.put("p3", 0);
-		marking.put("p4", 0);
-		marking.put("p5", 0);
+		marking.put("p1", 1l);
+		marking.put("p2", 0l);
+		marking.put("p3", 0l);
+		marking.put("p4", 0l);
+		marking.put("p5", 0l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 0);
-		marking.put("p2", 1);
-		marking.put("p3", 0);
-		marking.put("p4", 0);
-		marking.put("p5", 0);
+		marking.put("p1", 0l);
+		marking.put("p2", 1l);
+		marking.put("p3", 0l);
+		marking.put("p4", 0l);
+		marking.put("p5", 0l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 0);
-		marking.put("p2", 0);
-		marking.put("p3", 1);
-		marking.put("p4", 0);
-		marking.put("p5", 0);
+		marking.put("p1", 0l);
+		marking.put("p2", 0l);
+		marking.put("p3", 1l);
+		marking.put("p4", 0l);
+		marking.put("p5", 0l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 0);
-		marking.put("p2", 0);
-		marking.put("p3", 0);
-		marking.put("p4", 1);
-		marking.put("p5", 0);
+		marking.put("p1", 0l);
+		marking.put("p2", 0l);
+		marking.put("p3", 0l);
+		marking.put("p4", 1l);
+		marking.put("p5", 0l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 0);
-		marking.put("p2", 0);
-		marking.put("p3", 0);
-		marking.put("p4", 0);
-		marking.put("p5", 1);
+		marking.put("p1", 0l);
+		marking.put("p2", 0l);
+		marking.put("p3", 0l);
+		marking.put("p4", 0l);
+		marking.put("p5", 1l);
 		markings.add(markingThatIs(marking));
 
 		testNet(pn, 1, markings);
@@ -217,24 +217,24 @@ public class MarkingNetGeneratorTest {
 		Place p1 = pn.getPlace("p1");
 		Place p2 = pn.getPlace("p2");
 		Collection<Set<Place>> requiredPlaces = new LinkedList<>();
-		Map<String, Integer> marking = new HashMap<>();
+		Map<String, Long> marking = new HashMap<>();
 		Collection<Matcher<? super Marking>> markings = new LinkedList<>();
 
 		requiredPlaces.add(new HashSet<>(asList(p1, p2)));
 
 		// The constraint makes this a lot easier
-		marking.put("p1", 1);
-		marking.put("p2", 0);
-		marking.put("p3", 0);
-		marking.put("p4", 0);
-		marking.put("p5", 0);
+		marking.put("p1", 1l);
+		marking.put("p2", 0l);
+		marking.put("p3", 0l);
+		marking.put("p4", 0l);
+		marking.put("p5", 0l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 0);
-		marking.put("p2", 1);
-		marking.put("p3", 0);
-		marking.put("p4", 0);
-		marking.put("p5", 0);
+		marking.put("p1", 0l);
+		marking.put("p2", 1l);
+		marking.put("p3", 0l);
+		marking.put("p4", 0l);
+		marking.put("p5", 0l);
 		markings.add(markingThatIs(marking));
 
 		testNet(pn, 1, markings, requiredPlaces);
@@ -258,17 +258,17 @@ public class MarkingNetGeneratorTest {
 	@Test
 	public void testDeadLockNetAddToken() {
 		PetriNet pn = getDeadlockNet();
-		Map<String, Integer> marking = new HashMap<>();
+		Map<String, Long> marking = new HashMap<>();
 		Collection<Matcher<? super Marking>> markings = new LinkedList<>();
 
 		// As you see, the number of possible initial markings gets quite large quite fast
-		marking.put("p1", 1);
+		marking.put("p1", 1l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 2);
+		marking.put("p1", 2l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 3);
+		marking.put("p1", 3l);
 		markings.add(markingThatIs(marking));
 
 		testAddToNet(pn, 2, markings);
@@ -279,17 +279,17 @@ public class MarkingNetGeneratorTest {
 		PetriNet pn = getDeadlockNet();
 		Place p1 = pn.getPlace("p1");
 		Collection<Set<Place>> requiredPlaces = new LinkedList<>();
-		Map<String, Integer> marking = new HashMap<>();
+		Map<String, Long> marking = new HashMap<>();
 		Collection<Matcher<? super Marking>> markings = new LinkedList<>();
 
 		requiredPlaces.add(new HashSet<>(asList(p1)));
 
 		// At least one token must be added, so p1=1 is forbidden (this would be the initial marking)
 
-		marking.put("p1", 2);
+		marking.put("p1", 2l);
 		markings.add(markingThatIs(marking));
 
-		marking.put("p1", 3);
+		marking.put("p1", 3l);
 		markings.add(markingThatIs(marking));
 
 		testAddToNet(pn, 2, markings, requiredPlaces);

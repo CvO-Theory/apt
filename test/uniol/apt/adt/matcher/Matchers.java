@@ -110,7 +110,7 @@ public class Matchers extends org.hamcrest.Matchers {
 		return ArcThatConnectsMatcher.arcThatConnects(sourceMatcher, targetMatcher);
 	}
 
-	public static <T> Matcher<Marking> markingThatIs(Map<String, Integer> marking) {
+	public static <T> Matcher<Marking> markingThatIs(Map<String, Long> marking) {
 		return MarkingThatIsMatcher.markingThatIs(marking);
 	}
 

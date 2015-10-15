@@ -57,8 +57,8 @@ public class LargestK {
 	 * @return greatest common divisor
 	 *         ( 0 if dividend or divisor are 0 )
 	 */
-	public int computeGreatestCommonDivisor(int dividend , int divisor) {
-		int lastDivisor = divisor;
+	public long computeGreatestCommonDivisor(long dividend , long divisor) {
+		long lastDivisor = divisor;
 
 		if ((divisor == 0) || (dividend == 0))
 			return 0;
@@ -81,15 +81,15 @@ public class LargestK {
 	 *
 	 * @return Value of k
 	 */
-	public int computeLargestK() {
+	public long computeLargestK() {
 		//Marking marking = this.petriNet.getMarking();
 
 		// get values of all marks
-		HashSet<Integer> markValues = new HashSet<>();
+		HashSet<Long> markValues = new HashSet<>();
 		// over all places
 		for (Place place : petriNet.getPlaces()) {
 			// get value and save it (except value is zero)
-			int value = place.getInitialToken().getValue();
+			long value = place.getInitialToken().getValue();
 			//int value = marking.getToken(place.getId()).getValue();
 
 			if (value != 0) {
@@ -98,8 +98,8 @@ public class LargestK {
 		}
 
 		// greatest k is greatest common divisor of all different mark values
-		int k = 0;
-		for (int markValue : markValues) {
+		long k = 0;
+		for (long markValue : markValues) {
 			if (k == 0) {
 				k = markValue;
 			} else {

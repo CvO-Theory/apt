@@ -29,11 +29,11 @@ import java.util.Objects;
  */
 public class Token implements Comparable<Token> {
 
-	private final int v;
+	private final long v;
 	public final static Token OMEGA = new Token(-1, false);
 	public final static Token ZERO = new Token(0);
 
-	private Token(int v, boolean checkValue) {
+	private Token(long v, boolean checkValue) {
 		if (checkValue && v < 0) {
 			throw new IllegalArgumentException("v<0");
 		}
@@ -47,7 +47,7 @@ public class Token implements Comparable<Token> {
 	 * <p/>
 	 * @throws IllegalArgumentException if the given value is less than zero.
 	 */
-	public Token(int v) {
+	public Token(long v) {
 		this(v, true);
 	}
 
@@ -77,7 +77,7 @@ public class Token implements Comparable<Token> {
 	 * <p/>
 	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
 	 */
-	Token add(int t) {
+	Token add(long t) {
 		if (this.isOmega())
 			return this;
 		if (this.v + t < 0) {
@@ -91,7 +91,7 @@ public class Token implements Comparable<Token> {
 	 * <p/>
 	 * @return if isOmega() == true then -1 else the natural number of token count.
 	 */
-	public int getValue() {
+	public long getValue() {
 		return this.v;
 	}
 
@@ -106,7 +106,7 @@ public class Token implements Comparable<Token> {
 
 	@Override
 	public int hashCode() {
-		return v;
+		return (int) v;
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public class Token implements Comparable<Token> {
 		if (this.isOmega()) {
 			return "OMEGA";
 		} else {
-			return Integer.toString(v);
+			return Long.toString(v);
 		}
 	}
 

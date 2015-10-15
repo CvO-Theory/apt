@@ -57,7 +57,7 @@ public class Bounded {
 		CoverabilityGraph cover = CoverabilityGraph.get(pn);
 		List<Transition> sequence = new FiringSequence();
 		Place witness = null;
-		int k = 0;
+		long k = 0;
 
 		// Now check all markings and places and remember the largest token count that is seen.
 		for (CoverabilityGraphNode n : cover.getNodes()) {

@@ -53,7 +53,7 @@ public class SynetRenderer implements PNTSRenderer {
 		List<Place> places = new ArrayList<>();
 		for (Place p : pn.getPlaces()) {
 			output.append(String.format("place %s", p.getId()));
-			int initialMarking = pn.getInitialMarkingCopy().getToken(p).getValue();
+			long initialMarking = pn.getInitialMarkingCopy().getToken(p).getValue();
 			if (initialMarking > 0) {
 				output.append(String.format(" := %d", initialMarking));
 			}

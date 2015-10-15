@@ -37,7 +37,7 @@ import uniol.apt.analysis.coverability.CoverabilityGraph;
  */
 public class SeparationLogic {
 	private final PetriNet petriNet_;
-	private final int k;
+	private final long k;
 	private final int maxFiringSequenceLength;
 
 	private ArrayList<ArrayList<String>> firableSequences; // eg: [[t1,t2],[t2,t3]]
@@ -68,7 +68,7 @@ public class SeparationLogic {
 	 * @param fullOutput outputs every firing sequence
 	 * @throws UnboundedException Unbounded exception
 	 */
-	public SeparationLogic(PetriNet petriNet, boolean stronglyCheck, int initK,
+	public SeparationLogic(PetriNet petriNet, boolean stronglyCheck, long initK,
 			ArrayList<String> chosenFiringSequence,
 			int maxLength, boolean fullOutput) throws UnboundedException {
 		petriNet_ = petriNet;
@@ -86,7 +86,7 @@ public class SeparationLogic {
 		// k handling
 		// calculate the largest k
 		LargestK kCalculator = new LargestK(petriNet);
-		int kMax = kCalculator.computeLargestK();
+		long kMax = kCalculator.computeLargestK();
 
 		// auto set if k <= 0:
 		if (initK <= 0) {

@@ -71,9 +71,9 @@ public class LargestKModule extends AbstractModule {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 
 		LargestK largestK = new LargestK(pn);
-		Integer returnValue = largestK.computeLargestK();
+		long returnValue = largestK.computeLargestK();
 
-		output.setReturnValue("Largest k for which M0 is a k-marking", Integer.class, returnValue);
+		output.setReturnValue("Largest k for which M0 is a k-marking", Long.class, returnValue);
 	}
 
 	@Override

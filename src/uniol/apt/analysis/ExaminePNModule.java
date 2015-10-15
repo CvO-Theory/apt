@@ -80,10 +80,10 @@ public class ExaminePNModule extends AbstractModule {
 		outputSpec.addReturnValue("s_net", Boolean.class);
 		outputSpec.addReturnValue("output_nonbranching", Boolean.class);
 		outputSpec.addReturnValue("conflict_free", Boolean.class);
-		outputSpec.addReturnValue("k-marking", Integer.class);
+		outputSpec.addReturnValue("k-marking", Long.class);
 		outputSpec.addReturnValue("safe", Boolean.class);
 		outputSpec.addReturnValue("bounded", Boolean.class);
-		outputSpec.addReturnValue("k-bounded", Integer.class);
+		outputSpec.addReturnValue("k-bounded", Long.class);
 		outputSpec.addReturnValue("isolated_elements", Boolean.class);
 		outputSpec.addReturnValue("strongly_connected", Boolean.class);
 		outputSpec.addReturnValue("weakly_connected", Boolean.class);
@@ -115,12 +115,12 @@ public class ExaminePNModule extends AbstractModule {
 			output.setReturnValue("s_net", Boolean.class, new SNet(pn).testPlainSNet());
 			output.setReturnValue("conflict_free", Boolean.class, new ConflictFree(pn).check());
 		}
-		output.setReturnValue("k-marking", Integer.class, new LargestK(pn).computeLargestK());
+		output.setReturnValue("k-marking", Long.class, new LargestK(pn).computeLargestK());
 		output.setReturnValue("output_nonbranching", Boolean.class, new OutputNonBranching(pn).check());
 		output.setReturnValue("safe", Boolean.class, result.isSafe());
 		output.setReturnValue("bounded", Boolean.class, result.isBounded());
 		if (result.isBounded()) {
-			output.setReturnValue("k-bounded", Integer.class, result.k);
+			output.setReturnValue("k-bounded", Long.class, result.k);
 		}
 		output.setReturnValue("isolated_elements", Boolean.class, !Connectivity.findIsolatedElements(pn).isEmpty());
 		output.setReturnValue("strongly_connected", Boolean.class, Connectivity.isStronglyConnected(pn));

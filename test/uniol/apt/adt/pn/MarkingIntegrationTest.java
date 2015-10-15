@@ -63,7 +63,7 @@ public class MarkingIntegrationTest {
 		assertEquals(pn.getInitialMarkingCopy().getToken(p), new Token(0));
 	}
 
-	private int getTokenCountConcurrentDiamondNet(Marking m) {
+	private long getTokenCountConcurrentDiamondNet(Marking m) {
 		return m.getToken("p1").getValue() + m.getToken("p2").getValue();
 	}
 

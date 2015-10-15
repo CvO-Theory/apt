@@ -47,7 +47,7 @@ public class MarkingReturnValueTransformation implements ReturnValueTransformati
 				if (v.isOmega()) {
 					output.append("OMEGA");
 				} else {
-					output.append(Integer.toString(v.getValue()));
+					output.append(Long.toString(v.getValue()));
 				}
 				output.append(" ");
 			}

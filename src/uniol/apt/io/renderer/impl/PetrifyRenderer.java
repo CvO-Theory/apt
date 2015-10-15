@@ -66,7 +66,7 @@ public class PetrifyRenderer implements PNTSRenderer {
 		sb.append("\n");
 
 		String marking = "";
-		int mark = 0;
+		long mark = 0;
 		Set<Place> places = pn.getPlaces();
 		int placesCounter = 0;
 		for (Place p : places) {

@@ -232,7 +232,7 @@ public class MarkingTest {
 		// The bug that we are testing for: initial is a marking on pn2, but contains Token for places from net
 		// pn. Thus, we must explicitly call getToken(Place) to test for this bug.
 		Marking initial = pn2.getInitialMarkingCopy();
-		assertThat(initial.getToken(p2).getValue(), equalTo(1));
+		assertThat(initial.getToken(p2).getValue(), equalTo(1l));
 	}
 
 	@Test

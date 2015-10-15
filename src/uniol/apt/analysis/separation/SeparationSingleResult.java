@@ -34,7 +34,7 @@ public class SeparationSingleResult {
 
 	private boolean           isSeparable_;
 	private boolean           isStronglyCheck_; // or weakly
-	private int               k;
+	private long              k;
 
 	private Set<String>       notExistingTransitions;
 	private boolean           isNetUnbounded_;
@@ -287,7 +287,7 @@ public class SeparationSingleResult {
 	 *
 	 * @return k
 	 */
-	public int getK() {
+	public long getK() {
 		return k;
 	}
 
@@ -296,7 +296,7 @@ public class SeparationSingleResult {
 	 *
 	 * @param k k
 	 */
-	public void setK(int k) {
+	public void setK(long k) {
 		this.k = k;
 	}
 

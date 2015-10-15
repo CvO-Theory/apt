@@ -40,7 +40,7 @@ public class ComputeGreatestCommonDivisorTest {
 	public void teardown() {
 	}
 
-	private int testComputeGreatestCommonDivisor(int value1, int value2) {
+	private long testComputeGreatestCommonDivisor(int value1, int value2) {
 		LargestK largestK = new LargestK(null);
 
 		return largestK.computeGreatestCommonDivisor(value1, value2);

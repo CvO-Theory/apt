@@ -36,8 +36,8 @@ public class SeparationResult {
 
 	private boolean isStronglyCheck_; // or weakly
 
-	private int kMax;
-	private int k;
+	private long kMax;
+	private long k;
 
 	private ArrayList<String> testedSequence;
 	private boolean           testedJustASingleSequence;
@@ -218,7 +218,7 @@ public class SeparationResult {
 	 *
 	 * @return kMax
 	 */
-	public int getkMax() {
+	public long getkMax() {
 		return kMax;
 	}
 
@@ -227,7 +227,7 @@ public class SeparationResult {
 	 *
 	 * @param kMax kMax
 	 */
-	public void setkMax(int kMax) {
+	public void setkMax(long kMax) {
 		this.kMax = kMax;
 	}
 
@@ -236,7 +236,7 @@ public class SeparationResult {
 	 *
 	 * @return k
 	 */
-	public int getK() {
+	public long getK() {
 		return k;
 	}
 
@@ -245,7 +245,7 @@ public class SeparationResult {
 	 *
 	 * @param k k
 	 */
-	public void setK(int k) {
+	public void setK(long k) {
 		this.k = k;
 	}
 

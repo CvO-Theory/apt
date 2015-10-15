@@ -66,21 +66,21 @@ public class MarkingIterableTest {
 		Collection<Matcher<? super PetriNet>> netMatchers = new LinkedList<>();
 		netMatchers.add(both(netWithSameStructureAs(pn1)).and(netWithInitialMarkingThat(markingThatIs(mark1))));
 
-		Map<String, Integer> marking = new HashMap<>();
+		Map<String, Long> marking = new HashMap<>();
 
-		marking.put("p1", 0);
+		marking.put("p1", 0l);
 		netMatchers.add(both(netWithSameStructureAs(pn2)).and(
 					netWithInitialMarkingThat(markingThatIs(marking))));
 
-		marking.put("p1", 1);
+		marking.put("p1", 1l);
 		netMatchers.add(both(netWithSameStructureAs(pn2)).and(
 					netWithInitialMarkingThat(markingThatIs(marking))));
 
-		marking.put("p1", 2);
+		marking.put("p1", 2l);
 		netMatchers.add(both(netWithSameStructureAs(pn2)).and(
 					netWithInitialMarkingThat(markingThatIs(marking))));
 
-		marking.put("p1", 3);
+		marking.put("p1", 3l);
 		netMatchers.add(both(netWithSameStructureAs(pn2)).and(
 					netWithInitialMarkingThat(markingThatIs(marking))));
 

@@ -42,7 +42,7 @@ public class LargestKTest {
 	public void teardown() {
 	}
 
-	private int testNet(PetriNet pn) {
+	private long testNet(PetriNet pn) {
 		LargestK largestK = new LargestK(pn);
 
 		return largestK.computeLargestK();

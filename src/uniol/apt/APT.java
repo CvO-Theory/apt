@@ -377,6 +377,8 @@ public class APT {
 				new IsomorphismReturnValueTransformation());
 		returnValuesTransformer.addTransformation(Integer.class,
 			new ToStringReturnValueTransformation<Integer>());
+		returnValuesTransformer.addTransformation(Long.class,
+			new ToStringReturnValueTransformation<Long>());
 		returnValuesTransformer.addTransformation(Marking.class, new MarkingReturnValueTransformation());
 		returnValuesTransformer.addTransformation(State.class, new INodeReturnValueTransformation<State>());
 		returnValuesTransformer.addTransformation(NonBisimilarPath.class,

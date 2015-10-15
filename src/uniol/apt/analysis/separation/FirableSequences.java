@@ -41,7 +41,7 @@ import java.util.Set;
  * @author Daniel
  */
 public class FirableSequences {
-	private int k = 0;
+	private long k = 0;
 
 	/** will be used to mark used transitions when finding weakly separation */
 	private String magicWord = "u_s_e_d";
@@ -80,7 +80,7 @@ public class FirableSequences {
 	 * @param initFirableSequences firable sequences which we can use k times
 	 * @param initK k
 	 */
-	public FirableSequences(ArrayList<ArrayList<String>> initFirableSequences, int initK) {
+	public FirableSequences(ArrayList<ArrayList<String>> initFirableSequences, long initK) {
 		this.k = initK;
 
 		// first possible way

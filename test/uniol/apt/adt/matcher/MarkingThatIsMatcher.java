@@ -37,15 +37,15 @@ import uniol.apt.adt.pn.Token;
  */
 public class MarkingThatIsMatcher extends TypeSafeMatcher<Marking> {
 
-	private final Map<String, Integer> marking;
+	private final Map<String, Long> marking;
 
-	private MarkingThatIsMatcher(Map<String, Integer> marking) {
+	private MarkingThatIsMatcher(Map<String, Long> marking) {
 		this.marking = new HashMap<>(marking);
 	}
 
 	@Override
 	public boolean matchesSafely(Marking mark) {
-		for (Map.Entry<String, Integer> entry : marking.entrySet()) {
+		for (Map.Entry<String, Long> entry : marking.entrySet()) {
 			Token value = mark.getToken(mark.getNet().getPlace(entry.getKey()));
 			if (value.isOmega() || value.getValue() != entry.getValue()) {
 				return false;
@@ -60,7 +60,7 @@ public class MarkingThatIsMatcher extends TypeSafeMatcher<Marking> {
 	}
 
 	@Factory
-	public static <T> Matcher<Marking> markingThatIs(Map<String, Integer> marking) {
+	public static <T> Matcher<Marking> markingThatIs(Map<String, Long> marking) {
 		return new MarkingThatIsMatcher(marking);
 	}
 
@@ -68,7 +68,7 @@ public class MarkingThatIsMatcher extends TypeSafeMatcher<Marking> {
 	public static <T> Matcher<Marking> markingThatIs(Marking marking) {
 		assert !marking.hasOmega();
 		// Urgh
-		Map<String, Integer> map = new HashMap<>();
+		Map<String, Long> map = new HashMap<>();
 		for (Place place : marking.getNet().getPlaces()) {
 			map.put(place.getId(), place.getInitialToken().getValue());
 		}
