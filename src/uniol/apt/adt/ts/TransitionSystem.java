@@ -33,6 +33,7 @@ import org.apache.commons.collections4.SortedBag;
 import org.apache.commons.collections4.bag.TreeBag;
 
 import uniol.apt.adt.AbstractGraph;
+import uniol.apt.adt.CollectionToUnmodifiableSetAdapter;
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.SoftMap;
 import uniol.apt.adt.exception.ArcExistsException;
@@ -727,7 +728,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	@Override
 	public Set<State> getNodes() {
-		return Collections.unmodifiableSet(new LinkedHashSet<>(this.states.values()));
+		// This really behaves like a Set, but the Map doesn't know that its values are unique.
+		return new CollectionToUnmodifiableSetAdapter<>(this.states.values());
 	}
 
 	/**
@@ -828,7 +830,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (!states.containsKey(id)) {
 			throw new NoSuchNodeException(this, id);
 		}
-		return Collections.unmodifiableSet(new HashSet<>(presetEdges.get(id).values()));
+		// This really behaves like a Set, but the Map doesn't know that its values are unique
+		return new CollectionToUnmodifiableSetAdapter<>(presetEdges.get(id).values());
 	}
 
 	/**
@@ -849,7 +852,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (!states.containsKey(id)) {
 			throw new NoSuchNodeException(this, id);
 		}
-		return Collections.unmodifiableSet(new HashSet<>(postsetEdges.get(id).values()));
+		// This really behaves like a Set, but the Map doesn't know that its values are unique
+		return new CollectionToUnmodifiableSetAdapter<>(postsetEdges.get(id).values());
 	}
 
 	/**

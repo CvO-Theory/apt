@@ -32,6 +32,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import uniol.apt.adt.AbstractGraph;
+import uniol.apt.adt.CollectionToUnmodifiableSetAdapter;
 import uniol.apt.adt.EdgeKey;
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.SoftMap;
@@ -950,7 +951,8 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * @return a view of the places of this petri net.
 	 */
 	public Set<Place> getPlaces() {
-		return Collections.unmodifiableSet(new LinkedHashSet<>(this.places.values()));
+		// This really behaves like a Set, but the Map doesn't know that its values are unique.
+		return new CollectionToUnmodifiableSetAdapter<>(this.places.values());
 	}
 
 	/**
@@ -959,7 +961,8 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * @return a view of the transitions of this petri net.
 	 */
 	public Set<Transition> getTransitions() {
-		return Collections.unmodifiableSet(new LinkedHashSet<>(this.transitions.values()));
+		// This really behaves like a Set, but the Map doesn't know that its values are unique.
+		return new CollectionToUnmodifiableSetAdapter<>(this.transitions.values());
 	}
 
 	/**
@@ -1318,7 +1321,8 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 
 	@Override
 	public Set<Node> getNodes() {
-		return Collections.unmodifiableSet(new LinkedHashSet<>(this.nodes.values()));
+		// This really behaves like a Set, but the Map doesn't know that its values are unique.
+		return new CollectionToUnmodifiableSetAdapter<>(this.nodes.values());
 	}
 
 	/**

@@ -98,9 +98,10 @@ public class TransitionSystemTest {
 			assertEquals(ts.getArc(s0, states[1], "b").getLabel(), "b");
 		}
 		// Setze die Labels von den Kanten aus dem Vorbereich von p2 um
+		// (Um eine ConcurrentModificationException zu vermeiden, wird das Set kopiert)
 		Set<Arc> ed = ts.getPresetEdges("p2");
 		int counter = 0;
-		for (Arc arc : ed) {
+		for (Arc arc : new HashSet<>(ed)) {
 			arc.setLabel("l" + (++counter));
 		}
 		// Ver"andere noch ein Label
