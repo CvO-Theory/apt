@@ -42,9 +42,7 @@ import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.exception.StructureException;
 
 /**
- * Represents a Transitionsystem. With states, arcs and an alphabet. It holds the pre- and postsets with the help of
- * SoftReferences so its more efficient. That means it saves the pre- and postsets, but if there is not enough space the
- * garbage collector can delete this sets and if they are needed, they will just new calculated.
+ * Represents a Transitionsystem. With states, arcs and an alphabet.
  * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */

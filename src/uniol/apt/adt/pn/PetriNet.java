@@ -44,9 +44,7 @@ import uniol.apt.adt.exception.TransitionFireException;
 
 /**
  * The PetriNet is the base class for representing a petri net. With flows, places, transitions, a initial marking and
- * final markings. It holds the pre- and postsets with the help of SoftReferences so its more efficient.That means it
- * saves the pre- and postsets, but if there is not enough space the garbage collector can delete this sets and if they
- * are needed, they will just new calculated.
+ * final markings.
  * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
