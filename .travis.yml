@@ -1,0 +1,10 @@
+language: java
+jdk:
+  - oraclejdk8
+  - oraclejdk7
+  - openjdk7
+notifications:
+  email:
+    recipients: pg-apt-info@informatik.uni-oldenburg.de
+  on_failure: always
+  on_success: change
