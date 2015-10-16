@@ -19,6 +19,7 @@
 
 package uniol.apt.adt.pn;
 
+import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,6 +44,8 @@ import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.exception.TransitionFireException;
 
+import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
+
 /**
  * The PetriNet is the base class for representing a petri net. With flows, places, transitions, a initial marking and
  * final markings.
@@ -62,6 +65,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	private final Map<String, Set<Node>> postsetNodes = new SoftMap<>();
 	private final Map<String, Map<EdgeKey, Flow>> presetEdges = new HashMap<>();
 	private final Map<String, Map<EdgeKey, Flow>> postsetEdges = new HashMap<>();
+	private int numFlows = 0;
 	private Marking initialMarking = new Marking(this);
 	private final Set<Marking> finalMarkings = new HashSet<>();
 
@@ -138,6 +142,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		String sourceId = key.getSourceId();
 		this.presetEdges.get(targetId).put(key, f);
 		this.postsetEdges.get(sourceId).put(key, f);
+		this.numFlows++;
 		//update pre- and postsets
 		Set<Node> preNodes = presetNodes.get(targetId);
 		if (preNodes != null) {
@@ -574,6 +579,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		assert old == f;
 		old = postsetEdges.get(sourceId).remove(key);
 		assert old == f;
+		this.numFlows--;
 		invokeListeners();
 	}
 
@@ -1313,10 +1319,40 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 
 	@Override
 	public Set<Flow> getEdges() {
-		Set<Flow> result = new HashSet<>();
-		for (Map<EdgeKey, Flow> map : this.postsetEdges.values())
-			result.addAll(map.values());
-		return Collections.unmodifiableSet(result);
+		return new AbstractSet<Flow>() {
+			@Override
+			public int size() {
+				return PetriNet.this.numFlows;
+			}
+
+			@Override
+			public Iterator<Flow> iterator() {
+				return new Iterator<Flow>() {
+					private Iterator<Map<EdgeKey, Flow>> postsetIter
+						= PetriNet.this.postsetEdges.values().iterator();
+					private Iterator<Flow> flowIter = emptyIterator();
+
+					@Override
+					public boolean hasNext() {
+						while (!flowIter.hasNext() && postsetIter.hasNext())
+							flowIter = postsetIter.next().values().iterator();
+						return flowIter.hasNext();
+					}
+
+					@Override
+					public Flow next() {
+						// Update flowIter, if needed
+						hasNext();
+						return flowIter.next();
+					}
+
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
+				};
+			}
+		};
 	}
 
 	@Override
