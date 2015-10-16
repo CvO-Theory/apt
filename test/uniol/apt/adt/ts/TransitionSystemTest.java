@@ -26,7 +26,6 @@ import uniol.apt.adt.SoftMap;
 import uniol.apt.adt.exception.ArcExistsException;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
-import uniol.tests.TestUtils;
 
 /**
  *
@@ -50,32 +49,6 @@ public class TransitionSystemTest {
 	@Test
 	public void testDeleteElements() {
 		TransitionSystem ts = getTestSystem();
-		State p0 = ts.getNode("s0");
-		assertEquals(p0.getPresetEdges().size(), 1);
-		assertEquals(p0.getPresetNodes().size(), 1);
-		assertEquals(p0.getPostsetNodes().size(), 1);
-		assertEquals(p0.getPostsetEdges().size(), 2);
-		State p2 = ts.getNode("p2");
-		assertEquals(p2.getPresetEdges().size(), 2);
-		assertEquals(p2.getPresetNodes().size(), 1);
-		assertEquals(p2.getPostsetEdges().size(), 2);
-		assertEquals(p2.getPostsetNodes().size(), 1);
-		State p3 = ts.getNode("p3");
-		assertEquals(p3.getPresetEdges().size(), 2);
-		assertEquals(p3.getPresetNodes().size(), 1);
-		assertEquals(p3.getPostsetEdges().size(), 1);
-		assertEquals(p3.getPostsetNodes().size(), 1);
-	}
-
-	@Test
-	public void testSoftReferences() throws Exception {
-		TransitionSystem ts = getTestSystem();
-
-		TestUtils.setField(ts, "presetNodes", new SoftMap<Object, Object>());
-		TestUtils.setField(ts, "postsetNodes", new SoftMap<Object, Object>());
-		TestUtils.setField(ts, "presetEdges", new SoftMap<Object, Object>());
-		TestUtils.setField(ts, "postsetEdges", new SoftMap<Object, Object>());
-
 		State p0 = ts.getNode("s0");
 		assertEquals(p0.getPresetEdges().size(), 1);
 		assertEquals(p0.getPresetNodes().size(), 1);
