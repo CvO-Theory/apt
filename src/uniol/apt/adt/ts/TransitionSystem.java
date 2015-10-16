@@ -19,10 +19,12 @@
 
 package uniol.apt.adt.ts;
 
+import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +44,8 @@ import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.exception.StructureException;
 
+import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
+
 /**
  * Represents a Transitionsystem. With states, arcs and an alphabet.
  * <p/>
@@ -58,6 +62,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	private final Map<String, Set<State>> postsetNodes = new SoftMap<>();
 	private final Map<String, Map<ArcKey, Arc>> presetEdges = new HashMap<>();
 	private final Map<String, Map<ArcKey, Arc>> postsetEdges = new HashMap<>();
+	private int numArcs = 0;
 	private State initialState = null;
 	private long labelRev = 0;
 
@@ -158,6 +163,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		String sourceId = key.getSourceId();
 		this.presetEdges.get(targetId).put(key, arc);
 		this.postsetEdges.get(sourceId).put(key, arc);
+		this.numArcs++;
 		this.addLabel(key.getLabel());
 		//update pre- and postsets
 		Set<State> preNodes = presetNodes.get(targetId);
@@ -426,6 +432,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		assert old == a;
 		old = postsetEdges.get(sourceId).remove(key);
 		assert old == a;
+		this.numArcs--;
 		removeLabel(label);
 		invokeListeners();
 	}
@@ -720,10 +727,40 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	@Override
 	public Set<Arc> getEdges() {
-		Set<Arc> result = new HashSet<>();
-		for (Map<ArcKey, Arc> map : this.postsetEdges.values())
-			result.addAll(map.values());
-		return Collections.unmodifiableSet(result);
+		return new AbstractSet<Arc>() {
+			@Override
+			public int size() {
+				return TransitionSystem.this.numArcs;
+			}
+
+			@Override
+			public Iterator<Arc> iterator() {
+				return new Iterator<Arc>() {
+					private Iterator<Map<ArcKey, Arc>> postsetIter
+						= TransitionSystem.this.postsetEdges.values().iterator();
+					private Iterator<Arc> arcIter = emptyIterator();
+
+					@Override
+					public boolean hasNext() {
+						while (!arcIter.hasNext() && postsetIter.hasNext())
+							arcIter = postsetIter.next().values().iterator();
+						return arcIter.hasNext();
+					}
+
+					@Override
+					public Arc next() {
+						// Update arcIter, if needed
+						hasNext();
+						return arcIter.next();
+					}
+
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
+				};
+			}
+		};
 	}
 
 	@Override
