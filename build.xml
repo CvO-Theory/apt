@@ -185,7 +185,7 @@
 	</target>
 
 	<target name="test" depends="javac.tests,xml.tests" description="Run tests">
-		<testng outputdir="reports/testng" verbose="2">
+		<testng outputdir="reports/testng" verbose="2" haltonfailure="true">
 			<!-- enable assertions -->
 			<jvmarg value="-ea" />
 			<classpath>
