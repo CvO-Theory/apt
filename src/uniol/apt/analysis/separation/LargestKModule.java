@@ -63,7 +63,7 @@ public class LargestKModule extends AbstractModule {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("Largest k for which M0 is a k-marking", Integer.class);
+		outputSpec.addReturnValue("Largest k for which M0 is a k-marking", Long.class);
 	}
 
 	@Override
