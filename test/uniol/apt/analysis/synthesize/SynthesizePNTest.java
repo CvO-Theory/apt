@@ -605,6 +605,15 @@ public class SynthesizePNTest {
 		Set<String> set = new HashSet<>();
 		assertThat(new SynthesizePN.DifferentPairsIterable<>(set), emptyIterable());
 	}
+
+	@Test
+	public void testOverflows() throws Exception {
+		// Should be more than the number of bits in a long
+		int size = 70;
+		SynthesizePN synth = new SynthesizePN.Builder(TestTSCollection.getOverflowTS(size)).buildForIsomorphicBehavior();
+		assertThat(synth.getFailedEventStateSeparationProblems().size(), equalTo(size - 1));
+		assertThat(synth.getFailedStateSeparationProblems(), emptyIterable());
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

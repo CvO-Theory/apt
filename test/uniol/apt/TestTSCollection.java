@@ -668,6 +668,26 @@ public class TestTSCollection {
 
 		return ts;
 	}
+
+	public static TransitionSystem getOverflowTS(int size) {
+		TransitionSystem ts = new TransitionSystem();
+
+		ts.setInitialState(ts.createState());
+
+		State prev = ts.createState();
+		ts.createArc(ts.getInitialState(), prev, "l0");
+
+		for (int i = 0; i < size; i++) {
+			State next = ts.createState();
+			String label = "l" + (i + 1);
+			ts.createArc(ts.getInitialState(), next, label);
+			ts.createArc(next, prev, label);
+
+			prev = next;
+		}
+
+		return ts;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
