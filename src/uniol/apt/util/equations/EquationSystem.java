@@ -20,6 +20,9 @@
 package uniol.apt.util.equations;
 
 import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +38,7 @@ import static uniol.apt.util.DebugUtil.debug;
  */
 public class EquationSystem {
 	private final int numVariables;
-	private final Collection<List<Integer>> equations = new HashSet<>();
+	private final Collection<List<BigInteger>> equations = new HashSet<>();
 
 	private static class EquationSystemSolver {
 		// Algorithm 4 from "Petri Net Synthesis" by Badouel, Bernardinello and Darondeau, page 190
@@ -43,12 +46,12 @@ public class EquationSystem {
 		// The invariant of the algorithm is:
 		// There exists some y so that x = equations1 * y and equations2 * y = 0.
 		// So each equation in the equations has variables y_0 to y_{n-1}
-		private final List<List<Integer>> equations1 = new ArrayList<>();
-		private final List<List<Integer>> equations2 = new ArrayList<>();
+		private final List<List<BigInteger>> equations1 = new ArrayList<>();
+		private final List<List<BigInteger>> equations2 = new ArrayList<>();
 
 		private final int numVariables;
 
-		EquationSystemSolver(int numVariables, Collection<List<Integer>> equations) {
+		EquationSystemSolver(int numVariables, Collection<List<BigInteger>> equations) {
 			this.numVariables = numVariables;
 
 			// Input equations, but x_i is substituted with y_i
@@ -56,15 +59,15 @@ public class EquationSystem {
 
 			for (int i = 0; i < numVariables; i++) {
 				// Set x_i = y_i in equations1
-				List<Integer> equation = new ArrayList<>(numVariables);
+				List<BigInteger> equation = new ArrayList<>(numVariables);
 				for (int j = 0; j < numVariables; j++) {
-					equation.add(j == i ? 1 : 0);
+					equation.add(j == i ? BigInteger.ONE : BigInteger.ZERO);
 				}
 				equations1.add(equation);
 			}
 		}
 
-		public List<List<Integer>> solve() {
+		public List<List<BigInteger>> solve() {
 			debug("solve called");
 			debug("============");
 
@@ -75,9 +78,9 @@ public class EquationSystem {
 				debug();
 
 				// Get an equation and ensure it only has non-negative coefficients
-				List<Integer> equation = equations2.get(0);
+				List<BigInteger> equation = equations2.get(0);
 				for (int i = 0; i < numVariables; i++) {
-					if (equation.get(i) < 0)
+					if (equation.get(i).compareTo(BigInteger.ZERO) < 0)
 						invertVariableY(i);
 				}
 
@@ -88,28 +91,30 @@ public class EquationSystem {
 
 					// Find two coefficients with 0 < lambda_i <= lambda_j
 					for (int i = 0; i < numVariables; i++) {
-						int lambdai = equation.get(i);
-						if (lambdai == 0)
+						BigInteger lambdai = equation.get(i);
+						if (lambdai.equals(BigInteger.ZERO))
 							continue;
 						for (int j = i + 1; j < numVariables; j++) {
-							int lambdaj = equation.get(j);
-							if (lambdaj == 0)
+							BigInteger lambdaj = equation.get(j);
+							if (lambdaj.equals(BigInteger.ZERO))
 								continue;
 
 							// Swap the two equations if necessary
-							if (lambdaj < lambdai) {
-								int tmp = i;
+							if (lambdaj.compareTo(lambdai) < 0) {
+								int tmp1 = i;
 								i = j;
-								j = tmp;
+								j = tmp1;
 
-								tmp = lambdai;
+								BigInteger tmp2 = lambdai;
 								lambdai = lambdaj;
-								lambdaj = tmp;
+								lambdaj = tmp2;
 							}
 
 							// Substitute y_j -> y_j - floor(lambda_j / lambda_i) * y_i
-							substituteVariable(j,
-									(int) -Math.floor(lambdaj * 1.0 / lambdai), i);
+							BigDecimal a = new BigDecimal(lambdaj);
+							BigDecimal b = new BigDecimal(lambdai);
+							BigDecimal result = a.divide(b, RoundingMode.FLOOR);
+							substituteVariable(j, result.toBigIntegerExact().negate(), i);
 							restart = true;
 							break;
 						}
@@ -143,10 +148,10 @@ public class EquationSystem {
 			// variable y_i (since it must be zero)
 			for (int i = 0; i < equations2.size(); i++) {
 				Integer nonZeroIndex = null;
-				List<Integer> equation = equations2.get(i);
+				List<BigInteger> equation = equations2.get(i);
 
 				for (int j = 0; j < numVariables; j++) {
-					if (equation.get(j) == 0)
+					if (equation.get(j).equals(BigInteger.ZERO))
 						continue;
 					if (nonZeroIndex == null) {
 						nonZeroIndex = j;
@@ -164,11 +169,11 @@ public class EquationSystem {
 
 			// Eliminate redundant equations or the trivial equation 0=0 from E2
 			for (int i = 0; i < equations2.size(); i++) {
-				List<Integer> equation = equations2.get(i);
+				List<BigInteger> equation = equations2.get(i);
 				boolean found = false;
 
 				for (int j = 0; j < numVariables; j++)
-					if (equation.get(j) != 0) {
+					if (!equation.get(j).equals(BigInteger.ZERO)) {
 						found = true;
 						break;
 					}
@@ -184,12 +189,12 @@ public class EquationSystem {
 		private void invertVariableY(int j) {
 			debug("Inverting variable y_", j);
 			for (int i = 0; i < equations1.size(); i++) {
-				List<Integer> equation = equations1.get(i);
-				equation.set(j, -equation.get(j));
+				List<BigInteger> equation = equations1.get(i);
+				equation.set(j, equation.get(j).negate());
 			}
 			for (int i = 0; i < equations2.size(); i++) {
-				List<Integer> equation = equations2.get(i);
-				equation.set(j, -equation.get(j));
+				List<BigInteger> equation = equations2.get(i);
+				equation.set(j, equation.get(j).negate());
 			}
 		}
 
@@ -199,15 +204,15 @@ public class EquationSystem {
 		private void removeVariable(int j) {
 			debug("Removing variable y_", j);
 			for (int i = 0; i < equations1.size(); i++)
-				equations1.get(i).set(j, 0);
+				equations1.get(i).set(j, BigInteger.ZERO);
 			for (int i = 0; i < equations2.size(); i++)
-				equations2.get(i).set(j, 0);
+				equations2.get(i).set(j, BigInteger.ZERO);
 		}
 
 		/**
 		 * Substitute variable y_variableIndex with y_variableIndex + factor * y_addendIndex in all equations.
 		 */
-		private void substituteVariable(int variableIndex, int factor, int addendIndex) {
+		private void substituteVariable(int variableIndex, BigInteger factor, int addendIndex) {
 			debug("Substituting variable y_", variableIndex, " with y_", variableIndex, " + ",
 					factor, " * y_", addendIndex);
 			for (int i = 0; i < equations1.size(); i++)
@@ -220,11 +225,13 @@ public class EquationSystem {
 		 * Substitute variable y_variableIndex with y_variableIndex + factor * y_addendIndex in the given
 		 * equation.
 		 */
-		private static void substituteVariable(List<Integer> equation, int variableIndex, int factor,
+		private static void substituteVariable(List<BigInteger> equation, int variableIndex, BigInteger factor,
 				int addendIndex) {
-			int addend = equation.get(addendIndex);
-			int variableValue = equation.get(variableIndex);
-			equation.set(variableIndex, variableValue + factor * addend);
+			BigInteger addend = equation.get(addendIndex);
+			BigInteger variableValue = equation.get(variableIndex);
+			// newValue = variableValue + factor * addend
+			BigInteger newValue = variableValue.add(factor.multiply(addend));
+			equation.set(variableIndex, newValue);
 		}
 	}
 
@@ -245,9 +252,9 @@ public class EquationSystem {
 	 */
 	public void addEquation(int... coefficients) {
 		assert coefficients.length == numVariables;
-		ArrayList<Integer> row = new ArrayList<>(numVariables);
+		ArrayList<BigInteger> row = new ArrayList<>(numVariables);
 		for (int i = 0; i < coefficients.length; i++)
-			row.add(coefficients[i]);
+			row.add(BigInteger.valueOf(coefficients[i]));
 		equations.add(row);
 	}
 
@@ -256,9 +263,9 @@ public class EquationSystem {
 	 * @param coefficients List of coefficients for the equation. This must have exactly one entry for each variable
 	 * in the equation system.
 	 */
-	public void addEquation(Collection<Integer> coefficients) {
+	public void addEquation(Collection<BigInteger> coefficients) {
 		assert coefficients.size() == numVariables;
-		ArrayList<Integer> row = new ArrayList<>(coefficients);
+		ArrayList<BigInteger> row = new ArrayList<>(coefficients);
 		equations.add(row);
 	}
 
@@ -266,20 +273,20 @@ public class EquationSystem {
 	 * Calculate a basis of the equation system.
 	 * @return The set of basis vectors
 	 */
-	public Set<List<Integer>> findBasis() {
-		Set<List<Integer>> result = new HashSet<>();
+	public Set<List<BigInteger>> findBasis() {
+		Set<List<BigInteger>> result = new HashSet<>();
 		EquationSystemSolver solver = new EquationSystemSolver(numVariables, equations);
 
 		// The *columns* of the matrix provide a basis of the solution
-		List<List<Integer>> solution = solver.solve();
+		List<List<BigInteger>> solution = solver.solve();
 		assert solution.size() == numVariables;
 
 		for (int i = 0; i < numVariables; i++) {
 			boolean allZero = true;
-			List<Integer> row = new ArrayList<>(numVariables);
+			List<BigInteger> row = new ArrayList<>(numVariables);
 			for (int j = 0; j < numVariables; j++) {
-				int value = solution.get(j).get(i);
-				if (value != 0)
+				BigInteger value = solution.get(j).get(i);
+				if (!value.equals(BigInteger.ZERO))
 					allZero = false;
 				row.add(value);
 			}
@@ -294,14 +301,37 @@ public class EquationSystem {
 		return Collections.unmodifiableSet(result);
 	}
 
+	/**
+	 * Calculate a basis of the equation system.
+	 * This function represents the basis as integers. If a value is out of range for integers, an exception is
+	 * thrown.
+	 * @return The set of basis vectors
+	 * @deprecated Use findBasis() instead
+	 */
+	 @Deprecated
+	public Set<List<Integer>> findIntegerBasis() {
+		Set<List<Integer>> result = new HashSet<>();
+		for (List<BigInteger> vector : findBasis()) {
+			List<Integer> newVect = new ArrayList<>(numVariables);
+			for (BigInteger coeff : vector) {
+				if (coeff.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ||
+						coeff.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
+					throw new ArithmeticException("Cannot represent value as integer: " + coeff);
+				newVect.add(coeff.intValue());
+			}
+			result.add(newVect);
+		}
+		return result;
+	}
+
 	@Override
 	public String toString() {
 		StringWriter buffer = new StringWriter();
 		buffer.write("[\n");
-		for (List<Integer> equation : equations) {
+		for (List<BigInteger> equation : equations) {
 			boolean first = true;
 			for (int j = 0; j < numVariables; j++) {
-				if (equation.get(j) == 0)
+				if (equation.get(j).equals(BigInteger.ZERO))
 					continue;
 
 				if (!first)

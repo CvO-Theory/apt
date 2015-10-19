@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -173,7 +174,11 @@ public class RegionUtility {
 			// this transition system. Thus, each region must have zero effect on such a circle.
 			for (Arc chord : tree.getChords()) {
 				try {
-					system.addEquation(this.getParikhVectorForEdge(chord));
+					// FIXME: Get rid of this conversion
+					List<BigInteger> eq = new ArrayList<>();
+					for (int coeff : this.getParikhVectorForEdge(chord))
+						eq.add(BigInteger.valueOf(coeff));
+					system.addEquation(eq);
 				} catch (UnreachableException e) {
 					throw new AssertionError("A chord by definition belongs to reachable nodes, "
 							+ "yet one of them was unreachable?", e);
@@ -181,7 +186,7 @@ public class RegionUtility {
 			}
 
 			List<Region> result = new ArrayList<>();
-			for (List<Integer> vector : system.findBasis())
+			for (List<Integer> vector : system.findIntegerBasis())
 				result.add(Region.createPureRegionFromVector(this, vector));
 
 			this.regionBasis = Collections.unmodifiableList(result);
