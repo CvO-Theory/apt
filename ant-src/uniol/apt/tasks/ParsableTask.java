@@ -88,6 +88,7 @@ public class ParsableTask extends Task {
 			}
 		}
 
+		boolean fail = false;
 		ParserTester[] testers = null;
 		try {
 			try {
@@ -109,7 +110,8 @@ public class ParsableTask extends Task {
 				File baseDir        = ds.getBasedir();
 				for (String fileName : ds.getIncludedFiles()) {
 					File file = new File(baseDir, fileName);
-					parseFile(testers, file, fileName, excludedFiles.contains(file));
+					if (!parseFile(testers, file, fileName, excludedFiles.contains(file)))
+						fail = true;
 				}
 			}
 		} finally {
@@ -117,6 +119,9 @@ public class ParsableTask extends Task {
 				for (ParserTester tester : testers)
 					tester.close();
 		}
+
+		if (fail)
+			throw new BuildException("Errors found; see above messages.");
 	}
 
 	/** Do the work */
