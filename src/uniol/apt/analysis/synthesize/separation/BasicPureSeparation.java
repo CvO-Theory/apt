@@ -223,7 +223,7 @@ class BasicPureSeparation implements Separation {
 		List<Integer> solution = new InequalitySystemSolver()
 			.assertDisjunction(system)
 			.assertDisjunction(requireDistributableNet(utility, locationMap, event))
-			.findSolution();
+			.findIntegerSolution();
 		if (solution.isEmpty())
 			return null;
 

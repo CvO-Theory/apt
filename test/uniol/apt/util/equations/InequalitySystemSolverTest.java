@@ -35,7 +35,7 @@ public class InequalitySystemSolverTest {
 		system.addInequality(0, ">=", 0, 1, 1);
 		system.addInequality(0, ">=", 0, -1, -1);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, hasSize(3));
 		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 		assertThat(x + z, is(0));
@@ -49,7 +49,7 @@ public class InequalitySystemSolverTest {
 		system.addInequality(0, ">=", 1, 1, 2);
 		system.addInequality(0, ">=", 1, 2, 3);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, hasSize(3));
 		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 		assertThat(2 * x + 1 * y + 3 * z, lessThanOrEqualTo(0));
@@ -65,7 +65,7 @@ public class InequalitySystemSolverTest {
 		system.addInequality(3, ">=", 1, 2, 3);
 		system.addInequality(4, ">=", 3, 3, 6);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, hasSize(3));
 		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 		assertThat(2 * x + 1 * y + 3 * z, lessThanOrEqualTo(1));
@@ -81,7 +81,7 @@ public class InequalitySystemSolverTest {
 		system.addInequality(0, ">=", 0, 1, 1);
 		system.addInequality(0, ">=", 1, 0, 1);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, hasSize(3));
 		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 		assertThat(1 * x + 2 * y + 0 * z, lessThanOrEqualTo(0));
@@ -96,7 +96,7 @@ public class InequalitySystemSolverTest {
 		system.addInequality(10, ">=", 2, 2, 4);
 		system.addInequality(10, ">=", 2, 4, 6);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, hasSize(3));
 		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 		assertThat(4 * x + 2 * y + 6 * z, lessThanOrEqualTo(10));
@@ -110,7 +110,7 @@ public class InequalitySystemSolverTest {
 		system.addInequality(0, ">=", 4, 2, 5);
 		system.addInequality(0, ">=", 2, 2, 4);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, hasSize(3));
 		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 		assertThat(4 * x + 2 * y + 5 * z, lessThanOrEqualTo(0));
@@ -122,7 +122,7 @@ public class InequalitySystemSolverTest {
 		InequalitySystem system = new InequalitySystem();
 		system.addInequality(0, ">=", 0, 0);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, hasSize(2));
 	}
 
@@ -131,7 +131,7 @@ public class InequalitySystemSolverTest {
 		InequalitySystem system = new InequalitySystem();
 		system.addInequality(0, ">=", 0, 42);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, hasSize(2));
 		int y = solution.get(1);
 		assertThat(y, lessThanOrEqualTo(0));
@@ -145,7 +145,7 @@ public class InequalitySystemSolverTest {
 		system.addInequality(1, "<", 1, 0, 1);
 		system.addInequality(1, "=", 0, 0, 1);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, hasSize(3));
 		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
 		assertThat(x + y, is(1));
@@ -158,7 +158,7 @@ public class InequalitySystemSolverTest {
 		InequalitySystem system = new InequalitySystem();
 		system.addInequality(0, ">=");
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, empty());
 	}
 
@@ -166,7 +166,7 @@ public class InequalitySystemSolverTest {
 	public void testEmptySystem2() {
 		InequalitySystem system = new InequalitySystem();
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, empty());
 	}
 
@@ -176,7 +176,7 @@ public class InequalitySystemSolverTest {
 		for (int i = 1; i <= 300; i++)
 			system.addInequality(-1, ">=", i);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, hasSize(1));
 		int x = solution.get(0);
 		assertThat(x, lessThanOrEqualTo(-1));
@@ -194,7 +194,7 @@ public class InequalitySystemSolverTest {
 			system.addInequality(0, ">", -1 - (i / 20), -i);
 		system.addInequality(0, ">", -10, -200);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
 		assertThat(solution, hasSize(2));
 
 		int x = solution.get(0), y = solution.get(1);
@@ -217,7 +217,7 @@ public class InequalitySystemSolverTest {
 		List<Integer> solution = new InequalitySystemSolver()
 			.assertDisjunction(required)
 			.assertDisjunction(anyOf)
-			.findSolution();
+			.findIntegerSolution();
 		assertThat(solution, hasSize(2));
 
 		int x = solution.get(0), y = solution.get(1);
@@ -255,7 +255,7 @@ public class InequalitySystemSolverTest {
 			.assertDisjunction(first)
 			.assertDisjunction(second)
 			.assertDisjunction(third)
-			.findSolution();
+			.findIntegerSolution();
 		assertThat(solution, empty());
 	}
 
@@ -270,7 +270,7 @@ public class InequalitySystemSolverTest {
 			.assertDisjunction(empty)
 			.assertDisjunction(required)
 			.assertDisjunction(empty)
-			.findSolution();
+			.findIntegerSolution();
 		assertThat(solution, hasSize(1));
 
 		int x = solution.get(0);
@@ -288,7 +288,7 @@ public class InequalitySystemSolverTest {
 			.assertDisjunction(empty)
 			.assertDisjunction(required)
 			.assertDisjunction(empty)
-			.findSolution();
+			.findIntegerSolution();
 		assertThat(solution, hasSize(1));
 
 		int x = solution.get(0);
@@ -303,7 +303,7 @@ public class InequalitySystemSolverTest {
 		InequalitySystem system = new InequalitySystem();
 		system.addInequality(42, "=", 1);
 		solver.assertDisjunction(system);
-		assertThat(solver.findSolution(), contains(42));
+		assertThat(solver.findIntegerSolution(), contains(42));
 
 		solver.push();
 
@@ -311,7 +311,7 @@ public class InequalitySystemSolverTest {
 		system = new InequalitySystem();
 		system.addInequality(0, "=", 1, 1);
 		solver.assertDisjunction(system);
-		assertThat(solver.findSolution(), contains(42, -42));
+		assertThat(solver.findIntegerSolution(), contains(42, -42));
 
 		solver.pop();
 
@@ -319,7 +319,7 @@ public class InequalitySystemSolverTest {
 		system = new InequalitySystem();
 		system.addInequality(0, "=", 2, -1);
 		solver.assertDisjunction(system);
-		assertThat(solver.findSolution(), contains(42, 84));
+		assertThat(solver.findIntegerSolution(), contains(42, 84));
 	}
 }
 

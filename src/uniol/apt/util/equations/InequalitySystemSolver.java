@@ -172,8 +172,8 @@ public class InequalitySystemSolver {
 	 * Calculate a solution to the conjunction of disjunctions that were added to this solver.
 	 * @return A solution to the systems or an empty list if unsolvable
 	 */
-	public List<Integer> findSolution() {
-		List<Integer> solution = handleSolution(script, variablesStack.peekLast());
+	public List<BigInteger> findSolution() {
+		List<BigInteger> solution = handleSolution(script, variablesStack.peekLast());
 		if (solution.isEmpty()) {
 			debug("No solution found for:");
 			for (InequalitySystem[] disjunction : systems) {
@@ -189,7 +189,25 @@ public class InequalitySystemSolver {
 		return Collections.unmodifiableList(solution);
 	}
 
-	private boolean isSolution(List<Integer> solution) {
+	/**
+	 * Calculate a solution to the conjunction of disjunctions that were added to this solver.
+	 * If the result cannot be represented as integers, an exception is thrown.
+	 * @return A solution to the systems or an empty list if unsolvable.
+	 * @deprecated use findSolution() instead.
+	 */
+	 @Deprecated
+	public List<Integer> findIntegerSolution() {
+		List<Integer> solution = new ArrayList<>();
+		for (BigInteger value : findSolution()) {
+			if (value.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ||
+					value.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
+				throw new ArithmeticException("Cannot represent value as integer: " + value);
+			solution.add(value.intValue());
+		}
+		return solution;
+	}
+
+	private boolean isSolution(List<BigInteger> solution) {
 		int index = 0;
 		for (InequalitySystem[] disjunction : systems) {
 			boolean foundSolution = false;
@@ -205,7 +223,7 @@ public class InequalitySystemSolver {
 		return true;
 	}
 
-	static private List<Integer> handleSolution(Script script, int numVariables) {
+	static private List<BigInteger> handleSolution(Script script, int numVariables) {
 		LBool isSat = script.checkSat();
 		if (isSat != LBool.SAT) {
 			debug("SMTInterpol produced unsat: " + isSat.toString());
@@ -215,7 +233,7 @@ public class InequalitySystemSolver {
 
 		// Transform the solution
 		Model model = script.getModel();
-		List<Integer> solution = new ArrayList<>(numVariables);
+		List<BigInteger> solution = new ArrayList<>(numVariables);
 		for (int i = 0; i < numVariables; i++) {
 			Term term = model.evaluate(script.term("var" + i));
 			assert term instanceof ConstantTerm : term;
@@ -224,7 +242,7 @@ public class InequalitySystemSolver {
 			assert value instanceof Rational : value;
 
 			Rational rat = (Rational) value;
-			solution.add(rat.numerator().intValue());
+			solution.add(rat.numerator());
 			assert rat.denominator().equals(BigInteger.ONE) : value;
 		}
 		return solution;
