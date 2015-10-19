@@ -189,24 +189,6 @@ public class InequalitySystemSolver {
 		return Collections.unmodifiableList(solution);
 	}
 
-	/**
-	 * Calculate a solution to the conjunction of disjunctions that were added to this solver.
-	 * If the result cannot be represented as integers, an exception is thrown.
-	 * @return A solution to the systems or an empty list if unsolvable.
-	 * @deprecated use findSolution() instead.
-	 */
-	 @Deprecated
-	public List<Integer> findIntegerSolution() {
-		List<Integer> solution = new ArrayList<>();
-		for (BigInteger value : findSolution()) {
-			if (value.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ||
-					value.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
-				throw new ArithmeticException("Cannot represent value as integer: " + value);
-			solution.add(value.intValue());
-		}
-		return solution;
-	}
-
 	private boolean isSolution(List<BigInteger> solution) {
 		int index = 0;
 		for (InequalitySystem[] disjunction : systems) {

@@ -19,6 +19,7 @@
 
 package uniol.apt.util.equations;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.testng.annotations.Test;
@@ -27,6 +28,10 @@ import static org.hamcrest.Matchers.*;
 
 /** @author Uli Schlachter */
 public class InequalitySystemSolverTest {
+	static private BigInteger bi(long num) {
+		return BigInteger.valueOf(num);
+	}
+
 	@Test
 	public void testSimpleSystem0() {
 		InequalitySystem system = new InequalitySystem();
@@ -35,11 +40,11 @@ public class InequalitySystemSolverTest {
 		system.addInequality(0, ">=", 0, 1, 1);
 		system.addInequality(0, ">=", 0, -1, -1);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, hasSize(3));
-		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
-		assertThat(x + z, is(0));
-		assertThat(y + z, is(0));
+		BigInteger x = solution.get(0), y = solution.get(1), z = solution.get(2);
+		assertThat(x.add(z), is(bi(0)));
+		assertThat(y.add(z), is(bi(0)));
 	}
 
 	@Test
@@ -49,12 +54,12 @@ public class InequalitySystemSolverTest {
 		system.addInequality(0, ">=", 1, 1, 2);
 		system.addInequality(0, ">=", 1, 2, 3);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, hasSize(3));
-		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
-		assertThat(2 * x + 1 * y + 3 * z, lessThanOrEqualTo(0));
-		assertThat(1 * x + 1 * y + 2 * z, lessThanOrEqualTo(0));
-		assertThat(1 * x + 2 * y + 3 * z, lessThanOrEqualTo(0));
+		BigInteger x = solution.get(0), y = solution.get(1), z = solution.get(2);
+		assertThat(bi(2).multiply(x).add(bi(1).multiply(y)).add(bi(3).multiply(z)), lessThanOrEqualTo(bi(0)));
+		assertThat(bi(1).multiply(x).add(bi(1).multiply(y)).add(bi(2).multiply(z)), lessThanOrEqualTo(bi(0)));
+		assertThat(bi(1).multiply(x).add(bi(2).multiply(y)).add(bi(3).multiply(z)), lessThanOrEqualTo(bi(0)));
 	}
 
 	@Test
@@ -65,13 +70,13 @@ public class InequalitySystemSolverTest {
 		system.addInequality(3, ">=", 1, 2, 3);
 		system.addInequality(4, ">=", 3, 3, 6);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, hasSize(3));
-		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
-		assertThat(2 * x + 1 * y + 3 * z, lessThanOrEqualTo(1));
-		assertThat(1 * x + 1 * y + 2 * z, lessThanOrEqualTo(2));
-		assertThat(1 * x + 2 * y + 3 * z, lessThanOrEqualTo(3));
-		assertThat(3 * x + 3 * y + 6 * z, lessThanOrEqualTo(4));
+		BigInteger x = solution.get(0), y = solution.get(1), z = solution.get(2);
+		assertThat(bi(2).multiply(x).add(bi(1).multiply(y)).add(bi(3).multiply(z)), lessThanOrEqualTo(bi(1)));
+		assertThat(bi(1).multiply(x).add(bi(1).multiply(y)).add(bi(2).multiply(z)), lessThanOrEqualTo(bi(2)));
+		assertThat(bi(1).multiply(x).add(bi(2).multiply(y)).add(bi(3).multiply(z)), lessThanOrEqualTo(bi(3)));
+		assertThat(bi(3).multiply(x).add(bi(3).multiply(y)).add(bi(6).multiply(z)), lessThanOrEqualTo(bi(4)));
 	}
 
 	@Test
@@ -81,12 +86,12 @@ public class InequalitySystemSolverTest {
 		system.addInequality(0, ">=", 0, 1, 1);
 		system.addInequality(0, ">=", 1, 0, 1);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, hasSize(3));
-		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
-		assertThat(1 * x + 2 * y + 0 * z, lessThanOrEqualTo(0));
-		assertThat(0 * x + 1 * y + 1 * z, lessThanOrEqualTo(0));
-		assertThat(1 * x + 0 * y + 1 * z, lessThanOrEqualTo(0));
+		BigInteger x = solution.get(0), y = solution.get(1), z = solution.get(2);
+		assertThat(bi(1).multiply(x).add(bi(2).multiply(y)).add(bi(0).multiply(z)), lessThanOrEqualTo(bi(0)));
+		assertThat(bi(0).multiply(x).add(bi(1).multiply(y)).add(bi(1).multiply(z)), lessThanOrEqualTo(bi(0)));
+		assertThat(bi(1).multiply(x).add(bi(0).multiply(y)).add(bi(1).multiply(z)), lessThanOrEqualTo(bi(0)));
 	}
 
 	@Test
@@ -96,12 +101,12 @@ public class InequalitySystemSolverTest {
 		system.addInequality(10, ">=", 2, 2, 4);
 		system.addInequality(10, ">=", 2, 4, 6);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, hasSize(3));
-		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
-		assertThat(4 * x + 2 * y + 6 * z, lessThanOrEqualTo(10));
-		assertThat(2 * x + 2 * y + 4 * z, lessThanOrEqualTo(10));
-		assertThat(2 * x + 4 * y + 6 * z, lessThanOrEqualTo(10));
+		BigInteger x = solution.get(0), y = solution.get(1), z = solution.get(2);
+		assertThat(bi(4).multiply(x).add(bi(2).multiply(y)).add(bi(6).multiply(z)), lessThanOrEqualTo(bi(10)));
+		assertThat(bi(2).multiply(x).add(bi(2).multiply(y)).add(bi(4).multiply(z)), lessThanOrEqualTo(bi(10)));
+		assertThat(bi(2).multiply(x).add(bi(4).multiply(y)).add(bi(6).multiply(z)), lessThanOrEqualTo(bi(10)));
 	}
 
 	@Test
@@ -110,11 +115,11 @@ public class InequalitySystemSolverTest {
 		system.addInequality(0, ">=", 4, 2, 5);
 		system.addInequality(0, ">=", 2, 2, 4);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, hasSize(3));
-		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
-		assertThat(4 * x + 2 * y + 5 * z, lessThanOrEqualTo(0));
-		assertThat(2 * x + 2 * y + 4 * z, lessThanOrEqualTo(0));
+		BigInteger x = solution.get(0), y = solution.get(1), z = solution.get(2);
+		assertThat(bi(4).multiply(x).add(bi(2).multiply(y)).add(bi(5).multiply(z)), lessThanOrEqualTo(bi(0)));
+		assertThat(bi(2).multiply(x).add(bi(2).multiply(y)).add(bi(4).multiply(z)), lessThanOrEqualTo(bi(0)));
 	}
 
 	@Test
@@ -122,7 +127,7 @@ public class InequalitySystemSolverTest {
 		InequalitySystem system = new InequalitySystem();
 		system.addInequality(0, ">=", 0, 0);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, hasSize(2));
 	}
 
@@ -131,10 +136,10 @@ public class InequalitySystemSolverTest {
 		InequalitySystem system = new InequalitySystem();
 		system.addInequality(0, ">=", 0, 42);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, hasSize(2));
-		int y = solution.get(1);
-		assertThat(y, lessThanOrEqualTo(0));
+		BigInteger y = solution.get(1);
+		assertThat(y, lessThanOrEqualTo(bi(0)));
 	}
 
 	@Test
@@ -145,12 +150,12 @@ public class InequalitySystemSolverTest {
 		system.addInequality(1, "<", 1, 0, 1);
 		system.addInequality(1, "=", 0, 0, 1);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, hasSize(3));
-		int x = solution.get(0), y = solution.get(1), z = solution.get(2);
-		assertThat(x + y, is(1));
-		assertThat(x + z, greaterThan(1));
-		assertThat(z, is(1));
+		BigInteger x = solution.get(0), y = solution.get(1), z = solution.get(2);
+		assertThat(x.add(y), is(bi(1)));
+		assertThat(x.add(z), greaterThan(bi(1)));
+		assertThat(z, is(bi(1)));
 	}
 
 	@Test
@@ -158,7 +163,7 @@ public class InequalitySystemSolverTest {
 		InequalitySystem system = new InequalitySystem();
 		system.addInequality(0, ">=");
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, empty());
 	}
 
@@ -166,7 +171,7 @@ public class InequalitySystemSolverTest {
 	public void testEmptySystem2() {
 		InequalitySystem system = new InequalitySystem();
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, empty());
 	}
 
@@ -176,10 +181,10 @@ public class InequalitySystemSolverTest {
 		for (int i = 1; i <= 300; i++)
 			system.addInequality(-1, ">=", i);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, hasSize(1));
-		int x = solution.get(0);
-		assertThat(x, lessThanOrEqualTo(-1));
+		BigInteger x = solution.get(0);
+		assertThat(x, lessThanOrEqualTo(bi(-1)));
 	}
 
 	@Test
@@ -194,12 +199,12 @@ public class InequalitySystemSolverTest {
 			system.addInequality(0, ">", -1 - (i / 20), -i);
 		system.addInequality(0, ">", -10, -200);
 
-		List<Integer> solution = new InequalitySystemSolver().assertDisjunction(system).findIntegerSolution();
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
 		assertThat(solution, hasSize(2));
 
-		int x = solution.get(0), y = solution.get(1);
-		assertThat(x, greaterThan(-20 * y));
-		assertThat(y, lessThan(0));
+		BigInteger x = solution.get(0), y = solution.get(1);
+		assertThat(x, greaterThan(bi(-20).multiply(y)));
+		assertThat(y, lessThan(bi(0)));
 		assertThat(system.fulfilledBy(solution), is(true));
 	}
 
@@ -214,15 +219,15 @@ public class InequalitySystemSolverTest {
 		anyOf[0].addInequality(21, "=", 1);
 		anyOf[1].addInequality(21, "=", 1, -1);
 
-		List<Integer> solution = new InequalitySystemSolver()
+		List<BigInteger> solution = new InequalitySystemSolver()
 			.assertDisjunction(required)
 			.assertDisjunction(anyOf)
-			.findIntegerSolution();
+			.findSolution();
 		assertThat(solution, hasSize(2));
 
-		int x = solution.get(0), y = solution.get(1);
-		assertThat(x, equalTo(42));
-		assertThat(y, equalTo(21));
+		BigInteger x = solution.get(0), y = solution.get(1);
+		assertThat(x, equalTo(bi(42)));
+		assertThat(y, equalTo(bi(21)));
 		assertThat(required[0].fulfilledBy(solution), is(true));
 		assertThat(anyOf[0].fulfilledBy(solution), is(false));
 		assertThat(anyOf[1].fulfilledBy(solution), is(true));
@@ -251,11 +256,11 @@ public class InequalitySystemSolverTest {
 		third[0].addInequality(1, "=", 0, 1);
 		third[1].addInequality(2, "=", 0, 1);
 
-		List<Integer> solution = new InequalitySystemSolver()
+		List<BigInteger> solution = new InequalitySystemSolver()
 			.assertDisjunction(first)
 			.assertDisjunction(second)
 			.assertDisjunction(third)
-			.findIntegerSolution();
+			.findSolution();
 		assertThat(solution, empty());
 	}
 
@@ -266,15 +271,15 @@ public class InequalitySystemSolverTest {
 
 		InequalitySystem[] empty = new InequalitySystem[0];
 
-		List<Integer> solution = new InequalitySystemSolver()
+		List<BigInteger> solution = new InequalitySystemSolver()
 			.assertDisjunction(empty)
 			.assertDisjunction(required)
 			.assertDisjunction(empty)
-			.findIntegerSolution();
+			.findSolution();
 		assertThat(solution, hasSize(1));
 
-		int x = solution.get(0);
-		assertThat(x, equalTo(42));
+		BigInteger x = solution.get(0);
+		assertThat(x, equalTo(bi(42)));
 	}
 
 	@Test
@@ -284,15 +289,15 @@ public class InequalitySystemSolverTest {
 
 		InequalitySystem[] empty = new InequalitySystem[0];
 
-		List<Integer> solution = new InequalitySystemSolver()
+		List<BigInteger> solution = new InequalitySystemSolver()
 			.assertDisjunction(empty)
 			.assertDisjunction(required)
 			.assertDisjunction(empty)
-			.findIntegerSolution();
+			.findSolution();
 		assertThat(solution, hasSize(1));
 
-		int x = solution.get(0);
-		assertThat(x, equalTo(42));
+		BigInteger x = solution.get(0);
+		assertThat(x, equalTo(bi(42)));
 	}
 
 	@Test
@@ -303,7 +308,7 @@ public class InequalitySystemSolverTest {
 		InequalitySystem system = new InequalitySystem();
 		system.addInequality(42, "=", 1);
 		solver.assertDisjunction(system);
-		assertThat(solver.findIntegerSolution(), contains(42));
+		assertThat(solver.findSolution(), contains(bi(42)));
 
 		solver.push();
 
@@ -311,7 +316,7 @@ public class InequalitySystemSolverTest {
 		system = new InequalitySystem();
 		system.addInequality(0, "=", 1, 1);
 		solver.assertDisjunction(system);
-		assertThat(solver.findIntegerSolution(), contains(42, -42));
+		assertThat(solver.findSolution(), contains(bi(42), bi(-42)));
 
 		solver.pop();
 
@@ -319,7 +324,7 @@ public class InequalitySystemSolverTest {
 		system = new InequalitySystem();
 		system.addInequality(0, "=", 2, -1);
 		solver.assertDisjunction(system);
-		assertThat(solver.findIntegerSolution(), contains(42, 84));
+		assertThat(solver.findSolution(), contains(bi(42), bi(84)));
 	}
 }
 
