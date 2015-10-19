@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.math.BigInteger;
+
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
@@ -31,11 +33,11 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 public class ImpureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher<Region> {
 
 	private final String event;
-	private final Matcher<? super Integer> backwardMatcher;
-	private final Matcher<? super Integer> forwardMatcher;
+	private final Matcher<? super BigInteger> backwardMatcher;
+	private final Matcher<? super BigInteger> forwardMatcher;
 
 	private ImpureRegionWithWeightThatMatcher(String event,
-			Matcher<? super Integer> backwardMatcher, Matcher<? super Integer> forwardMatcher) {
+			Matcher<? super BigInteger> backwardMatcher, Matcher<? super BigInteger> forwardMatcher) {
 		this.event = event;
 		this.backwardMatcher = backwardMatcher;
 		this.forwardMatcher = forwardMatcher;
@@ -76,7 +78,7 @@ public class ImpureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher
 
 	@Factory
 	public static Matcher<Region> impureRegionWithWeightThat(String event,
-			Matcher<? super Integer> backward, Matcher<? super Integer> forward) {
+			Matcher<? super BigInteger> backward, Matcher<? super BigInteger> forward) {
 		return new ImpureRegionWithWeightThatMatcher(event, backward, forward);
 	}
 }

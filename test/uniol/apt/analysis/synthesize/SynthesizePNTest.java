@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,16 +58,26 @@ public class SynthesizePNTest {
 
 		Region result = mock(Region.class);
 		when(result.getRegionUtility()).thenReturn(utility);
-		when(result.getNormalRegionMarking()).thenReturn(normalMarking);
+		when(result.getNormalRegionMarking()).thenReturn(BigInteger.valueOf(normalMarking));
+		when(result.getInitialMarking()).thenReturn(BigInteger.valueOf(normalMarking));
 
 		List<String> eventList = utility.getEventList();
 		for (int i = 0; i < backwardWeights.size(); i++) {
-			when(result.getBackwardWeight(i)).thenReturn(backwardWeights.get(i));
-			when(result.getBackwardWeight(eventList.get(i))).thenReturn(backwardWeights.get(i));
-			when(result.getForwardWeight(i)).thenReturn(forwardWeights.get(i));
-			when(result.getForwardWeight(eventList.get(i))).thenReturn(forwardWeights.get(i));
+			BigInteger back = BigInteger.valueOf(backwardWeights.get(i));
+			BigInteger forw = BigInteger.valueOf(forwardWeights.get(i));
+			when(result.getBackwardWeight(i)).thenReturn(back);
+			when(result.getBackwardWeight(eventList.get(i))).thenReturn(back);
+			when(result.getForwardWeight(i)).thenReturn(forw);
+			when(result.getForwardWeight(eventList.get(i))).thenReturn(forw);
 		}
 
+		return result;
+	}
+
+	static private List<BigInteger> asBigIntegerList(int... list) {
+		List<BigInteger> result = new ArrayList<>(list.length);
+		for (int i = 0; i < list.length; i++)
+			result.add(BigInteger.valueOf(list[i]));
 		return result;
 	}
 
@@ -141,12 +152,13 @@ public class SynthesizePNTest {
 		PNProperties properties = new PNProperties().setOutputNonbranching(true);
 		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
 
+		BigInteger ZERO = BigInteger.ZERO;
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// We know that there is a solution with three regions. Test that this really found an ON feasible set.
 		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
-					allOf(pureRegionWithWeightThat("b", greaterThanOrEqualTo(0)), pureRegionWithWeightThat("c", greaterThanOrEqualTo(0))),
-					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(0)), pureRegionWithWeightThat("c", greaterThanOrEqualTo(0))),
-					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(0)), pureRegionWithWeightThat("b", greaterThanOrEqualTo(0)))));
+					allOf(pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO)), pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
+					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)), pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
+					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)), pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO)))));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}
@@ -157,13 +169,14 @@ public class SynthesizePNTest {
 		PNProperties properties = new PNProperties().setTNet(true);
 		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
 
+		BigInteger ZERO = BigInteger.ZERO;
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// We know that there is a solution with four regions. Test that this really found an T-Net feasible set.
 		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
-					allOf(pureRegionWithWeightThat("a", equalTo(0)), pureRegionWithWeightThat("b", greaterThan(0)), pureRegionWithWeightThat("c", lessThan(0))),
-					allOf(pureRegionWithWeightThat("a", equalTo(0)), pureRegionWithWeightThat("b", lessThan(0)), pureRegionWithWeightThat("c", greaterThan(0))),
-					allOf(pureRegionWithWeightThat("b", equalTo(0)), pureRegionWithWeightThat("a", greaterThan(0)), pureRegionWithWeightThat("c", lessThan(0))),
-					allOf(pureRegionWithWeightThat("b", equalTo(0)), pureRegionWithWeightThat("a", lessThan(0)), pureRegionWithWeightThat("c", greaterThan(0)))));
+					allOf(pureRegionWithWeightThat("a", equalTo(ZERO)), pureRegionWithWeightThat("b", greaterThan(ZERO)), pureRegionWithWeightThat("c", lessThan(ZERO))),
+					allOf(pureRegionWithWeightThat("a", equalTo(ZERO)), pureRegionWithWeightThat("b", lessThan(ZERO)), pureRegionWithWeightThat("c", greaterThan(ZERO))),
+					allOf(pureRegionWithWeightThat("b", equalTo(ZERO)), pureRegionWithWeightThat("a", greaterThan(ZERO)), pureRegionWithWeightThat("c", lessThan(ZERO))),
+					allOf(pureRegionWithWeightThat("b", equalTo(ZERO)), pureRegionWithWeightThat("a", lessThan(ZERO)), pureRegionWithWeightThat("c", greaterThan(ZERO)))));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}
@@ -349,7 +362,7 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testSingleRegion() {
-			Region region = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0));
+			Region region = Region.createPureRegionFromVector(utility, asBigIntegerList(-1, 0));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -358,7 +371,7 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testSingleRegionESSP() {
-			Region region = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0));
+			Region region = Region.createPureRegionFromVector(utility, asBigIntegerList(-1, 0));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);
@@ -367,7 +380,7 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testUselessRegion() {
-			Region region = new Region(utility, Arrays.asList(1, 1), Arrays.asList(1, 1)).withInitialMarking(1);
+			Region region = new Region(utility, asBigIntegerList(1, 1), asBigIntegerList(1, 1)).withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -376,7 +389,7 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testUselessRegionESSP() {
-			Region region = new Region(utility, Arrays.asList(1, 1), Arrays.asList(1, 1)).withInitialMarking(1);
+			Region region = new Region(utility, asBigIntegerList(1, 1), asBigIntegerList(1, 1)).withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);
@@ -385,8 +398,8 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testNoUselessRegion() {
-			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
-			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
+			Region region1 = Region.createPureRegionFromVector(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.createPureRegionFromVector(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -395,8 +408,8 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testNoUselessRegionESSP() {
-			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
-			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
+			Region region1 = Region.createPureRegionFromVector(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.createPureRegionFromVector(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);
@@ -405,9 +418,9 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testUselessRegionForSSP() {
-			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
-			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
-			Region region3 = Region.createPureRegionFromVector(utility, Arrays.asList(1, 1));
+			Region region1 = Region.createPureRegionFromVector(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.createPureRegionFromVector(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
+			Region region3 = Region.createPureRegionFromVector(utility, asBigIntegerList(1, 1));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2, region3));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -416,9 +429,9 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testUselessRegionForSSPESSP() {
-			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
-			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
-			Region region3 = Region.createPureRegionFromVector(utility, Arrays.asList(1, 1));
+			Region region1 = Region.createPureRegionFromVector(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.createPureRegionFromVector(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
+			Region region3 = Region.createPureRegionFromVector(utility, asBigIntegerList(1, 1));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2, region3));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);
@@ -427,8 +440,8 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testDuplicateRegion() {
-			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
-			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(-2, 0)).withInitialMarking(2);
+			Region region1 = Region.createPureRegionFromVector(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.createPureRegionFromVector(utility, asBigIntegerList(-2, 0)).withInitialMarking(BigInteger.valueOf(2));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -437,8 +450,8 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testDuplicateRegionESSP() {
-			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0)).withInitialMarking(1);
-			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(-2, 0)).withInitialMarking(2);
+			Region region1 = Region.createPureRegionFromVector(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.createPureRegionFromVector(utility, asBigIntegerList(-2, 0)).withInitialMarking(BigInteger.valueOf(2));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);
@@ -449,10 +462,10 @@ public class SynthesizePNTest {
 		public void testLessUsefulRegion() {
 			// There are three SSP instances and two ESSP instances. This region solves all of them except
 			// for one ESSP instance (disabling a after the first a).
-			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, -1)).withInitialMarking(2);
+			Region region1 = Region.createPureRegionFromVector(utility, asBigIntegerList(-1, -1)).withInitialMarking(BigInteger.valueOf(2));
 			// This region solves only two SSP and one ESSP instance (less than the above and the above
 			// solves all these problems, too)
-			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
+			Region region2 = Region.createPureRegionFromVector(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -463,10 +476,10 @@ public class SynthesizePNTest {
 		public void testLessUsefulRegionESSP() {
 			// There are three SSP instances and two ESSP instances. This region solves all of them except
 			// for one ESSP instance (disabling a after the first a).
-			Region region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, -1)).withInitialMarking(2);
+			Region region1 = Region.createPureRegionFromVector(utility, asBigIntegerList(-1, -1)).withInitialMarking(BigInteger.valueOf(2));
 			// This region solves only two SSP and one ESSP instance (less than the above and the above
 			// solves all these problems, too)
-			Region region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1)).withInitialMarking(1);
+			Region region2 = Region.createPureRegionFromVector(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);

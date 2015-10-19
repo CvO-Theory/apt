@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -94,10 +95,10 @@ public class SeparationTestHelper {
 		assertThat(r, notNullValue());
 
 		// "event" must have a non-zero backwards weight
-		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(0)), anything()));
+		assertThat(r, impureRegionWithWeightThat(event, is(greaterThan(BigInteger.ZERO)), anything()));
 
 		// State "state" must be reachable (This only tests a necessary, but no sufficient, condition)
-		assertThat(r.getMarkingForState(state), is(greaterThanOrEqualTo(0)));
+		assertThat(r.getMarkingForState(state), is(greaterThanOrEqualTo(BigInteger.ZERO)));
 
 		// After reaching state "state", "event" must be disabled
 		assertThat(r.getMarkingForState(state), is(lessThan(r.getBackwardWeight(event))));
@@ -284,12 +285,12 @@ public class SeparationTestHelper {
 			Region r = separation.calculateSeparatingRegion(ts.getNode(state), event);
 
 			assertThat(r, notNullValue());
-			assertThat(r.getInitialMarking(), greaterThanOrEqualTo(0));
+			assertThat(r.getInitialMarking(), greaterThanOrEqualTo(BigInteger.ZERO));
 
 			for (State s : ts.getNodes())
 				for (Arc arc : s.getPostsetEdges()) {
 					String label = arc.getLabel();
-					int backwards = r.getBackwardWeight(label);
+					BigInteger backwards = r.getBackwardWeight(label);
 					assertThat(r.getInitialMarking() + " : " + r + " : " + s.toString() + " : " + label,
 							r.getMarkingForState(s), greaterThanOrEqualTo(backwards));
 				}
@@ -337,12 +338,12 @@ public class SeparationTestHelper {
 			Region r = separation.calculateSeparatingRegion(ts.getNode(state), event);
 
 			assertThat(r, notNullValue());
-			assertThat(r.getInitialMarking(), greaterThanOrEqualTo(0));
+			assertThat(r.getInitialMarking(), greaterThanOrEqualTo(BigInteger.ZERO));
 
 			for (State s : ts.getNodes())
 				for (Arc arc : s.getPostsetEdges()) {
 					String label = arc.getLabel();
-					int backwards = r.getBackwardWeight(label);
+					BigInteger backwards = r.getBackwardWeight(label);
 					assertThat(r.getInitialMarking() + " : " + r + " : " + s.toString() + " : " + label,
 							r.getMarkingForState(s), greaterThanOrEqualTo(backwards));
 				}

@@ -19,6 +19,7 @@
 
 package uniol.apt.util.equations;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 import org.testng.annotations.Test;
@@ -71,8 +72,8 @@ public class InequalitySystemTest {
 	@Test
 	public void testToStringWithComments() {
 		InequalitySystem system = new InequalitySystem();
-		system.addInequality(0, "<=", Arrays.asList(0), "Just ensuring the trivial");
-		system.addInequality(0, "<=", Arrays.asList(1), "and something useful");
+		system.addInequality(0, "<=", Arrays.asList(BigInteger.ZERO), "Just ensuring the trivial");
+		system.addInequality(0, "<=", Arrays.asList(BigInteger.ONE), "and something useful");
 		system.addInequality(0, ">=", 1);
 
 		assertThat(system, hasToString("[\n0 <= 0\t(Just ensuring the trivial)\n0 <= 1*x[0]\t(and something useful)\n0 >= 1*x[0]\n]"));

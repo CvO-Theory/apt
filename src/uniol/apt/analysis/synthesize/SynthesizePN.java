@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -632,17 +633,17 @@ public class SynthesizePN {
 
 		for (Region region : regions) {
 			Place place = pn.createPlace();
-			place.setInitialToken(region.getInitialMarking());
+			place.setInitialToken(bigIntToLong(region.getInitialMarking()));
 			place.putExtension(Region.class.getName(), region);
 
 			for (String event : region.getRegionUtility().getEventList()) {
 				Transition transition = pn.getTransition(event);
-				int backward = region.getBackwardWeight(event);
+				int backward = bigIntToInt(region.getBackwardWeight(event));
 				assert backward >= 0;
 				if (backward > 0)
 					pn.createFlow(place, transition, backward);
 
-				int forward = region.getForwardWeight(event);
+				int forward = bigIntToInt(region.getForwardWeight(event));
 				assert forward >= 0;
 				if (forward > 0)
 					pn.createFlow(transition, place, forward);
@@ -650,6 +651,20 @@ public class SynthesizePN {
 		}
 
 		return pn;
+	}
+
+	private static long bigIntToLong(BigInteger value) {
+		if (value.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0 ||
+				value.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) < 0)
+			throw new ArithmeticException("Cannot represent value as long: " + value);
+		return value.longValue();
+	}
+
+	private static int bigIntToInt(BigInteger value) {
+		if (value.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ||
+				value.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
+			throw new ArithmeticException("Cannot represent value as int: " + value);
+		return value.intValue();
 	}
 
 	/**

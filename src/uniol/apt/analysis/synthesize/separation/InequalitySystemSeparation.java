@@ -64,9 +64,6 @@ class InequalitySystemSeparation implements Separation {
 	private final Term[] regionBackwardWeights;
 	private final Term[] regionForwardWeights;
 
-	private final static BigInteger INTEGER_MIN_VALUE = BigInteger.valueOf(Integer.MIN_VALUE);
-	private final static BigInteger INTEGER_MAX_VALUE = BigInteger.valueOf(Integer.MAX_VALUE);
-
 	/**
 	 * Construct a new instance for solving separation problems.
 	 * @param utility The region utility to use.
@@ -131,23 +128,23 @@ class InequalitySystemSeparation implements Separation {
 		Model model = script.getModel();
 		Region r;
 		if (properties.isPure()) {
-			List<Integer> weights = new ArrayList<>();
+			List<BigInteger> weights = new ArrayList<>();
 			for (Term term : regionWeights)
-				weights.add(getIntValue(model, term));
+				weights.add(getValue(model, term));
 			r = Region.createPureRegionFromVector(utility, weights);
 		} else {
-			List<Integer> backwardWeight = new ArrayList<>();
-			List<Integer> forwardWeight = new ArrayList<>();
+			List<BigInteger> backwardWeight = new ArrayList<>();
+			List<BigInteger> forwardWeight = new ArrayList<>();
 			for (Term term : regionBackwardWeights)
-				backwardWeight.add(getIntValue(model, term));
+				backwardWeight.add(getValue(model, term));
 			for (Term term : regionForwardWeights)
-				forwardWeight.add(getIntValue(model, term));
+				forwardWeight.add(getValue(model, term));
 			r = new Region(utility, backwardWeight, forwardWeight);
 		}
-		r = r.withInitialMarking(getIntValue(model, regionInitialMarking));
+		r = r.withInitialMarking(getValue(model, regionInitialMarking));
 		debug("region: ", r);
 
-		assert r.getNormalRegionMarking() <= r.getInitialMarking() : model;
+		assert r.getNormalRegionMarking().compareTo(r.getInitialMarking()) <= 0: model;
 		return r;
 	}
 
@@ -218,7 +215,7 @@ class InequalitySystemSeparation implements Separation {
 		}
 	}
 
-	private int getIntValue(Model model, Term term) {
+	private BigInteger getValue(Model model, Term term) {
 		Term evald = model.evaluate(term);
 		assert evald instanceof ConstantTerm : evald;
 
@@ -228,11 +225,7 @@ class InequalitySystemSeparation implements Separation {
 		Rational rat = (Rational) value;
 		assert rat.denominator().equals(BigInteger.ONE) : value;
 
-		BigInteger num = rat.numerator();
-		if (num.compareTo(INTEGER_MAX_VALUE) > 0 || num.compareTo(INTEGER_MIN_VALUE) < 0)
-			throw new ArithmeticException("Value for term " + term.toString()
-					+ " not representable as int: " + num.toString());
-		return num.intValue();
+		return rat.numerator();
 	}
 }
 

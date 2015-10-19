@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,10 +83,10 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 			if (!SeparationUtility.isEventEnabled(otherState, event))
 				continue;
 
-			List<Integer> inequality = new ArrayList<>(basis.size());
+			List<BigInteger> inequality = new ArrayList<>(basis.size());
 			for (Region region : basis) {
 				// Evaluate [Psi_s - Psi_s'] in this region
-				int stateValue, otherStateValue;
+				BigInteger stateValue, otherStateValue;
 				try {
 					stateValue = region.getMarkingForState(state);
 				} catch (UnreachableException e) {
@@ -98,7 +99,7 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 					// Just ignore and skip unreachable states
 					continue stateLoop;
 				}
-				inequality.add(stateValue - otherStateValue);
+				inequality.add(stateValue.subtract(otherStateValue));
 			}
 
 			system.addInequality(0, ">", inequality, "inequality for state " + otherState);
@@ -116,14 +117,14 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 
 		// Calculate m = min { r_S(s') | delta(s', event) defined }:
 		// For each state in which 'event' is enabled...
-		Integer min = null;
+		BigInteger min = null;
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
 			if (!SeparationUtility.isEventEnabled(otherState, event))
 				continue;
 
 			try {
-				int stateMarking = result.getMarkingForState(otherState);
-				if (min == null || min > stateMarking)
+				BigInteger stateMarking = result.getMarkingForState(otherState);
+				if (min == null || min.compareTo(stateMarking) > 0)
 					min = stateMarking;
 			} catch (UnreachableException e) {
 				// Silently ignore unreachable states
@@ -133,16 +134,16 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 
 		// If the event is dead, no reachable marking fires it. Handle this by just adding a simple loop
 		if (min == null)
-			min = 1;
+			min = BigInteger.ONE;
 
 		// Make the event have backward weight m. By construction, this must solve separation. Since the region
 		// could already have a non-zero backward weight, we have to handle that.
 		// (This solves ESSP, because the inequality system gave us a region where our state 'state' has a lower
 		// marking than all states in which 'event' is enabled. Thus, we can add suitably many loops to solve
 		// ESSP.)
-		min -= result.getBackwardWeight(eventIndex);
+		min = min.subtract(result.getBackwardWeight(eventIndex));
 		debug("Adding self-loop to event ", event, " with weight ", min);
-		assert min > 0;
+		assert min.compareTo(BigInteger.ZERO) > 0;
 		return result.addRegionWithFactor(Region.createUnitRegion(utility, eventIndex), min)
 			.withInitialMarking(result.getInitialMarking());
 	}

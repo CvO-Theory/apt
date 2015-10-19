@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.math.BigInteger;
+
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
@@ -31,9 +33,9 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 public class PureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher<Region> {
 
 	private final String event;
-	private final Matcher<? super Integer> weightWatcher;
+	private final Matcher<? super BigInteger> weightWatcher;
 
-	private PureRegionWithWeightThatMatcher(String event, Matcher<? super Integer> weightWatcher) {
+	private PureRegionWithWeightThatMatcher(String event, Matcher<? super BigInteger> weightWatcher) {
 		this.event = event;
 		this.weightWatcher = weightWatcher;
 	}
@@ -50,7 +52,7 @@ public class PureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher<R
 	public boolean matchesSafely(Region region, Description description) {
 		boolean matches = true;
 
-		if (region.getBackwardWeight(event) != 0 && region.getForwardWeight(event) != 0) {
+		if (!region.getBackwardWeight(event).equals(BigInteger.ZERO) && !region.getForwardWeight(event).equals(BigInteger.ZERO)) {
 			description.appendText("region weight('");
 			description.appendText(event);
 			description.appendText("')=(");
@@ -75,7 +77,7 @@ public class PureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher<R
 	}
 
 	@Factory
-	public static Matcher<Region> pureRegionWithWeightThat(String event, Matcher<? super Integer> weight) {
+	public static Matcher<Region> pureRegionWithWeightThat(String event, Matcher<? super BigInteger> weight) {
 		return new PureRegionWithWeightThatMatcher(event, weight);
 	}
 }

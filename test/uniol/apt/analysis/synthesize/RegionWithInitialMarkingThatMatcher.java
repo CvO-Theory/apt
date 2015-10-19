@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.math.BigInteger;
+
 import org.hamcrest.Factory;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
@@ -27,18 +29,18 @@ import org.hamcrest.Matcher;
  * Matcher to verify that a Region has a matching initial marking.
  * @author Uli Schlachter
  */
-public class RegionWithInitialMarkingThatMatcher extends FeatureMatcher<Region, Integer> {
-	private RegionWithInitialMarkingThatMatcher(Matcher<? super Integer> matcher) {
+public class RegionWithInitialMarkingThatMatcher extends FeatureMatcher<Region, BigInteger> {
+	private RegionWithInitialMarkingThatMatcher(Matcher<? super BigInteger> matcher) {
 		super(matcher, "region with initial marking", "initial marking");
 	}
 
 	@Override
-	protected Integer featureValueOf(Region region) {
+	protected BigInteger featureValueOf(Region region) {
 		return region.getInitialMarking();
 	}
 
 	@Factory
-	public static <T> Matcher<Region> regionWithInitialMarking(Matcher<? super Integer> matcher) {
+	public static <T> Matcher<Region> regionWithInitialMarking(Matcher<? super BigInteger> matcher) {
 		return new RegionWithInitialMarkingThatMatcher(matcher);
 	}
 }

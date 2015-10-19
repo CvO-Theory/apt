@@ -324,8 +324,8 @@ public class InequalitySystem extends AbstractCollection<InequalitySystem.Inequa
 	 * @param coefficients List of coefficients for the inequality.
 	 * @param comment A comment describing the inequality.
 	 */
-	public void addInequality(int lhs, Comparator comparator, Collection<Integer> coefficients, String comment) {
-		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients),
+	public void addInequality(int lhs, Comparator comparator, Collection<BigInteger> coefficients, String comment) {
+		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, new ArrayList<>(coefficients),
 					comment));
 	}
 
@@ -336,8 +336,8 @@ public class InequalitySystem extends AbstractCollection<InequalitySystem.Inequa
 	 * @param comparator Comparator for the inequality,
 	 * @param coefficients List of coefficients for the inequality.
 	 */
-	public void addInequality(int lhs, Comparator comparator, Collection<Integer> coefficients) {
-		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, toBigIntegerList(coefficients)));
+	public void addInequality(int lhs, Comparator comparator, Collection<BigInteger> coefficients) {
+		addInequality(new Inequality(BigInteger.valueOf(lhs), comparator, new ArrayList<>(coefficients)));
 	}
 
 	/**
@@ -348,7 +348,7 @@ public class InequalitySystem extends AbstractCollection<InequalitySystem.Inequa
 	 * @param coefficients List of coefficients for the inequality.
 	 * @param comment A comment describing the inequality.
 	 */
-	public void addInequality(int lhs, String comparator, Collection<Integer> coefficients, String comment) {
+	public void addInequality(int lhs, String comparator, Collection<BigInteger> coefficients, String comment) {
 		addInequality(lhs, Comparator.fromString(comparator), coefficients, comment);
 	}
 
@@ -359,7 +359,7 @@ public class InequalitySystem extends AbstractCollection<InequalitySystem.Inequa
 	 * @param comparator Comparator for the inequality,
 	 * @param coefficients List of coefficients for the inequality.
 	 */
-	public void addInequality(int lhs, String comparator, Collection<Integer> coefficients) {
+	public void addInequality(int lhs, String comparator, Collection<BigInteger> coefficients) {
 		addInequality(lhs, Comparator.fromString(comparator), coefficients);
 	}
 

@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.math.BigInteger;
+
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
@@ -45,10 +47,10 @@ public class PlainRegionMatcher extends TypeSafeDiagnosingMatcher<Region> {
 		description.appendText("{");
 
 		for (String event : region.getTransitionSystem().getAlphabet()) {
-			int backward = region.getBackwardWeight(event);
-			int forward = region.getForwardWeight(event);
+			BigInteger backward = region.getBackwardWeight(event);
+			BigInteger forward = region.getForwardWeight(event);
 
-			if (backward <= 1 && forward <= 1)
+			if (backward.compareTo(BigInteger.ONE) <= 0 && forward.compareTo(BigInteger.ONE) <= 0)
 				continue;
 
 			if (!matches)

@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -65,9 +66,9 @@ public final class SeparationUtility {
 	static public boolean isSeparatingRegion(Region region, State state, State otherState) {
 		try {
 			// We need a region which assigns different values to these two states.
-			int stateValue = region.getMarkingForState(state);
-			int otherStateValue = region.getMarkingForState(otherState);
-			return stateValue != otherStateValue;
+			BigInteger stateValue = region.getMarkingForState(state);
+			BigInteger otherStateValue = region.getMarkingForState(otherState);
+			return !stateValue.equals(otherStateValue);
 		} catch (UnreachableException e) {
 			return false;
 		}
@@ -83,7 +84,7 @@ public final class SeparationUtility {
 	static public boolean isSeparatingRegion(Region region, State state, String event) {
 		try {
 			// We need r(state) to be smaller than the event's backward weight in some region.
-			return region.getMarkingForState(state) < region.getBackwardWeight(event);
+			return region.getMarkingForState(state).compareTo(region.getBackwardWeight(event)) < 0;
 		} catch (UnreachableException e) {
 			return false;
 		}

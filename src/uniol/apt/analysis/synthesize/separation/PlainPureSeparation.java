@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +71,7 @@ class PlainPureSeparation extends BasicPureSeparation implements Separation {
 		InequalitySystem system = new InequalitySystem();
 
 		for (int event = 0; event < utility.getNumberOfEvents(); event++) {
-			List<Integer> inequality = new ArrayList<>();
+			List<BigInteger> inequality = new ArrayList<>();
 			for (Region region : utility.getRegionBasis())
 				inequality.add(region.getWeight(event));
 

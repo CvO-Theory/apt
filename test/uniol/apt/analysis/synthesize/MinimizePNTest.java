@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,7 +47,7 @@ public class MinimizePNTest {
 	static private Set<Region> createRegions(RegionUtility utility, int numRegions) {
 		Set<Region> result = new HashSet<>();
 		for (int i = 0; i < numRegions; i++)
-			result.add(Region.createTrivialRegion(utility).withInitialMarking(i));
+			result.add(Region.createTrivialRegion(utility).withInitialMarking(BigInteger.valueOf(i)));
 		return result;
 	}
 

@@ -62,9 +62,6 @@ public class MinimizePN {
 	private SMTInterpolHelper helper;
 	private Script script;
 
-	private final static BigInteger INTEGER_MIN_VALUE = BigInteger.valueOf(Integer.MIN_VALUE);
-	private final static BigInteger INTEGER_MAX_VALUE = BigInteger.valueOf(Integer.MAX_VALUE);
-
 	public MinimizePN(SynthesizePN synthesize) {
 		this.synthesize = synthesize;
 		this.utility = synthesize.getUtility();
@@ -229,20 +226,20 @@ public class MinimizePN {
 			for (int numRegion = 0; numRegion < limit; numRegion++) {
 				Region r;
 				if (pure) {
-					List<Integer> weights = new ArrayList<>();
+					List<BigInteger> weights = new ArrayList<>();
 					for (String event : eventList)
-						weights.add(getIntValue(model, script.term("e-" + event + "-" + numRegion)));
+						weights.add(getValue(model, script.term("e-" + event + "-" + numRegion)));
 					r = Region.createPureRegionFromVector(utility, weights);
 				} else {
-					List<Integer> backwardWeights = new ArrayList<>();
-					List<Integer> forwardWeights = new ArrayList<>();
+					List<BigInteger> backwardWeights = new ArrayList<>();
+					List<BigInteger> forwardWeights = new ArrayList<>();
 					for (String event : eventList) {
-						backwardWeights.add(getIntValue(model, script.term("b-" + event + "-" + numRegion)));
-						forwardWeights.add(getIntValue(model, script.term("f-" + event + "-" + numRegion)));
+						backwardWeights.add(getValue(model, script.term("b-" + event + "-" + numRegion)));
+						forwardWeights.add(getValue(model, script.term("f-" + event + "-" + numRegion)));
 					}
 					r = new Region(utility, backwardWeights, forwardWeights);
 				}
-				int initialMarking = getIntValue(model, script.term("m0-" + numRegion));
+				BigInteger initialMarking = getValue(model, script.term("m0-" + numRegion));
 				r = r.withInitialMarking(initialMarking);
 				regions.add(r);
 			}
@@ -254,7 +251,7 @@ public class MinimizePN {
 		}
 	}
 
-	private int getIntValue(Model model, Term term) {
+	private BigInteger getValue(Model model, Term term) {
 		Term evald = model.evaluate(term);
 		assert evald instanceof ConstantTerm : evald;
 
@@ -264,11 +261,7 @@ public class MinimizePN {
 		Rational rat = (Rational) value;
 		assert rat.denominator().equals(BigInteger.ONE) : value;
 
-		BigInteger num = rat.numerator();
-		if (num.compareTo(INTEGER_MAX_VALUE) > 0 || num.compareTo(INTEGER_MIN_VALUE) < 0)
-			throw new ArithmeticException("Value for term " + term.toString()
-					+ " not representable as int: " + num.toString());
-		return num.intValue();
+		return rat.numerator();
 	}
 
 	private Term collectTerms(String operation, Term[] terms, Term def) {

@@ -19,7 +19,10 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.hamcrest.Matcher;
 
 import uniol.apt.TestTSCollection;
@@ -34,17 +37,24 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked") // I hate generics
 public class RegionUtilityTest {
-	private Matcher<Iterable<? extends Integer>> parikhVector(int... args) {
+	private Matcher<Iterable<? extends BigInteger>> parikhVector(int... args) {
 		assert args.length % 2 == 0;
 
-		Integer[] expected = new Integer[args.length / 2];
+		BigInteger[] expected = new BigInteger[args.length / 2];
 		for (int i = 0; i < args.length; i += 2) {
 			assertThat(args[i], is(greaterThanOrEqualTo(0)));
 			assertThat(args[i], is(lessThan(args.length / 2)));
-			expected[args[i]] = args[i + 1];
+			expected[args[i]] = BigInteger.valueOf(args[i + 1]);
 		}
 
 		return contains(expected);
+	}
+
+	static private List<BigInteger> asBigIntegerList(int... list) {
+		List<BigInteger> result = new ArrayList<>(list.length);
+		for (int i = 0; i < list.length; i++)
+			result.add(BigInteger.valueOf(list[i]));
+		return result;
 	}
 
 	@Test
@@ -193,14 +203,14 @@ public class RegionUtilityTest {
 
 		assertThat(utility.getRegionBasis(), containsInAnyOrder(anyOf(
 						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
-							Arrays.asList(1, 0, -1, 0)),
+							asBigIntegerList(1, 0, -1, 0)),
 						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
-							Arrays.asList(-1, 0, 1, 0))),
+							asBigIntegerList(-1, 0, 1, 0))),
 					anyOf(
 						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
-							Arrays.asList(0, 1, 0, -1)),
+							asBigIntegerList(0, 1, 0, -1)),
 						pureRegionWithWeights(Arrays.asList("a", "b", "c", "d"),
-							Arrays.asList(0, -1, 0, 1)))));
+							asBigIntegerList(0, -1, 0, 1)))));
 	}
 
 	@Test
@@ -208,8 +218,8 @@ public class RegionUtilityTest {
 		RegionUtility utility = new RegionUtility(TestTSCollection.getThreeStatesTwoEdgesTS());
 
 		assertThat(utility.getRegionBasis(), containsInAnyOrder(
-					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(1, 0)),
-					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(0, 1))));
+					pureRegionWithWeights(Arrays.asList("a", "b"), asBigIntegerList(1, 0)),
+					pureRegionWithWeights(Arrays.asList("a", "b"), asBigIntegerList(0, 1))));
 	}
 
 	@Test
@@ -217,8 +227,8 @@ public class RegionUtilityTest {
 		RegionUtility utility = new RegionUtility(TestTSCollection.getPersistentTS());
 
 		assertThat(utility.getRegionBasis(), containsInAnyOrder(
-					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(1, 0)),
-					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(0, 1))));
+					pureRegionWithWeights(Arrays.asList("a", "b"), asBigIntegerList(1, 0)),
+					pureRegionWithWeights(Arrays.asList("a", "b"), asBigIntegerList(0, 1))));
 	}
 
 	@Test
@@ -226,8 +236,8 @@ public class RegionUtilityTest {
 		RegionUtility utility = new RegionUtility(TestTSCollection.getNotTotallyReachableTS());
 
 		assertThat(utility.getRegionBasis(), containsInAnyOrder(
-					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(1, 0)),
-					pureRegionWithWeights(Arrays.asList("a", "b"), Arrays.asList(0, 1))));
+					pureRegionWithWeights(Arrays.asList("a", "b"), asBigIntegerList(1, 0)),
+					pureRegionWithWeights(Arrays.asList("a", "b"), asBigIntegerList(0, 1))));
 	}
 }
 

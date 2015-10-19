@@ -177,16 +177,16 @@ public class SMTInterpolHelper {
 	 * @param pv The Parikh vector to evaluate.
 	 * @return A term describing the effect of the vector.
 	 */
-	private Term evaluateParikhVector(Term[] weight, List<Integer> pv) {
+	private Term evaluateParikhVector(Term[] weight, List<BigInteger> pv) {
 		assert weight.length == pv.size();
 		Term[] summands = new Term[weight.length];
 		for (int event = 0; event < weight.length; event++) {
 			Term addend;
-			int w = pv.get(event);
-			if (w >= 0)
-				addend = script.numeral(BigInteger.valueOf(w));
+			BigInteger w = pv.get(event);
+			if (w.compareTo(BigInteger.ZERO) >= 0)
+				addend = script.numeral(w);
 			else
-				addend = script.term("-", script.numeral(BigInteger.valueOf(w).negate()));
+				addend = script.term("-", script.numeral(w.negate()));
 			summands[event] = script.term("*", addend, weight[event]);
 		}
 		return collectTerms("+", summands, script.numeral(BigInteger.ZERO));
@@ -207,7 +207,7 @@ public class SMTInterpolHelper {
 		Term zero = script.numeral(BigInteger.ZERO);
 
 		// Cycles must reach the same marking again
-		Set<List<Integer>> parikhVectorsOfCycles = new HashSet<>();
+		Set<List<BigInteger>> parikhVectorsOfCycles = new HashSet<>();
 		for (Arc chord : utility.getSpanningTree().getChords()) {
 			try {
 				parikhVectorsOfCycles.add(utility.getParikhVectorForEdge(chord));
@@ -216,7 +216,7 @@ public class SMTInterpolHelper {
 						+ "unreachable states?!", e);
 			}
 		}
-		for (List<Integer> pv : parikhVectorsOfCycles)
+		for (List<BigInteger> pv : parikhVectorsOfCycles)
 			result.add(script.term("=", zero, evaluateParikhVector(weight, pv)));
 
 		// Each arc must be enabled

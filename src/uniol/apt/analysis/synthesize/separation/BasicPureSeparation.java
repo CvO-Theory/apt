@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -101,9 +102,9 @@ class BasicPureSeparation implements Separation {
 		final List<Region> basis = utility.getRegionBasis();
 		InequalitySystem system = prepareInequalitySystem();
 
-		List<Integer> inequality = new ArrayList<>(basis.size());
+		List<BigInteger> inequality = new ArrayList<>(basis.size());
 		for (Region region : basis) {
-			int stateValue, otherStateValue;
+			BigInteger stateValue, otherStateValue;
 			try {
 				stateValue = region.getMarkingForState(state);
 				otherStateValue = region.getMarkingForState(otherState);
@@ -111,7 +112,7 @@ class BasicPureSeparation implements Separation {
 				throw new AssertionError("Made sure that the state is reachable, but "
 						+ "apparently it isn't?!", e);
 			}
-			inequality.add(stateValue - otherStateValue);
+			inequality.add(stateValue.subtract(otherStateValue));
 		}
 		// We want r_E(Psi_s - Psi_{s'}) != 0. Since we are in a finite LTS, we can just use ">".
 		system.addInequality(0, ">", inequality, "Region should separate state " + state
@@ -143,10 +144,10 @@ class BasicPureSeparation implements Separation {
 
 		stateLoop:
 		for (State otherState : utility.getTransitionSystem().getNodes()) {
-			List<Integer> inequality = new ArrayList<>(basis.size());
+			List<BigInteger> inequality = new ArrayList<>(basis.size());
 			for (Region region : basis) {
 				// Evaluate [Psi_s - Psi_s' + 1*event] in this region
-				int stateValue, otherStateValue;
+				BigInteger stateValue, otherStateValue;
 				try {
 					stateValue = region.getMarkingForState(state);
 				} catch (UnreachableException e) {
@@ -159,7 +160,7 @@ class BasicPureSeparation implements Separation {
 					// Just ignore and skip unreachable states
 					continue stateLoop;
 				}
-				inequality.add(stateValue - otherStateValue + region.getWeight(eventIndex));
+				inequality.add(stateValue.subtract(otherStateValue).add(region.getWeight(eventIndex)));
 			}
 
 			system.addInequality(0, ">", inequality, "inequality for state " + otherState);
@@ -198,7 +199,7 @@ class BasicPureSeparation implements Separation {
 			for (int eventIndex = 0; eventIndex < utility.getNumberOfEvents(); eventIndex++) {
 				if (locationMap[eventIndex] != null && !locationMap[eventIndex].equals(location)) {
 					// Require that 0 <= r_E(event)
-					List<Integer> inequality = new ArrayList<>();
+					List<BigInteger> inequality = new ArrayList<>();
 					for (Region region : utility.getRegionBasis())
 						inequality.add(region.getWeight(eventIndex));
 
@@ -220,10 +221,10 @@ class BasicPureSeparation implements Separation {
 	 * @return A pure region from a solution of the system or null if the system was unsolvable.
 	 */
 	protected Region findRegionFromSystem(InequalitySystem system, List<Region> basis, String event) {
-		List<Integer> solution = new InequalitySystemSolver()
+		List<BigInteger> solution = new InequalitySystemSolver()
 			.assertDisjunction(system)
 			.assertDisjunction(requireDistributableNet(utility, locationMap, event))
-			.findIntegerSolution();
+			.findSolution();
 		if (solution.isEmpty())
 			return null;
 

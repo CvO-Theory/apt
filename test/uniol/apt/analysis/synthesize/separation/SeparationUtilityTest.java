@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +41,13 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked") // I hate generics
 public class SeparationUtilityTest {
+	static private List<BigInteger> asBigIntegerList(int... list) {
+		List<BigInteger> result = new ArrayList<>(list.length);
+		for (int i = 0; i < list.length; i++)
+			result.add(BigInteger.valueOf(list[i]));
+		return result;
+	}
+
 	public static abstract class Tester {
 		protected TransitionSystem ts;
 		protected RegionUtility utility;
@@ -66,9 +74,9 @@ public class SeparationUtilityTest {
 			assertThat(utility.getEventIndex("b"), is(1));
 			assertThat(utility.getEventIndex("c"), is(2));
 
-			region1 = Region.createPureRegionFromVector(utility, Arrays.asList(-1, 0, 0));
-			region2 = Region.createPureRegionFromVector(utility, Arrays.asList(0, -1, 0));
-			region3 = Region.createPureRegionFromVector(utility, Arrays.asList(0, 0, -1));
+			region1 = Region.createPureRegionFromVector(utility, asBigIntegerList(-1, 0, 0));
+			region2 = Region.createPureRegionFromVector(utility, asBigIntegerList(0, -1, 0));
+			region3 = Region.createPureRegionFromVector(utility, asBigIntegerList(0, 0, -1));
 
 			regionBasis = new ArrayList<>();
 			regionBasis.add(region1);

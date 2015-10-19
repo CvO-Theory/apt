@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,18 +35,25 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
 public class RegionTest {
-	private List<Integer> makeVector(int... args) {
+	static private List<BigInteger> makeVector(int... args) {
 		assert args.length % 2 == 0;
 
-		Integer[] vector = new Integer[args.length / 2];
+		BigInteger[] vector = new BigInteger[args.length / 2];
 		for (int i = 0; i < args.length; i += 2) {
 			assertThat(args[i], is(greaterThanOrEqualTo(0)));
 			assertThat(args[i], is(lessThan(args.length / 2)));
 
-			vector[args[i]] = args[i + 1];
+			vector[args[i]] = BigInteger.valueOf(args[i + 1]);
 		}
 
 		return Arrays.asList(vector);
+	}
+
+	static private List<BigInteger> asBigIntegerList(int... list) {
+		List<BigInteger> result = new ArrayList<>(list.length);
+		for (int i = 0; i < list.length; i++)
+			result.add(BigInteger.valueOf(list[i]));
+		return result;
 	}
 
 	@Test
@@ -68,7 +77,7 @@ public class RegionTest {
 
 		Region region = Region.createPureRegionFromVector(utility, makeVector(a, 1, b, 3, c, -1));
 
-		assertThat(region, is(pureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(1, 3, -1))));
+		assertThat(region, is(pureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(1, 3, -1))));
 	}
 
 	@Test
@@ -83,7 +92,7 @@ public class RegionTest {
 		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		assertThat(region, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
-						Arrays.asList(1, 2, 3, 4, 5, 6))));
+						asBigIntegerList(1, 2, 3, 4, 5, 6))));
 	}
 
 	@Test
@@ -95,7 +104,7 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6), 0);
+		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6), BigInteger.ZERO);
 
 		assertThat(region.toString(), anyOf(
 					equalTo("{ init=0, 1:a:2, 3:b:4, 5:c:6 }"),
@@ -117,7 +126,7 @@ public class RegionTest {
 		int c = utility.getEventIndex("c");
 
 		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6))
-			.withInitialMarking(0);
+			.withInitialMarking(BigInteger.ZERO);
 
 		assertThat(region.toString(), anyOf(
 					equalTo("{ init=0, 1:a:2, 3:b:4, 5:c:6 }"),
@@ -140,7 +149,7 @@ public class RegionTest {
 
 		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
-		assertThat(region.evaluateParikhVector(makeVector(a, 0, b, 0, c, 0)), is(equalTo(0)));
+		assertThat(region.evaluateParikhVector(makeVector(a, 0, b, 0, c, 0)), is(equalTo(BigInteger.ZERO)));
 	}
 
 	@Test
@@ -154,7 +163,7 @@ public class RegionTest {
 
 		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
-		assertThat(region.evaluateParikhVector(makeVector(a, 1, b, 0, c, 0)), is(equalTo(1)));
+		assertThat(region.evaluateParikhVector(makeVector(a, 1, b, 0, c, 0)), is(equalTo(BigInteger.ONE)));
 	}
 
 	@Test
@@ -168,7 +177,7 @@ public class RegionTest {
 
 		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
-		assertThat(region.evaluateParikhVector(makeVector(a, 2, b, 0, c, 0)), is(equalTo(2)));
+		assertThat(region.evaluateParikhVector(makeVector(a, 2, b, 0, c, 0)), is(equalTo(BigInteger.valueOf(2))));
 	}
 
 	@Test
@@ -182,7 +191,7 @@ public class RegionTest {
 
 		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
-		assertThat(region.evaluateParikhVector(makeVector(a, -6, b, 7, c, 9)), is(equalTo(10)));
+		assertThat(region.evaluateParikhVector(makeVector(a, -6, b, 7, c, 9)), is(equalTo(BigInteger.valueOf(10))));
 	}
 
 	@Test
@@ -196,7 +205,7 @@ public class RegionTest {
 
 		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
-		assertThat(region.getNormalRegionMarking(), is(equalTo(0)));
+		assertThat(region.getNormalRegionMarking(), is(equalTo(BigInteger.ZERO)));
 	}
 
 	@Test
@@ -210,7 +219,7 @@ public class RegionTest {
 
 		Region region = new Region(utility, makeVector(a, 2, b, 3, c, 5), makeVector(a, 1, b, 0, c, 3));
 
-		assertThat(region.getNormalRegionMarking(), is(equalTo(7)));
+		assertThat(region.getNormalRegionMarking(), is(equalTo(BigInteger.valueOf(7))));
 	}
 
 	@Test
@@ -250,7 +259,7 @@ public class RegionTest {
 		RegionUtility utility = new RegionUtility(ts);
 
 		assertThat(Region.createTrivialRegion(utility),
-				pureRegionWithWeights(Arrays.asList("a", "b", "c"), Arrays.asList(0, 0, 0)));
+				pureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 0, 0)));
 	}
 
 	@Test
@@ -272,9 +281,9 @@ public class RegionTest {
 		assertThat(r1.addRegionWithFactor(r2, 0), equalTo(r1));
 		assertThat(r2.addRegionWithFactor(r1, 42), equalTo(r2));
 		assertThat(r3.addRegionWithFactor(r2, 1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
-						Arrays.asList(1, 3, 3, 7, 6, 6))));
+						asBigIntegerList(1, 3, 3, 7, 6, 6))));
 		assertThat(r3.addRegionWithFactor(r2, 2), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
-						Arrays.asList(1, 4, 3, 10, 7, 6))));
+						asBigIntegerList(1, 4, 3, 10, 7, 6))));
 	}
 
 	@Test
@@ -310,11 +319,11 @@ public class RegionTest {
 		Region r3 = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		assertThat(r2.addRegionWithFactor(r2, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
-						Arrays.asList(1, 1, 3, 3, 2, 2))));
+						asBigIntegerList(1, 1, 3, 3, 2, 2))));
 		assertThat(r3.addRegionWithFactor(r3, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
-						Arrays.asList(3, 3, 7, 7, 11, 11))));
+						asBigIntegerList(3, 3, 7, 7, 11, 11))));
 		assertThat(r1.addRegionWithFactor(r3, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
-						Arrays.asList(2, 1, 4, 3, 6, 5))));
+						asBigIntegerList(2, 1, 4, 3, 6, 5))));
 	}
 
 	@Test
@@ -331,15 +340,15 @@ public class RegionTest {
 
 		Region result = r1.addRegionWithFactor(r1, 4);
 		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
-						Arrays.asList(0, 5, 0, 15, 10, 0))));
+						asBigIntegerList(0, 5, 0, 15, 10, 0))));
 
 		result = result.addRegionWithFactor(r2, 21);
 		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
-						Arrays.asList(21, 47, 63, 99, 115, 126))));
+						asBigIntegerList(21, 47, 63, 99, 115, 126))));
 
 		result = result.addRegionWithFactor(r1, -6);
 		assertThat(result, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
-						Arrays.asList(27, 47, 81, 99, 115, 138))));
+						asBigIntegerList(27, 47, 81, 99, 115, 138))));
 	}
 
 	@Test
@@ -364,7 +373,7 @@ public class RegionTest {
 		Region region = new Region(utility, makeVector(a, 1, b, 4, c, 5), makeVector(a, 2, b, 3, c, 6));
 
 		assertThat(region.makePure(), is(pureRegionWithWeights(Arrays.asList("a", "b", "c"),
-						Arrays.asList(1, -1, 1))));
+						asBigIntegerList(1, -1, 1))));
 	}
 
 	@Test
@@ -376,7 +385,7 @@ public class RegionTest {
 		Region region = Region.createUnitRegion(utility, b);
 
 		assertThat(region, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
-						Arrays.asList(0, 0, 1, 1, 0, 0))));
+						asBigIntegerList(0, 0, 1, 1, 0, 0))));
 	}
 
 	@Test(expectedExceptions = IndexOutOfBoundsException.class)
@@ -398,11 +407,11 @@ public class RegionTest {
 
 		Region region = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
-		assertThat(region.getMarkingForState(ts.getNode("s")), equalTo(0));
-		assertThat(region.getMarkingForState(ts.getNode("t")), equalTo(1));
-		assertThat(region.getMarkingForState(ts.getNode("u")), equalTo(2));
-		assertThat(region.getMarkingForState(ts.getNode("v")), equalTo(3));
-		assertThat(region.getMarkingForState(ts.getNode("w")), equalTo(4));
+		assertThat(region.getMarkingForState(ts.getNode("s")), equalTo(BigInteger.valueOf(0)));
+		assertThat(region.getMarkingForState(ts.getNode("t")), equalTo(BigInteger.valueOf(1)));
+		assertThat(region.getMarkingForState(ts.getNode("u")), equalTo(BigInteger.valueOf(2)));
+		assertThat(region.getMarkingForState(ts.getNode("v")), equalTo(BigInteger.valueOf(3)));
+		assertThat(region.getMarkingForState(ts.getNode("w")), equalTo(BigInteger.valueOf(4)));
 	}
 
 	@Test
@@ -416,11 +425,11 @@ public class RegionTest {
 
 		Region region = new Region(utility, makeVector(a, 2, b, 3, c, 5), makeVector(a, 1, b, 0, c, 3));
 
-		assertThat(region.getMarkingForState(ts.getNode("s")), equalTo(7));
-		assertThat(region.getMarkingForState(ts.getNode("t")), equalTo(6));
-		assertThat(region.getMarkingForState(ts.getNode("u")), equalTo(3));
-		assertThat(region.getMarkingForState(ts.getNode("v")), equalTo(1));
-		assertThat(region.getMarkingForState(ts.getNode("w")), equalTo(0));
+		assertThat(region.getMarkingForState(ts.getNode("s")), equalTo(BigInteger.valueOf(7)));
+		assertThat(region.getMarkingForState(ts.getNode("t")), equalTo(BigInteger.valueOf(6)));
+		assertThat(region.getMarkingForState(ts.getNode("u")), equalTo(BigInteger.valueOf(3)));
+		assertThat(region.getMarkingForState(ts.getNode("v")), equalTo(BigInteger.valueOf(1)));
+		assertThat(region.getMarkingForState(ts.getNode("w")), equalTo(BigInteger.valueOf(0)));
 	}
 }
 

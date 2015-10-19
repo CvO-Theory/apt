@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -43,24 +44,24 @@ public class Matchers extends org.hamcrest.Matchers {
 	}
 
 	public static Matcher<Region> impureRegionWithWeightThat(String event,
-			Matcher<? super Integer> backward, Matcher<? super Integer> forward) {
+			Matcher<? super BigInteger> backward, Matcher<? super BigInteger> forward) {
 		return ImpureRegionWithWeightThatMatcher.impureRegionWithWeightThat(event, backward, forward);
 	}
 
-	public static Matcher<Region> pureRegionWithWeightThat(String event, Matcher<? super Integer> weight) {
+	public static Matcher<Region> pureRegionWithWeightThat(String event, Matcher<? super BigInteger> weight) {
 		return PureRegionWithWeightThatMatcher.pureRegionWithWeightThat(event, weight);
 	}
 
 	public static Matcher<Region> impureRegionWithWeight(String event, int backward, int forward) {
-		return impureRegionWithWeightThat(event, equalTo(backward), equalTo(forward));
+		return impureRegionWithWeightThat(event, equalTo(BigInteger.valueOf(backward)), equalTo(BigInteger.valueOf(forward)));
 	}
 
 	public static Matcher<Region> pureRegionWithWeight(String event, int weight) {
-		return pureRegionWithWeightThat(event, equalTo(weight));
+		return pureRegionWithWeightThat(event, equalTo(BigInteger.valueOf(weight)));
 	}
 
 	public static Matcher<Region> impureRegionWithWeightsThat(List<String> events,
-			List<Matcher<? super Integer>> weightMatchers) {
+			List<Matcher<? super BigInteger>> weightMatchers) {
 		List<Matcher<? super Region>> matchers = new ArrayList<>();
 		assert 2 * events.size() == weightMatchers.size();
 		for (int i = 0; i < events.size(); i++) {
@@ -71,7 +72,7 @@ public class Matchers extends org.hamcrest.Matchers {
 	}
 
 	public static Matcher<Region> pureRegionWithWeightsThat(List<String> events,
-			List<Matcher<? super Integer>> weightWatcher) {
+			List<Matcher<? super BigInteger>> weightWatcher) {
 		List<Matcher<? super Region>> matchers = new ArrayList<>();
 		assert events.size() == weightWatcher.size();
 
@@ -83,28 +84,28 @@ public class Matchers extends org.hamcrest.Matchers {
 		return allOf(matchers);
 	}
 
-	public static Matcher<Region> impureRegionWithWeights(List<String> events, List<Integer> weights) {
-		List<Matcher<? super Integer>> matchers = new ArrayList<>();
+	public static Matcher<Region> impureRegionWithWeights(List<String> events, List<BigInteger> weights) {
+		List<Matcher<? super BigInteger>> matchers = new ArrayList<>();
 		for (int i = 0; i < weights.size(); i++) {
 			matchers.add(equalTo(weights.get(i)));
 		}
 		return impureRegionWithWeightsThat(events, matchers);
 	}
 
-	public static Matcher<Region> pureRegionWithWeights(List<String> events, List<Integer> weights) {
-		List<Matcher<? super Integer>> matchers = new ArrayList<>();
+	public static Matcher<Region> pureRegionWithWeights(List<String> events, List<BigInteger> weights) {
+		List<Matcher<? super BigInteger>> matchers = new ArrayList<>();
 		for (int i = 0; i < weights.size(); i++) {
 			matchers.add(equalTo(weights.get(i)));
 		}
 		return pureRegionWithWeightsThat(events, matchers);
 	}
 
-	public static Matcher<Region> regionWithInitialMarking(Matcher<? super Integer> markingThat) {
+	public static Matcher<Region> regionWithInitialMarking(Matcher<? super BigInteger> markingThat) {
 		return RegionWithInitialMarkingThatMatcher.regionWithInitialMarking(markingThat);
 	}
 
 	public static Matcher<Region> regionWithInitialMarking(int marking) {
-		return regionWithInitialMarking(equalTo(marking));
+		return regionWithInitialMarking(equalTo(BigInteger.valueOf(marking)));
 	}
 }
 

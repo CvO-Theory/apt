@@ -42,7 +42,7 @@ public class RegionUtility {
 	private final TransitionSystem ts;
 	private final SpanningTree<TransitionSystem, Arc, State> tree;
 	private final List<String> eventList;
-	private final Map<State, List<Integer>> parikhVectorMap = new HashMap<>();
+	private final Map<State, List<BigInteger>> parikhVectorMap = new HashMap<>();
 	private List<Region> regionBasis;
 
 	/**
@@ -111,24 +111,24 @@ public class RegionUtility {
 	 * @return The Parikh vector that reaches the node from the initial state.
 	 * @throws UnreachableException if the given state is unreachable from the initial state
 	 */
-	public List<Integer> getReachingParikhVector(State node) throws UnreachableException {
-		List<Integer> result = parikhVectorMap.get(node);
+	public List<BigInteger> getReachingParikhVector(State node) throws UnreachableException {
+		List<BigInteger> result = parikhVectorMap.get(node);
 		if (result == null) {
 			if (node.equals(tree.getStartNode())) {
-				Integer[] array = new Integer[eventList.size()];
-				Arrays.fill(array, 0);
+				BigInteger[] array = new BigInteger[eventList.size()];
+				Arrays.fill(array, BigInteger.ZERO);
 				result = Arrays.asList(array);
 			} else {
 				Arc predecessor = tree.getPredecessorEdge(node);
 				if (predecessor == null)
 					throw new UnreachableException(ts, node);
 
-				List<Integer> predVector = getReachingParikhVector(predecessor.getSource());
+				List<BigInteger> predVector = getReachingParikhVector(predecessor.getSource());
 				result = new ArrayList<>();
 				result.addAll(predVector);
 
 				int idx = getEventIndex(predecessor.getLabel());
-				result.set(idx, result.get(idx) + 1);
+				result.set(idx, result.get(idx).add(BigInteger.ONE));
 			}
 			result = Collections.unmodifiableList(result);
 			parikhVectorMap.put(node, result);
@@ -143,19 +143,24 @@ public class RegionUtility {
 	 * @return The edge's Parikh vector or an empty list if none exists.
 	 * @throws UnreachableException if the given state is unreachable from the initial state
 	 */
-	public List<Integer> getParikhVectorForEdge(Arc edge) throws UnreachableException {
+	public List<BigInteger> getParikhVectorForEdge(Arc edge) throws UnreachableException {
 		State source = edge.getSource();
 		State target = edge.getTarget();
-		List<Integer> sourcePV = getReachingParikhVector(source);
-		List<Integer> targetPV = getReachingParikhVector(target);
+		List<BigInteger> sourcePV = getReachingParikhVector(source);
+		List<BigInteger> targetPV = getReachingParikhVector(target);
 		int eventIndex = getEventIndex(edge.getLabel());
 
 		if (sourcePV.isEmpty() || targetPV.isEmpty())
 			return Collections.emptyList();
 
-		List<Integer> result = new ArrayList<>(eventList.size());
-		for (int i = 0; i < eventList.size(); i++)
-			result.add(sourcePV.get(i) - targetPV.get(i) + (i == eventIndex ? 1 : 0));
+		// Calculate source - target + 1_eventIndex
+		List<BigInteger> result = new ArrayList<>(eventList.size());
+		for (int i = 0; i < eventList.size(); i++) {
+			BigInteger sourceVal = sourcePV.get(i);
+			BigInteger targetVal = targetPV.get(i);
+			BigInteger addend = i == eventIndex ? BigInteger.ONE : BigInteger.ZERO;
+			result.add(sourceVal.subtract(targetVal).add(addend));
+		}
 
 		return Collections.unmodifiableList(result);
 	}
@@ -174,11 +179,7 @@ public class RegionUtility {
 			// this transition system. Thus, each region must have zero effect on such a circle.
 			for (Arc chord : tree.getChords()) {
 				try {
-					// FIXME: Get rid of this conversion
-					List<BigInteger> eq = new ArrayList<>();
-					for (int coeff : this.getParikhVectorForEdge(chord))
-						eq.add(BigInteger.valueOf(coeff));
-					system.addEquation(eq);
+					system.addEquation(this.getParikhVectorForEdge(chord));
 				} catch (UnreachableException e) {
 					throw new AssertionError("A chord by definition belongs to reachable nodes, "
 							+ "yet one of them was unreachable?", e);
@@ -186,7 +187,7 @@ public class RegionUtility {
 			}
 
 			List<Region> result = new ArrayList<>();
-			for (List<Integer> vector : system.findIntegerBasis())
+			for (List<BigInteger> vector : system.findBasis())
 				result.add(Region.createPureRegionFromVector(this, vector));
 
 			this.regionBasis = Collections.unmodifiableList(result);

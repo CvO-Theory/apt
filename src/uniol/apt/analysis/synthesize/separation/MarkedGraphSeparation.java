@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,7 +47,7 @@ import uniol.apt.analysis.synthesize.UnreachableException;
 class MarkedGraphSeparation implements Separation {
 	private final RegionUtility utility;
 	private final List<Region> regions;
-	private final Map<Integer, List<Integer>> reachedOnlyByPVs;
+	private final Map<Integer, List<BigInteger>> reachedOnlyByPVs;
 
 	/**
 	 * Construct a new instance for solving separation problems.
@@ -85,8 +86,8 @@ class MarkedGraphSeparation implements Separation {
 	 * @param utility region utility to use
 	 * @return A map from event index to the parikh vector of the state for that event
 	 */
-	static public Map<Integer, List<Integer>> calculateParikhVectorOfUniqueReachedState(RegionUtility utility) {
-		Map<Integer, List<Integer>> result = new HashMap<>();
+	static public Map<Integer, List<BigInteger>> calculateParikhVectorOfUniqueReachedState(RegionUtility utility) {
+		Map<Integer, List<BigInteger>> result = new HashMap<>();
 		stateLoop:
 		for (State state : utility.getTransitionSystem().getNodes()) {
 			Set<Arc> arcs = state.getPresetEdges();
@@ -95,7 +96,7 @@ class MarkedGraphSeparation implements Separation {
 
 			Arc arc = arcs.iterator().next();
 			int event = utility.getEventIndex(arc.getLabel());
-			List<Integer> pv;
+			List<BigInteger> pv;
 			try {
 				pv = utility.getReachingParikhVector(state);
 			} catch (UnreachableException e) {
@@ -103,7 +104,7 @@ class MarkedGraphSeparation implements Separation {
 				// precondition...)
 				continue stateLoop;
 			}
-			List<Integer> old = result.put(event, pv);
+			List<BigInteger> old = result.put(event, pv);
 			assert old == null;
 		}
 		return result;
@@ -131,10 +132,10 @@ class MarkedGraphSeparation implements Separation {
 					continue;
 
 				// Create a region where event produces and otherEvent consumes one token
-				Integer[] array = new Integer[utility.getNumberOfEvents()];
-				Arrays.fill(array, 0);
-				array[event] = 1;
-				array[otherEvent] = -1;
+				BigInteger[] array = new BigInteger[utility.getNumberOfEvents()];
+				Arrays.fill(array, BigInteger.ZERO);
+				array[event] = BigInteger.ONE;
+				array[otherEvent] = BigInteger.ONE.negate();
 				Region region = Region.createPureRegionFromVector(utility, Arrays.asList(array));
 
 				// Its initial marking is the number of times that 'event' appears on a shortest path
@@ -142,12 +143,12 @@ class MarkedGraphSeparation implements Separation {
 				// structure, we can calculate this from the opposite path, because path + opposite path
 				// = (k, ..., k) (The cycle property gives us this). A path is short if it contains a
 				// zero entry somewhere. So k is the maximum entry in the parikh vector.
-				List<Integer> pv = reachedOnlyByPVs.get(otherEvent);
+				List<BigInteger> pv = reachedOnlyByPVs.get(otherEvent);
 				// This code assumes that the spanning tree computes shortest paths. Check with an
 				// assert (Lemma 25: a path is short iff some event never occurs in it).
-				assert pv.contains(0) : pv;
-				int k = Collections.max(pv);
-				region = region.withInitialMarking(k - pv.get(event));
+				assert pv.contains(BigInteger.ZERO) : pv;
+				BigInteger k = Collections.max(pv);
+				region = region.withInitialMarking(k.subtract(pv.get(event)));
 
 				result.add(region);
 			}

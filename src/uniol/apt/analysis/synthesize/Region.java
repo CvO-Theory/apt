@@ -20,6 +20,7 @@
 package uniol.apt.analysis.synthesize;
 
 import java.util.ArrayList;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +35,10 @@ import uniol.apt.adt.ts.TransitionSystem;
  */
 public class Region {
 	private final RegionUtility utility;
-	private final List<Integer> backwardWeights;
-	private final List<Integer> forwardWeights;
-	private Integer initialMarking;
-	private final Map<State, Integer> stateMarkingCache = new HashMap<>();
+	private final List<BigInteger> backwardWeights;
+	private final List<BigInteger> forwardWeights;
+	private BigInteger initialMarking;
+	private final Map<State, BigInteger> stateMarkingCache = new HashMap<>();
 
 	/**
 	 * Create a new region.
@@ -46,8 +47,8 @@ public class Region {
 	 * @param forwardWeights List of weights for the forward weights of each event.
 	 * @param initialMarking Initial marking, or null if one should be calculated.
 	 */
-	private Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights,
-			Integer initialMarking) {
+	public Region(RegionUtility utility, List<BigInteger> backwardWeights, List<BigInteger> forwardWeights,
+			BigInteger initialMarking) {
 		this.utility = utility;
 		this.backwardWeights = Collections.unmodifiableList(new ArrayList<>(backwardWeights));
 		this.forwardWeights = Collections.unmodifiableList(new ArrayList<>(forwardWeights));
@@ -58,26 +59,14 @@ public class Region {
 			throw new IllegalArgumentException("There must be as many backward weights as events");
 		if (forwardWeights.size() != numberEvents)
 			throw new IllegalArgumentException("There must be as many forward weights as events");
-		for (int i : backwardWeights)
-			if (i < 0)
+		for (BigInteger i : backwardWeights)
+			if (i.compareTo(BigInteger.ZERO) < 0)
 				throw new IllegalArgumentException("Backward weight i=" + i + " must not be negative");
-		for (int i : forwardWeights)
-			if (i < 0)
+		for (BigInteger i : forwardWeights)
+			if (i.compareTo(BigInteger.ZERO) < 0)
 				throw new IllegalArgumentException("Forward weight i=" + i + " must not be negative");
-		if (initialMarking != null && initialMarking < 0)
-			throw new IllegalArgumentException("Initial marking must not be negative");
-	}
-
-	/**
-	 * Create a new region.
-	 * @param utility The RegionUtility instance that supports this region.
-	 * @param backwardWeights List of weights for the backward weight of each event.
-	 * @param forwardWeights List of weights for the forward weights of each event.
-	 * @param initialMarking Initial marking for the region
-	 */
-	public Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights,
-			int initialMarking) {
-		this(utility, backwardWeights, forwardWeights, Integer.valueOf(initialMarking));
+		if (initialMarking != null && initialMarking.compareTo(BigInteger.ZERO) < 0)
+			throw new IllegalArgumentException("Initial marking " + initialMarking + " must not be negative");
 	}
 
 	/**
@@ -86,8 +75,8 @@ public class Region {
 	 * @param backwardWeights List of weights for the backward weight of each event.
 	 * @param forwardWeights List of weights for the forward weights of each event.
 	 */
-	public Region(RegionUtility utility, List<Integer> backwardWeights, List<Integer> forwardWeights) {
-		this(utility, backwardWeights, forwardWeights, (Integer) null);
+	public Region(RegionUtility utility, List<BigInteger> backwardWeights, List<BigInteger> forwardWeights) {
+		this(utility, backwardWeights, forwardWeights, (BigInteger) null);
 	}
 
 	/**
@@ -111,7 +100,7 @@ public class Region {
 	 * @param index The event index to query.
 	 * @return the backwards weight of the given event.
 	 */
-	public int getBackwardWeight(int index) {
+	public BigInteger getBackwardWeight(int index) {
 		return backwardWeights.get(index);
 	}
 
@@ -120,7 +109,7 @@ public class Region {
 	 * @param event The event to query.
 	 * @return the backwards weight of the given event.
 	 */
-	public int getBackwardWeight(String event) {
+	public BigInteger getBackwardWeight(String event) {
 		return backwardWeights.get(utility.getEventIndex(event));
 	}
 
@@ -129,7 +118,7 @@ public class Region {
 	 * @param index The event index to query.
 	 * @return the forwards weight of the given event.
 	 */
-	public int getForwardWeight(int index) {
+	public BigInteger getForwardWeight(int index) {
 		return forwardWeights.get(index);
 	}
 
@@ -138,7 +127,7 @@ public class Region {
 	 * @param event The event to query.
 	 * @return the forwards weight of the given event.
 	 */
-	public int getForwardWeight(String event) {
+	public BigInteger getForwardWeight(String event) {
 		return forwardWeights.get(utility.getEventIndex(event));
 	}
 
@@ -147,8 +136,8 @@ public class Region {
 	 * @param index The event index to query.
 	 * @return the total weight of the given event.
 	 */
-	public int getWeight(int index) {
-		return getForwardWeight(index) - getBackwardWeight(index);
+	public BigInteger getWeight(int index) {
+		return getForwardWeight(index).subtract(getBackwardWeight(index));
 	}
 
 	/**
@@ -156,9 +145,8 @@ public class Region {
 	 * @param event The event to query.
 	 * @return the total weight of the given event.
 	 */
-	public int getWeight(String event) {
-		int index = utility.getEventIndex(event);
-		return getForwardWeight(index) - getBackwardWeight(index);
+	public BigInteger getWeight(String event) {
+		return getWeight(utility.getEventIndex(event));
 	}
 
 	/**
@@ -166,12 +154,12 @@ public class Region {
 	 * @param vector The vector to evaluate.
 	 * @return The resulting number that this region assigns to the arguments
 	 */
-	public int evaluateParikhVector(List<Integer> vector) {
+	public BigInteger evaluateParikhVector(List<BigInteger> vector) {
 		assert vector.size() == utility.getEventList().size();
 
-		int result = 0;
+		BigInteger result = BigInteger.ZERO;
 		for (int i = 0; i < vector.size(); i++)
-			result += vector.get(i) * getWeight(i);
+			result = result.add(vector.get(i).multiply(getWeight(i)));
 
 		return result;
 	}
@@ -180,10 +168,10 @@ public class Region {
 	 * Return the initial marking of this region.
 	 * @return The initial marking of this region.
 	 */
-	public int getInitialMarking() {
+	public BigInteger getInitialMarking() {
 		if (this.initialMarking == null) {
 			this.initialMarking = getNormalRegionMarking();
-			assert this.initialMarking >= 0;
+			assert this.initialMarking.compareTo(BigInteger.ZERO) >= 0;
 		}
 		return this.initialMarking;
 	}
@@ -192,12 +180,12 @@ public class Region {
 	 * Get the marking that a normal region based on this abstract would assign to the initial state.
 	 * @return The resulting number.
 	 */
-	public int getNormalRegionMarking() {
-		int marking = 0;
+	public BigInteger getNormalRegionMarking() {
+		BigInteger marking = BigInteger.ZERO;
 		for (State state : getTransitionSystem().getNodes()) {
 			try {
-				marking = Math.max(marking, -evaluateParikhVector(
-							utility.getReachingParikhVector(state)));
+				BigInteger value = evaluateParikhVector(utility.getReachingParikhVector(state));
+				marking = marking.max(value.negate());
 			} catch (UnreachableException e) {
 				continue;
 			}
@@ -211,10 +199,10 @@ public class Region {
 	 * @return The resulting number.
 	 * @throws UnreachableException if the given state is unreachable from the initial state
 	 */
-	public int getMarkingForState(State state) throws UnreachableException {
-		Integer i = stateMarkingCache.get(state);
+	public BigInteger getMarkingForState(State state) throws UnreachableException {
+		BigInteger i = stateMarkingCache.get(state);
 		if (i == null) {
-			i = getInitialMarking() + evaluateParikhVector(utility.getReachingParikhVector(state));
+			i = getInitialMarking().add(evaluateParikhVector(utility.getReachingParikhVector(state)));
 			stateMarkingCache.put(state, i);
 		}
 		return i;
@@ -227,23 +215,33 @@ public class Region {
 	 * @return The resulting region.
 	 */
 	public Region addRegionWithFactor(Region otherRegion, int factor) {
+		return this.addRegionWithFactor(otherRegion, BigInteger.valueOf(factor));
+	}
+
+	/**
+	 * Add a multiple of another region to this region and return the result.
+	 * @param otherRegion The region to add to this one.
+	 * @param factor A factor with which the other region is multiplied before addition.
+	 * @return The resulting region.
+	 */
+	public Region addRegionWithFactor(Region otherRegion, BigInteger factor) {
 		assert otherRegion.utility == utility;
 
-		if (factor == 0)
+		if (factor.equals(BigInteger.ZERO))
 			return this;
 
-		List<Integer> backwardList = new ArrayList<>(utility.getNumberOfEvents());
-		List<Integer> forwardList = new ArrayList<>(utility.getNumberOfEvents());
+		List<BigInteger> backwardList = new ArrayList<>(utility.getNumberOfEvents());
+		List<BigInteger> forwardList = new ArrayList<>(utility.getNumberOfEvents());
 
 		for (int i = 0; i < utility.getNumberOfEvents(); i++) {
-			int backward = this.backwardWeights.get(i);
-			int forward = this.forwardWeights.get(i);
-			if (factor > 0) {
-				backward += factor * otherRegion.getBackwardWeight(i);
-				forward += factor * otherRegion.getForwardWeight(i);
+			BigInteger backward = this.backwardWeights.get(i);
+			BigInteger forward = this.forwardWeights.get(i);
+			if (factor.compareTo(BigInteger.ZERO) > 0) {
+				backward = backward.add(factor.multiply(otherRegion.getBackwardWeight(i)));
+				forward = forward.add(factor.multiply(otherRegion.getForwardWeight(i)));
 			} else {
-				forward += -factor * otherRegion.getBackwardWeight(i);
-				backward += -factor * otherRegion.getForwardWeight(i);
+				forward = forward.add(factor.negate().multiply(otherRegion.getBackwardWeight(i)));
+				backward = backward.add(factor.negate().multiply(otherRegion.getForwardWeight(i)));
 			}
 			backwardList.add(backward);
 			forwardList.add(forward);
@@ -267,7 +265,7 @@ public class Region {
 	 * @return The resulting region.
 	 */
 	public Region makePure() {
-		List<Integer> vector = new ArrayList<>(utility.getNumberOfEvents());
+		List<BigInteger> vector = new ArrayList<>(utility.getNumberOfEvents());
 
 		for (int i = 0; i < utility.getNumberOfEvents(); i++) {
 			vector.add(getWeight(i));
@@ -281,7 +279,7 @@ public class Region {
 	 * @param initial The initial marking for the new region.
 	 * @return The new region.
 	 */
-	public Region withInitialMarking(int initial) {
+	public Region withInitialMarking(BigInteger initial) {
 		return new Region(utility, backwardWeights, forwardWeights, initial);
 	}
 
@@ -312,12 +310,12 @@ public class Region {
 		return reg.utility.equals(utility) &&
 			reg.forwardWeights.equals(forwardWeights) &&
 			reg.backwardWeights.equals(backwardWeights) &&
-			reg.getInitialMarking() == getInitialMarking();
+			reg.getInitialMarking().equals(getInitialMarking());
 	}
 
 	@Override
 	public int hashCode() {
-		return 31 * (forwardWeights.hashCode() + 31 * backwardWeights.hashCode()) + getInitialMarking();
+		return 31 * (forwardWeights.hashCode() + 31 * backwardWeights.hashCode()) + getInitialMarking().hashCode();
 	}
 
 	/**
@@ -326,19 +324,19 @@ public class Region {
 	 * @param vector A vector which contains the weight for each event in the order described by the RegionUtility.
 	 * @return The resulting region.
 	 */
-	public static Region createPureRegionFromVector(RegionUtility utility, List<Integer> vector) {
-		List<Integer> backwardList = new ArrayList<>(utility.getNumberOfEvents());
-		List<Integer> forwardList = new ArrayList<>(utility.getNumberOfEvents());
+	public static Region createPureRegionFromVector(RegionUtility utility, List<BigInteger> vector) {
+		List<BigInteger> backwardList = new ArrayList<>(utility.getNumberOfEvents());
+		List<BigInteger> forwardList = new ArrayList<>(utility.getNumberOfEvents());
 		assert vector.size() == utility.getNumberOfEvents();
 
 		for (int i = 0; i < vector.size(); i++) {
-			int value = vector.get(i);
-			if (value > 0) {
-				backwardList.add(0);
+			BigInteger value = vector.get(i);
+			if (value.compareTo(BigInteger.ZERO) > 0) {
+				backwardList.add(BigInteger.ZERO);
 				forwardList.add(value);
 			} else {
-				backwardList.add(-value);
-				forwardList.add(0);
+				backwardList.add(value.negate());
+				forwardList.add(BigInteger.ZERO);
 			}
 		}
 
@@ -351,7 +349,7 @@ public class Region {
 	 * @return The resulting region.
 	 */
 	public static Region createTrivialRegion(RegionUtility utility) {
-		List<Integer> vector = Collections.nCopies(utility.getNumberOfEvents(), 0);
+		List<BigInteger> vector = Collections.nCopies(utility.getNumberOfEvents(), BigInteger.ZERO);
 		return new Region(utility, vector, vector);
 	}
 
@@ -363,9 +361,9 @@ public class Region {
 	 * @return The resulting region.
 	 */
 	public static Region createUnitRegion(RegionUtility utility, int event) {
-		List<Integer> nullList = Collections.nCopies(utility.getNumberOfEvents(), 0);
-		List<Integer> vector = new ArrayList<>(nullList);
-		vector.set(event, 1);
+		List<BigInteger> nullList = Collections.nCopies(utility.getNumberOfEvents(), BigInteger.ZERO);
+		List<BigInteger> vector = new ArrayList<>(nullList);
+		vector.set(event, BigInteger.ONE);
 		return new Region(utility, vector, vector);
 	}
 }
