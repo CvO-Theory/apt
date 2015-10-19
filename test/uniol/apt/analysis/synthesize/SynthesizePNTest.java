@@ -52,14 +52,13 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked") // I hate generics
 public class SynthesizePNTest {
-	static private Region mockRegion(RegionUtility utility, int normalMarking,
+	static private Region mockRegion(RegionUtility utility, int initialMarking,
 			List<Integer> backwardWeights, List<Integer> forwardWeights) {
 		assert backwardWeights.size() == forwardWeights.size();
 
 		Region result = mock(Region.class);
 		when(result.getRegionUtility()).thenReturn(utility);
-		when(result.getNormalRegionMarking()).thenReturn(BigInteger.valueOf(normalMarking));
-		when(result.getInitialMarking()).thenReturn(BigInteger.valueOf(normalMarking));
+		when(result.getInitialMarking()).thenReturn(BigInteger.valueOf(initialMarking));
 
 		List<String> eventList = utility.getEventList();
 		for (int i = 0; i < backwardWeights.size(); i++) {
@@ -380,7 +379,7 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testUselessRegion() {
-			Region region = new Region(utility, asBigIntegerList(1, 1), asBigIntegerList(1, 1)).withInitialMarking(BigInteger.ONE);
+			Region region = new Region.Builder(utility, asBigIntegerList(1, 1), asBigIntegerList(1, 1)).withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -389,7 +388,7 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testUselessRegionESSP() {
-			Region region = new Region(utility, asBigIntegerList(1, 1), asBigIntegerList(1, 1)).withInitialMarking(BigInteger.ONE);
+			Region region = new Region.Builder(utility, asBigIntegerList(1, 1), asBigIntegerList(1, 1)).withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);

@@ -144,7 +144,6 @@ class InequalitySystemSeparation implements Separation {
 		Region r = builder.withInitialMarking(getValue(model, regionInitialMarking));
 		debug("region: ", r);
 
-		assert r.getNormalRegionMarking().compareTo(r.getInitialMarking()) <= 0: model;
 		return r;
 	}
 

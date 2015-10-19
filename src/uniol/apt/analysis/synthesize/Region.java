@@ -37,7 +37,7 @@ public class Region {
 	private final RegionUtility utility;
 	private final List<BigInteger> backwardWeights;
 	private final List<BigInteger> forwardWeights;
-	private BigInteger initialMarking;
+	private final BigInteger initialMarking;
 	private final Map<State, BigInteger> stateMarkingCache = new HashMap<>();
 
 	/**
@@ -47,7 +47,7 @@ public class Region {
 	 * @param forwardWeights List of weights for the forward weights of each event.
 	 * @param initialMarking Initial marking, or null if one should be calculated.
 	 */
-	public Region(RegionUtility utility, List<BigInteger> backwardWeights, List<BigInteger> forwardWeights,
+	private Region(RegionUtility utility, List<BigInteger> backwardWeights, List<BigInteger> forwardWeights,
 			BigInteger initialMarking) {
 		this.utility = utility;
 		this.backwardWeights = Collections.unmodifiableList(new ArrayList<>(backwardWeights));
@@ -65,18 +65,8 @@ public class Region {
 		for (BigInteger i : forwardWeights)
 			if (i.compareTo(BigInteger.ZERO) < 0)
 				throw new IllegalArgumentException("Forward weight i=" + i + " must not be negative");
-		if (initialMarking != null && initialMarking.compareTo(BigInteger.ZERO) < 0)
+		if (initialMarking.compareTo(BigInteger.ZERO) < 0)
 			throw new IllegalArgumentException("Initial marking " + initialMarking + " must not be negative");
-	}
-
-	/**
-	 * Create a new region.
-	 * @param utility The RegionUtility instance that supports this region.
-	 * @param backwardWeights List of weights for the backward weight of each event.
-	 * @param forwardWeights List of weights for the forward weights of each event.
-	 */
-	public Region(RegionUtility utility, List<BigInteger> backwardWeights, List<BigInteger> forwardWeights) {
-		this(utility, backwardWeights, forwardWeights, (BigInteger) null);
 	}
 
 	/**
@@ -169,28 +159,7 @@ public class Region {
 	 * @return The initial marking of this region.
 	 */
 	public BigInteger getInitialMarking() {
-		if (this.initialMarking == null) {
-			this.initialMarking = getNormalRegionMarking();
-			assert this.initialMarking.compareTo(BigInteger.ZERO) >= 0;
-		}
 		return this.initialMarking;
-	}
-
-	/**
-	 * Get the marking that a normal region based on this abstract would assign to the initial state.
-	 * @return The resulting number.
-	 */
-	public BigInteger getNormalRegionMarking() {
-		BigInteger marking = BigInteger.ZERO;
-		for (State state : getTransitionSystem().getNodes()) {
-			try {
-				BigInteger value = evaluateParikhVector(utility.getReachingParikhVector(state));
-				marking = marking.max(value.negate());
-			} catch (UnreachableException e) {
-				continue;
-			}
-		}
-		return marking;
 	}
 
 	/**
@@ -206,81 +175,6 @@ public class Region {
 			stateMarkingCache.put(state, i);
 		}
 		return i;
-	}
-
-	/**
-	 * Add a multiple of another region to this region and return the result.
-	 * @param otherRegion The region to add to this one.
-	 * @param factor A factor with which the other region is multiplied before addition.
-	 * @return The resulting region.
-	 */
-	public Region addRegionWithFactor(Region otherRegion, int factor) {
-		return this.addRegionWithFactor(otherRegion, BigInteger.valueOf(factor));
-	}
-
-	/**
-	 * Add a multiple of another region to this region and return the result.
-	 * @param otherRegion The region to add to this one.
-	 * @param factor A factor with which the other region is multiplied before addition.
-	 * @return The resulting region.
-	 */
-	public Region addRegionWithFactor(Region otherRegion, BigInteger factor) {
-		assert otherRegion.utility == utility;
-
-		if (factor.equals(BigInteger.ZERO))
-			return this;
-
-		List<BigInteger> backwardList = new ArrayList<>(utility.getNumberOfEvents());
-		List<BigInteger> forwardList = new ArrayList<>(utility.getNumberOfEvents());
-
-		for (int i = 0; i < utility.getNumberOfEvents(); i++) {
-			BigInteger backward = this.backwardWeights.get(i);
-			BigInteger forward = this.forwardWeights.get(i);
-			if (factor.compareTo(BigInteger.ZERO) > 0) {
-				backward = backward.add(factor.multiply(otherRegion.getBackwardWeight(i)));
-				forward = forward.add(factor.multiply(otherRegion.getForwardWeight(i)));
-			} else {
-				forward = forward.add(factor.negate().multiply(otherRegion.getBackwardWeight(i)));
-				backward = backward.add(factor.negate().multiply(otherRegion.getForwardWeight(i)));
-			}
-			backwardList.add(backward);
-			forwardList.add(forward);
-		}
-
-		return new Region(utility, backwardList, forwardList);
-	}
-
-	/**
-	 * Add a multiple of another region to this region and return the result.
-	 * @param otherRegion The region to add to this one.
-	 * @return The resulting region.
-	 */
-	public Region addRegion(Region otherRegion) {
-		return addRegionWithFactor(otherRegion, 1);
-	}
-
-	/**
-	 * Turn this region into a pure region by enforcing that for every event, at least one of the forward or
-	 * backward weight must be zero.
-	 * @return The resulting region.
-	 */
-	public Region makePure() {
-		List<BigInteger> vector = new ArrayList<>(utility.getNumberOfEvents());
-
-		for (int i = 0; i < utility.getNumberOfEvents(); i++) {
-			vector.add(getWeight(i));
-		}
-
-		return Builder.createPure(utility, vector).withNormalRegionInitialMarking();
-	}
-
-	/**
-	 * Create a new region that is a copy of this region, but with the specified initial marking.
-	 * @param initial The initial marking for the new region.
-	 * @return The new region.
-	 */
-	public Region withInitialMarking(BigInteger initial) {
-		return new Region(utility, backwardWeights, forwardWeights, initial);
 	}
 
 	@Override
