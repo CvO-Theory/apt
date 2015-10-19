@@ -32,7 +32,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
@@ -78,10 +80,30 @@ public class PNMLParser {
 	// Parse an xml file into a DOM model
 	private Document getDocument(String path) throws PNMLParserException, IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder;
 		try {
-			return factory.newDocumentBuilder().parse(path);
+			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 			throw new PNMLParserException("Internal error while parsing the document", e);
+		}
+		builder.setErrorHandler(new ErrorHandler() {
+			@Override
+			public void warning(SAXParseException e) throws SAXException {
+				// Silently ignore warnings
+			}
+
+			@Override
+			public void error(SAXParseException e) throws SAXException {
+				throw e;
+			}
+
+			@Override
+			public void fatalError(SAXParseException e) throws SAXException {
+				throw e;
+			}
+		});
+		try {
+			return builder.parse(path);
 		} catch (SAXException e) {
 			throw new PNMLParserException("Could not parse PNML XML file", e);
 		}
