@@ -94,6 +94,11 @@ tokens {
 	public void recover(RecognitionException e) {
 		throw new LexerRuntimeException(e);
 	}
+
+	@Override
+	public void reportError(RecognitionException e) {
+		throw new LexerRuntimeException(e);
+	}
 }
 
 start       returns [FiniteAutomaton aut]	: expr EOF { $aut = $expr.aut; };
