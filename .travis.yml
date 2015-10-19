@@ -11,3 +11,4 @@ notifications:
 script:
   - ant test
   - ant jar
+  - ant verify-parsers
