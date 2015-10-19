@@ -55,6 +55,7 @@ public class PetrifyPNParser {
 		BufferedReader br = new BufferedReader(new StringReader(petrifyFormat));
 		
 		int places = 0;
+		boolean sawTransitions = false;
 		pn_ = new PetriNet();
 
 		String line = "";
@@ -75,6 +76,7 @@ public class PetrifyPNParser {
 					if (!s.isEmpty())
 						pn_.createTransition(s);
 				}
+				sawTransitions = true;
 			} else if (line.contains(".marking")) {
 				line = line.replace(".marking", "");
 				line = line.replace("{", "");
@@ -106,7 +108,7 @@ public class PetrifyPNParser {
 						}
 					}
 				}
-			} else if (!line.contains(".") && pn_.getTransitions() != null) {
+			} else if (!line.contains(".") && sawTransitions) {
 				String[] tmpTrans = line.split(" ");
 
 				if (tmpTrans.length == 0) {
