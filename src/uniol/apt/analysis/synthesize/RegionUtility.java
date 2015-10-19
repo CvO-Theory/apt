@@ -188,7 +188,7 @@ public class RegionUtility {
 
 			List<Region> result = new ArrayList<>();
 			for (List<BigInteger> vector : system.findBasis())
-				result.add(Region.createPureRegionFromVector(this, vector));
+				result.add(Region.Builder.createPure(this, vector).withNormalRegionInitialMarking());
 
 			this.regionBasis = Collections.unmodifiableList(result);
 		}

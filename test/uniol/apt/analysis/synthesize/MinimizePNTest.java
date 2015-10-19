@@ -47,7 +47,7 @@ public class MinimizePNTest {
 	static private Set<Region> createRegions(RegionUtility utility, int numRegions) {
 		Set<Region> result = new HashSet<>();
 		for (int i = 0; i < numRegions; i++)
-			result.add(Region.createTrivialRegion(utility).withInitialMarking(BigInteger.valueOf(i)));
+			result.add(new Region.Builder(utility).withInitialMarking(BigInteger.valueOf(i)));
 		return result;
 	}
 

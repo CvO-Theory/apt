@@ -61,7 +61,7 @@ public class RegionTest {
 		TransitionSystem ts = TestTSCollection.getSingleStateTS();
 		RegionUtility utility = new RegionUtility(ts);
 
-		Region region = Region.createPureRegionFromVector(utility, makeVector());
+		Region region = Region.Builder.createPure(utility, makeVector()).withInitialMarking(BigInteger.ZERO);
 
 		assertThat(region, is(pureRegion()));
 	}
@@ -75,7 +75,7 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region region = Region.createPureRegionFromVector(utility, makeVector(a, 1, b, 3, c, -1));
+		Region region = Region.Builder.createPure(utility, makeVector(a, 1, b, 3, c, -1)).withInitialMarking(BigInteger.ZERO);
 
 		assertThat(region, is(pureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(1, 3, -1))));
 	}
@@ -258,7 +258,7 @@ public class RegionTest {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
 
-		assertThat(Region.createTrivialRegion(utility),
+		assertThat(new Region.Builder(utility).withInitialMarking(BigInteger.ZERO),
 				pureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 0, 0)));
 	}
 
@@ -271,8 +271,8 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region r1 = Region.createTrivialRegion(utility);
-		Region r2 = Region.createPureRegionFromVector(utility, makeVector(a, 1, b, 3, c, -1));
+		Region r1 = new Region.Builder(utility).withInitialMarking(BigInteger.ZERO);
+		Region r2 = Region.Builder.createPure(utility, makeVector(a, 1, b, 3, c, -1)).withInitialMarking(BigInteger.ZERO);
 		Region r3 = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		assertThat(r1.addRegion(r1), equalTo(r1));
@@ -295,9 +295,9 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region r1 = Region.createPureRegionFromVector(utility, makeVector(a, 1, b, 3, c, -2));
-		Region r2 = Region.createPureRegionFromVector(utility, makeVector(a, 2, b, 6, c, -4));
-		Region r3 = Region.createPureRegionFromVector(utility, makeVector(a, 3, b, 9, c, -6));
+		Region r1 = Region.Builder.createPure(utility, makeVector(a, 1, b, 3, c, -2)).withInitialMarking(BigInteger.ZERO);
+		Region r2 = Region.Builder.createPure(utility, makeVector(a, 2, b, 6, c, -4)).withInitialMarking(BigInteger.ZERO);
+		Region r3 = Region.Builder.createPure(utility, makeVector(a, 3, b, 9, c, -6)).withInitialMarking(BigInteger.ZERO);
 
 		assertThat(r1.addRegion(r1), equalTo(r2));
 		assertThat(r1.addRegionWithFactor(r1, 2), equalTo(r3));
@@ -314,8 +314,8 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region r1 = Region.createTrivialRegion(utility);
-		Region r2 = Region.createPureRegionFromVector(utility, makeVector(a, 1, b, 3, c, -2));
+		Region r1 = new Region.Builder(utility).withInitialMarking(BigInteger.ZERO);
+		Region r2 = Region.Builder.createPure(utility, makeVector(a, 1, b, 3, c, -2)).withInitialMarking(BigInteger.ZERO);
 		Region r3 = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		assertThat(r2.addRegionWithFactor(r2, -1), is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
@@ -335,7 +335,7 @@ public class RegionTest {
 		int b = utility.getEventIndex("b");
 		int c = utility.getEventIndex("c");
 
-		Region r1 = Region.createPureRegionFromVector(utility, makeVector(a, 1, b, 3, c, -2));
+		Region r1 = Region.Builder.createPure(utility, makeVector(a, 1, b, 3, c, -2)).withInitialMarking(BigInteger.ZERO);
 		Region r2 = new Region(utility, makeVector(a, 1, b, 3, c, 5), makeVector(a, 2, b, 4, c, 6));
 
 		Region result = r1.addRegionWithFactor(r1, 4);
@@ -356,9 +356,10 @@ public class RegionTest {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
 
-		Region region = Region.createTrivialRegion(utility);
+		Region.Builder builder = new Region.Builder(utility);
+		Region region = builder.withInitialMarking(BigInteger.ZERO);
 
-		assertThat(region.makePure(), equalTo(region));
+		assertThat(region.makePure().withInitialMarking(BigInteger.ZERO), equalTo(region));
 	}
 
 	@Test
@@ -381,9 +382,7 @@ public class RegionTest {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
 
-		int b = utility.getEventIndex("b");
-		Region region = Region.createUnitRegion(utility, b);
-
+		Region region = new Region.Builder(utility).addLoopAround("b", BigInteger.ONE).withInitialMarking(BigInteger.ZERO);
 		assertThat(region, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
 						asBigIntegerList(0, 0, 1, 1, 0, 0))));
 	}
@@ -393,7 +392,7 @@ public class RegionTest {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
 
-		Region.createUnitRegion(utility, 23);
+		new Region.Builder(utility).addLoopAround(23, BigInteger.ONE);
 	}
 
 	@Test

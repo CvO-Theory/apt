@@ -229,12 +229,12 @@ class BasicPureSeparation implements Separation {
 			return null;
 
 		assert solution.size() == basis.size();
-		Region result = Region.createTrivialRegion(utility);
+		Region.Builder builder = new Region.Builder(utility);
 		int i = 0;
 		for (Region region : basis)
-			result = result.addRegionWithFactor(region, solution.get(i++));
+			builder.addRegionWithFactor(region, solution.get(i++));
 
-		result = result.makePure();
+		Region result = builder.makePure().withNormalRegionInitialMarking();
 		debug("region: ", result);
 		return result;
 	}

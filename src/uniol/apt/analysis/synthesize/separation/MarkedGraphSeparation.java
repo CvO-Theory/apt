@@ -136,7 +136,7 @@ class MarkedGraphSeparation implements Separation {
 				Arrays.fill(array, BigInteger.ZERO);
 				array[event] = BigInteger.ONE;
 				array[otherEvent] = BigInteger.ONE.negate();
-				Region region = Region.createPureRegionFromVector(utility, Arrays.asList(array));
+				Region.Builder builder = Region.Builder.createPure(utility, Arrays.asList(array));
 
 				// Its initial marking is the number of times that 'event' appears on a shortest path
 				// from reachedOnlyByPVs(otherEvent) to the initial state. Due to the special net
@@ -148,9 +148,7 @@ class MarkedGraphSeparation implements Separation {
 				// assert (Lemma 25: a path is short iff some event never occurs in it).
 				assert pv.contains(BigInteger.ZERO) : pv;
 				BigInteger k = Collections.max(pv);
-				region = region.withInitialMarking(k.subtract(pv.get(event)));
-
-				result.add(region);
+				result.add(builder.withInitialMarking(k.subtract(pv.get(event))));
 			}
 		}
 		return result;

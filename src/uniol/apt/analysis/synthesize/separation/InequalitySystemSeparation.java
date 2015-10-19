@@ -126,12 +126,12 @@ class InequalitySystemSeparation implements Separation {
 		}
 
 		Model model = script.getModel();
-		Region r;
+		Region.Builder builder;
 		if (properties.isPure()) {
 			List<BigInteger> weights = new ArrayList<>();
 			for (Term term : regionWeights)
 				weights.add(getValue(model, term));
-			r = Region.createPureRegionFromVector(utility, weights);
+			builder = Region.Builder.createPure(utility, weights);
 		} else {
 			List<BigInteger> backwardWeight = new ArrayList<>();
 			List<BigInteger> forwardWeight = new ArrayList<>();
@@ -139,9 +139,9 @@ class InequalitySystemSeparation implements Separation {
 				backwardWeight.add(getValue(model, term));
 			for (Term term : regionForwardWeights)
 				forwardWeight.add(getValue(model, term));
-			r = new Region(utility, backwardWeight, forwardWeight);
+			builder = new Region.Builder(utility, backwardWeight, forwardWeight);
 		}
-		r = r.withInitialMarking(getValue(model, regionInitialMarking));
+		Region r = builder.withInitialMarking(getValue(model, regionInitialMarking));
 		debug("region: ", r);
 
 		assert r.getNormalRegionMarking().compareTo(r.getInitialMarking()) <= 0: model;

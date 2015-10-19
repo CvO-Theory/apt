@@ -271,7 +271,7 @@ public class Region {
 			vector.add(getWeight(i));
 		}
 
-		return createPureRegionFromVector(utility, vector);
+		return Builder.createPure(utility, vector).withNormalRegionInitialMarking();
 	}
 
 	/**
@@ -319,52 +319,177 @@ public class Region {
 	}
 
 	/**
-	 * Create a pure region with the given weight vector.
-	 * @param utility The RegionUtility whose alphabet should be used.
-	 * @param vector A vector which contains the weight for each event in the order described by the RegionUtility.
-	 * @return The resulting region.
+	 * Helper class for creating Region instances.
 	 */
-	public static Region createPureRegionFromVector(RegionUtility utility, List<BigInteger> vector) {
-		List<BigInteger> backwardList = new ArrayList<>(utility.getNumberOfEvents());
-		List<BigInteger> forwardList = new ArrayList<>(utility.getNumberOfEvents());
-		assert vector.size() == utility.getNumberOfEvents();
+	static public class Builder {
+		private final RegionUtility utility;
+		private final List<BigInteger> backwardList;
+		private final List<BigInteger> forwardList;
 
-		for (int i = 0; i < vector.size(); i++) {
-			BigInteger value = vector.get(i);
-			if (value.compareTo(BigInteger.ZERO) > 0) {
-				backwardList.add(BigInteger.ZERO);
-				forwardList.add(value);
-			} else {
-				backwardList.add(value.negate());
-				forwardList.add(BigInteger.ZERO);
-			}
+		/**
+		 * Create a builder for the region with the given weights.
+		 * @param utility The region utility that should be used.
+		 * @param backward The backward weights.
+		 * @param forward The forward weights.
+		 */
+		public Builder(RegionUtility utility, List<BigInteger> backward, List<BigInteger> forward) {
+			if (backward.size() != utility.getNumberOfEvents())
+				throw new IllegalArgumentException("The backward list must contain one entry per event");
+			if (forward.size() != utility.getNumberOfEvents())
+				throw new IllegalArgumentException("The forward list must contain one entry per event");
+			this.utility = utility;
+			this.backwardList = new ArrayList<>(backward);
+			this.forwardList = new ArrayList<>(forward);
 		}
 
-		return new Region(utility, backwardList, forwardList);
-	}
+		/**
+		 * Create a builder for the region which, for now, assigns weight 0 to everything.
+		 * @param utility The region utility that should be used.
+		 */
+		public Builder(RegionUtility utility) {
+			this(utility, Collections.nCopies(utility.getNumberOfEvents(), BigInteger.ZERO),
+					Collections.nCopies(utility.getNumberOfEvents(), BigInteger.ZERO));
+		}
 
-	/**
-	 * Create the trivial region which assigns weight 0 to everything.
-	 * @param utility The RegionUtility whose alphabet should be used.
-	 * @return The resulting region.
-	 */
-	public static Region createTrivialRegion(RegionUtility utility) {
-		List<BigInteger> vector = Collections.nCopies(utility.getNumberOfEvents(), BigInteger.ZERO);
-		return new Region(utility, vector, vector);
-	}
+		/**
+		 * Create a builder and initialize the weights from the given region.
+		 * @param region The region to copy.
+		 */
+		public Builder(Region region) {
+			this(region.utility, region.backwardWeights, region.forwardWeights);
+		}
 
-	/**
-	 * Create a region which assigns forward and backward weight one to the given event and zero to all other
-	 * events.
-	 * @param utility The RegionUtility whose alphabet should be used.
-	 * @param event The index in the region utility of the event that should get weight one.
-	 * @return The resulting region.
-	 */
-	public static Region createUnitRegion(RegionUtility utility, int event) {
-		List<BigInteger> nullList = Collections.nCopies(utility.getNumberOfEvents(), BigInteger.ZERO);
-		List<BigInteger> vector = new ArrayList<>(nullList);
-		vector.set(event, BigInteger.ONE);
-		return new Region(utility, vector, vector);
+		/**
+		 * Add a loop with the given weight around the given event. This means that the backward weight and the
+		 * forward weight are both increased by the given weight.
+		 * @param event The event on which a loop should be added.
+		 * @param weight The weight that should be added.
+		 * @return This builder instance.
+		 */
+		public Builder addLoopAround(String event, BigInteger weight) {
+			return addLoopAround(utility.getEventIndex(event), weight);
+		}
+
+		/**
+		 * Add a loop with the given weight around the given event. This means that the backward weight and the
+		 * forward weight are both increased by the given weight.
+		 * @param event The event on which a loop should be added.
+		 * @param weight The weight that should be added.
+		 * @return This builder instance.
+		 */
+		public Builder addLoopAround(int index, BigInteger weight) {
+			backwardList.set(index, backwardList.get(index).add(weight));
+			forwardList.set(index, forwardList.get(index).add(weight));
+			return this;
+		}
+
+		/**
+		 * Add the weights of a region with some factor applied to our current state. Adding a region with a
+		 * factor of one means that its backward and forward weights get added to our backward and forward
+		 * weights. Adding a region with a factor of minus one means that its backward weights get added to our
+		 * forward weight, and vice versa.
+		 * @param region The region to add.
+		 * @param factor The factor that should be used.
+		 * @return This builder instance.
+		 */
+		public Builder addRegionWithFactor(Region region, BigInteger factor) {
+			if (factor.equals(BigInteger.ZERO))
+				return this;
+
+			List<BigInteger> theirBackwardWeights = region.backwardWeights;
+			List<BigInteger> theirForwardWeights = region.forwardWeights;
+
+			// If the factor is negative, swap the weights and negate the factor
+			if (factor.compareTo(BigInteger.ZERO) < 0) {
+				factor = factor.negate();
+				List<BigInteger> tmp = theirBackwardWeights;
+				theirBackwardWeights = theirForwardWeights;
+				theirForwardWeights = tmp;
+			}
+
+			// Do the addition
+			for (int i = 0; i < utility.getNumberOfEvents(); i++) {
+				BigInteger weight = backwardList.get(i);
+				backwardList.set(i, weight.add(factor.multiply(theirBackwardWeights.get(i))));
+
+				weight = forwardList.get(i);
+				forwardList.set(i, weight.add(factor.multiply(theirForwardWeights.get(i))));
+			}
+			return this;
+		}
+
+		/**
+		 * Turn this builder's weight into the weight for a normal region. This modifies the weight so that the
+		 * effect of each event is still the same, but at least one of the forward or the backward weights are
+		 * zero.
+		 * @return This builder instance.
+		 */
+		public Builder makePure() {
+			for (int i = 0; i < utility.getNumberOfEvents(); i++) {
+				BigInteger weight = forwardList.get(i).subtract(backwardList.get(i));
+				if (weight.compareTo(BigInteger.ZERO) >= 0) {
+					forwardList.set(i, weight);
+					backwardList.set(i, BigInteger.ZERO);
+				} else {
+					forwardList.set(i, BigInteger.ZERO);
+					backwardList.set(i, weight.negate());
+				}
+			}
+			return this;
+		}
+
+		/**
+		 * Create a region from the current state of the builder and the given initial marking.
+		 * @param initial The initial marking of the region.
+		 * @return A new region corresponding to the weights that are currently in this builder.
+		 */
+		public Region withInitialMarking(BigInteger initial) {
+			return new Region(utility, backwardList, forwardList, initial);
+		}
+
+		/**
+		 * Create a region from the current state of this builder and the initial marking that a normal region
+		 * would have. Please note that the normal region marking is only valid for pure region. Also, of course
+		 * the region has to be cycle-consistent (going through a cycle reaches the same value again).
+		 * @return a new region corresponding to the weights that are currently in this builder.
+		 */
+		public Region withNormalRegionInitialMarking() {
+			int numEvents = utility.getNumberOfEvents();
+			BigInteger initial = BigInteger.ZERO;
+			for (State state : utility.getTransitionSystem().getNodes()) {
+				try {
+					BigInteger value = BigInteger.ZERO;
+					List<BigInteger> pv = utility.getReachingParikhVector(state);
+					for (int i = 0; i < numEvents; i++)
+						value = value.add(pv.get(i).multiply(forwardList.get(i).subtract(backwardList.get(i))));
+					initial = initial.max(value.negate());
+				} catch (UnreachableException e) {
+					continue;
+				}
+			}
+			return withInitialMarking(initial);
+		}
+
+		/**
+		 * Create a new region builder for a pure region with the given weights.
+		 * @param utility The region utility that should be used.
+		 * @param vector A vector which contains the weight for each event in the order described by utility.
+		 * @return A region builder containing the given weights.
+		 */
+		static public Builder createPure(RegionUtility utility, List<BigInteger> vector) {
+			if (vector.size() != utility.getNumberOfEvents())
+				throw new IllegalArgumentException("The vector must contain one entry per event");
+
+			Builder result = new Builder(utility);
+			for (int i = 0; i < vector.size(); i++) {
+				BigInteger value = vector.get(i);
+				if (value.compareTo(BigInteger.ZERO) > 0)
+					result.forwardList.set(i, value);
+				else
+					result.backwardList.set(i, value.negate());
+			}
+			return result;
+		}
 	}
 }
 

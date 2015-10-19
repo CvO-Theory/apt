@@ -224,12 +224,12 @@ public class MinimizePN {
 			Model model = script.getModel();
 			Set<Region> regions = new HashSet<>();
 			for (int numRegion = 0; numRegion < limit; numRegion++) {
-				Region r;
+				Region.Builder r;
 				if (pure) {
 					List<BigInteger> weights = new ArrayList<>();
 					for (String event : eventList)
 						weights.add(getValue(model, script.term("e-" + event + "-" + numRegion)));
-					r = Region.createPureRegionFromVector(utility, weights);
+					r = Region.Builder.createPure(utility, weights);
 				} else {
 					List<BigInteger> backwardWeights = new ArrayList<>();
 					List<BigInteger> forwardWeights = new ArrayList<>();
@@ -237,11 +237,10 @@ public class MinimizePN {
 						backwardWeights.add(getValue(model, script.term("b-" + event + "-" + numRegion)));
 						forwardWeights.add(getValue(model, script.term("f-" + event + "-" + numRegion)));
 					}
-					r = new Region(utility, backwardWeights, forwardWeights);
+					r = new Region.Builder(utility, backwardWeights, forwardWeights);
 				}
 				BigInteger initialMarking = getValue(model, script.term("m0-" + numRegion));
-				r = r.withInitialMarking(initialMarking);
-				regions.add(r);
+				regions.add(r.withInitialMarking(initialMarking));
 			}
 
 			return regions;
