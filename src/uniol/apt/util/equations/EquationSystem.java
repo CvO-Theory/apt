@@ -301,29 +301,6 @@ public class EquationSystem {
 		return Collections.unmodifiableSet(result);
 	}
 
-	/**
-	 * Calculate a basis of the equation system.
-	 * This function represents the basis as integers. If a value is out of range for integers, an exception is
-	 * thrown.
-	 * @return The set of basis vectors
-	 * @deprecated Use findBasis() instead
-	 */
-	 @Deprecated
-	public Set<List<Integer>> findIntegerBasis() {
-		Set<List<Integer>> result = new HashSet<>();
-		for (List<BigInteger> vector : findBasis()) {
-			List<Integer> newVect = new ArrayList<>(numVariables);
-			for (BigInteger coeff : vector) {
-				if (coeff.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ||
-						coeff.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
-					throw new ArithmeticException("Cannot represent value as integer: " + coeff);
-				newVect.add(coeff.intValue());
-			}
-			result.add(newVect);
-		}
-		return result;
-	}
-
 	@Override
 	public String toString() {
 		StringWriter buffer = new StringWriter();
