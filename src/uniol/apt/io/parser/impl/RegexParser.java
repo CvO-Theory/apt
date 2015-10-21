@@ -104,6 +104,28 @@ public class RegexParser {
 			this.automatons.put(ctx, kleenePlus(automaton));
 		}
 
+		public void exitExpr_repeat_exact(RegexFormatParser.Expr_repeat_exactContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.expr_id());
+			assert automaton != null;
+			int x = Integer.parseInt(ctx.x.getText());
+			this.automatons.put(ctx, repeat(automaton, x, x));
+		}
+
+		public void exitExpr_repeat_least(RegexFormatParser.Expr_repeat_leastContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.expr_id());
+			assert automaton != null;
+			int x = Integer.parseInt(ctx.x.getText());
+			this.automatons.put(ctx, concatenate(repeat(automaton, x, x), kleeneStar(automaton)));
+		}
+
+		public void exitExpr_repeat_minmax(RegexFormatParser.Expr_repeat_minmaxContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.expr_id());
+			assert automaton != null;
+			int x = Integer.parseInt(ctx.x.getText());
+			int y = Integer.parseInt(ctx.y.getText());
+			this.automatons.put(ctx, repeat(automaton, x, y));
+		}
+
 		public void exitExpr_repeat_nothing(RegexFormatParser.Expr_repeat_nothingContext ctx) {
 			FiniteAutomaton automaton = this.automatons.get(ctx.expr_id());
 			assert automaton != null;

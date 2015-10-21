@@ -87,6 +87,36 @@ public class RegexParserTest {
 				concatenate(getAtomic("a"), getAtomic("b")));
 	}
 
+	@Test
+	public void testRepeat1() throws Exception {
+		test("a{3,3}", concatenate(getAtomic("a"), concatenate(getAtomic("a"), getAtomic("a"))));
+	}
+
+	@Test
+	public void testRepeat2() throws Exception {
+		test("a{1,3}", concatenate(getAtomic("a"), optional(concatenate(getAtomic("a"), optional(getAtomic("a"))))));
+	}
+
+	@Test
+	public void testRepeat3() throws Exception {
+		test("a{0,3}", optional(concatenate(getAtomic("a"), optional(concatenate(getAtomic("a"), optional(getAtomic("a")))))));
+	}
+
+	@Test
+	public void testRepeat4() throws Exception {
+		test("a{1,}", kleenePlus(getAtomic("a")));
+	}
+
+	@Test
+	public void testRepeat5() throws Exception {
+		test("a{1,}a", concatenate(getAtomic("a"), concatenate(kleeneStar(getAtomic("a")), getAtomic("a"))));
+	}
+
+	@Test
+	public void testRepeat6() throws Exception {
+		test("a{2}", concatenate(getAtomic("a"), getAtomic("a")));
+	}
+
 	@Test(expectedExceptions = { ParseException.class })
 	public void testComment4() throws Exception {
 		RegexParser.parseRegex("/a");
@@ -130,6 +160,46 @@ public class RegexParserTest {
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBrokenID3() throws Exception {
 		RegexParser.parseRegex("<");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadRepeat1() throws Exception {
+		RegexParser.parseRegex("a{1,1,1}");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadRepeat2() throws Exception {
+		RegexParser.parseRegex("a{}");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadRepeat3() throws Exception {
+		RegexParser.parseRegex("a{,42}");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadRepeat4() throws Exception {
+		RegexParser.parseRegex("a{b,ad}");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadRepeat5() throws Exception {
+		RegexParser.parseRegex("{1,}");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadRepeat6() throws Exception {
+		RegexParser.parseRegex("a{1,2{1,}}");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadRepeat7() throws Exception {
+		RegexParser.parseRegex("{1,2}1{2,3}");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadRepeat8() throws Exception {
+		RegexParser.parseRegex("a{-42}");
 	}
 }
 

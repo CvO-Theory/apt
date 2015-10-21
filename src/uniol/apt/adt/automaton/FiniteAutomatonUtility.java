@@ -221,6 +221,28 @@ public class FiniteAutomatonUtility {
 	}
 
 	/**
+	 * Get a finite automaton accepting repeatitions of the language of an automaton.
+	 * @param a The automaton to repeat
+	 * @param min minimum number of repeatitions
+	 * @param max maximum number of repeatitions
+	 * @return An automation accepting the repeatitions.
+	 */
+	static public FiniteAutomaton repeat(FiniteAutomaton a, int min, int max) {
+		if (max < 0 || min < 0)
+			throw new IllegalArgumentException("min and max must not be negative");
+		if (min > max)
+			throw new IllegalArgumentException("min must be less or equal max");
+
+		if (max == 0)
+			return getAtomicLanguage(Symbol.EPSILON);
+		if (min > 0)
+			return concatenate(a, repeat(a, min - 1, max - 1));
+		else
+			return optional(concatenate(a, repeat(a, 0, max - 1)));
+
+	}
+
+	/**
 	 * Get a finite automaton accepting a word accepted by the given automaton or the empty word.
 	 * @param a The automaton
 	 * @return An automaton accepting the empty word or a word accepted by the given automaton.

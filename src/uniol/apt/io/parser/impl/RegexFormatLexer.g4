@@ -26,6 +26,7 @@ OPT		: '?';
 PLUS		: '+';
 EPSILON		: '$';
 EMPTY		: '~';
+REPEATOPEN	: '{' -> mode(REPEAT_MODE);
 PAROPEN		: '(';
 PARCLOSE	: ')';
 
@@ -34,6 +35,11 @@ ID		: '<' SYMBOL+ '>';
 COMMENT		: ('//' ~('\n'|'\r')*
 			|   '/*' .*? '*/') -> skip;
 WS		: ( ' ' | '\n' | '\r' | '\t')+ -> skip;
+
+mode REPEAT_MODE;
+REPEATCLOSE	: '}' -> mode(DEFAULT_MODE);
+INT		: DIGIT+;
+COMMA		: ',';
 
 fragment SYMBOL	: DIGIT | LETTER | '_';
 fragment DIGIT	: '0'..'9';

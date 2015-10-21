@@ -31,6 +31,9 @@ expr_concat : ex1=expr_repeat
 expr_repeat : expr_id STAR						# expr_repeat_star
 		| expr_id OPT						# expr_repeat_opt
 		| expr_id PLUS						# expr_repeat_plus
+		| expr_id REPEATOPEN x=INT REPEATCLOSE			# expr_repeat_exact
+		| expr_id REPEATOPEN x=INT COMMA REPEATCLOSE		# expr_repeat_least
+		| expr_id REPEATOPEN x=INT COMMA y=INT REPEATCLOSE	# expr_repeat_minmax
 		| expr_id						# expr_repeat_nothing
 		;
 expr_id     : PAROPEN expr PARCLOSE	# expr_id_parentheses
