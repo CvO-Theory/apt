@@ -117,6 +117,21 @@ public class RegexParserTest {
 		test("a{2}", concatenate(getAtomic("a"), getAtomic("a")));
 	}
 
+	@Test
+	public void testIntersection1() throws Exception {
+		test("a&a?", getAtomic("a"));
+	}
+
+	@Test
+	public void testIntersection2() throws Exception {
+		test("a&b?", getEmptyLanguage());
+	}
+
+	@Test
+	public void testIntersection3() throws Exception {
+		test("a|b&b?", union(getAtomic("a"), getAtomic("b")));
+	}
+
 	@Test(expectedExceptions = { ParseException.class })
 	public void testComment4() throws Exception {
 		RegexParser.parseRegex("/a");
@@ -200,6 +215,26 @@ public class RegexParserTest {
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadRepeat8() throws Exception {
 		RegexParser.parseRegex("a{-42}");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadIntersection1() throws Exception {
+		RegexParser.parseRegex("b&*b");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadIntersection2() throws Exception {
+		RegexParser.parseRegex("b&");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadIntersection3() throws Exception {
+		RegexParser.parseRegex("b&&b");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testBadIntersection4() throws Exception {
+		RegexParser.parseRegex("&a");
 	}
 }
 

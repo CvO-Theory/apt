@@ -21,6 +21,7 @@
 lexer grammar RegexFormatLexer;
 
 OR		: '|';
+AND		: '&';
 STAR		: '*';
 OPT		: '?';
 PLUS		: '+';

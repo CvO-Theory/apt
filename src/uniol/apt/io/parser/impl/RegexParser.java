@@ -75,6 +75,17 @@ public class RegexParser {
 			this.automatons.put(ctx, automaton);
 		}
 
+		public void exitExpr_and(RegexFormatParser.Expr_andContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.ex1);
+			assert automaton != null;
+			if (ctx.ex2 != null) {
+				FiniteAutomaton automaton2 = this.automatons.get(ctx.ex2);
+				assert automaton2 != null;
+				automaton = intersection(automaton, automaton2);
+			}
+			this.automatons.put(ctx, automaton);
+		}
+
 		public void exitExpr_concat(RegexFormatParser.Expr_concatContext ctx) {
 			FiniteAutomaton automaton = this.automatons.get(ctx.ex1);
 			assert automaton != null;

@@ -24,8 +24,10 @@ options { tokenVocab = RegexFormatLexer; }
 
 start       : expr EOF ;
 expr        : expr_or ;
-expr_or     : ex1=expr_concat
+expr_or     : ex1=expr_and
 			(OR ex2=expr_or)?;
+expr_and    : ex1=expr_concat
+			(AND ex2=expr_and)?;
 expr_concat : ex1=expr_repeat
 			(ex2=expr_concat)?;
 expr_repeat : expr_id STAR						# expr_repeat_star

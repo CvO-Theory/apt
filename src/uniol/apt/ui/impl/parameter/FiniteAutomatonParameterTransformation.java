@@ -60,6 +60,7 @@ public class FiniteAutomatonParameterTransformation implements ParameterTransfor
 			+ " - a{x,y} means repeating 'a' between x and y times (with integers x and y).\n"
 			+ " - a? matches either 'a' or nothing, meaning that 'a' is made optional.\n"
 			+ " - a|b matches either 'a' or 'b'.\n"
+			+ " - a&b means the intersection which matches if both subexpresssion (a and b) match (this example never matches).\n"
 			+ " - ~ describes the empty language\n"
 			+ " - $ is the language containing only the empty word\n\n"
 			+ "The precedence of the operators is:\n"

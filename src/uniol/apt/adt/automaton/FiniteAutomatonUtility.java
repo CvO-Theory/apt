@@ -157,6 +157,18 @@ public class FiniteAutomatonUtility {
 	 * @param a2 The second automaton of the intersection.
 	 * @return An automaton accepting the intersection.
 	 */
+	static public FiniteAutomaton intersection(FiniteAutomaton a1, FiniteAutomaton a2) {
+		// I don't know a nice construction for the intesection on nondeterministic automatons
+		return intersection(constructDFA(a1), constructDFA(a2));
+	}
+
+	/**
+	 * Get a finite automaton accepting the intersection of the languages of two automatons. A word is in the
+	 * intersection of the languages if it is in all of the individual languages.
+	 * @param a1 The first automaton of the intersection.
+	 * @param a2 The second automaton of the intersection.
+	 * @return An automaton accepting the intersection.
+	 */
 	static public DeterministicFiniteAutomaton intersection(DeterministicFiniteAutomaton a1,
 			DeterministicFiniteAutomaton a2) {
 		Set<Symbol> alphabet = new HashSet<>(a1.getAlphabet());
