@@ -325,6 +325,48 @@
 		</findbugs>
 	</target>
 
+	<!-- JaCoCo -->
+	<!-- Set a sane default which can be overwritten via -Djacoco.jar=... -->
+	<property name="jacoco.jar" location="/usr/share/java/jacoco/org.jacoco.ant.jar"/>
+	<available file="${jacoco.jar}" type="file" property="jacoco.present"/>
+
+	<target name="jacoco" depends="jacoco.fail,jacoco.run" description="Run tests under JaCoCo"/>
+	<target name="jacoco.fail" unless="jacoco.present">
+		<fail message="JaCoCo was not found. Try -Djacoco.jar=/path/to/jacocoant.jar."/>
+	</target>
+
+	<target name="jacoco.run" depends="javac.tests,xml.tests" if="jacoco.present">
+		<taskdef resource="org/jacoco/ant/antlib.xml" classpath="${jacoco.jar}"/>
+
+		<delete file="reports/jacoco/jacoco.exec"/>
+		<coverage destfile="reports/jacoco/jacoco.exec">
+			<testng outputdir="reports/testng" verbose="1">
+				<classpath>
+					<path refid="test.class.path" />
+					<path refid="project.class.path" />
+				</classpath>
+				<xmlfileset file="testng.xml" />
+			</testng>
+		</coverage>
+
+		<report>
+			<executiondata>
+				<file file="reports/jacoco/jacoco.exec"/>
+			</executiondata>
+
+			<structure name="APT">
+				<classfiles>
+					<fileset dir="classes/"/>
+				</classfiles>
+				<sourcefiles>
+					<fileset dir="src/"/>
+				</sourcefiles>
+			</structure>
+
+			<html destdir="reports/jacoco/"/>
+		</report>
+	</target>
+
 	<target name="clean" description="Cleans this project">
 		<delete dir="ant-classes" failonerror="false" />
 		<delete dir="classes" failonerror="false" />
