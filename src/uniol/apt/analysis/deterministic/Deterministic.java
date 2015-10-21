@@ -44,7 +44,7 @@ public class Deterministic {
 		check();
 	}
 
-	private class StateNameWithLabel {
+	static private class StateNameWithLabel {
 
 		final String stateName;
 		final String label;
@@ -66,6 +66,9 @@ public class Deterministic {
 
 		@Override
 		public boolean equals(Object object) {
+			if (!(object instanceof StateNameWithLabel))
+				return false;
+
 			StateNameWithLabel other = (StateNameWithLabel) object;
 
 			if (!stateName.equals(other.stateName)) {

@@ -72,7 +72,7 @@ public class SimpleModulePreconditionsCheckerTest {
 	private class Something extends Object {
 	};
 
-	private class CheckingModule extends AbstractModule {
+	static private class CheckingModule extends AbstractModule {
 
 		private boolean isMet;
 
@@ -105,7 +105,7 @@ public class SimpleModulePreconditionsCheckerTest {
 		}
 	}
 
-	private class CheckedModule extends AbstractModule {
+	static private class CheckedModule extends AbstractModule {
 
 		@Override
 		public String getName() {

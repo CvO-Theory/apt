@@ -44,7 +44,6 @@ import static uniol.apt.adt.pn.Token.OMEGA;
 public class GenerateStepNetTest {
 	@Test
 	public void testEmptyStepLabel() {
-		PetriNet pn = new PetriNet();
 		assertThat(GenerateStepNet.getStepLabel(Collections.<Transition>emptyList()), equalTo("{}"));
 	}
 

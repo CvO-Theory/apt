@@ -119,7 +119,7 @@ public class PNMLParser {
 	// Get an attribute of an element or throw an exception if it doesn't have such an attribute
 	private String getAttribute(Element elem, String name) throws PNMLParserException {
 		String result = elem.getAttribute(name);
-		if (result == null)
+		if (result.equals(""))
 			throw new PNMLParserException(errPrefix + "Element <" + elem.getTagName() + "> does not have attribute " + name);
 		return result;
 	}
@@ -167,7 +167,7 @@ public class PNMLParser {
 		if (index != -1)
 			str = str.substring(index + 1);
 		try {
-			return Integer.valueOf(str);
+			return Integer.parseInt(str);
 		} catch (NumberFormatException e) {
 			throw new PNMLParserException(errPrefix + "Cannot parse number " + str, e);
 		}
@@ -199,6 +199,8 @@ public class PNMLParser {
 				case "transition":
 					createTransition(cur);
 					break;
+				default:
+					break;
 			}
 			cur = nextElement(cur.getNextSibling());
 		}
@@ -218,10 +220,8 @@ public class PNMLParser {
 	private void createArcs(Element net) throws PNMLParserException {
 		Element cur = nextElement(net.getFirstChild());
 		while (cur != null) {
-			switch (cur.getTagName()) {
-				case "arc":
-					createArc(cur);
-					break;
+			if (cur.getTagName().equals("arc")) {
+				createArc(cur);
 			}
 			cur = nextElement(cur.getNextSibling());
 		}

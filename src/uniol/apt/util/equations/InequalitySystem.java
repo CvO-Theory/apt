@@ -36,14 +36,6 @@ import static org.apache.commons.collections4.iterators.UnmodifiableIterator.unm
 public class InequalitySystem extends AbstractCollection<InequalitySystem.Inequality> {
 	private final List<Inequality> inequalities = new ArrayList<>();
 
-	private static List<BigInteger> toBigIntegerList(Collection<Integer> collection) {
-		List<BigInteger> result = new ArrayList<>(collection.size());
-		for (int value : collection)
-			result.add(BigInteger.valueOf(value));
-
-		return result;
-	}
-
 	private static List<BigInteger> toBigIntegerList(int... array) {
 		List<BigInteger> result = new ArrayList<>(array.length);
 		for (int value : array)

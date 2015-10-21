@@ -51,8 +51,6 @@ public class SynthesizeWordModuleTest {
 		Word word = new Word(Arrays.asList("a", "b"));
 		TransitionSystem ts = makeTS(word);
 		State s = ts.getInitialState();
-		State sA = s.getPostsetNodes().iterator().next();
-		State sAB = sA.getPostsetNodes().iterator().next();
 
 		Map<String, Set<State>> failures = new HashMap<>();
 		failures.put("b", Collections.singleton(s));

@@ -27,6 +27,7 @@ import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
+import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.analysis.exception.NoSuchTransitionException;
 
 import uniol.apt.adt.pn.PetriNet;
@@ -77,9 +78,11 @@ public class WeaklyLiveModule extends AbstractModule {
 			output.setReturnValue("weakly_live", Boolean.class, trans == null);
 			output.setReturnValue("sample_witness_transition", Transition.class, trans);
 		} else {
-			Transition transition = pn.getTransition(id);
-			if (transition == null) {
-				throw new NoSuchTransitionException(pn, id);
+			Transition transition;
+			try {
+				transition = pn.getTransition(id);
+			} catch (NoSuchNodeException e) {
+				throw new NoSuchTransitionException(pn, e);
 			}
 
 			boolean live = Live.checkWeaklyLive(pn, transition);

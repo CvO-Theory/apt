@@ -20,6 +20,7 @@
 package uniol.apt.check;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
@@ -363,8 +364,8 @@ public class SmartChanceGenerator {
 		int i = 0;
 
 		// randomly pick a modification from our pool
-		for (ModificationType mod : this.chances.keySet()) {
-			d = this.chances.get(mod);
+		for (Double dBoxed : this.chances.values()) {
+			d = dBoxed;
 			if (d > 0) {
 				i++;
 				max += d;
@@ -374,16 +375,15 @@ public class SmartChanceGenerator {
 		// No weighted chances, low sum on chances, or only one modification.
 		if (d <= 0.2 || i < 2) {
 			resetChances();
-			d = 5;
 		}
 
 		// randomly pick a modification based on weights.
 		p = rnd.nextDouble() * max;
 
-		for (ModificationType mod : this.chances.keySet()) {
-			sum += this.chances.get(mod);
+		for (Map.Entry<ModificationType, Double> entry : this.chances.entrySet()) {
+			sum += entry.getValue();
 			if (p <= sum) {
-				return doModification(mod);
+				return doModification(entry.getKey());
 			}
 		}
 		return false;
@@ -596,7 +596,7 @@ public class SmartChanceGenerator {
 	 *
 	 * @author Chris
 	 */
-	private class ModificationStep {
+	static private class ModificationStep {
 
 		private Object obj;
 		private ModificationType modification;

@@ -40,8 +40,7 @@ public class NonPure {
 	 * @return true if the net is nonpure.
 	 */
 	public static boolean checkNonPure(PetriNet pn) {
-		SideConditions conditions = new SideConditions();
-		conditions = CheckSideConditions.checkSideConditions(pn);
+		SideConditions conditions = CheckSideConditions.checkSideConditions(pn);
 		if (conditions.isEmpty()) {
 			return false;
 		}

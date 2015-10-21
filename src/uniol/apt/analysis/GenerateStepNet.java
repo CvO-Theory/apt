@@ -244,7 +244,7 @@ public class GenerateStepNet {
 	public String renderCoverabilityGraphAsDot() {
 		CoverabilityGraph graph = CoverabilityGraph.get(getStepNet());
 		String TS_NODE_TEMPLATE         = "%1$s[label=\"%2$s\"]; // node for marking %3$s\n";
-		String TS_INITIAL_NODE_TEMPLATE = "%1$s[label=\"%2$s\", shape=circle];\n";
+		String TS_INITIAL_NODE_TEMPLATE = "%1$s[label=\"%2$s\", shape=circle]; // node for marking %3$s\n";
 		String TS_EDGE_TEMPLATE = "%1$s -> %2$s[label=\"%3$s\"];\n";
 
 		StringBuilder sb = new StringBuilder();

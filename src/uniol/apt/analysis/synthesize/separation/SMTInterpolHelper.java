@@ -203,7 +203,6 @@ public class SMTInterpolHelper {
 	 */
 	private List<Term> requireRegion(Term initialMarking, Term[] weight, Term[] backwardWeight, Term[] forwardWeight) {
 		List<Term> result = new ArrayList<>();
-		final int events = utility.getNumberOfEvents();
 		Term zero = script.numeral(BigInteger.ZERO);
 
 		// Cycles must reach the same marking again
@@ -231,7 +230,7 @@ public class SMTInterpolHelper {
 			}
 		}
 
-		// Some terms must not be zero
+		// Some terms must not be negative
 		result.add(script.term("<=", zero, initialMarking));
 		for (Term term : backwardWeight)
 			result.add(script.term("<=", zero, term));
@@ -343,7 +342,6 @@ public class SMTInterpolHelper {
 	private List<Term> requireConflictFree(Term[] weight, Term[] backwardWeight) {
 		Term[] result = new Term[utility.getNumberOfEvents() + 1];
 		Term zero = script.numeral(BigInteger.ZERO);
-		Term sumOfAllBackwards = collectTerms("+", backwardWeight, zero);
 
 		// Conflict free: Either there is just a single transition consuming token...
 		// (And thus this automatically satisfies any distribution)

@@ -19,6 +19,8 @@
 
 package uniol.apt.module.impl;
 
+import java.util.Objects;
+
 /**
  * Makes it possible to add an optional parameter to module.
  *
@@ -37,6 +39,19 @@ public class OptionalParameter<T> extends Parameter {
 
 	public T getDefaultValue() {
 		return defaultValue;
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode() + Objects.hashCode(defaultValue);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!super.equals(o) || !(o instanceof OptionalParameter<?>))
+			return false;
+		OptionalParameter<?> other = (OptionalParameter<?>) o;
+		return Objects.equals(other.defaultValue, defaultValue);
 	}
 }
 

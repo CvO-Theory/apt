@@ -50,8 +50,7 @@ public class ModuleRegistryTest {
 
 	@Test
 	public void testFindNonExistentModule() {
-		ModuleRegistry registry = new ModuleRegistry();
-		assertTrue(registry.findModule("module1") == null);
+		assertTrue(new ModuleRegistry().findModule("module1") == null);
 	}
 
 	@Test

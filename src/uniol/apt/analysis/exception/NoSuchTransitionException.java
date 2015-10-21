@@ -19,8 +19,9 @@
 
 package uniol.apt.analysis.exception;
 
-import uniol.apt.module.exception.ModuleException;
+import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.module.exception.ModuleException;
 
 /**
  * A NoSuchTransitionException is thrown when a user-specified transition does not exist in the given Petri net.
@@ -37,7 +38,20 @@ public class NoSuchTransitionException extends ModuleException {
 	 */
 	public NoSuchTransitionException(PetriNet pn, String id) {
 		super("Petri net " + pn.getName() + " does not contain a transition '" + id + "'");
-		assert pn.getTransition(id) == null;
+		try {
+			assert pn.getTransition(id) == null;
+		} catch (NoSuchNodeException e) {
+			// This is expected, all is good
+		}
+	}
+
+	/**
+	 * Constructor creates a new NoSuchTransitionException for the given arguments.
+	 * @param pn The Petri net which was given
+	 * @param e The NoSuchNodeException that was thrown from getTransition()
+	 */
+	public NoSuchTransitionException(PetriNet pn, NoSuchNodeException e) {
+		this(pn, e.getNodeId());
 	}
 }
 

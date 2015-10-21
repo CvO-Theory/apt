@@ -31,7 +31,7 @@ public class Symbol {
 	/**
 	 * Constant representing the epsilon symbol
 	 */
-	static public Symbol EPSILON = new Symbol();
+	static final public Symbol EPSILON = new Symbol();
 
 	private Symbol() {
 		this.event = "";

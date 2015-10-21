@@ -174,11 +174,11 @@ public class EquivalenceRelationTest {
 		EquivalenceRelation<Integer> numbers = getOddEven(20);
 		EquivalenceRelation<Integer> refined = primes.refine(numbers);
 
-		assertThat(primes.isEquivalent(3, 7), is(true));
-		assertThat(primes.isEquivalent(1, 5), is(false));
-		assertThat(primes.isEquivalent(11, 9), is(false));
-		assertThat(primes.isEquivalent(11, 13), is(true));
-		assertThat(primes.isEquivalent(15, 9), is(true));
+		assertThat(refined.isEquivalent(3, 7), is(true));
+		assertThat(refined.isEquivalent(1, 5), is(false));
+		assertThat(refined.isEquivalent(11, 9), is(false));
+		assertThat(refined.isEquivalent(11, 13), is(true));
+		assertThat(refined.isEquivalent(15, 9), is(true));
 	}
 }
 

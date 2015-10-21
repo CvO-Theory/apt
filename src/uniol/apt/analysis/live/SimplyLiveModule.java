@@ -29,6 +29,7 @@ import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
+import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.analysis.exception.NoSuchTransitionException;
 import uniol.apt.analysis.language.FiringSequence;
 
@@ -82,9 +83,11 @@ public class SimplyLiveModule extends AbstractModule {
 			output.setReturnValue("simply_live", Boolean.class, dead == null);
 			output.setReturnValue("sample_dead_transition", Transition.class, dead);
 		} else {
-			Transition transition = pn.getTransition(id);
-			if (transition == null) {
-				throw new NoSuchTransitionException(pn, id);
+			Transition transition;
+			try {
+				transition = pn.getTransition(id);
+			} catch (NoSuchNodeException e) {
+				throw new NoSuchTransitionException(pn, e);
 			}
 
 			List<Transition> live = Live.checkSimplyLive(pn, transition);

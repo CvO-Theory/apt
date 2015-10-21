@@ -21,6 +21,7 @@ package uniol.apt.adt.extension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.util.Pair;
@@ -34,7 +35,7 @@ import uniol.apt.util.Pair;
  */
 public class Extensible implements IExtensible {
 
-    private final HashMap<String, Pair<Object, Boolean>> extensions = new HashMap<>();
+    private final Map<String, Pair<Object, Boolean>> extensions = new HashMap<>();
 
     /**
      * Returns if this extension contains the given key.
@@ -104,9 +105,9 @@ public class Extensible implements IExtensible {
      */
     public List<Pair<String, Object>> getExtensions() {
         ArrayList<Pair<String, Object>> ret = new ArrayList<>();
-        for (String key : extensions.keySet()) {
-            Pair<Object, Boolean> pair = extensions.get(key);
-            ret.add(new Pair<>(key, pair.getFirst()));
+        for (Map.Entry<String, Pair<Object, Boolean>> entry : extensions.entrySet()) {
+            Pair<Object, Boolean> pair = entry.getValue();
+            ret.add(new Pair<>(entry.getKey(), pair.getFirst()));
         }
         return ret;
     }
@@ -119,10 +120,10 @@ public class Extensible implements IExtensible {
      */
     public List<Pair<String, Object>> getCopyExtensions() {
         ArrayList<Pair<String, Object>> ret = new ArrayList<>();
-        for (String key : extensions.keySet()) {
-            Pair<Object, Boolean> pair = extensions.get(key);
+        for (Map.Entry<String, Pair<Object, Boolean>> entry : extensions.entrySet()) {
+            Pair<Object, Boolean> pair = entry.getValue();
             if (pair.getSecond()) {
-                ret.add(new Pair<>(key, pair.getFirst()));
+                ret.add(new Pair<>(entry.getKey(), pair.getFirst()));
             }
         }
         return ret;

@@ -183,10 +183,11 @@ public class ParikhVector {
 			throw new StructureException("Parikhvectors are not operating on the same alphabet.");
 		}
 		boolean ret = false;
-		for (String label : pv.keySet()) {
-			if (pv.get(label).intValue() > pv2.get(label).intValue()) {
+		for (Map.Entry<String, Integer> entry : pv.entrySet()) {
+			String label = entry.getKey();
+			if (entry.getValue().intValue() > pv2.get(label).intValue()) {
 				return false;
-			} else if (pv.get(label).intValue() != pv2.get(label).intValue()) {
+			} else if (entry.getValue().intValue() != pv2.get(label).intValue()) {
 				ret = true;
 			}
 		}
@@ -211,11 +212,12 @@ public class ParikhVector {
 		}
 		boolean same = true;
 		boolean disjoint = true;
-		for (String label : pv.keySet()) {
-			if (pv.get(label).intValue() != 0 && pv2.get(label).intValue() != 0) {
+		for (Map.Entry<String, Integer> entry : pv.entrySet()) {
+			String label = entry.getKey();
+			if (entry.getValue().intValue() != 0 && pv2.get(label).intValue() != 0) {
 				disjoint = false;
 			}
-			if (pv.get(label).intValue() != pv2.get(label).intValue()) {
+			if (entry.getValue().intValue() != pv2.get(label).intValue()) {
 				same = false;
 			}
 		}

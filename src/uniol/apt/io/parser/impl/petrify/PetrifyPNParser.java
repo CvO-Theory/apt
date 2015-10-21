@@ -39,8 +39,8 @@ import uniol.apt.module.exception.NetIsNotParsableException;
 public class PetrifyPNParser {
 
 	private PetriNet pn_;
-	private final int SOURCE = 0;
-	private final int TARGET = 1;
+	private static final int SOURCE = 0;
+	private static final int TARGET = 1;
 
 	/**
 	 * Parse the petrify string into the APT-data structure.

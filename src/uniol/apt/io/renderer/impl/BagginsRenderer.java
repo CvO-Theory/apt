@@ -39,7 +39,7 @@ import java.util.List;
  * @author vsp
  */
 public class BagginsRenderer {
-	private class IdWeightPair {
+	static private class IdWeightPair {
 		public int id;
 		public int weight;
 

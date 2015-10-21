@@ -37,7 +37,7 @@ import uniol.apt.module.impl.ModuleVisibility;
 public class ModuleRegistry {
 	Map<String, ModuleEntry> modulesEntries = new LinkedHashMap<>();
 
-	private class ModuleEntry {
+	static private class ModuleEntry {
 		Module module;
 		ModuleVisibility visibility;
 	}
