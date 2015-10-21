@@ -191,7 +191,7 @@ public class FiniteAutomatonUtility {
 	 * concatenation if it can be split into two words so that the first word is accepted by the first automaton and
 	 * the second word by the second automaton.
 	 * @param a1 The first automaton of the concatenation.
-	 * @param a1 The second automaton of the concatenation.
+	 * @param a2 The second automaton of the concatenation.
 	 * @return An automaton accepting the concatenation.
 	 */
 	static public FiniteAutomaton concatenate(FiniteAutomaton a1, FiniteAutomaton a2) {
