@@ -189,7 +189,7 @@ public class RegexParser {
 		try {
 			tree             = parser.start();
 		} catch (ParseCancellationException ex) {
-			throw new ParseException(ex);
+			throw new ParseException(ex.getMessage(), ex);
 		}
 		ParseTreeWalker walker   = new ParseTreeWalker();
 		Listener listener        = new Listener();
