@@ -96,6 +96,7 @@ public class ParsableTask extends Task {
 				testers = new AbstractParserTester[] {
 					new ParserTester<>(new AptPNParser(), outputdir),
 					new ParserTester<>(new AptLTSParser(), outputdir),
+					new ParserTester<>(new LoLAPNParser(), outputdir),
 					new ParserTester<>(new SynetPNParser(), outputdir),
 					new ParserTester<>(new SynetLTSParser(), outputdir),
 					new ParserTester<>(new PetrifyPNParser(), outputdir),
