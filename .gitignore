@@ -6,6 +6,7 @@
 ant-classes/
 apt.jar
 bin/
+build.local.xml
 classes/
 doc/
 reports/
