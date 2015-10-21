@@ -289,6 +289,42 @@
 		</checkstyle>
 	</target>
 
+	<!-- Findbugs -->
+	<!-- Set a sane default which can be overwritten via -Dfindbugs.home=... -->
+	<property name="findbugs.home" location="/usr/share/findbugs"/>
+	<available file="${findbugs.home}" type="dir" property="findbugs.present"/>
+
+	<target name="findbugs" depends="findbugs.fail,findbugs.run" description="Run FindBugs on the source code"/>
+	<target name="findbugs.fail" unless="findbugs.present">
+		<fail message="FindBugs was not found. Try -Dfindbugs.home=/path/to/findbugs."/>
+	</target>
+
+	<target name="findbugs.run" depends="javac,javac.tests" if="findbugs.present">
+		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
+			classpath="${findbugs.home}/lib/findbugs-ant.jar" />
+		<mkdir dir="reports" />
+		<findbugs home="${findbugs.home}"
+				output="xml:withMessages"
+				outputFile="reports/findbugs.xml" >
+			<auxClasspath>
+				<path refid="test.class.path" />
+				<path refid="project.class.path" />
+			</auxClasspath>
+			<sourcePath>
+				<pathelement location="src" />
+				<pathelement location="test" />
+			</sourcePath>
+			<fileset dir="classes">
+				<include name="**/*.class" />
+				<exclude name="uniol/apt/io/parser/impl/apt/*.class" />
+				<exclude name="uniol/apt/io/parser/impl/RegexFormat*.class" />
+			</fileset>
+			<fileset dir="test-classes">
+				<include name="**/*.class" />
+			</fileset>
+		</findbugs>
+	</target>
+
 	<target name="clean" description="Cleans this project">
 		<delete dir="ant-classes" failonerror="false" />
 		<delete dir="classes" failonerror="false" />
