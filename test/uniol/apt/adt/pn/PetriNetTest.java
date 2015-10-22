@@ -37,6 +37,7 @@ import uniol.apt.module.exception.ModuleException;
  *
  * @author Manuel Gieseking
  */
+@SuppressWarnings("deprecation")
 public class PetriNetTest {
 
 	@Test
