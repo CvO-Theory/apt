@@ -24,7 +24,7 @@ package uniol.apt.adt.exception;
  * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
-public class TransitionFireException extends RuntimeException {
+public class TransitionFireException extends DatastructureException {
 
 	public static final long serialVersionUID = 0xdeadbeef00000002l;
 

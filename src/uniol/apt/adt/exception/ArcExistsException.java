@@ -28,7 +28,7 @@ import uniol.apt.adt.ts.ArcKey;
  * <p/>
  * @author Manuel Gieseking
  */
-public class ArcExistsException extends RuntimeException {
+public class ArcExistsException extends DatastructureException {
 
 	public static final long serialVersionUID = 0xdeadbeef00000008l;
 

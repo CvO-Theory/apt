@@ -26,7 +26,7 @@ import uniol.apt.adt.IGraph;
  * <p/>
  * @author Manuel Gieseking
  */
-public class NodeExistsException extends RuntimeException {
+public class NodeExistsException extends DatastructureException {
 
 	public static final long serialVersionUID = 0xdeadbeef00000008l;
 

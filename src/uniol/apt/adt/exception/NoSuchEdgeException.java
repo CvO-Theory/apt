@@ -26,7 +26,7 @@ import uniol.apt.adt.IGraph;
  * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
-public class NoSuchEdgeException extends RuntimeException {
+public class NoSuchEdgeException extends DatastructureException {
 
 	public static final long serialVersionUID = 0xdeadbeef00000003l;
 

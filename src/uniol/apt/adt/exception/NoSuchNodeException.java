@@ -26,7 +26,7 @@ import uniol.apt.adt.IGraph;
  * <p/>
  * @author Manuel Gieseking
  */
-public class NoSuchNodeException extends RuntimeException {
+public class NoSuchNodeException extends DatastructureException {
 
 	public static final long serialVersionUID = 0xdeadbeef00000002l;
 	private String nodeId = "";

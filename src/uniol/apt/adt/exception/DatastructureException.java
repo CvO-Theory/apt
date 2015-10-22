@@ -20,31 +20,23 @@
 package uniol.apt.adt.exception;
 
 /**
- * A StructureException is thrown if an operation breaks the structural consistency of e.g. a graph or net.
- * <p/>
- * @author Dennis-Michael Borde, Manuel Gieseking
+ * Superclass of all exceptions, which the datastructures may throw
+ *
+ * @author vsp
  */
-public class StructureException extends DatastructureException {
+public abstract class DatastructureException extends RuntimeException {
+	public static final long serialVersionUID = 0x1l;
 
-	public static final long serialVersionUID = 0xdeadbeef00000000l;
-
-	/**
-	 * Constructor creates a new StructureException with given message.
-	 * <p/>
-	 * @param message A string containing a describing message.
-	 */
-	public StructureException(String message) {
+	public DatastructureException(String message) {
 		super(message);
 	}
 
-	/**
-	 * Constructor creates a new StructureException with given message and cause.
-	 * <p/>
-	 * @param message A string containing a describing message.
-	 * @param cause   The cause for this exception as Throwable.
-	 */
-	public StructureException(String message, Throwable cause) {
+	public DatastructureException(String message, Throwable cause) {
 		super(message, cause);
+	}
+
+	public DatastructureException(Throwable cause) {
+		super(cause);
 	}
 }
 

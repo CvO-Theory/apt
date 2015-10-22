@@ -28,7 +28,7 @@ import uniol.apt.adt.IGraph;
  * <p/>
  * @author Manuel Gieseking
  */
-public class FlowExistsException extends RuntimeException {
+public class FlowExistsException extends DatastructureException {
 
 	public static final long serialVersionUID = 0xdeadbeef00000008l;
 
