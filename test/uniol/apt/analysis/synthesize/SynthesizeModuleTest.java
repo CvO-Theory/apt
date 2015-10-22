@@ -80,6 +80,12 @@ public class SynthesizeModuleTest {
 	}
 
 	@Test
+	public void testMarkedGraph() throws Exception {
+		PNProperties properties = new PNProperties().setMarkedGraph(true);
+		assertThat(parse("marked-Graph"), equalTo(properties));
+	}
+
+	@Test
 	public void test3Bounded() throws Exception {
 		PNProperties properties = new PNProperties().requireKBounded(3);
 		assertThat(parse("3-bounded"), equalTo(properties));

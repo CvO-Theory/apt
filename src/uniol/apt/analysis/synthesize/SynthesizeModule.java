@@ -73,7 +73,7 @@ public class SynthesizeModule extends AbstractModule {
 	static public void requireCommon(ModuleInputSpec inputSpec, String extra1, String extra2) {
 		inputSpec.addParameter("options", String.class,
 				"Comma separated list of options,"
-				+ " can be verbose, none, safe, [k]-bounded, pure, plain, tnet,"
+				+ " can be verbose, none, safe, [k]-bounded, pure, plain, tnet, marked-graph,"
 				+ " output-nonbranching (on), conflict-free (cf),"
 				+ " upto-language-equivalence (language, le), minimize" + extra1 + "."
 				+ " Special options are verbose (print detail information about the regions),"
@@ -311,6 +311,9 @@ public class SynthesizeModule extends AbstractModule {
 						break;
 					case "tnet":
 						result = result.setTNet(true);
+						break;
+					case "marked-graph":
+						result = result.setMarkedGraph(true);
 						break;
 					case "output-nonbranching":
 					case "on":
