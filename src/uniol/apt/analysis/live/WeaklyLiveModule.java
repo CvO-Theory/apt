@@ -19,16 +19,9 @@
 
 package uniol.apt.analysis.live;
 
-import uniol.apt.module.AbstractModule;
-import uniol.apt.module.Category;
-import uniol.apt.module.ModuleInput;
-import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
-
-import uniol.apt.adt.exception.NoSuchNodeException;
-import uniol.apt.analysis.exception.NoSuchTransitionException;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;

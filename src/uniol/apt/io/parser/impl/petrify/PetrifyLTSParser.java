@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.impl.ANTLRParser;
-import uniol.apt.io.parser.impl.apt.APTLTSParserOutput;
 import uniol.apt.io.parser.impl.apt.APTParserContext;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;

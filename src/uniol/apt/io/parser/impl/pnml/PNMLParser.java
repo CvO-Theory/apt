@@ -38,8 +38,6 @@ import org.xml.sax.SAXParseException;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Place;
-import uniol.apt.adt.pn.Transition;
 import uniol.apt.io.parser.impl.exception.PNMLParserException;
 
 /**

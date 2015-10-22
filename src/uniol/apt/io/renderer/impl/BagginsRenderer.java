@@ -23,12 +23,10 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
-import uniol.apt.adt.INode;
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.adt.pn.Token;
 import uniol.apt.module.exception.ModuleException;
 
 import java.util.ArrayList;

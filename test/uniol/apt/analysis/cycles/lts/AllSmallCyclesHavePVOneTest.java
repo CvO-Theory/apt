@@ -29,7 +29,6 @@ import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.analysis.exception.PreconditionFailedException;
-import uniol.apt.util.Pair;
 import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
 
 /**

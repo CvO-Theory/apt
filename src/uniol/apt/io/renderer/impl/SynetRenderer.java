@@ -21,7 +21,6 @@ package uniol.apt.io.renderer.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;

@@ -23,14 +23,10 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
-import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.util.equations.InequalitySystem;
-
-import static uniol.apt.util.DebugUtil.debug;
 
 /**
  * This class finds impure solutions to separation problems without any other properties.

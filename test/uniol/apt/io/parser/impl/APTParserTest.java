@@ -20,12 +20,9 @@
 package uniol.apt.io.parser.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -47,8 +44,6 @@ import uniol.apt.io.parser.impl.apt.APTParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.StructureException;
-import uniol.apt.module.exception.ModuleException;
-import uniol.apt.module.impl.ModuleInvoker;
 
 /**
  * @author Manuel Gieseking

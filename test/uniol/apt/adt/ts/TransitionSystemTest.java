@@ -22,7 +22,6 @@ package uniol.apt.adt.ts;
 import java.util.HashSet;
 import java.util.Set;
 import org.testng.annotations.Test;
-import uniol.apt.adt.SoftMap;
 import uniol.apt.adt.exception.ArcExistsException;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;

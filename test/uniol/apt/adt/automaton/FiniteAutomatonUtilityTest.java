@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import uniol.apt.TestTSCollection;
-import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
 
 import org.testng.annotations.Test;

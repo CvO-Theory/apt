@@ -19,13 +19,9 @@
 
 package uniol.apt.analysis.synthesize;
 
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

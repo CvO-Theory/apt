@@ -30,7 +30,6 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 import uniol.apt.CrashCourseNets;
 import uniol.apt.adt.EdgeKey;
-import uniol.apt.adt.SoftMap;
 import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.module.exception.ModuleException;
 

@@ -20,7 +20,6 @@
 package uniol.apt.extension;
 
 import uniol.apt.adt.ts.ParikhVector;
-import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.lts.extension.ExtendTransitionSystem;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
