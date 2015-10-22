@@ -35,7 +35,7 @@ import uniol.apt.module.exception.ModuleException;
 public class LimitedUnfoldingModule extends AbstractModule {
 	@Override
 	public String getShortDescription() {
-		return "Calculate the limited unfolding of a Petri net";
+		return "Calculate the limited unfolding of a lts";
 	}
 
 	@Override
