@@ -19,14 +19,12 @@
 
 package uniol.apt.ui.impl.parameter;
 
+import java.io.File;
 import java.io.IOException;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.parser.impl.apt.APTPNParser;
-import uniol.apt.io.parser.impl.exception.FormatException;
-import uniol.apt.io.parser.impl.exception.LexerParserException;
-import uniol.apt.io.parser.impl.exception.NodeNotExistException;
-import uniol.apt.io.parser.impl.exception.TypeMismatchException;
+import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.impl.AptPNParser;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.ParameterTransformation;
 
@@ -38,28 +36,16 @@ public class NetParameterTransformation implements ParameterTransformation<Petri
 
 	@Override
 	public PetriNet transform(String filename) throws ModuleException {
-		boolean fromStandardInput = false;
-
 		try {
 			if (filename.equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)) {
-				fromStandardInput = true;
-				return APTPNParser.getPetriNet(System.in);
+				return new AptPNParser().parsePN(System.in);
 			}
 
-			return APTPNParser.getPetriNet(filename);
-		} catch (IOException e) {
-			throw new ModuleException("Cannot parse file '" + filename + "': File does not exist");
-		} catch (LexerParserException e) {
-			if (fromStandardInput) {
-				throw new ModuleException("Cannot parse data: \n" + e.getLexerParserMessage(), e);
-			} else {
-				throw new ModuleException("Cannot parse file '" + filename + "': \n"
-					+ e.getLexerParserMessage(), e);
-			}
-		} catch (NodeNotExistException | TypeMismatchException ex) {
-			throw new ModuleException("Create data structure: " + ex.getMessage(), ex);
-		} catch (FormatException e) {
-			throw new ModuleException("Format of data does not fit: " + e.getMessage(), e);
+			return new AptPNParser().parsePNFile(filename);
+		} catch (IOException ex) {
+			throw new ModuleException("Can't read Petri net: " + ex.getMessage());
+		} catch (ParseException ex) {
+			throw new ModuleException("Can't parse Petri net: " + ex.getMessage());
 		}
 	}
 }
