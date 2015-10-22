@@ -94,7 +94,7 @@ public class Transition extends Node {
 	 * @return the resulting marking upon firing this transition.
 	 */
 	public Marking fire(Marking m) {
-		return this.graph.fireTransition(this.id, new Marking(m));
+		return this.graph.fireTransition(this.id, m);
 	}
 
 	/**

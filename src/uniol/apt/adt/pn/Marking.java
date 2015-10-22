@@ -162,17 +162,35 @@ public class Marking {
 	}
 
 	/**
+	 * Fires the given transitions and creates a new marking.
+	 * <p/>
+	 * @param t - the transitions that should be fired.
+	 * <p/>
+	 * @return the marking reached after firing the transitions
+	 */
+	public Marking fireTransitions(Transition... t) {
+		ensureConsistency();
+		Marking result = this;
+		for (int i = 0; i < t.length; i++) {
+			result = this.net.fireTransition(t[i].getId(), result);
+		}
+		return result;
+	}
+
+	/**
 	 * Fires the given transitions by changing this marking.
 	 * <p/>
 	 * @param t - the transitions that should be fired.
 	 * <p/>
 	 * @return this marking, changed by firing the transitions.
+	 * @deprecated Markings should be used immutably. Use {@link fireTransitions} instead.
 	 */
+	@Deprecated
 	public Marking fire(Transition... t) {
 		ensureConsistency();
-		for (int i = 0; i < t.length; i++) {
-			this.net.fireTransition(t[i].getId(), this);
-		}
+		Marking result = fireTransitions(t);
+		if (result != this)
+			setMarking(result);
 		return this;
 	}
 
@@ -182,8 +200,23 @@ public class Marking {
 	 * @param placeId the place id.
 	 * @param m       the token.
 	 * <p/>
+	 * @return A copy of this marking with the given modification.
 	 * @throws StructureException if the places of this net and the given token do not fit.
 	 */
+	public Marking setTokenCount(String placeId, Token m) {
+		return setTokenCount(net.getPlace(placeId), m);
+	}
+
+	/**
+	 * Sets the given token(s) on a place with the given id.
+	 * <p/>
+	 * @param placeId the place id.
+	 * @param m       the token.
+	 * <p/>
+	 * @throws StructureException if the places of this net and the given token do not fit.
+	 * @deprecated Markings should be used immutably. Use {@link setTokenCount} instead.
+	 */
+	@Deprecated
 	public void setToken(String placeId, Token m) {
 		setToken(net.getPlace(placeId), m);
 	}
@@ -194,9 +227,25 @@ public class Marking {
 	 * @param placeId the place id.
 	 * @param m       the token.
 	 * <p/>
+	 * @return A copy of this marking with the given modification.
 	 * @throws StructureException       thrown if the places of this net and the given token do not fit.
 	 * @throws IllegalArgumentException thrown if a token count is less than zero.
 	 */
+	public Marking setTokenCount(String placeId, int m) {
+		return setTokenCount(net.getPlace(placeId), m);
+	}
+
+	/**
+	 * Sets the given token(s) on a place with the given id.
+	 * <p/>
+	 * @param placeId the place id.
+	 * @param m       the token.
+	 * <p/>
+	 * @throws StructureException       thrown if the places of this net and the given token do not fit.
+	 * @throws IllegalArgumentException thrown if a token count is less than zero.
+	 * @deprecated Markings should be used immutably. Use {@link setTokenCount} instead.
+	 */
+	@Deprecated
 	public void setToken(String placeId, int m) {
 		setToken(net.getPlace(placeId), m);
 	}
@@ -207,8 +256,31 @@ public class Marking {
 	 * @param p the place.
 	 * @param m the token.
 	 * <p/>
+	 * @return A copy of this marking with the given modification.
 	 * @throws StructureException if the the given place don't belong to the net of this marking.
 	 */
+	public Marking setTokenCount(Place p, Token m) {
+		assert p != null && m != null;
+		ensureConsistency();
+		if (net != p.getGraph() || !map.containsKey(p)) {
+			throw new StructureException("place '" + p.getId() + "' does not belong to net '"
+				+ this.net.getName() + "'.");
+		}
+		Marking result = new Marking(this);
+		result.map.put(p, m);
+		return result;
+	}
+
+	/**
+	 * Sets the given token(s) on a given place.
+	 * <p/>
+	 * @param p the place.
+	 * @param m the token.
+	 * <p/>
+	 * @throws StructureException if the the given place don't belong to the net of this marking.
+	 * @deprecated Markings should be used immutably. Use {@link setTokenCount} instead.
+	 */
+	@Deprecated
 	public void setToken(Place p, Token m) {
 		assert p != null && m != null;
 		ensureConsistency();
@@ -225,9 +297,25 @@ public class Marking {
 	 * @param p the place.
 	 * @param m the number of tokens on this place.
 	 * <p/>
+	 * @return A copy of this marking with the given modification.
 	 * @throws StructureException       if the the given place don't belong to the net of this marking.
 	 * @throws IllegalArgumentException thrown if a token count is less than zero.
 	 */
+	public Marking setTokenCount(Place p, int m) {
+		return setTokenCount(p, new Token(m));
+	}
+
+	/**
+	 * Sets the given token(s) on a given place.
+	 * <p/>
+	 * @param p the place.
+	 * @param m the number of tokens on this place.
+	 * <p/>
+	 * @throws StructureException       if the the given place don't belong to the net of this marking.
+	 * @throws IllegalArgumentException thrown if a token count is less than zero.
+	 * @deprecated Markings should be used immutably. Use {@link setTokenCount} instead.
+	 */
+	@Deprecated
 	public void setToken(Place p, int m) {
 		this.setToken(p, new Token(m));
 	}
@@ -238,8 +326,24 @@ public class Marking {
 	 * @param id the place id.
 	 * @param m  the number of tokens that get added.
 	 * <p/>
+	 * @return A copy of this marking with the given modification.
 	 * @throws NoSuchNodeException thrown if the place with the given id don't exists in the net.
 	 */
+	public Marking addTokenCount(String id, Token m) {
+		assert id != null && m != null;
+		return addTokenCount(this.net.getPlace(id), m);
+	}
+
+	/**
+	 * Adds the given token(s) to a given place.
+	 * <p/>
+	 * @param id the place id.
+	 * @param m  the number of tokens that get added.
+	 * <p/>
+	 * @throws NoSuchNodeException thrown if the place with the given id don't exists in the net.
+	 * @deprecated Markings should be used immutably. Use {@link addTokenCount} instead.
+	 */
+	@Deprecated
 	public void addToken(String id, Token m) {
 		assert id != null && m != null;
 		addToken(this.net.getPlace(id), m);
@@ -251,8 +355,27 @@ public class Marking {
 	 * @param p the place.
 	 * @param m the token.
 	 * <p/>
+	 * @return A copy of this marking with the given modification.
 	 * @throws NoSuchNodeException if the place does not exist in the given net.
 	 */
+	public Marking addTokenCount(Place p, Token m) {
+		assert p != null && m != null;
+		Token val = getToken(p);
+		Marking result = new Marking(this);
+		result.map.put(p, val.add(m));
+		return result;
+	}
+
+	/**
+	 * Adds the given token(s) to a given place.
+	 * <p/>
+	 * @param p the place.
+	 * @param m the token.
+	 * <p/>
+	 * @throws NoSuchNodeException if the place does not exist in the given net.
+	 * @deprecated Markings should be used immutably. Use {@link addTokenCount} instead.
+	 */
+	@Deprecated
 	public void addToken(Place p, Token m) {
 		assert p != null && m != null;
 		ensureConsistency();
@@ -266,9 +389,26 @@ public class Marking {
 	 * @param id the place id.
 	 * @param m  the number of tokens that get added.
 	 * <p/>
+	 * @return A copy of this marking with the given modification.
 	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
 	 * @throws NoSuchNodeException      if the place does not exist in the given net.
 	 */
+	public Marking addTokenCount(String id, int m) {
+		assert id != null;
+		return addTokenCount(this.net.getPlace(id), m);
+	}
+
+	/**
+	 * Adds the given token(s) to a place with the given id.
+	 * <p/>
+	 * @param id the place id.
+	 * @param m  the number of tokens that get added.
+	 * <p/>
+	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
+	 * @throws NoSuchNodeException      if the place does not exist in the given net.
+	 * @deprecated Markings should be used immutably. Use {@link addTokenCount} instead.
+	 */
+	@Deprecated
 	public void addToken(String id, int m) {
 		assert id != null;
 		addToken(this.net.getPlace(id), m);
@@ -280,9 +420,30 @@ public class Marking {
 	 * @param p the place.
 	 * @param m the number of tokens that get added.
 	 * <p/>
+	 * @return A copy of this marking with the given modification.
 	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
 	 * @throws NoSuchNodeException      if the place does not exist in the given net.
 	 */
+	public Marking addTokenCount(Place p, int m) {
+		assert p != null;
+		ensureConsistency();
+		Token val = getToken(p);
+		Marking result = new Marking(this);
+		result.map.put(p, val.add(m));
+		return result;
+	}
+
+	/**
+	 * Adds the given token(s) to a given place.
+	 * <p/>
+	 * @param p the place.
+	 * @param m the number of tokens that get added.
+	 * <p/>
+	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
+	 * @throws NoSuchNodeException      if the place does not exist in the given net.
+	 * @deprecated Markings should be used immutably. Use {@link addTokenCount} instead.
+	 */
+	@Deprecated
 	public void addToken(Place p, int m) {
 		assert p != null;
 		ensureConsistency();
@@ -353,6 +514,47 @@ public class Marking {
 	}
 
 	/**
+	 * Check if this object covers the given other marking. If the other marking is covered, a new marking is
+	 * returned with has suitable omegas added. Else, null is returned.
+	 * <p/>
+	 * @param o The marking that should be covered.
+	 * <p/>
+	 * @return A marking with added omegas, or null if this does not cover the other marking.
+	 * <p/>
+	 * @author Uli Schlachter, Manuel Gieseking
+	 */
+	public Marking cover(Marking o) {
+		ensureConsistency();
+		o.ensureConsistency();
+		assert map.keySet().equals(o.map.keySet());
+
+		Set<Place> covered = new HashSet<>();
+		for (Map.Entry<Place, Token> e : map.entrySet()) {
+			Token own = e.getValue();
+			Token other = o.map.get(e.getKey());
+
+			int comp = own.compareTo(other);
+			if (comp < 0) {
+				return null;
+			} else if (comp > 0 && !own.isOmega()) {
+				covered.add(e.getKey());
+			}
+		}
+		if (covered.isEmpty()) {
+			// Both markings are equal and thus we don't cover anything
+			return null;
+		}
+
+		// We are covering the other marking, add the suitable omegas
+		Marking result = new Marking(this);
+		for (Place place : covered) {
+			result.map.put(place, Token.OMEGA);
+		}
+
+		return result;
+	}
+
+	/**
 	 * Check if this object covers the given other marking. If the other marking is covered, suitable omegas are
 	 * added to this object.
 	 * <p/>
@@ -361,7 +563,9 @@ public class Marking {
 	 * @return true if the given marking gets covered
 	 * <p/>
 	 * @author Uli Schlachter, Manuel Gieseking
+	 * @deprecated Markings should be used immutably. Use {@link cover} instead.
 	 */
+	@Deprecated
 	public boolean covers(Marking o) {
 		ensureConsistency();
 		o.ensureConsistency();

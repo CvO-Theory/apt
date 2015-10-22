@@ -1220,10 +1220,10 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	Marking fireTransition(String id, Marking m) {
 		if (getTransitionIsFireable(id, m)) {
 			for (Flow f : this.getPresetEdges(id)) {
-				m.addToken(f.getPlace(), -f.getWeight());
+				m = m.addTokenCount(f.getPlace(), -f.getWeight());
 			}
 			for (Flow f : this.getPostsetEdges(id)) {
-				m.addToken(f.getPlace(), +f.getWeight());
+				m = m.addTokenCount(f.getPlace(), +f.getWeight());
 			}
 			return m;
 		} else {

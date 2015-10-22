@@ -63,9 +63,9 @@ public class MarkingTest {
 		assert places.length == token.length;
 		for (int i = 0; i < token.length; i++) {
 			if (token[i] == null) {
-				mark.setToken(places[i], Token.OMEGA);
+				mark = mark.setTokenCount(places[i], Token.OMEGA);
 			} else {
-				mark.setToken(places[i], token[i]);
+				mark = mark.setTokenCount(places[i], token[i]);
 			}
 		}
 		return mark;
@@ -74,6 +74,7 @@ public class MarkingTest {
 	private void markingEqual(Integer... token) {
 		Marking a = createMarking(token);
 		Marking b = createMarking(token);
+		assertEquals(a, a);
 		assertEquals(a, b);
 		assertEquals(a.hashCode(), b.hashCode());
 	}
@@ -101,10 +102,35 @@ public class MarkingTest {
 	}
 
 	@Test
+	public void testNotEqual3() {
+		Marking a = new PetriNet().getInitialMarkingCopy();
+		Marking b = new PetriNet().getInitialMarkingCopy();
+		assertFalse(a.equals(b));
+	}
+
+	@Test
+	public void testNotEqual4() {
+		Marking a = createMarking(1, 2, 3);
+		assertFalse(a.equals(null));
+	}
+
+	@Test
 	public void testMarkingNotEqual() {
 		Marking a = createMarking(1, 2, 3);
 		Marking b = createMarking(1, 5, 3);
 		assertFalse(a.equals(b));
+	}
+
+	@Test
+	public void testOmega() {
+		Marking a = createMarking(1, 2, OMEGA, 4, 5);
+		assertTrue(a.hasOmega());
+	}
+
+	@Test
+	public void testNoOmega() {
+		Marking a = createMarking(1, 2, 3, 4, 5);
+		assertFalse(a.hasOmega());
 	}
 
 	private void coverSucceed(Integer[] cover, Integer[] covered, Integer[] expected) {
@@ -113,6 +139,11 @@ public class MarkingTest {
 		Marking mcover = createMarking(cover);
 		Marking mcovered = createMarking(covered);
 		Marking mexpected = createMarking(expected);
+
+		Marking mresult = mcover.cover(mcovered);
+		assertEquals(mcover, createMarking(cover));
+		assertEquals(mresult, mexpected);
+
 		assertTrue(mcover.covers(mcovered));
 		assertEquals(mcover, mexpected);
 	}
@@ -122,6 +153,10 @@ public class MarkingTest {
 		Marking mcover = createMarking(cover);
 		Marking mcovered = createMarking(covered);
 		Marking mexpected = createMarking(cover);
+
+		assertThat(mcover.cover(mcovered), nullValue());
+		assertEquals(mcover, mexpected);
+
 		assertFalse(mcover.covers(mcovered));
 		assertEquals(mcover, mexpected);
 	}
@@ -209,6 +244,20 @@ public class MarkingTest {
 
 		// Verify that the two Markings aren't equal (=the copy constructor works correctly)
 		assertThat(mark, not(equalTo(other)));
+	}
+
+	@Test
+	public void testAddTokenCopies() {
+		Marking mark = createMarking(1, 2, 3);
+		Marking other = new Marking(mark);
+		// Change the number of tokens on a random place
+		Marking changed = mark.addTokenCount(pn.getPlaces().iterator().next(), 42);
+
+		// Mark was not changed
+		assertThat(mark, equalTo(createMarking(1, 2, 3)));
+
+		// Verify that the two Markings aren't equal (=something was changed)
+		assertThat(changed, not(equalTo(other)));
 	}
 
 	@Test
