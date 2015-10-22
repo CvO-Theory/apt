@@ -1073,7 +1073,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * @param t  the token count to set.
 	 */
 	void setInitialToken(String id, Token t) {
-		initialMarking.setToken(id, t);
+		initialMarking = initialMarking.setTokenCount(id, t);
 		invokeListeners();
 	}
 
