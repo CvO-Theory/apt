@@ -24,6 +24,7 @@ import java.io.IOException;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.apt.APTParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
@@ -70,6 +71,8 @@ public class NetOrTSParameterTransformation implements ParameterTransformation<P
 			throw new ModuleException("Create data structure: " + ex.getMessage(), ex);
 		} catch (FormatException e) {
 			throw new ModuleException("Format of data does not fit: " + e.getMessage(), e);
+		} catch (ParseException ex) {
+			throw new ModuleException("Can't parse Petri net: " + ex.getMessage());
 		}
 
 		PetriNet pn = parser.getPn();

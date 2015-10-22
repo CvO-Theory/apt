@@ -38,6 +38,7 @@ import uniol.apt.adt.pn.Token;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.apt.APTLTSParser;
 import uniol.apt.io.parser.impl.apt.APTPNParser;
 import uniol.apt.io.parser.impl.apt.APTParser;
@@ -52,7 +53,7 @@ import uniol.apt.io.parser.impl.exception.StructureException;
 public class APTParserTest {
 
 	@Test
-	public void testAPTParser() throws IOException, FormatException {
+	public void testAPTParser() throws IOException, FormatException, ParseException {
 		APTParser parser = new APTParser();
 		parser.parse("nets/crashkurs-cc1-net.apt");
 		assertNotNull(parser.getPn());
@@ -110,7 +111,7 @@ public class APTParserTest {
 	}
 
 	@Test
-	public void testLTSandPN() throws IOException, FormatException {
+	public void testLTSandPN() throws IOException, FormatException, ParseException {
 		APTParser parser = new APTParser();
 		parser.parse("nets/crashkurs-cc1-aut.apt");
 		assertNull(parser.getPn());

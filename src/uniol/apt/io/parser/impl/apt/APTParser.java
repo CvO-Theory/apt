@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.impl.AptPNParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
@@ -57,7 +59,7 @@ public class APTParser {
 	 *                               all.
 	 */
 	public void parse(String path) throws IOException, NodeNotExistException, TypeMismatchException,
-		LexerParserException, StructureException, FormatException {
+		LexerParserException, StructureException, FormatException, ParseException {
 		parse(new FileInputStream(path));
 	}
 
@@ -76,7 +78,7 @@ public class APTParser {
 	 *                               all.
 	 */
 	public void parse(InputStream is) throws IOException, NodeNotExistException, TypeMismatchException,
-		LexerParserException, StructureException, FormatException {
+		LexerParserException, StructureException, FormatException, ParseException {
 		pn = null;
 		ts = null;
 
@@ -93,7 +95,7 @@ public class APTParser {
 		if (data.matches("(?s).*\\.type\\s+(LTS|TS)(?s).*")) {
 			ts = APTLTSParser.getLTS(is);
 		} else if (data.matches("(?s).*\\.type\\s+(LPN|PN)(?s).*")) {
-			pn = APTPNParser.getPetriNet(is);
+			pn = new AptPNParser().parsePN(is);
 		} else {
 			throw new TypeMismatchException("File type PN, LPN, TS, LTS needed.");
 		}
