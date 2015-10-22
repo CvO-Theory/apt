@@ -38,6 +38,7 @@ import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.Pair;
 
 import uniol.apt.adt.exception.ArcExistsException;
 import uniol.apt.adt.exception.StructureException;
@@ -169,8 +170,11 @@ public class CoverabilityGraph {
 
 			Marking newMarking = t.fire(marking);
 			// checkCover() will also change the marking of the Petri net if some OMEGAs are created!
-			CoverabilityGraphNode covered = checkCover(newMarking, node);
-			result.add(addArc(t, newMarking, node, covered));
+			Pair<CoverabilityGraphNode, Marking> covered = checkCover(newMarking, node);
+			if (covered == null)
+				result.add(addArc(t, newMarking, node, null));
+			else
+				result.add(addArc(t, covered.getSecond(), node, covered.getFirst()));
 		}
 
 		return result;
@@ -181,17 +185,16 @@ public class CoverabilityGraph {
 	 * If the marking covers some other marking, suitable omegas are inserted.
 	 * @param cur The marking to check.
 	 * @param parent The immediate parent node.
-	 * @return null if no covering occurred, else the node that is covered.
+	 * @return null if no covering occurred, else the node that is covered and the covering marking.
 	 */
-	private CoverabilityGraphNode checkCover(Marking cur, CoverabilityGraphNode parent) {
+	private Pair<CoverabilityGraphNode, Marking> checkCover(Marking cur, CoverabilityGraphNode parent) {
 		if (reachabilityGraph)
 			return null;
 		assert parent != null;
 		while (parent != null) {
-			Marking m = parent.getMarking();
-			if (cur.covers(m)) {
-				return parent;
-			}
+			Marking m = cur.cover(parent.getMarking());
+			if (m != null)
+				return new Pair<>(parent, m);
 			parent = parent.getParent();
 		}
 		return null;
