@@ -37,11 +37,11 @@ public class ModuleParameterVerifyClassVisitor extends ClassVisitor {
 	private final ModuleParameterVerifyMethodVisitor provideVisitor   =
 			new ModuleParameterVerifyMethodVisitor(ModuleOutputSpec.class, "addReturnValue");
 	private final ModuleParameterVerifyMethodVisitor optionalVisitor   =
-			new ModuleParameterVerifyMethodVisitor(ModuleInputSpec.class, "addOptionalParameter");
+			new ModuleParameterVerifyMethodVisitor(ModuleInputSpec.class, "addOptionalParameter", provideVisitor);
 	private final ModuleParameterVerifyMethodVisitor requireVisitor   =
 			new ModuleParameterVerifyMethodVisitor(ModuleInputSpec.class, "addParameter", optionalVisitor);
 	private final ModuleParameterVerifyMethodVisitor runInputVisitor  =
-			new ModuleParameterVerifyMethodVisitor(ModuleInput.class, "getParameter");
+			new ModuleParameterVerifyMethodVisitor(ModuleInput.class, "getParameter", requireVisitor);
 	private final ModuleParameterVerifyMethodVisitor runOutputVisitor =
 			new ModuleParameterVerifyMethodVisitor(ModuleOutput.class, "setReturnValue", runInputVisitor);
 	private String name;
@@ -60,16 +60,7 @@ public class ModuleParameterVerifyClassVisitor extends ClassVisitor {
 
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-		switch(name) {
-			case "provide":
-				return provideVisitor;
-			case "require":
-				return requireVisitor;
-			case "run":
-				return runOutputVisitor;
-		}
-
-		return null;
+		return runOutputVisitor;
 	}
 
 	/**
