@@ -42,7 +42,7 @@ public class Symbol {
 	 * @param event The event that should be represented
 	 * @throws IllegalArgumentException When the event is the empty string.
 	 */
-	public Symbol(String event) throws IllegalArgumentException {
+	public Symbol(String event) {
 		if (event.isEmpty())
 			throw new IllegalArgumentException("Events must be non-empty strings");
 		this.event = event;

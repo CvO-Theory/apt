@@ -44,7 +44,8 @@ import uniol.apt.util.Pair;
  * @author Uli Schlachter
  */
 public class FiniteAutomatonUtility {
-	private FiniteAutomatonUtility() {}
+	private FiniteAutomatonUtility() {
+	}
 
 	// Get an automaton with the given initial state
 	static private FiniteAutomaton getAutomaton(State state) {
@@ -351,7 +352,6 @@ public class FiniteAutomatonUtility {
 	 * Find a word that is only accepted by one of the automatons.
 	 * @param a1 The first automaton to test with
 	 * @param a2 The second automaton to test with
-	 * @return true if and only if both automaton accept the same language.
 	 * @return A word that is only accepted by one of the automatons
 	 */
 	static public List<String> findWordDifference(FiniteAutomaton a1, FiniteAutomaton a2) {
@@ -457,14 +457,19 @@ public class FiniteAutomatonUtility {
 	/**
 	 * Construct a finite automaton from a transition system. Each sequence that reaches at least some state will be
 	 * accepted by the automaton. Each sequence which reaches no state will be rejected.
+	 * @param lts The transition system to transform.
+	 * @return A finite automaton for the LTS' prefix language.
 	 */
 	static public FiniteAutomaton fromPrefixLanguageLTS(TransitionSystem lts) {
 		return getAutomaton(new LTSAdaptorState(lts.getInitialState()));
 	}
 
 	/**
-	 * Construct a finite automaton from a transition system. Each sequence that reaches at least some state will be
-	 * accepted by the automaton. Each sequence which reaches no state will be rejected.
+	 * Construct a finite automaton from a transition system with final states. Each sequence that reaches one of
+	 * the final states will be accepted. All other sequences are rejected.
+	 * @param lts The transition system to transform.
+	 * @param finalStates Sequences reaching a state from this collection are accepted.
+	 * @return A finite automaton for the LTS' language with the given final states.
 	 */
 	static public FiniteAutomaton fromLTS(TransitionSystem lts, Collection<uniol.apt.adt.ts.State> finalStates) {
 		finalStates = new HashSet<>(finalStates);
@@ -496,7 +501,8 @@ public class FiniteAutomatonUtility {
 			for (Symbol sym : symbols) {
 				for (State next : state.getFollowingStates(sym)) {
 					String nextId = identifier.get(next);
-					result.append("  " + stateId + " -> " + nextId + " [label=\"" + sym.toString() + "\"];\n");
+					result.append("  " + stateId + " -> " + nextId
+							+ " [label=\"" + sym.toString() + "\"];\n");
 				}
 			}
 		}
@@ -915,7 +921,8 @@ public class FiniteAutomatonUtility {
 			private final Map<Symbol, Integer> postset;
 			private final boolean isFinalState;
 
-			public MinimalState(MinimalDeterministicFiniteAutomaton automaton, Map<Symbol, Integer> postset, boolean isFinalState) {
+			public MinimalState(MinimalDeterministicFiniteAutomaton automaton, Map<Symbol, Integer> postset,
+					boolean isFinalState) {
 				this.automaton = automaton;
 				this.isFinalState = isFinalState;
 				this.postset = postset;
@@ -939,7 +946,8 @@ public class FiniteAutomatonUtility {
 			}
 		}
 
-		static private EquivalenceRelation<DFAState> getInitialPartitionForMinimize(DeterministicFiniteAutomaton a) {
+		static private EquivalenceRelation<DFAState> getInitialPartitionForMinimize(
+				DeterministicFiniteAutomaton a) {
 			DFAState finalState = null;
 			DFAState nonFinalState = null;
 			EquivalenceRelation<DFAState> relation = new EquivalenceRelation<>();
@@ -958,7 +966,8 @@ public class FiniteAutomatonUtility {
 			return relation;
 		}
 
-		static private EquivalenceRelation<DFAState> refinePartition(EquivalenceRelation<DFAState> partition, Set<Symbol> alphabet) {
+		static private EquivalenceRelation<DFAState> refinePartition(EquivalenceRelation<DFAState> partition,
+				Set<Symbol> alphabet) {
 			EquivalenceRelation<DFAState> lastPartition;
 			do {
 				lastPartition = partition;
@@ -967,7 +976,8 @@ public class FiniteAutomatonUtility {
 					// transition with symbol 'symbol' going to different classes, then this class
 					// must be split.
 					final IEquivalenceRelation<DFAState> current = partition;
-					IEquivalenceRelation<DFAState> predicate = new IEquivalenceRelation<DFAState>() {
+					IEquivalenceRelation<DFAState> predicate
+						= new IEquivalenceRelation<DFAState>() {
 						@Override
 						public boolean isEquivalent(DFAState state1, DFAState state2) {
 							DFAState follow1 = state1.getFollowingState(symbol);
@@ -1087,8 +1097,9 @@ public class FiniteAutomatonUtility {
 					return state1Final && state2Final;
 				case UNION:
 					return state1Final || state2Final;
+				default:
+					throw new AssertionError("Unknown mode for SynchronousParallelComposition");
 			}
-			throw new AssertionError("Unknown mode for SynchronousParallelComposition");
 		}
 
 		@Override

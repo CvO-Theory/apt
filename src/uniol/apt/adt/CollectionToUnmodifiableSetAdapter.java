@@ -28,11 +28,17 @@ import static org.apache.commons.collections4.iterators.UnmodifiableIterator.unm
 
 /**
  * Given a collection which really behaves like a set (read: has no duplicate entries), implement a read-only set.
+ * @param <E> The type of elements of the set.
  * @author Uli Schlachter
  */
 public class CollectionToUnmodifiableSetAdapter<E> extends AbstractSet<E> {
 	private final Collection<E> collection;
 
+	/**
+	 * Create a new adapter for the given Collection. This does not create a copy of the collection, but instead
+	 * behaves as a view into that collection.
+	 * @param c The collection to adapt into a set.
+	 */
 	public CollectionToUnmodifiableSetAdapter(Collection<E> c) {
 		this.collection = Collections.unmodifiableCollection(c);
 	}

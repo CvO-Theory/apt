@@ -30,6 +30,8 @@ import java.util.Set;
 /**
  * A soft reference to a map. This keeps a soft reference to a map and re-creates the map if the reference is
  * invalidated. In other words, this is a map which sometimes loses all of its entries.
+ * @param <K> The type of keys in the map.
+ * @param <V> The type of values in the map.
  * @author Uli Schlachter
  */
 public class SoftMap<K, V> implements Map<K, V> {

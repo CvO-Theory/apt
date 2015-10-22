@@ -31,7 +31,7 @@ public abstract class DFAState implements State {
 	/**
 	 * Get the state that is reached by some symbol. This function can also be called for symbols which are not
 	 * returned by {@link getDefinedSymbols}. However, no such symbols which may have transitions.
-	 * @param symbol The symbol which should be followed.
+	 * @param atom The symbol which should be followed.
 	 * @return the state that is reached or null if the atom is epsilon or not in the alphabet.
 	 */
 	abstract public DFAState getFollowingState(Symbol atom);
