@@ -122,6 +122,7 @@ public class Marking {
 	 * @param m The marking that serves as template for copying the marking.
 	 */
 	private void setMarking(Marking m) {
+		assert this != m;
 		this.map.clear();
 		if (this.net == m.net) {
 			this.map.putAll(m.map);
