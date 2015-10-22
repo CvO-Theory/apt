@@ -40,7 +40,7 @@ import java.util.List;
  * Provide the strongly live test as a module.
  * @author Uli Schlachter, vsp
  */
-public class StronglyLiveModule extends AbstractModule {
+public class StronglyLiveModule extends AbstractLiveModule {
 
 	@Override
 	public String getShortDescription() {
@@ -62,13 +62,6 @@ public class StronglyLiveModule extends AbstractModule {
 	}
 
 	@Override
-	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
-		inputSpec.addOptionalParameter("transition", String.class, null,
-			"A transition that should be checked for liveness");
-	}
-
-	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("strongly_live", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("sample_witness_transition", Transition.class);
@@ -76,35 +69,22 @@ public class StronglyLiveModule extends AbstractModule {
 	}
 
 	@Override
-	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
-		PetriNet pn = input.getParameter("pn", PetriNet.class);
-		String id = input.getParameter("transition", String.class);
-		if (id == null) {
-			Transition trans = Live.findNonStronglyLiveTransition(pn);
-			output.setReturnValue("strongly_live", Boolean.class, trans == null);
-			output.setReturnValue("sample_witness_transition", Transition.class, trans);
-			if (trans != null)
-				output.setReturnValue("sample_witness_firing_sequence", FiringSequence.class,
-						new FiringSequence(Live.findKillingFireSequence(pn, trans)));
-		} else {
-			Transition transition;
-			try {
-				transition = pn.getTransition(id);
-			} catch (NoSuchNodeException e) {
-				throw new NoSuchTransitionException(pn, e);
-			}
-
-			List<Transition> killingSequence = Live.findKillingFireSequence(pn, transition);
-			output.setReturnValue("strongly_live", Boolean.class, killingSequence == null);
-			if (killingSequence != null)
-				output.setReturnValue("sample_witness_firing_sequence",
-						FiringSequence.class, new FiringSequence(killingSequence));
-		}
+	protected void findNonLiveTransition(ModuleOutput output, PetriNet pn) throws ModuleException {
+		Transition trans = Live.findNonStronglyLiveTransition(pn);
+		output.setReturnValue("strongly_live", Boolean.class, trans == null);
+		output.setReturnValue("sample_witness_transition", Transition.class, trans);
+		if (trans != null)
+			output.setReturnValue("sample_witness_firing_sequence", FiringSequence.class,
+					new FiringSequence(Live.findKillingFireSequence(pn, trans)));
 	}
 
 	@Override
-	public Category[] getCategories() {
-		return new Category[]{Category.PN};
+	protected void checkTransitionLiveness(ModuleOutput output, PetriNet pn, Transition transition) throws ModuleException {
+		List<Transition> killingSequence = Live.findKillingFireSequence(pn, transition);
+		output.setReturnValue("strongly_live", Boolean.class, killingSequence == null);
+		if (killingSequence != null)
+			output.setReturnValue("sample_witness_firing_sequence",
+					FiringSequence.class, new FiringSequence(killingSequence));
 	}
 }
 

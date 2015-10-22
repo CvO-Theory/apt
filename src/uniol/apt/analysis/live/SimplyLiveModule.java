@@ -40,7 +40,7 @@ import uniol.apt.adt.pn.Transition;
  * Provide the simply live test as a module.
  * @author Uli Schlachter, vsp
  */
-public class SimplyLiveModule extends AbstractModule {
+public class SimplyLiveModule extends AbstractLiveModule {
 
 	@Override
 	public String getShortDescription() {
@@ -61,13 +61,6 @@ public class SimplyLiveModule extends AbstractModule {
 	}
 
 	@Override
-	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
-		inputSpec.addOptionalParameter("transition", String.class, null,
-			"A transition that should be checked for liveness");
-	}
-
-	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("simply_live", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("sample_dead_transition", Transition.class);
@@ -75,32 +68,19 @@ public class SimplyLiveModule extends AbstractModule {
 	}
 
 	@Override
-	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
-		PetriNet pn = input.getParameter("pn", PetriNet.class);
-		String id = input.getParameter("transition", String.class);
-		if (id == null) {
-			Transition dead = Live.findDeadTransition(pn);
-			output.setReturnValue("simply_live", Boolean.class, dead == null);
-			output.setReturnValue("sample_dead_transition", Transition.class, dead);
-		} else {
-			Transition transition;
-			try {
-				transition = pn.getTransition(id);
-			} catch (NoSuchNodeException e) {
-				throw new NoSuchTransitionException(pn, e);
-			}
-
-			List<Transition> live = Live.checkSimplyLive(pn, transition);
-			output.setReturnValue("simply_live", Boolean.class, live != null);
-			if (live != null)
-				output.setReturnValue("sample_witness_firing_sequence",
-						FiringSequence.class, new FiringSequence(live));
-		}
+	protected void findNonLiveTransition(ModuleOutput output, PetriNet pn) throws ModuleException {
+		Transition dead = Live.findDeadTransition(pn);
+		output.setReturnValue("simply_live", Boolean.class, dead == null);
+		output.setReturnValue("sample_dead_transition", Transition.class, dead);
 	}
 
 	@Override
-	public Category[] getCategories() {
-		return new Category[]{Category.PN};
+	protected void checkTransitionLiveness(ModuleOutput output, PetriNet pn, Transition transition) throws ModuleException {
+		List<Transition> live = Live.checkSimplyLive(pn, transition);
+		output.setReturnValue("simply_live", Boolean.class, live != null);
+		if (live != null)
+			output.setReturnValue("sample_witness_firing_sequence",
+					FiringSequence.class, new FiringSequence(live));
 	}
 }
 
