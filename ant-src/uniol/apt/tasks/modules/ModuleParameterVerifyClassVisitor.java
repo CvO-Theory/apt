@@ -44,10 +44,18 @@ public class ModuleParameterVerifyClassVisitor extends ClassVisitor {
 			new ModuleParameterVerifyMethodVisitor(ModuleInput.class, "getParameter");
 	private final ModuleParameterVerifyMethodVisitor runOutputVisitor =
 			new ModuleParameterVerifyMethodVisitor(ModuleOutput.class, "setReturnValue", runInputVisitor);
+	private String name;
+	private String superName;
 
 	/** Constructor */
 	public ModuleParameterVerifyClassVisitor() {
 		super(ASM4);
+	}
+
+	@Override
+	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+		this.name = name;
+		this.superName = superName;
 	}
 
 	@Override
@@ -62,6 +70,20 @@ public class ModuleParameterVerifyClassVisitor extends ClassVisitor {
 		}
 
 		return null;
+	}
+
+	/**
+	 * @return The internal name of the class.
+	 */
+	public String getClassName() {
+		return name;
+	}
+
+	/**
+	 * @return The internal name of the super class.
+	 */
+	public String getSuperclassName() {
+		return superName;
 	}
 
 	/**
