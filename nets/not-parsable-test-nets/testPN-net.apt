@@ -31,7 +31,7 @@ t1: {s2, s2, 4*s2} -> {s1}
 
 t2: {s1} -> {s2}
 
-.initial_marking {s1, s3, s1, s3, 2*s1}
+.initial_marking {s1, s3, s1, s3, 2*s1
 
 .flows
 t3: {s4} -> {s3}
