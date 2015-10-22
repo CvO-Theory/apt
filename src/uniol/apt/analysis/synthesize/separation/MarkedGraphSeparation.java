@@ -64,7 +64,12 @@ class MarkedGraphSeparation implements Separation {
 
 		// Check if only supported properties are requested. Ignore the locationMap since t-nets satisfy any
 		// location map.
-		PNProperties supported = new PNProperties().setPure(true).setPlain(true).setTNet(true).setOutputNonbranching(true);
+		PNProperties supported = new PNProperties()
+			.setPure(true)
+			.setPlain(true)
+			.setTNet(true)
+			.setMarkedGraph(true)
+			.setOutputNonbranching(true);
 		if (!supported.containsAll(properties))
 			throw new UnsupportedPNPropertiesException();
 
