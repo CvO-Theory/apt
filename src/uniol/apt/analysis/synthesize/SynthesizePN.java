@@ -567,6 +567,26 @@ public class SynthesizePN {
 	}
 
 	/**
+	 * Check if the PetriNet is a generalized marked graph. In a marked graph, every place has a preset and postset
+	 * with exacly one entry. In a generalized marked graph, arc weights are allowed.
+	 * @param PetriNet The Petri net to check
+	 * @return true if the pn is a generalized marked graph.
+	 */
+	static public boolean isGeneralizedMarkedGraph(PetriNet pn) {
+		for (Place place : pn.getPlaces()) {
+			if (place.getPreset().size() != 1) {
+				debug("marked graph check: Preset of ", place.getId(), " doesn't have exactly one entry");
+				return false;
+			}
+			if (place.getPostset().size() != 1) {
+				debug("marked graph check: Postset of ", place.getId(), " doesn't have exactly one entry");
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Synthesize a Petri Net from the separating regions that were calculated.
 	 * @return The synthesized PetriNet
 	 */
@@ -588,6 +608,7 @@ public class SynthesizePN {
 		assert !properties.isPure() || Pure.checkPure(pn) : regions;
 		assert !properties.isPlain() || new Plain().checkPlain(pn) : regions;
 		assert !properties.isTNet() || isGeneralizedTNet(pn) : regions;
+		assert !properties.isMarkedGraph() || isGeneralizedMarkedGraph(pn) : regions;
 		assert !properties.isKBounded() || Bounded.checkBounded(pn).k <= properties.getKForKBounded() : regions;
 		assert !properties.isOutputNonbranching() || new OutputNonBranching(pn).check() : regions;
 		try {

@@ -558,13 +558,45 @@ public class SynthesizePNTest {
 	}
 
 	@Test(dataProvider = "TNets")
-	public void testGoodNet(PetriNet pn) {
+	public void testGoodTNet(PetriNet pn) {
 		assertThat(SynthesizePN.isGeneralizedTNet(pn), is(true));
 	}
 
 	@Test(dataProvider = "NonTNets")
-	public void testBadNet(PetriNet pn) {
+	public void testBadTNet(PetriNet pn) {
 		assertThat(SynthesizePN.isGeneralizedTNet(pn), is(false));
+	}
+
+	@DataProvider(name = "MarkedGraphs")
+	private Object[][] createMarkedGraphs() {
+		return new Object[][]{
+				{TestNetCollection.getEmptyNet()},
+				{TestNetCollection.getOneTransitionNoPlaceNet()},
+				{TestNetCollection.getACBCCLoopNet()}};
+	}
+
+	@DataProvider(name = "NonMarkedGraphs")
+	private Object[][] createNonMarkedGraphs() {
+		return new Object[][]{
+				{TestNetCollection.getDeadTransitionNet()},
+				{TestNetCollection.getNoTransitionOnePlaceNet()},
+				{TestNetCollection.getConcurrentDiamondNet()},
+				{TestNetCollection.getTokenGeneratorNet()},
+				{TestNetCollection.getDeadlockNet()},
+				{TestNetCollection.getNonPersistentNet()},
+				{TestNetCollection.getPersistentBiCFNet()},
+				{TestNetCollection.getConflictingDiamondNet()},
+				{TestNetCollection.getABCLanguageNet()}};
+	}
+
+	@Test(dataProvider = "MarkedGraphs")
+	public void testGoodMarkedGraph(PetriNet pn) {
+		assertThat(SynthesizePN.isGeneralizedMarkedGraph(pn), is(true));
+	}
+
+	@Test(dataProvider = "NonMarkedGraphs")
+	public void testBadMarkedGraph(PetriNet pn) {
+		assertThat(SynthesizePN.isGeneralizedMarkedGraph(pn), is(false));
 	}
 
 	@DataProvider(name = "ESSPInstances")
