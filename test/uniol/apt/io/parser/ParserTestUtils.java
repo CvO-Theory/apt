@@ -19,11 +19,15 @@
 
 package uniol.apt.io.parser;
 
+import java.io.File;
 import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.parser.impl.apt.APTPNParser;
+import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.impl.AptPNParser;
 import uniol.apt.io.parser.impl.apt.APTLTSParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 
@@ -47,9 +51,9 @@ public class ParserTestUtils {
 	 */
 	public static PetriNet getAptPN(String fileName) {
 		try {
-			return APTPNParser.getPetriNet(fileName);
-		} catch (IOException | FormatException ex) {
-			throw new ParserSkipException(fileName, APTPNParser.class, ex);
+			return new AptPNParser().parsePNFile(fileName);
+		} catch (IOException | ParseException ex) {
+			throw new ParserSkipException(fileName, AptPNParser.class, ex);
 		}
 	}
 

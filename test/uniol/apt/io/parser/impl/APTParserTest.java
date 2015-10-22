@@ -40,7 +40,6 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.apt.APTLTSParser;
-import uniol.apt.io.parser.impl.apt.APTPNParser;
 import uniol.apt.io.parser.impl.apt.APTParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
@@ -61,11 +60,6 @@ public class APTParserTest {
 		parser.parse("nets/crashkurs-cc1-aut.apt");
 		assertNotNull(parser.getTs());
 		assertNull(parser.getPn());
-	}
-
-	@Test
-	public void testNotModule() throws IOException, FormatException {
-		assertNotNull(APTPNParser.getPetriNet("nets/crashkurs-cc1-net.apt"));
 	}
 
 	@Test
@@ -90,18 +84,6 @@ public class APTParserTest {
 			//System.err.println(ex.getLexerParserMessage());
 			fail();
 		}
-	}
-
-	@Test
-	public void testPNTestNet() throws IOException, FormatException {
-		PetriNet net = APTPNParser.getPetriNet("nets/testPN-net.apt");
-		assertEquals(4, net.getPlaces().size());
-		assertEquals(4, net.getTransitions().size());
-		assertEquals(8, net.getEdges().size());
-		Flow f = net.getFlow("s2", "t1");
-		assertEquals(f.getWeight(), 6);
-		assertEquals(net.getPlace("s1").getInitialToken().getValue(), 4);
-		assertEquals(net.getPlace("s3").getInitialToken().getValue(), 2);
 	}
 
 	@Test
@@ -143,14 +125,6 @@ public class APTParserTest {
 
 	@Test
 	public void testDoubleNodes() throws IOException, FormatException {
-		// test PN
-		try {
-			APTPNParser.getPetriNet("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-net.apt");
-			fail("not detected adding two nodes with same id.");
-		} catch (LexerParserException e) {
-			assertEquals(e.getLexerMsg(), "line 12:0 Node s1 already exists.");
-			assertEquals(e.getParserMsg(), "line 12:0 Node s1 already exists.");
-		}
 		// test LTS
 		// double nodes
 		try {
@@ -167,42 +141,6 @@ public class APTParserTest {
 		} catch (StructureException se) {
 			assertEquals(se.getMessage(), "initial state is set multiple times.");
 		}
-	}
-
-	@Test
-	public void testInitalMarking() throws IOException, FormatException {
-		PetriNet pn = APTPNParser.getPetriNet("nets/doubleMarking.apt");
-		Marking im = pn.getInitialMarking();
-		Token s1 = im.getToken("s1");
-		Token s3 = im.getToken("s3");
-		assertEquals(s1.getValue(), 4);
-		assertEquals(s3.getValue(), 1);
-	}
-
-	@Test
-	public void testCrashkursCC1Net() throws IOException, FormatException {
-		PetriNet pn = APTPNParser.getPetriNet("nets/crashkurs-cc1-net.apt");
-		assertNotNull(pn);
-	}
-
-	@Test
-	public void testUnknownAttributeNet() throws IOException, FormatException {
-		try {
-			APTPNParser.getPetriNet("nets/not-parsable-test-nets/unknown-attribute.apt");
-			fail("Didn't detect unknown attribute");
-
-		} catch (LexerParserException ex) {
-			assertEquals("line 1:1 no viable alternative at input 'unknown'", ex.getParserMsg());
-		} catch (StructureException ex) {
-			assertEquals("'.type' - identifier not specified", ex.getMessage());
-		}
-	}
-
-	@Test
-	public void testMissingNewlineAfterComment() throws Exception {
-		String string = ".type PN// Comment without newline after";
-		InputStream stream = new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8));
-		APTPNParser.getPetriNet(stream);
 	}
 }
 

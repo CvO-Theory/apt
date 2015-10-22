@@ -31,8 +31,9 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.converter.Synet2AptModule;
+import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.impl.AptPNParser;
 import uniol.apt.io.parser.impl.apt.APTLTSParser;
-import uniol.apt.io.parser.impl.apt.APTPNParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.impl.ModuleInvoker;
@@ -91,13 +92,13 @@ public class Synet2AptTest {
 	}
 
 	@Test
-	public void testPN() throws IOException, FormatException, ModuleException {
+	public void testPN() throws IOException, ParseException, FormatException, ModuleException {
 		Synet2AptModule mod = new Synet2AptModule();
 		ModuleInvoker m = new ModuleInvoker();
 		List<Object> objs = m.invoke(mod, "nets/synet-nets/synet-docu-example.net");
 		String synet2apt = (String) objs.get(0);
 
-		PetriNet pn = APTPNParser.getPetriNet(new ByteArrayInputStream(synet2apt.getBytes("UTF-8")));
+		PetriNet pn = new AptPNParser().parsePN(synet2apt);
 		assertNotNull(pn);
 		assertEquals(5, pn.getTransitions().size());
 		assertEquals(6, pn.getPlaces().size());
@@ -120,7 +121,7 @@ public class Synet2AptTest {
 		assertTrue(x0.getPreset().contains(pn.getTransition("a")));
 		assertFalse(x0.getPreset().contains(pn.getTransition("t")));
 
-		PetriNet pn2 = APTPNParser.getPetriNet(new ByteArrayInputStream(synet2apt.getBytes("UTF-8")));
+		PetriNet pn2 = new AptPNParser().parsePN(synet2apt);
 		assertNotNull(pn2);
 		assertEquals(5, pn2.getTransitions().size());
 		assertEquals(6, pn2.getPlaces().size());

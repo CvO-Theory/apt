@@ -36,8 +36,9 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.io.converter.Synet2Apt;
 import uniol.apt.io.parser.IParserOutput;
+import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.impl.AptPNParser;
 import uniol.apt.io.parser.impl.apt.APTLTSParser;
-import uniol.apt.io.parser.impl.apt.APTPNParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.synet.SynetLTSParser;
 import uniol.apt.io.parser.impl.synet.SynetPNParser;
@@ -97,7 +98,7 @@ public class SynetParserTest {
 	}
 
 	@Test
-	public void testSynetParser() throws IOException, FormatException, ModuleException {
+	public void testSynetParser() throws IOException, ParseException, FormatException, ModuleException {
 		// LTS
 		TransitionSystem ts_synet = SynetLTSParser.getLTS("nets/synet-nets/mar17-12-groessere-testdatei.aut");
 		String txt_apt = Synet2Apt.convert("nets/synet-nets/mar17-12-groessere-testdatei.aut",
@@ -111,8 +112,7 @@ public class SynetParserTest {
 		PetriNet pn_synet = SynetPNParser.getPetriNet("nets/synet-nets/synet-docu-example.net");
 		txt_apt = Synet2Apt.convert("nets/synet-nets/synet-docu-example.net",
 			IParserOutput.Type.PN);
-		PetriNet pn_apt = APTPNParser.getPetriNet(new ByteArrayInputStream(
-			txt_apt.getBytes("UTF-8")));
+		PetriNet pn_apt = new AptPNParser().parsePN(txt_apt);
 		iso = new IsomorphismLogic(pn_synet, pn_apt, true);
 		assertTrue(iso.isIsomorphic());
 
