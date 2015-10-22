@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -64,32 +65,61 @@ public class ModuleParameterVerifyTask extends Task {
 			throw new BuildException("No nested fileset element found.");
 		}
 
+		Map<String, ModuleParameterVerifyClassVisitor> classes = new HashMap<>();
 		for (FileSet fs : filesets) {
 			DirectoryScanner ds = fs.getDirectoryScanner(getProject());
 			File baseDir        = ds.getBasedir();
 			for (String className : ds.getIncludedFiles()) {
 				File classFile = new File(baseDir, className);
+				ClassReader reader;
 				try {
-					analyseClass(FileUtils.openInputStream(classFile), classFile.getPath());
+					reader = new ClassReader(FileUtils.openInputStream(classFile));
 				} catch(IOException ex) {
 					throw new BuildException("Error accessing class: " + className, ex);
 				}
+				ModuleParameterVerifyClassVisitor cv = new ModuleParameterVerifyClassVisitor();
+				reader.accept(cv, 0);
+
+				cv = classes.put(cv.getClassName(), cv);
+				if (cv != null)
+					throw new BuildException("Multiple definitions for class: " + cv.getClassName());
 			}
+		}
+
+		for (ModuleParameterVerifyClassVisitor cv : classes.values()) {
+			analyseClass(cv, classes);
 		}
 	}
 
+	/** Get class information */
+	private void getClassInformation(ModuleParameterVerifyClassVisitor cv,
+			Map<String, ModuleParameterVerifyClassVisitor> classes, Map<String, Type> requestedInputs,
+			Map<String, Type> optionalInputs, Map<String, Type> usedInputs,
+			Map<String, Type> announcedOutputs, Map<String, Type> providedOutputs) {
+		requestedInputs .putAll(cv.getRequestedInputs());
+		optionalInputs  .putAll(cv.getOptionalInputs());
+		usedInputs      .putAll(cv.getUsedInputs());
+		announcedOutputs.putAll(cv.getAnnouncedOutputs());
+		providedOutputs .putAll(cv.getProvidedOuputs());
+
+		cv = classes.get(cv.getSuperclassName());
+		if (cv != null)
+			getClassInformation(cv, classes, requestedInputs, optionalInputs, usedInputs,
+					announcedOutputs, providedOutputs);
+	}
+
 	/** Do the work */
-	private void analyseClass(InputStream classIs, String className) throws IOException {
-		ClassReader reader = new ClassReader(classIs);
+	private void analyseClass(ModuleParameterVerifyClassVisitor cv, Map<String, ModuleParameterVerifyClassVisitor> classes) {
+		String className = cv.getClassName();
 
-		ModuleParameterVerifyClassVisitor cv = new ModuleParameterVerifyClassVisitor();
-		reader.accept(cv, 0);
+		Map<String, Type> requestedInputs  = new HashMap<>();
+		Map<String, Type> optionalInputs   = new HashMap<>();
+		Map<String, Type> usedInputs       = new HashMap<>();
+		Map<String, Type> announcedOutputs = new HashMap<>();
+		Map<String, Type> providedOutputs  = new HashMap<>();
 
-		Map<String, Type> requestedInputs  = cv.getRequestedInputs();
-		Map<String, Type> optionalInputs   = cv.getOptionalInputs();
-		Map<String, Type> usedInputs       = cv.getUsedInputs();
-		Map<String, Type> announcedOutputs = cv.getAnnouncedOutputs();
-		Map<String, Type> providedOutputs  = cv.getProvidedOuputs();
+		getClassInformation(cv, classes, requestedInputs, optionalInputs, usedInputs,
+				announcedOutputs, providedOutputs);
 
 		boolean fail = false;
 
