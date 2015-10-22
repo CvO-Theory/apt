@@ -113,14 +113,14 @@ public class BoundedResult {
 
 		// Fire sequence once...
 		Transition[] array = sequence.toArray(new Transition[0]);
-		m = m.fire(array);
+		m = m.fireTransitions(array);
 		result.addAll(sequence);
 
 		// ...and then go through the cycle until we exceed the target bound
 		array = cycle.toArray(new Transition[0]);
 		while (m.getToken(unboundedPlace).compareTo(target) <= 0) {
 			result.addAll(cycle);
-			m = m.fire(array);
+			m = m.fireTransitions(array);
 		}
 
 		return result;
