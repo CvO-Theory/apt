@@ -92,6 +92,9 @@ public class PNPropertiesTest {
 
 		properties = properties.setPure(true);
 		assertThat(properties, containsAll(properties2));
+
+		properties = properties.setMarkedGraph(true);
+		assertThat(properties, containsAll(properties2));
 	}
 
 	@Test
@@ -133,6 +136,9 @@ public class PNPropertiesTest {
 
 		properties = properties.setConflictFree(false);
 		assertThat(properties, hasToString("[safe, output-nonbranching]"));
+
+		properties = properties.setMarkedGraph(true);
+		assertThat(properties, hasToString("[safe, marked-graph, output-nonbranching]"));
 	}
 }
 

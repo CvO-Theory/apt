@@ -34,6 +34,7 @@ public class PNProperties {
 	private boolean pure = false;
 	private boolean plain = false;
 	private boolean tnet = false;
+	private boolean markedgraph = false;
 	private boolean outputNonbranching = false;
 	private boolean conflictFree = false;
 
@@ -52,6 +53,7 @@ public class PNProperties {
 		pure = other.pure;
 		plain = other.plain;
 		tnet = other.tnet;
+		markedgraph = other.markedgraph;
 		outputNonbranching = other.outputNonbranching;
 		conflictFree = other.conflictFree;
 	}
@@ -170,6 +172,25 @@ public class PNProperties {
 	}
 
 	/**
+	 * Return true if this property description requires a marked graph.
+	 * @return true if marked graph
+	 */
+	public boolean isMarkedGraph() {
+		return markedgraph;
+	}
+
+	/**
+	 * Create a new instance which differs from this one in the specified marked graph requirement.
+	 * @param value whether marked graph should be required.
+	 * @return A new PNProperties which expresses the same properties as this instance, plus marked graph.
+	 */
+	public PNProperties setMarkedGraph(boolean value) {
+		PNProperties result = new PNProperties(this);
+		result.markedgraph = value;
+		return result;
+	}
+
+	/**
 	 * Return true if this property description requires an output nonbranching PN.
 	 * @return true if output nonbranching
 	 */
@@ -221,6 +242,8 @@ public class PNProperties {
 			return false;
 		if (other.isTNet() && !isTNet())
 			return false;
+		if (other.isMarkedGraph() && !isMarkedGraph())
+			return false;
 		if (other.isOutputNonbranching() && !isOutputNonbranching())
 			return false;
 		if (other.isConflictFree() && !isConflictFree())
@@ -237,12 +260,14 @@ public class PNProperties {
 			hashCode |= 1 << 1;
 		if (tnet)
 			hashCode |= 1 << 2;
-		if (outputNonbranching)
+		if (markedgraph)
 			hashCode |= 1 << 3;
-		if (conflictFree)
+		if (outputNonbranching)
 			hashCode |= 1 << 4;
+		if (conflictFree)
+			hashCode |= 1 << 5;
 		if (isKBounded())
-			hashCode |= getKForKBounded() << 5;
+			hashCode |= getKForKBounded() << 6;
 		return hashCode;
 	}
 
@@ -258,6 +283,8 @@ public class PNProperties {
 		if (plain != other.plain)
 			return false;
 		if (tnet != other.tnet)
+			return false;
+		if (markedgraph != other.markedgraph)
 			return false;
 		if (outputNonbranching != other.outputNonbranching)
 			return false;
@@ -280,6 +307,8 @@ public class PNProperties {
 			tmpList.add("plain");
 		if (isTNet())
 			tmpList.add("tnet");
+		if (isMarkedGraph())
+			tmpList.add("marked-graph");
 		if (isOutputNonbranching())
 			tmpList.add("output-nonbranching");
 		if (isConflictFree())
