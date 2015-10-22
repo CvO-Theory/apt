@@ -170,7 +170,25 @@ public class SynthesizePNTest {
 
 		BigInteger ZERO = BigInteger.ZERO;
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
-		// We know that there is a solution with four regions. Test that this really found an T-Net feasible set.
+		// We know that there is a solution with four regions. Test that this really found a T-Net feasible set.
+		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
+					allOf(pureRegionWithWeightThat("a", equalTo(ZERO)), pureRegionWithWeightThat("b", greaterThan(ZERO)), pureRegionWithWeightThat("c", lessThan(ZERO))),
+					allOf(pureRegionWithWeightThat("a", equalTo(ZERO)), pureRegionWithWeightThat("b", lessThan(ZERO)), pureRegionWithWeightThat("c", greaterThan(ZERO))),
+					allOf(pureRegionWithWeightThat("b", equalTo(ZERO)), pureRegionWithWeightThat("a", greaterThan(ZERO)), pureRegionWithWeightThat("c", lessThan(ZERO))),
+					allOf(pureRegionWithWeightThat("b", equalTo(ZERO)), pureRegionWithWeightThat("a", lessThan(ZERO)), pureRegionWithWeightThat("c", greaterThan(ZERO)))));
+		assertThat(synth.getFailedStateSeparationProblems(), empty());
+		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
+	}
+
+	@Test
+	public void testACBCCLoopTSMarkedGraph() throws MissingLocationException {
+		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
+		PNProperties properties = new PNProperties().setMarkedGraph(true);
+		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
+
+		BigInteger ZERO = BigInteger.ZERO;
+		assertThat(synth.wasSuccessfullySeparated(), is(true));
+		// We know that there is a solution with four regions. Test that this really found a marked graph feasible set.
 		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
 					allOf(pureRegionWithWeightThat("a", equalTo(ZERO)), pureRegionWithWeightThat("b", greaterThan(ZERO)), pureRegionWithWeightThat("c", lessThan(ZERO))),
 					allOf(pureRegionWithWeightThat("a", equalTo(ZERO)), pureRegionWithWeightThat("b", lessThan(ZERO)), pureRegionWithWeightThat("c", greaterThan(ZERO))),

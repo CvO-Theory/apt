@@ -146,9 +146,9 @@ public class SMTInterpolHelper {
 		isRegion.addAll(requireDistributableNet(backwardWeight));
 		if (properties.isConflictFree())
 			isRegion.addAll(requireConflictFree(weight, backwardWeight));
-		if (properties.isTNet()) {
-			isRegion.addAll(requireTNet(backwardWeight));
-			isRegion.addAll(requireTNet(forwardWeight));
+		if (properties.isTNet() || properties.isMarkedGraph()) {
+			isRegion.addAll(requireTNetOrMarkedGraph(backwardWeight, properties.isMarkedGraph()));
+			isRegion.addAll(requireTNetOrMarkedGraph(forwardWeight, properties.isMarkedGraph()));
 		}
 
 		// Now we can define the "isRegion" function
@@ -279,12 +279,13 @@ public class SMTInterpolHelper {
 	}
 
 	/**
-	 * Add the needed inequalities so that the system may only produce T-Net regions for the given weights. This
-	 * must be called for both the presets and postsets.
+	 * Add the needed inequalities so that the system may only produce T-Net/marked graph regions for the given
+	 * weights. This must be called for both the presets and postsets.
 	 * @param weight Terms representing the weights of transitions.
+	 * @param markedGraph If this is true, a marked graph is required, else a T-net.
 	 * @return The needed terms.
 	 */
-	private List<Term> requireTNet(Term[] weight) {
+	private List<Term> requireTNetOrMarkedGraph(Term[] weight, boolean markedGraph) {
 		final int numberEvents = utility.getNumberOfEvents();
 		Term[] result = new Term[numberEvents];
 		Term zero = script.numeral(BigInteger.ZERO);
@@ -298,6 +299,9 @@ public class SMTInterpolHelper {
 					sum[idx - 1] = weight[idx];
 			}
 			result[event] = script.term("=", zero, collectTerms("+", sum, zero));
+			if (markedGraph)
+				result[event] = script.term("and", result[event],
+						script.term("<", zero, weight[event]));
 		}
 
 		return Collections.singletonList(collectTerms("or", result, script.term("true")));
