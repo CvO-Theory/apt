@@ -89,6 +89,10 @@ public class PetriNetTest {
 		//[ [p4:4] [p2:2] [p1:2] [p0:2] ]
 		assertEquals(m, mcopy);
 		assertFalse(m.equals(changed));
+		// feure t3 ohne mcopy zu "anderen
+		Marking mnew = mcopy.fireTransitions(pn.getTransition("t3"));
+		assertEquals(mnew, changed);
+		assertEquals(mcopy, new Marking(pn, 1, 2, 3, 4));
 		// feure t3 "andere dabei mcopy
 		mcopy.fire(pn.getTransition("t3"));
 		assertEquals(mcopy, changed);

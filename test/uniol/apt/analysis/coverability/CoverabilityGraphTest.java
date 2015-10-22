@@ -184,8 +184,7 @@ public class CoverabilityGraphTest {
 	public void testTokenGeneratorNet() {
 		PetriNet pn = getTokenGeneratorNet();
 		Marking initialMark = pn.getInitialMarkingCopy();
-		Marking aMark = new Marking(initialMark);
-		aMark.setToken(pn.getPlaces().iterator().next(), Token.OMEGA);
+		Marking aMark = initialMark.setTokenCount(pn.getPlaces().iterator().next(), Token.OMEGA);
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 

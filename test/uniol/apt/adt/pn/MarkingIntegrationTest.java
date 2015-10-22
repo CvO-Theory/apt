@@ -77,13 +77,11 @@ public class MarkingIntegrationTest {
 
 		markings[0] = pn.getInitialMarkingCopy();
 
-		markings[0].fire(t[0]);
+		markings[0] = markings[0].fireTransitions(t[0]);
 
 		assertEquals(getTokenCountConcurrentDiamondNet(markings[0]), 1);
 
-		markings[1] = new Marking(markings[0]);
-
-		markings[1].fire(t[1]);
+		markings[1] = markings[0].fireTransitions(t[1]);
 
 		assertEquals(getTokenCountConcurrentDiamondNet(markings[0]), 1);
 		assertEquals(getTokenCountConcurrentDiamondNet(markings[1]), 0);
@@ -98,7 +96,7 @@ public class MarkingIntegrationTest {
 
 		assertEquals(getTokenCountConcurrentDiamondNet(markings[3]), 1);
 
-		markings[3].fire(t[0]);
+		markings[3] = markings[3].fireTransitions(t[0]);
 
 		assertEquals(getTokenCountConcurrentDiamondNet(markings[3]), 0);
 		assertEquals(markings[3], markings[2]);

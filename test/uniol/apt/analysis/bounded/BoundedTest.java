@@ -35,7 +35,7 @@ public class BoundedTest {
 		BoundedResult result = Bounded.checkBounded(pn);
 		assertThat(result.k, is(nullValue()));
 		assertThat(result.isKBounded(42), is(false));
-		assertThat(pn.getInitialMarkingCopy().fire(
+		assertThat(pn.getInitialMarkingCopy().fireTransitions(
 					result.getSequenceExceeding(42).toArray(new Transition[0]))
 				.getToken(result.unboundedPlace).getValue(),
 				greaterThan(42l));
@@ -51,7 +51,7 @@ public class BoundedTest {
 
 		if (k > 0) {
 			assertThat(result.isKBounded(k - 1), is(false));
-			assertThat(pn.getInitialMarkingCopy().fire(
+			assertThat(pn.getInitialMarkingCopy().fireTransitions(
 						result.getSequenceExceeding(k - 1).toArray(new Transition[0]))
 					.getToken(result.unboundedPlace).getValue(),
 					greaterThan(k-1l));

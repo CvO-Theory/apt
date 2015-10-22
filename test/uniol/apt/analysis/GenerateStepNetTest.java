@@ -102,11 +102,11 @@ public class GenerateStepNetTest {
 		markings[1] = new Marking(pn, 0, o, 1, o, 0); // Firing sequence ta1,ta2,tb1
 		markings[2] = new Marking(pn, 0, o, 0, o, 1); // Firing sequence ta1,ta2,tb1,tb2
 
-		markings[0].setToken("p2", OMEGA);
-		markings[1].setToken("p2", OMEGA);
-		markings[1].setToken("p4", OMEGA);
-		markings[2].setToken("p2", OMEGA);
-		markings[2].setToken("p4", OMEGA);
+		markings[0] = markings[0].setTokenCount("p2", OMEGA);
+		markings[1] = markings[1].setTokenCount("p2", OMEGA);
+		markings[1] = markings[1].setTokenCount("p4", OMEGA);
+		markings[2] = markings[2].setTokenCount("p2", OMEGA);
+		markings[2] = markings[2].setTokenCount("p4", OMEGA);
 
 		assertThat(GenerateStepNet.getMaximalReachableMarkings(pn), containsInAnyOrder(markings));
 	}
