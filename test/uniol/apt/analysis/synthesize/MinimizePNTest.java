@@ -78,6 +78,8 @@ public class MinimizePNTest {
 			assertThat(new Plain().checkPlain(pn), is(true));
 		if (properties.isTNet())
 			assertThat(SynthesizePN.isGeneralizedTNet(pn), is(true));
+		if (properties.isMarkedGraph())
+			assertThat(SynthesizePN.isGeneralizedMarkedGraph(pn), is(true));
 		if (properties.isKBounded())
 			assertThat(Bounded.checkBounded(pn).k <= properties.getKForKBounded(), is(true));
 		if (properties.isOutputNonbranching())
