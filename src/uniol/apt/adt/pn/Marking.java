@@ -87,7 +87,7 @@ public class Marking {
 	 * <p/>
 	 * @throws StructureException if the places of the given net and tokenmap do not fit.
 	 */
-	public Marking(PetriNet net, Map<String, Token> m) {
+	public Marking(PetriNet net, Map<String, Integer> m) {
 		this.net = net;
 		this.setMarking(m);
 	}
@@ -141,13 +141,13 @@ public class Marking {
 	 * <p/>
 	 * @throws StructureException if the places of the given net and tokenmap do not fit.
 	 */
-	private void setMarking(Map<String, Token> m) {
-		for (Map.Entry<String, Token> entry : m.entrySet()) {
+	private void setMarking(Map<String, Integer> m) {
+		for (Map.Entry<String, Integer> entry : m.entrySet()) {
 			if (!this.net.containsPlace(entry.getKey())) {
 				throw new StructureException("place '" + entry.getKey() + "' does not belong to net '"
 					+ this.net.getName() + "'.");
 			}
-			this.map.put(this.net.getPlace(entry.getKey()), entry.getValue());
+			this.map.put(this.net.getPlace(entry.getKey()), new Token(entry.getValue()));
 		}
 		ensureConsistency();
 	}

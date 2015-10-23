@@ -25,7 +25,6 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
-import uniol.apt.adt.pn.Token;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.io.parser.impl.AbstractPNParserOutput;
 import uniol.apt.io.parser.impl.ParserFlow;
@@ -89,16 +88,14 @@ public class APTPNParserOutput extends AbstractPNParserOutput<PetriNet> {
 			}
 			// final markings
 			for (Map<String, Integer> finalMarking : finalMarkings) {
-				Map<String, Token> fmarking = new HashMap<>();
 				for (String placeId : finalMarking.keySet()) {
 					try {
 						net.getPlace(placeId);
 					} catch (NoSuchNodeException e) {
 						throw new NodeNotExistException(e.getNodeId());
 					}
-					fmarking.put(placeId, new Token(finalMarking.get(placeId)));
 				}
-				net.addFinalMarking(new Marking(net, fmarking));
+				net.addFinalMarking(new Marking(net, finalMarking));
 			}
 			return net;
 		} else {

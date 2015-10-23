@@ -30,7 +30,6 @@ import java.util.NoSuchElementException;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
-import uniol.apt.adt.pn.Token;
 import uniol.apt.adt.pn.Transition;
 
 /**
@@ -99,17 +98,17 @@ public class CycleTNetIterator implements Iterator<PetriNet> {
 			Transition t = pn.createTransition();
 			transitions.add(t);
 		}
-		Map<String, Token> markingMap = new HashMap<>();
+		Map<String, Integer> markingMap = new HashMap<>();
 		int placesWithToken = initialStateArcsSize;
 		for (Place place : places) {
 			int indexOfPlace = places.indexOf(place);
 			pn.createFlow(transitions.get(indexOfPlace), place);
 			pn.createFlow(place, transitions.get((indexOfPlace + 1) % placesSize));
 			if (placesWithToken > 1) {
-				markingMap.put(place.getId(), new Token(token / initialStateArcsSize));
+				markingMap.put(place.getId(), token / initialStateArcsSize);
 				token = token - (token / initialStateArcsSize);
 			} else if (placesWithToken == 1) {
-				markingMap.put(place.getId(), new Token(token));
+				markingMap.put(place.getId(), token);
 			}
 			if (placesWithToken > 0) {
 				placesWithToken -= 1;
