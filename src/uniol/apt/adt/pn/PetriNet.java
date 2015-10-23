@@ -992,8 +992,19 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * <p/>
 	 * @return the copy of the initial marking of this petri net.
 	 */
-	public Marking getInitialMarkingCopy() {
+	public Marking getInitialMarking() {
 		return new Marking(initialMarking);
+	}
+
+	/**
+	 * Returns a copy of the initial marking of this petri net.
+	 * <p/>
+	 * @return the copy of the initial marking of this petri net.
+	 * @deprecated Use {@link getInitialMarking()} instead, because the function name is better.
+	 */
+	@Deprecated
+	public Marking getInitialMarkingCopy() {
+		return getInitialMarking();
 	}
 
 	/**
