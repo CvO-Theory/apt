@@ -32,9 +32,9 @@ import uniol.apt.module.exception.NetIsNotParsableException;
 
 /**
  * Parse the petrify string into the APT-data structure.
- * 
+ *
  * @author Sören Dierkes
- * 
+ *
  */
 public class PetrifyPNParser {
 
@@ -44,7 +44,7 @@ public class PetrifyPNParser {
 
 	/**
 	 * Parse the petrify string into the APT-data structure.
-	 * 
+	 *
 	 * @param petrifyFormat
 	 *            Petri net as Petrify string.
 	 * @throws IOException
@@ -53,7 +53,7 @@ public class PetrifyPNParser {
 	public void parse(String petrifyFormat) throws IOException, NetIsNotParsableException {
 
 		BufferedReader br = new BufferedReader(new StringReader(petrifyFormat));
-		
+
 		int places = 0;
 		boolean sawTransitions = false;
 		pn_ = new PetriNet();
@@ -114,7 +114,7 @@ public class PetrifyPNParser {
 				if (tmpTrans.length == 0) {
 					throw new NetIsNotParsableException();
 				}
-				
+
 				if (tmpTrans[SOURCE].contains("_") && !pn_.containsTransition(tmpTrans[SOURCE])) {
 					Transition t = pn_.createTransition(tmpTrans[SOURCE]);
 					if (tmpTrans[SOURCE].split("_").length == 0) {
@@ -124,7 +124,7 @@ public class PetrifyPNParser {
 				}
 
 				for (int i = 1; i < tmpTrans.length; i++) {
-					
+
 					if (tmpTrans[i].contains("_") && !pn_.containsTransition(tmpTrans[i])) {
 						Transition t = pn_.createTransition(tmpTrans[i]);
 						if (tmpTrans[i].split("_").length == 0) {

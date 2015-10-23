@@ -128,11 +128,11 @@ public class CycleTNetIterator implements Iterator<PetriNet> {
 			int tokenNumber = 1;
 			while (stateCount <= stateNumber) {
 				stateCount = computeBinomialCoeffizient(new BigInteger(String
-				                .valueOf(currentPlacesCount)),
+							.valueOf(currentPlacesCount)),
 						new BigInteger(String.valueOf(tokenNumber)));
 				if (stateCount == stateNumber) {
 					currentPn = createCycleTNet(currentPlacesCount, tokenNumber,
-					                initialStateArcsSize);
+							initialStateArcsSize);
 					if (currentPn != null) {
 						return true;
 					}

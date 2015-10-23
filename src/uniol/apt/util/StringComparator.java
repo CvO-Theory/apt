@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  */
 public class StringComparator implements Comparator<String> {
 
-	private static final Pattern pattern = 
+	private static final Pattern pattern =
 		Pattern.compile("(.*?)([0-9]+)");
 
 	public int compare(String s1, String s2) {
@@ -56,7 +56,7 @@ public class StringComparator implements Comparator<String> {
 			else
 				return Integer.compare(n1, n2);
 		}
-		
+
 		return s1.compareTo(s2);
 	}
 

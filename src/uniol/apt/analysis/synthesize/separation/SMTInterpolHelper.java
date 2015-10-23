@@ -131,7 +131,7 @@ public class SMTInterpolHelper {
 		// Our definition of conflict-free requires plainness
 		if (properties.isPlain() || properties.isConflictFree())
 			isRegion.addAll(requirePlainness(initialMarking, backwardWeight, forwardWeight));
-		
+
 		// ON is handled in SeparationUtility by messing with the locationMap
 		assert !properties.isOutputNonbranching();
 

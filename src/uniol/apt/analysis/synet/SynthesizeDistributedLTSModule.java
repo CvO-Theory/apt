@@ -41,71 +41,71 @@ import uniol.apt.module.exception.ModuleException;
  */
 public class SynthesizeDistributedLTSModule extends AbstractModule {
 
-    @Override
-    public String getName() {
-        return "use_synet";
-    }
+	@Override
+	public String getName() {
+		return "use_synet";
+	}
 
-    @Override
-    public void require(ModuleInputSpec inputSpec) {
-        inputSpec.addParameter("lts", TransitionSystem.class, "The LTS that should be examined");
-    }
+	@Override
+	public void require(ModuleInputSpec inputSpec) {
+		inputSpec.addParameter("lts", TransitionSystem.class, "The LTS that should be examined");
+	}
 
-    @Override
-    public void provide(ModuleOutputSpec outputSpec) {
-        outputSpec.addReturnValue("synthesize_distributed_lts", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
-        outputSpec.addReturnValue("error", String.class);
-        outputSpec.addReturnValue("separationError", String.class);
-        outputSpec.addReturnValue("pn", PetriNet.class, ModuleOutputSpec.PROPERTY_FILE, ModuleOutputSpec.PROPERTY_RAW);
-    }
+	@Override
+	public void provide(ModuleOutputSpec outputSpec) {
+		outputSpec.addReturnValue("synthesize_distributed_lts", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
+		outputSpec.addReturnValue("error", String.class);
+		outputSpec.addReturnValue("separationError", String.class);
+		outputSpec.addReturnValue("pn", PetriNet.class, ModuleOutputSpec.PROPERTY_FILE, ModuleOutputSpec.PROPERTY_RAW);
+	}
 
-    @Override
-    public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
-        TransitionSystem ts = input.getParameter("lts", TransitionSystem.class);
+	@Override
+	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
+		TransitionSystem ts = input.getParameter("lts", TransitionSystem.class);
 
-        SynetSynthesizeDistributedLTS checkLTS = new SynetSynthesizeDistributedLTS(ts);
+		SynetSynthesizeDistributedLTS checkLTS = new SynetSynthesizeDistributedLTS(ts);
 
-        boolean b;
-        try {
-            b = checkLTS.check();
-           
-            if(checkLTS.getSeparationError() == null) {
-                output.setReturnValue("synthesize_distributed_lts", Boolean.class, b);
-                output.setReturnValue("separationError", String.class, null);
-            } else {
-                output.setReturnValue("separationError", String.class, checkLTS.getSeparationError());
-            }
-           
-            if (b) {
-                output.setReturnValue("error", String.class, null);
-            } else {
-                output.setReturnValue("error", String.class, checkLTS.getError());
-            }
-        } catch (IOException | FormatException e) {
-            e.printStackTrace();
-        }
+		boolean b;
+		try {
+			b = checkLTS.check();
 
-        output.setReturnValue("pn", PetriNet.class, checkLTS.getPN());
-    }
+			if(checkLTS.getSeparationError() == null) {
+				output.setReturnValue("synthesize_distributed_lts", Boolean.class, b);
+				output.setReturnValue("separationError", String.class, null);
+			} else {
+				output.setReturnValue("separationError", String.class, checkLTS.getSeparationError());
+			}
 
-    @Override
-    public String getShortDescription() {
-        return "Check if Synet can generate a Petri net from a LTS";
-    }
+			if (b) {
+				output.setReturnValue("error", String.class, null);
+			} else {
+				output.setReturnValue("error", String.class, checkLTS.getError());
+			}
+		} catch (IOException | FormatException e) {
+			e.printStackTrace();
+		}
 
-    @Override
-    public String getLongDescription() {
-        return getShortDescription() + "\n\n" + "For this module to function"
-            + " properly you must ensure that the Synet executable can be"
-            + " found on your system. On most systems adding the directory"
-            + " where the executable is located to the PATH environment"
-            + " variable suffices to make it available to the APT system.";
-    }
+		output.setReturnValue("pn", PetriNet.class, checkLTS.getPN());
+	}
 
-    @Override
-    public Category[] getCategories() {
-        return new Category[]{Category.LTS};
-    }
+	@Override
+	public String getShortDescription() {
+		return "Check if Synet can generate a Petri net from a LTS";
+	}
+
+	@Override
+	public String getLongDescription() {
+		return getShortDescription() + "\n\n" + "For this module to function"
+			+ " properly you must ensure that the Synet executable can be"
+			+ " found on your system. On most systems adding the directory"
+			+ " where the executable is located to the PATH environment"
+			+ " variable suffices to make it available to the APT system.";
+	}
+
+	@Override
+	public Category[] getCategories() {
+		return new Category[]{Category.LTS};
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

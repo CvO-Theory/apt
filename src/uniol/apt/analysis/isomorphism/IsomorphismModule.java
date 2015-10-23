@@ -49,17 +49,17 @@ public class IsomorphismModule extends AbstractModule {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn_or_ts1", PetriNetOrTransitionSystem.class,
-			"The first Petri net or transition system that should be examined");
+				"The first Petri net or transition system that should be examined");
 		inputSpec.addParameter("pn_or_ts2", PetriNetOrTransitionSystem.class,
-			"The second Petri net or transition system that should be examined");
+				"The second Petri net or transition system that should be examined");
 		inputSpec.addOptionalParameter("dontCheckLabels", String.class, null,
-					       "do not check arc labels (default is to check labels)");
+				"do not check arc labels (default is to check labels)");
 	}
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("isomorphic_reachability_graphs", Boolean.class,
-			ModuleOutputSpec.PROPERTY_SUCCESS);
+				ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("isomorphism", Isomorphism.class);
 	}
 
@@ -78,7 +78,7 @@ public class IsomorphismModule extends AbstractModule {
 
 		boolean checkLabels = true;
 		if(input.getParameter("dontCheckLabels", String.class) != null)
-		    checkLabels = false;
+			checkLabels = false;
 
 		IsomorphismLogic logic = new IsomorphismLogic(lts1, lts2, checkLabels);
 		boolean result = logic.isIsomorphic();

@@ -33,7 +33,7 @@ import uniol.apt.module.exception.ModuleException;
 
 /**
  * A Module for converting a file in apt format to a file in synet format.
- * 
+ *
  * @author Sören
  */
 public class Apt2SynetModule extends AbstractModule {
@@ -65,7 +65,7 @@ public class Apt2SynetModule extends AbstractModule {
 
 		PetriNet pn = pnOrTs.getNet();
 		TransitionSystem ts = pnOrTs.getTs();
-		
+
 		SynetRenderer ren = new SynetRenderer();
 		String synetPN = null;
 		if(pn != null) {

@@ -87,10 +87,10 @@ public class SynetRenderer implements PNTSRenderer {
 		StringBuilder output = new StringBuilder();
 		StringBuilder head = new StringBuilder();
 		output.append("\n");
-		
+
 		// build a map from APT state _names_ to Synet state _indices_
 		HashMap<String, Integer> rename = new HashMap<>();
-		
+
 		// to ensure that the initial state is always mapped to 0 insert it first!
 		rename.put(ts.getInitialState().getId(), 0);
 
@@ -113,7 +113,7 @@ public class SynetRenderer implements PNTSRenderer {
 			output.append(String.format("(%s, %s, %s)\n",
 				rename.get(source), label, rename.get(target)));
 		}
-		
+
 		// write file header
 		int initial = rename.get(ts.getInitialState().getId());
 		head.append(String.format("des(%d, %d, %d)", initial,

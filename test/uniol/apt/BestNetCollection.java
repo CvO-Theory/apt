@@ -41,7 +41,7 @@ public class BestNetCollection {
 	}
 
 	private static TransitionSystem getTs(String packageName, String prefixnet) {
-	        return ParserTestUtils.getAptLTS("nets/eb-nets" + "/" + packageName + "/" + prefixnet + "-lts.apt");
+		return ParserTestUtils.getAptLTS("nets/eb-nets" + "/" + packageName + "/" + prefixnet + "-lts.apt");
 	}
 
 	public static PetriNet getNet1A() {
@@ -105,7 +105,7 @@ public class BestNetCollection {
 	}
 
 	public static TransitionSystem getTs4B() {
-	       return getTs("aeq-iso-bisim", "4b");
+		return getTs("aeq-iso-bisim", "4b");
 	}
 
 	public static PetriNet getNetEB1() {

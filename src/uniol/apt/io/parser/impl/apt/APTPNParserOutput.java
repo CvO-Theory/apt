@@ -39,72 +39,72 @@ import uniol.apt.io.parser.impl.exception.TypeMismatchException;
  */
 public class APTPNParserOutput extends AbstractPNParserOutput<PetriNet> {
 
-    @Override
-    public PetriNet convertToDatastructure() throws NodeNotExistException, TypeMismatchException {
-        if (type == Type.PN || type == Type.LPN) {
-            PetriNet net = new PetriNet((name != null) ? name : "");
-            // description
-            net.putExtension("description", description);
-            // places
-            for (String id : places.keySet()) {
-                Place p = net.createPlace(id);
-                Map<String, Object> options = places.get(id).getOptions();
-                for (String opt : options.keySet()) {
-                    p.putExtension(opt, options.get(opt));
-                }
-            }
-            // transitions
-            for (String id : transitions.keySet()) {
-                Transition t = net.createTransition(id);
-                Map<String, Object> options = transitions.get(id).getOptions();
-                for (String opt : options.keySet()) {
-                    Object value = options.get(opt);
-                    if (opt.equals("label")) {
-                        t.setLabel((String) value);
-                    } else {
-                        t.putExtension(opt, value);
-                    }
-                }
-            }
-            // flows
-            for (ParserFlow parserFlow : flows.values()) {
-                Node from, to;
-                try {
-                    from = net.getNode(parserFlow.getFromId());
-                    to = net.getNode(parserFlow.getToId());
-                } catch (NoSuchNodeException e) {
-                    throw new NodeNotExistException(e.getNodeId());
-                }
-                net.createFlow(from.getId(), to.getId(), parserFlow.getWeight());
-            }
-            // init marking
-            for (String id : initMarking.keySet()) {
-                Place p;
-                try {
-                    p = net.getPlace(id);
-                } catch (NoSuchNodeException e) {
-                    throw new NodeNotExistException(e.getNodeId());
-                }
-                p.setInitialToken(initMarking.get(id));
-            }
-            // final markings
-            for (Map<String, Integer> finalMarking : finalMarkings) {
-                Map<String, Token> fmarking = new HashMap<>();
-                for (String placeId : finalMarking.keySet()) {
-                    try {
-                        net.getPlace(placeId);
-                    } catch (NoSuchNodeException e) {
-                        throw new NodeNotExistException(e.getNodeId());
-                    }
-                    fmarking.put(placeId, new Token(finalMarking.get(placeId)));
-                }
-                net.addFinalMarking(new Marking(net, fmarking));
-            }
-            return net;
-        } else {
-            throw new TypeMismatchException("PN or LPN", type.name());
-        }
-    }
+	@Override
+	public PetriNet convertToDatastructure() throws NodeNotExistException, TypeMismatchException {
+		if (type == Type.PN || type == Type.LPN) {
+			PetriNet net = new PetriNet((name != null) ? name : "");
+			// description
+			net.putExtension("description", description);
+			// places
+			for (String id : places.keySet()) {
+				Place p = net.createPlace(id);
+				Map<String, Object> options = places.get(id).getOptions();
+				for (String opt : options.keySet()) {
+					p.putExtension(opt, options.get(opt));
+				}
+			}
+			// transitions
+			for (String id : transitions.keySet()) {
+				Transition t = net.createTransition(id);
+				Map<String, Object> options = transitions.get(id).getOptions();
+				for (String opt : options.keySet()) {
+					Object value = options.get(opt);
+					if (opt.equals("label")) {
+						t.setLabel((String) value);
+					} else {
+						t.putExtension(opt, value);
+					}
+				}
+			}
+			// flows
+			for (ParserFlow parserFlow : flows.values()) {
+				Node from, to;
+				try {
+					from = net.getNode(parserFlow.getFromId());
+					to = net.getNode(parserFlow.getToId());
+				} catch (NoSuchNodeException e) {
+					throw new NodeNotExistException(e.getNodeId());
+				}
+				net.createFlow(from.getId(), to.getId(), parserFlow.getWeight());
+			}
+			// init marking
+			for (String id : initMarking.keySet()) {
+				Place p;
+				try {
+					p = net.getPlace(id);
+				} catch (NoSuchNodeException e) {
+					throw new NodeNotExistException(e.getNodeId());
+				}
+				p.setInitialToken(initMarking.get(id));
+			}
+			// final markings
+			for (Map<String, Integer> finalMarking : finalMarkings) {
+				Map<String, Token> fmarking = new HashMap<>();
+				for (String placeId : finalMarking.keySet()) {
+					try {
+						net.getPlace(placeId);
+					} catch (NoSuchNodeException e) {
+						throw new NodeNotExistException(e.getNodeId());
+					}
+					fmarking.put(placeId, new Token(finalMarking.get(placeId)));
+				}
+				net.addFinalMarking(new Marking(net, fmarking));
+			}
+			return net;
+		} else {
+			throw new TypeMismatchException("PN or LPN", type.name());
+		}
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

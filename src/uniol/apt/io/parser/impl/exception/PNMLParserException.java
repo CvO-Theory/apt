@@ -37,7 +37,7 @@ public class PNMLParserException extends FormatException {
 	/**
 	 * Creates the exception. The code constructing this object is
 	 * responsible for providing a helpful and precise error message.
-	 * 
+	 *
 	 * @param message - the error message to report
 	 * @param cause   - The throwable which caused this exception
 	 */
@@ -48,7 +48,7 @@ public class PNMLParserException extends FormatException {
 	/**
 	 * Creates the exception. The code constructing this object is
 	 * responsible for providing a helpful and precise error message.
-	 * 
+	 *
 	 * @param message - the error message to report
 	 */
 	public PNMLParserException(String message) {

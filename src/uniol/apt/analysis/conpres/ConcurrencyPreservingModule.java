@@ -36,53 +36,53 @@ import uniol.apt.module.exception.ModuleException;
  */
 public class ConcurrencyPreservingModule extends AbstractModule {
 
-    private final static String SHORTDESCRIPTION = "Check if a Petri net is concurrency-preserving";
-    private final static String LONGDESCRIPTION = "This module checks if a Petri net is concurrency-preserving."
-            + "That is: for every transition t there are as many places in the preset as in the postset of t.";
-    private final static String TITLE = "concurrency-preserving";
-    private final static String NAME = "conpres";
+	private final static String SHORTDESCRIPTION = "Check if a Petri net is concurrency-preserving";
+	private final static String LONGDESCRIPTION = "This module checks if a Petri net is concurrency-preserving."
+		+ "That is: for every transition t there are as many places in the preset as in the postset of t.";
+	private final static String TITLE = "concurrency-preserving";
+	private final static String NAME = "conpres";
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
+	@Override
+	public String getName() {
+		return NAME;
+	}
 
-    @Override
-    public void require(ModuleInputSpec inputSpec) {
-        inputSpec.addParameter("net", PetriNet.class, "The Petri net that should be examined");
-    }
+	@Override
+	public void require(ModuleInputSpec inputSpec) {
+		inputSpec.addParameter("net", PetriNet.class, "The Petri net that should be examined");
+	}
 
-    @Override
-    public void provide(ModuleOutputSpec outputSpec) {
-        outputSpec.addReturnValue("conpres", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
-    }
+	@Override
+	public void provide(ModuleOutputSpec outputSpec) {
+		outputSpec.addReturnValue("conpres", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
+	}
 
-    @Override
-    public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
-        PetriNet pn = input.getParameter("net", PetriNet.class);
-        ConcurrencyPreserving c = new ConcurrencyPreserving(pn);
-        output.setReturnValue("conpres", Boolean.class, c.check());
-    }
+	@Override
+	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
+		PetriNet pn = input.getParameter("net", PetriNet.class);
+		ConcurrencyPreserving c = new ConcurrencyPreserving(pn);
+		output.setReturnValue("conpres", Boolean.class, c.check());
+	}
 
-    @Override
-    public String getTitle() {
-        return TITLE;
-    }
+	@Override
+	public String getTitle() {
+		return TITLE;
+	}
 
-    @Override
-    public String getShortDescription() {
-        return SHORTDESCRIPTION;
-    }
+	@Override
+	public String getShortDescription() {
+		return SHORTDESCRIPTION;
+	}
 
-    @Override
-    public String getLongDescription() {
-        return LONGDESCRIPTION;
-    }
+	@Override
+	public String getLongDescription() {
+		return LONGDESCRIPTION;
+	}
 
-    @Override
-    public Category[] getCategories() {
-        return new Category[]{Category.PN};
-    }
+	@Override
+	public Category[] getCategories() {
+		return new Category[]{Category.PN};
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

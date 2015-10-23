@@ -219,7 +219,7 @@ public class APT {
 		new CheckModule(),
 		new CheckSideConditionsModule(),
 		new ComputeMinSemiPosInvariantsModule(),
-                new ConcurrencyPreservingModule(),
+		new ConcurrencyPreservingModule(),
 		new ConflictFreeModule(),
 		new CoverabilityModule(),
 		new CoveredByInvariantModule(),
@@ -350,9 +350,9 @@ public class APT {
 		parametersTransformer.addTransformation(ExtendMode.class, new ExtendModeParameterTransformation());
 		parametersTransformer.addTransformation(ParikhVector.class, new ParikhVectorParameterTransformation());
 		parametersTransformer.addTransformation(PetriNetOrTransitionSystem.class,
-			new NetOrTSParameterTransformation());
+				new NetOrTSParameterTransformation());
 		parametersTransformer.addTransformation((Class<IGraph<?, ?, ?>>) (Class<?>) IGraph.class,
-			new GraphParameterTransformation());
+				new GraphParameterTransformation());
 		parametersTransformer.addTransformation(MatrixFileFormat.class, new MatrixFileFormatParameterTransformation());
 		parametersTransformer.addTransformation(FiniteAutomaton.class, new FiniteAutomatonParameterTransformation());
 	}
@@ -364,47 +364,47 @@ public class APT {
 	public static void addReturnValuesTransformations() {
 		returnValuesTransformer.addTransformation(Boolean.class, new BooleanReturnValueTransformation());
 		returnValuesTransformer.addTransformation(Component.class,
-			new INodeCollectionReturnValueTransformation<Component>());
+				new INodeCollectionReturnValueTransformation<Component>());
 		returnValuesTransformer.addTransformation(Components.class,
-			new ComponentsReturnValueTransformation());
+				new ComponentsReturnValueTransformation());
 		returnValuesTransformer.addTransformation(CycleCounterExample.class,
-			new ToStringReturnValueTransformation<CycleCounterExample>());
+				new ToStringReturnValueTransformation<CycleCounterExample>());
 		returnValuesTransformer.addTransformation(FiringSequence.class,
-			new INodeCollectionReturnValueTransformation<FiringSequence>());
+				new INodeCollectionReturnValueTransformation<FiringSequence>());
 		returnValuesTransformer.addTransformation((Class<INode<?, ?, ?>>) (Class<?>) INode.class,
-			new INodeReturnValueTransformation<>());
+				new INodeReturnValueTransformation<>());
 		returnValuesTransformer.addTransformation(Isomorphism.class,
 				new IsomorphismReturnValueTransformation());
 		returnValuesTransformer.addTransformation(Integer.class,
-			new ToStringReturnValueTransformation<Integer>());
+				new ToStringReturnValueTransformation<Integer>());
 		returnValuesTransformer.addTransformation(Long.class,
-			new ToStringReturnValueTransformation<Long>());
+				new ToStringReturnValueTransformation<Long>());
 		returnValuesTransformer.addTransformation(Marking.class, new MarkingReturnValueTransformation());
 		returnValuesTransformer.addTransformation(State.class, new INodeReturnValueTransformation<State>());
 		returnValuesTransformer.addTransformation(NonBisimilarPath.class,
-			new NonBisimilarPathReturnValueTransformation());
+				new NonBisimilarPathReturnValueTransformation());
 		returnValuesTransformer.addTransformation(ParikhVector.class,
-			new ToStringReturnValueTransformation<ParikhVector>());
+				new ToStringReturnValueTransformation<ParikhVector>());
 		returnValuesTransformer.addTransformation(PetriNet.class, new NetReturnValueTransformation());
 		returnValuesTransformer.addTransformation(Place.class, new INodeReturnValueTransformation<Place>());
 		returnValuesTransformer.addTransformation(SideConditions.class,
-			new ToStringReturnValueTransformation<SideConditions>());
+				new ToStringReturnValueTransformation<SideConditions>());
 		returnValuesTransformer.addTransformation(SNetResult.class, new SNetResultReturnValueTransformation());
 		returnValuesTransformer.addTransformation(String.class,
-			new ToStringReturnValueTransformation<String>());
+				new ToStringReturnValueTransformation<String>());
 		returnValuesTransformer.addTransformation(String[][].class,
-			new StringArrayArrayReturnValueTransformation());
+				new StringArrayArrayReturnValueTransformation());
 		returnValuesTransformer.addTransformation(TNetResult.class, new TNetResultReturnValueTransformation());
 		returnValuesTransformer.addTransformation(Transition.class,
-			new INodeReturnValueTransformation<Transition>());
+				new INodeReturnValueTransformation<Transition>());
 		returnValuesTransformer.addTransformation(TransitionSystem.class, new TSReturnValueTransformation());
 		returnValuesTransformer.addTransformation(TrapsSiphonsList.class,
-			new TrapsSiphonsListReturnValueTransformation());
+				new TrapsSiphonsListReturnValueTransformation());
 		returnValuesTransformer.addTransformation(Vector.class,
-			new ToStringReturnValueTransformation<Vector>());
+				new ToStringReturnValueTransformation<Vector>());
 		returnValuesTransformer.addTransformation(Word.class, new ToStringReturnValueTransformation<Word>());
 		returnValuesTransformer.addTransformation(WordList.class,
-			new ToStringReturnValueTransformation<WordList>());
+				new ToStringReturnValueTransformation<WordList>());
 	}
 
 	public static void main(String[] args) {
@@ -481,9 +481,9 @@ public class APT {
 			for (int i = 0; i < numberOfUsedParameters; i++) {
 				// FIXME: This is hard-coded and could be way more flexible
 				if (moduleArgs[i].equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)
-					&& (IGraph.class.isAssignableFrom(allParameters.get(i).getKlass())
-					|| PetriNetOrTransitionSystem.class.isAssignableFrom(
-					allParameters.get(i).getKlass()))) {
+						&& (IGraph.class.isAssignableFrom(allParameters.get(i).getKlass())
+							|| PetriNetOrTransitionSystem.class.isAssignableFrom(
+								allParameters.get(i).getKlass()))) {
 
 					if (hasStdInParameter) {
 						printCanOnlyReadOneParameterFromStdInAndExit();
@@ -495,7 +495,7 @@ public class APT {
 
 			for (int i = 0; i < numberOfUsedParameters; i++) {
 				transformedArgs[i] = parametersTransformer.transform(moduleArgs[i],
-					allParameters.get(i).getKlass());
+						allParameters.get(i).getKlass());
 			}
 
 			ModulePreconditionsChecker checker = new SimpleModulePreconditionsChecker();
@@ -540,10 +540,10 @@ public class APT {
 					String returnValueName = returnValues.get(i).getName();
 
 					boolean isRawReturnValue =
-							Arrays.asList(returnValues.get(i).getProperties()).contains(ModuleOutputSpec.PROPERTY_RAW);
+						Arrays.asList(returnValues.get(i).getProperties()).contains(ModuleOutputSpec.PROPERTY_RAW);
 
 					boolean isFileReturnValue =
-							Arrays.asList(returnValues.get(i).getProperties()).contains(ModuleOutputSpec.PROPERTY_FILE);
+						Arrays.asList(returnValues.get(i).getProperties()).contains(ModuleOutputSpec.PROPERTY_FILE);
 
 					// Print the return value to file without its name
 					if (isFileReturnValue) {
@@ -651,7 +651,7 @@ public class APT {
 	}
 
 	private static void printAmbiguousModuleNameAndExit(String moduleName,
-		Collection<Module> foundModules) {
+			Collection<Module> foundModules) {
 		errPrinter.println("Ambiguous module name: " + moduleName);
 
 		errPrinter.println();
@@ -750,12 +750,12 @@ class CloseableCollection<T extends Closeable> implements Closeable {
 				try {
 					c.close();
 				}
-				catch (IOException e) {
-					if (err == null)
-						err = e;
-					else
-						err.addSuppressed(e);
-				}
+			catch (IOException e) {
+				if (err == null)
+					err = e;
+				else
+					err.addSuppressed(e);
+			}
 		}
 		if (err != null)
 			throw err;

@@ -120,8 +120,8 @@ public class IsomorphismLogic {
 	 */
 	public IsomorphismLogic(PetriNet pn1, PetriNet pn2, boolean checkLabels) throws UnboundedException {
 		this(CoverabilityGraph.get(pn1).toReachabilityLTS(),
-		     CoverabilityGraph.get(pn2).toReachabilityLTS(),
-		     checkLabels);
+				CoverabilityGraph.get(pn2).toReachabilityLTS(),
+				checkLabels);
 	}
 
 	/**

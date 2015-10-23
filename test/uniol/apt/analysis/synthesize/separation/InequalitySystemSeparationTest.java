@@ -58,7 +58,7 @@ public class InequalitySystemSeparationTest {
 	public Object[] factory() {
 		List<Object> tests = new ArrayList<>();
 		PNProperties properties;
-		
+
 		properties = new PNProperties();
 		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
 						new InequalitySystemSeparationFactory(properties))));
