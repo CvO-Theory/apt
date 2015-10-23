@@ -33,6 +33,9 @@ import uniol.apt.adt.EdgeKey;
 import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.module.exception.ModuleException;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 /**
  *
  * @author Manuel Gieseking
@@ -249,6 +252,25 @@ public class PetriNetTest {
 		// "Andert die initiale Markierung
 		pn.getPlace("p1").setInitialToken(5);
 		return pn;
+	}
+
+	@Test
+	public void testNetCopyFinalMarking() {
+		PetriNet pn = new PetriNet("Test net");
+		Place p = pn.createPlace();
+		Marking final1 = pn.getInitialMarkingCopy();
+		final1 = final1.setTokenCount(p, 42);
+		pn.addFinalMarking(final1);
+
+		PetriNet pnCopy = new PetriNet(pn);
+		Place p2 = pnCopy.getPlace(p.getId());
+		Set<Marking> finalMarkings = pnCopy.getFinalMarkings();
+		assertThat(finalMarkings, hasSize(1));
+
+		// The bug that we are testing for: final2 is a marking on pn2, but contains Token for places from net
+		// pn. Thus, we must explicitly call getToken(Place) to test for this bug.
+		Marking final2 = finalMarkings.iterator().next();
+		assertThat(final2.getToken(p2).getValue(), equalTo(42l));
 	}
 }
 
