@@ -107,7 +107,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 			}
 		}
 		for (Marking m : pn.finalMarkings) {
-			this.finalMarkings.add(new Marking(m));
+			this.finalMarkings.add(new Marking(this, m));
 		}
 		this.placeRev = pn.placeRev;
 		this.initialMarking = new Marking(this, pn.initialMarking);
