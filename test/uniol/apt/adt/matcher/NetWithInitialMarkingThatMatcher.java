@@ -37,7 +37,7 @@ public class NetWithInitialMarkingThatMatcher extends FeatureMatcher<PetriNet, M
 
 	@Override
 	protected Marking featureValueOf(PetriNet pn) {
-		return pn.getInitialMarkingCopy();
+		return pn.getInitialMarking();
 	}
 
 	@Factory

@@ -62,7 +62,7 @@ public class BagginsRenderer {
 			throw new ModuleException("Cannot express Petri nets without places in the BAGGINS "
 					+ " file format");
 		}
-		if (pn.getInitialMarkingCopy().hasOmega()) {
+		if (pn.getInitialMarking().hasOmega()) {
 			throw new ModuleException("Cannot express an initial marking with at least one OMEGA "
 					+ "token in the BAGGINS file format");
 		}

@@ -171,7 +171,7 @@ public class APTParserTest {
 	@Test
 	public void testInitalMarking() throws IOException, FormatException {
 		PetriNet pn = APTPNParser.getPetriNet("nets/doubleMarking.apt");
-		Marking im = pn.getInitialMarkingCopy();
+		Marking im = pn.getInitialMarking();
 		Token s1 = im.getToken("s1");
 		Token s3 = im.getToken("s3");
 		assertEquals(s1.getValue(), 4);

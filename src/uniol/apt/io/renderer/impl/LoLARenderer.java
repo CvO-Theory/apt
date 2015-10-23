@@ -48,7 +48,7 @@ public class LoLARenderer {
 			throw new ModuleException("Cannot express Petri nets without places in the LoLA "
 					+ " file format");
 		}
-		if (pn.getInitialMarkingCopy().hasOmega()) {
+		if (pn.getInitialMarking().hasOmega()) {
 			throw new ModuleException("Cannot express an initial marking with at least one OMEGA"
 					+ "token in the LoLA file format");
 		}
@@ -101,7 +101,7 @@ public class LoLARenderer {
 
 		// Handle the initial marking
 		for (Place p : pn.getPlaces()) {
-			Token val = pn.getInitialMarkingCopy().getToken(p);
+			Token val = pn.getInitialMarking().getToken(p);
 			if (val.getValue() != 0) {
 				pnTemplate.addAggr("marking.{place, weight}", p, val.getValue());
 			}

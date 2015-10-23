@@ -82,7 +82,7 @@ public class DotRenderer {
 		Formatter placeFormat = new Formatter(sb);
 
 		for (Place place : pn.getPlaces()) {
-			Token tokens = pn.getInitialMarkingCopy().getToken(place);
+			Token tokens = pn.getInitialMarking().getToken(place);
 			String tokensString = "";
 
 			if (tokens.getValue() > 0) {

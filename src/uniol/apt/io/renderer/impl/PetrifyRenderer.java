@@ -70,7 +70,7 @@ public class PetrifyRenderer implements PNTSRenderer {
 		Set<Place> places = pn.getPlaces();
 		int placesCounter = 0;
 		for (Place p : places) {
-			mark = pn.getInitialMarkingCopy().getToken(p).getValue();
+			mark = pn.getInitialMarking().getToken(p).getValue();
 			if (mark > 1) {
 				throw new ModuleException("Too many marks, Petrify is only able to read one bounded net");
 			}

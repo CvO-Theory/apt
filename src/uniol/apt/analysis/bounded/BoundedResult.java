@@ -105,7 +105,7 @@ public class BoundedResult {
 			return null;
 
 		Token target = new Token(n);
-		Marking m = pn.getInitialMarkingCopy();
+		Marking m = pn.getInitialMarking();
 		List<Transition> result = new ArrayList<>();
 		// Does the initial marking already exceed bound n?
 		if (m.getToken(unboundedPlace).compareTo(target) > 0)

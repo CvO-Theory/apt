@@ -81,8 +81,8 @@ public class CoverabilityTest {
 		List<Matcher<? super State>> nodeMatchers = new ArrayList<>();
 		List<Matcher<? super Arc>> edgeMatchers = new ArrayList<>();
 
-		Marking initialMark = pn.getInitialMarkingCopy();
-		Marking curMark = pn.getInitialMarkingCopy();
+		Marking initialMark = pn.getInitialMarking();
+		Marking curMark = pn.getInitialMarking();
 		Marking prevMark;
 
 		for (int i = 0; i < size; i++) {
@@ -149,7 +149,7 @@ public class CoverabilityTest {
 	@Test
 	public void testEmptyNet() {
 		PetriNet pn = getEmptyNet();
-		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking initialMark = pn.getInitialMarking();
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
@@ -165,7 +165,7 @@ public class CoverabilityTest {
 	@Test
 	public void testNoTransitionOnePlaceNet() {
 		PetriNet pn = getNoTransitionOnePlaceNet();
-		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking initialMark = pn.getInitialMarking();
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
@@ -181,7 +181,7 @@ public class CoverabilityTest {
 	@Test
 	public void testOneTransitionNoPlaceNet() {
 		PetriNet pn = getOneTransitionNoPlaceNet();
-		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking initialMark = pn.getInitialMarking();
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();
@@ -198,7 +198,7 @@ public class CoverabilityTest {
 	@Test
 	public void testTokenGeneratorNet() {
 		PetriNet pn = getTokenGeneratorNet();
-		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking initialMark = pn.getInitialMarking();
 		Marking aMark = initialMark.setTokenCount(pn.getPlaces().iterator().next(), Token.OMEGA);
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
@@ -219,7 +219,7 @@ public class CoverabilityTest {
 	public void testDeadlockNet() {
 		PetriNet pn = getDeadlockNet();
 		Transition transitions[] = pn.getTransitions().toArray(new Transition[0]);
-		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking initialMark = pn.getInitialMarking();
 		Marking aMark = transitions[0].fire(initialMark);
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
@@ -239,7 +239,7 @@ public class CoverabilityTest {
 	@Test
 	public void testNonPersistentNet() {
 		PetriNet pn = getNonPersistentNet();
-		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking initialMark = pn.getInitialMarking();
 		Transition ta = pn.getTransition("a");
 		Marking aMark = ta.fire(initialMark);
 
@@ -265,7 +265,7 @@ public class CoverabilityTest {
 		Transition ta = pn.getTransition("a");
 		Transition tb = pn.getTransition("b");
 
-		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking initialMark = pn.getInitialMarking();
 		Marking aMark = ta.fire(initialMark);
 		Marking abMark = tb.fire(aMark);
 		Marking bMark = tb.fire(initialMark);
@@ -301,7 +301,7 @@ public class CoverabilityTest {
 		PetriNet pn = getConcurrentDiamondNet();
 		Transition transitions[] = pn.getTransitions().toArray(new Transition[0]);
 
-		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking initialMark = pn.getInitialMarking();
 		Marking aMark = transitions[0].fire(initialMark);
 		Marking abMark = transitions[1].fire(aMark);
 		Marking bMark = transitions[1].fire(initialMark);
@@ -331,7 +331,7 @@ public class CoverabilityTest {
 		PetriNet pn = getConflictingDiamondNet();
 		Transition transitions[] = pn.getTransitions().toArray(new Transition[0]);
 
-		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking initialMark = pn.getInitialMarking();
 		Marking aMark = transitions[0].fire(initialMark);
 		Marking abMark = transitions[1].fire(aMark);
 		Marking bMark = transitions[1].fire(initialMark);
@@ -359,7 +359,7 @@ public class CoverabilityTest {
 	@Test
 	public void testMultiArcNet() {
 		PetriNet pn = getMultiArcNet();
-		Marking initialMark = pn.getInitialMarkingCopy();
+		Marking initialMark = pn.getInitialMarking();
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 		TransitionSystem lts = cov.toCoverabilityLTS();

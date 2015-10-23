@@ -128,7 +128,7 @@ public class CoverabilityGraph {
 	private CoverabilityGraph(PetriNet pn, boolean reachabilityGraph) {
 		this.pn = pn;
 		this.reachabilityGraph = reachabilityGraph;
-		addNode(null, pn.getInitialMarkingCopy(), null, null);
+		addNode(null, pn.getInitialMarking(), null, null);
 	}
 
 	/**
@@ -385,7 +385,7 @@ public class CoverabilityGraph {
 		}
 
 		// Set up the LTS' initial state
-		Marking initialMarking = pn.getInitialMarkingCopy();
+		Marking initialMarking = pn.getInitialMarking();
 		State initialNode = ltsStates.get(initialMarking);
 		lts.setInitialState(initialNode);
 		assert initialNode != null;

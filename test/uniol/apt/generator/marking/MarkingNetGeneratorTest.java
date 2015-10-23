@@ -75,7 +75,7 @@ public class MarkingNetGeneratorTest {
 		PetriNet pn = getEmptyNet();
 		Collection<Matcher<? super Marking>> markings = new LinkedList<>();
 		// For a net without places, just the empty initial marking should be generated
-		markings.add(markingThatIs(pn.getInitialMarkingCopy()));
+		markings.add(markingThatIs(pn.getInitialMarking()));
 		testNet(pn, 5, markings);
 	}
 
@@ -105,7 +105,7 @@ public class MarkingNetGeneratorTest {
 		PetriNet pn = getOneTransitionNoPlaceNet();
 		Collection<Matcher<? super Marking>> markings = new LinkedList<>();
 		// For a net without places, just the empty initial marking should be generated
-		markings.add(markingThatIs(pn.getInitialMarkingCopy()));
+		markings.add(markingThatIs(pn.getInitialMarking()));
 		testNet(pn, 5, markings);
 	}
 

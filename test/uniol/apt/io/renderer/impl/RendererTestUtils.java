@@ -96,7 +96,7 @@ public class RendererTestUtils {
 			nodeComparator, arcComparator);
 
 		Marking initialMarking = mock(Marking.class);
-		Marking orig = pn.getInitialMarkingCopy();
+		Marking orig = pn.getInitialMarking();
 		for (Place place : places) {
 			String id = place.getId();
 			when(initialMarking.getToken(place)).thenReturn(orig.getToken(id));
@@ -104,7 +104,7 @@ public class RendererTestUtils {
 
 		when(newPN.getPlaces()).thenReturn(places);
 		when(newPN.getTransitions()).thenReturn(transitions);
-		when(newPN.getInitialMarkingCopy()).thenReturn(initialMarking);
+		when(newPN.getInitialMarking()).thenReturn(initialMarking);
 		return newPN;
 	}
 }

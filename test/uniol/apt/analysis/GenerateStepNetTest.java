@@ -83,7 +83,7 @@ public class GenerateStepNetTest {
 	@Test
 	public void testGetMaximalReachableMarkingsDeadNet() {
 		PetriNet pn = TestNetCollection.getDeadNet();
-		assertThat(GenerateStepNet.getMaximalReachableMarkings(pn), contains(pn.getInitialMarkingCopy()));
+		assertThat(GenerateStepNet.getMaximalReachableMarkings(pn), contains(pn.getInitialMarking()));
 	}
 
 	@Test
@@ -151,7 +151,7 @@ public class GenerateStepNetTest {
 		for (Place place : pn.getPlaces())
 			expectedPlaces.add(nodeWithID(place.getId()));
 		assertThat(stepPN.getPlaces(), containsInAnyOrder(expectedPlaces));
-		assertThat(stepPN.getInitialMarkingCopy(), markingThatIs(pn.getInitialMarkingCopy()));
+		assertThat(stepPN.getInitialMarking(), markingThatIs(pn.getInitialMarking()));
 		assertThat(stepPN.getTransitions(), hasSize(8));
 		assertThat(stepPN.getEdges(), hasSize(4*2 + 4*4));
 	}

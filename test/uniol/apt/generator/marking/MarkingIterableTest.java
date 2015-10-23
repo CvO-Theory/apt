@@ -39,7 +39,7 @@ public class MarkingIterableTest {
 	@Test
 	public void testEmptyNets() {
 		PetriNet pn = getEmptyNet();
-		Marking mark = pn.getInitialMarkingCopy();
+		Marking mark = pn.getInitialMarking();
 
 		Collection<PetriNet> nets = new LinkedList<>();
 		nets.add(pn);
@@ -55,7 +55,7 @@ public class MarkingIterableTest {
 	@Test
 	public void testTwoNets() {
 		PetriNet pn1 = getEmptyNet();
-		Marking mark1 = pn1.getInitialMarkingCopy();
+		Marking mark1 = pn1.getInitialMarking();
 
 		PetriNet pn2 = getNoTransitionOnePlaceNet();
 

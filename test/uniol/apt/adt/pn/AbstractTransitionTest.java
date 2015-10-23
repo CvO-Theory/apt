@@ -36,7 +36,7 @@ public class AbstractTransitionTest {
 		pn.createFlow(p, t, 2);
 		p.setInitialToken(1);
 
-		assertFalse(t.isFireable(pn.getInitialMarkingCopy()));
+		assertFalse(t.isFireable(pn.getInitialMarking()));
 	}
 
 	@Test
@@ -47,7 +47,7 @@ public class AbstractTransitionTest {
 		pn.createFlow(p, t).setWeight(3);
 		p.setInitialToken(2);
 
-		assertFalse(t.isFireable(pn.getInitialMarkingCopy()));
+		assertFalse(t.isFireable(pn.getInitialMarking()));
 	}
 }
 

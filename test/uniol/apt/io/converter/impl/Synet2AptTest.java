@@ -105,7 +105,7 @@ public class Synet2AptTest {
 		assertEquals("A", pn.getTransition("t").getExtension("location"));
 		assertEquals("A", pn.getPlace("x_0").getExtension("location"));
 
-		Marking mark = pn.getInitialMarkingCopy();
+		Marking mark = pn.getInitialMarking();
 		assertEquals(1, mark.getToken("x_5").getValue());
 		assertEquals(1, mark.getToken("x_2").getValue());
 		assertEquals(0, mark.getToken("x_3").getValue());
@@ -128,7 +128,7 @@ public class Synet2AptTest {
 		assertEquals("A", pn2.getTransition("t").getExtension("location"));
 		assertEquals("A", pn2.getPlace("x_0").getExtension("location"));
 
-		mark = pn2.getInitialMarkingCopy();
+		mark = pn2.getInitialMarking();
 		assertEquals(1, mark.getToken("x_5").getValue());
 		assertEquals(1, mark.getToken("x_2").getValue());
 		assertEquals(0, mark.getToken("x_3").getValue());

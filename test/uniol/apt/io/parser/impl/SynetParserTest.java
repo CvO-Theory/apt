@@ -80,7 +80,7 @@ public class SynetParserTest {
 		assertEquals("A", pn.getTransition("t").getExtension("location"));
 		assertEquals("A", pn.getPlace("x_0").getExtension("location"));
 
-		Marking mark = pn.getInitialMarkingCopy();
+		Marking mark = pn.getInitialMarking();
 		assertEquals(1, mark.getToken("x_5").getValue());
 		assertEquals(1, mark.getToken("x_2").getValue());
 		assertEquals(0, mark.getToken("x_3").getValue());

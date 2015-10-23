@@ -73,7 +73,7 @@ public class WordInLanguage {
 	 * word.
 	 */
 	public FiringSequence checkWord(List<String> word) {
-		return checkWord(pn.getInitialMarkingCopy(), word, 0, getLabels());
+		return checkWord(pn.getInitialMarking(), word, 0, getLabels());
 	}
 
 	/**

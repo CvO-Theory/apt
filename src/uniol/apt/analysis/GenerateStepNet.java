@@ -204,8 +204,7 @@ public class GenerateStepNet {
 			placeMap.put(place, result.createPlace(place));
 		}
 
-		result.setInitialMarking(new Marking(result, pn.getInitialMarkingCopy()));
-
+		result.setInitialMarking(new Marking(result, pn.getInitialMarking()));
 
 		// TODO Replace this implementation by an idea from vsp:
 		// Start with small steps (only single transitions) and add new transitions to generate larger steps.

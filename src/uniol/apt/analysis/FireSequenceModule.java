@@ -77,7 +77,7 @@ public class FireSequenceModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 		Word sequence = input.getParameter("sequence", Word.class);
-		Marking marking = pn.getInitialMarkingCopy();
+		Marking marking = pn.getInitialMarking();
 		FiringSequence fired = new FiringSequence();
 		boolean success = true;
 
