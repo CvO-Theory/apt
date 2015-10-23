@@ -1,0 +1,127 @@
+PLACE
+	gabel.1,
+	gabel.2,
+	gabel.3,
+	gabel.4,
+	gabel.5,
+	essend.1,
+	essend.2,
+	essend.3,
+	essend.4,
+	essend.5,
+	denkend.1,
+	denkend.2,
+	denkend.3,
+	denkend.4,
+	denkend.5,
+	wartend.1,
+	wartend.2,
+	wartend.3,
+	wartend.4,
+	wartend.5;
+MARKING
+	gabel.1 : 1,
+	gabel.2 : 1,
+	gabel.3 : 1,
+	gabel.4 : 1,
+	gabel.5 : 1,
+	denkend.1 : 1,
+	denkend.2 : 1,
+	denkend.3 : 1,
+	denkend.4 : 1,
+	denkend.5 : 1;
+TRANSITION iss.[p=1]
+	CONSUME
+		gabel.2 : 1,
+		wartend.1 : 1;
+	PRODUCE
+		essend.1 : 1;
+TRANSITION iss.[p=2]
+	CONSUME
+		gabel.3 : 1,
+		wartend.2 : 1;
+	PRODUCE
+		essend.2 : 1;
+TRANSITION iss.[p=3]
+	CONSUME
+		gabel.4 : 1,
+		wartend.3 : 1;
+	PRODUCE
+		essend.3 : 1;
+TRANSITION iss.[p=4]
+	CONSUME
+		gabel.5 : 1,
+		wartend.4 : 1;
+	PRODUCE
+		essend.4 : 1;
+TRANSITION iss.[p=5]
+	CONSUME
+		gabel.1 : 1,
+		wartend.5 : 1;
+	PRODUCE
+		essend.5 : 1;
+TRANSITION nimm.[p=1]
+	CONSUME
+		gabel.1 : 1,
+		denkend.1 : 1;
+	PRODUCE
+		wartend.1 : 1;
+TRANSITION nimm.[p=2]
+	CONSUME
+		gabel.2 : 1,
+		denkend.2 : 1;
+	PRODUCE
+		wartend.2 : 1;
+TRANSITION nimm.[p=3]
+	CONSUME
+		gabel.3 : 1,
+		denkend.3 : 1;
+	PRODUCE
+		wartend.3 : 1;
+TRANSITION nimm.[p=4]
+	CONSUME
+		gabel.4 : 1,
+		denkend.4 : 1;
+	PRODUCE
+		wartend.4 : 1;
+TRANSITION nimm.[p=5]
+	CONSUME
+		gabel.5 : 1,
+		denkend.5 : 1;
+	PRODUCE
+		wartend.5 : 1;
+TRANSITION satt.[p=1]
+	CONSUME
+		essend.1 : 1;
+	PRODUCE
+		gabel.2 : 1,
+		gabel.1 : 1,
+		denkend.1 : 1;
+TRANSITION satt.[p=2]
+	CONSUME
+		essend.2 : 1;
+	PRODUCE
+		gabel.3 : 1,
+		gabel.2 : 1,
+		denkend.2 : 1;
+TRANSITION satt.[p=3]
+	CONSUME
+		essend.3 : 1;
+	PRODUCE
+		gabel.4 : 1,
+		gabel.3 : 1,
+		denkend.3 : 1;
+TRANSITION satt.[p=4]
+	CONSUME
+		essend.4 : 1;
+	PRODUCE
+		gabel.5 : 1,
+		gabel.4 : 1,
+		denkend.4 : 1;
+TRANSITION satt.[p=5]
+	CONSUME
+		essend.5 : 1;
+	PRODUCE
+		gabel.1 : 1,
+		gabel.5 : 1,
+		denkend.5 : 1;

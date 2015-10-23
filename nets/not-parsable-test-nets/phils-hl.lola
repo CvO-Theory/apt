@@ -1,0 +1,44 @@
+SORT
+	phil = [ 1 , 3 ];
+	gabeln = phil ;
+
+FUNCTION L ( p : phil ) : gabeln
+BEGIN
+	RETURN p
+END
+
+FUNCTION R ( p : phil ) : gabeln
+BEGIN
+	RETURN p + 1
+END
+
+FUNCTION all () : phil
+VAR p: phil;
+BEGIN
+	FOR ALL p DO
+		RETURN p
+	END
+END
+
+PLACE denkend : phil,
+	wartend : phil,
+	essend : phil,
+	gabel : gabeln;
+
+MARKING denkend : all(), gabel : L(all());
+
+TRANSITION nimm
+	VAR p : phil;
+	CONSUME denkend : p, gabel : L(p);
+	PRODUCE wartend : p ;
+
+TRANSITION iss
+	VAR p : phil;
+	CONSUME wartend : p, gabel : R(p);
+	PRODUCE essend : p ;
+
+TRANSITION satt
+	VAR p : phil;
+	CONSUME essend : p;
+	PRODUCE denkend : p, gabel : L(p),
+		gabel : R(p);
