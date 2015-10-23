@@ -134,6 +134,9 @@ public class PetriNetTest {
 		pn.createTransition(t);
 		assertEquals("asdfasdf", pn.getTransition("t0").getExtension("extension"));
 		pn.createFlow(s0Copy, t, 10);
+		Marking mark = pn.getInitialMarkingCopy().setTokenCount(s0Copy, 42);
+		pn.addFinalMarking(pn.getInitialMarkingCopy());
+		pn.addFinalMarking(mark);
 		PetriNet pnCopy = new PetriNet(pn);
 		petriNetEquals(pnCopy, pn);
 	}
