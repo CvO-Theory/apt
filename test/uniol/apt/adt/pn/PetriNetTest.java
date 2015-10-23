@@ -175,9 +175,18 @@ public class PetriNetTest {
 		assertNotEquals(pn1.getInitialMarkingCopy(), pn2.getInitialMarkingCopy());
 		Set<Marking> finalMarkings1 = pn1.getFinalMarkings();
 		Set<Marking> finalMarkings2 = pn2.getFinalMarkings();
-		for (Marking marking : finalMarkings2) {
-			assertTrue(finalMarkings1.contains(marking));
+		for (Marking marking1 : finalMarkings1) {
+			boolean found = true;
+			for (Marking marking2 : finalMarkings2) {
+				found = true;
+				for (Place place : pn1.getPlaces())
+					found &= marking1.getToken(place).equals(marking2.getToken(place.getId()));
+				if (found)
+					break;
+			}
+			assertTrue(found, finalMarkings1.toString() + finalMarkings2.toString());
 		}
+		assertEquals(finalMarkings1.size(), finalMarkings2.size());
 		assertEquals(pn1.getPlaces().size(), pn2.getPlaces().size());
 		assertEquals(pn1.getTransitions().size(), pn2.getTransitions().size());
 		assertEquals(pn1.getNodes().size(), pn2.getNodes().size());
