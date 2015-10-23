@@ -30,6 +30,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import static org.hamcrest.Matchers.*;
 
+import uniol.apt.adt.exception.NoSuchNodeException;
+
 /**
  * @author Dennis-Michael Borde, Uli Schlachter, vsp
  */
@@ -283,6 +285,16 @@ public class MarkingTest {
 		// pn. Thus, we must explicitly call getToken(Place) to test for this bug.
 		Marking initial = pn2.getInitialMarkingCopy();
 		assertThat(initial.getToken(p2).getValue(), equalTo(1l));
+	}
+
+	@Test(expectedExceptions = NoSuchNodeException.class)
+	public void testGetTokenAfterRemove() {
+		Place p = pn.createPlace();
+		p.setInitialToken(1);
+		Marking mark = pn.getInitialMarking();
+		pn.removePlace(p);
+
+		mark.getToken(p);
 	}
 
 	@Test
