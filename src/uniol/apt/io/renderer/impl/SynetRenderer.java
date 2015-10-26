@@ -19,6 +19,8 @@
 
 package uniol.apt.io.renderer.impl;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,31 +34,31 @@ import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.renderer.PNRenderer;
 import uniol.apt.io.renderer.PNTSRenderer;
+import uniol.apt.io.renderer.RenderException;
 import uniol.apt.util.StringComparator;
 
 /**
  * @author Vincent Göbel, Thomas Strathmann
  *
  */
-public class SynetRenderer implements PNTSRenderer {
+public class SynetRenderer extends AbstractPNRenderer implements PNRenderer, PNTSRenderer {
 
 	@Override
-	public String render(PetriNet pn) {
-		StringBuilder output = new StringBuilder();
-
+	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
 		for (Transition t : pn.getTransitions()) {
-			output.append(String.format("transition %s\n", t.getId()));
+			writer.append(String.format("transition %s\n", t.getId()));
 		}
 
 		List<Place> places = new ArrayList<>();
 		for (Place p : pn.getPlaces()) {
-			output.append(String.format("place %s", p.getId()));
+			writer.append(String.format("place %s", p.getId()));
 			long initialMarking = pn.getInitialMarking().getToken(p).getValue();
 			if (initialMarking > 0) {
-				output.append(String.format(" := %d", initialMarking));
+				writer.append(String.format(" := %d", initialMarking));
 			}
-			output.append("\n");
+			writer.append("\n");
 			places.add(p);
 		}
 
@@ -64,22 +66,20 @@ public class SynetRenderer implements PNTSRenderer {
 			Set<Flow> postset = p.getPostsetEdges();
 			Set<Flow> preset = p.getPresetEdges();
 			for (Flow a : postset) {
-				output.append(String.format("flow %s --", p.getId()));
+				writer.append(String.format("flow %s --", p.getId()));
 				if (a.getWeight() != 1) {
-					output.append(a.getWeight());
+					writer.append(String.valueOf(a.getWeight()));
 				}
-				output.append(String.format("-> %s\n", a.getTarget().getId()));
+				writer.append(String.format("-> %s\n", a.getTarget().getId()));
 			}
 			for (Flow a : preset) {
-				output.append(String.format("flow %s <-", p.getId()));
+				writer.append(String.format("flow %s <-", p.getId()));
 				if (a.getWeight() != 1) {
-					output.append(a.getWeight());
+					writer.append(String.valueOf(a.getWeight()));
 				}
-				output.append(String.format("-- %s\n", a.getSource().getId()));
+				writer.append(String.format("-- %s\n", a.getSource().getId()));
 			}
 		}
-
-		return output.toString();
 	}
 
 	@Override

@@ -19,6 +19,10 @@
 
 package uniol.apt.io.renderer.impl;
 
+import java.io.IOException;
+import java.io.Writer;
+
+import org.stringtemplate.v4.AutoIndentWriter;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
@@ -27,29 +31,30 @@ import uniol.apt.adt.INode;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Token;
-import uniol.apt.module.exception.ModuleException;
+import uniol.apt.io.renderer.PNRenderer;
+import uniol.apt.io.renderer.RenderException;
 
 /**
  * This class renders Petri nets in the file format used by LoLA.
  * @author Uli Schlachter, vsp
  */
-public class LoLARenderer {
+public class LoLARenderer extends AbstractPNRenderer implements PNRenderer {
 
 	/**
 	 * Verify that the net can be expressed in LoLA file format.
 	 * @param pn the net to verify
 	 */
-	private static void verifyNet(PetriNet pn) throws ModuleException {
+	private static void verifyNet(PetriNet pn) throws RenderException {
 		if (pn.getTransitions().isEmpty()) {
-			throw new ModuleException("Cannot express Petri nets without transitions in the LoLA "
+			throw new RenderException("Cannot express Petri nets without transitions in the LoLA "
 					+ " file format");
 		}
 		if (pn.getPlaces().isEmpty()) {
-			throw new ModuleException("Cannot express Petri nets without places in the LoLA "
+			throw new RenderException("Cannot express Petri nets without places in the LoLA "
 					+ " file format");
 		}
 		if (pn.getInitialMarking().hasOmega()) {
-			throw new ModuleException("Cannot express an initial marking with at least one OMEGA"
+			throw new RenderException("Cannot express an initial marking with at least one OMEGA"
 					+ "token in the LoLA file format");
 		}
 
@@ -60,36 +65,30 @@ public class LoLARenderer {
 	/**
 	 * Verify that a list of INodes have ids that are valid LoLA identifiers.
 	 * @param list The list to verify
-	 * @throws ModuleException when a id is not a valid identifier.
+	 * @throws RenderException when a id is not a valid identifier.
 	 */
-	private static void verifyNames(Iterable<? extends INode<?, ?, ?>> list) throws ModuleException {
+	private static void verifyNames(Iterable<? extends INode<?, ?, ?>> list) throws RenderException {
 		for (INode<?, ?, ?> node : list) {
 			String name = node.getId();
 			// The LoLA lexer uses the following regular expression for "name":
 			// [^,;:()\t \n\{\}][^,;:()\t \n\{\}]*
 			if (name.isEmpty()) {
-				throw new ModuleException("Empty identifiers not allowed");
+				throw new RenderException("Empty identifiers not allowed");
 			}
 
 			String forbidden = ",;:()\t \n{}";
 			for (int i = 0; i < name.length(); i++) {
 				char c[] = {name.charAt(i)};
 				if (forbidden.contains(new String(c))) {
-					throw new ModuleException("Invalid character in identifier '" + name + "'. "
+					throw new RenderException("Invalid character in identifier '" + name + "'. "
 							+ "The following characters are forbidden: ,;:()\\t \\n{}");
 				}
 			}
 		}
 	}
 
-	/**
-	 * Render the given Petri net into the LoLA file format.
-	 * @param pn the Petri net that should be represented as a string.
-	 * @return the string representation of the net.
-	 * @throws ModuleException when the Petri net cannot be expressed in the LoLA file format, for example when
-	 * invalid identifiers are used or when the net has no places or no transitions.
-	 */
-	public String render(PetriNet pn) throws ModuleException {
+	@Override
+	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
 		verifyNet(pn);
 
 		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/LoLA.stg");
@@ -110,7 +109,7 @@ public class LoLARenderer {
 		// Handle transitions (and arcs)
 		pnTemplate.add("transitions", pn.getTransitions());
 
-		return pnTemplate.render();
+		pnTemplate.write(new AutoIndentWriter(writer));
 	}
 }
 

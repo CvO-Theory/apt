@@ -36,51 +36,28 @@ import uniol.apt.adt.pn.Token;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.exception.ModuleException;
+import uniol.apt.io.renderer.PNRenderer;
+import uniol.apt.io.renderer.RenderException;
 
 /**
  * @author Vincent Göbel, vsp
  *
  */
-public class APTRenderer {
+public class APTRenderer extends AbstractPNRenderer implements PNRenderer {
 
 	/**
 	 * Verify that the net can be expressed in APT file format.
 	 * @param pn the net to verify
 	 */
-	private static void verifyNet(PetriNet pn) throws ModuleException {
+	private static void verifyNet(PetriNet pn) throws RenderException {
 		if (pn.getInitialMarking().hasOmega()) {
-			throw new ModuleException("Cannot express an initial marking with at least one OMEGA"
+			throw new RenderException("Cannot express an initial marking with at least one OMEGA"
 					+ "token in the APT file format");
 		}
 	}
 
-	/**
-	 * Render the given Petri net into the APT file format.
-	 * @param pn the Petri net that should be represented as a string.
-	 * @return the string representation of the net.
-	 * @throws ModuleException when the Petri net cannot be expressed in the LoLA file format, for example when
-	 * invalid identifiers are used or when the net has no places or no transitions.
-	 */
-	public String render(PetriNet pn) throws ModuleException {
-		StringWriter writer = new StringWriter();
-		try {
-			render(writer, pn);
-		} catch (IOException e) {
-			// A StringWriter shouldn't throw IOExceptions
-			throw new RuntimeException(e);
-		}
-		return writer.toString();
-	}
-
-	/**
-	 * Render the given Petri net into the APT file format.
-	 * @param output the writer to send the result to
-	 * @param pn the Petri net that should be represented as a string.
-	 * @throws ModuleException when the Petri net cannot be expressed in the APT file format.
-	 * @throws IOException when writing to the output produces an exception.
-	 */
-	public void render(Writer output, PetriNet pn) throws ModuleException, IOException {
+	@Override
+	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
 		verifyNet(pn);
 
 		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/APTPN.stg");
@@ -101,7 +78,7 @@ public class APTRenderer {
 		// Handle transitions (and arcs)
 		pnTemplate.add("transitions", pn.getTransitions());
 
-		pnTemplate.write(new AutoIndentWriter(output));
+		pnTemplate.write(new AutoIndentWriter(writer));
 	}
 
 	/**

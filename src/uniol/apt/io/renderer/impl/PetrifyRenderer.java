@@ -19,6 +19,8 @@
 
 package uniol.apt.io.renderer.impl;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
@@ -28,7 +30,9 @@ import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.renderer.PNRenderer;
 import uniol.apt.io.renderer.PNTSRenderer;
+import uniol.apt.io.renderer.RenderException;
 import uniol.apt.module.exception.ModuleException;
 
 /**
@@ -36,12 +40,10 @@ import uniol.apt.module.exception.ModuleException;
  * @author Sören Dierkes
  *
  */
-public class PetrifyRenderer implements PNTSRenderer {
+public class PetrifyRenderer extends AbstractPNRenderer implements PNRenderer, PNTSRenderer {
 
 	@Override
-	public String render(PetriNet pn) throws ModuleException {
-		StringBuilder sb = new StringBuilder();
-
+	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
 		// Petrify does not like:
 		// - empty names (attempted fix below)
 		// - names containing spaces (thus this code was disabled)
@@ -52,18 +54,18 @@ public class PetrifyRenderer implements PNTSRenderer {
 		sb.append("\n");
 		*/
 
-		sb.append(".inputs ");
+		writer.append(".inputs ");
 		ArrayList<String> c = new ArrayList<>(0);
 		for (Transition s : pn.getTransitions()) {
 			if (!c.contains(s.getLabel())) {
 				c.add(s.getLabel());
-				sb.append(s.getLabel()).append(" ");
+				writer.append(s.getLabel()).append(" ");
 			}
 		}
-		sb.append("\n");
+		writer.append("\n");
 
-		sb.append(".graph");
-		sb.append("\n");
+		writer.append(".graph");
+		writer.append("\n");
 
 		String marking = "";
 		long mark = 0;
@@ -72,7 +74,7 @@ public class PetrifyRenderer implements PNTSRenderer {
 		for (Place p : places) {
 			mark = pn.getInitialMarking().getToken(p).getValue();
 			if (mark > 1) {
-				throw new ModuleException("Too many marks, Petrify is only able to read one bounded net");
+				throw new RenderException("Too many marks, Petrify is only able to read one bounded net");
 			}
 
 			Set<Transition> preSet = p.getPreset();
@@ -85,15 +87,15 @@ public class PetrifyRenderer implements PNTSRenderer {
 				}
 				if (!preSet.isEmpty()) {
 					for (Transition t : preSet) {
-						sb.append(t.getLabel()).append(" p").append(placesCounter);
-						sb.append("\n");
+						writer.append(t.getLabel()).append(" p").append(String.valueOf(placesCounter));
+						writer.append("\n");
 					}
 				}
 
 				if (!preSet.isEmpty()) {
 					for (Transition t : postSet) {
-						sb.append("p").append(placesCounter).append(" ").append(t.getLabel());
-						sb.append("\n");
+						writer.append("p").append(String.valueOf(placesCounter)).append(" ").append(t.getLabel());
+						writer.append("\n");
 					}
 				}
 			} else {
@@ -102,12 +104,12 @@ public class PetrifyRenderer implements PNTSRenderer {
 					String post = "";
 					Iterator<Transition> itr = preSet.iterator();
 					pre = itr.next().getLabel();
-					sb.append(pre).append(" ");
+					writer.append(pre).append(" ");
 
 					itr = postSet.iterator();
 					post = itr.next().getLabel();
-					sb.append(post);
-					sb.append("\n");
+					writer.append(post);
+					writer.append("\n");
 
 					if (mark == 1) {
 						marking += " <" + pre + "," + post + ">";
@@ -116,11 +118,11 @@ public class PetrifyRenderer implements PNTSRenderer {
 					if (!postSet.isEmpty()) {
 						Iterator<Transition> itr = postSet.iterator();
 						placesCounter++;
-						sb.append("p").append(placesCounter).append(" ").append(itr.next().getLabel());
-						sb.append("\n");
+						writer.append("p").append(String.valueOf(placesCounter)).append(" ").append(itr.next().getLabel());
+						writer.append("\n");
 					} else {
-						sb.append("p").append(++placesCounter);
-						sb.append("\n");
+						writer.append("p").append(String.valueOf(++placesCounter));
+						writer.append("\n");
 					}
 
 					if (mark == 1) {
@@ -130,13 +132,11 @@ public class PetrifyRenderer implements PNTSRenderer {
 			}
 		}
 
-		sb.append(".marking {").append(marking.trim()).append("}");
-		sb.append("\n");
+		writer.append(".marking {").append(marking.trim()).append("}");
+		writer.append("\n");
 
-		sb.append(".end");
-		sb.append("\n");
-
-		return sb.toString();
+		writer.append(".end");
+		writer.append("\n");
 	}
 
 	@Override

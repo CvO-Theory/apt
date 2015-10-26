@@ -38,7 +38,7 @@ public class NetReturnValueTransformation implements ReturnValueTransformation<P
 
 	@Override
 	public void transform(Writer output, PetriNet arg) throws ModuleException, IOException {
-		new APTRenderer().render(output, arg);
+		new APTRenderer().render(arg, output);
 	}
 
 }
