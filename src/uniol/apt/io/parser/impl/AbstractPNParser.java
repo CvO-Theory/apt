@@ -31,7 +31,7 @@ import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.PNParser;
 
 /**
- * Interface for Petri net parsers.
+ * Abstract base class for Petri net parsers.
  *
  * @author vsp
  */
