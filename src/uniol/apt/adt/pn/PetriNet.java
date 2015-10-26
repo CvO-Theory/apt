@@ -20,12 +20,14 @@
 package uniol.apt.adt.pn;
 
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -60,6 +62,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	private long placeRev = 0;
 	private final SortedMap<String, Node> nodes = new TreeMap<>();
 	private final SortedMap<String, Place> places = new TreeMap<>();
+	private List<Place> placesList = Collections.emptyList();
 	private final SortedMap<String, Transition> transitions = new TreeMap<>();
 	private final Map<String, Set<Node>> presetNodes = new SoftMap<>();
 	private final Map<String, Set<Node>> postsetNodes = new SoftMap<>();
@@ -265,6 +268,8 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	private Place addPlace(String id, Place p) {
 		this.places.put(id, p);
 		this.nodes.put(id, p);
+		this.placesList = new ArrayList<>(this.placesList);
+		this.placesList.add(p);
 		// update pre- and postsets
 		presetNodes.put(id, new HashSet<Node>());
 		postsetNodes.put(id, new HashSet<Node>());
@@ -707,6 +712,8 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		if (!this.places.containsKey(id)) {
 			throw new NoSuchNodeException(this, id);
 		}
+		this.placesList = new ArrayList<>(this.placesList);
+		this.placesList.remove(places.get(id));
 		rmNode(id);
 		places.remove(id);
 		++placeRev;
@@ -1041,6 +1048,15 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 */
 	long getPlaceRev() {
 		return placeRev;
+	}
+
+	/**
+	 * Get a list of all places. This list is never modified and is instead replaced every time a place is created
+	 * or removed. This is used by the {@link Marking} class.
+	 * @return A list with all places of the net.
+	 */
+	List<Place> getPlacesList() {
+		return placesList;
 	}
 
 	/**

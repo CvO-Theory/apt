@@ -19,10 +19,13 @@
 
 package uniol.apt.adt.pn;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -39,8 +42,9 @@ import uniol.apt.adt.exception.StructureException;
  */
 public class Marking {
 
-	private final HashMap<Place, Token> map = new HashMap<>();
 	private final PetriNet net;
+	private List<Place> placesList;
+	private List<Token> tokenList = new ArrayList<>();
 	private long rev = -1;
 
 	/**
@@ -50,8 +54,9 @@ public class Marking {
 	 */
 	public Marking(PetriNet net) {
 		this.net = net;
-		for (Place place : net.getPlaces()) {
-			map.put(place, Token.ZERO);
+		this.placesList = net.getPlacesList();
+		for (Place place : placesList) {
+			tokenList.add(Token.ZERO);
 		}
 		this.rev = net.getPlaceRev();
 	}
@@ -104,16 +109,14 @@ public class Marking {
 	 */
 	public Marking(PetriNet net, int... orderedTokenCounts) {
 		this.net = net;
-		Set<Place> places = this.net.getPlaces();
-		if (orderedTokenCounts.length != places.size()) {
+		this.placesList = this.net.getPlacesList();
+		this.rev = this.net.getPlaceRev();
+		if (orderedTokenCounts.length != this.placesList.size()) {
 			throw new StructureException("Count of tokencounts does not match the count of"
 				+ "places in graph '" + this.net.getName() + "'.");
 		}
-		int count = -1;
-		for (Iterator<Place> it = places.iterator(); it.hasNext();) {
-			Place place = it.next();
-			this.map.put(place, new Token(orderedTokenCounts[++count]));
-		}
+		for (int i = 0; i < orderedTokenCounts.length; i++)
+			this.tokenList.add(new Token(orderedTokenCounts[i]));
 	}
 
 	/**
@@ -123,15 +126,19 @@ public class Marking {
 	 */
 	private void setMarking(Marking m) {
 		assert this != m;
-		this.map.clear();
 		if (this.net == m.net) {
-			this.map.putAll(m.map);
+			this.placesList = m.placesList;
+			this.tokenList = new ArrayList<>(m.tokenList);
+			this.rev = m.rev;
 		} else {
-			for (Map.Entry<Place, Token> entry : m.map.entrySet()) {
-				this.map.put(this.net.getPlace(entry.getKey().getId()), entry.getValue());
+			this.placesList = this.net.getPlacesList();
+			this.tokenList = new ArrayList<>(Collections.nCopies(this.placesList.size(), Token.ZERO));
+			for (int idx = 0; idx < m.placesList.size(); idx++) {
+				int ownIdx = placesList.indexOf(net.getPlace(m.placesList.get(idx).getId()));
+				this.tokenList.set(ownIdx, m.tokenList.get(idx));
 			}
+			this.rev = this.net.getPlaceRev();
 		}
-		this.rev = m.rev;
 	}
 
 	/**
@@ -142,12 +149,15 @@ public class Marking {
 	 * @throws StructureException if the places of the given net and tokenmap do not fit.
 	 */
 	private void setMarking(Map<String, Integer> m) {
+		this.placesList = net.getPlacesList();
+		this.tokenList = new ArrayList<>(Collections.nCopies(this.placesList.size(), Token.ZERO));
 		for (Map.Entry<String, Integer> entry : m.entrySet()) {
-			if (!this.net.containsPlace(entry.getKey())) {
+			int idx = this.placesList.indexOf(this.net.getPlace(entry.getKey()));
+			if (idx == -1) {
 				throw new StructureException("place '" + entry.getKey() + "' does not belong to net '"
 					+ this.net.getName() + "'.");
 			}
-			this.map.put(this.net.getPlace(entry.getKey()), new Token(entry.getValue()));
+			this.tokenList.set(idx, new Token(entry.getValue()));
 		}
 		ensureConsistency();
 	}
@@ -262,12 +272,13 @@ public class Marking {
 	public Marking setTokenCount(Place p, Token m) {
 		assert p != null && m != null;
 		ensureConsistency();
-		if (net != p.getGraph() || !map.containsKey(p)) {
+		if (net != p.getGraph() || !this.placesList.contains(p)) {
 			throw new StructureException("place '" + p.getId() + "' does not belong to net '"
 				+ this.net.getName() + "'.");
 		}
 		Marking result = new Marking(this);
-		result.map.put(p, m);
+		int idx = result.placesList.indexOf(p);
+		result.tokenList.set(idx, m);
 		return result;
 	}
 
@@ -284,11 +295,12 @@ public class Marking {
 	public void setToken(Place p, Token m) {
 		assert p != null && m != null;
 		ensureConsistency();
-		if (net != p.getGraph() || !map.containsKey(p)) {
+		if (net != p.getGraph() || !this.placesList.contains(p)) {
 			throw new StructureException("place '" + p.getId() + "' does not belong to net '"
 				+ this.net.getName() + "'.");
 		}
-		map.put(p, m);
+		int idx = this.placesList.indexOf(p);
+		this.tokenList.set(idx, m);
 	}
 
 	/**
@@ -362,7 +374,8 @@ public class Marking {
 		assert p != null && m != null;
 		Token val = getToken(p);
 		Marking result = new Marking(this);
-		result.map.put(p, val.add(m));
+		int idx = result.placesList.indexOf(p);
+		result.tokenList.set(idx, val.add(m));
 		return result;
 	}
 
@@ -380,7 +393,8 @@ public class Marking {
 		assert p != null && m != null;
 		ensureConsistency();
 		Token val = getToken(p);
-		map.put(p, val.add(m));
+		int idx = this.placesList.indexOf(p);
+		this.tokenList.set(idx, val.add(m));
 	}
 
 	/**
@@ -429,7 +443,8 @@ public class Marking {
 		ensureConsistency();
 		Token val = getToken(p);
 		Marking result = new Marking(this);
-		result.map.put(p, val.add(m));
+		int idx = result.placesList.indexOf(p);
+		result.tokenList.set(idx, val.add(m));
 		return result;
 	}
 
@@ -448,7 +463,8 @@ public class Marking {
 		assert p != null;
 		ensureConsistency();
 		Token val = getToken(p);
-		map.put(p, val.add(m));
+		int idx = this.placesList.indexOf(p);
+		this.tokenList.set(idx, val.add(m));
 	}
 
 	/**
@@ -482,11 +498,11 @@ public class Marking {
 				+ this.net.getName() + "'.");
 		}
 		ensureConsistency();
-		Token val = map.get(p);
-		if (val == null) {
+		int idx = this.placesList.indexOf(p);
+		if (idx == -1) {
 			throw new NoSuchNodeException(net, p.getId());
 		}
-		return val;
+		return this.tokenList.get(idx);
 	}
 
 	/**
@@ -495,19 +511,16 @@ public class Marking {
 	 */
 	final void ensureConsistency() {
 		if (rev != net.getPlaceRev()) {
-			Collection<Place> places = this.net.getPlaces();
-			Iterator<Map.Entry<Place, Token>> iter = this.map.entrySet().iterator();
-			while (iter.hasNext()) {
-				Map.Entry<Place, Token> entry = iter.next();
-				Place place = entry.getKey();
-				if (!places.contains(place)) {
-					iter.remove();
-				}
-			}
-			for (Place p : places) {
-				if (!this.map.containsKey(p)) {
-					map.put(p, Token.ZERO);
-				}
+			List<Place> oldPlacesList = placesList;
+			List<Token> oldTokenList = tokenList;
+			this.placesList = this.net.getPlacesList();
+			this.tokenList = new ArrayList<>(this.placesList.size());
+			for (Place place : this.placesList) {
+				int idx = oldPlacesList.indexOf(place);
+				if (idx == -1)
+					this.tokenList.add(Token.ZERO);
+				else
+					this.tokenList.add(oldTokenList.get(idx));
 			}
 			rev = net.getPlaceRev();
 		}
@@ -526,18 +539,18 @@ public class Marking {
 	public Marking cover(Marking o) {
 		ensureConsistency();
 		o.ensureConsistency();
-		assert map.keySet().equals(o.map.keySet());
+		assert this.placesList == o.placesList;
 
-		Set<Place> covered = new HashSet<>();
-		for (Map.Entry<Place, Token> e : map.entrySet()) {
-			Token own = e.getValue();
-			Token other = o.map.get(e.getKey());
+		Set<Integer> covered = new HashSet<>();
+		for (int idx = 0; idx < placesList.size(); idx++) {
+			Token own = this.tokenList.get(idx);
+			Token other = o.tokenList.get(idx);
 
 			int comp = own.compareTo(other);
 			if (comp < 0) {
 				return null;
 			} else if (comp > 0 && !own.isOmega()) {
-				covered.add(e.getKey());
+				covered.add(idx);
 			}
 		}
 		if (covered.isEmpty()) {
@@ -547,8 +560,8 @@ public class Marking {
 
 		// We are covering the other marking, add the suitable omegas
 		Marking result = new Marking(this);
-		for (Place place : covered) {
-			result.map.put(place, Token.OMEGA);
+		for (int idx : covered) {
+			result.tokenList.set(idx, Token.OMEGA);
 		}
 
 		return result;
@@ -569,18 +582,18 @@ public class Marking {
 	public boolean covers(Marking o) {
 		ensureConsistency();
 		o.ensureConsistency();
-		assert map.keySet().equals(o.map.keySet());
+		assert this.placesList == o.placesList;
 
-		Set<Place> covered = new HashSet<>();
-		for (Map.Entry<Place, Token> e : map.entrySet()) {
-			Token own = e.getValue();
-			Token other = o.map.get(e.getKey());
+		Set<Integer> covered = new HashSet<>();
+		for (int idx = 0; idx < placesList.size(); idx++) {
+			Token own = this.tokenList.get(idx);
+			Token other = o.tokenList.get(idx);
 
 			int comp = own.compareTo(other);
 			if (comp < 0) {
 				return false;
 			} else if (comp > 0 && !own.isOmega()) {
-				covered.add(e.getKey());
+				covered.add(idx);
 			}
 		}
 		if (covered.isEmpty()) {
@@ -589,8 +602,8 @@ public class Marking {
 		}
 
 		// We are covering the other marking, add the suitable omegas
-		for (Place place : covered) {
-			this.map.put(place, Token.OMEGA);
+		for (int index : covered) {
+			this.tokenList.set(index, Token.OMEGA);
 		}
 
 		return true;
@@ -603,7 +616,7 @@ public class Marking {
 	 */
 	public boolean hasOmega() {
 		ensureConsistency();
-		for (Token val : map.values()) {
+		for (Token val : tokenList) {
 			if (val.isOmega()) {
 				return true;
 			}
@@ -624,10 +637,10 @@ public class Marking {
 		// Loop over all entries in our map and calculate a hash code. For two different Markings that "are
 		// logically the same" (according to equals()), this must produce the same hash code. Since the
 		// iteration of a map is unstable, this must use an associative operation like plus inside the loop.
-		for (Map.Entry<Place, Token> entry : map.entrySet()) {
+		for (int idx = 0; idx < placesList.size(); idx++) {
 			// Mix the hash codes more so that hopefully all bits of the resulting hash code are influenced.
-			int keyCode = entry.getKey().hashCode();
-			int valCode = entry.getValue().hashCode();
+			int keyCode = placesList.get(idx).hashCode();
+			int valCode = tokenList.get(idx).hashCode();
 			hashCode += Integer.rotateLeft(valCode, keyCode);
 			hashCode += Integer.rotateLeft(keyCode, valCode);
 		}
@@ -651,10 +664,8 @@ public class Marking {
 		if (this.net != other.net) {
 			return false;
 		}
-		if (!Objects.equals(this.map, other.map)) {
-			return false;
-		}
-		return true;
+		assert this.placesList == other.placesList;
+		return Objects.equals(this.tokenList, other.tokenList);
 	}
 
 	@Override
@@ -662,7 +673,7 @@ public class Marking {
 		ensureConsistency();
 		StringBuilder strBuilder = new StringBuilder("[ ");
 		for (Place place : net.getPlaces()) {
-			strBuilder.append("[").append(place.getId()).append(":").append(map.get(place).toString()).append("] ");
+			strBuilder.append("[").append(place.getId()).append(":").append(getToken(place).toString()).append("] ");
 		}
 		strBuilder.append("]");
 		return strBuilder.toString();
