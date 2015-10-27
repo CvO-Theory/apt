@@ -13,8 +13,8 @@
 	<path id="test.class.path">
 		<pathelement location="lib/mockito-1.9.5-rc1/mockito-core-1.9.5-rc1.jar" />
 		<pathelement location="lib/objenesis-1.2/objenesis-1.2.jar" />
-		<pathelement location="lib/testng-6.8/testng-6.8.jar" />
-		<pathelement location="lib/testng-6.8/jcommander-1.18.jar" />
+		<pathelement location="lib/testng-6.9.9/testng-6.9.9.jar" />
+		<pathelement location="lib/testng-6.9.9/jcommander-1.48.jar" />
 		<pathelement location="lib/hamcrest-1.3/hamcrest-core-1.3.jar" />
 		<pathelement location="lib/hamcrest-1.3/hamcrest-library-1.3.jar" />
 		<pathelement location="test-classes" />
