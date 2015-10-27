@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2012-2013  Members of the project group APT
+ * Copyright (C) 2015       vsp
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,13 @@
 package uniol.apt.io.parser.impl;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
-import uniol.apt.CrashCourseNets;
+
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Token;
-import uniol.apt.adt.ts.Arc;
-import uniol.apt.adt.ts.State;
-import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
 
 /**
@@ -53,9 +47,7 @@ public class AptPNParserTest {
 		assertEquals(net.getPlace("s3").getInitialToken().getValue(), 2);
 	}
 
-	@Test
-	public void testMarkedSideCondition() throws Exception {
-		PetriNet net = new AptPNParser().parsePN(".type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+	private void sideConditionAsserts(PetriNet net) {
 		assertEquals(1, net.getPlaces().size());
 		assertEquals(1, net.getTransitions().size());
 		assertEquals(2, net.getEdges().size());
@@ -64,32 +56,36 @@ public class AptPNParserTest {
 		f = net.getFlow("t1", "p1");
 		assertEquals(f.getWeight(), 1);
 		assertEquals(net.getPlace("p1").getInitialToken().getValue(), 1);
+	}
+
+	@Test
+	public void testMarkedSideCondition() throws Exception {
+		PetriNet net = new AptPNParser().parsePN(".type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		sideConditionAsserts(net);
+	}
+
+	@Test
+	public void testMarkedSideConditionPlacesFirst() throws Exception {
+		PetriNet net = new AptPNParser().parsePN(".places p1\n.type PN\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		sideConditionAsserts(net);
+	}
+
+	@Test
+	public void testMarkedSideConditionTransitionsFirst() throws Exception {
+		PetriNet net = new AptPNParser().parsePN(".transitions t1\n.type PN\n.places p1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionFlowsFirst() throws Exception {
 		PetriNet net = new AptPNParser().parsePN(".flows t1:{p1}->{p1}\n.type PN\n.places p1\n.transitions t1\n.initial_marking {p1}");
-		assertEquals(1, net.getPlaces().size());
-		assertEquals(1, net.getTransitions().size());
-		assertEquals(2, net.getEdges().size());
-		Flow f = net.getFlow("p1", "t1");
-		assertEquals(f.getWeight(), 1);
-		f = net.getFlow("t1", "p1");
-		assertEquals(f.getWeight(), 1);
-		assertEquals(net.getPlace("p1").getInitialToken().getValue(), 1);
+		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionMarkingFirst() throws Exception {
 		PetriNet net = new AptPNParser().parsePN(".initial_marking {p1}\n.type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}");
-		assertEquals(1, net.getPlaces().size());
-		assertEquals(1, net.getTransitions().size());
-		assertEquals(2, net.getEdges().size());
-		Flow f = net.getFlow("p1", "t1");
-		assertEquals(f.getWeight(), 1);
-		f = net.getFlow("t1", "p1");
-		assertEquals(f.getWeight(), 1);
-		assertEquals(net.getPlace("p1").getInitialToken().getValue(), 1);
+		sideConditionAsserts(net);
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
