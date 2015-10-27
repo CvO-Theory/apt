@@ -35,6 +35,7 @@ import static org.apache.tools.ant.Project.MSG_ERR;
 
 import uniol.apt.tasks.parsers.*;
 import uniol.apt.io.parser.impl.AptPNParser;
+import uniol.apt.io.parser.impl.AptLTSParser;
 
 /**
  * Ant task to verify that a list of files is parsable.
@@ -95,7 +96,7 @@ public class ParsableTask extends Task {
 			try {
 				testers = new ParserTester[] {
 					new PNParserTester(new AptPNParser(), outputdir),
-					new APTLTSParserTester(outputdir),
+					new LTSParserTester(new AptLTSParser(), outputdir),
 					new PetrifyPNParserTester(outputdir),
 					new SynetLTSParserTester(outputdir),
 					new SynetPNParserTester(outputdir),
