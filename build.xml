@@ -316,8 +316,12 @@
 			</sourcePath>
 			<fileset dir="classes">
 				<include name="**/*.class" />
-				<exclude name="uniol/apt/io/parser/impl/apt/*.class" />
+				<exclude name="uniol/apt/io/parser/impl/AptLTSFormat*.class" />
+				<exclude name="uniol/apt/io/parser/impl/AptPNFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/RegexFormat*.class" />
+				<exclude name="uniol/apt/io/parser/impl/petrify/PetrifyLTSFormat*.class" />
+				<exclude name="uniol/apt/io/parser/impl/synet/SynetPNFormat*.class" />
+				<exclude name="uniol/apt/io/parser/impl/synet/SynetLTSFormat*.class" />
 			</fileset>
 			<fileset dir="test-classes">
 				<include name="**/*.class" />
