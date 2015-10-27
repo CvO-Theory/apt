@@ -33,7 +33,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.converter.Synet2AptModule;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.AptPNParser;
-import uniol.apt.io.parser.impl.apt.APTLTSParser;
+import uniol.apt.io.parser.impl.AptLTSParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.impl.ModuleInvoker;
@@ -50,13 +50,13 @@ import uniol.apt.io.renderer.impl.APTRenderer;
 public class Synet2AptTest {
 
 	@Test
-	public void testLTS() throws IOException, FormatException, ModuleException {
+	public void testLTS() throws Exception {
 		Synet2AptModule mod = new Synet2AptModule();
 		ModuleInvoker m = new ModuleInvoker();
 		List<Object> objs = m.invoke(mod, "nets/synet-nets/synet-apt1-redmine-docs.aut");
 		String fromSynet2Apt = (String) objs.get(0);
 
-		TransitionSystem ts1 = APTLTSParser.getLTS(new ByteArrayInputStream(fromSynet2Apt.getBytes("UTF-8")));
+		TransitionSystem ts1 = new AptLTSParser().parseLTS(fromSynet2Apt);
 		assertNotNull(ts1);
 		assertEquals(ts1.getNodes().size(), 4);
 		assertNotNull(ts1.getNode("0"));
@@ -92,7 +92,7 @@ public class Synet2AptTest {
 	}
 
 	@Test
-	public void testPN() throws IOException, ParseException, FormatException, ModuleException {
+	public void testPN() throws Exception {
 		Synet2AptModule mod = new Synet2AptModule();
 		ModuleInvoker m = new ModuleInvoker();
 		List<Object> objs = m.invoke(mod, "nets/synet-nets/synet-docu-example.net");

@@ -28,8 +28,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.AptPNParser;
-import uniol.apt.io.parser.impl.apt.APTLTSParser;
-import uniol.apt.io.parser.impl.exception.FormatException;
+import uniol.apt.io.parser.impl.AptLTSParser;
 
 /**
  * Utility class to allow tests to use the parsers without the need to care
@@ -65,9 +64,9 @@ public class ParserTestUtils {
 	 */
 	public static TransitionSystem getAptLTS(String fileName) {
 		try {
-			return APTLTSParser.getLTS(fileName);
-		} catch (IOException | FormatException ex) {
-			throw new ParserSkipException(fileName, APTLTSParser.class, ex);
+			return new AptLTSParser().parseLTSFile(fileName);
+		} catch (IOException | ParseException ex) {
+			throw new ParserSkipException(fileName, AptLTSParser.class, ex);
 		}
 	}
 }

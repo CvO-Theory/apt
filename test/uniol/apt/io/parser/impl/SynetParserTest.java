@@ -38,7 +38,7 @@ import uniol.apt.io.converter.Synet2Apt;
 import uniol.apt.io.parser.IParserOutput;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.AptPNParser;
-import uniol.apt.io.parser.impl.apt.APTLTSParser;
+import uniol.apt.io.parser.impl.AptLTSParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.synet.SynetLTSParser;
 import uniol.apt.io.parser.impl.synet.SynetPNParser;
@@ -103,8 +103,7 @@ public class SynetParserTest {
 		TransitionSystem ts_synet = SynetLTSParser.getLTS("nets/synet-nets/mar17-12-groessere-testdatei.aut");
 		String txt_apt = Synet2Apt.convert("nets/synet-nets/mar17-12-groessere-testdatei.aut",
 			IParserOutput.Type.LTS);
-		TransitionSystem ts_apt = APTLTSParser.getLTS(new ByteArrayInputStream(
-			txt_apt.getBytes("UTF-8")));
+		TransitionSystem ts_apt = new AptLTSParser().parseLTS(txt_apt);
 		IsomorphismLogic iso = new IsomorphismLogic(ts_synet, ts_apt, true);
 		assertTrue(iso.isIsomorphic());
 
