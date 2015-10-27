@@ -60,19 +60,10 @@ public class NetOrTSParameterTransformation implements ParameterTransformation<P
 			}
 		} catch (IOException e) {
 			throw new ModuleException("Cannot parse file '" + filename + "': File does not exist");
-		} catch (LexerParserException e) {
-			if (fromStandardInput) {
-				throw new ModuleException("Cannot parse data: \n" + e.getLexerParserMessage(), e);
-			} else {
-				throw new ModuleException("Cannot parse file '" + filename + "': \n"
-					+ e.getLexerParserMessage(), e);
-			}
-		} catch (NodeNotExistException | TypeMismatchException ex) {
+		} catch (TypeMismatchException ex) {
 			throw new ModuleException("Create data structure: " + ex.getMessage(), ex);
-		} catch (FormatException e) {
-			throw new ModuleException("Format of data does not fit: " + e.getMessage(), e);
 		} catch (ParseException ex) {
-			throw new ModuleException("Can't parse Petri net: " + ex.getMessage());
+			throw new ModuleException("Can't parse Petri net or transition system: " + ex.getMessage());
 		}
 
 		PetriNet pn = parser.getPn();

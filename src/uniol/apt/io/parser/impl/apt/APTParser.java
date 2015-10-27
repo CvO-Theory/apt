@@ -28,11 +28,8 @@ import java.io.InputStreamReader;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.impl.AptLTSParser;
 import uniol.apt.io.parser.impl.AptPNParser;
-import uniol.apt.io.parser.impl.exception.FormatException;
-import uniol.apt.io.parser.impl.exception.LexerParserException;
-import uniol.apt.io.parser.impl.exception.NodeNotExistException;
-import uniol.apt.io.parser.impl.exception.StructureException;
 import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 
 /**
@@ -58,8 +55,7 @@ public class APTParser {
 	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
 	 *                               all.
 	 */
-	public void parse(String path) throws IOException, NodeNotExistException, TypeMismatchException,
-		LexerParserException, StructureException, FormatException, ParseException {
+	public void parse(String path) throws IOException, TypeMismatchException, ParseException {
 		parse(new FileInputStream(path));
 	}
 
@@ -77,8 +73,7 @@ public class APTParser {
 	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
 	 *                               all.
 	 */
-	public void parse(InputStream is) throws IOException, NodeNotExistException, TypeMismatchException,
-		LexerParserException, StructureException, FormatException, ParseException {
+	public void parse(InputStream is) throws IOException, TypeMismatchException, ParseException {
 		pn = null;
 		ts = null;
 
@@ -93,7 +88,7 @@ public class APTParser {
 		is = new ByteArrayInputStream(data.getBytes());
 
 		if (data.matches("(?s).*\\.type\\s+(LTS|TS)(?s).*")) {
-			ts = APTLTSParser.getLTS(is);
+			ts = new AptLTSParser().parseLTS(is);
 		} else if (data.matches("(?s).*\\.type\\s+(LPN|PN)(?s).*")) {
 			pn = new AptPNParser().parsePN(is);
 		} else {
