@@ -144,7 +144,6 @@ public class Connectivity {
 		Components result = new Components();
 		Map<INode<?, ?, ?>, Integer> dfsNumbers = new HashMap<>();
 		Map<INode<?, ?, ?>, Integer> minNumbers = new HashMap<>();
-		Deque<INode<?, ?, ?>> stack = new LinkedList<>();
 		int counter = 0;
 
 		// Implemented per 'Algorithmische Datenstrukturen' Sommersemester 2012, algorithm 13.
@@ -160,7 +159,7 @@ public class Connectivity {
 		// Handle all of the graph's nodes.
 		for (INode<?, ?, ?> node : graph.getNodes()) {
 			if (!dfsNumbers.containsKey(node)) {
-				counter = handleStronglyConnectedComponents(node, result, dfsNumbers, minNumbers, stack,
+				counter = handleStronglyConnectedComponents(node, result, dfsNumbers, minNumbers,
 						counter);
 			}
 		}
@@ -172,9 +171,62 @@ public class Connectivity {
 	 * Compute the strongly connected components reachable from node.
 	 * No, I will not explain the parameters.
 	 */
-	private static int handleStronglyConnectedComponents(INode<?, ?, ?> node,
-			Components result, Map<INode<?, ?, ?>, Integer> dfsNumbers,
-			Map<INode<?, ?, ?>, Integer> minNumbers, Deque<INode<?, ?, ?>> stack, int counter) {
+	private static int handleStronglyConnectedComponents(INode<?, ?, ?> node, Components result,
+			Map<INode<?, ?, ?>, Integer> dfsNumbers, Map<INode<?, ?, ?>, Integer> minNumbers, int counter) {
+		Deque<INode<?, ?, ?>> callers = new LinkedList<>();
+		Deque<INode<?, ?, ?>> stack = new LinkedList<>();
+
+		counter = visitNode(node, dfsNumbers, minNumbers, counter, stack);
+		do {
+			boolean done = true;
+			for (INode<?, ?, ?> current : node.getPostsetNodes()) {
+				if (!dfsNumbers.containsKey(current)) {
+					// 'current' was not visited yet
+					callers.addLast(node);
+					node = current;
+
+					counter = visitNode(node, dfsNumbers, minNumbers, counter, stack);
+					done = false;
+					break;
+				} else if (stack.contains(current) && minNumbers.get(node) > minNumbers.get(current)) {
+					// Set our own minNumbers to current's depth search number if that one is smaller
+					minNumbers.put(node, Math.min(minNumbers.get(node), dfsNumbers.get(current)));
+				}
+			}
+
+			if (done) {
+				if (dfsNumbers.get(node).equals(minNumbers.get(node))) {
+					// We are the root of the current component, let's get it from the stack. All of the nodes on
+					// the stack up to the current node form a strongly connected component.
+					Component component = new Component();
+					INode<?, ?, ?> cur = null;
+
+					while (cur != node) {
+						cur = stack.removeLast();
+						component.add(cur);
+					}
+					result.add(component);
+				}
+
+				INode<?, ?, ?> next = callers.pollLast();
+				if (next != null)
+					// Set our own minNumber to current's number if that one is smaller
+					minNumbers.put(next, Math.min(minNumbers.get(next), minNumbers.get(node)));
+				node = next;
+			}
+		} while (node != null);
+
+		assert callers.isEmpty();
+		assert stack.isEmpty();
+		return counter;
+	}
+
+	/**
+	 * Update the data structures for the visit of a new node.
+	 * Nope, the parameters aren't explained here either.
+	 */
+	private static int visitNode(INode<?, ?, ?> node, Map<INode<?, ?, ?>, Integer> dfsNumbers,
+			Map<INode<?, ?, ?>, Integer> minNumbers, int counter, Deque<INode<?, ?, ?>> stack) {
 		// Node should not have been visited before.
 		assert !dfsNumbers.containsKey(node);
 		assert !minNumbers.containsKey(node);
@@ -183,32 +235,6 @@ public class Connectivity {
 		dfsNumbers.put(node, counter);
 		minNumbers.put(node, counter);
 		stack.add(node);
-
-		for (INode<?, ?, ?> current : node.getPostsetNodes()) {
-			if (!dfsNumbers.containsKey(current)) {
-				// 'current' was not visited yet
-				counter = handleStronglyConnectedComponents(current, result, dfsNumbers, minNumbers,
-						stack, counter);
-				// Set our own minNumber to current's number if that one is smaller
-				minNumbers.put(node, Math.min(minNumbers.get(node), minNumbers.get(current)));
-			} else if (stack.contains(current) && minNumbers.get(node) > minNumbers.get(current)) {
-				// Set our own minNumbers to current's depth search number if that one is smaller
-				minNumbers.put(node, Math.min(minNumbers.get(node), dfsNumbers.get(current)));
-			}
-		}
-
-		if (dfsNumbers.get(node).equals(minNumbers.get(node))) {
-			// We are the root of the current component, let's get it from the stack. All of the nodes on
-			// the stack up to the current node form a strongly connected component.
-			Component component = new Component();
-			INode<?, ?, ?> cur = null;
-
-			while (cur != node) {
-				cur = stack.removeLast();
-				component.add(cur);
-			}
-			result.add(component);
-		}
 
 		return counter;
 	}
