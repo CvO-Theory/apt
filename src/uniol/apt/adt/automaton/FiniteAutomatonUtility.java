@@ -335,10 +335,21 @@ public class FiniteAutomatonUtility {
 	 * @param a the automaton to minimize
 	 * @return The minimal automaton for the language
 	 */
-	static public DeterministicFiniteAutomaton minimize(FiniteAutomaton a) {
+	static private MinimalDeterministicFiniteAutomaton minimizeInternal(FiniteAutomaton a) {
 		if (a instanceof MinimalDeterministicFiniteAutomaton)
-			return (DeterministicFiniteAutomaton) a;
+			return (MinimalDeterministicFiniteAutomaton) a;
 		return new MinimalDeterministicFiniteAutomaton(a);
+	}
+
+	/**
+	 * Get the unique deterministic automaton with the minimal number of states that accepts the same language as
+	 * the given automaton.
+	 * @param a the automaton to minimize
+	 * @return The minimal automaton for the language
+	 */
+	static public DeterministicFiniteAutomaton minimize(FiniteAutomaton a) {
+		// The only difference is the return type (MinimalDeterministicFiniteAutomaton is private!)
+		return minimizeInternal(a);
 	}
 
 	/**
@@ -410,12 +421,13 @@ public class FiniteAutomatonUtility {
 	 *
 	 * This method uses a depth-first search. A breath-first search would use more memory.
 	 *
-	 * @param dfa The automaton whose accepted words should get checked.
+	 * @param a The automaton whose accepted words should get checked.
 	 * @param prefixPredicate The predicate to check the prefixes.
 	 * @param wordPredicate The predicate to check the words.
 	 * @return A word which conforms to the predicates.
 	 */
-	static public List<String> findPredicateWord(DeterministicFiniteAutomaton dfa, Predicate<List<String>> prefixPredicate, Predicate<List<String>> wordPredicate) {
+	static public List<String> findPredicateWord(FiniteAutomaton a, Predicate<List<String>> prefixPredicate, Predicate<List<String>> wordPredicate) {
+		MinimalDeterministicFiniteAutomaton dfa = minimizeInternal(a);
 		Deque<Pair<DFAState, Iterator<Symbol>>> trace = new ArrayDeque<>();
 		LinkedList<String> word = new LinkedList<>();
 		DFAState initial   = dfa.getInitialState();
@@ -451,7 +463,7 @@ public class FiniteAutomatonUtility {
 	}
 
 	// find the sink state of an DFA if it exists
-	static private DFAState findSinkState(DeterministicFiniteAutomaton dfa) {
+	static private DFAState findSinkState(MinimalDeterministicFiniteAutomaton dfa) {
 		// A minimal DFA can have at most one "sink state". All words which cannot be extended into words of the
 		// language will reach that sink state. Let's find that sink state and skip it in our translation.
 		for (DFAState state : statesIterable(dfa)) {
@@ -479,7 +491,7 @@ public class FiniteAutomatonUtility {
 	 * accepted by a.
 	 */
 	static public TransitionSystem prefixLanguageLTS(FiniteAutomaton a) {
-		DeterministicFiniteAutomaton dfa = minimize(a);
+		MinimalDeterministicFiniteAutomaton dfa = minimizeInternal(a);
 		DFAState sinkState = findSinkState(dfa);
 
 		// Now create the transition system, but skip the sink state (if there is one)
