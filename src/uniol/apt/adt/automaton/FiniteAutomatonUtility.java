@@ -364,12 +364,13 @@ public class FiniteAutomatonUtility {
 	}
 
 	/**
-	 * Find a word that is only accepted by one of the automatons.
+	 * Return a finite automaton that accepts all words which are only accepted by one of the automatons. This
+	 * constructs (a1 minus a2) union (a2 minus a1).
 	 * @param a1 The first automaton to test with
 	 * @param a2 The second automaton to test with
-	 * @return A word that is only accepted by one of the automatons
+	 * @return An automaton that accepts the difference of the two languages.
 	 */
-	static public List<String> findWordDifference(FiniteAutomaton a1, FiniteAutomaton a2) {
+	static public FiniteAutomaton getDifferenceAutomaton(FiniteAutomaton a1, FiniteAutomaton a2) {
 		DeterministicFiniteAutomaton dfa1 = constructDFA(a1);
 		DeterministicFiniteAutomaton dfa2 = constructDFA(a2);
 
@@ -380,8 +381,17 @@ public class FiniteAutomatonUtility {
 		// input automaton are language equivalent
 		DeterministicFiniteAutomaton notDfa1 = negate(dfa1, alphabet);
 		DeterministicFiniteAutomaton notDfa2 = negate(dfa2, alphabet);
-		DeterministicFiniteAutomaton dfa = union(intersection(dfa1, notDfa2), intersection(notDfa1, dfa2));
-		return findAcceptedWord(minimize(dfa));
+		return union(intersection(dfa1, notDfa2), intersection(notDfa1, dfa2));
+	}
+
+	/**
+	 * Find a word that is only accepted by one of the automatons.
+	 * @param a1 The first automaton to test with
+	 * @param a2 The second automaton to test with
+	 * @return A word that is only accepted by one of the automatons
+	 */
+	static public List<String> findWordDifference(FiniteAutomaton a1, FiniteAutomaton a2) {
+		return findAcceptedWord(minimize(getDifferenceAutomaton(a1, a2)));
 	}
 
 	// Find a word that the given automaton accepts
