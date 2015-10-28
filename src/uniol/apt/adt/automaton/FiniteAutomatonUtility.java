@@ -19,6 +19,7 @@
 
 package uniol.apt.adt.automaton;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.Predicate;
 
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -401,17 +405,55 @@ public class FiniteAutomatonUtility {
 	}
 
 	/**
-	 * Construct a transition system that describes the prefix language of the given finite automaton. For this, the
-	 * minimal DFA is calculated and transformed.
-	 * @param a The automaton whose prefix language should be generated.
-	 * @return A transition system where sequences are enabled that correspond to prefixes of words which are
-	 * accepted by a.
+	 * Find a word whose prefixes (including the word) conform to a given predicate and which itself also conforms
+	 * to a second predicate.
+	 *
+	 * This method uses a depth-first search. A breath-first search would use more memory.
+	 *
+	 * @param dfa The automaton whose accepted words should get checked.
+	 * @param prefixPredicate The predicate to check the prefixes.
+	 * @param wordPredicate The predicate to check the words.
+	 * @return A word which conforms to the predicates.
 	 */
-	static public TransitionSystem prefixLanguageLTS(FiniteAutomaton a) {
-		DeterministicFiniteAutomaton dfa = minimize(a);
+	static public List<String> findPredicateWord(DeterministicFiniteAutomaton dfa, Predicate<List<String>> prefixPredicate, Predicate<List<String>> wordPredicate) {
+		Deque<Pair<DFAState, Iterator<Symbol>>> trace = new ArrayDeque<>();
+		LinkedList<String> word = new LinkedList<>();
+		DFAState initial   = dfa.getInitialState();
+		DFAState sinkState = findSinkState(dfa);
+		trace.add(new Pair<>(initial, initial.getDefinedSymbols().iterator()));
+
+		while (!trace.isEmpty()) {
+			Pair<DFAState, Iterator<Symbol>> pair = trace.peekLast();
+			if (!pair.getSecond().hasNext()) {
+				trace.removeLast();
+				word.pollLast();
+			} else {
+				Symbol symbol = pair.getSecond().next();
+				DFAState nextState = pair.getFirst().getFollowingState(symbol);
+				if (!nextState.equals(sinkState)) {
+					word.add(symbol.getEvent());
+
+					List<String> roWord = ListUtils.unmodifiableList(word);
+
+					if (prefixPredicate.evaluate(roWord)) {
+						trace.addLast(new Pair<>(nextState, nextState.getDefinedSymbols().iterator()));
+
+						if (nextState.isFinalState() && wordPredicate.evaluate(roWord))
+							return word;
+					} else {
+						word.removeLast();
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	// find the sink state of an DFA if it exists
+	static private DFAState findSinkState(DeterministicFiniteAutomaton dfa) {
 		// A minimal DFA can have at most one "sink state". All words which cannot be extended into words of the
 		// language will reach that sink state. Let's find that sink state and skip it in our translation.
-		DFAState sinkState = null;
 		for (DFAState state : statesIterable(dfa)) {
 			// The sink state is not a final state and all arcs go back to itself
 			if (state.isFinalState())
@@ -423,10 +465,22 @@ public class FiniteAutomatonUtility {
 					break;
 				}
 			if (sink) {
-				sinkState = state;
-				break;
+				return state;
 			}
 		}
+		return null;
+	}
+
+	/**
+	 * Construct a transition system that describes the prefix language of the given finite automaton. For this, the
+	 * minimal DFA is calculated and transformed.
+	 * @param a The automaton whose prefix language should be generated.
+	 * @return A transition system where sequences are enabled that correspond to prefixes of words which are
+	 * accepted by a.
+	 */
+	static public TransitionSystem prefixLanguageLTS(FiniteAutomaton a) {
+		DeterministicFiniteAutomaton dfa = minimize(a);
+		DFAState sinkState = findSinkState(dfa);
 
 		// Now create the transition system, but skip the sink state (if there is one)
 		Map<DFAState, uniol.apt.adt.ts.State> stateMap = new HashMap<>();
