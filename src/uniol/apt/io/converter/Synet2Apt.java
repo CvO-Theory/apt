@@ -23,13 +23,9 @@ import java.io.IOException;
 
 import uniol.apt.io.parser.IParserOutput.Type;
 import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.impl.SynetLTSParser;
 import uniol.apt.io.parser.impl.SynetPNParser;
-import uniol.apt.io.parser.impl.exception.FormatException;
-import uniol.apt.io.parser.impl.exception.LexerParserException;
-import uniol.apt.io.parser.impl.exception.NodeNotExistException;
-import uniol.apt.io.parser.impl.exception.StructureException;
 import uniol.apt.io.parser.impl.exception.TypeMismatchException;
-import uniol.apt.io.parser.impl.synet.SynetLTSParser;
 import uniol.apt.io.renderer.impl.APTRenderer;
 import uniol.apt.module.exception.ModuleException;
 
@@ -56,16 +52,10 @@ public class Synet2Apt {
 	 * <p/>
 	 * @throws IOException           thrown if the file do not end with .net or .aut or is not readable.
 	 * @throws ModuleException       thrown if the net has a omega marking.
-	 * @throws NodeNotExistException thrown if it is referenced to a node, which is not defined in the graph.
 	 * @throws TypeMismatchException thrown if the type of the graph do not fit.
-	 * @throws LexerParserException  thrown if the file is not parseable.
-	 * @throws StructureException    thrown if an error by converting the file to the datastructure occure.
-	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
-	 *                               all.
 	 * @throws ParseException        thrown if the file can't get parsed
 	 */
-	public static String convert(String filename) throws IOException, ModuleException, NodeNotExistException,
-			TypeMismatchException, LexerParserException, StructureException, FormatException,
+	public static String convert(String filename) throws IOException, ModuleException, TypeMismatchException,
 			ParseException {
 		if (filename.endsWith(".aut")) {
 			return convert(filename, Type.LTS);
@@ -89,21 +79,15 @@ public class Synet2Apt {
 	 * <p/>
 	 * @throws IOException           thrown if the file do not end with .net or .aut or is not readable.
 	 * @throws ModuleException       thrown if the net has a omega marking.
-	 * @throws NodeNotExistException thrown if it is referenced to a node, which is not defined in the graph.
 	 * @throws TypeMismatchException thrown if the type of the graph do not fit.
-	 * @throws LexerParserException  thrown if the file is not parseable.
-	 * @throws StructureException    thrown if an error by converting the file to the datastructure occure.
-	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
-	 *                               all.
 	 * @throws ParseException        thrown if the file can't get parsed
 	 */
 	public static String convert(String filename, Type type) throws IOException, ModuleException,
-			NodeNotExistException, TypeMismatchException, LexerParserException, StructureException,
-			FormatException, ParseException {
+			TypeMismatchException, ParseException {
 		APTRenderer renderer = new APTRenderer();
 		switch (type) {
 			case LTS:
-				return renderer.render(SynetLTSParser.getLTS(filename));
+				return renderer.render(new SynetLTSParser().parseLTSFile(filename));
 			case LPN:
 			case PN:
 				return renderer.render(new SynetPNParser().parsePNFile(filename));

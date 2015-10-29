@@ -22,10 +22,6 @@ package uniol.apt.io.converter;
 import java.io.IOException;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.IParserOutput.Type;
-import uniol.apt.io.parser.impl.exception.FormatException;
-import uniol.apt.io.parser.impl.exception.LexerParserException;
-import uniol.apt.io.parser.impl.exception.NodeNotExistException;
-import uniol.apt.io.parser.impl.exception.StructureException;
 import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -76,14 +72,9 @@ public class Synet2AptModule extends AbstractModule {
 				throw new ModuleException("input_type has to be ts or pn");
 			}
 			output.setReturnValue("output_filename", String.class, out);
-		} catch (NodeNotExistException | TypeMismatchException ex) {
-			throw new ModuleException("Create datastructur: " + ex.getMessage());
-		} catch (IOException e) {
-			throw new ModuleException("Cannot parse file '" + filename + "': File does not exist");
-		} catch (LexerParserException e) {
-			throw new ModuleException("Cannot parse file '" + filename + "': \n"
-				+ e.getLexerParserMessage());
-		} catch (FormatException | ParseException ex) {
+		} catch (IOException ex) {
+			throw new ModuleException("Can't read file: " + ex.getMessage(), ex);
+		} catch (TypeMismatchException | ParseException ex) {
 			throw new ModuleException(ex.getMessage(), ex);
 		}
 	}
