@@ -27,7 +27,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.generator.isolated.IsolatedTransitionsIterable;
 import uniol.apt.generator.marking.MarkingIterable;
 import uniol.apt.generator.tnet.TNetGenerator;
-import uniol.apt.io.renderer.impl.APTRenderer;
+import uniol.apt.io.renderer.impl.AptPNRenderer;
 
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -68,7 +68,7 @@ public class TNetGeneratorModule extends AbstractModule {
 	}
 
 	private String renderNet(PetriNet arg) throws ModuleException {
-		return new APTRenderer().render(arg);
+		return new AptPNRenderer().render(arg);
 	}
 
 	@Override

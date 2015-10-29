@@ -26,7 +26,8 @@ import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.SynetLTSParser;
 import uniol.apt.io.parser.impl.SynetPNParser;
 import uniol.apt.io.parser.impl.exception.TypeMismatchException;
-import uniol.apt.io.renderer.impl.APTRenderer;
+import uniol.apt.io.renderer.impl.AptLTSRenderer;
+import uniol.apt.io.renderer.impl.AptPNRenderer;
 import uniol.apt.module.exception.ModuleException;
 
 /**
@@ -84,13 +85,12 @@ public class Synet2Apt {
 	 */
 	public static String convert(String filename, Type type) throws IOException, ModuleException,
 			TypeMismatchException, ParseException {
-		APTRenderer renderer = new APTRenderer();
 		switch (type) {
 			case LTS:
-				return renderer.render(new SynetLTSParser().parseLTSFile(filename));
+				return new AptLTSRenderer().render(new SynetLTSParser().parseLTSFile(filename));
 			case LPN:
 			case PN:
-				return renderer.render(new SynetPNParser().parsePNFile(filename));
+				return new AptPNRenderer().render(new SynetPNParser().parsePNFile(filename));
 			default:
 				throw new TypeMismatchException(Type.LTS.name() + ", " + Type.PN.name()
 					+ " or " + Type.LPN.name(), type.name());

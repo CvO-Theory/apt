@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.renderer.impl.APTRenderer;
+import uniol.apt.io.renderer.impl.AptLTSRenderer;
 import uniol.apt.ui.ReturnValueTransformation;
 import uniol.apt.module.exception.ModuleException;
 
@@ -38,7 +38,7 @@ public class TSReturnValueTransformation implements ReturnValueTransformation<Tr
 
 	@Override
 	public void transform(Writer output, TransitionSystem arg) throws ModuleException, IOException {
-		new APTRenderer().render(output, arg);
+		new AptLTSRenderer().render(arg, output);
 	}
 
 }

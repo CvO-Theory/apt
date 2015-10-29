@@ -40,7 +40,7 @@ import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
-import uniol.apt.io.renderer.impl.APTRenderer;
+import uniol.apt.io.renderer.impl.AptPNRenderer;
 import uniol.apt.module.exception.ModuleException;
 import uniol.tests.dataprovider.IntRangeDataProvider;
 import uniol.tests.dataprovider.annotations.IntRangeParameter;
@@ -99,7 +99,7 @@ public class PnAnalysisTest {
 		if (net != null) {
 			IsomorphismLogic logic = new IsomorphismLogic(pn, net, true);
 			assertTrue(logic.isIsomorphic());
-			APTRenderer renderer = new APTRenderer();
+			AptPNRenderer renderer = new AptPNRenderer();
 			File file = new File("./nets/tnetIsomorphToEB-PhD-Fundamenta.apt");
 			try (FileWriter writer = new FileWriter(file, true)) {
 				writer.write(renderer.render(net));

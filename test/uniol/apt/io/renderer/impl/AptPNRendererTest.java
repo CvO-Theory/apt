@@ -26,14 +26,12 @@ import uniol.apt.adt.pn.PetriNet;
 
 import static uniol.apt.TestNetCollection.*;
 
-import uniol.apt.module.exception.ModuleException;
-
 /** @author vsp */
-public class APTRendererTest {
+public class AptPNRendererTest {
 	// Please only add tests to this class after you verified that our parser can actually parse them!
 
-	private String render(PetriNet pn) throws ModuleException {
-		return new APTRenderer().render(RendererTestUtils.getSortedNet(pn));
+	private String render(PetriNet pn) throws Exception {
+		return new AptPNRenderer().render(RendererTestUtils.getSortedNet(pn));
 	}
 
 	@Test

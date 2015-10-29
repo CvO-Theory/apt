@@ -20,7 +20,6 @@
 package uniol.apt.pnanalysis;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.renderer.impl.APTRenderer;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -60,7 +59,7 @@ public class PnAnalysisModule extends AbstractModule {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("T-system", String.class, ModuleOutputSpec.PROPERTY_FILE,
+		outputSpec.addReturnValue("T-system", PetriNet.class, ModuleOutputSpec.PROPERTY_FILE,
 			ModuleOutputSpec.PROPERTY_RAW);
 	}
 
@@ -82,8 +81,7 @@ public class PnAnalysisModule extends AbstractModule {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 		Integer g = input.getParameter("g", Integer.class);
 		PetriNet result = new PnAnalysis().checkAllIsomorphicTSystemsForPetriNet(pn, g, k, randomly);
-		APTRenderer renderer = new APTRenderer();
-		output.setReturnValue("T-system", String.class, renderer.render(result));
+		output.setReturnValue("T-system", PetriNet.class, result);
 	}
 
 	@Override

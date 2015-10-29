@@ -20,7 +20,6 @@
 package uniol.apt.pnanalysis;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.renderer.impl.APTRenderer;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -55,7 +54,7 @@ public class RandomTNetGeneratorModule extends AbstractModule {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("t-net", String.class, ModuleOutputSpec.PROPERTY_FILE,
+		outputSpec.addReturnValue("t-net", PetriNet.class, ModuleOutputSpec.PROPERTY_FILE,
 			ModuleOutputSpec.PROPERTY_RAW);
 	}
 
@@ -68,8 +67,7 @@ public class RandomTNetGeneratorModule extends AbstractModule {
 		Integer g = input.getParameter("g", Integer.class);
 		PetriNet result = (k == null) ? RandomTNetGenerator.createRandomTNet(g)
 			: RandomTNetGenerator.createRandomTSystem(g, k);
-		APTRenderer renderer = new APTRenderer();
-		output.setReturnValue("t-net", String.class, renderer.render(result));
+		output.setReturnValue("t-net", PetriNet.class, result);
 	}
 
 	@Override

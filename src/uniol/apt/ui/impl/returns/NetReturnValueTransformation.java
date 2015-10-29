@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.renderer.impl.APTRenderer;
+import uniol.apt.io.renderer.impl.AptPNRenderer;
 import uniol.apt.ui.ReturnValueTransformation;
 import uniol.apt.module.exception.ModuleException;
 
@@ -38,7 +38,7 @@ public class NetReturnValueTransformation implements ReturnValueTransformation<P
 
 	@Override
 	public void transform(Writer output, PetriNet arg) throws ModuleException, IOException {
-		new APTRenderer().render(arg, output);
+		new AptPNRenderer().render(arg, output);
 	}
 
 }

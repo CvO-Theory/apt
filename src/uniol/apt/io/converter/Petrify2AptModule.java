@@ -31,7 +31,8 @@ import uniol.apt.io.parser.impl.exception.StructureException;
 import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 import uniol.apt.io.parser.impl.petrify.PetrifyLTSParser;
 import uniol.apt.io.parser.impl.petrify.PetrifyPNParser;
-import uniol.apt.io.renderer.impl.APTRenderer;
+import uniol.apt.io.renderer.impl.AptLTSRenderer;
+import uniol.apt.io.renderer.impl.AptPNRenderer;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -80,11 +81,11 @@ public class Petrify2AptModule extends AbstractModule {
 					PetrifyPNParser parser = new PetrifyPNParser();
 					parser.parse(FileUtils.readFileToString(new File(filename)));
 					PetriNet pn = parser.getPN();
-					out = new APTRenderer().render(pn);
+					out = new AptPNRenderer().render(pn);
 					break;
 				case "ts":
 					TransitionSystem lts = PetrifyLTSParser.getLTS(filename);
-					out = new APTRenderer().render(lts);
+					out = new AptLTSRenderer().render(lts);
 					break;
 				default:
 					throw new ModuleException("input_type has to be ts or pn");

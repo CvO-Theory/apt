@@ -20,10 +20,7 @@
 package uniol.apt.io.renderer.impl;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.stringtemplate.v4.AutoIndentWriter;
 import org.stringtemplate.v4.ST;
@@ -33,18 +30,14 @@ import org.stringtemplate.v4.STGroupFile;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Token;
-import uniol.apt.adt.ts.Arc;
-import uniol.apt.adt.ts.State;
-import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.renderer.PNRenderer;
 import uniol.apt.io.renderer.RenderException;
 
 /**
- * @author Vincent Göbel, vsp
+ * @author vsp
  *
  */
-public class APTRenderer extends AbstractPNRenderer implements PNRenderer {
-
+public class AptPNRenderer extends AbstractPNRenderer implements PNRenderer {
 	/**
 	 * Verify that the net can be expressed in APT file format.
 	 * @param pn the net to verify
@@ -60,7 +53,7 @@ public class APTRenderer extends AbstractPNRenderer implements PNRenderer {
 	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
 		verifyNet(pn);
 
-		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/APTPN.stg");
+		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/AptPN.stg");
 		ST pnTemplate = group.getInstanceOf("pn");
 		pnTemplate.add("name", pn.getName());
 
@@ -79,74 +72,6 @@ public class APTRenderer extends AbstractPNRenderer implements PNRenderer {
 		pnTemplate.add("transitions", pn.getTransitions());
 
 		pnTemplate.write(new AutoIndentWriter(writer));
-	}
-
-	/**
-	 * Render the given Petri net into the APT file format.
-	 * @param ts transition system
-	 * @return the string representation of the net.
-	 */
-	public String render(TransitionSystem ts) {
-		StringWriter writer = new StringWriter();
-		try {
-			render(writer, ts);
-		} catch (IOException e) {
-			// A StringWriter shouldn't throw IOExceptions
-			throw new RuntimeException(e);
-		}
-		return writer.toString();
-	}
-
-	/**
-	 * Render the given Petri net into the APT file format.
-	 * @param output the writer to send the result to
-	 * @param ts transition system
-	 * @throws IOException when writing to the output produces an exception.
-	 */
-	public void render(Writer output, TransitionSystem ts) throws IOException {
-		output.append(".name \"").append(ts.getName()).append("\"\n");
-		output.append(".type LTS" + "\n");
-		output.append("\n");
-
-		output.append(".states" + "\n");
-		for (State s : ts.getNodes()) {
-			output.append(s.getId());
-			if (s.equals(ts.getInitialState())) {
-				output.append("[initial]");
-			}
-
-			/* If the "comment" extension is present, escape it properly and append it as a comment */
-			try {
-				Object comment = s.getExtension("comment");
-				if (comment instanceof String) {
-					String c = (String) comment;
-					output.append(" /* ");
-					output.append(c.replace("*/", "* /"));
-					output.append(" */");
-				}
-			} catch (Exception e) {
-			}
-			output.append("\n");
-		}
-		output.append("\n");
-
-		output.append(".labels" + "\n");
-		Set<String> labels = new HashSet<>();
-		for (Arc e : ts.getEdges()) {
-			labels.add(e.getLabel());
-		}
-		for (String l : labels) {
-			output.append(l).append("\n");
-		}
-		output.append("\n");
-
-		output.append(".arcs");
-		for (Arc e : ts.getEdges()) {
-			output.append("\n");
-			output.append(e.getSource().getId()).append(" ");
-			output.append(e.getLabel()).append(" ");
-			output.append(e.getTarget().getId());
-		}
 	}
 }
 

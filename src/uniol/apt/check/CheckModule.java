@@ -20,7 +20,7 @@
 package uniol.apt.check;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.renderer.impl.APTRenderer;
+import uniol.apt.io.renderer.impl.AptPNRenderer;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -154,10 +154,8 @@ public class CheckModule extends AbstractModule {
 				returnString += "A Petri net with following attributes was found:" + c.getBestMatch();
 			}
 		} else {
-			APTRenderer renderer = new APTRenderer();
-
 			try {
-				returnString = "\n" + renderer.render(pn);
+				returnString = "\n" + new AptPNRenderer().render(pn);
 			} catch (ModuleException e) {
 				returnString = "\nUnable to render found Petri net.";
 			}

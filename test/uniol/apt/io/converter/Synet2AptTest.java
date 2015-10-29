@@ -35,7 +35,7 @@ import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.io.parser.impl.AptLTSParser;
 import uniol.apt.io.parser.impl.AptPNParser;
 import uniol.apt.io.parser.impl.SynetLTSParser;
-import uniol.apt.io.renderer.impl.APTRenderer;
+import uniol.apt.io.renderer.impl.AptLTSRenderer;
 import uniol.apt.module.impl.ModuleInvoker;
 
 /**
@@ -75,7 +75,7 @@ public class Synet2AptTest {
 		IsomorphismLogic iso = new IsomorphismLogic(ts1, ts, true);
 		assertTrue(iso.isIsomorphic());
 
-		APTRenderer renderer = new APTRenderer();
+		AptLTSRenderer renderer = new AptLTSRenderer();
 		String apt = renderer.render(ts);
 		String[] rows = apt.split("\n");
 		for (String string : rows) {
