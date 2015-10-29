@@ -37,11 +37,9 @@ import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.io.converter.Synet2Apt;
 import uniol.apt.io.parser.IParserOutput;
 import uniol.apt.io.parser.ParseException;
-import uniol.apt.io.parser.impl.AptPNParser;
 import uniol.apt.io.parser.impl.AptLTSParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.synet.SynetLTSParser;
-import uniol.apt.io.parser.impl.synet.SynetPNParser;
 import uniol.apt.module.exception.ModuleException;
 
 /**
@@ -72,32 +70,6 @@ public class SynetParserTest {
 	}
 
 	@Test
-	public void testPN() throws IOException, FormatException {
-		PetriNet pn = SynetPNParser.getPetriNet("nets/synet-nets/synet-docu-example.net");
-		assertNotNull(pn);
-		assertEquals(5, pn.getTransitions().size());
-		assertEquals(6, pn.getPlaces().size());
-
-		assertEquals("A", pn.getTransition("t").getExtension("location"));
-		assertEquals("A", pn.getPlace("x_0").getExtension("location"));
-
-		Marking mark = pn.getInitialMarking();
-		assertEquals(1, mark.getToken("x_5").getValue());
-		assertEquals(1, mark.getToken("x_2").getValue());
-		assertEquals(0, mark.getToken("x_3").getValue());
-
-		Place x0 = pn.getPlace("x_0");
-		assertEquals(x0.getPostset().size(), 2);
-		assertTrue(x0.getPostset().contains(pn.getTransition("t")));
-		assertTrue(x0.getPostset().contains(pn.getTransition("d")));
-		assertFalse(x0.getPostset().contains(pn.getTransition("c")));
-
-		assertEquals(x0.getPreset().size(), 1);
-		assertTrue(x0.getPreset().contains(pn.getTransition("a")));
-		assertFalse(x0.getPreset().contains(pn.getTransition("t")));
-	}
-
-	@Test
 	public void testSynetParser() throws IOException, ParseException, FormatException, ModuleException {
 		// LTS
 		TransitionSystem ts_synet = SynetLTSParser.getLTS("nets/synet-nets/mar17-12-groessere-testdatei.aut");
@@ -106,15 +78,6 @@ public class SynetParserTest {
 		TransitionSystem ts_apt = new AptLTSParser().parseLTS(txt_apt);
 		IsomorphismLogic iso = new IsomorphismLogic(ts_synet, ts_apt, true);
 		assertTrue(iso.isIsomorphic());
-
-		// PN
-		PetriNet pn_synet = SynetPNParser.getPetriNet("nets/synet-nets/synet-docu-example.net");
-		txt_apt = Synet2Apt.convert("nets/synet-nets/synet-docu-example.net",
-			IParserOutput.Type.PN);
-		PetriNet pn_apt = new AptPNParser().parsePN(txt_apt);
-		iso = new IsomorphismLogic(pn_synet, pn_apt, true);
-		assertTrue(iso.isIsomorphic());
-
 	}
 }
 
