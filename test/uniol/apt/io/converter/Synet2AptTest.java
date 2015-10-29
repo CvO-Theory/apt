@@ -17,30 +17,26 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.io.converter.impl;
+package uniol.apt.io.converter;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertFalse;
 import java.util.List;
+
+import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.converter.Synet2AptModule;
-import uniol.apt.io.parser.ParseException;
-import uniol.apt.io.parser.impl.AptPNParser;
-import uniol.apt.io.parser.impl.AptLTSParser;
-import uniol.apt.io.parser.impl.exception.FormatException;
-import uniol.apt.module.exception.ModuleException;
-import uniol.apt.module.impl.ModuleInvoker;
-import org.testng.annotations.Test;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
-import uniol.apt.io.parser.impl.synet.SynetLTSParser;
+import uniol.apt.io.parser.impl.AptLTSParser;
+import uniol.apt.io.parser.impl.AptPNParser;
+import uniol.apt.io.parser.impl.SynetLTSParser;
 import uniol.apt.io.renderer.impl.APTRenderer;
+import uniol.apt.module.impl.ModuleInvoker;
 
 /**
  * Tests the converter, which parses a synet file and saves the content in the apt format.
@@ -66,7 +62,7 @@ public class Synet2AptTest {
 		assertEquals(ts1.getInitialState(), ts1.getNode("0"));
 		assertEquals(ts1.getEdges().size(), 4);
 
-		TransitionSystem ts = SynetLTSParser.getLTS("nets/synet-nets/synet-apt1-redmine-docs.aut");
+		TransitionSystem ts = new SynetLTSParser().parseLTSFile("nets/synet-nets/synet-apt1-redmine-docs.aut");
 		assertNotNull(ts);
 		assertEquals(ts.getNodes().size(), 4);
 		assertNotNull(ts.getNode("0"));
