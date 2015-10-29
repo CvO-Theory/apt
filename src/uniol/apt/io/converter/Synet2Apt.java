@@ -22,13 +22,14 @@ package uniol.apt.io.converter;
 import java.io.IOException;
 
 import uniol.apt.io.parser.IParserOutput.Type;
+import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.impl.SynetPNParser;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
 import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 import uniol.apt.io.parser.impl.synet.SynetLTSParser;
-import uniol.apt.io.parser.impl.synet.SynetPNParser;
 import uniol.apt.io.renderer.impl.APTRenderer;
 import uniol.apt.module.exception.ModuleException;
 
@@ -61,9 +62,11 @@ public class Synet2Apt {
 	 * @throws StructureException    thrown if an error by converting the file to the datastructure occure.
 	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
 	 *                               all.
+	 * @throws ParseException        thrown if the file can't get parsed
 	 */
 	public static String convert(String filename) throws IOException, ModuleException, NodeNotExistException,
-		TypeMismatchException, LexerParserException, StructureException, FormatException {
+			TypeMismatchException, LexerParserException, StructureException, FormatException,
+			ParseException {
 		if (filename.endsWith(".aut")) {
 			return convert(filename, Type.LTS);
 		} else if (filename.endsWith(".net")) {
@@ -92,17 +95,18 @@ public class Synet2Apt {
 	 * @throws StructureException    thrown if an error by converting the file to the datastructure occure.
 	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
 	 *                               all.
+	 * @throws ParseException        thrown if the file can't get parsed
 	 */
 	public static String convert(String filename, Type type) throws IOException, ModuleException,
-		NodeNotExistException, TypeMismatchException, LexerParserException, StructureException, FormatException {
+			NodeNotExistException, TypeMismatchException, LexerParserException, StructureException,
+			FormatException, ParseException {
 		APTRenderer renderer = new APTRenderer();
 		switch (type) {
 			case LTS:
 				return renderer.render(SynetLTSParser.getLTS(filename));
 			case LPN:
-				return renderer.render(SynetPNParser.getPetriNet(filename));
 			case PN:
-				return renderer.render(SynetPNParser.getPetriNet(filename));
+				return renderer.render(new SynetPNParser().parsePNFile(filename));
 			default:
 				throw new TypeMismatchException(Type.LTS.name() + ", " + Type.PN.name()
 					+ " or " + Type.LPN.name(), type.name());

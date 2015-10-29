@@ -44,6 +44,14 @@ public class ModuleException extends Exception {
 	public ModuleException(String message, Throwable cause) {
 		super(message, cause);
 	}
+
+	/**
+	 * Constructs a new module exception with the given cause.
+	 * @param cause The cause for this exception. Please note that this is usually ignored.
+	 */
+	public ModuleException(Throwable cause) {
+		super(cause);
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

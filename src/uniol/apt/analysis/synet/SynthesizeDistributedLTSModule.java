@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -81,8 +82,8 @@ public class SynthesizeDistributedLTSModule extends AbstractModule {
 			} else {
 				output.setReturnValue("error", String.class, checkLTS.getError());
 			}
-		} catch (IOException | FormatException e) {
-			e.printStackTrace();
+		} catch (IOException | FormatException | ParseException ex) {
+			throw new ModuleException(ex);
 		}
 
 		output.setReturnValue("pn", PetriNet.class, checkLTS.getPN());

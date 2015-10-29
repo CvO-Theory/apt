@@ -19,7 +19,6 @@
 
 package uniol.apt.analysis.synet;
 
-import java.io.IOException;
 import org.testng.SkipException;
 
 import org.testng.annotations.Test;
@@ -27,7 +26,6 @@ import static org.testng.Assert.assertTrue;
 
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.exception.SynetNotFoundException;
-import uniol.apt.io.parser.impl.exception.FormatException;
 import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
 
 /**
@@ -38,7 +36,7 @@ import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
 public class SynetTest {
 
 	@Test
-	public void test() throws FormatException, IOException {
+	public void test() throws Exception {
 		try {
 			TransitionSystem ts = getAptLTS("nets/synet-nets/synet.apt");
 			SynetSynthesizeDistributedLTS synet = new SynetSynthesizeDistributedLTS(ts);

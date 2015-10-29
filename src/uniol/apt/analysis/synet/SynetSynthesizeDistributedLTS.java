@@ -33,8 +33,9 @@ import java.util.Set;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.exception.FormatException;
-import uniol.apt.io.parser.impl.synet.SynetPNParser;
+import uniol.apt.io.parser.impl.SynetPNParser;
 import uniol.apt.io.renderer.impl.SynetRenderer;
 import uniol.apt.module.exception.SynetNotFoundException;
 
@@ -64,8 +65,9 @@ public class SynetSynthesizeDistributedLTS {
 	 * @throws SynetNotFoundException
 	 * @throws IOException
 	 * @throws FormatException
+	 * @throws ParseException Thrown if the synet output can't get parsed.
 	 */
-	public boolean check() throws SynetNotFoundException, IOException, FormatException {
+	public boolean check() throws SynetNotFoundException, IOException, FormatException, ParseException {
 		SynetRenderer synetRen = new SynetRenderer();
 		String ltsSynetFormat = synetRen.render(ts_);
 
@@ -122,7 +124,7 @@ public class SynetSynthesizeDistributedLTS {
 			}
 		}
 
-		pn_ = SynetPNParser.getPetriNet(new FileInputStream(tmpSaveFile.getAbsolutePath()));
+		pn_ = new SynetPNParser().parsePNFile(tmpSaveFile.getAbsolutePath());
 
 		String errorStr = error.readLine();
 		if (errorStr != null) {
