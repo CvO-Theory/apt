@@ -28,9 +28,6 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Token;
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.adt.ts.Arc;
-import uniol.apt.adt.ts.State;
-import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.renderer.PNRenderer;
 import uniol.apt.io.renderer.RenderException;
 
@@ -41,21 +38,14 @@ import uniol.apt.io.renderer.RenderException;
  * @author Renke Grunwald
  *
  */
-public class DotRenderer extends AbstractPNRenderer implements PNRenderer {
-
-	private static String PN_PLACE_TEMPLATE =
+public class DotPNRenderer extends AbstractPNRenderer implements PNRenderer {
+	private final static String PN_PLACE_TEMPLATE =
 		"%1$s[label=\"%2$s\"]\n%1$s_label[shape=plaintext,label=\"\"]\n%1$s -> %1$s_label[penwidth=0,"
 		+ "label=\"%1$s\",arrowhead=none]\n";
-	private static String PN_TRANSITION_TEMPLATE =
+	private final static String PN_TRANSITION_TEMPLATE =
 		"%1$s[label=\"%2$s\"]\n%1$s_label[shape=plaintext,label=\"\"]\n%1$s -> %1$s_label[penwidth=0,"
 		+ "label=\"%1$s\",arrowhead=none]\n";
-	private static String PN_FLOW_TEMPLATE = "%1$s -> %2$s[label=\"%3$s\"]\n";
-	private static final String TS_NODE_TEMPLATE =
-		"%1$s[label=\"%2$s\"];\n";
-	private static final String TS_INITIAL_NODE_TEMPLATE =
-		"%1$s[label=\"%2$s\", shape=circle];\n";
-	private static final String TS_EDGE_TEMPLATE =
-		"%1$s -> %2$s[label=\"%3$s\"];\n";
+	private final static String PN_FLOW_TEMPLATE = "%1$s -> %2$s[label=\"%3$s\"]\n";
 
 	@Override
 	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
@@ -109,46 +99,6 @@ public class DotRenderer extends AbstractPNRenderer implements PNRenderer {
 
 		flowFormat.close();
 		writer.append("}\n");
-	}
-
-	/**
-	 * Converts transition net to dot file strings.
-	 * @param ts transition system
-	 * @return String
-	 */
-	public String render(TransitionSystem ts) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("digraph G {\n");
-		sb.append("node [shape = point, color=white, fontcolor=white]; start;");
-		sb.append("edge [fontsize=20]\n");
-		sb.append("node [fontsize=20,shape=circle,color=black, fontcolor=black, height=0.5,width=0.5,fixedsize=true];\n");
-
-		Formatter nodeFormat = new Formatter(sb);
-
-		for (State node : ts.getNodes()) {
-			if (ts.getInitialState().equals(node)) {
-				nodeFormat.format(TS_INITIAL_NODE_TEMPLATE, node.getId(), node.getId());
-			} else {
-				nodeFormat.format(TS_NODE_TEMPLATE, node.getId(), node.getId());
-			}
-		}
-
-		nodeFormat.close();
-
-		Formatter edgeFormat = new Formatter(sb);
-
-		edgeFormat.format(TS_EDGE_TEMPLATE, "start", ts.getInitialState().getId(), "");
-
-		for (Arc edge : ts.getEdges()) {
-			edgeFormat.format(TS_EDGE_TEMPLATE, edge.getSource().getId(), edge.getTarget().getId(),
-					edge.getLabel());
-		}
-
-		edgeFormat.close();
-		sb.append("}\n");
-
-		return sb.toString();
 	}
 }
 

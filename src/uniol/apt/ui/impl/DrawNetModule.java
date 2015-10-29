@@ -20,7 +20,7 @@
 package uniol.apt.ui.impl;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.renderer.impl.DotRenderer;
+import uniol.apt.io.renderer.impl.DotPNRenderer;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
@@ -56,8 +56,7 @@ public class DrawNetModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 
-		DotRenderer renderer = new DotRenderer();
-		String dot = renderer.render(pn);
+		String dot = new DotPNRenderer().render(pn);
 
 		output.setReturnValue("dot", String.class, dot);
 	}

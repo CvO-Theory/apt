@@ -20,7 +20,7 @@
 package uniol.apt.ui.impl;
 
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.renderer.impl.DotRenderer;
+import uniol.apt.io.renderer.impl.DotLTSRenderer;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
@@ -55,8 +55,7 @@ public class DrawTSModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		TransitionSystem ts = input.getParameter("lts", TransitionSystem.class);
 
-		DotRenderer renderer = new DotRenderer();
-		String dot = renderer.render(ts);
+		String dot = new DotLTSRenderer().render(ts);
 
 		output.setReturnValue("dot", String.class, dot);
 	}

@@ -22,7 +22,8 @@ package uniol.apt.ui.impl;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.renderer.impl.DotRenderer;
+import uniol.apt.io.renderer.impl.DotLTSRenderer;
+import uniol.apt.io.renderer.impl.DotPNRenderer;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -63,8 +64,7 @@ public class DrawModule extends AbstractModule {
 		PetriNet pn = pnorts.getNet();
 		TransitionSystem ts = pnorts.getTs();
 
-		DotRenderer renderer = new DotRenderer();
-		String dot = pn == null ? renderer.render(ts) : renderer.render(pn);
+		String dot = pn == null ? new DotLTSRenderer().render(ts) : new DotPNRenderer().render(pn);
 
 		output.setReturnValue("dot", String.class, dot);
 	}
