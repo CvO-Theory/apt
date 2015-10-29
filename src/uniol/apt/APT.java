@@ -141,7 +141,7 @@ import uniol.apt.io.converter.Apt2SynetModule;
 import uniol.apt.io.converter.PNML2AptModule;
 import uniol.apt.io.converter.Petrify2AptModule;
 import uniol.apt.io.converter.Synet2AptModule;
-import uniol.apt.io.renderer.impl.BagginsRendererModule;
+import uniol.apt.io.renderer.impl.BagginsPNRendererModule;
 import uniol.apt.io.renderer.impl.LoLARendererModule;
 import uniol.apt.io.renderer.impl.PNMLRendererModule;
 import uniol.apt.module.Category;
@@ -208,7 +208,7 @@ public class APT {
 	private static final Module[] modules = {
 		new Apt2SynetModule(),
 		new Apt2PetrifyModule(),
-		new BagginsRendererModule(),
+		new BagginsPNRendererModule(),
 		new BCFModule(),
 		new BiCFModule(),
 		new BisimulationModule(),

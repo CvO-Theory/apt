@@ -32,7 +32,7 @@ import uniol.apt.module.exception.ModuleException;
  * Convert a given Petri net to the BAGGINS file format used by BAGGINS.
  * @author vsp
  */
-public class BagginsRendererModule extends AbstractModule {
+public class BagginsPNRendererModule extends AbstractModule {
 
 	@Override
 	public String getName() {
@@ -54,7 +54,7 @@ public class BagginsRendererModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 
-		BagginsRenderer renderer = new BagginsRenderer();
+		BagginsPNRenderer renderer = new BagginsPNRenderer();
 		String baggins = renderer.render(pn);
 
 		output.setReturnValue("baggins", String.class, baggins);

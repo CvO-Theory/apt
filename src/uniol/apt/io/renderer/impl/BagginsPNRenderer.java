@@ -41,7 +41,7 @@ import java.util.List;
  * This class renders Petri nets in the file format used by BAGGINS.
  * @author vsp
  */
-public class BagginsRenderer extends AbstractPNRenderer implements PNRenderer {
+public class BagginsPNRenderer extends AbstractPNRenderer implements PNRenderer {
 	static private class IdWeightPair {
 		public int id;
 		public int weight;
@@ -77,7 +77,7 @@ public class BagginsRenderer extends AbstractPNRenderer implements PNRenderer {
 	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
 		verifyNet(pn);
 
-		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/Baggins.stg", '$', '$');
+		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/BagginsPN.stg", '$', '$');
 		ST pnTemplate = group.getInstanceOf("pn");
 		pnTemplate.add("name", pn.getName());
 
