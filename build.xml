@@ -90,6 +90,13 @@
 			<arg value="uniol.apt.io.parser.impl"/>
 			<arg line="${basedir}/src/uniol/apt/io/parser/impl/AptLTSFormat.g4"/>
 		</java>
+		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
+			<arg value="-o"/>
+			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg value="-package"/>
+			<arg value="uniol.apt.io.parser.impl"/>
+			<arg line="${basedir}/src/uniol/apt/io/parser/impl/SynetPNFormat.g4"/>
+		</java>
 		<!-- Touch the time stamp file which antlr.checkforchanges checks for -->
 		<touch file="generated-src/antlr.stamp" mkdirs="true"/>
 	</target>
@@ -319,6 +326,7 @@
 				<exclude name="uniol/apt/io/parser/impl/AptLTSFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/AptPNFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/RegexFormat*.class" />
+				<exclude name="uniol/apt/io/parser/impl/SynetPNFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/petrify/PetrifyLTSFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/synet/SynetPNFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/synet/SynetLTSFormat*.class" />
