@@ -29,7 +29,7 @@ import java.io.InputStreamReader;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.impl.petrify.PetrifyPNParser;
-import uniol.apt.io.renderer.impl.PetrifyRenderer;
+import uniol.apt.io.renderer.impl.PetrifyLTSRenderer;
 import uniol.apt.module.exception.FalseParameterException;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.exception.PetrifyNotFoundException;
@@ -61,7 +61,7 @@ public class PetrifyLTSSynthesize {
 	 * @throws ModuleException
 	 */
 	public boolean check() throws IOException, ModuleException {
-		PetrifyRenderer pf = new PetrifyRenderer();
+		PetrifyLTSRenderer pf = new PetrifyLTSRenderer();
 		String petrifyLts = pf.render(ts_);
 		petrifyLts += "\n"; // this is necessary for petrify v4.2 on MacOS X
 

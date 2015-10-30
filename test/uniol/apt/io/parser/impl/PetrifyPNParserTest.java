@@ -34,7 +34,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.io.parser.impl.petrify.PetrifyPNParser;
-import uniol.apt.io.renderer.impl.PetrifyRenderer;
+import uniol.apt.io.renderer.impl.PetrifyPNRenderer;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.exception.NetIsNotParsableException;
 
@@ -65,7 +65,7 @@ public class PetrifyPNParserTest {
 	}
 
 	private void testonePlaceOneTrans(PetriNet pn) throws ModuleException, IOException {
-		PetrifyRenderer renderer = new PetrifyRenderer();
+		PetrifyPNRenderer renderer = new PetrifyPNRenderer();
 		PetrifyPNParser p = new PetrifyPNParser();
 		String s1 = renderer.render(pn);
 		p.parse(renderer.render(pn));
@@ -76,7 +76,7 @@ public class PetrifyPNParserTest {
 
 	private void testNets(PetriNet pn) throws IOException, NetIsNotParsableException, ModuleException,
 		UnboundedException {
-		PetrifyRenderer renderer = new PetrifyRenderer();
+		PetrifyPNRenderer renderer = new PetrifyPNRenderer();
 		PetrifyPNParser p = new PetrifyPNParser();
 		p.parse(renderer.render(pn));
 		PetriNet test = p.getPN();

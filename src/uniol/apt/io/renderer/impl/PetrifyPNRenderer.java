@@ -28,20 +28,15 @@ import java.util.Set;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.adt.ts.Arc;
-import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.renderer.PNRenderer;
-import uniol.apt.io.renderer.PNTSRenderer;
 import uniol.apt.io.renderer.RenderException;
-import uniol.apt.module.exception.ModuleException;
 
 /**
  * Creates a string which returns a petri net or transitionsystem in the Petrify-format.
  * @author Sören Dierkes
  *
  */
-public class PetrifyRenderer extends AbstractPNRenderer implements PNRenderer, PNTSRenderer {
-
+public class PetrifyPNRenderer extends AbstractPNRenderer implements PNRenderer {
 	@Override
 	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
 		// Petrify does not like:
@@ -137,49 +132,6 @@ public class PetrifyRenderer extends AbstractPNRenderer implements PNRenderer, P
 
 		writer.append(".end");
 		writer.append("\n");
-	}
-
-	@Override
-	public String render(TransitionSystem ts) {
-		StringBuilder sb = new StringBuilder();
-
-		// Petrify does not like:
-		// - empty names (attempted fix below)
-		// - names containing spaces (thus this code was disabled)
-		/*
-		sb.append(".model ").append(ts.getName());
-		if (ts.getName().isEmpty())
-			sb.append("model");
-		sb.append("\n");
-		*/
-
-		sb.append(".inputs ");
-		ArrayList<String> c = new ArrayList<>(0);
-		for (Arc s : ts.getEdges()) {
-			if (!c.contains(s.getLabel())) {
-				c.add(s.getLabel());
-				sb.append(s.getLabel()).append(" ");
-			}
-		}
-		sb.append("\n");
-
-		sb.append(".state graph");
-		sb.append("\n");
-
-		for (Arc e : ts.getEdges()) {
-			String label = e.getLabel();
-			String source = e.getSource().getId();
-			String target = e.getTarget().getId();
-			sb.append(source).append(" ").append(label).append(" ").append(target);
-			sb.append("\n");
-		}
-
-		sb.append(".marking {").append(ts.getInitialState().getId()).append("}");
-		sb.append("\n");
-
-		sb.append(".end");
-		sb.append("\n");
-		return sb.toString();
 	}
 }
 

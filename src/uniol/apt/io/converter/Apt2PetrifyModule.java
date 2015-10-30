@@ -22,7 +22,8 @@ package uniol.apt.io.converter;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.renderer.impl.PetrifyRenderer;
+import uniol.apt.io.renderer.impl.PetrifyLTSRenderer;
+import uniol.apt.io.renderer.impl.PetrifyPNRenderer;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -66,12 +67,11 @@ public class Apt2PetrifyModule extends AbstractModule {
 		PetriNet pn = pnOrTs.getNet();
 		TransitionSystem ts = pnOrTs.getTs();
 
-		PetrifyRenderer ren = new PetrifyRenderer();
 		String out = null;
 		if (pn != null) {
-			out = ren.render(pn);
+			out = new PetrifyPNRenderer().render(pn);
 		} else if (ts != null) {
-			out = ren.render(ts);
+			out = new PetrifyLTSRenderer().render(ts);
 		}
 		if (out == null) {
 			throw new ModuleException("input_type has to be ts or pn");
