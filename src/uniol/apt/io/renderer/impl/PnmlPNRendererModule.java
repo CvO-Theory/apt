@@ -33,7 +33,7 @@ import uniol.apt.module.exception.ModuleException;
  * <p/>
  * @author Manuel Gieseking
  */
-public class PNMLRendererModule extends AbstractModule {
+public class PnmlPNRendererModule extends AbstractModule {
 
 	@Override
 	public String getName() {
@@ -55,7 +55,7 @@ public class PNMLRendererModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 
-		PNMLRenderer renderer = new PNMLRenderer();
+		PnmlPNRenderer renderer = new PnmlPNRenderer();
 		String pnml = renderer.render(pn);
 
 		output.setReturnValue("pnml", String.class, pnml);

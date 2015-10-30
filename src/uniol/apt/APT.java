@@ -143,7 +143,7 @@ import uniol.apt.io.converter.Petrify2AptModule;
 import uniol.apt.io.converter.Synet2AptModule;
 import uniol.apt.io.renderer.impl.BagginsPNRendererModule;
 import uniol.apt.io.renderer.impl.LoLAPNRendererModule;
-import uniol.apt.io.renderer.impl.PNMLRendererModule;
+import uniol.apt.io.renderer.impl.PnmlPNRendererModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleExitStatusChecker;
@@ -251,7 +251,7 @@ public class APT {
 		new NonPureModule(),
 		new OutputNonBranchingModule(),
 		new PNML2AptModule(),
-		new PNMLRendererModule(),
+		new PnmlPNRendererModule(),
 		new PVsOfSmallestCyclesModule(),
 		new PersistentModule(),
 		new Petrify2AptModule(),

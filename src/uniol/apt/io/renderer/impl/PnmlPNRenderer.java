@@ -31,7 +31,7 @@ import uniol.apt.adt.pn.Transition;
  * <p/>
  * @author Manuel Gieseking
  */
-public class PNMLRenderer {
+public class PnmlPNRenderer {
 
 	/**
 	 * Render the given Petri net into the PNML file format.
