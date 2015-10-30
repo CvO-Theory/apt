@@ -142,7 +142,7 @@ import uniol.apt.io.converter.PNML2AptModule;
 import uniol.apt.io.converter.Petrify2AptModule;
 import uniol.apt.io.converter.Synet2AptModule;
 import uniol.apt.io.renderer.impl.BagginsPNRendererModule;
-import uniol.apt.io.renderer.impl.LoLARendererModule;
+import uniol.apt.io.renderer.impl.LoLAPNRendererModule;
 import uniol.apt.io.renderer.impl.PNMLRendererModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.Module;
@@ -246,7 +246,7 @@ public class APT {
 		new LanguageEquivalenceModule(),
 		new LargestKModule(),
 		new LimitedUnfoldingModule(),
-		new LoLARendererModule(),
+		new LoLAPNRendererModule(),
 		new MatrixModule(),
 		new NonPureModule(),
 		new OutputNonBranchingModule(),

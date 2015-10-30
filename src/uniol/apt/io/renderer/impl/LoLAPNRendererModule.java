@@ -32,7 +32,7 @@ import uniol.apt.module.exception.ModuleException;
  * Convert a given Petri net to the LoLA file format used by LoLA.
  * @author Uli Schlachter
  */
-public class LoLARendererModule extends AbstractModule {
+public class LoLAPNRendererModule extends AbstractModule {
 
 	@Override
 	public String getName() {
@@ -54,7 +54,7 @@ public class LoLARendererModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 
-		LoLARenderer renderer = new LoLARenderer();
+		LoLAPNRenderer renderer = new LoLAPNRenderer();
 		String lola = renderer.render(pn);
 
 		output.setReturnValue("lola", String.class, lola);

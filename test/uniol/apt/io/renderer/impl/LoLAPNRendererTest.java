@@ -29,11 +29,11 @@ import static uniol.apt.TestNetCollection.*;
 import uniol.apt.module.exception.ModuleException;
 
 /** @author Uli Schlachter, vsp */
-public class LoLARendererTest {
+public class LoLAPNRendererTest {
 	// Please only add tests to this class after you verified that LoLA can actually parse them!
 
 	private String render(PetriNet pn) throws ModuleException {
-		return new LoLARenderer().render(RendererTestUtils.getSortedNet(pn));
+		return new LoLAPNRenderer().render(RendererTestUtils.getSortedNet(pn));
 	}
 
 	@Test(expectedExceptions = ModuleException.class)

@@ -38,7 +38,7 @@ import uniol.apt.io.renderer.RenderException;
  * This class renders Petri nets in the file format used by LoLA.
  * @author Uli Schlachter, vsp
  */
-public class LoLARenderer extends AbstractPNRenderer implements PNRenderer {
+public class LoLAPNRenderer extends AbstractPNRenderer implements PNRenderer {
 
 	/**
 	 * Verify that the net can be expressed in LoLA file format.
@@ -91,7 +91,7 @@ public class LoLARenderer extends AbstractPNRenderer implements PNRenderer {
 	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
 		verifyNet(pn);
 
-		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/LoLA.stg");
+		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/LoLAPN.stg");
 		ST pnTemplate = group.getInstanceOf("pn");
 		pnTemplate.add("name", pn.getName());
 
