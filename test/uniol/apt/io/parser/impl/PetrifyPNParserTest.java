@@ -19,70 +19,111 @@
 
 package uniol.apt.io.parser.impl;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static uniol.apt.TestNetCollection.getNoTransitionOnePlaceNet;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.testng.annotations.Test;
 
-import uniol.apt.CrashCourseNets;
-import uniol.apt.TestNetCollection;
+import uniol.apt.io.parser.ParseException;
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.analysis.exception.UnboundedException;
-import uniol.apt.analysis.isomorphism.IsomorphismLogic;
-import uniol.apt.io.parser.impl.petrify.PetrifyPNParser;
-import uniol.apt.io.renderer.impl.PetrifyPNRenderer;
-import uniol.apt.module.exception.ModuleException;
-import uniol.apt.module.exception.NetIsNotParsableException;
+import uniol.apt.adt.pn.Place;
+import uniol.apt.adt.pn.Transition;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
- * Test wether the Petrify renderer and parser work together.
+ * Test wether the Petrify parser works.
  * <p/>
  * @author Sören
  * <p/>
  */
 public class PetrifyPNParserTest {
+	@Test
+	public void testOnePlaceOneTrans() throws Exception {
+		PetriNet pn = new PetrifyPNParser().parsePN(".inputs t1\n.graph\nt1 p1\n.marking  { } \n.end\n");
+		assertEquals(pn.getTransitions().size(), 1);
+		assertEquals(pn.getPlaces().size(), 1);
+		assertEquals(pn.getEdges().size(), 1);
+		assertEquals(pn.getTransition("t1").getPostsetNodes().iterator().next().getId(), "p1");
+	}
 
 	@Test
-	public void test() throws FileNotFoundException, ModuleException {
-
-		PetriNet pn = CrashCourseNets.getCCNet1();
-
-		PetriNet onePlace = getNoTransitionOnePlaceNet();
-
-		PetriNet onePlaceOneTrans = TestNetCollection.getTokenGeneratorNet();
-
-		try {
-			testNets(pn);
-			testNets(onePlace);
-			testonePlaceOneTrans(onePlaceOneTrans);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+	public void testIsolatedPlace() throws Exception {
+		PetriNet pn = new PetrifyPNParser().parsePN(".inputs\n.graph\nfoo\n.marking{}\n.end\n");
+		assertEquals(pn.getTransitions().size(), 0);
+		assertEquals(pn.getPlaces().size(), 1);
 	}
 
-	private void testonePlaceOneTrans(PetriNet pn) throws ModuleException, IOException {
-		PetrifyPNRenderer renderer = new PetrifyPNRenderer();
-		PetrifyPNParser p = new PetrifyPNParser();
-		String s1 = renderer.render(pn);
-		p.parse(renderer.render(pn));
-		PetriNet test = p.getPN();
-		String s2 = renderer.render(test);
-		assertEquals(s1, s2);
+	@Test
+	public void testEmptyPN() throws Exception {
+		PetriNet pn = new PetrifyPNParser().parsePN(".inputs\n.graph\n\n.marking{}\n.end\n");
+		assertEquals(pn.getTransitions().size(), 0);
+		assertEquals(pn.getPlaces().size(), 0);
 	}
 
-	private void testNets(PetriNet pn) throws IOException, NetIsNotParsableException, ModuleException,
-		UnboundedException {
-		PetrifyPNRenderer renderer = new PetrifyPNRenderer();
-		PetrifyPNParser p = new PetrifyPNParser();
-		p.parse(renderer.render(pn));
-		PetriNet test = p.getPN();
+	@Test
+	public void testLabel() throws Exception {
+		PetriNet pn = new PetrifyPNParser().parsePN(".inputs a\n.graph\np0 a\na/0 a/1\n.marking{p0}\n.end\n");
+		assertEquals(pn.getTransitions().size(), 2);
+		assertEquals(pn.getPlaces().size(), 2);
 
-		IsomorphismLogic logic = new IsomorphismLogic(pn, test, false);
-		assertTrue(logic.isIsomorphic());
+		Place p0 = pn.getPlace("p0");
+		Place pImpl = pn.getPlace("<a,a/1>");
+		Transition ta = pn.getTransition("a");
+		Transition ta1 = pn.getTransition("a/1");
+
+		assertEquals(p0.getInitialToken().getValue(), 1);
+		assertEquals(pImpl.getInitialToken().getValue(), 0);
+
+		assertEquals(ta.getLabel(), "a");
+		assertEquals(ta1.getLabel(), "a");
+
+		assertEquals(p0.getPresetEdges().size(), 0);
+		assertEquals(p0.getPostsetEdges().size(), 1);
+		assertEquals(ta.getPresetEdges().size(), 1);
+		assertEquals(ta.getPostsetEdges().size(), 1);
+		assertEquals(pImpl.getPresetEdges().size(), 1);
+		assertEquals(pImpl.getPostsetEdges().size(), 1);
+		assertEquals(ta1.getPresetEdges().size(), 1);
+		assertEquals(ta1.getPostsetEdges().size(), 0);
+
+		assertEquals(p0.getPostsetNodes().iterator().next().getId(), ta.getId());
+		assertEquals(ta.getPostsetNodes().iterator().next().getId(), pImpl.getId());
+		assertEquals(pImpl.getPostsetNodes().iterator().next().getId(), ta1.getId());
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testArcBetweenPlaces() throws Exception {
+		PetrifyPNParser p = new PetrifyPNParser();
+		p.parsePN(".inputs\n.graph\np0 p1\n.marking { }\n.end\n");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testDuplicateMarking() throws Exception {
+		PetrifyPNParser p = new PetrifyPNParser();
+		p.parsePN(".inputs a b\n.graph\na b\nb a\n.marking { <a, b> <a, b> }\n.end\n");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testDuplicateMarking2() throws Exception {
+		PetrifyPNParser p = new PetrifyPNParser();
+		p.parsePN(".inputs a b\n.graph\np a\np b\n.marking { p p }\n.end\n");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testDuplicateMarking3() throws Exception {
+		PetrifyPNParser p = new PetrifyPNParser();
+		p.parsePN(".inputs a b\n.graph\na p\na p\n.marking { p p }\n.end\n");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testPlaceDoesNotExist() throws Exception {
+		PetrifyPNParser p = new PetrifyPNParser();
+		p.parsePN(".inputs a b\n.graph\n.marking { <a, b> }\n.end\n");
+	}
+
+	@Test(expectedExceptions = { ParseException.class })
+	public void testSplitNonExistentEvent() throws Exception {
+		PetrifyPNParser p = new PetrifyPNParser();
+		p.parsePN(".inputs a b\n.graph\na/0 b c/1\n.marking { <a, b> }\n.end\n");
 	}
 }
 
