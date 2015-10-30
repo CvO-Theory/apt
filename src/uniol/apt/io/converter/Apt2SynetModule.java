@@ -22,7 +22,8 @@ package uniol.apt.io.converter;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.renderer.impl.SynetRenderer;
+import uniol.apt.io.renderer.impl.SynetLTSRenderer;
+import uniol.apt.io.renderer.impl.SynetPNRenderer;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -66,12 +67,11 @@ public class Apt2SynetModule extends AbstractModule {
 		PetriNet pn = pnOrTs.getNet();
 		TransitionSystem ts = pnOrTs.getTs();
 
-		SynetRenderer ren = new SynetRenderer();
 		String synetPN = null;
 		if(pn != null) {
-			synetPN = ren.render(pn);
+			synetPN = new SynetPNRenderer().render(pn);
 		} else if (ts != null) {
-			synetPN = ren.render(ts);
+			synetPN = new SynetLTSRenderer().render(ts);
 		}
 		if (synetPN == null) {
 			throw new ModuleException("input_type has to be ts or pn");

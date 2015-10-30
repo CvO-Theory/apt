@@ -26,6 +26,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.exception.FormatException;
+import uniol.apt.io.renderer.RenderException;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -82,7 +83,7 @@ public class SynthesizeDistributedLTSModule extends AbstractModule {
 			} else {
 				output.setReturnValue("error", String.class, checkLTS.getError());
 			}
-		} catch (IOException | FormatException | ParseException ex) {
+		} catch (IOException | FormatException | ParseException | RenderException ex) {
 			throw new ModuleException(ex);
 		}
 

@@ -22,29 +22,21 @@ package uniol.apt.io.renderer.impl;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.adt.ts.Arc;
-import uniol.apt.adt.ts.State;
-import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.renderer.PNRenderer;
-import uniol.apt.io.renderer.PNTSRenderer;
 import uniol.apt.io.renderer.RenderException;
-import uniol.apt.util.StringComparator;
 
 /**
  * @author Vincent Göbel, Thomas Strathmann
  *
  */
-public class SynetRenderer extends AbstractPNRenderer implements PNRenderer, PNTSRenderer {
-
+public class SynetPNRenderer extends AbstractPNRenderer implements PNRenderer {
 	@Override
 	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
 		for (Transition t : pn.getTransitions()) {
@@ -80,46 +72,6 @@ public class SynetRenderer extends AbstractPNRenderer implements PNRenderer, PNT
 				writer.append(String.format("-- %s\n", a.getSource().getId()));
 			}
 		}
-	}
-
-	@Override
-	public String render(TransitionSystem ts) {
-		StringBuilder output = new StringBuilder();
-		StringBuilder head = new StringBuilder();
-		output.append("\n");
-
-		// build a map from APT state _names_ to Synet state _indices_
-		HashMap<String, Integer> rename = new HashMap<>();
-
-		// to ensure that the initial state is always mapped to 0 insert it first!
-		rename.put(ts.getInitialState().getId(), 0);
-
-		// add the other states (in ascending order)
-		TreeSet<String> stateNames = new TreeSet<String>(new StringComparator());
-		for (State s : ts.getNodes()) {
-			if(s != ts.getInitialState())
-				stateNames.add(s.getId());
-		}
-		int id = 1;
-		for (String s : stateNames) {
-			rename.put(s, id++);
-		}
-
-		// export edges
-		for (Arc e : ts.getEdges()) {
-			String label = e.getLabel();
-			String source = e.getSource().getId();
-			String target = e.getTarget().getId();
-			output.append(String.format("(%s, %s, %s)\n",
-				rename.get(source), label, rename.get(target)));
-		}
-
-		// write file header
-		int initial = rename.get(ts.getInitialState().getId());
-		head.append(String.format("des(%d, %d, %d)", initial,
-			ts.getEdges().size(), ts.getNodes().size()));
-
-		return head.append(output).toString();
 	}
 }
 
