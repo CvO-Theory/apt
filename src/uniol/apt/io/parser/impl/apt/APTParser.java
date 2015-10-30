@@ -30,7 +30,6 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.AptLTSParser;
 import uniol.apt.io.parser.impl.AptPNParser;
-import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 
 /**
  * Parses a file in apt format into a lts or pn; depending on the type parameter mention in the file.
@@ -48,14 +47,10 @@ public class APTParser {
 	 * @param path the file with the data to parse.
 	 * <p/>
 	 * @throws IOException           thrown if the file could not be read.
-	 * @throws NodeNotExistException thrown if a node is used, but do not belong the graph.
-	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file.
-	 * @throws LexerParserException  thrown if the file could not be parsed.
-	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
 	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
 	 *                               all.
 	 */
-	public void parse(String path) throws IOException, TypeMismatchException, ParseException {
+	public void parse(String path) throws IOException, ParseException {
 		parse(new FileInputStream(path));
 	}
 
@@ -65,15 +60,10 @@ public class APTParser {
 	 * @param is the inputstream with the data to parse.
 	 * <p/>
 	 * @throws IOException           thrown if the file could not be read.
-	 * @throws NodeNotExistException thrown if a node is used, but do not belong the graph.
-	 * @throws TypeMismatchException thrown if the type of the graph do not match the specified type in the file or
-	 *                               type not found.
-	 * @throws LexerParserException  thrown if the file could not be parsed.
-	 * @throws StructureException    thrown if the parsed data could not be converted into the graph.
 	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
 	 *                               all.
 	 */
-	public void parse(InputStream is) throws IOException, TypeMismatchException, ParseException {
+	public void parse(InputStream is) throws IOException, ParseException {
 		pn = null;
 		ts = null;
 
@@ -92,7 +82,7 @@ public class APTParser {
 		} else if (data.matches("(?s).*\\.type\\s+(LPN|PN)(?s).*")) {
 			pn = new AptPNParser().parsePN(is);
 		} else {
-			throw new TypeMismatchException("File type PN, LPN, TS, LTS needed.");
+			throw new ParseException("File type PN, LPN, TS, LTS needed.");
 		}
 	}
 

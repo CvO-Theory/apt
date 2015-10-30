@@ -23,7 +23,6 @@ import java.io.IOException;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
-import uniol.apt.io.parser.impl.exception.StructureException;
 import uniol.apt.io.parser.impl.PetrifyLTSParser;
 import uniol.apt.io.parser.impl.PetrifyPNParser;
 import uniol.apt.io.renderer.impl.AptLTSRenderer;

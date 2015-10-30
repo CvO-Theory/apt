@@ -21,7 +21,6 @@ package uniol.apt.pnanalysis;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Set;
 
 import uniol.apt.TestNetCollection;
@@ -29,7 +28,6 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.io.parser.ParserTestUtils;
-import uniol.apt.io.parser.impl.exception.FormatException;
 import static org.testng.Assert.fail;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -51,7 +49,7 @@ import uniol.tests.dataprovider.annotations.IntRangeParameter;
 public class PnAnalysisTest {
 
 	@Test
-	public void testPreconditionFailedTest() throws IOException, FormatException, ModuleException {
+	public void testPreconditionFailedTest() throws Exception {
 		PnAnalysis ana = new PnAnalysis();
 		try {
 			PetriNet pn = ParserTestUtils.getAptPN("nets/crashkurs-cc2-net.apt");
@@ -70,7 +68,7 @@ public class PnAnalysisTest {
 	}
 
 	@Test
-	public void testIsomorphism() throws IOException, FormatException, ModuleException {
+	public void testIsomorphism() throws Exception {
 		PetriNet pn1 = ParserTestUtils.getAptPN("nets/ksysT-net-aut-net.apt");
 		PetriNet pn2 = ParserTestUtils.getAptPN("./nets/EB-PhD-Fundamenta.apt");
 		IsomorphismLogic logic = new IsomorphismLogic(pn1, pn2, false);
@@ -92,7 +90,7 @@ public class PnAnalysisTest {
 	}
 
 	@Test(enabled = false) // This test needs sometimes more than hour (instead of a minute) => disable it
-	public void testRandom() throws IOException, FormatException, ModuleException {
+	public void testRandom() throws Exception {
 		PetriNet pn = ParserTestUtils.getAptPN("./nets/EB-PhD-Fundamenta.apt");
 		PnAnalysis ana = new PnAnalysis();
 		PetriNet net = ana.checkAllIsomorphicTSystemsForPetriNet(pn, 20, 10, true);
@@ -134,14 +132,14 @@ public class PnAnalysisTest {
 	}
 
 	@Test(enabled = false)
-	public void test() throws IOException, FormatException, ModuleException {
+	public void test() throws Exception {
 		PetriNet pn = ParserTestUtils.getAptPN("./nets/EB-PhD-Fundamenta.apt");
 		PnAnalysis ana = new PnAnalysis();
 		assertNotEquals(null, ana.checkAllIsomorphicTSystemsForPetriNet(pn, 8, 2, false));
 	}
 
 	@Test
-	public void testOnePlaceNet() throws IOException, FormatException, ModuleException {
+	public void testOnePlaceNet() throws Exception {
 		PetriNet pn = TestNetCollection.getNoTransitionOnePlaceNet();
 		pn.setInitialMarking(new Marking(pn, 5));
 		PnAnalysis ana = new PnAnalysis();

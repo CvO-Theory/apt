@@ -26,10 +26,6 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.apt.APTParser;
-import uniol.apt.io.parser.impl.exception.FormatException;
-import uniol.apt.io.parser.impl.exception.LexerParserException;
-import uniol.apt.io.parser.impl.exception.NodeNotExistException;
-import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.ParameterTransformation;
 
@@ -60,8 +56,6 @@ public class NetOrTSParameterTransformation implements ParameterTransformation<P
 			}
 		} catch (IOException e) {
 			throw new ModuleException("Cannot parse file '" + filename + "': File does not exist");
-		} catch (TypeMismatchException ex) {
-			throw new ModuleException("Create data structure: " + ex.getMessage(), ex);
 		} catch (ParseException ex) {
 			throw new ModuleException("Can't parse Petri net or transition system: " + ex.getMessage());
 		}

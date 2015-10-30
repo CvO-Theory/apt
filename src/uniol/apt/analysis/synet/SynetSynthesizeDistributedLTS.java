@@ -34,7 +34,6 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
-import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.SynetPNParser;
 import uniol.apt.io.renderer.RenderException;
 import uniol.apt.io.renderer.impl.SynetLTSRenderer;
@@ -68,8 +67,7 @@ public class SynetSynthesizeDistributedLTS {
 	 * @throws FormatException
 	 * @throws ParseException Thrown if the synet output can't get parsed.
 	 */
-	public boolean check() throws SynetNotFoundException, IOException, FormatException, ParseException,
-			RenderException {
+	public boolean check() throws SynetNotFoundException, IOException, ParseException, RenderException {
 		String ltsSynetFormat = new SynetLTSRenderer().render(ts_);
 
 		File tmpAutFile = File.createTempFile("synetAut", ".aut");
