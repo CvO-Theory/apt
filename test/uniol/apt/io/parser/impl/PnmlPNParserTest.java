@@ -22,7 +22,6 @@ package uniol.apt.io.parser.impl;
 import org.testng.annotations.Test;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.parser.impl.pnml.PNMLParser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.CrashCourseNets.getCCNet2;
@@ -31,10 +30,10 @@ import static uniol.apt.adt.matcher.Matchers.*;
 /**
  * @author Manuel Gieseking
  */
-public class PNMLParserTest {
+public class PnmlPNParserTest {
 	@Test
 	public void testCCNet2Pipe() throws Exception {
-		PetriNet actual = PNMLParser.getPetriNet("nets/crashkurs-cc2-net.pipe.pnml");
+		PetriNet actual = new PnmlPNParser().parsePNFile("nets/crashkurs-cc2-net.pipe.pnml");
 		PetriNet expected = getCCNet2();
 		assertThat(actual, netWithSameStructureAs(expected));
 		assertThat(actual.getName(), is("Net-One"));
@@ -42,7 +41,7 @@ public class PNMLParserTest {
 
 	@Test
 	public void testCCNet2Lola() throws Exception {
-		PetriNet actual = PNMLParser.getPetriNet("nets/crashkurs-cc2-net.lola.pnml");
+		PetriNet actual = new PnmlPNParser().parsePNFile("nets/crashkurs-cc2-net.lola.pnml");
 		PetriNet expected = getCCNet2();
 		assertThat(actual, netWithSameStructureAs(expected));
 		assertThat(actual.getName(), is("LoLA_Ausgabe"));
@@ -50,7 +49,7 @@ public class PNMLParserTest {
 
 	@Test
 	public void testEmptyNetPipe() throws Exception {
-		PetriNet actual = PNMLParser.getPetriNet("nets/empty-net.pnml");
+		PetriNet actual = new PnmlPNParser().parsePNFile("nets/empty-net.pnml");
 		PetriNet expected = new PetriNet();
 		assertThat(actual, netWithSameStructureAs(expected));
 		assertThat(actual.getName(), is("Net-One"));

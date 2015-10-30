@@ -101,7 +101,7 @@ public class ParsableTask extends Task {
 					new PNParserTester(new PetrifyPNParser(), outputdir),
 					new LTSParserTester(new PetrifyLTSParser(), outputdir),
 					new RegexParserTester(outputdir),
-					new PNMLParserTester(outputdir),
+					new PNParserTester(new PnmlPNParser(), outputdir),
 				};
 			} catch (FileNotFoundException | UnsupportedEncodingException e) {
 				throw new BuildException(e);

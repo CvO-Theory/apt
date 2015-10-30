@@ -19,11 +19,9 @@
 
 package uniol.apt.io.converter;
 
-import java.io.IOException;
-
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.parser.impl.exception.FormatException;
-import uniol.apt.io.parser.impl.pnml.PNMLParser;
+import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.impl.PnmlPNParser;
 
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -55,11 +53,9 @@ public class PNML2AptModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		String filename = input.getParameter("input_filename", String.class);
 		try {
-			output.setReturnValue("pn", PetriNet.class, PNMLParser.getPetriNet(filename));
-		} catch (IOException e) {
-			throw new ModuleException("Cannot parse file '" + filename + "': File does not exist");
-		} catch (FormatException ex) {
-			throw new ModuleException(ex.getMessage(), ex);
+			output.setReturnValue("pn", PetriNet.class, new PnmlPNParser().parsePN(filename));
+		} catch (ParseException ex) {
+			throw new ModuleException(ex);
 		}
 	}
 
