@@ -37,7 +37,7 @@ import uniol.apt.adt.exception.DatastructureException;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.parser.LTSParser;
+import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 
 /**
@@ -45,7 +45,7 @@ import uniol.apt.io.parser.ParseException;
  *
  * @author vsp
  */
-public class AptLTSParser extends AbstractLTSParser implements LTSParser {
+public class AptLTSParser extends AbstractParser<TransitionSystem> implements Parser<TransitionSystem> {
 	private static class NameDescStateLabelListener extends AptLTSFormatBaseListener
 			implements AptLTSFormatListener {
 		private final TransitionSystem ts;
@@ -154,7 +154,7 @@ public class AptLTSParser extends AbstractLTSParser implements LTSParser {
 	}
 
 	@Override
-	public TransitionSystem parseLTS(InputStream is) throws ParseException, IOException {
+	public TransitionSystem parse(InputStream is) throws ParseException, IOException {
 		CharStream input          = new ANTLRInputStream(is);
 		AptLTSFormatLexer lexer   = new AptLTSFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr

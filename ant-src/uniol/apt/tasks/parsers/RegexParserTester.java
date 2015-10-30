@@ -31,7 +31,7 @@ import uniol.apt.io.parser.impl.RegexParser;
  * A tester for the RegexParser.
  * @author Uli Schlachter
  */
-public class RegexParserTester extends ParserTester {
+public class RegexParserTester extends AbstractParserTester {
 
 	/** Construct a new tester */
 	public RegexParserTester(File outputDir) throws FileNotFoundException, UnsupportedEncodingException {

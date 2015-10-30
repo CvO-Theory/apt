@@ -33,7 +33,7 @@ import static uniol.apt.adt.matcher.Matchers.*;
 public class PnmlPNParserTest {
 	@Test
 	public void testCCNet2Pipe() throws Exception {
-		PetriNet actual = new PnmlPNParser().parsePNFile("nets/crashkurs-cc2-net.pipe.pnml");
+		PetriNet actual = new PnmlPNParser().parseFile("nets/crashkurs-cc2-net.pipe.pnml");
 		PetriNet expected = getCCNet2();
 		assertThat(actual, netWithSameStructureAs(expected));
 		assertThat(actual.getName(), is("Net-One"));
@@ -41,7 +41,7 @@ public class PnmlPNParserTest {
 
 	@Test
 	public void testCCNet2Lola() throws Exception {
-		PetriNet actual = new PnmlPNParser().parsePNFile("nets/crashkurs-cc2-net.lola.pnml");
+		PetriNet actual = new PnmlPNParser().parseFile("nets/crashkurs-cc2-net.lola.pnml");
 		PetriNet expected = getCCNet2();
 		assertThat(actual, netWithSameStructureAs(expected));
 		assertThat(actual.getName(), is("LoLA_Ausgabe"));
@@ -49,7 +49,7 @@ public class PnmlPNParserTest {
 
 	@Test
 	public void testEmptyNetPipe() throws Exception {
-		PetriNet actual = new PnmlPNParser().parsePNFile("nets/empty-net.pnml");
+		PetriNet actual = new PnmlPNParser().parseFile("nets/empty-net.pnml");
 		PetriNet expected = new PetriNet();
 		assertThat(actual, netWithSameStructureAs(expected));
 		assertThat(actual.getName(), is("Net-One"));

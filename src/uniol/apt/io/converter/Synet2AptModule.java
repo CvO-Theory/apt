@@ -97,11 +97,11 @@ public class Synet2AptModule extends AbstractModule {
 	}
 
 	private static String convertLTS(String filename) throws IOException, ModuleException, ParseException {
-		return new AptLTSRenderer().render(new SynetLTSParser().parseLTSFile(filename));
+		return new AptLTSRenderer().render(new SynetLTSParser().parseFile(filename));
 	}
 
 	private static String convertPN(String filename) throws IOException, ModuleException, ParseException {
-		return new AptPNRenderer().render(new SynetPNParser().parsePNFile(filename));
+		return new AptPNRenderer().render(new SynetPNParser().parseFile(filename));
 	}
 
 	@Override

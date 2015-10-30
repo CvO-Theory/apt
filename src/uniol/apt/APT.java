@@ -141,6 +141,8 @@ import uniol.apt.io.converter.Apt2SynetModule;
 import uniol.apt.io.converter.PNML2AptModule;
 import uniol.apt.io.converter.Petrify2AptModule;
 import uniol.apt.io.converter.Synet2AptModule;
+import uniol.apt.io.parser.impl.AptLTSParser;
+import uniol.apt.io.parser.impl.AptPNParser;
 import uniol.apt.io.renderer.impl.BagginsPNRendererModule;
 import uniol.apt.io.renderer.impl.LoLAPNRendererModule;
 import uniol.apt.io.renderer.impl.PnmlPNRendererModule;
@@ -177,10 +179,9 @@ import uniol.apt.ui.impl.parameter.GraphParameterTransformation;
 import uniol.apt.ui.impl.parameter.IntegerParameterTransformation;
 import uniol.apt.ui.impl.parameter.MatrixFileFormatParameterTransformation;
 import uniol.apt.ui.impl.parameter.NetOrTSParameterTransformation;
-import uniol.apt.ui.impl.parameter.NetParameterTransformation;
 import uniol.apt.ui.impl.parameter.ParikhVectorParameterTransformation;
+import uniol.apt.ui.impl.parameter.ParserParameterTransformation;
 import uniol.apt.ui.impl.parameter.StringParameterTransformation;
-import uniol.apt.ui.impl.parameter.TSParameterTransformation;
 import uniol.apt.ui.impl.parameter.WordParameterTransformation;
 import uniol.apt.ui.impl.returns.BooleanReturnValueTransformation;
 import uniol.apt.ui.impl.returns.ComponentsReturnValueTransformation;
@@ -345,8 +346,11 @@ public class APT {
 		parametersTransformer.addTransformation(Character.class, new CharacterParameterTransformation());
 		parametersTransformer.addTransformation(Integer.class, new IntegerParameterTransformation());
 		parametersTransformer.addTransformation(Word.class, new WordParameterTransformation());
-		parametersTransformer.addTransformation(PetriNet.class, new NetParameterTransformation());
-		parametersTransformer.addTransformation(TransitionSystem.class, new TSParameterTransformation());
+		parametersTransformer.addTransformation(PetriNet.class,
+				new ParserParameterTransformation<PetriNet>(new AptPNParser(), "Petri net"));
+		parametersTransformer.addTransformation(TransitionSystem.class,
+				new ParserParameterTransformation<TransitionSystem>(new AptLTSParser(),
+					"transition system"));
 		parametersTransformer.addTransformation(ExtendMode.class, new ExtendModeParameterTransformation());
 		parametersTransformer.addTransformation(ParikhVector.class, new ParikhVectorParameterTransformation());
 		parametersTransformer.addTransformation(PetriNetOrTransitionSystem.class,

@@ -38,7 +38,7 @@ import static org.testng.Assert.assertTrue;
 public class PetrifyPNParserTest {
 	@Test
 	public void testOnePlaceOneTrans() throws Exception {
-		PetriNet pn = new PetrifyPNParser().parsePN(".inputs t1\n.graph\nt1 p1\n.marking  { } \n.end\n");
+		PetriNet pn = new PetrifyPNParser().parse(".inputs t1\n.graph\nt1 p1\n.marking  { } \n.end\n");
 		assertEquals(pn.getTransitions().size(), 1);
 		assertEquals(pn.getPlaces().size(), 1);
 		assertEquals(pn.getEdges().size(), 1);
@@ -47,21 +47,21 @@ public class PetrifyPNParserTest {
 
 	@Test
 	public void testIsolatedPlace() throws Exception {
-		PetriNet pn = new PetrifyPNParser().parsePN(".inputs\n.graph\nfoo\n.marking{}\n.end\n");
+		PetriNet pn = new PetrifyPNParser().parse(".inputs\n.graph\nfoo\n.marking{}\n.end\n");
 		assertEquals(pn.getTransitions().size(), 0);
 		assertEquals(pn.getPlaces().size(), 1);
 	}
 
 	@Test
 	public void testEmptyPN() throws Exception {
-		PetriNet pn = new PetrifyPNParser().parsePN(".inputs\n.graph\n\n.marking{}\n.end\n");
+		PetriNet pn = new PetrifyPNParser().parse(".inputs\n.graph\n\n.marking{}\n.end\n");
 		assertEquals(pn.getTransitions().size(), 0);
 		assertEquals(pn.getPlaces().size(), 0);
 	}
 
 	@Test
 	public void testLabel() throws Exception {
-		PetriNet pn = new PetrifyPNParser().parsePN(".inputs a\n.graph\np0 a\na/0 a/1\n.marking{p0}\n.end\n");
+		PetriNet pn = new PetrifyPNParser().parse(".inputs a\n.graph\np0 a\na/0 a/1\n.marking{p0}\n.end\n");
 		assertEquals(pn.getTransitions().size(), 2);
 		assertEquals(pn.getPlaces().size(), 2);
 
@@ -93,37 +93,37 @@ public class PetrifyPNParserTest {
 	@Test(expectedExceptions = { ParseException.class })
 	public void testArcBetweenPlaces() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
-		p.parsePN(".inputs\n.graph\np0 p1\n.marking { }\n.end\n");
+		p.parse(".inputs\n.graph\np0 p1\n.marking { }\n.end\n");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDuplicateMarking() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
-		p.parsePN(".inputs a b\n.graph\na b\nb a\n.marking { <a, b> <a, b> }\n.end\n");
+		p.parse(".inputs a b\n.graph\na b\nb a\n.marking { <a, b> <a, b> }\n.end\n");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDuplicateMarking2() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
-		p.parsePN(".inputs a b\n.graph\np a\np b\n.marking { p p }\n.end\n");
+		p.parse(".inputs a b\n.graph\np a\np b\n.marking { p p }\n.end\n");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDuplicateMarking3() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
-		p.parsePN(".inputs a b\n.graph\na p\na p\n.marking { p p }\n.end\n");
+		p.parse(".inputs a b\n.graph\na p\na p\n.marking { p p }\n.end\n");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testPlaceDoesNotExist() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
-		p.parsePN(".inputs a b\n.graph\n.marking { <a, b> }\n.end\n");
+		p.parse(".inputs a b\n.graph\n.marking { <a, b> }\n.end\n");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testSplitNonExistentEvent() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
-		p.parsePN(".inputs a b\n.graph\na/0 b c/1\n.marking { <a, b> }\n.end\n");
+		p.parse(".inputs a b\n.graph\na/0 b c/1\n.marking { <a, b> }\n.end\n");
 	}
 }
 

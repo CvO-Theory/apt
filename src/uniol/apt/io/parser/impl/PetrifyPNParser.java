@@ -37,7 +37,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import uniol.apt.adt.exception.DatastructureException;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
-import uniol.apt.io.parser.PNParser;
+import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.util.Pair;
 
@@ -46,7 +46,7 @@ import uniol.apt.util.Pair;
  *
  * @author Uli Schlachter
  */
-public class PetrifyPNParser extends AbstractPNParser implements PNParser {
+public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<PetriNet> {
 	private static class PNListener extends PetrifyPNFormatParserBaseListener
 			implements PetrifyPNFormatParserListener {
 		private final PetriNet pn;
@@ -148,7 +148,7 @@ public class PetrifyPNParser extends AbstractPNParser implements PNParser {
 	}
 
 	@Override
-	public PetriNet parsePN(InputStream is) throws ParseException, IOException {
+	public PetriNet parse(InputStream is) throws ParseException, IOException {
 		CharStream input = new ANTLRInputStream(is);
 		PetrifyPNFormatLexer lexer = new PetrifyPNFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr

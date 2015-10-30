@@ -53,7 +53,7 @@ public class PNML2AptModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		String filename = input.getParameter("input_filename", String.class);
 		try {
-			output.setReturnValue("pn", PetriNet.class, new PnmlPNParser().parsePN(filename));
+			output.setReturnValue("pn", PetriNet.class, new PnmlPNParser().parse(filename));
 		} catch (ParseException ex) {
 			throw new ModuleException(ex);
 		}

@@ -36,7 +36,7 @@ import uniol.apt.io.parser.ParseException;
 public class AptLTSParserTest {
 	@Test
 	public void testLTSTestNet() throws Exception {
-		TransitionSystem ts = new AptLTSParser().parseLTSFile("nets/testLts-aut.apt");
+		TransitionSystem ts = new AptLTSParser().parseFile("nets/testLts-aut.apt");
 		assertEquals(ts.getName(), "testnet");
 		State e = ts.getNode("s2");
 		assertEquals(e.getExtension("bla").toString(), "hund");
@@ -73,56 +73,56 @@ public class AptLTSParserTest {
 
 	@Test
 	public void testLoop() throws Exception {
-		TransitionSystem ts = new AptLTSParser().parseLTS(".type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.labels l1\n.arcs s1 l1 s1");
+		TransitionSystem ts = new AptLTSParser().parse(".type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.labels l1\n.arcs s1 l1 s1");
 		loopAsserts(ts);
 	}
 
 	@Test
 	public void testLoopArcsFirst() throws Exception {
-		TransitionSystem ts = new AptLTSParser().parseLTS(".arcs s1 l1 s1\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.labels l1");
+		TransitionSystem ts = new AptLTSParser().parse(".arcs s1 l1 s1\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.labels l1");
 		loopAsserts(ts);
 	}
 
 	@Test
 	public void testLoopLabelsFirst() throws Exception {
-		TransitionSystem ts = new AptLTSParser().parseLTS(".labels l1\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.arcs s1 l1 s1");
+		TransitionSystem ts = new AptLTSParser().parse(".labels l1\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.arcs s1 l1 s1");
 		loopAsserts(ts);
 	}
 
 	@Test
 	public void testLoopStatesFirst() throws Exception {
-		TransitionSystem ts = new AptLTSParser().parseLTS(".states s1[initial]\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.labels l1\n.arcs s1 l1 s1");
+		TransitionSystem ts = new AptLTSParser().parse(".states s1[initial]\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.labels l1\n.arcs s1 l1 s1");
 		loopAsserts(ts);
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDoubleNodes() throws Exception {
-		new AptLTSParser().parseLTSFile("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-aut.apt");
+		new AptLTSParser().parseFile("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-aut.apt");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDoubleInitState() throws Exception {
-		new AptLTSParser().parseLTSFile("nets/not-parsable-test-nets/doubleInitialstate_shouldNotBeParsable-aut.apt");
+		new AptLTSParser().parseFile("nets/not-parsable-test-nets/doubleInitialstate_shouldNotBeParsable-aut.apt");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testMissingType() throws Exception {
-		new AptLTSParser().parseLTS(".name \"42\"\n.states foo\n.labels bar\n.arcs");
+		new AptLTSParser().parse(".name \"42\"\n.states foo\n.labels bar\n.arcs");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testTypeTwice() throws Exception {
-		new AptLTSParser().parseLTS(".name \"42\"\n.type LTS\n.type LTS\n.states foo\n.labels bar\n.arcs");
+		new AptLTSParser().parse(".name \"42\"\n.type LTS\n.type LTS\n.states foo\n.labels bar\n.arcs");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testNameTwice() throws Exception {
-		new AptLTSParser().parseLTS(".name \"42\"\n.name \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
+		new AptLTSParser().parse(".name \"42\"\n.name \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDescriptionTwice() throws Exception {
-		new AptLTSParser().parseLTS(".name \"42\"\n.description \"42\"\n.description \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
+		new AptLTSParser().parse(".name \"42\"\n.description \"42\"\n.description \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
 	}
 }
 

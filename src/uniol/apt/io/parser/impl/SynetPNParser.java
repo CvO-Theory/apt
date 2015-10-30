@@ -38,7 +38,7 @@ import uniol.apt.adt.extension.Extensible;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.io.parser.PNParser;
+import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 
 /**
@@ -46,7 +46,7 @@ import uniol.apt.io.parser.ParseException;
  *
  * @author vsp
  */
-public class SynetPNParser extends AbstractPNParser implements PNParser {
+public class SynetPNParser extends AbstractParser<PetriNet> implements Parser<PetriNet> {
 	private static class LocationListener extends SynetPNFormatBaseListener implements SynetPNFormatListener {
 		private final Set<String> locations;
 
@@ -141,7 +141,7 @@ public class SynetPNParser extends AbstractPNParser implements PNParser {
 	}
 
 	@Override
-	public PetriNet parsePN(InputStream is) throws ParseException, IOException {
+	public PetriNet parse(InputStream is) throws ParseException, IOException {
 		CharStream input           = new ANTLRInputStream(is);
 		SynetPNFormatLexer lexer   = new SynetPNFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr

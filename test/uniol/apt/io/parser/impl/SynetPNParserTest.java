@@ -35,7 +35,7 @@ import uniol.apt.io.parser.ParseException;
 public class SynetPNParserTest {
 	@Test
 	public void testPN() throws Exception {
-		PetriNet pn = new SynetPNParser().parsePNFile("nets/synet-nets/synet-docu-example.net");
+		PetriNet pn = new SynetPNParser().parseFile("nets/synet-nets/synet-docu-example.net");
 		assertEquals(pn.getTransitions().size(), 5);
 		assertEquals(pn.getPlaces().size(), 6);
 
@@ -69,37 +69,37 @@ public class SynetPNParserTest {
 
 	@Test
 	public void testSideCondition() throws Exception {
-		PetriNet pn = new SynetPNParser().parsePN("transition t1 place p1 := 1 flow p1 <- 1 -- t1 flow p1 ---> t1");
+		PetriNet pn = new SynetPNParser().parse("transition t1 place p1 := 1 flow p1 <- 1 -- t1 flow p1 ---> t1");
 		sideConditionAsserts(pn);
 	}
 
 	@Test
 	public void testSideConditionWithLocation() throws Exception {
-		PetriNet pn = new SynetPNParser().parsePN("transition t1 :: l place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
+		PetriNet pn = new SynetPNParser().parse("transition t1 :: l place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
 		sideConditionAsserts(pn);
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testSideConditionWithPartialLocation1() throws Exception {
-		PetriNet pn = new SynetPNParser().parsePN("transition t1 place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
+		PetriNet pn = new SynetPNParser().parse("transition t1 place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
 		sideConditionAsserts(pn);
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testSideConditionWithPartialLocation2() throws Exception {
-		PetriNet pn = new SynetPNParser().parsePN("transition t1 :: l place p1 := 1 flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
+		PetriNet pn = new SynetPNParser().parse("transition t1 :: l place p1 := 1 flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
 		sideConditionAsserts(pn);
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testSideConditionWithUndeclaredLocation() throws Exception {
-		PetriNet pn = new SynetPNParser().parsePN("transition t1 :: l place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1");
+		PetriNet pn = new SynetPNParser().parse("transition t1 :: l place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1");
 		sideConditionAsserts(pn);
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDoubleLocation() throws Exception {
-		new SynetPNParser().parsePN("location A\nlocation A");
+		new SynetPNParser().parse("location A\nlocation A");
 	}
 }
 

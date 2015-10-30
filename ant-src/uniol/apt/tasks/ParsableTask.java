@@ -90,18 +90,18 @@ public class ParsableTask extends Task {
 		}
 
 		boolean fail = false;
-		ParserTester[] testers = null;
+		AbstractParserTester[] testers = null;
 		try {
 			try {
-				testers = new ParserTester[] {
-					new PNParserTester(new AptPNParser(), outputdir),
-					new LTSParserTester(new AptLTSParser(), outputdir),
-					new PNParserTester(new SynetPNParser(), outputdir),
-					new LTSParserTester(new SynetLTSParser(), outputdir),
-					new PNParserTester(new PetrifyPNParser(), outputdir),
-					new LTSParserTester(new PetrifyLTSParser(), outputdir),
+				testers = new AbstractParserTester[] {
+					new ParserTester<>(new AptPNParser(), outputdir),
+					new ParserTester<>(new AptLTSParser(), outputdir),
+					new ParserTester<>(new SynetPNParser(), outputdir),
+					new ParserTester<>(new SynetLTSParser(), outputdir),
+					new ParserTester<>(new PetrifyPNParser(), outputdir),
+					new ParserTester<>(new PetrifyLTSParser(), outputdir),
 					new RegexParserTester(outputdir),
-					new PNParserTester(new PnmlPNParser(), outputdir),
+					new ParserTester<>(new PnmlPNParser(), outputdir),
 				};
 			} catch (FileNotFoundException | UnsupportedEncodingException e) {
 				throw new BuildException(e);
@@ -118,7 +118,7 @@ public class ParsableTask extends Task {
 			}
 		} finally {
 			if (testers != null)
-				for (ParserTester tester : testers)
+				for (AbstractParserTester tester : testers)
 					tester.close();
 		}
 
@@ -127,13 +127,13 @@ public class ParsableTask extends Task {
 	}
 
 	/** Do the work */
-	private boolean parseFile(ParserTester[] testers, File file, String fileName, boolean expectUnparsable) {
+	private boolean parseFile(AbstractParserTester[] testers, File file, String fileName, boolean expectUnparsable) {
 		// Try various parsers and hope that one of them works, but always check all parsers to make sure they
 		// can handle unparsable files correctly.
 		boolean fail = false;
-		List<ParserTester> successful = new ArrayList<>();
+		List<AbstractParserTester> successful = new ArrayList<>();
 
-		for (ParserTester tester : testers) {
+		for (AbstractParserTester tester : testers) {
 			try {
 				tester.parse(file);
 				successful.add(tester);
@@ -151,7 +151,7 @@ public class ParsableTask extends Task {
 			fail = true;
 			log("No parser managed to parse " + file.getPath(), MSG_ERR);
 
-			for (ParserTester tester : testers) {
+			for (AbstractParserTester tester : testers) {
 				tester.printUnparsable(fileName);
 			}
 		}
@@ -162,7 +162,7 @@ public class ParsableTask extends Task {
 			fail = true;
 			log("More than one parser managed to parse " + file.getPath(), MSG_ERR);
 		}
-		for (ParserTester tester : successful) {
+		for (AbstractParserTester tester : successful) {
 			if (expectUnparsable) {
 				tester.printUnexpectedParsable(fileName);
 			} else if (successful.size() > 1) {

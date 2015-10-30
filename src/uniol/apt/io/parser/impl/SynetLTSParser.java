@@ -33,7 +33,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import uniol.apt.adt.exception.DatastructureException;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.parser.LTSParser;
+import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 
 /**
@@ -41,7 +41,7 @@ import uniol.apt.io.parser.ParseException;
  *
  * @author vsp
  */
-public class SynetLTSParser extends AbstractLTSParser implements LTSParser {
+public class SynetLTSParser extends AbstractParser<TransitionSystem> implements Parser<TransitionSystem> {
 	private static class StateListener extends SynetLTSFormatBaseListener implements SynetLTSFormatListener {
 		private final TransitionSystem ts;
 		private final Set<String> states;
@@ -80,7 +80,7 @@ public class SynetLTSParser extends AbstractLTSParser implements LTSParser {
 	}
 
 	@Override
-	public TransitionSystem parseLTS(InputStream is) throws ParseException, IOException {
+	public TransitionSystem parse(InputStream is) throws ParseException, IOException {
 		CharStream input            = new ANTLRInputStream(is);
 		SynetLTSFormatLexer lexer   = new SynetLTSFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr

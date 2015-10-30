@@ -50,7 +50,7 @@ public class ParserTestUtils {
 	 */
 	public static PetriNet getAptPN(String fileName) {
 		try {
-			return new AptPNParser().parsePNFile(fileName);
+			return new AptPNParser().parseFile(fileName);
 		} catch (IOException | ParseException ex) {
 			throw new ParserSkipException(fileName, AptPNParser.class, ex);
 		}
@@ -64,7 +64,7 @@ public class ParserTestUtils {
 	 */
 	public static TransitionSystem getAptLTS(String fileName) {
 		try {
-			return new AptLTSParser().parseLTSFile(fileName);
+			return new AptLTSParser().parseFile(fileName);
 		} catch (IOException | ParseException ex) {
 			throw new ParserSkipException(fileName, AptLTSParser.class, ex);
 		}

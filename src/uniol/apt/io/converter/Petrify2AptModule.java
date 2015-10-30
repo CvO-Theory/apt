@@ -73,11 +73,11 @@ public class Petrify2AptModule extends AbstractModule {
 			switch (type) {
 				case "pn":
 					PetrifyPNParser parser = new PetrifyPNParser();
-					PetriNet pn = parser.parsePNFile(filename);
+					PetriNet pn = parser.parseFile(filename);
 					out = new AptPNRenderer().render(pn);
 					break;
 				case "ts":
-					TransitionSystem lts = new PetrifyLTSParser().parseLTS(filename);
+					TransitionSystem lts = new PetrifyLTSParser().parseFile(filename);
 					out = new AptLTSRenderer().render(lts);
 					break;
 				default:

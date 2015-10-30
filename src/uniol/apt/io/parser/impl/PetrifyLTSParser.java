@@ -36,7 +36,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import uniol.apt.adt.exception.DatastructureException;
 import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.parser.LTSParser;
+import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 
 /**
@@ -44,7 +44,7 @@ import uniol.apt.io.parser.ParseException;
  *
  * @author Uli Schlachter
  */
-public class PetrifyLTSParser extends AbstractLTSParser implements LTSParser {
+public class PetrifyLTSParser extends AbstractParser<TransitionSystem> implements Parser<TransitionSystem> {
 	private static class LTSListener extends PetrifyLTSFormatParserBaseListener
 			implements PetrifyLTSFormatParserListener {
 		private final TransitionSystem lts;
@@ -102,7 +102,7 @@ public class PetrifyLTSParser extends AbstractLTSParser implements LTSParser {
 	}
 
 	@Override
-	public TransitionSystem parseLTS(InputStream is) throws ParseException, IOException {
+	public TransitionSystem parse(InputStream is) throws ParseException, IOException {
 		CharStream input = new ANTLRInputStream(is);
 		PetrifyLTSFormatLexer lexer = new PetrifyLTSFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr

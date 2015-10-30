@@ -35,7 +35,7 @@ import uniol.apt.io.parser.ParseException;
 public class AptPNParserTest {
 	@Test
 	public void testPNTestNet() throws Exception {
-		PetriNet net = new AptPNParser().parsePNFile("nets/testPN-net.apt");
+		PetriNet net = new AptPNParser().parseFile("nets/testPN-net.apt");
 		assertEquals(net.getName(), "cc1.net");
 		assertEquals(net.getExtension("description"), "asdfpeterpan");
 		assertEquals(net.getPlaces().size(), 4);
@@ -60,42 +60,42 @@ public class AptPNParserTest {
 
 	@Test
 	public void testMarkedSideCondition() throws Exception {
-		PetriNet net = new AptPNParser().parsePN(".type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parse(".type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionPlacesFirst() throws Exception {
-		PetriNet net = new AptPNParser().parsePN(".places p1\n.type PN\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parse(".places p1\n.type PN\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionTransitionsFirst() throws Exception {
-		PetriNet net = new AptPNParser().parsePN(".transitions t1\n.type PN\n.places p1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parse(".transitions t1\n.type PN\n.places p1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionFlowsFirst() throws Exception {
-		PetriNet net = new AptPNParser().parsePN(".flows t1:{p1}->{p1}\n.type PN\n.places p1\n.transitions t1\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parse(".flows t1:{p1}->{p1}\n.type PN\n.places p1\n.transitions t1\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionMarkingFirst() throws Exception {
-		PetriNet net = new AptPNParser().parsePN(".initial_marking {p1}\n.type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}");
+		PetriNet net = new AptPNParser().parse(".initial_marking {p1}\n.type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDoubleNodes() throws Exception {
-		new AptPNParser().parsePNFile("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-net.apt");
+		new AptPNParser().parseFile("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-net.apt");
 	}
 
 	@Test
 	public void testInitalMarking() throws Exception {
-		PetriNet pn = new AptPNParser().parsePNFile("nets/doubleMarking.apt");
+		PetriNet pn = new AptPNParser().parseFile("nets/doubleMarking.apt");
 		Marking im = pn.getInitialMarking();
 		Token s1 = im.getToken("s1");
 		Token s3 = im.getToken("s3");
@@ -105,37 +105,37 @@ public class AptPNParserTest {
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testUnknownAttributeNet() throws Exception {
-		new AptPNParser().parsePNFile("nets/not-parsable-test-nets/unknown-attribute.apt");
+		new AptPNParser().parseFile("nets/not-parsable-test-nets/unknown-attribute.apt");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testMissingNewlineAfterComment() throws Exception {
-		new AptPNParser().parsePN(".type PN// Comment without newline after");
+		new AptPNParser().parse(".type PN// Comment without newline after");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testMissingType() throws Exception {
-		new AptPNParser().parsePN(".places foo\n.transitions bar");
+		new AptPNParser().parse(".places foo\n.transitions bar");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testTypeTwice() throws Exception {
-		new AptPNParser().parsePN(".type PN\n.places foo\n.transitions bar\n.type LPN");
+		new AptPNParser().parse(".type PN\n.places foo\n.transitions bar\n.type LPN");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testNameTwice() throws Exception {
-		new AptPNParser().parsePN(".type PN\n.name \"foo\"\n.places foo\n.transitions bar\n.name \"bar\"");
+		new AptPNParser().parse(".type PN\n.name \"foo\"\n.places foo\n.transitions bar\n.name \"bar\"");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDesciptionTwice() throws Exception {
-		new AptPNParser().parsePN(".type PN\n.description \"foo\"\n.places foo\n.transitions bar\n.description \"bar\"");
+		new AptPNParser().parse(".type PN\n.description \"foo\"\n.places foo\n.transitions bar\n.description \"bar\"");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testInitialMarkingTwice() throws Exception {
-		new AptPNParser().parsePN(".type PN\n.initialMarking {foo}\n.places foo\n.transitions bar\n.initialMarking");
+		new AptPNParser().parse(".type PN\n.initialMarking {foo}\n.places foo\n.transitions bar\n.initialMarking");
 	}
 }
 

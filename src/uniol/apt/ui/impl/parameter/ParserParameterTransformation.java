@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2015       vsp
+ * Copyright (C) 2012-2013  Members of the project group APT
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,34 +17,40 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.tasks.parsers;
+package uniol.apt.ui.impl.parameter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+
 import uniol.apt.io.parser.ParseException;
-import uniol.apt.io.parser.PNParser;
+import uniol.apt.io.parser.Parser;
+import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.ParameterTransformation;
 
 /**
- * A tester for parsers that implement the PNParser interface.
- * @author vsp
+ * @author Renke Grunwald
+ *
  */
-public class PNParserTester extends ParserTester {
-	private final PNParser parser;
+public class ParserParameterTransformation<G> implements ParameterTransformation<G> {
+	private final Parser<G> parser;
+	private final String objectName;
 
-	/** Construct a new tester */
-	public PNParserTester(PNParser parser, File outputDir) throws FileNotFoundException, UnsupportedEncodingException {
-		super(outputDir, parser.getClass().getSimpleName());
+	public ParserParameterTransformation(Parser<G> parser, String objectName) {
 		this.parser = parser;
+		this.objectName = objectName;
 	}
 
 	@Override
-	public void parse(File file) throws Exception, UnparsableException {
+	public G transform(String filename) throws ModuleException {
 		try {
-			this.parser.parsePNFile(file);
+			if (filename.equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)) {
+				return parser.parse(System.in);
+			}
+
+			return parser.parseFile(filename);
+		} catch (IOException ex) {
+			throw new ModuleException("Can't read " + objectName + ": " + ex.getMessage());
 		} catch (ParseException ex) {
-			throw new UnparsableException(ex);
+			throw new ModuleException("Can't parse " + objectName + ": " + ex.getMessage());
 		}
 	}
 }

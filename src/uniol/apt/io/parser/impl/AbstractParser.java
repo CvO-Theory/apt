@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2012-2013  Members of the project group APT
+ * Copyright (C) 2014  vsp
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,36 +17,42 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.ui.impl.parameter;
+package uniol.apt.io.parser.impl;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 
-import uniol.apt.adt.pn.PetriNet;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
 import uniol.apt.io.parser.ParseException;
-import uniol.apt.io.parser.impl.AptPNParser;
-import uniol.apt.module.exception.ModuleException;
-import uniol.apt.ui.ParameterTransformation;
+import uniol.apt.io.parser.Parser;
 
 /**
- * @author Renke Grunwald
- *
+ * Abstract base class for parsers.
+ * @param <G> Type of object that the parser produces.
+ * @author vsp
  */
-public class NetParameterTransformation implements ParameterTransformation<PetriNet> {
+public abstract class AbstractParser<G> implements Parser<G> {
+	@Override
+	public G parse(String input) throws ParseException {
+		try {
+			return parse(IOUtils.toInputStream(input));
+		} catch (IOException e) {
+			// This should never cause IOExceptions
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
-	public PetriNet transform(String filename) throws ModuleException {
-		try {
-			if (filename.equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)) {
-				return new AptPNParser().parsePN(System.in);
-			}
+	public G parseFile(String filename) throws ParseException, IOException {
+		return parseFile(new File(filename));
+	}
 
-			return new AptPNParser().parsePNFile(filename);
-		} catch (IOException ex) {
-			throw new ModuleException("Can't read Petri net: " + ex.getMessage());
-		} catch (ParseException ex) {
-			throw new ModuleException("Can't parse Petri net: " + ex.getMessage());
-		}
+	@Override
+	public G parseFile(File file) throws ParseException, IOException {
+		return parse(FileUtils.openInputStream(file));
 	}
 }
 

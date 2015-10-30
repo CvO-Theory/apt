@@ -37,7 +37,7 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.io.parser.PNParser;
+import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 
 /**
@@ -45,7 +45,7 @@ import uniol.apt.io.parser.ParseException;
  *
  * @author vsp
  */
-public class AptPNParser extends AbstractPNParser implements PNParser {
+public class AptPNParser extends AbstractParser<PetriNet> implements Parser<PetriNet> {
 	private static class NameDescPlaceTransitionListener extends AptPNFormatBaseListener
 			implements AptPNFormatListener {
 		private final PetriNet pn;
@@ -191,7 +191,7 @@ public class AptPNParser extends AbstractPNParser implements PNParser {
 	}
 
 	@Override
-	public PetriNet parsePN(InputStream is) throws ParseException, IOException {
+	public PetriNet parse(InputStream is) throws ParseException, IOException {
 		CharStream input         = new ANTLRInputStream(is);
 		AptPNFormatLexer lexer   = new AptPNFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr

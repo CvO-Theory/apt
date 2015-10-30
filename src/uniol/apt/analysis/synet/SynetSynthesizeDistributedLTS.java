@@ -123,7 +123,7 @@ public class SynetSynthesizeDistributedLTS {
 			}
 		}
 
-		pn_ = new SynetPNParser().parsePNFile(tmpSaveFile.getAbsolutePath());
+		pn_ = new SynetPNParser().parseFile(tmpSaveFile.getAbsolutePath());
 
 		String errorStr = error.readLine();
 		if (errorStr != null) {

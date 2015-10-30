@@ -78,9 +78,9 @@ public class APTParser {
 		is = new ByteArrayInputStream(data.getBytes());
 
 		if (data.matches("(?s).*\\.type\\s+(LTS|TS)(?s).*")) {
-			ts = new AptLTSParser().parseLTS(is);
+			ts = new AptLTSParser().parse(is);
 		} else if (data.matches("(?s).*\\.type\\s+(LPN|PN)(?s).*")) {
-			pn = new AptPNParser().parsePN(is);
+			pn = new AptPNParser().parse(is);
 		} else {
 			throw new ParseException("File type PN, LPN, TS, LTS needed.");
 		}

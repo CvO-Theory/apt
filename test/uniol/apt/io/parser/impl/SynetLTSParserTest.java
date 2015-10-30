@@ -31,7 +31,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 public class SynetLTSParserTest {
 	@Test
 	public void testLTS() throws Exception {
-		TransitionSystem ts = new SynetLTSParser().parseLTSFile("nets/synet-nets/synet-apt1-redmine-docs.aut");
+		TransitionSystem ts = new SynetLTSParser().parseFile("nets/synet-nets/synet-apt1-redmine-docs.aut");
 
 		assertEquals(ts.getNodes().size(), 4);
 		assertNotNull(ts.getNode("0"));
