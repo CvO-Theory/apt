@@ -21,8 +21,10 @@ package uniol.apt.io.converter;
 
 import java.io.IOException;
 import uniol.apt.io.parser.ParseException;
-import uniol.apt.io.parser.IParserOutput.Type;
-import uniol.apt.io.parser.impl.exception.TypeMismatchException;
+import uniol.apt.io.parser.impl.SynetLTSParser;
+import uniol.apt.io.parser.impl.SynetPNParser;
+import uniol.apt.io.renderer.impl.AptLTSRenderer;
+import uniol.apt.io.renderer.impl.AptPNRenderer;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
@@ -51,7 +53,7 @@ public class Synet2AptModule extends AbstractModule {
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("input_filename", String.class, "The file that should be converted.");
 		inputSpec.addOptionalParameter("input_type", String.class, null, "The type of the graph."
-			+ " Possible values: ts or pn. If not set trying to decide by extension .aut or .net.");
+			+ " Possible values: ts or pn.");
 	}
 
 	@Override
@@ -65,18 +67,41 @@ public class Synet2AptModule extends AbstractModule {
 		String filename = input.getParameter("input_filename", String.class);
 		String type = input.getParameter("input_type", String.class);
 		try {
-			String out = (type == null) ? Synet2Apt.convert(filename)
-				: (type.equals("ts") ? Synet2Apt.convert(filename, Type.LTS)
-				: (type.equals("pn") ? Synet2Apt.convert(filename, Type.PN) : null));
-			if (out == null) {
-				throw new ModuleException("input_type has to be ts or pn");
+			String out;
+			if (type == null) {
+				if (filename.endsWith(".aut"))
+					type = "ts";
+				else if (filename.endsWith(".net"))
+					type = "pn";
+				else
+					throw new ParseException("type not set and file extension isn't .aut or .net");
+			}
+			switch (type) {
+				case "ts":
+				case "lts":
+					out = convertLTS(filename);
+					break;
+				case "pn":
+				case "lpn":
+					out = convertPN(filename);
+					break;
+				default:
+					throw new ModuleException("input_type has to be ts or pn");
 			}
 			output.setReturnValue("output_filename", String.class, out);
 		} catch (IOException ex) {
 			throw new ModuleException("Can't read file: " + ex.getMessage(), ex);
-		} catch (TypeMismatchException | ParseException ex) {
+		} catch (ParseException ex) {
 			throw new ModuleException(ex.getMessage(), ex);
 		}
+	}
+
+	private static String convertLTS(String filename) throws IOException, ModuleException, ParseException {
+		return new AptLTSRenderer().render(new SynetLTSParser().parseLTSFile(filename));
+	}
+
+	private static String convertPN(String filename) throws IOException, ModuleException, ParseException {
+		return new AptPNRenderer().render(new SynetPNParser().parsePNFile(filename));
 	}
 
 	@Override
