@@ -19,18 +19,17 @@
 
 package uniol.apt.io.converter;
 
-import java.io.File;
 import java.io.IOException;
-import org.apache.commons.io.FileUtils;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.exception.FormatException;
 import uniol.apt.io.parser.impl.exception.LexerParserException;
 import uniol.apt.io.parser.impl.exception.NodeNotExistException;
 import uniol.apt.io.parser.impl.exception.StructureException;
 import uniol.apt.io.parser.impl.exception.TypeMismatchException;
 import uniol.apt.io.parser.impl.petrify.PetrifyLTSParser;
-import uniol.apt.io.parser.impl.petrify.PetrifyPNParser;
+import uniol.apt.io.parser.impl.PetrifyPNParser;
 import uniol.apt.io.renderer.impl.AptLTSRenderer;
 import uniol.apt.io.renderer.impl.AptPNRenderer;
 import uniol.apt.module.AbstractModule;
@@ -79,8 +78,7 @@ public class Petrify2AptModule extends AbstractModule {
 			switch (type) {
 				case "pn":
 					PetrifyPNParser parser = new PetrifyPNParser();
-					parser.parse(FileUtils.readFileToString(new File(filename)));
-					PetriNet pn = parser.getPN();
+					PetriNet pn = parser.parsePNFile(filename);
 					out = new AptPNRenderer().render(pn);
 					break;
 				case "ts":
@@ -98,10 +96,8 @@ public class Petrify2AptModule extends AbstractModule {
 		} catch (LexerParserException e) {
 			throw new ModuleException("Cannot parse file '" + filename + "': \n"
 				+ e.getLexerParserMessage());
-		} catch (StructureException ex) {
-			throw new ModuleException(ex.getMessage(), ex);
-		} catch (FormatException ex) {
-			throw new ModuleException(ex.getMessage(), ex);
+		} catch (FormatException | ParseException ex) {
+			throw new ModuleException(ex);
 		}
 	}
 

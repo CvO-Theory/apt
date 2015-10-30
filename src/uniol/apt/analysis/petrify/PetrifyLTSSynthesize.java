@@ -28,7 +28,8 @@ import java.io.InputStreamReader;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.parser.impl.petrify.PetrifyPNParser;
+import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.impl.PetrifyPNParser;
 import uniol.apt.io.renderer.impl.PetrifyLTSRenderer;
 import uniol.apt.module.exception.FalseParameterException;
 import uniol.apt.module.exception.ModuleException;
@@ -105,8 +106,11 @@ public class PetrifyLTSSynthesize {
 		}
 
 		PetrifyPNParser ps = new PetrifyPNParser();
-		ps.parse(net);
-		pn_ = ps.getPN();
+		try {
+			pn_ = ps.parsePN(net);
+		} catch (ParseException e) {
+			throw new ModuleException(e);
+		}
 
 		String errorStr = error.readLine();
 		if (errorStr != null) {
