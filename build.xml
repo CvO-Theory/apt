@@ -95,6 +95,20 @@
 			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
 			<arg value="-package"/>
 			<arg value="uniol.apt.io.parser.impl"/>
+			<arg line="${basedir}/src/uniol/apt/io/parser/impl/PetrifyLTSFormatLexer.g4"/>
+		</java>
+		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
+			<arg value="-o"/>
+			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg value="-package"/>
+			<arg value="uniol.apt.io.parser.impl"/>
+			<arg line="${basedir}/src/uniol/apt/io/parser/impl/PetrifyLTSFormatParser.g4"/>
+		</java>
+		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
+			<arg value="-o"/>
+			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg value="-package"/>
+			<arg value="uniol.apt.io.parser.impl"/>
 			<arg line="${basedir}/src/uniol/apt/io/parser/impl/PetrifyPNFormatLexer.g4"/>
 		</java>
 		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
@@ -336,7 +350,7 @@
 				<exclude name="uniol/apt/io/parser/impl/SynetPNFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/SynetLTSFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/PetrifyPNFormat*.class" />
-				<exclude name="uniol/apt/io/parser/impl/petrify/PetrifyLTSFormat*.class" />
+				<exclude name="uniol/apt/io/parser/impl/PetrifyLTSFormat*.class" />
 			</fileset>
 			<fileset dir="test-classes">
 				<include name="**/*.class" />
