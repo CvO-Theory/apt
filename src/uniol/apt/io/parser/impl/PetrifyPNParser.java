@@ -148,13 +148,8 @@ public class PetrifyPNParser extends AbstractPNParser implements PNParser {
 	}
 
 	@Override
-	public PetriNet parsePN(InputStream is) throws ParseException {
-		CharStream input;
-		try {
-			input = new ANTLRInputStream(is);
-		} catch (IOException ex) {
-			throw new ParseException(ex);
-		}
+	public PetriNet parsePN(InputStream is) throws ParseException, IOException {
+		CharStream input = new ANTLRInputStream(is);
 		PetrifyPNFormatLexer lexer = new PetrifyPNFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr
 		lexer.addErrorListener(new ThrowingErrorListener());

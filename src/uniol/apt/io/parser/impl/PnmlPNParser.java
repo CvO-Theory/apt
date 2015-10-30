@@ -229,13 +229,9 @@ public class PnmlPNParser extends AbstractPNParser implements PNParser {
 	}
 
 	@Override
-	public PetriNet parsePN(InputStream is) throws ParseException {
+	public PetriNet parsePN(InputStream is) throws ParseException, IOException {
 		PetriNet pn = new PetriNet();
-		try {
-			new Parser(pn, is);
-		} catch (IOException e) {
-			throw new ParseException(e);
-		}
+		new Parser(pn, is);
 		return pn;
 	}
 }

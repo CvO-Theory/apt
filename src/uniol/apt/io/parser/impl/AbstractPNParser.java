@@ -38,7 +38,12 @@ import uniol.apt.io.parser.PNParser;
 public abstract class AbstractPNParser implements PNParser {
 	@Override
 	public PetriNet parsePN(String input) throws ParseException {
-		return parsePN(IOUtils.toInputStream(input));
+		try {
+			return parsePN(IOUtils.toInputStream(input));
+		} catch (IOException e) {
+			// This should never cause IOExceptions
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

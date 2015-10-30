@@ -80,13 +80,8 @@ public class SynetLTSParser extends AbstractLTSParser implements LTSParser {
 	}
 
 	@Override
-	public TransitionSystem parseLTS(InputStream is) throws ParseException {
-		CharStream input;
-		try {
-			input               = new ANTLRInputStream(is);
-		} catch (IOException ex) {
-			throw new ParseException(ex.getMessage(), ex);
-		}
+	public TransitionSystem parseLTS(InputStream is) throws ParseException, IOException {
+		CharStream input            = new ANTLRInputStream(is);
 		SynetLTSFormatLexer lexer   = new SynetLTSFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr
 		lexer.addErrorListener(new ThrowingErrorListener());

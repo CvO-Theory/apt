@@ -47,7 +47,7 @@ public interface LTSParser {
 	 * @returns {@link TransitionSystem} which got read from the input
 	 * @throws ParseException If the input can't get parsed
 	 */
-	public TransitionSystem parseLTS(InputStream input) throws ParseException;
+	public TransitionSystem parseLTS(InputStream input) throws ParseException, IOException;
 
 	/**
 	 * Parse a labeled transition system from file

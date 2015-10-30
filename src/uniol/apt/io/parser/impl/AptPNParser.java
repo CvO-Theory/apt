@@ -191,13 +191,8 @@ public class AptPNParser extends AbstractPNParser implements PNParser {
 	}
 
 	@Override
-	public PetriNet parsePN(InputStream is) throws ParseException {
-		CharStream input;
-		try {
-			input            = new ANTLRInputStream(is);
-		} catch (IOException ex) {
-			throw new ParseException(ex.getMessage(), ex);
-		}
+	public PetriNet parsePN(InputStream is) throws ParseException, IOException {
+		CharStream input         = new ANTLRInputStream(is);
 		AptPNFormatLexer lexer   = new AptPNFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr
 		lexer.addErrorListener(new ThrowingErrorListener());

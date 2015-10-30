@@ -102,13 +102,8 @@ public class PetrifyLTSParser extends AbstractLTSParser implements LTSParser {
 	}
 
 	@Override
-	public TransitionSystem parseLTS(InputStream is) throws ParseException {
-		CharStream input;
-		try {
-			input = new ANTLRInputStream(is);
-		} catch (IOException ex) {
-			throw new ParseException(ex);
-		}
+	public TransitionSystem parseLTS(InputStream is) throws ParseException, IOException {
+		CharStream input = new ANTLRInputStream(is);
 		PetrifyLTSFormatLexer lexer = new PetrifyLTSFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr
 		lexer.addErrorListener(new ThrowingErrorListener());

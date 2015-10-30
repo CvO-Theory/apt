@@ -38,7 +38,12 @@ import uniol.apt.io.parser.LTSParser;
 public abstract class AbstractLTSParser implements LTSParser {
 	@Override
 	public TransitionSystem parseLTS(String input) throws ParseException {
-		return parseLTS(IOUtils.toInputStream(input));
+		try {
+			return parseLTS(IOUtils.toInputStream(input));
+		} catch (IOException e) {
+			// This should never cause IOExceptions
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

@@ -154,13 +154,8 @@ public class AptLTSParser extends AbstractLTSParser implements LTSParser {
 	}
 
 	@Override
-	public TransitionSystem parseLTS(InputStream is) throws ParseException {
-		CharStream input;
-		try {
-			input             = new ANTLRInputStream(is);
-		} catch (IOException ex) {
-			throw new ParseException(ex.getMessage(), ex);
-		}
+	public TransitionSystem parseLTS(InputStream is) throws ParseException, IOException {
+		CharStream input          = new ANTLRInputStream(is);
 		AptLTSFormatLexer lexer   = new AptLTSFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr
 		lexer.addErrorListener(new ThrowingErrorListener());

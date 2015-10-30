@@ -47,7 +47,7 @@ public interface PNParser {
 	 * @returns {@link PetriNet} which got read from the input
 	 * @throws ParseException If the input can't get parsed
 	 */
-	public PetriNet parsePN(InputStream input) throws ParseException;
+	public PetriNet parsePN(InputStream input) throws ParseException, IOException;
 
 	/**
 	 * Parse a Petri net from file
