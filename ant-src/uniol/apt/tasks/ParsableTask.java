@@ -98,7 +98,7 @@ public class ParsableTask extends Task {
 					new LTSParserTester(new AptLTSParser(), outputdir),
 					new PNParserTester(new SynetPNParser(), outputdir),
 					new LTSParserTester(new SynetLTSParser(), outputdir),
-					new PetrifyPNParserTester(outputdir),
+					new PNParserTester(new PetrifyPNParser(), outputdir),
 					new RegexParserTester(outputdir),
 					new PNMLParserTester(outputdir),
 				};
