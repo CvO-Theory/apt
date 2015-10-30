@@ -43,16 +43,12 @@ import uniol.apt.util.Pair;
 public class Matchers extends org.hamcrest.Matchers {
 
 	public static <T> Matcher<Arc> edgeNodesMarkingEq(Marking sourceMark, Marking targetMark) {
-		return edgeNodesThat(nodeMarkingEq(sourceMark), nodeMarkingEq(targetMark));
+		return arcThatConnects(nodeMarkingEq(sourceMark), nodeMarkingEq(targetMark));
 	}
 
 	public static <T> Matcher<CoverabilityGraphEdge> edgeCoverNodesMarkingEq(Marking sourceMark,
 			Marking targetMark) {
 		return edgeCoverNodesThat(coverNodeMarkingEq(sourceMark), coverNodeMarkingEq(targetMark));
-	}
-
-	public static <T> Matcher<Arc> edgeNodesThat(Matcher<State> sourceMatcher, Matcher<State> targetMatcher) {
-		return EdgeNodesThatMatcher.edgeNodesThat(sourceMatcher, targetMatcher);
 	}
 
 	public static <T> Matcher<CoverabilityGraphEdge> edgeCoverNodesThat(Matcher<CoverabilityGraphNode> source,
