@@ -29,32 +29,31 @@ import java.io.Writer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.StringBuilderWriter;
 
-import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.renderer.LTSRenderer;
+import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 
 /**
- * Abstract base class for labeled transition system renderers
- *
+ * Abstract base class for renderers
+ * @param <G> Type of object that the parser produces.
  * @author vsp
  */
-public abstract class AbstractLTSRenderer implements LTSRenderer {
-	public void renderFile(TransitionSystem ts, String filename) throws RenderException, IOException {
-		renderFile(ts, new File(filename));
+public abstract class AbstractRenderer<G> implements Renderer<G> {
+	public void renderFile(G obj, String filename) throws RenderException, IOException {
+		renderFile(obj, new File(filename));
 	}
 
-	public void renderFile(TransitionSystem ts, File file) throws RenderException, IOException {
-		render(ts, FileUtils.openOutputStream(file));
+	public void renderFile(G obj, File file) throws RenderException, IOException {
+		render(obj, FileUtils.openOutputStream(file));
 	}
 
-	public void render(TransitionSystem ts, OutputStream os) throws RenderException, IOException {
-		render(ts, new BufferedWriter(new OutputStreamWriter(os, "UTF-8")));
+	public void render(G obj, OutputStream os) throws RenderException, IOException {
+		render(obj, new BufferedWriter(new OutputStreamWriter(os, "UTF-8")));
 	}
 
-	public String render(TransitionSystem ts) throws RenderException {
+	public String render(G obj) throws RenderException {
 		Writer writer = new StringBuilderWriter();
 		try {
-			render(ts, writer);
+			render(obj, writer);
 		} catch (IOException e) {
 			// A StringWriter shouldn't throw IOExceptions
 			throw new RuntimeException(e);

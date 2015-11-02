@@ -28,14 +28,14 @@ import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.renderer.LTSRenderer;
+import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 
 /**
  * @author Vincent Göbel
  *
  */
-public class AptLTSRenderer extends AbstractLTSRenderer implements LTSRenderer {
+public class AptLTSRenderer extends AbstractRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
 	@Override
 	public void render(TransitionSystem ts, Writer writer) throws RenderException, IOException {
 		writer.append(".name \"").append(ts.getName()).append("\"\n");

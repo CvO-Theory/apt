@@ -31,7 +31,7 @@ import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.io.renderer.PNRenderer;
+import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ import java.util.List;
  * This class renders Petri nets in the file format used by BAGGINS.
  * @author vsp
  */
-public class BagginsPNRenderer extends AbstractPNRenderer implements PNRenderer {
+public class BagginsPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
 	static private class IdWeightPair {
 		public int id;
 		public int weight;

@@ -28,7 +28,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Token;
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.io.renderer.PNRenderer;
+import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 
 /**
@@ -38,7 +38,7 @@ import uniol.apt.io.renderer.RenderException;
  * @author Renke Grunwald
  *
  */
-public class DotPNRenderer extends AbstractPNRenderer implements PNRenderer {
+public class DotPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
 	private final static String PN_PLACE_TEMPLATE =
 		"%1$s[label=\"%2$s\"]\n%1$s_label[shape=plaintext,label=\"\"]\n%1$s -> %1$s_label[penwidth=0,"
 		+ "label=\"%1$s\",arrowhead=none]\n";

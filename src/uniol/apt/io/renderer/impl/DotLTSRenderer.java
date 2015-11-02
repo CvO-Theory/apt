@@ -26,7 +26,7 @@ import java.util.Formatter;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.renderer.LTSRenderer;
+import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 
 /**
@@ -36,7 +36,7 @@ import uniol.apt.io.renderer.RenderException;
  * @author Renke Grunwald
  *
  */
-public class DotLTSRenderer extends AbstractLTSRenderer implements LTSRenderer {
+public class DotLTSRenderer extends AbstractRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
 	private static final String TS_NODE_TEMPLATE =
 		"%1$s[label=\"%2$s\"];\n";
 	private static final String TS_INITIAL_NODE_TEMPLATE =

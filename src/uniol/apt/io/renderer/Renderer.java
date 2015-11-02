@@ -24,62 +24,60 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import uniol.apt.adt.pn.PetriNet;
-
 /**
- * Interface for Petri net renderers
- *
+ * Interface for generic renderers.
+ * @param <G> Type of object that the renderer consumes.
  * @author vsp
  */
-public interface PNRenderer {
+public interface Renderer<G> {
 	/**
-	 * Render a Petri net into a file
+	 * Render an object into a file
 	 *
-	 * @param pn the Petri net to render
+	 * @param obj the object to render
 	 * @param filename the name of the desired output file
-	 * @throws RenderException if the renderer can't describe the Petri net
+	 * @throws RenderException if the renderer can't describe the object
 	 * @throws IOException if writing failes
 	 */
-	public void renderFile(PetriNet pn, String filename) throws RenderException, IOException;
+	public void renderFile(G obj, String filename) throws RenderException, IOException;
 
 	/**
-	 * Render a Petri net into a file
+	 * Render an object into a file
 	 *
-	 * @param pn the Petri net to render
+	 * @param obj the object to render
 	 * @param file the desired output file
-	 * @throws RenderException if the renderer can't describe the Petri net
+	 * @throws RenderException if the renderer can't describe the object
 	 * @throws IOException if writing failes
 	 */
-	public void renderFile(PetriNet pn, File file) throws RenderException, IOException;
+	public void renderFile(G obj, File file) throws RenderException, IOException;
 
 	/**
-	 * Render a Petri net into a outputstream
+	 * Render an object into a outputstream
 	 *
-	 * @param pn the Petri net to render
+	 * @param obj the object to render
 	 * @param os the outputstream
-	 * @throws RenderException if the renderer can't describe the Petri net
+	 * @throws RenderException if the renderer can't describe the object
 	 * @throws IOException if writing failes
 	 */
-	public void render(PetriNet pn, OutputStream os) throws RenderException, IOException;
+	public void render(G obj, OutputStream os) throws RenderException, IOException;
 
 	/**
-	 * Render a Petri net into a writer
+	 * Render an object into a writer
 	 *
-	 * @param pn the Petri net to render
+	 * @param obj the object to render
 	 * @param writer the writer
-	 * @throws RenderException if the renderer can't describe the Petri net
+	 * @throws RenderException if the renderer can't describe the object
 	 * @throws IOException if writing failes
 	 */
-	public void render(PetriNet pn, Writer writer) throws RenderException, IOException;
+	public void render(G obj, Writer writer) throws RenderException, IOException;
 
 	/**
-	 * Render a Petri net into a string
+	 * Render an object into a string
 	 *
-	 * @param pn the Petri net to render
-	 * @return a string describing the Petri net
-	 * @throws RenderException if the renderer can't describe the Petri net
+	 * @param obj the object to render
+	 * @return a string describing the object
+	 * @throws RenderException if the renderer can't describe the object
 	 */
-	public String render(PetriNet pn) throws RenderException;
+	public String render(G obj) throws RenderException;
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

@@ -30,14 +30,14 @@ import org.stringtemplate.v4.STGroupFile;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Token;
-import uniol.apt.io.renderer.PNRenderer;
+import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 
 /**
  * @author vsp
  *
  */
-public class AptPNRenderer extends AbstractPNRenderer implements PNRenderer {
+public class AptPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
 	/**
 	 * Verify that the net can be expressed in APT file format.
 	 * @param pn the net to verify

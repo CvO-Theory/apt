@@ -29,14 +29,14 @@ import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
-import uniol.apt.io.renderer.PNRenderer;
+import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 
 /**
  * @author Vincent Göbel, Thomas Strathmann
  *
  */
-public class SynetPNRenderer extends AbstractPNRenderer implements PNRenderer {
+public class SynetPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
 	@Override
 	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
 		for (Transition t : pn.getTransitions()) {
