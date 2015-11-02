@@ -37,7 +37,7 @@ public interface Parser<G> {
 	 * @return Object which got read from the input.
 	 * @throws ParseException If the input can't get parsed.
 	 */
-	public G parse(String input) throws ParseException;
+	public G parseString(String input) throws ParseException;
 
 	/**
 	 * Parse an input stream into an object.

@@ -36,7 +36,7 @@ import uniol.apt.io.parser.Parser;
  */
 public abstract class AbstractParser<G> implements Parser<G> {
 	@Override
-	public G parse(String input) throws ParseException {
+	public G parseString(String input) throws ParseException {
 		try {
 			return parse(IOUtils.toInputStream(input));
 		} catch (IOException e) {

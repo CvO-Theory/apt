@@ -107,7 +107,7 @@ public class PetrifyLTSSynthesize {
 
 		PetrifyPNParser ps = new PetrifyPNParser();
 		try {
-			pn_ = ps.parse(net);
+			pn_ = ps.parseString(net);
 		} catch (ParseException e) {
 			throw new ModuleException(e);
 		}

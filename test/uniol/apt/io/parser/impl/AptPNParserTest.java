@@ -60,31 +60,31 @@ public class AptPNParserTest {
 
 	@Test
 	public void testMarkedSideCondition() throws Exception {
-		PetriNet net = new AptPNParser().parse(".type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parseString(".type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionPlacesFirst() throws Exception {
-		PetriNet net = new AptPNParser().parse(".places p1\n.type PN\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parseString(".places p1\n.type PN\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionTransitionsFirst() throws Exception {
-		PetriNet net = new AptPNParser().parse(".transitions t1\n.type PN\n.places p1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parseString(".transitions t1\n.type PN\n.places p1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionFlowsFirst() throws Exception {
-		PetriNet net = new AptPNParser().parse(".flows t1:{p1}->{p1}\n.type PN\n.places p1\n.transitions t1\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parseString(".flows t1:{p1}->{p1}\n.type PN\n.places p1\n.transitions t1\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionMarkingFirst() throws Exception {
-		PetriNet net = new AptPNParser().parse(".initial_marking {p1}\n.type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}");
+		PetriNet net = new AptPNParser().parseString(".initial_marking {p1}\n.type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}");
 		sideConditionAsserts(net);
 	}
 
@@ -110,32 +110,32 @@ public class AptPNParserTest {
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testMissingNewlineAfterComment() throws Exception {
-		new AptPNParser().parse(".type PN// Comment without newline after");
+		new AptPNParser().parseString(".type PN// Comment without newline after");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testMissingType() throws Exception {
-		new AptPNParser().parse(".places foo\n.transitions bar");
+		new AptPNParser().parseString(".places foo\n.transitions bar");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testTypeTwice() throws Exception {
-		new AptPNParser().parse(".type PN\n.places foo\n.transitions bar\n.type LPN");
+		new AptPNParser().parseString(".type PN\n.places foo\n.transitions bar\n.type LPN");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testNameTwice() throws Exception {
-		new AptPNParser().parse(".type PN\n.name \"foo\"\n.places foo\n.transitions bar\n.name \"bar\"");
+		new AptPNParser().parseString(".type PN\n.name \"foo\"\n.places foo\n.transitions bar\n.name \"bar\"");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDesciptionTwice() throws Exception {
-		new AptPNParser().parse(".type PN\n.description \"foo\"\n.places foo\n.transitions bar\n.description \"bar\"");
+		new AptPNParser().parseString(".type PN\n.description \"foo\"\n.places foo\n.transitions bar\n.description \"bar\"");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testInitialMarkingTwice() throws Exception {
-		new AptPNParser().parse(".type PN\n.initialMarking {foo}\n.places foo\n.transitions bar\n.initialMarking");
+		new AptPNParser().parseString(".type PN\n.initialMarking {foo}\n.places foo\n.transitions bar\n.initialMarking");
 	}
 }
 

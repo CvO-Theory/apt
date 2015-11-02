@@ -73,25 +73,25 @@ public class AptLTSParserTest {
 
 	@Test
 	public void testLoop() throws Exception {
-		TransitionSystem ts = new AptLTSParser().parse(".type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.labels l1\n.arcs s1 l1 s1");
+		TransitionSystem ts = new AptLTSParser().parseString(".type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.labels l1\n.arcs s1 l1 s1");
 		loopAsserts(ts);
 	}
 
 	@Test
 	public void testLoopArcsFirst() throws Exception {
-		TransitionSystem ts = new AptLTSParser().parse(".arcs s1 l1 s1\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.labels l1");
+		TransitionSystem ts = new AptLTSParser().parseString(".arcs s1 l1 s1\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.labels l1");
 		loopAsserts(ts);
 	}
 
 	@Test
 	public void testLoopLabelsFirst() throws Exception {
-		TransitionSystem ts = new AptLTSParser().parse(".labels l1\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.arcs s1 l1 s1");
+		TransitionSystem ts = new AptLTSParser().parseString(".labels l1\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.states s1[initial]\n.arcs s1 l1 s1");
 		loopAsserts(ts);
 	}
 
 	@Test
 	public void testLoopStatesFirst() throws Exception {
-		TransitionSystem ts = new AptLTSParser().parse(".states s1[initial]\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.labels l1\n.arcs s1 l1 s1");
+		TransitionSystem ts = new AptLTSParser().parseString(".states s1[initial]\n.type LTS\n.name \"42\"\n.description \"the answer!\"\n.labels l1\n.arcs s1 l1 s1");
 		loopAsserts(ts);
 	}
 
@@ -107,22 +107,22 @@ public class AptLTSParserTest {
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testMissingType() throws Exception {
-		new AptLTSParser().parse(".name \"42\"\n.states foo\n.labels bar\n.arcs");
+		new AptLTSParser().parseString(".name \"42\"\n.states foo\n.labels bar\n.arcs");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testTypeTwice() throws Exception {
-		new AptLTSParser().parse(".name \"42\"\n.type LTS\n.type LTS\n.states foo\n.labels bar\n.arcs");
+		new AptLTSParser().parseString(".name \"42\"\n.type LTS\n.type LTS\n.states foo\n.labels bar\n.arcs");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testNameTwice() throws Exception {
-		new AptLTSParser().parse(".name \"42\"\n.name \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
+		new AptLTSParser().parseString(".name \"42\"\n.name \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDescriptionTwice() throws Exception {
-		new AptLTSParser().parse(".name \"42\"\n.description \"42\"\n.description \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
+		new AptLTSParser().parseString(".name \"42\"\n.description \"42\"\n.description \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
 	}
 }
 

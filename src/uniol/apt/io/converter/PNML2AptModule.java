@@ -19,6 +19,8 @@
 
 package uniol.apt.io.converter;
 
+import java.io.IOException;
+
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.PnmlPNParser;
@@ -53,8 +55,8 @@ public class PNML2AptModule extends AbstractModule {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		String filename = input.getParameter("input_filename", String.class);
 		try {
-			output.setReturnValue("pn", PetriNet.class, new PnmlPNParser().parse(filename));
-		} catch (ParseException ex) {
+			output.setReturnValue("pn", PetriNet.class, new PnmlPNParser().parseFile(filename));
+		} catch (ParseException | IOException ex) {
 			throw new ModuleException(ex);
 		}
 	}

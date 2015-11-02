@@ -52,7 +52,7 @@ public class Synet2AptTest {
 		List<Object> objs = m.invoke(mod, "nets/synet-nets/synet-apt1-redmine-docs.aut");
 		String fromSynet2Apt = (String) objs.get(0);
 
-		TransitionSystem ts1 = new AptLTSParser().parse(fromSynet2Apt);
+		TransitionSystem ts1 = new AptLTSParser().parseString(fromSynet2Apt);
 		assertNotNull(ts1);
 		assertEquals(ts1.getNodes().size(), 4);
 		assertNotNull(ts1.getNode("0"));
@@ -94,7 +94,7 @@ public class Synet2AptTest {
 		List<Object> objs = m.invoke(mod, "nets/synet-nets/synet-docu-example.net");
 		String synet2apt = (String) objs.get(0);
 
-		PetriNet pn = new AptPNParser().parse(synet2apt);
+		PetriNet pn = new AptPNParser().parseString(synet2apt);
 		assertNotNull(pn);
 		assertEquals(5, pn.getTransitions().size());
 		assertEquals(6, pn.getPlaces().size());
@@ -117,7 +117,7 @@ public class Synet2AptTest {
 		assertTrue(x0.getPreset().contains(pn.getTransition("a")));
 		assertFalse(x0.getPreset().contains(pn.getTransition("t")));
 
-		PetriNet pn2 = new AptPNParser().parse(synet2apt);
+		PetriNet pn2 = new AptPNParser().parseString(synet2apt);
 		assertNotNull(pn2);
 		assertEquals(5, pn2.getTransitions().size());
 		assertEquals(6, pn2.getPlaces().size());
