@@ -19,67 +19,58 @@
 
 package uniol.apt.io.renderer.impl;
 
-import java.util.Set;
+import java.io.IOException;
+import java.io.Writer;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.io.renderer.Renderer;
 
 /**
  * Renderer for the pnml format. It is optimized for the format PIPE http://pipe2.sourceforge.net/ likes to read.
  * <p/>
  * @author Manuel Gieseking
  */
-public class PnmlPNRenderer {
-
-	/**
-	 * Render the given Petri net into the PNML file format.
-	 * <p/>
-	 * @param pn the Petri net that should be represented as a string.
-	 * <p/>
-	 * @return the string representation of the net.
-	 */
-	public String render(PetriNet pn) {
-		StringBuilder b = new StringBuilder("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n"
-			+ "<pnml>\n"
-			+ "<net id=\"" + pn.getName() + "\" type=\"P/T net\">\n");
+public class PnmlPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
+	@Override
+	public void render(PetriNet pn, Writer writer) throws IOException {
+		writer.append("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
+		writer.append("<pnml>\n");
+		writer.append("<net id=\"").append(pn.getName()).append("\" type=\"P/T net\">\n");
 
 		// Just for PIPE
-		b.append("<token id=\"Default\" enabled=\"true\" red=\"0\" green=\"0\" blue=\"0\"/>");
+		writer.append("<token id=\"Default\" enabled=\"true\" red=\"0\" green=\"0\" blue=\"0\"/>");
 
-		Set<Place> places = pn.getPlaces();
-		for (Place place : places) {
-			b.append("<place id=\"").append(place.getId()).append("\">\n");
-			b.append("<name>\n<value>").append(place.getId()).append("</value>\n</name>\n");
-			b.append("<initialMarking>\n").append("<value>").
-				append(place.getInitialToken()).append("</value>\n").
+		for (Place place : pn.getPlaces()) {
+			writer.append("<place id=\"").append(place.getId()).append("\">\n");
+			writer.append("<name>\n<value>").append(place.getId()).append("</value>\n</name>\n");
+			writer.append("<initialMarking>\n").append("<value>").
+				append(place.getInitialToken().toString()).append("</value>\n").
 				append("</initialMarking>\n");
-			b.append("</place>\n");
+			writer.append("</place>\n");
 		}
 
-		Set<Transition> transitions = pn.getTransitions();
-		for (Transition transition : transitions) {
-			b.append("<transition id=\"").append(transition.getId()).append("\">\n");
-			b.append("<name>\n<value>").append(transition.getLabel()).append("</value>\n</name>\n");
-			b.append("</transition>\n");
+		for (Transition transition : pn.getTransitions()) {
+			writer.append("<transition id=\"").append(transition.getId()).append("\">\n");
+			writer.append("<name>\n<value>").append(transition.getLabel()).append("</value>\n</name>\n");
+			writer.append("</transition>\n");
 		}
 
-		Set<Flow> flows = pn.getEdges();
-		for (Flow flow : flows) {
-			b.append("<arc id=\"").append(flow.getSource().getId()).append(" to ").
+		for (Flow flow : pn.getEdges()) {
+			writer.append("<arc id=\"").append(flow.getSource().getId()).append(" to ").
 				append(flow.getTarget().getId()).append("\" source=\"").
 				append(flow.getSource().getId()).append("\" target=\"").
 				append(flow.getTarget().getId()).append("\">\n");
-			b.append("<inscription>\n<value>").
-				append(flow.getWeight()).
+			writer.append("<inscription>\n<value>").
+				append(Integer.toString(flow.getWeight())).
 				append("</value>\n</inscription>\n");
-			b.append("</arc>\n");
+			writer.append("</arc>\n");
 		}
 
-		b.append("</net>\n");
-		b.append("</pnml>");
-		return b.toString();
+		writer.append("</net>\n");
+		writer.append("</pnml>");
 	}
 }
 
