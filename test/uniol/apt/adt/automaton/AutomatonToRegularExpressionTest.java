@@ -35,7 +35,7 @@ import static uniol.apt.adt.matcher.Matchers.*;
 public class AutomatonToRegularExpressionTest {
 	private FiniteAutomaton parse(String str) {
 		try {
-			return RegexParser.parseRegex(str);
+			return new RegexParser().parseString(str);
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}

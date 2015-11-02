@@ -34,7 +34,7 @@ import static uniol.apt.adt.matcher.Matchers.*;
  */
 public class RegexParserTest {
 	static private void test(String regex, FiniteAutomaton expected) throws Exception {
-		FiniteAutomaton aut = RegexParser.parseRegex(regex);
+		FiniteAutomaton aut = new RegexParser().parseString(regex);
 		assertThat(findWordDifference(aut, expected), nullValue());
 	}
 
@@ -134,7 +134,7 @@ public class RegexParserTest {
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testComment4() throws Exception {
-		RegexParser.parseRegex("/a");
+		new RegexParser().parseString("/a");
 	}
 
 	@Test
@@ -144,97 +144,97 @@ public class RegexParserTest {
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testClosingParen() throws Exception {
-		RegexParser.parseRegex(")");
+		new RegexParser().parseString(")");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testClosingParenAfterExpr() throws Exception {
-		RegexParser.parseRegex("(ab)*)");
+		new RegexParser().parseString("(ab)*)");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testMissingClosingParen() throws Exception {
-		RegexParser.parseRegex("(a*|b+");
+		new RegexParser().parseString("(a*|b+");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testNotAllowedCharacter() throws Exception {
-		RegexParser.parseRegex("ab?@d");
+		new RegexParser().parseString("ab?@d");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBrokenID() throws Exception {
-		RegexParser.parseRegex("<ab");
+		new RegexParser().parseString("<ab");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBrokenID2() throws Exception {
-		RegexParser.parseRegex("<a<");
+		new RegexParser().parseString("<a<");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBrokenID3() throws Exception {
-		RegexParser.parseRegex("<");
+		new RegexParser().parseString("<");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadRepeat1() throws Exception {
-		RegexParser.parseRegex("a{1,1,1}");
+		new RegexParser().parseString("a{1,1,1}");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadRepeat2() throws Exception {
-		RegexParser.parseRegex("a{}");
+		new RegexParser().parseString("a{}");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadRepeat3() throws Exception {
-		RegexParser.parseRegex("a{,42}");
+		new RegexParser().parseString("a{,42}");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadRepeat4() throws Exception {
-		RegexParser.parseRegex("a{b,ad}");
+		new RegexParser().parseString("a{b,ad}");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadRepeat5() throws Exception {
-		RegexParser.parseRegex("{1,}");
+		new RegexParser().parseString("{1,}");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadRepeat6() throws Exception {
-		RegexParser.parseRegex("a{1,2{1,}}");
+		new RegexParser().parseString("a{1,2{1,}}");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadRepeat7() throws Exception {
-		RegexParser.parseRegex("{1,2}1{2,3}");
+		new RegexParser().parseString("{1,2}1{2,3}");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadRepeat8() throws Exception {
-		RegexParser.parseRegex("a{-42}");
+		new RegexParser().parseString("a{-42}");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadIntersection1() throws Exception {
-		RegexParser.parseRegex("b&*b");
+		new RegexParser().parseString("b&*b");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadIntersection2() throws Exception {
-		RegexParser.parseRegex("b&");
+		new RegexParser().parseString("b&");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadIntersection3() throws Exception {
-		RegexParser.parseRegex("b&&b");
+		new RegexParser().parseString("b&&b");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testBadIntersection4() throws Exception {
-		RegexParser.parseRegex("&a");
+		new RegexParser().parseString("&a");
 	}
 }
 

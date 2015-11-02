@@ -33,7 +33,7 @@ public class FiniteAutomatonParameterTransformation implements ParameterTransfor
 	@Override
 	public FiniteAutomaton transform(String regularExpression) throws ModuleException {
 		try {
-			return RegexParser.parseRegex(regularExpression);
+			return new RegexParser().parseString(regularExpression);
 		} catch (ParseException ex) {
 			throw new ModuleException(ex.getMessage(), ex);
 		}

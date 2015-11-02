@@ -19,6 +19,9 @@
 
 package uniol.apt.io.parser.impl;
 
+import java.io.InputStream;
+import java.io.IOException;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -30,6 +33,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import uniol.apt.adt.automaton.FiniteAutomaton;
 import uniol.apt.adt.automaton.Symbol;
 import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.Parser;
 import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
 
 /**
@@ -37,7 +41,7 @@ import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
  *
  * @author vsp
  */
-public class RegexParser {
+public class RegexParser extends AbstractParser<FiniteAutomaton> implements Parser<FiniteAutomaton> {
 	private static class Listener extends RegexFormatParserBaseListener {
 		ParseTreeProperty<FiniteAutomaton> automatons;
 		FiniteAutomaton automaton;
@@ -167,16 +171,9 @@ public class RegexParser {
 		}
 	}
 
-	private RegexParser() { /* hide constructor */ }
-
-	/**
-	 * Parse a regular expression into an automaton
-	 *
-	 * @param regex the regular expression to parse
-	 * @returns the constructed finite automaton
-	 */
-	public static FiniteAutomaton parseRegex(String regex) throws ParseException {
-		CharStream input         = new ANTLRInputStream(regex);
+	@Override
+	public FiniteAutomaton parse(InputStream is) throws ParseException, IOException {
+		CharStream input         = new ANTLRInputStream(is);
 		RegexFormatLexer lexer   = new RegexFormatLexer(input);
 		lexer.removeErrorListeners(); // don't spam on stderr
 		lexer.addErrorListener(new ThrowingErrorListener());
