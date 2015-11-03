@@ -100,7 +100,7 @@ public class BagginsPNRenderer extends AbstractRenderer<PetriNet> implements Ren
 			pnTemplate.addAggr("transitions.{transition, preset, postset}", t, preset, postset);
 		}
 
-		pnTemplate.write(new AutoIndentWriter(writer));
+		pnTemplate.write(new AutoIndentWriter(writer), new ThrowingErrorListener());
 	}
 }
 

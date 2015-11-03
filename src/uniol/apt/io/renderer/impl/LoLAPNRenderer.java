@@ -109,7 +109,7 @@ public class LoLAPNRenderer extends AbstractRenderer<PetriNet> implements Render
 		// Handle transitions (and arcs)
 		pnTemplate.add("transitions", pn.getTransitions());
 
-		pnTemplate.write(new AutoIndentWriter(writer));
+		pnTemplate.write(new AutoIndentWriter(writer), new ThrowingErrorListener());
 	}
 }
 

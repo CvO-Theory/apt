@@ -71,7 +71,7 @@ public class AptPNRenderer extends AbstractRenderer<PetriNet> implements Rendere
 		// Handle transitions (and arcs)
 		pnTemplate.add("transitions", pn.getTransitions());
 
-		pnTemplate.write(new AutoIndentWriter(writer));
+		pnTemplate.write(new AutoIndentWriter(writer), new ThrowingErrorListener());
 	}
 }
 
