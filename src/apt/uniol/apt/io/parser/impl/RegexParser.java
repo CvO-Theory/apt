@@ -33,6 +33,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import uniol.apt.adt.automaton.FiniteAutomaton;
 import uniol.apt.adt.automaton.Symbol;
+import uniol.apt.io.parser.AptParser;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.Parser;
 import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
@@ -42,7 +43,10 @@ import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
  *
  * @author vsp
  */
+@AptParser
 public class RegexParser extends AbstractParser<FiniteAutomaton> implements Parser<FiniteAutomaton> {
+	public final static String FORMAT = "regex";
+
 	private static class AlphabetListener extends RegexFormatParserBaseListener {
 		private final Set<Symbol> alphabet;
 
@@ -198,6 +202,11 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 		public void exitExprIdEpsilon(RegexFormatParser.ExprIdEpsilonContext ctx) {
 			this.automatons.put(ctx, getAtomicLanguage(Symbol.EPSILON));
 		}
+	}
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
 	}
 
 	@Override

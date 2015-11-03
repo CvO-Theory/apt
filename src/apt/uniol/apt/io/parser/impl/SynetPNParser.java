@@ -37,6 +37,7 @@ import uniol.apt.adt.extension.Extensible;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.io.parser.AptParser;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 
@@ -45,7 +46,10 @@ import uniol.apt.io.parser.ParseException;
  *
  * @author vsp
  */
+@AptParser
 public class SynetPNParser extends AbstractParser<PetriNet> implements Parser<PetriNet> {
+	public final static String FORMAT = "synet";
+
 	private static class LocationListener extends SynetPNFormatBaseListener implements SynetPNFormatListener {
 		private final Set<String> locations;
 
@@ -137,6 +141,11 @@ public class SynetPNParser extends AbstractParser<PetriNet> implements Parser<Pe
 
 			this.pn.createFlow(ctx.p.getText(), ctx.t.getText(), weight);
 		}
+	}
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
 	}
 
 	@Override

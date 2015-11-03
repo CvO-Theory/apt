@@ -36,6 +36,7 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.io.parser.AptParser;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 
@@ -44,7 +45,10 @@ import uniol.apt.io.parser.ParseException;
  *
  * @author vsp
  */
+@AptParser
 public class AptPNParser extends AbstractParser<PetriNet> implements Parser<PetriNet> {
+	public final static String FORMAT = "apt";
+
 	private static class NameDescPlaceTransitionListener extends AptPNFormatBaseListener
 			implements AptPNFormatListener {
 		private final PetriNet pn;
@@ -187,6 +191,11 @@ public class AptPNParser extends AbstractParser<PetriNet> implements Parser<Petr
 				this.pn.addFinalMarking(new Marking(this.pn, marking));
 			}
 		}
+	}
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
 	}
 
 	@Override

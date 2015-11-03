@@ -31,6 +31,12 @@ import java.io.IOException;
  */
 public interface Parser<G> {
 	/**
+	 * Which format does this parser understand?
+	 * @return name of the supported format
+	 */
+	public String getFormat();
+
+	/**
 	 * Parse a string into an object.
 	 *
 	 * @param input The input string to read the object from.

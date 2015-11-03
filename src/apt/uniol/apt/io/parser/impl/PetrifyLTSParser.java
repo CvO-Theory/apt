@@ -35,6 +35,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import uniol.apt.adt.exception.DatastructureException;
 import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.AptParser;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 
@@ -43,7 +44,10 @@ import uniol.apt.io.parser.ParseException;
  *
  * @author Uli Schlachter
  */
+@AptParser
 public class PetrifyLTSParser extends AbstractParser<TransitionSystem> implements Parser<TransitionSystem> {
+	public final static String FORMAT = "petrify";
+
 	private static class LTSListener extends PetrifyLTSFormatParserBaseListener
 			implements PetrifyLTSFormatParserListener {
 		private final TransitionSystem lts;
@@ -96,6 +100,11 @@ public class PetrifyLTSParser extends AbstractParser<TransitionSystem> implement
 		public void exitMarking(PetrifyLTSFormatParser.MarkingContext ctx) {
 			lts.setInitialState(ctx.ID().getText());
 		}
+	}
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
 	}
 
 	@Override

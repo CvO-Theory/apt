@@ -36,6 +36,7 @@ import uniol.apt.adt.exception.DatastructureException;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.AptParser;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 
@@ -44,7 +45,10 @@ import uniol.apt.io.parser.ParseException;
  *
  * @author vsp
  */
+@AptParser
 public class AptLTSParser extends AbstractParser<TransitionSystem> implements Parser<TransitionSystem> {
+	public final static String FORMAT = "apt";
+
 	private static class NameDescStateLabelListener extends AptLTSFormatBaseListener
 			implements AptLTSFormatListener {
 		private final TransitionSystem ts;
@@ -150,6 +154,11 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 				a.putExtension(entry.getKey(), entry.getValue());
 			}
 		}
+	}
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
 	}
 
 	@Override

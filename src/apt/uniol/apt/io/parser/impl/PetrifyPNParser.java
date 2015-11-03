@@ -36,6 +36,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import uniol.apt.adt.exception.DatastructureException;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
+import uniol.apt.io.parser.AptParser;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.util.Pair;
@@ -45,7 +46,10 @@ import uniol.apt.util.Pair;
  *
  * @author Uli Schlachter
  */
+@AptParser
 public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<PetriNet> {
+	public final static String FORMAT = "petrify";
+
 	private static class PNListener extends PetrifyPNFormatParserBaseListener
 			implements PetrifyPNFormatParserListener {
 		private final PetriNet pn;
@@ -145,6 +149,11 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 				nodeIds.put(ctx, id);
 			}
 		}
+	}
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
 	}
 
 	@Override

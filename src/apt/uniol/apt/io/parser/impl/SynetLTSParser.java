@@ -32,15 +32,19 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import uniol.apt.adt.exception.DatastructureException;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.parser.AptParser;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 
 /**
- * apt format parser
+ * synet lts format parser
  *
  * @author vsp
  */
+@AptParser
 public class SynetLTSParser extends AbstractParser<TransitionSystem> implements Parser<TransitionSystem> {
+	public final static String FORMAT = "synet";
+
 	private static class StateListener extends SynetLTSFormatBaseListener implements SynetLTSFormatListener {
 		private final TransitionSystem ts;
 		private final Set<String> states;
@@ -76,6 +80,11 @@ public class SynetLTSParser extends AbstractParser<TransitionSystem> implements 
 		public void exitTrans(SynetLTSFormatParser.TransContext ctx) {
 			this.ts.createArc(ctx.from.getText(), ctx.to.getText(), ctx.event.getText());
 		}
+	}
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
 	}
 
 	@Override

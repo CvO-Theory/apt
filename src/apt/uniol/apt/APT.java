@@ -134,8 +134,10 @@ import uniol.apt.io.converter.Apt2SynetModule;
 import uniol.apt.io.converter.PNML2AptModule;
 import uniol.apt.io.converter.Petrify2AptModule;
 import uniol.apt.io.converter.Synet2AptModule;
-import uniol.apt.io.parser.impl.AptLTSParser;
-import uniol.apt.io.parser.impl.AptPNParser;
+import uniol.apt.io.parser.LTSParsers;
+import uniol.apt.io.parser.Parsers;
+import uniol.apt.io.parser.ParserNotFoundException;
+import uniol.apt.io.parser.PNParsers;
 import uniol.apt.io.renderer.impl.BagginsPNRendererModule;
 import uniol.apt.io.renderer.impl.LoLAPNRendererModule;
 import uniol.apt.io.renderer.impl.PnmlPNRendererModule;
@@ -317,15 +319,24 @@ public class APT {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void addParametersTransformations() {
+		Parsers<PetriNet> pnParsers          = new PNParsers();
+		Parsers<TransitionSystem> ltsParsers = new LTSParsers();
 		parametersTransformer.addTransformation(String.class, new StringParameterTransformation());
 		parametersTransformer.addTransformation(Character.class, new CharacterParameterTransformation());
 		parametersTransformer.addTransformation(Integer.class, new IntegerParameterTransformation());
 		parametersTransformer.addTransformation(Word.class, new WordParameterTransformation());
-		parametersTransformer.addTransformation(PetriNet.class,
-				new ParserParameterTransformation<PetriNet>(new AptPNParser(), "Petri net"));
-		parametersTransformer.addTransformation(TransitionSystem.class,
-				new ParserParameterTransformation<TransitionSystem>(new AptLTSParser(),
-					"transition system"));
+		try {
+			parametersTransformer.addTransformation(PetriNet.class,
+					new ParserParameterTransformation<PetriNet>(
+						pnParsers.getParser("apt"), "Petri net"));
+			parametersTransformer.addTransformation(TransitionSystem.class,
+					new ParserParameterTransformation<TransitionSystem>(ltsParsers.getParser("apt"),
+						"transition system"));
+		} catch (ParserNotFoundException ex) {
+			errPrinter.println("Error finding apt parser: " + ex.getMessage());
+			errPrinter.flush();
+			System.exit(ExitStatus.ERROR.getValue());
+		}
 		parametersTransformer.addTransformation(ExtendMode.class, new ExtendModeParameterTransformation());
 		parametersTransformer.addTransformation(ParikhVector.class, new ParikhVectorParameterTransformation());
 		parametersTransformer.addTransformation(PetriNetOrTransitionSystem.class,

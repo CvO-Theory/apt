@@ -39,6 +39,7 @@ import org.xml.sax.SAXParseException;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.io.parser.AptParser;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
 
@@ -46,7 +47,10 @@ import uniol.apt.io.parser.ParseException;
  * Reads P/T nets in PNML format.
  * @author Uli Schlachter, based on code by Thomas Strathmann
  */
+@AptParser
 public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<PetriNet> {
+	public final static String FORMAT = "pnml";
+
 	private static class Parser {
 		final private PetriNet pn;
 
@@ -228,6 +232,11 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 				cur = nextElement(cur.getNextSibling());
 			}
 		}
+	}
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
 	}
 
 	@Override
