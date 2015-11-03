@@ -731,39 +731,4 @@ public class APT {
 	}
 }
 
-class CloseableCollection<T extends Closeable> implements Closeable {
-	private final List<T> array = new ArrayList<>();
-	private final List<Boolean> needsClose = new ArrayList<>();
-
-	public T get(int idx) {
-		return array.get(idx);
-	}
-
-	public void add(T val, boolean needsClose) {
-		this.array.add(val);
-		this.needsClose.add(needsClose);
-	}
-
-	@Override
-	public void close() throws IOException {
-		IOException err = null;
-		while (!array.isEmpty()) {
-			Closeable c = array.remove(0);
-			boolean close = needsClose.remove(0);
-			if (close)
-				try {
-					c.close();
-				}
-			catch (IOException e) {
-				if (err == null)
-					err = e;
-				else
-					err.addSuppressed(e);
-			}
-		}
-		if (err != null)
-			throw err;
-	}
-}
-
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
