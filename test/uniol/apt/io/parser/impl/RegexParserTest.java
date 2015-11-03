@@ -142,6 +142,36 @@ public class RegexParserTest {
 		test("a // Missing newline after comment", getAtomic("a"));
 	}
 
+	@Test
+	public void testNegation1() throws Exception {
+		test("!a", union(getAtomicLanguage(Symbol.EPSILON), concatenate(getAtomic("a"), kleenePlus(getAtomic("a")))));
+	}
+
+	@Test
+	public void testNegation2() throws Exception {
+		test("!(a*)", getEmptyLanguage());
+	}
+
+	@Test
+	public void testNegation3() throws Exception {
+		test("!(a+)", getAtomicLanguage(Symbol.EPSILON));
+	}
+
+	@Test
+	public void testNegation4() throws Exception {
+		test("b&!(a+)", getAtomic("b"));
+	}
+
+	@Test
+	public void testNegation5() throws Exception {
+		test("b|!(a+)", concatenate(kleeneStar(getAtomic("a")), concatenate(getAtomic("b"), kleeneStar(union(getAtomic("a"), getAtomic("b"))))));
+	}
+
+	@Test
+	public void testNegation6() throws Exception {
+		test("!(!a)", getAtomic("a"));
+	}
+
 	@Test(expectedExceptions = { ParseException.class })
 	public void testClosingParen() throws Exception {
 		new RegexParser().parseString(")");

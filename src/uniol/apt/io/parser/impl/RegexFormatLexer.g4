@@ -24,6 +24,7 @@ OR		: '|';
 AND		: '&';
 STAR		: '*';
 OPT		: '?';
+NEGATE		: '!';
 PLUS		: '+';
 EPSILON		: '$';
 EMPTY		: '~';

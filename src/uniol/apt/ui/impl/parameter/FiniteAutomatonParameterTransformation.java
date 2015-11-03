@@ -52,6 +52,8 @@ public class FiniteAutomatonParameterTransformation implements ParameterTransfor
 			+ " sub-expressions next to each other. If you need an event consisting of more than just a"
 			+ " single letter, enclose it in angle brackets like this: <event>\n\n"
 			+ "Supported operations are:\n"
+			+ " - !a is the negation of 'a', this means any word except a single 'a' is allowed (if the regex contains other"
+			+ " symbols, like 'b' or 'c', then they may also occur in this words)\n"
 			+ " - a* is the Kleene closure of 'a', including the empty word. This means any sequence"
 			+ " of 'a' is allowed.\n"
 			+ " - a+ is the Kleene plus of 'a' (without explicitly including the empty word).\n"
@@ -64,8 +66,8 @@ public class FiniteAutomatonParameterTransformation implements ParameterTransfor
 			+ " - ~ describes the empty language\n"
 			+ " - $ is the language containing only the empty word\n\n"
 			+ "The precedence of the operators is:\n"
-			+ " * + and ? bind the strongest, then concatenation and then the union operator. Parentheses"
-			+ " can be used to influence the precedence, for example in (a(bc?)+)*.\n\n"
+			+ " ! binds strongest, then * + and ? and repetition with {}, then concatenation, then intersection and at last the"
+			+ " union operator. Parentheses can be used to influence the precedence, for example in (a(bc?)+)*.\n\n"
 			+ "Finally, comments of the form\n  /* comment */\nand\n  // comment\nare supported.";
 	}
 }

@@ -199,7 +199,21 @@ public class FiniteAutomatonUtility {
 	 * @param alphabet The alphabet of the negation
 	 * @return An automaton accepting the negation.
 	 */
+	static public DeterministicFiniteAutomaton negate(FiniteAutomaton a, Set<Symbol> alphabet) {
+		return negate(constructDFA(a), alphabet);
+	}
+	/**
+	 * Get a finite automaton accepting the negation of the language of the given automaton. A word is in the
+	 * negation of the language if is is not in the language itself.
+	 * @param a The automaton whose language is to negate.
+	 * @param alphabet The alphabet of the negation
+	 * @return An automaton accepting the negation.
+	 */
 	static public DeterministicFiniteAutomaton negate(DeterministicFiniteAutomaton a, Set<Symbol> alphabet) {
+		if (!alphabet.containsAll(a.getAlphabet())) {
+			throw new IllegalArgumentException("Alphabet of the automaton isn't subset of the given alphabet.");
+		}
+
 		return getAutomaton(new NegationState(a.getInitialState(), new HashSet<>(alphabet)));
 	}
 

@@ -30,14 +30,15 @@ expr_and    : ex1=expr_concat
 			(AND ex2=expr_and)?;
 expr_concat : ex1=expr_repeat
 			(ex2=expr_concat)?;
-expr_repeat : expr_id STAR						# expr_repeat_star
-		| expr_id OPT						# expr_repeat_opt
-		| expr_id PLUS						# expr_repeat_plus
-		| expr_id REPEATOPEN x=INT REPEATCLOSE			# expr_repeat_exact
-		| expr_id REPEATOPEN x=INT COMMA REPEATCLOSE		# expr_repeat_least
-		| expr_id REPEATOPEN x=INT COMMA y=INT REPEATCLOSE	# expr_repeat_minmax
-		| expr_id						# expr_repeat_nothing
+expr_repeat : expr_negate STAR						# expr_repeat_star
+		| expr_negate OPT					# expr_repeat_opt
+		| expr_negate PLUS					# expr_repeat_plus
+		| expr_negate REPEATOPEN x=INT REPEATCLOSE		# expr_repeat_exact
+		| expr_negate REPEATOPEN x=INT COMMA REPEATCLOSE	# expr_repeat_least
+		| expr_negate REPEATOPEN x=INT COMMA y=INT REPEATCLOSE	# expr_repeat_minmax
+		| expr_negate						# expr_repeat_nothing
 		;
+expr_negate : NEGATE? expr_id ;
 expr_id     : PAROPEN expr PARCLOSE	# expr_id_parentheses
 			| ATOM		# expr_id_atom
 			| ID		# expr_id_id
