@@ -64,88 +64,80 @@ public class SynetSynthesizeDistributedLTS {
 	 * @return <true> if synthesizable.
 	 * @throws SynetNotFoundException
 	 * @throws IOException
-	 * @throws FormatException
-	 * @throws ParseException Thrown if the synet output can't get parsed.
+	 * @throws ParseException Thrown if the synet output can't be parsed.
+	 * @throws RenderException Thrown if the input lts cannot be represented in the synet format.
 	 */
 	public boolean check() throws SynetNotFoundException, IOException, ParseException, RenderException {
 		String ltsSynetFormat = new SynetLTSRenderer().render(ts_);
 
-		File tmpAutFile = File.createTempFile("synetAut", ".aut");
-		tmpAutFile.deleteOnExit();
-		BufferedWriter bw = new BufferedWriter(new FileWriter(tmpAutFile));
-		bw.write(ltsSynetFormat);
-		bw.close();
+		File tmpAutFile = null;
+		File tmpDisFile = null;
+		File tmpSaveFile = null;
+		try {
+			tmpAutFile = File.createTempFile("synetAut", ".aut");
+			BufferedWriter bw = new BufferedWriter(new FileWriter(tmpAutFile));
+			bw.write(ltsSynetFormat);
+			bw.close();
 
-		File tmpDisFile = File.createTempFile("synetDis", ".dis");
-		tmpDisFile.deleteOnExit();
-		BufferedWriter bw2 = new BufferedWriter(new FileWriter(tmpDisFile));
-		bw2.write(getDisString());
-		bw2.close();
+			tmpDisFile = File.createTempFile("synetDis", ".dis");
+			BufferedWriter bw2 = new BufferedWriter(new FileWriter(tmpDisFile));
+			bw2.write(getDisString());
+			bw2.close();
 
-		File tmpSaveFile = File.createTempFile("synetNet", ".net");
-		tmpSaveFile.deleteOnExit();
+			tmpSaveFile = File.createTempFile("synetNet", ".net");
 
-		Process p;// -r uses a new algorithm -o creates an output file -d is the
-		// option for distributed nets with locations
-		if (location_) {
-			try {
-				p = new ProcessBuilder("synet", "-r", "-o", tmpSaveFile.getAbsolutePath(), "-d",
-						tmpDisFile.getAbsolutePath(), tmpAutFile.getAbsolutePath()).start();
-			} catch (Exception e) {
-				deleteCreatedFiles(tmpAutFile, tmpDisFile, tmpSaveFile);
-				throw new SynetNotFoundException();
+			Process p;// -r uses a new algorithm -o creates an output file -d is the
+			// option for distributed nets with locations
+			if (location_) {
+				try {
+					p = new ProcessBuilder("synet", "-r", "-o", tmpSaveFile.getAbsolutePath(), "-d",
+							tmpDisFile.getAbsolutePath(), tmpAutFile.getAbsolutePath()).start();
+				} catch (Exception e) {
+					throw new SynetNotFoundException();
+				}
+			} else {
+				try {
+					p = new ProcessBuilder("synet", "-r", "-o", tmpSaveFile.getAbsolutePath(), tmpAutFile.getAbsolutePath())
+						.start();
+				} catch (Exception e) {
+					throw new SynetNotFoundException();
+				}
 			}
-		} else {
-			try {
-				p = new ProcessBuilder("synet", "-r", "-o", tmpSaveFile.getAbsolutePath(), tmpAutFile.getAbsolutePath())
-					.start();
-			} catch (Exception e) {
-				deleteCreatedFiles(tmpAutFile, tmpDisFile, tmpSaveFile);
-				throw new SynetNotFoundException();
+
+			BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+			String line = "";
+			while ((line = br.readLine()) != null) {
+				if(line.contains("failures") || line.contains("not separated")) {
+					if(separationErrorMsg_ == null)
+						separationErrorMsg_ = "";
+					separationErrorMsg_ += line + "\n";
+				}
+				try {
+					p.waitFor();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
+
+			pn_ = new SynetPNParser().parseFile(tmpSaveFile.getAbsolutePath());
+
+			String errorStr = error.readLine();
+			if (errorStr != null) {
+				errorMsg_ = errorStr;
+				return false;
+			}
+			return true;
+		} finally {
+			if (tmpAutFile != null)
+				tmpAutFile.delete();
+			if (tmpDisFile != null)
+				tmpDisFile.delete();
+			if (tmpSaveFile != null)
+				tmpSaveFile.delete();
 		}
-
-		BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-		String line = "";
-		while ((line = br.readLine()) != null) {
-			if(line.contains("failures") || line.contains("not separated")) {
-				if(separationErrorMsg_ == null)
-					separationErrorMsg_ = "";
-				separationErrorMsg_ += line + "\n";
-			}
-			try {
-				p.waitFor();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		pn_ = new SynetPNParser().parseFile(tmpSaveFile.getAbsolutePath());
-
-		String errorStr = error.readLine();
-		if (errorStr != null) {
-			errorMsg_ = errorStr;
-			deleteCreatedFiles(tmpAutFile, tmpDisFile, tmpSaveFile);
-			return false;
-		}
-		deleteCreatedFiles(tmpAutFile, tmpDisFile, tmpSaveFile);
-		return true;
-	}
-
-	/**
-	 * Deletes the created files.
-	 *
-	 * @param tmpSaveFile
-	 * @param tmpDisFile
-	 * @param tmpAutFile
-	 */
-	private void deleteCreatedFiles(File tmpAutFile, File tmpDisFile, File tmpSaveFile) {
-		tmpAutFile.delete();
-		tmpDisFile.delete();
-		tmpSaveFile.delete();
 	}
 
 	/**

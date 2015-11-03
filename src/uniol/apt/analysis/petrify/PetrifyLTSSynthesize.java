@@ -66,59 +66,63 @@ public class PetrifyLTSSynthesize {
 		String petrifyLts = pf.render(ts_);
 		petrifyLts += "\n"; // this is necessary for petrify v4.2 on MacOS X
 
-		File tmpAutFile = File.createTempFile("petrifyAut", ".aut");
-		tmpAutFile.deleteOnExit();
-		BufferedWriter bw = new BufferedWriter(new FileWriter(tmpAutFile));
-		bw.write(petrifyLts);
-		bw.close();
-
-		Process p;
+		File tmpAutFile = null;
 		try {
-			if (sndParameter_ != null) {
-				if (sndParameter_.equals("dead")) {
-					p = new ProcessBuilder("petrify", "-nolog", "-p", tmpAutFile.getAbsolutePath(), "-" + sndParameter_)
-							.start();
-				} else {
-					throw new FalseParameterException();
-				}
-			} else {
-				p = new ProcessBuilder("petrify", "-nolog", "-p", tmpAutFile.getAbsolutePath()).start();
-			}
-		} catch (FalseParameterException e) {
-			throw new FalseParameterException();
-		} catch (Exception e) {
-			throw new PetrifyNotFoundException();
-		}
+			tmpAutFile = File.createTempFile("petrifyAut", ".aut");
+			BufferedWriter bw = new BufferedWriter(new FileWriter(tmpAutFile));
+			bw.write(petrifyLts);
+			bw.close();
 
-		BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-		String line = "";
-		String net = "";
-		while ((line = br.readLine()) != null) {
-			net += line + "\n";
+			Process p;
 			try {
-				p.waitFor();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+				if (sndParameter_ != null) {
+					if (sndParameter_.equals("dead")) {
+						p = new ProcessBuilder("petrify", "-nolog", "-p", tmpAutFile.getAbsolutePath(), "-" + sndParameter_)
+								.start();
+					} else {
+						throw new FalseParameterException();
+					}
+				} else {
+					p = new ProcessBuilder("petrify", "-nolog", "-p", tmpAutFile.getAbsolutePath()).start();
+				}
+			} catch (FalseParameterException e) {
+				throw new FalseParameterException();
+			} catch (Exception e) {
+				throw new PetrifyNotFoundException();
 			}
-		}
 
-		PetrifyPNParser ps = new PetrifyPNParser();
-		try {
-			pn_ = ps.parseString(net);
-		} catch (ParseException e) {
-			throw new ModuleException(e);
-		}
+			BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
-		String errorStr = error.readLine();
-		if (errorStr != null) {
-			errorMsg_ = errorStr;
-			return false;
-		}
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
-		return true;
+			String line = "";
+			String net = "";
+			while ((line = br.readLine()) != null) {
+				net += line + "\n";
+				try {
+					p.waitFor();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			try {
+				pn_ = new PetrifyPNParser().parseString(net);
+			} catch (ParseException e) {
+				throw new ModuleException(e);
+			}
+
+			String errorStr = error.readLine();
+			if (errorStr != null) {
+				errorMsg_ = errorStr;
+				return false;
+			}
+
+			return true;
+		} finally {
+			if (tmpAutFile != null)
+				tmpAutFile.delete();
+		}
 	}
 
 	/**
