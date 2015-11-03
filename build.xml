@@ -31,7 +31,6 @@
 	<!-- Only run the antlr target if some .g file is newer than generated-src/antlr.stamp (which the antlr target touches) -->
 	<target name="antlr.checkforchanges">
 		<uptodate property="antlr.nochanges" targetfile="generated-src/antlr.stamp">
-			<srcfiles dir="src/uniol/apt/io/parser/" includes="**/*.g"/>
 			<srcfiles dir="src/uniol/apt/io/parser/" includes="**/*.g4"/>
 		</uptodate>
 	</target>
