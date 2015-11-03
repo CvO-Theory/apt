@@ -40,6 +40,7 @@ import uniol.apt.adt.EdgeKey;
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.SoftMap;
 import uniol.apt.adt.exception.FlowExistsException;
+import uniol.apt.adt.exception.IllegalFlowException;
 import uniol.apt.adt.exception.NoSuchEdgeException;
 import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.exception.NodeExistsException;
@@ -129,6 +130,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * @throws NoSuchNodeException      thrown if one of the ids does not match a node in this petri net.
 	 * @throws FlowExistsException      thrown if a flow with the same source and target already exists in this
 	 *                                  petri net.
+	 * @throws IllegalFlowException     thrown if argument don't correspond to a place and a transition.
 	 */
 	public Flow createFlow(String sourceId, String targetId) {
 		return createFlow(sourceId, targetId, 1);
@@ -172,6 +174,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * @throws NoSuchNodeException      thrown if one of the ids does not match a node in this petri net.
 	 * @throws FlowExistsException      thrown if a flow with the same source and target already exists in this
 	 *                                  petri net.
+	 * @throws IllegalFlowException     thrown if argument don't correspond to a place and a transition.
 	 */
 	public Flow createFlow(String sourceId, String targetId, int weight) {
 		if (sourceId == null) {
@@ -188,6 +191,11 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		// createEdgeKey() makes sure the node exists
 		if (this.postsetEdges.get(sourceId).containsKey(key)) {
 			throw new FlowExistsException(this, key);
+		}
+		boolean hasPlace = places.containsKey(sourceId) || places.containsKey(targetId);
+		boolean hasTransition = transitions.containsKey(sourceId) || transitions.containsKey(targetId);
+		if (!hasPlace || !hasTransition) {
+			throw new IllegalFlowException(this, key);
 		}
 		Flow f = new Flow(this, sourceId, targetId, weight);
 		if (weight > 0) {
@@ -209,6 +217,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * @throws NoSuchNodeException      thrown if one of the ids does not match a node in this petri net.
 	 * @throws FlowExistsException      thrown if a flow with the same source and target already exists in this
 	 *                                  petri net.
+	 * @throws IllegalFlowException     thrown if argument don't correspond to a place and a transition.
 	 */
 	public Flow createFlow(Node source, Node target, int weight) {
 		if (source == null) {
@@ -232,6 +241,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * @throws NoSuchNodeException      thrown if one of the ids does not match a node in this petri net.
 	 * @throws FlowExistsException      thrown if a flow with the same source and target already exists in this
 	 *                                  petri net.
+	 * @throws IllegalFlowException     thrown if argument don't correspond to a place and a transition.
 	 */
 	public Flow createFlow(Node source, Node target) {
 		return createFlow(source, target, 1);
@@ -249,6 +259,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * @throws NoSuchNodeException      thrown if one of the ids does not match a node in this petri net.
 	 * @throws FlowExistsException      thrown if a flow with the same source and target already exists in this
 	 *                                  petri net.
+	 * @throws IllegalFlowException     thrown if argument don't correspond to a place and a transition.
 	 */
 	public Flow createFlow(Flow flow) {
 		if (flow == null) {
