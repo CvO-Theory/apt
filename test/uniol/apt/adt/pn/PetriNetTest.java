@@ -30,6 +30,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 import uniol.apt.CrashCourseNets;
 import uniol.apt.adt.EdgeKey;
+import uniol.apt.adt.exception.IllegalFlowException;
 import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.module.exception.ModuleException;
 
@@ -280,6 +281,20 @@ public class PetriNetTest {
 		// pn. Thus, we must explicitly call getToken(Place) to test for this bug.
 		Marking final2 = finalMarkings.iterator().next();
 		assertThat(final2.getToken(p2).getValue(), equalTo(42l));
+	}
+
+	@Test(expectedExceptions = { IllegalFlowException.class })
+	public void testArcBetweenPlaces() {
+		PetriNet pn = new PetriNet();
+		pn.createPlaces("p0", "p1");
+		pn.createFlow("p0", "p1");
+	}
+
+	@Test(expectedExceptions = { IllegalFlowException.class })
+	public void testArcBetweenTransitions() {
+		PetriNet pn = new PetriNet();
+		pn.createTransitions("t0", "t1");
+		pn.createFlow("t0", "t1");
 	}
 }
 
