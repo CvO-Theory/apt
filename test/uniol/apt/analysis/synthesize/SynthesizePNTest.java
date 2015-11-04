@@ -48,6 +48,7 @@ import static uniol.apt.adt.matcher.Matchers.flowThatConnects;
 import static uniol.apt.adt.matcher.Matchers.nodeWithID;
 import static uniol.apt.adt.matcher.Matchers.pairWith;
 import static uniol.apt.analysis.synthesize.Matchers.*;
+import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
 
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked") // I hate generics
@@ -276,7 +277,7 @@ public class SynthesizePNTest {
 
 	@Test
 	public void testWordB2AB5AB6AB6None() throws MissingLocationException, UnboundedException {
-		TransitionSystem ts = SynthesizeWordModule.makeTS(Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b",
+		TransitionSystem ts = makeTS(Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b",
 					"a", "b", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b"));
 		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(new PNProperties()).buildForIsomorphicBehavior();
 
@@ -291,7 +292,7 @@ public class SynthesizePNTest {
 
 	@Test
 	public void testWordB2AB5AB6AB6Pure() throws MissingLocationException, UnboundedException {
-		TransitionSystem ts = SynthesizeWordModule.makeTS(Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b",
+		TransitionSystem ts = makeTS(Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b",
 					"a", "b", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b"));
 		PNProperties properties = new PNProperties().setPure(true);
 		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
@@ -355,7 +356,7 @@ public class SynthesizePNTest {
 
 		@BeforeClass
 		public void setup() {
-			ts = SynthesizeWordModule.makeTS(Arrays.asList("a", "b"));
+			ts = makeTS(Arrays.asList("a", "b"));
 			// Add an unreachable state, just because we can
 			ts.createState();
 			utility = new RegionUtility(ts);

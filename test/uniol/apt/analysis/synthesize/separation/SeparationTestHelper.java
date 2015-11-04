@@ -41,6 +41,7 @@ import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.analysis.synthesize.Matchers.*;
+import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
 
 /** @author Uli Schlachter */
 public class SeparationTestHelper {
@@ -264,7 +265,7 @@ public class SeparationTestHelper {
 		public void setup() throws Exception {
 			word = Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b", "a", "b", "b",
 					"b", "b", "b", "b");
-			ts = SynthesizeWordModule.makeTS(word);
+			ts = makeTS(word);
 			utility = new RegionUtility(ts);
 		}
 
@@ -313,7 +314,7 @@ public class SeparationTestHelper {
 		@BeforeClass
 		public void setup() throws Exception {
 			word = Arrays.asList("c", "b", "a", "d", "c", "b", "a");
-			ts = SynthesizeWordModule.makeTS(word);
+			ts = makeTS(word);
 			utility = new RegionUtility(ts);
 			locationMap = new String[4];
 			locationMap[0] = "a";

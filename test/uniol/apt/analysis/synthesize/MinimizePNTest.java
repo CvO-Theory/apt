@@ -41,6 +41,7 @@ import uniol.apt.analysis.language.LanguageEquivalence;
 import uniol.apt.analysis.on.OutputNonBranching;
 import uniol.apt.analysis.plain.Plain;
 import uniol.apt.analysis.sideconditions.Pure;
+import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
 
 /** @author Uli Schlachter */
 public class MinimizePNTest {
@@ -127,7 +128,7 @@ public class MinimizePNTest {
 	@Test
 	public void testA() throws Exception {
 		PNProperties properties = new PNProperties();
-		TransitionSystem ts = SynthesizeWordModule.makeTS(Arrays.asList("a"));
+		TransitionSystem ts = makeTS(Arrays.asList("a"));
 		SynthesizePN synth = mockSynthesize(ts, properties, 2);
 		MinimizePN min = new MinimizePN(synth);
 

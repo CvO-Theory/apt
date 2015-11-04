@@ -34,10 +34,10 @@ import uniol.apt.analysis.language.Word;
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.analysis.synthesize.Matchers.*;
-import static uniol.apt.analysis.synthesize.SynthesizeWordModule.*;
+import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
 
 /** @author Uli Schlachter */
-public class SynthesizeWordModuleTest {
+public class SynthesizeUtilsTest {
 	@Test
 	public void testFormatESSPFailureEmpty() {
 		Word word = new Word(Arrays.asList("a", "b"));

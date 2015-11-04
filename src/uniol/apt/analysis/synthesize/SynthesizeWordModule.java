@@ -38,6 +38,7 @@ import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.impl.parameter.WordParameterTransformation;
+import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
 
 /**
  * Provide the net synthesis from a word as a module.
@@ -95,93 +96,6 @@ public class SynthesizeWordModule extends AbstractModule {
 		outputSpec.addReturnValue("stateSeparationFailurePoints", String.class);
 	}
 
-	static private void appendSeparationFailure(StringBuilder result, Set<String> failures, boolean compressedFormat) {
-		if (failures.isEmpty())
-			return;
-
-		boolean first = true;
-		if (!compressedFormat && result.length() != 0)
-			result.append(" ");
-		result.append("[");
-		for (String event : failures) {
-			if (!compressedFormat && !first)
-				result.append(",");
-			result.append(event);
-			first = false;
-		}
-		result.append("]");
-	}
-
-	static public String formatESSPFailure(List<String> word, Map<String, Set<State>> separationFailures, boolean compressedFormat) {
-		if (separationFailures.isEmpty())
-			return null;
-
-		// List mapping indices into the word to sets of failed separation problems
-		List<Set<String>> failedSeparation = new ArrayList<>(word.size());
-		// Add one for the initial state
-		failedSeparation.add(new HashSet<String>());
-		for (String event : word) {
-			failedSeparation.add(new HashSet<String>());
-		}
-
-		// Add all failed separation problems into the above list
-		for (Map.Entry<String, Set<State>> failures : separationFailures.entrySet()) {
-			for (State state : failures.getValue()) {
-				int index = Integer.parseInt(state.getExtension("index").toString());
-				failedSeparation.get(index).add(failures.getKey());
-			}
-		}
-
-		// Build the string representation of the separation failures
-		StringBuilder result = new StringBuilder();
-		for (int index = 0; index < word.size(); index++) {
-			if (!compressedFormat && index != 0)
-				result.append(",");
-			appendSeparationFailure(result, failedSeparation.get(index), compressedFormat);
-			if (!compressedFormat && result.length() != 0)
-				result.append(" ");
-			result.append(word.get(index));
-		}
-		appendSeparationFailure(result, failedSeparation.get(word.size()), compressedFormat);
-		return result.toString();
-	}
-
-	static public String formatSSPFailure(List<String> word, Collection<Set<State>> separationFailures) {
-		// State separation can only fail due to boundedness. E.g. a safe Petri net cannot generate a,a.
-		if (separationFailures.isEmpty())
-			return null;
-
-		int separable[] = new int[word.size() + 1];
-		Arrays.fill(separable, 0);
-
-		int numFailure = 0;
-		for (Set<State> states : separationFailures) {
-			numFailure++;
-			for (State state : states) {
-				int index = Integer.parseInt(state.getExtension("index").toString());
-				separable[index] = numFailure;
-			}
-		}
-
-		// Build the string representation of the separation failures
-		StringBuilder result = new StringBuilder();
-		for (int index = 0; index < word.size(); index++) {
-			if (index != 0)
-				result.append(",");
-			if (separable[index] != 0) {
-				if (index != 0)
-					result.append(" ");
-				result.append(separable[index]);
-			}
-			if (result.length() != 0)
-				result.append(" ");
-			result.append(word.get(index));
-		}
-		if (separable[word.size()] != 0)
-			result.append(" " + separable[word.size()]);
-		return result.toString();
-	}
-
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		Word word = input.getParameter("word", Word.class);
@@ -195,34 +109,6 @@ public class SynthesizeWordModule extends AbstractModule {
 	@Override
 	public Category[] getCategories() {
 		return new Category[]{Category.LTS};
-	}
-
-	static public TransitionSystem makeTS(List<String> word) {
-		return makeTS(word, false);
-	}
-
-	static public TransitionSystem makeTS(List<String> word, boolean cycle) {
-		TransitionSystem ts = new TransitionSystem();
-		State state = ts.createState();
-		state.putExtension("index", 0);
-		ts.setInitialState(state);
-
-		int index = 1;
-		for (String label : word) {
-			State nextState;
-			if (cycle && index == word.size())
-				nextState = ts.getInitialState();
-			else {
-				nextState = ts.createState();
-				nextState.putExtension("index", index);
-			}
-			ts.createArc(state, nextState, label);
-
-			state = nextState;
-			index++;
-		}
-
-		return ts;
 	}
 
 	static private class TSForWord implements SynthesizeModule.TransitionSystemForOptions {
