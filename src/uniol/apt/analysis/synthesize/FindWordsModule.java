@@ -105,7 +105,7 @@ public class FindWordsModule extends AbstractModule {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("options", String.class, "options");
-		inputSpec.addParameter("operation", String.class, "Choose between printing all minimal 'unsolvable' words or all 'solvable' words");
+		inputSpec.addParameter("operation", String.class, "Choose between printing all 'minimal_unsolvable' words or all 'solvable' words");
 		inputSpec.addParameter("alphabet", String.class, "Letters that should be part of the alphabet");
 	}
 
@@ -126,14 +126,14 @@ public class FindWordsModule extends AbstractModule {
 		alphabet.remove("");
 
 		switch (operation) {
-			case "unsolvable":
+			case "minimal_unsolvable":
 				generateList(properties, alphabet, Operation.UNSOLVABLE);
 				break;
 			case "solvable":
 				generateList(properties, alphabet, Operation.SOLVABLE);
 				break;
 			default:
-				throw new ModuleException("Unknown operation '" + operation + "', valid options are 'unsolvable' and 'solvable'");
+				throw new ModuleException("Unknown operation '" + operation + "', valid options are 'minimal_unsolvable' and 'solvable'");
 		}
 	}
 
@@ -150,7 +150,7 @@ public class FindWordsModule extends AbstractModule {
 			else if (printSolvable)
 				print = "solvable";
 			else if (printUnsolvable)
-				print = "unsolvable";
+				print = "minimal unsolvable";
 			else
 				print = "no";
 			System.out.println("Looking for " + print + " words from class " + properties.toString() + " over the alphabet " + alphabet);
