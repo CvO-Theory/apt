@@ -122,6 +122,8 @@ public class FindWordsModule extends AbstractModule {
 
 		PNProperties properties = SynthesizeModule.Options.parseProperties(optionsStr).properties;
 		SortedSet<String> alphabet = new TreeSet<>(Arrays.asList(alphabetLetter.split("")));
+		// some Java versions include "" as first part of the splitted string => try to remove it
+		alphabet.remove("");
 
 		switch (operation) {
 			case "unsolvable":
