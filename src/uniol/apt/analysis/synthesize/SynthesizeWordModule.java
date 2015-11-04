@@ -95,16 +95,16 @@ public class SynthesizeWordModule extends AbstractModule {
 		outputSpec.addReturnValue("stateSeparationFailurePoints", String.class);
 	}
 
-	static private void appendSeparationFailure(StringBuilder result, Set<String> failures) {
+	static private void appendSeparationFailure(StringBuilder result, Set<String> failures, boolean compressedFormat) {
 		if (failures.isEmpty())
 			return;
 
 		boolean first = true;
-		if (result.length() != 0)
+		if (!compressedFormat && result.length() != 0)
 			result.append(" ");
 		result.append("[");
 		for (String event : failures) {
-			if (!first)
+			if (!compressedFormat && !first)
 				result.append(",");
 			result.append(event);
 			first = false;
@@ -112,7 +112,7 @@ public class SynthesizeWordModule extends AbstractModule {
 		result.append("]");
 	}
 
-	static public String formatESSPFailure(Word word, Map<String, Set<State>> separationFailures) {
+	static public String formatESSPFailure(List<String> word, Map<String, Set<State>> separationFailures, boolean compressedFormat) {
 		if (separationFailures.isEmpty())
 			return null;
 
@@ -135,18 +135,18 @@ public class SynthesizeWordModule extends AbstractModule {
 		// Build the string representation of the separation failures
 		StringBuilder result = new StringBuilder();
 		for (int index = 0; index < word.size(); index++) {
-			if (index != 0)
+			if (!compressedFormat && index != 0)
 				result.append(",");
-			appendSeparationFailure(result, failedSeparation.get(index));
-			if (result.length() != 0)
+			appendSeparationFailure(result, failedSeparation.get(index), compressedFormat);
+			if (!compressedFormat && result.length() != 0)
 				result.append(" ");
 			result.append(word.get(index));
 		}
-		appendSeparationFailure(result, failedSeparation.get(word.size()));
+		appendSeparationFailure(result, failedSeparation.get(word.size()), compressedFormat);
 		return result.toString();
 	}
 
-	static public String formatSSPFailure(Word word, Collection<Set<State>> separationFailures) {
+	static public String formatSSPFailure(List<String> word, Collection<Set<State>> separationFailures) {
 		// State separation can only fail due to boundedness. E.g. a safe Petri net cannot generate a,a.
 		if (separationFailures.isEmpty())
 			return null;
@@ -189,7 +189,7 @@ public class SynthesizeWordModule extends AbstractModule {
 		output.setReturnValue("stateSeparationFailurePoints", String.class,
 				formatSSPFailure(word, synthesize.getFailedStateSeparationProblems()));
 		output.setReturnValue("separationFailurePoints", String.class,
-				formatESSPFailure(word, synthesize.getFailedEventStateSeparationProblems()));
+				formatESSPFailure(word, synthesize.getFailedEventStateSeparationProblems(), false));
 	}
 
 	@Override

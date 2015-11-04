@@ -43,7 +43,8 @@ public class SynthesizeWordModuleTest {
 		Word word = new Word(Arrays.asList("a", "b"));
 		Map<String, Set<State>> failures = Collections.emptyMap();
 
-		assertThat(formatESSPFailure(word, failures), nullValue());
+		assertThat(formatESSPFailure(word, failures, false), nullValue());
+		assertThat(formatESSPFailure(word, failures, true), nullValue());
 	}
 
 	@Test
@@ -55,7 +56,8 @@ public class SynthesizeWordModuleTest {
 		Map<String, Set<State>> failures = new HashMap<>();
 		failures.put("b", Collections.singleton(s));
 
-		assertThat(formatESSPFailure(word, failures), is("[b] a, b"));
+		assertThat(formatESSPFailure(word, failures, false), is("[b] a, b"));
+		assertThat(formatESSPFailure(word, failures, true), is("[b]ab"));
 	}
 
 	@Test
@@ -71,7 +73,8 @@ public class SynthesizeWordModuleTest {
 		failures.put("b", Collections.singleton(sA));
 		failures.put("c", Collections.singleton(sA));
 
-		assertThat(formatESSPFailure(word, failures), is("a, [b,c] b [a]"));
+		assertThat(formatESSPFailure(word, failures, false), is("a, [b,c] b [a]"));
+		assertThat(formatESSPFailure(word, failures, true), is("a[bc]b[a]"));
 	}
 
 	@Test
