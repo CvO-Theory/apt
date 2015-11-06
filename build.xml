@@ -7,6 +7,7 @@
 		<pathelement location="lib/sat4j-2.3.2/org.sat4j.core.jar"/>
 		<pathelement location="lib/smtinterpol-2.1-219-g60cc1b6/smtinterpol.jar"/>
 		<pathelement location="classes/apt" />
+		<pathelement location="classes/glue" />
 	</path>
 
 	<path id="test.class.path">
@@ -22,6 +23,10 @@
 	<path id="ant.class.path">
 		<pathelement location="lib/asm-4.1/asm-4.1.jar" />
 		<pathelement location="classes/ant" />
+	</path>
+
+	<path id="glue.class.path">
+		<pathelement location="classes/glue" />
 	</path>
 
 	<taskdef name="testng" classname="org.testng.TestNGAntTask" classpathref="test.class.path" />
@@ -111,9 +116,9 @@
 		<touch file="generated-src/antlr.stamp" mkdirs="true"/>
 	</target>
 
-	<target name="javac" description="Compile java source to bytecode" depends="antlr">
+	<target name="javac" description="Compile java source to bytecode" depends="antlr,javac.glue">
 		<mkdir dir="classes/apt"/>
-		<depend srcdir="src/apt:generated-src/apt" destdir="classes/apt" />
+		<depend srcdir="src/apt:generated-src/apt" destdir="classes/apt" classpath="classes/glue" />
 		<javac includes="**" encoding="utf-8"
 				destdir="classes/apt" source="1.7" target="1.7"
 				debug="true" debuglevel="lines,vars,source"
@@ -128,6 +133,18 @@
 				<include name="**/*.stg" />
 			</fileset>
 		</copy>
+	</target>
+
+	<target name="javac.glue" description="Compile java source to bytecode">
+		<mkdir dir="classes/glue"/>
+		<depend srcdir="src/glue" destdir="classes/glue" />
+		<javac srcdir="src/glue" includes="**" encoding="utf-8"
+				destdir="classes/glue" source="1.7" target="1.7"
+				debug="true" debuglevel="lines,vars,source"
+				includeantruntime="false">
+			<classpath refid="glue.class.path"/>
+			<compilerarg value="-Xlint:all"/>
+		</javac>
 	</target>
 
 	<target name="javac.ant" depends="javac" description="Compile ant task">
@@ -284,6 +301,7 @@
 				Encoding="UTF-8" charset="UTF-8"
 				docencoding="UTF-8" access="private">
 			<fileset dir="src/apt" includes="**/*.java"/>
+			<fileset dir="src/glue" includes="**/*.java"/>
 			<fileset dir="test" includes="**/*.java"/>
 			<classpath>
 				<path refid="test.class.path" />
@@ -298,6 +316,7 @@
 			<formatter type="xml" tofile="reports/checkstyle.xml"/>
 			<formatter type="plain" tofile="reports/checkstyle.txt"/>
 			<fileset dir="src/apt" includes="**/*"/>
+			<fileset dir="src/glue" includes="**/*"/>
 			<fileset dir="test" includes="**/*"/>
 			<classpath>
 				<path refid="test.class.path" />
@@ -340,6 +359,9 @@
 				<exclude name="uniol/apt/io/parser/impl/SynetLTSFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/PetrifyPNFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/PetrifyLTSFormat*.class" />
+			</fileset>
+			<fileset dir="classes/glue">
+				<include name="**/*.class" />
 			</fileset>
 			<fileset dir="test-classes">
 				<include name="**/*.class" />
@@ -403,6 +425,7 @@
 		description="Build a jar file containing all the needed stuff to run the apt tool.">
 		<jar destfile="apt.jar">
 			<fileset dir="classes/apt/" />
+			<fileset dir="classes/glue/" />
 			<zipfileset includes="**/*.class" src="lib/commons-io-2.4/commons-io-2.4.jar" />
 			<zipfileset includes="**/*.class" src="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
 			<zipfileset includes="**/*.class" src="lib/antlr-4.5.1/antlr-4.5.1-complete.jar" />
