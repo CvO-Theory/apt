@@ -3,7 +3,6 @@
 .metadata
 .settings
 .DS_Store
-ant-classes/
 apt.jar
 bin/
 build.local.xml

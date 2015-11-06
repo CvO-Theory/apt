@@ -21,7 +21,7 @@
 
 	<path id="ant.class.path">
 		<pathelement location="lib/asm-4.1/asm-4.1.jar" />
-		<pathelement location="ant-classes" />
+		<pathelement location="classes/ant" />
 	</path>
 
 	<taskdef name="testng" classname="org.testng.TestNGAntTask" classpathref="test.class.path" />
@@ -131,10 +131,10 @@
 	</target>
 
 	<target name="javac.ant" depends="javac" description="Compile ant task">
-		<mkdir dir="ant-classes"/>
-		<depend srcdir="ant-src" destdir="ant-classes" classpath="classes/apt" />
-		<javac srcdir="ant-src" includes="**" encoding="utf-8"
-				destdir="ant-classes" source="1.7" target="1.7"
+		<mkdir dir="classes/ant"/>
+		<depend srcdir="src/ant" destdir="classes/ant" classpath="classes/apt" />
+		<javac srcdir="src/ant" includes="**" encoding="utf-8"
+				destdir="classes/ant" source="1.7" target="1.7"
 				debug="true" debuglevel="lines,vars,source"
 				includeantruntime="true">
 			<classpath>
@@ -390,7 +390,6 @@
 	</target>
 
 	<target name="clean" description="Cleans this project">
-		<delete dir="ant-classes" failonerror="false" />
 		<delete dir="classes" failonerror="false" />
 		<delete dir="test-classes" failonerror="false" />
 		<delete dir="reports" failonerror="false" />
