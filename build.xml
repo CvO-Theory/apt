@@ -5,7 +5,7 @@
 		<pathelement location="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
 		<pathelement location="lib/antlr-4.5.1/antlr-4.5.1-complete.jar" />
 		<pathelement location="lib/sat4j-2.3.2/org.sat4j.core.jar"/>
-		<pathelement location="lib/smtinterpol-2.1-149-g744cf8f/smtinterpol.jar"/>
+		<pathelement location="lib/smtinterpol-2.1-219-g60cc1b6/smtinterpol.jar"/>
 		<pathelement location="classes" />
 	</path>
 
@@ -409,7 +409,7 @@
 			<zipfileset includes="**/*.class" src="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
 			<zipfileset includes="**/*.class" src="lib/antlr-4.5.1/antlr-4.5.1-complete.jar" />
 			<zipfileset includes="**/*.class" src="lib/sat4j-2.3.2/org.sat4j.core.jar" />
-			<zipfileset includes="**/*.class" src="lib/smtinterpol-2.1-149-g744cf8f/smtinterpol.jar" />
+			<zipfileset includes="**/*.class" src="lib/smtinterpol-2.1-219-g60cc1b6/smtinterpol.jar"/>
 			<manifest>
 				<attribute name="Main-Class" value="uniol.apt.APT" />
 			</manifest>
