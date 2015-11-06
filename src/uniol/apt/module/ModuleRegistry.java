@@ -26,6 +26,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.Trie;
+import org.apache.commons.collections4.trie.PatriciaTrie;
+
 import uniol.apt.module.impl.ModuleVisibility;
 
 /**
@@ -35,7 +38,7 @@ import uniol.apt.module.impl.ModuleVisibility;
  *
  */
 public class ModuleRegistry {
-	Map<String, ModuleEntry> modulesEntries = new LinkedHashMap<>();
+	Trie<String, ModuleEntry> modulesEntries = new PatriciaTrie<>();
 
 	static private class ModuleEntry {
 		Module module;
@@ -87,10 +90,8 @@ public class ModuleRegistry {
 	public Collection<Module> findModulesByPrefix(String prefix) {
 		List<Module> prefixedModules = new ArrayList<Module>();
 
-		for (Module module : getModules()) {
-			if (module.getName().startsWith(prefix)) {
-				prefixedModules.add(module);
-			}
+		for (ModuleEntry entry : this.modulesEntries.prefixMap(prefix).values()) {
+			prefixedModules.add(entry.module);
 		}
 
 		return prefixedModules;
@@ -108,9 +109,9 @@ public class ModuleRegistry {
 	public Collection<Module> findModulesByPrefix(String prefix, ModuleVisibility... visibilities) {
 		List<Module> prefixedModules = new ArrayList<Module>();
 
-		for (Module module : getModules(visibilities)) {
-			if (module.getName().startsWith(prefix)) {
-				prefixedModules.add(module);
+		for (ModuleEntry entry : this.modulesEntries.prefixMap(prefix).values()) {
+			if (Arrays.asList(visibilities).contains(entry.visibility)) {
+				prefixedModules.add(entry.module);
 			}
 		}
 
