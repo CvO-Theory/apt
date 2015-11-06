@@ -6,7 +6,7 @@
 		<pathelement location="lib/antlr-4.5.1/antlr-4.5.1-complete.jar" />
 		<pathelement location="lib/sat4j-2.3.2/org.sat4j.core.jar"/>
 		<pathelement location="lib/smtinterpol-2.1-219-g60cc1b6/smtinterpol.jar"/>
-		<pathelement location="classes" />
+		<pathelement location="classes/apt" />
 	</path>
 
 	<path id="test.class.path">
@@ -31,7 +31,7 @@
 	<!-- Only run the antlr target if some .g file is newer than generated-src/antlr.stamp (which the antlr target touches) -->
 	<target name="antlr.checkforchanges">
 		<uptodate property="antlr.nochanges" targetfile="generated-src/antlr.stamp">
-			<srcfiles dir="src/uniol/apt/io/parser/" includes="**/*.g4"/>
+			<srcfiles dir="src/apt/uniol/apt/io/parser/" includes="**/*.g4"/>
 		</uptodate>
 	</target>
 
@@ -39,92 +39,92 @@
 	<target name="antlr" depends="antlr.checkforchanges" unless="antlr.nochanges">
 		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
 			<arg value="-o"/>
-			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
 			<arg value="-package"/>
 			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/uniol/apt/io/parser/impl/RegexFormatLexer.g4"/>
+			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/RegexFormatLexer.g4"/>
 		</java>
 		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
 			<arg value="-o"/>
-			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
 			<arg value="-package"/>
 			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/uniol/apt/io/parser/impl/RegexFormatParser.g4"/>
+			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/RegexFormatParser.g4"/>
 		</java>
 		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
 			<arg value="-o"/>
-			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
 			<arg value="-package"/>
 			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/uniol/apt/io/parser/impl/AptPNFormat.g4"/>
+			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/AptPNFormat.g4"/>
 		</java>
 		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
 			<arg value="-o"/>
-			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
 			<arg value="-package"/>
 			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/uniol/apt/io/parser/impl/AptLTSFormat.g4"/>
+			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/AptLTSFormat.g4"/>
 		</java>
 		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
 			<arg value="-o"/>
-			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
 			<arg value="-package"/>
 			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/uniol/apt/io/parser/impl/SynetLTSFormat.g4"/>
+			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/SynetLTSFormat.g4"/>
 		</java>
 		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
 			<arg value="-o"/>
-			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
 			<arg value="-package"/>
 			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/uniol/apt/io/parser/impl/SynetPNFormat.g4"/>
+			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/SynetPNFormat.g4"/>
 		</java>
 		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
 			<arg value="-o"/>
-			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
 			<arg value="-package"/>
 			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/uniol/apt/io/parser/impl/PetrifyLTSFormatLexer.g4"/>
+			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/PetrifyLTSFormatLexer.g4"/>
 		</java>
 		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
 			<arg value="-o"/>
-			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
 			<arg value="-package"/>
 			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/uniol/apt/io/parser/impl/PetrifyLTSFormatParser.g4"/>
+			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/PetrifyLTSFormatParser.g4"/>
 		</java>
 		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
 			<arg value="-o"/>
-			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
 			<arg value="-package"/>
 			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/uniol/apt/io/parser/impl/PetrifyPNFormatLexer.g4"/>
+			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/PetrifyPNFormatLexer.g4"/>
 		</java>
 		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
 			<arg value="-o"/>
-			<arg path="generated-src/uniol/apt/io/parser/impl/"/>
+			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
 			<arg value="-package"/>
 			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/uniol/apt/io/parser/impl/PetrifyPNFormatParser.g4"/>
+			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/PetrifyPNFormatParser.g4"/>
 		</java>
 		<!-- Touch the time stamp file which antlr.checkforchanges checks for -->
 		<touch file="generated-src/antlr.stamp" mkdirs="true"/>
 	</target>
 
 	<target name="javac" description="Compile java source to bytecode" depends="antlr">
-		<mkdir dir="classes"/>
-		<depend srcdir="src:generated-src" destdir="classes" />
+		<mkdir dir="classes/apt"/>
+		<depend srcdir="src/apt:generated-src/apt" destdir="classes/apt" />
 		<javac includes="**" encoding="utf-8"
-				destdir="classes" source="1.7" target="1.7"
+				destdir="classes/apt" source="1.7" target="1.7"
 				debug="true" debuglevel="lines,vars,source"
 				includeantruntime="false">
-			<src path="src" />
-			<src path="generated-src" />
+			<src path="src/apt" />
+			<src path="generated-src/apt" />
 			<classpath refid="project.class.path"/>
 			<compilerarg value="-Xlint:all"/>
 		</javac>
-		<copy todir="classes">
-			<fileset dir="src">
+		<copy todir="classes/apt">
+			<fileset dir="src/apt">
 				<include name="**/*.stg" />
 			</fileset>
 		</copy>
@@ -132,7 +132,7 @@
 
 	<target name="javac.ant" depends="javac" description="Compile ant task">
 		<mkdir dir="ant-classes"/>
-		<depend srcdir="ant-src" destdir="ant-classes" classpath="classes" />
+		<depend srcdir="ant-src" destdir="ant-classes" classpath="classes/apt" />
 		<javac srcdir="ant-src" includes="**" encoding="utf-8"
 				destdir="ant-classes" source="1.7" target="1.7"
 				debug="true" debuglevel="lines,vars,source"
@@ -147,7 +147,7 @@
 
 	<target name="javac.tests" depends="javac" description="Compile test code">
 		<mkdir dir="test-classes"/>
-		<depend srcdir="test" destdir="test-classes" classpath="classes" />
+		<depend srcdir="test" destdir="test-classes" classpath="classes/apt" />
 		<javac srcdir="test" includes="**" encoding="utf-8"
 				destdir="test-classes" source="1.7" target="1.7"
 				debug="true" debuglevel="lines,vars,source"
@@ -190,7 +190,7 @@
 		</taskdef>
 
 		<module-verify>
-			<fileset dir="classes" >
+			<fileset dir="classes/apt" >
 				<include name="**/*Module.class" />
 			</fileset>
 		</module-verify>
@@ -283,7 +283,7 @@
 				author="true" version="true" use="true"
 				Encoding="UTF-8" charset="UTF-8"
 				docencoding="UTF-8" access="private">
-			<fileset dir="src" includes="**/*.java"/>
+			<fileset dir="src/apt" includes="**/*.java"/>
 			<fileset dir="test" includes="**/*.java"/>
 			<classpath>
 				<path refid="test.class.path" />
@@ -297,7 +297,7 @@
 		<checkstyle config="checkstyle.xml" failOnViolation="false">
 			<formatter type="xml" tofile="reports/checkstyle.xml"/>
 			<formatter type="plain" tofile="reports/checkstyle.txt"/>
-			<fileset dir="src" includes="**/*"/>
+			<fileset dir="src/apt" includes="**/*"/>
 			<fileset dir="test" includes="**/*"/>
 			<classpath>
 				<path refid="test.class.path" />
@@ -328,10 +328,10 @@
 				<path refid="project.class.path" />
 			</auxClasspath>
 			<sourcePath>
-				<pathelement location="src" />
+				<pathelement location="src/apt" />
 				<pathelement location="test" />
 			</sourcePath>
-			<fileset dir="classes">
+			<fileset dir="classes/apt">
 				<include name="**/*.class" />
 				<exclude name="uniol/apt/io/parser/impl/AptLTSFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/AptPNFormat*.class" />
@@ -378,10 +378,10 @@
 
 			<structure name="APT">
 				<classfiles>
-					<fileset dir="classes/"/>
+					<fileset dir="classes/apt/"/>
 				</classfiles>
 				<sourcefiles>
-					<fileset dir="src/"/>
+					<fileset dir="src/apt/"/>
 				</sourcefiles>
 			</structure>
 
@@ -403,7 +403,7 @@
 	<target name="jar" depends="verify-modules"
 		description="Build a jar file containing all the needed stuff to run the apt tool.">
 		<jar destfile="apt.jar">
-			<fileset dir="classes/" />
+			<fileset dir="classes/apt/" />
 			<zipfileset includes="**/*.class" src="lib/commons-io-2.4/commons-io-2.4.jar" />
 			<zipfileset includes="**/*.class" src="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
 			<zipfileset includes="**/*.class" src="lib/antlr-4.5.1/antlr-4.5.1-complete.jar" />
