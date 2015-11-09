@@ -95,9 +95,9 @@ public class TrapsAndSiphonsTest {
 	@Test
 	public void testOnePlaceNet() {
 		String[][] minimalTraps = {
-			{"p1"},};
+			{"p1"}, };
 		String[][] minimalSiphons = {
-			{"p1"},};
+			{"p1"}, };
 		testTrapSiphons(getNoTransitionOnePlaceNet(), minimalTraps, minimalSiphons);
 	}
 
@@ -109,11 +109,11 @@ public class TrapsAndSiphonsTest {
 	public void testPersFig2Net() {
 		String[][] minimalTraps = {
 			{"s1", "s2", "s4"},
-			{"s2", "s3", "s4"},};
+			{"s2", "s3", "s4"}, };
 		String[][] minimalSiphons = {
 			{"s1", "s2"},
 			{"s2", "s3"},
-			{"s3", "s4"},};
+			{"s3", "s4"}, };
 		testTrapSiphons(getNetPersFig2(), minimalTraps, minimalSiphons);
 	}
 
@@ -123,9 +123,9 @@ public class TrapsAndSiphonsTest {
 	@Test
 	public void testPersFig4Net() {
 		String[][] minimalTraps = {
-			{"s1", "s2"},};
+			{"s1", "s2"}, };
 		String[][] minimalSiphons = {
-			{"s1", "s2"},};
+			{"s1", "s2"}, };
 		testTrapSiphons(getNetPersFig4(), minimalTraps, minimalSiphons);
 	}
 
@@ -135,18 +135,18 @@ public class TrapsAndSiphonsTest {
 	@Test
 	public void test32Net() {
 		String[][] minimalTraps = {
-			{"x"},};
+			{"x"}, };
 		String[][] minimalSiphons = {
-			{"x"},};
+			{"x"}, };
 		testTrapSiphons(getNet32(), minimalTraps, minimalSiphons);
 	}
 
 	@Test
 	public void testSiphonAndTrapNet() {
 		String[][] minimalTraps = {
-			{"s1"},};
+			{"s1"}, };
 		String[][] minimalSiphons = {
-			{"s2"},};
+			{"s2"}, };
 		testTrapSiphons(getSiphonAndTrapNet(), minimalTraps, minimalSiphons);
 	}
 
@@ -159,7 +159,7 @@ public class TrapsAndSiphonsTest {
 			{"p0", "p2", "p3", "p5", "p7", "p8"},
 			{"p0", "p2", "p3", "p6"},
 			{"p0", "p2", "p3", "p7", "p9"},
-			{"p1", "p2", "p3", "p4"},};
+			{"p1", "p2", "p3", "p4"}, };
 		String[][] minimalSiphons = {
 			{"p0", "p2", "p3", "p5", "p7", "p8"},
 			{"p0", "p2", "p3", "p6"},
@@ -175,14 +175,14 @@ public class TrapsAndSiphonsTest {
 	@Test
 	public void testFCTrapSiphonNet() {
 		String[][] minimalTraps = {
-			{"s1", "s2", "s3", "s6", "s7", "s8",},
-			{"s1", "s2", "s5", "s6", "s7", "s8",},
-			{"s2", "s3", "s4", "s7", "s8",},
-			{"s2", "s4", "s5", "s7", "s8",},};
+			{"s1", "s2", "s3", "s6", "s7", "s8", },
+			{"s1", "s2", "s5", "s6", "s7", "s8", },
+			{"s2", "s3", "s4", "s7", "s8", },
+			{"s2", "s4", "s5", "s7", "s8", }, };
 		String[][] minimalSiphons = {
 			{"s2", "s3", "s4", "s7", "s8"},
-			{"s5", "s7", "s8",},
-			{"s1", "s2", "s3", "s6", "s7", "s8"},};
+			{"s5", "s7", "s8", },
+			{"s1", "s2", "s3", "s6", "s7", "s8"}, };
 		testTrapSiphons(getFCTrapSiphonNet(), minimalTraps, minimalSiphons);
 	}
 
@@ -194,11 +194,11 @@ public class TrapsAndSiphonsTest {
 		String[][] minimalTraps = {
 			{"s0"},
 			{"s1"},
-			{"s2"},};
+			{"s2"}, };
 		String[][] minimalSiphons = {
 			{"s0"},
 			{"s1"},
-			{"s2"},};
+			{"s2"}, };
 		testTrapSiphons(getTotallyConnectedNet(), minimalTraps, minimalSiphons);
 	}
 
@@ -212,11 +212,11 @@ public class TrapsAndSiphonsTest {
 		String[][] minimalTraps = {
 			{"s0"},
 			{"s1"},
-			{"s2"},};
+			{"s2"}, };
 		String[][] minimalSiphons = {
 			{"s0"},
 			{"s1"},
-			{"s2"},};
+			{"s2"}, };
 		testTrapSiphons(getNotConnectedNet(), minimalTraps, minimalSiphons);
 	}
 
@@ -238,9 +238,9 @@ public class TrapsAndSiphonsTest {
 	@Test
 	public void testDualityNet2() {
 		String[][] minimalTraps = {
-			{"s0"},};
+			{"s0"}, };
 		String[][] minimalSiphons = {
-			{"s2"},};
+			{"s2"}, };
 		testTrapSiphons(getDualityTestNet2(), minimalTraps, minimalSiphons);
 	}
 }

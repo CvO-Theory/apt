@@ -1,4 +1,3 @@
-
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
  * Copyright (C) 2012-2013  Members of the project group APT
@@ -23,7 +22,6 @@ package uniol.apt.analysis.synet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -86,7 +84,7 @@ public class SynetSynthesizeDistributedLTS {
 
 			tmpSaveFile = File.createTempFile("synetNet", ".net");
 
-			Process p;// -r uses a new algorithm -o creates an output file -d is the
+			Process p; // -r uses a new algorithm -o creates an output file -d is the
 			// option for distributed nets with locations
 			if (location_) {
 				try {
@@ -110,8 +108,8 @@ public class SynetSynthesizeDistributedLTS {
 
 			String line = "";
 			while ((line = br.readLine()) != null) {
-				if(line.contains("failures") || line.contains("not separated")) {
-					if(separationErrorMsg_ == null)
+				if (line.contains("failures") || line.contains("not separated")) {
+					if (separationErrorMsg_ == null)
 						separationErrorMsg_ = "";
 					separationErrorMsg_ += line + "\n";
 				}

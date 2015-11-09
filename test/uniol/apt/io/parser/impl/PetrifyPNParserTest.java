@@ -27,7 +27,6 @@ import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 /**
  * Test wether the Petrify parser works.

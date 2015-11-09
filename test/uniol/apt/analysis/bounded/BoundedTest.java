@@ -54,7 +54,7 @@ public class BoundedTest {
 			assertThat(pn.getInitialMarking().fireTransitions(
 						result.getSequenceExceeding(k - 1).toArray(new Transition[0]))
 					.getToken(result.unboundedPlace).getValue(),
-					greaterThan(k-1l));
+					greaterThan(k - 1l));
 		}
 	}
 

@@ -45,6 +45,7 @@ public interface Parser<G> {
 	 * @param input The input stream to read the object from.
 	 * @return Object which got read from the input.
 	 * @throws ParseException If the input can't get parsed.
+	 * @throws IOException If readig the input fails.
 	 */
 	public G parse(InputStream input) throws ParseException, IOException;
 
@@ -54,15 +55,17 @@ public interface Parser<G> {
 	 * @param filename The input filename to read the object from.
 	 * @return Object which got read from the input.
 	 * @throws ParseException If the input can't get parsed.
+	 * @throws IOException If readig the input fails.
 	 */
 	public G parseFile(String filename) throws ParseException, IOException;
 
 	/**
 	 * Parse an object from a file.
 	 *
-	 * @param filename The input filename to read the object from.
+	 * @param file The input file to read the object from.
 	 * @return Object which got read from the input.
 	 * @throws ParseException If the input can't get parsed.
+	 * @throws IOException If readig the input fails.
 	 */
 	public G parseFile(File file) throws ParseException, IOException;
 }

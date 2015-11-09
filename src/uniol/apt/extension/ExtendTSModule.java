@@ -114,27 +114,27 @@ public class ExtendTSModule extends AbstractModule {
 
 		if (currentCode != null)
 			switch (mode) {
-			case Next:
-				extender.findNext();
-				break;
-			case NextValid:
-				extender.findNextValid(currentCode);
-				break;
-			case NextMinimalValid:
-				extender.findNextMinimal(currentCode);
-				break;
+				case Next:
+					extender.findNext();
+					break;
+				case NextValid:
+					extender.findNextValid(currentCode);
+					break;
+				case NextMinimalValid:
+					extender.findNextMinimal(currentCode);
+					break;
 			}
 		else {
 			switch (mode) {
-			case Next:
-				extender.findNext();
-				break;
-			case NextValid:
-				extender.findNextValid();
-				break;
-			case NextMinimalValid:
-				extender.findNextMinimal();
-				break;
+				case Next:
+					extender.findNext();
+					break;
+				case NextValid:
+					extender.findNextValid();
+					break;
+				case NextMinimalValid:
+					extender.findNextMinimal();
+					break;
 			}
 		}
 

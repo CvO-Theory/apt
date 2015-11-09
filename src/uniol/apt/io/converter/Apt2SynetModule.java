@@ -68,7 +68,7 @@ public class Apt2SynetModule extends AbstractModule {
 		TransitionSystem ts = pnOrTs.getTs();
 
 		String synetPN = null;
-		if(pn != null) {
+		if (pn != null) {
 			synetPN = new SynetPNRenderer().render(pn);
 		} else if (ts != null) {
 			synetPN = new SynetLTSRenderer().render(ts);

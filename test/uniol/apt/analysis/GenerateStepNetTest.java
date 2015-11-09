@@ -153,7 +153,7 @@ public class GenerateStepNetTest {
 		assertThat(stepPN.getPlaces(), containsInAnyOrder(expectedPlaces));
 		assertThat(stepPN.getInitialMarking(), markingThatIs(pn.getInitialMarking()));
 		assertThat(stepPN.getTransitions(), hasSize(8));
-		assertThat(stepPN.getEdges(), hasSize(4*2 + 4*4));
+		assertThat(stepPN.getEdges(), hasSize(4 * 2 + 4 * 4));
 	}
 }
 

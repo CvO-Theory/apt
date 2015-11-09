@@ -20,7 +20,6 @@
 package uniol.apt.io.parser.impl;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;

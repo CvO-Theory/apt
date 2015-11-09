@@ -40,18 +40,18 @@ public class StringComparator implements Comparator<String> {
 		Pattern.compile("(.*?)([0-9]+)");
 
 	public int compare(String s1, String s2) {
-		if(s1.equals(s2))
+		if (s1.equals(s2))
 			return 0;
 
 		Matcher m1 = pattern.matcher(s1);
 		Matcher m2 = pattern.matcher(s2);
-		if(m1.matches() && m2.matches()) {
+		if (m1.matches() && m2.matches()) {
 			String prefix1 = m1.group(1);
 			String prefix2 = m2.group(1);
 			int n1 = Integer.parseInt(m1.group(2));
 			int n2 = Integer.parseInt(m2.group(2));
 
-			if(!prefix1.equals(prefix2))
+			if (!prefix1.equals(prefix2))
 				return s1.compareTo(s2);
 			else
 				return Integer.compare(n1, n2);

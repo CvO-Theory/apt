@@ -77,7 +77,7 @@ public class IsomorphismModule extends AbstractModule {
 		}
 
 		boolean checkLabels = true;
-		if(input.getParameter("dontCheckLabels", String.class) != null)
+		if (input.getParameter("dontCheckLabels", String.class) != null)
 			checkLabels = false;
 
 		IsomorphismLogic logic = new IsomorphismLogic(lts1, lts2, checkLabels);

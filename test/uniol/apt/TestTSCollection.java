@@ -613,12 +613,12 @@ public class TestTSCollection {
 		ts.setInitialState("s0");
 
 		for (int i = 0; i < 2; i++) {
-			ts.createArc("s" + i, "s" + (i+1), "a");
-			ts.createArc("s" + (i+3), "s" + (i+4), "a");
-			ts.createArc("s" + (i+4), "s" + i, "c");
+			ts.createArc("s" + i, "s" + (i + 1), "a");
+			ts.createArc("s" + (i + 3), "s" + (i + 4), "a");
+			ts.createArc("s" + (i + 4), "s" + i, "c");
 		}
 		for (int i = 0; i < 3; i++) {
-			ts.createArc("s" + i, "s" + (i+3), "b");
+			ts.createArc("s" + i, "s" + (i + 3), "b");
 		}
 		return ts;
 	}

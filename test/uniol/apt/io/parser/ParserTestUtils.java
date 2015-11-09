@@ -19,14 +19,10 @@
 
 package uniol.apt.io.parser;
 
-import java.io.File;
 import java.io.IOException;
-
-import org.apache.commons.io.FileUtils;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.AptPNParser;
 import uniol.apt.io.parser.impl.AptLTSParser;
 

@@ -280,7 +280,7 @@ public class FiniteAutomatonUtility {
 	 */
 	static public FiniteAutomaton optional(FiniteAutomaton a) {
 		final State initial = a.getInitialState();
-		return getAutomaton(new StateWithoutArcs(true){
+		return getAutomaton(new StateWithoutArcs(true) {
 			@Override
 			public Set<State> getFollowingStates(Symbol atom) {
 				if (atom.isEpsilon())

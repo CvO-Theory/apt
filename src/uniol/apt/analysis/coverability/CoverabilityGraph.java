@@ -102,8 +102,7 @@ public class CoverabilityGraph {
 		Object extension = null;
 		try {
 			extension = pn.getExtension(key);
-		}
-		catch (StructureException e) {
+		} catch (StructureException e) {
 			// No such extension. Returning "null" would be too easy...
 		}
 

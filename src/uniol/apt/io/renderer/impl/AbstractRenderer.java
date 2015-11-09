@@ -38,18 +38,22 @@ import uniol.apt.io.renderer.RenderException;
  * @author vsp
  */
 public abstract class AbstractRenderer<G> implements Renderer<G> {
+	@Override
 	public void renderFile(G obj, String filename) throws RenderException, IOException {
 		renderFile(obj, new File(filename));
 	}
 
+	@Override
 	public void renderFile(G obj, File file) throws RenderException, IOException {
 		render(obj, FileUtils.openOutputStream(file));
 	}
 
+	@Override
 	public void render(G obj, OutputStream os) throws RenderException, IOException {
 		render(obj, new BufferedWriter(new OutputStreamWriter(os, "UTF-8")));
 	}
 
+	@Override
 	public String render(G obj) throws RenderException {
 		Writer writer = new StringBuilderWriter();
 		try {

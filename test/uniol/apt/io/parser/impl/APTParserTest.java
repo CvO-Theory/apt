@@ -19,26 +19,12 @@
 
 package uniol.apt.io.parser.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
-import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
+
 import uniol.apt.CrashCourseNets;
-import uniol.apt.adt.pn.Flow;
-import uniol.apt.adt.pn.Marking;
-import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Token;
-import uniol.apt.adt.ts.Arc;
-import uniol.apt.adt.ts.State;
-import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.apt.APTParser;
 
 /**

@@ -113,8 +113,7 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 		Object extension = null;
 		try {
 			extension = graph.getExtension(key);
-		}
-		catch (StructureException e) {
+		} catch (StructureException e) {
 			// No such extension. Returning "null" would be too easy...
 		}
 

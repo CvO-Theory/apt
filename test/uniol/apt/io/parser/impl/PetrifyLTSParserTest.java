@@ -64,7 +64,7 @@ public class PetrifyLTSParserTest {
 	@Test
 	public void testEmptyLTS() throws Exception {
 		TransitionSystem lts = new PetrifyLTSParser().parseString(" #bar\n.model   a_7-g # foo\n.state graph\ns0\n.marking{ s0 }\n.end\n");
-		assertThat(lts.getName(), is ("a_7-g"));
+		assertThat(lts.getName(), is("a_7-g"));
 		assertThat(lts.getNodes(), contains(nodeWithID("s0")));
 		assertThat(lts.getAlphabet(), empty());
 		assertThat(lts.getEdges(), empty());

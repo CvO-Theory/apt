@@ -52,13 +52,12 @@ class CloseableCollection<T extends Closeable> implements Closeable {
 			if (close)
 				try {
 					c.close();
+				} catch (IOException e) {
+					if (err == null)
+						err = e;
+					else
+						err.addSuppressed(e);
 				}
-			catch (IOException e) {
-				if (err == null)
-					err = e;
-				else
-					err.addSuppressed(e);
-			}
 		}
 		if (err != null)
 			throw err;

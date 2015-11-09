@@ -1,4 +1,3 @@
-
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
  * Copyright (C) 2012-2013  Members of the project group APT
@@ -70,7 +69,7 @@ public class SynthesizeDistributedLTSModule extends AbstractModule {
 		try {
 			b = checkLTS.check();
 
-			if(checkLTS.getSeparationError() == null) {
+			if (checkLTS.getSeparationError() == null) {
 				output.setReturnValue("synthesize_distributed_lts", Boolean.class, b);
 				output.setReturnValue("separationError", String.class, null);
 			} else {
