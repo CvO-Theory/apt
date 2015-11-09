@@ -26,6 +26,7 @@ import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.io.renderer.AptRenderer;
 import uniol.apt.io.renderer.Renderer;
 
 /**
@@ -33,6 +34,7 @@ import uniol.apt.io.renderer.Renderer;
  * <p/>
  * @author Manuel Gieseking
  */
+@AptRenderer
 public class PnmlPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
 	@Override
 	public void render(PetriNet pn, Writer writer) throws IOException {

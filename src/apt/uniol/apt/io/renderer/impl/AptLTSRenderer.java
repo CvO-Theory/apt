@@ -28,6 +28,7 @@ import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.renderer.AptRenderer;
 import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 
@@ -35,6 +36,7 @@ import uniol.apt.io.renderer.RenderException;
  * @author Vincent Göbel
  *
  */
+@AptRenderer
 public class AptLTSRenderer extends AbstractRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
 	@Override
 	public void render(TransitionSystem ts, Writer writer) throws RenderException, IOException {

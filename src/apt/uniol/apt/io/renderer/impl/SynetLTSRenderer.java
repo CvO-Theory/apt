@@ -27,6 +27,7 @@ import java.util.TreeSet;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.renderer.AptRenderer;
 import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 import uniol.apt.util.StringComparator;
@@ -35,6 +36,7 @@ import uniol.apt.util.StringComparator;
  * @author Vincent Göbel, Thomas Strathmann
  *
  */
+@AptRenderer
 public class SynetLTSRenderer extends AbstractRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
 	@Override
 	public void render(TransitionSystem ts, Writer writer) throws RenderException, IOException {

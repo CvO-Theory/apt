@@ -17,21 +17,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.io.renderer.impl;
+package uniol.apt.compiler;
 
-import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.io.renderer.AptRenderer;
 import uniol.apt.io.renderer.Renderer;
 
 /**
- * Renderer for the synet Petri net file format.
+ * Annotation Processor which searches for classes annotated with AptRenderer, analyzes them and write them in lists in
+ * META-INF where the Renderers class can find them.
  *
  * @author vsp
  */
-@AptRenderer
-public class SynetPNRenderer extends AbstractSTRenderer<PetriNet> implements Renderer<PetriNet> {
-	public SynetPNRenderer() {
-		super("uniol/apt/io/renderer/impl/SynetPN.stg", "pn");
+public class RendererProcessor extends AbstractServiceProcessor {
+	/**
+	 * Constructor
+	 */
+	public RendererProcessor() {
+		super(AptRenderer.class, Renderer.class);
 	}
 }
 

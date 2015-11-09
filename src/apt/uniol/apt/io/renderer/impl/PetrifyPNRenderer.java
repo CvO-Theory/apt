@@ -28,6 +28,7 @@ import java.util.Set;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.io.renderer.AptRenderer;
 import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 
@@ -36,6 +37,7 @@ import uniol.apt.io.renderer.RenderException;
  * @author Sören Dierkes
  *
  */
+@AptRenderer
 public class PetrifyPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
 	@Override
 	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {

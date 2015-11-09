@@ -20,6 +20,7 @@
 package uniol.apt.io.renderer.impl;
 
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.io.renderer.AptRenderer;
 import uniol.apt.io.renderer.Renderer;
 
 /**
@@ -27,6 +28,7 @@ import uniol.apt.io.renderer.Renderer;
  *
  * @author vsp
  */
+@AptRenderer
 public class DotLTSRenderer extends AbstractSTRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
 	public DotLTSRenderer() {
 		super("uniol/apt/io/renderer/impl/DotLTS.stg", "ts");

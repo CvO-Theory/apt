@@ -31,6 +31,7 @@ import uniol.apt.adt.INode;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Token;
+import uniol.apt.io.renderer.AptRenderer;
 import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 
@@ -38,6 +39,7 @@ import uniol.apt.io.renderer.RenderException;
  * This class renders Petri nets in the file format used by LoLA.
  * @author Uli Schlachter, vsp
  */
+@AptRenderer
 public class LoLAPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
 
 	/**

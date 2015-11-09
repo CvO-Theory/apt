@@ -17,22 +17,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.io.renderer.impl;
+package uniol.apt.io.renderer;
 
-import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.renderer.AptRenderer;
-import uniol.apt.io.renderer.Renderer;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Renderer for the synet Petri net file format.
+ * Annotation which marks renderers
+ *
+ * This Annotation can only get used on non-generic non-abstract classes which implement the Renderer interface.
  *
  * @author vsp
  */
-@AptRenderer
-public class SynetPNRenderer extends AbstractSTRenderer<PetriNet> implements Renderer<PetriNet> {
-	public SynetPNRenderer() {
-		super("uniol/apt/io/renderer/impl/SynetPN.stg", "pn");
-	}
-}
+@Documented
+@Retention(RetentionPolicy.SOURCE)
+@Target(ElementType.TYPE)
+public @interface AptRenderer { /* empty */ }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
