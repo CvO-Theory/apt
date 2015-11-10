@@ -402,15 +402,10 @@ public class APT {
 		String moduleName = moduleNames[0]; // Only use a single module for now
 		Collection<Module> foundModules = registry.findModulesByPrefix(moduleName, ModuleVisibility.SHOWN);
 
-		Module module;
+		Module module = null;
 
 		if (foundModules.isEmpty()) {
-			// Okay, maybe it's a hidden module
-			module = registry.findModule(moduleName, ModuleVisibility.HIDDEN);
-
-			if (module == null) {
-				printNoSuchModuleAndExit(moduleName);
-			}
+			printNoSuchModuleAndExit(moduleName);
 		} else if (foundModules.size() == 1) {
 			// These is only one right module and we just found it
 			module = foundModules.iterator().next();
