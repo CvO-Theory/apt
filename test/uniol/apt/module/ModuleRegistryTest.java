@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 
 import org.testng.annotations.Test;
 
-import uniol.apt.module.impl.ModuleVisibility;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -51,39 +50,6 @@ public class ModuleRegistryTest {
 	@Test
 	public void testFindNonExistentModule() {
 		assertTrue(new ModuleRegistry().findModule("module1") == null);
-	}
-
-	@Test
-	public void testFindWithWrongVisibilityModule() {
-		ModuleRegistry registry = new ModuleRegistry();
-
-		Module module1 = mock(Module.class);
-		when(module1.getName()).thenReturn("module1");
-
-		registry.registerModule(module1, ModuleVisibility.SHOWN);
-		assertTrue(registry.findModule("module1", ModuleVisibility.HIDDEN) == null);
-	}
-
-	@Test
-	public void testFindWithRightVisibilityModule() {
-		ModuleRegistry registry = new ModuleRegistry();
-
-		Module module1 = mock(Module.class);
-		when(module1.getName()).thenReturn("module1");
-
-		registry.registerModule(module1, ModuleVisibility.SHOWN);
-		assertEquals(registry.findModule("module1", ModuleVisibility.SHOWN), module1);
-	}
-
-	@Test
-	public void testFindWithOneRightVisibilityModule() {
-		ModuleRegistry registry = new ModuleRegistry();
-
-		Module module1 = mock(Module.class);
-		when(module1.getName()).thenReturn("module1");
-
-		registry.registerModule(module1, ModuleVisibility.SHOWN);
-		assertEquals(registry.findModule("module1", ModuleVisibility.SHOWN, ModuleVisibility.INTERNAL), module1);
 	}
 
 	@Test

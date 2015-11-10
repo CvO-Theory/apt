@@ -22,6 +22,7 @@ package uniol.apt.module;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,6 @@ import java.util.Map;
 import org.apache.commons.collections4.Trie;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 
-import uniol.apt.module.impl.ModuleVisibility;
 
 /**
  * Used to register modules that are used in APT.
@@ -38,12 +38,7 @@ import uniol.apt.module.impl.ModuleVisibility;
  *
  */
 public class ModuleRegistry {
-	Trie<String, ModuleEntry> modulesEntries = new PatriciaTrie<>();
-
-	static private class ModuleEntry {
-		Module module;
-		ModuleVisibility visibility;
-	}
+	Trie<String, Module> modulesEntries = new PatriciaTrie<>();
 
 	/**
 	 * Finds a module by its name.
@@ -53,31 +48,7 @@ public class ModuleRegistry {
 	 * @return the module
 	 */
 	public Module findModule(String name) {
-		ModuleEntry entry = modulesEntries.get(name);
-
-		if (entry != null) {
-			return entry.module;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Finds a module by its name if it has one of the given visibilities.
-	 *
-	 * @param visibilities
-	 * @param name
-	 *            the name of a module
-	 * @return the module
-	 */
-	public Module findModule(String name, ModuleVisibility... visibilities) {
-		ModuleEntry entry = modulesEntries.get(name);
-
-		if (entry != null && Arrays.asList(visibilities).contains(entry.visibility)) {
-			return entry.module;
-		}
-
-		return null;
+		return modulesEntries.get(name);
 	}
 
 	/**
@@ -88,65 +59,16 @@ public class ModuleRegistry {
 	 * @return the modules
 	 */
 	public Collection<Module> findModulesByPrefix(String prefix) {
-		List<Module> prefixedModules = new ArrayList<Module>();
-
-		for (ModuleEntry entry : this.modulesEntries.prefixMap(prefix).values()) {
-			prefixedModules.add(entry.module);
-		}
-
-		return prefixedModules;
+		return Collections.unmodifiableCollection(this.modulesEntries.prefixMap(prefix).values());
 	}
 
 	/**
-	 * Finds all modules that start with the given prefix and have the one of
-	 * the given visibilities.
-	 *
-	 * @param visibilities
-	 * @param prefix
-	 *            the prefix
-	 * @return the modules
-	 */
-	public Collection<Module> findModulesByPrefix(String prefix, ModuleVisibility... visibilities) {
-		List<Module> prefixedModules = new ArrayList<Module>();
-
-		for (ModuleEntry entry : this.modulesEntries.prefixMap(prefix).values()) {
-			if (Arrays.asList(visibilities).contains(entry.visibility)) {
-				prefixedModules.add(entry.module);
-			}
-		}
-
-		return prefixedModules;
-	}
-
-	/**
-	 * Register a module such that it's used in APT. The registered module has
-	 * the given {@link ModuleVisibility}.
-	 *
-	 * @param visibility
-	 * @param module
-	 */
-	public void registerModule(Module module, ModuleVisibility visibility) {
-		ModuleEntry entry = new ModuleEntry();
-
-		entry.module = module;
-		entry.visibility = visibility;
-
-		modulesEntries.put(module.getName(), entry);
-	}
-
-	/**
-	 * Register a module such that it's used in APT. The registered module has
-	 * the {@link ModuleVisibility} SHOWN by default.
+	 * Register a module such that it's used in APT.
 	 *
 	 * @param module
 	 */
 	public void registerModule(Module module) {
-		ModuleEntry entry = new ModuleEntry();
-
-		entry.module = module;
-		entry.visibility = ModuleVisibility.SHOWN;
-
-		modulesEntries.put(module.getName(), entry);
+		modulesEntries.put(module.getName(), module);
 	}
 
 	/**
@@ -161,53 +83,12 @@ public class ModuleRegistry {
 	}
 
 	/**
-	 * Registers multiple modules via {@link #registerModule(Module)}. The
-	 * registered modules all have the the given {@link ModuleVisibility}.
-	 *
-	 * @param visibility
-	 *            the visibility the modules should have
-	 * @param modules
-	 *            the modules to be registered
-	 */
-	public void registerModules(ModuleVisibility visibility, Module... modules) {
-		for (Module module : modules) {
-			registerModule(module, visibility);
-		}
-	}
-
-	/**
 	 * Gets all modules that are used in APT.
 	 *
 	 * @return the modules
 	 */
 	public Collection<Module> getModules() {
-		List<Module> modules = new ArrayList<>();
-
-		for (ModuleEntry entry : modulesEntries.values()) {
-			modules.add(entry.module);
-		}
-
-		return modules;
-	}
-
-	/**
-	 * Gets all modules that are used in APT and have one of the given
-	 * visibilities.
-	 *
-	 * @param visibilities
-	 *            the visibilities one of which the modules fulfills
-	 * @return the modules
-	 */
-	public Collection<Module> getModules(ModuleVisibility... visibilities) {
-		List<Module> modules = new ArrayList<>();
-
-		for (ModuleEntry entry : modulesEntries.values()) {
-			if (Arrays.asList(visibilities).contains(entry.visibility)) {
-				modules.add(entry.module);
-			}
-		}
-
-		return modules;
+		return Collections.unmodifiableCollection(this.modulesEntries.values());
 	}
 }
 

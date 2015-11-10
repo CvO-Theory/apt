@@ -153,7 +153,6 @@ import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.impl.ExitStatus;
 import uniol.apt.module.impl.ModuleInvoker;
 import uniol.apt.module.impl.ModuleUtils;
-import uniol.apt.module.impl.ModuleVisibility;
 import uniol.apt.module.impl.Parameter;
 import uniol.apt.module.impl.ReturnValue;
 import uniol.apt.module.impl.SimpleModulePreconditionsChecker;
@@ -400,7 +399,7 @@ public class APT {
 		}
 
 		String moduleName = moduleNames[0]; // Only use a single module for now
-		Collection<Module> foundModules = registry.findModulesByPrefix(moduleName, ModuleVisibility.SHOWN);
+		Collection<Module> foundModules = registry.findModulesByPrefix(moduleName);
 
 		Module module = null;
 
@@ -411,7 +410,7 @@ public class APT {
 			module = foundModules.iterator().next();
 		} else {
 			// Ambiguous, but maybe the name isn't a partial name after all
-			module = registry.findModule(moduleName, ModuleVisibility.SHOWN);
+			module = registry.findModule(moduleName);
 
 			if (module == null) {
 				printAmbiguousModuleNameAndExit(moduleName, foundModules);
@@ -647,7 +646,7 @@ public class APT {
 		outPrinter.println();
 
 		outPrinter.println("Available modules:");
-		printModuleList(registry.getModules(ModuleVisibility.SHOWN), outPrinter);
+		printModuleList(registry.getModules(), outPrinter);
 
 		outPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
