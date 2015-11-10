@@ -20,11 +20,6 @@
 package uniol.apt.module;
 
 import java.util.Collection;
-import java.util.Collections;
-
-import org.apache.commons.collections4.Trie;
-import org.apache.commons.collections4.trie.PatriciaTrie;
-
 
 /**
  * Used to register modules that are used in APT.
@@ -32,9 +27,7 @@ import org.apache.commons.collections4.trie.PatriciaTrie;
  * @author Renke Grunwald
  *
  */
-public class ModuleRegistry {
-	Trie<String, Module> modulesEntries = new PatriciaTrie<>();
-
+public interface ModuleRegistry {
 	/**
 	 * Finds a module by its name.
 	 *
@@ -42,9 +35,7 @@ public class ModuleRegistry {
 	 *            the name of a module
 	 * @return the module
 	 */
-	public Module findModule(String name) {
-		return modulesEntries.get(name);
-	}
+	public Module findModule(String name);
 
 	/**
 	 * Finds all modules that start with the given prefix.
@@ -53,38 +44,14 @@ public class ModuleRegistry {
 	 *            the prefix
 	 * @return the modules
 	 */
-	public Collection<Module> findModulesByPrefix(String prefix) {
-		return Collections.unmodifiableCollection(this.modulesEntries.prefixMap(prefix).values());
-	}
-
-	/**
-	 * Register a module such that it's used in APT.
-	 *
-	 * @param module
-	 */
-	public void registerModule(Module module) {
-		modulesEntries.put(module.getName(), module);
-	}
-
-	/**
-	 * Registers multiple modules via {@link #registerModule(Module)}.
-	 *
-	 * @param modules array of modules
-	 */
-	public void registerModules(Module... modules) {
-		for (Module module : modules) {
-			registerModule(module);
-		}
-	}
+	public Collection<Module> findModulesByPrefix(String prefix);
 
 	/**
 	 * Gets all modules that are used in APT.
 	 *
 	 * @return the modules
 	 */
-	public Collection<Module> getModules() {
-		return Collections.unmodifiableCollection(this.modulesEntries.values());
-	}
+	public Collection<Module> getModules();
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

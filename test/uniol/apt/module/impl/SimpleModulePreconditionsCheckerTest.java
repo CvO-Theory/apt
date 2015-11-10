@@ -25,6 +25,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AbstractModuleRegistry;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
@@ -41,13 +42,13 @@ public class SimpleModulePreconditionsCheckerTest {
 
 	@Test
 	public void testIfPreconditionIsMet() {
+		final Module checkingModule = new CheckingModule(true);
+		final Module checkedModule = new CheckedModule();
+
 		SimpleModulePreconditionsChecker checker = new SimpleModulePreconditionsChecker();
-		ModuleRegistry registry = new ModuleRegistry();
-
-		Module checkingModule = new CheckingModule(true);
-		Module checkedModule = new CheckedModule();
-
-		registry.registerModules(checkedModule, checkingModule);
+		ModuleRegistry registry = new AbstractModuleRegistry() {{
+			registerModules(checkedModule, checkingModule);
+		}};
 
 		Something something = new Something();
 		assertTrue(checker.check(registry, checkedModule, something).isEmpty());
@@ -55,13 +56,13 @@ public class SimpleModulePreconditionsCheckerTest {
 
 	@Test
 	public void testIfPreconditionIsNotMet() {
+		final Module checkingModule = new CheckingModule(false);
+		final Module checkedModule = new CheckedModule();
+
 		SimpleModulePreconditionsChecker checker = new SimpleModulePreconditionsChecker();
-		ModuleRegistry registry = new ModuleRegistry();
-
-		Module checkingModule = new CheckingModule(false);
-		Module checkedModule = new CheckedModule();
-
-		registry.registerModules(checkedModule, checkingModule);
+		ModuleRegistry registry = new AbstractModuleRegistry() {{
+			registerModules(checkedModule, checkingModule);
+		}};
 
 		Something something = new Something();
 

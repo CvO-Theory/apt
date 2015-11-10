@@ -42,105 +42,26 @@ import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.ExamineLTSModule;
-import uniol.apt.analysis.ExaminePNModule;
-import uniol.apt.analysis.FireSequenceModule;
-import uniol.apt.analysis.GenerateStepNetModule;
-import uniol.apt.analysis.InfoModule;
-import uniol.apt.analysis.RegularLanguageToLTSModule;
 import uniol.apt.analysis.algebra.MatrixFileFormat;
-import uniol.apt.analysis.algebra.MatrixModule;
-import uniol.apt.analysis.bcf.BCFModule;
-import uniol.apt.analysis.bicf.BiCFModule;
-import uniol.apt.analysis.bisimulation.BisimulationModule;
 import uniol.apt.analysis.bisimulation.NonBisimilarPath;
-import uniol.apt.analysis.bounded.BoundedModule;
-import uniol.apt.analysis.bounded.KBoundedModule;
-import uniol.apt.analysis.bounded.SafeModule;
-import uniol.apt.analysis.cf.ConflictFreeModule;
 import uniol.apt.analysis.connectivity.Component;
 import uniol.apt.analysis.connectivity.Components;
-import uniol.apt.analysis.connectivity.IsolatedElementsModule;
-import uniol.apt.analysis.connectivity.StrongComponentsModule;
-import uniol.apt.analysis.connectivity.StrongConnectivityModule;
-import uniol.apt.analysis.connectivity.WeakComponentsModule;
-import uniol.apt.analysis.connectivity.WeakConnectivityModule;
-import uniol.apt.analysis.conpres.ConcurrencyPreservingModule;
-import uniol.apt.analysis.coverability.CoverabilityModule;
-import uniol.apt.analysis.coverability.ReachabilityModule;
-import uniol.apt.analysis.cycles.CheckAllCyclePropertiesModule;
 import uniol.apt.analysis.cycles.lts.CycleCounterExample;
-import uniol.apt.analysis.cycles.lts.CyclesHaveSameOrMutallyDisjointPVModule;
-import uniol.apt.analysis.cycles.lts.CyclesHaveSamePVModule;
-import uniol.apt.analysis.cycles.lts.PVsOfSmallestCyclesModule;
-import uniol.apt.analysis.deterministic.DeterministicModule;
-import uniol.apt.analysis.fc.FCModule;
-import uniol.apt.analysis.fcnet.FCNetModule;
-import uniol.apt.analysis.invariants.ComputeMinSemiPosInvariantsModule;
-import uniol.apt.analysis.invariants.CoveredByInvariantModule;
 import uniol.apt.analysis.invariants.Vector;
-import uniol.apt.analysis.isolated.IsolatedModule;
 import uniol.apt.analysis.isomorphism.Isomorphism;
-import uniol.apt.analysis.isomorphism.IsomorphismModule;
 import uniol.apt.analysis.language.FiringSequence;
-import uniol.apt.analysis.language.LanguageEquivalenceModule;
-import uniol.apt.analysis.language.ToRegularExpressionModule;
 import uniol.apt.analysis.language.Word;
-import uniol.apt.analysis.language.WordInLanguageModule;
 import uniol.apt.analysis.language.WordList;
-import uniol.apt.analysis.live.SimplyLiveModule;
-import uniol.apt.analysis.live.StronglyLiveModule;
-import uniol.apt.analysis.live.WeaklyLiveModule;
-import uniol.apt.analysis.on.OutputNonBranchingModule;
-import uniol.apt.analysis.persistent.PersistentModule;
-import uniol.apt.analysis.petrify.PetrifySynthesizeModule;
-import uniol.apt.analysis.plain.PlainModule;
-import uniol.apt.analysis.reversible.ReversibleModule;
-import uniol.apt.analysis.separation.LargestKModule;
-import uniol.apt.analysis.separation.StrongSeparationLengthModule;
-import uniol.apt.analysis.separation.StrongSeparationModule;
-import uniol.apt.analysis.separation.WeakSeparationLengthModule;
-import uniol.apt.analysis.separation.WeakSeparationModule;
-import uniol.apt.analysis.sideconditions.CheckSideConditionsModule;
-import uniol.apt.analysis.sideconditions.NonPureModule;
-import uniol.apt.analysis.sideconditions.PureModule;
 import uniol.apt.analysis.sideconditions.SideConditions;
-import uniol.apt.analysis.snet.SNetModule;
 import uniol.apt.analysis.snet.SNetResult;
-import uniol.apt.analysis.synet.SynthesizeDistributedLTSModule;
-import uniol.apt.analysis.synthesize.FindWordsModule;
-import uniol.apt.analysis.synthesize.LimitedUnfoldingModule;
-import uniol.apt.analysis.synthesize.SynthesizeModule;
-import uniol.apt.analysis.synthesize.SynthesizeWordModule;
-import uniol.apt.analysis.tnet.TNetModule;
 import uniol.apt.analysis.tnet.TNetResult;
-import uniol.apt.analysis.totallyreachable.TotallyReachableModule;
-import uniol.apt.analysis.trapsAndSiphons.SiphonModule;
-import uniol.apt.analysis.trapsAndSiphons.TrapsModule;
 import uniol.apt.analysis.trapsAndSiphons.TrapsSiphonsList;
-import uniol.apt.check.CheckModule;
 import uniol.apt.extension.ExtendMode;
-import uniol.apt.extension.ExtendTSExplicitPVModule;
-import uniol.apt.extension.ExtendTSModule;
-import uniol.apt.generator.module.BistatePhilNetGeneratorModule;
-import uniol.apt.generator.module.BitNetGeneratorModule;
-import uniol.apt.generator.module.CycleNetGeneratorModule;
-import uniol.apt.generator.module.InverseNetGeneratorModule;
-import uniol.apt.generator.module.QuadstatePhilNetGeneratorModule;
-import uniol.apt.generator.module.TNetGeneratorModule;
-import uniol.apt.generator.module.TristatePhilNetGeneratorModule;
-import uniol.apt.io.converter.Apt2PetrifyModule;
-import uniol.apt.io.converter.Apt2SynetModule;
-import uniol.apt.io.converter.PNML2AptModule;
-import uniol.apt.io.converter.Petrify2AptModule;
-import uniol.apt.io.converter.Synet2AptModule;
 import uniol.apt.io.parser.LTSParsers;
 import uniol.apt.io.parser.Parsers;
 import uniol.apt.io.parser.ParserNotFoundException;
 import uniol.apt.io.parser.PNParsers;
-import uniol.apt.io.renderer.impl.BagginsPNRendererModule;
-import uniol.apt.io.renderer.impl.LoLAPNRendererModule;
-import uniol.apt.io.renderer.impl.PnmlPNRendererModule;
+import uniol.apt.module.AptModuleRegistry;
 import uniol.apt.module.Category;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleExitStatusChecker;
@@ -155,13 +76,9 @@ import uniol.apt.module.impl.ModuleUtils;
 import uniol.apt.module.impl.Parameter;
 import uniol.apt.module.impl.ReturnValue;
 import uniol.apt.module.impl.SimpleModulePreconditionsChecker;
-import uniol.apt.pnanalysis.PnAnalysisModule;
-import uniol.apt.pnanalysis.RandomTNetGeneratorModule;
 import uniol.apt.ui.ParametersParser;
 import uniol.apt.ui.ParametersTransformer;
 import uniol.apt.ui.ReturnValuesTransformer;
-import uniol.apt.ui.impl.DrawModule;
-import uniol.apt.ui.impl.HelpModule;
 import uniol.apt.ui.impl.SimpleParametersParser;
 import uniol.apt.ui.impl.parameter.CharacterParameterTransformation;
 import uniol.apt.ui.impl.parameter.ExtendModeParameterTransformation;
@@ -198,100 +115,10 @@ public class APT {
 	 */
 	public static final String STANDARD_INPUT_SYMBOL = "-";
 
-
-	/**
-	 * All the modules that are used in APT.
-	 */
-	private static final Module[] modules = {
-		new Apt2SynetModule(),
-		new Apt2PetrifyModule(),
-		new BagginsPNRendererModule(),
-		new BCFModule(),
-		new BiCFModule(),
-		new BisimulationModule(),
-		new BistatePhilNetGeneratorModule(),
-		new BitNetGeneratorModule(),
-		new BoundedModule(),
-		new CheckAllCyclePropertiesModule(),
-		new CheckModule(),
-		new CheckSideConditionsModule(),
-		new ComputeMinSemiPosInvariantsModule(),
-		new ConcurrencyPreservingModule(),
-		new ConflictFreeModule(),
-		new CoverabilityModule(),
-		new CoveredByInvariantModule(),
-		new CycleNetGeneratorModule(),
-		new CyclesHaveSameOrMutallyDisjointPVModule(),
-		new CyclesHaveSamePVModule(),
-		new DeterministicModule(),
-		new DrawModule(),
-		new ExamineLTSModule(),
-		new ExaminePNModule(),
-		new ExtendTSExplicitPVModule(),
-		new ExtendTSModule(),
-		new FCModule(),
-		new FCNetModule(),
-		new FindWordsModule(),
-		new FireSequenceModule(),
-		new GenerateStepNetModule(),
-		new InfoModule(),
-		new InverseNetGeneratorModule(),
-		new IsolatedElementsModule(),
-		new IsolatedModule(),
-		new IsomorphismModule(),
-		new KBoundedModule(),
-		new LanguageEquivalenceModule(),
-		new LargestKModule(),
-		new LimitedUnfoldingModule(),
-		new LoLAPNRendererModule(),
-		new MatrixModule(),
-		new NonPureModule(),
-		new OutputNonBranchingModule(),
-		new PNML2AptModule(),
-		new PnmlPNRendererModule(),
-		new PVsOfSmallestCyclesModule(),
-		new PersistentModule(),
-		new Petrify2AptModule(),
-		new PetrifySynthesizeModule(),
-		new PlainModule(),
-		new PnAnalysisModule(),
-		new PureModule(),
-		new QuadstatePhilNetGeneratorModule(),
-		new RandomTNetGeneratorModule(),
-		new ReachabilityModule(),
-		new RegularLanguageToLTSModule(),
-		new ReversibleModule(),
-		new SNetModule(),
-		new SafeModule(),
-		new SimplyLiveModule(),
-		new SiphonModule(),
-		new StrongComponentsModule(),
-		new StrongConnectivityModule(),
-		new StrongSeparationLengthModule(),
-		new StrongSeparationModule(),
-		new StronglyLiveModule(),
-		new Synet2AptModule(),
-		new SynthesizeDistributedLTSModule(),
-		new SynthesizeModule(),
-		new SynthesizeWordModule(),
-		new TNetGeneratorModule(),
-		new TNetModule(),
-		new ToRegularExpressionModule(),
-		new TotallyReachableModule(),
-		new TrapsModule(),
-		new TristatePhilNetGeneratorModule(),
-		new WeakComponentsModule(),
-		new WeakConnectivityModule(),
-		new WeakSeparationLengthModule(),
-		new WeakSeparationModule(),
-		new WeaklyLiveModule(),
-		new WordInLanguageModule()
-	};
-
 	private static final ParametersParser parametersParser = new SimpleParametersParser();
 	private static final ParametersTransformer parametersTransformer = new ParametersTransformer();
 	private static final ReturnValuesTransformer returnValuesTransformer = new ReturnValuesTransformer();
-	private static final ModuleRegistry registry = new ModuleRegistry();
+	private static final ModuleRegistry registry = new AptModuleRegistry();
 
 	private static final PrintStream outPrinter = System.out;
 	private static final PrintStream errPrinter = System.err;
@@ -300,17 +127,6 @@ public class APT {
 	 * Hidden Constructor.
 	 */
 	private APT() {
-	}
-
-	/**
-	 * Register all modules that are used in APT
-	 */
-	public static void registerModules() {
-		registry.registerModules(modules);
-
-		HelpModule helpModule = new HelpModule(registry);
-
-		registry.registerModule(helpModule);
 	}
 
 	/**
@@ -400,8 +216,6 @@ public class APT {
 	}
 
 	public static void main(String[] args) {
-		registerModules();
-
 		addParametersTransformations();
 		addReturnValuesTransformations();
 

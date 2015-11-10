@@ -38,32 +38,33 @@ public class ModuleRegistryTest {
 
 	@Test
 	public void testFindModule() {
-		ModuleRegistry registry = new ModuleRegistry();
-
-		Module module1 = mock(Module.class);
+		final Module module1 = mock(Module.class);
 		when(module1.getName()).thenReturn("module1");
 
-		registry.registerModule(module1);
+		ModuleRegistry registry = new AbstractModuleRegistry() {{
+			registerModule(module1);
+		}};
+
 		assertEquals(registry.findModule("module1"), module1);
 	}
 
 	@Test
 	public void testFindNonExistentModule() {
-		assertTrue(new ModuleRegistry().findModule("module1") == null);
+		assertTrue(new AbstractModuleRegistry(){}.findModule("module1") == null);
 	}
 
 	@Test
 	public void testGetModules() {
-		ModuleRegistry registry = new ModuleRegistry();
-
-		Module module1 = mock(Module.class);
+		final Module module1 = mock(Module.class);
 		when(module1.getName()).thenReturn("module1");
 
-		Module module2 = mock(Module.class);
+		final Module module2 = mock(Module.class);
 		when(module2.getName()).thenReturn("module2");
 
-		registry.registerModule(module1);
-		registry.registerModule(module2);
+		ModuleRegistry registry = new AbstractModuleRegistry() {{
+			registerModule(module1);
+			registerModule(module2);
+		}};
 
 		assertEquals(registry.getModules().size(), 2);
 		assertTrue(registry.getModules().contains(module1));
@@ -72,20 +73,20 @@ public class ModuleRegistryTest {
 
 	@Test
 	public void testGetModulesByPrefix() {
-		ModuleRegistry registry = new ModuleRegistry();
-
-		Module module1 = mock(Module.class);
+		final Module module1 = mock(Module.class);
 		when(module1.getName()).thenReturn("a_module");
 
-		Module module2 = mock(Module.class);
+		final Module module2 = mock(Module.class);
 		when(module2.getName()).thenReturn("some_module");
 
-		Module module3 = mock(Module.class);
+		final Module module3 = mock(Module.class);
 		when(module3.getName()).thenReturn("another_module");
 
-		registry.registerModule(module1);
-		registry.registerModule(module2);
-		registry.registerModule(module3);
+		ModuleRegistry registry = new AbstractModuleRegistry() {{
+			registerModule(module1);
+			registerModule(module2);
+			registerModule(module3);
+		}};
 
 		Collection<Module> modules;
 
