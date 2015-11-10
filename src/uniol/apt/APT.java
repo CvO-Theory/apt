@@ -170,7 +170,6 @@ import uniol.apt.ui.impl.DrawModule;
 import uniol.apt.ui.impl.DrawNetModule;
 import uniol.apt.ui.impl.DrawTSModule;
 import uniol.apt.ui.impl.HelpModule;
-import uniol.apt.ui.impl.InternalsModule;
 import uniol.apt.ui.impl.SimpleParametersParser;
 import uniol.apt.ui.impl.parameter.CharacterParameterTransformation;
 import uniol.apt.ui.impl.parameter.ExtendModeParameterTransformation;
@@ -325,14 +324,8 @@ public class APT {
 		registry.registerModules(modules);
 		registry.registerModules(ModuleVisibility.INTERNAL, internalModules);
 
-		InternalsModule internalsModule = new InternalsModule();
 		HelpModule helpModule = new HelpModule(registry);
 
-		internalsModule.setModuleRegistry(registry);
-		internalsModule.setParamTransformer(parametersTransformer);
-		internalsModule.setReturnValueTransformer(returnValuesTransformer);
-
-		registry.registerModule(internalsModule, ModuleVisibility.HIDDEN);
 		registry.registerModule(helpModule);
 	}
 
