@@ -21,6 +21,7 @@ package uniol.apt.analysis.live;
 
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -36,7 +37,7 @@ import uniol.apt.adt.pn.Transition;
  * Base class used by the various liveness testing modules
  * @author Uli Schlachter, vsp
  */
-abstract public class AbstractLiveModule extends AbstractModule {
+abstract public class AbstractLiveModule extends AbstractModule implements Module {
 	@Override
 	final public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");

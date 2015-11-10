@@ -26,7 +26,9 @@ import uniol.apt.io.parser.impl.SynetPNParser;
 import uniol.apt.io.renderer.impl.AptLTSRenderer;
 import uniol.apt.io.renderer.impl.AptPNRenderer;
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -38,7 +40,8 @@ import uniol.apt.module.exception.ModuleException;
  *
  * @author Manuel Gieseking
  */
-public class Synet2AptModule extends AbstractModule {
+@AptModule
+public class Synet2AptModule extends AbstractModule implements Module {
 
 	private final static String DESCRIPTION = "Convert Synet format to APT format";
 	private final static String TITLE = "Synet2Apt";

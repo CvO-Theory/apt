@@ -20,7 +20,9 @@
 package uniol.apt.analysis.bicf;
 
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -36,7 +38,8 @@ import uniol.apt.adt.pn.Transition;
  * Provide the BiCF test as a module.
  * @author Uli Schlachter, vsp
  */
-public class BiCFModule extends AbstractModule {
+@AptModule
+public class BiCFModule extends AbstractModule implements Module {
 
 	@Override
 	public String getShortDescription() {

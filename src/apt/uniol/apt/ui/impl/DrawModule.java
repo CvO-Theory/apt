@@ -25,7 +25,9 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.renderer.impl.DotLTSRenderer;
 import uniol.apt.io.renderer.impl.DotPNRenderer;
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -39,7 +41,8 @@ import uniol.apt.module.exception.ModuleException;
  * @author Vincent Göbel
  *
  */
-public class DrawModule extends AbstractModule {
+@AptModule
+public class DrawModule extends AbstractModule implements Module {
 
 	@Override
 	public String getName() {

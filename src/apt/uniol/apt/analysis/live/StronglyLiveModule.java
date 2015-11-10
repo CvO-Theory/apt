@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis.live;
 
+import uniol.apt.module.AptModule;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
@@ -33,7 +35,8 @@ import java.util.List;
  * Provide the strongly live test as a module.
  * @author Uli Schlachter, vsp
  */
-public class StronglyLiveModule extends AbstractLiveModule {
+@AptModule
+public class StronglyLiveModule extends AbstractLiveModule implements Module {
 
 	@Override
 	public String getShortDescription() {

@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2012-2015  Members of the project group APT
+ * Copyright (C) 2015       vsp
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,33 +17,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.coverability;
+package uniol.apt.module;
 
-import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.module.AptModule;
-import uniol.apt.module.Module;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Provide the coverability graph as a module.
- * @author Uli Schlachter, vsp
+ * Annotation which marks modules
+ *
+ * This Annotation can only get used on non-generic non-abstract classes which implement the Module interface.
+ *
+ * @author vsp
  */
-@AptModule
-public class ReachabilityModule extends CoverabilityModule implements Module {
-
-	@Override
-	public String getShortDescription() {
-		return "Compute a Petri net's reachability graph";
-	}
-
-	@Override
-	public String getName() {
-		return "reachability_graph";
-	}
-
-	@Override
-	protected CoverabilityGraph getGraph(PetriNet pn) {
-		return CoverabilityGraph.getReachabilityGraph(pn);
-	}
-}
+@Documented
+@Retention(RetentionPolicy.SOURCE)
+@Target(ElementType.TYPE)
+public @interface AptModule { /* empty */ }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

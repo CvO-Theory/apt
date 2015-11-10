@@ -29,7 +29,9 @@ import uniol.apt.analysis.cycles.lts.ComputeSmallestCycles;
 import uniol.apt.analysis.cycles.lts.CycleCounterExample;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -45,7 +47,8 @@ import uniol.apt.util.Pair;
  * @author Sören Dierkes
  *
  */
-public class CheckAllCyclePropertiesModule extends AbstractModule {
+@AptModule
+public class CheckAllCyclePropertiesModule extends AbstractModule implements Module {
 
 	@Override
 	public String getName() {

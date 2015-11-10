@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -36,7 +38,8 @@ import uniol.apt.module.exception.ModuleException;
  * @author Renke Grunwald
  *
  */
-public class ExampleModule extends AbstractModule {
+@AptModule
+public class ExampleModule extends AbstractModule implements Module {
 	@Override
 	public String getName() {
 		return "example_module";

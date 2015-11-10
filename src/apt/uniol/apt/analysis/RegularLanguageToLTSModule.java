@@ -22,8 +22,10 @@ package uniol.apt.analysis;
 import uniol.apt.adt.automaton.FiniteAutomaton;
 import uniol.apt.adt.automaton.FiniteAutomatonUtility;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -35,7 +37,8 @@ import uniol.apt.ui.impl.parameter.FiniteAutomatonParameterTransformation;
  * Represent a regular language into a transition system.
  * @author Uli Schlachter
  */
-public class RegularLanguageToLTSModule extends AbstractModule {
+@AptModule
+public class RegularLanguageToLTSModule extends AbstractModule implements Module {
 
 	@Override
 	public String getShortDescription() {

@@ -21,6 +21,8 @@ package uniol.apt.analysis.live;
 
 import java.util.List;
 
+import uniol.apt.module.AptModule;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
@@ -34,7 +36,8 @@ import uniol.apt.adt.pn.Transition;
  * Provide the simply live test as a module.
  * @author Uli Schlachter, vsp
  */
-public class SimplyLiveModule extends AbstractLiveModule {
+@AptModule
+public class SimplyLiveModule extends AbstractLiveModule implements Module {
 
 	@Override
 	public String getShortDescription() {

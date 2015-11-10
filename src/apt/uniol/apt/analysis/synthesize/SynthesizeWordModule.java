@@ -27,7 +27,9 @@ import java.util.Set;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.language.Word;
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -40,7 +42,8 @@ import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
  * Provide the net synthesis from a word as a module.
  * @author Uli Schlachter
  */
-public class SynthesizeWordModule extends AbstractModule {
+@AptModule
+public class SynthesizeWordModule extends AbstractModule implements Module {
 
 	@Override
 	public String getShortDescription() {

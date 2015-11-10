@@ -27,7 +27,9 @@ import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.language.FiringSequence;
 import uniol.apt.analysis.language.Word;
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -40,7 +42,8 @@ import uniol.apt.ui.impl.parameter.WordParameterTransformation;
  *
  * @author Uli Schlachter
  */
-public class FireSequenceModule extends AbstractModule {
+@AptModule
+public class FireSequenceModule extends AbstractModule implements Module {
 
 	@Override
 	public String getShortDescription() {

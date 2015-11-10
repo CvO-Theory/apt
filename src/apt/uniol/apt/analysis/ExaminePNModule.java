@@ -20,7 +20,9 @@
 package uniol.apt.analysis;
 
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -52,7 +54,8 @@ import uniol.apt.adt.pn.PetriNet;
  * Provide various checks in a single module.
  * @author Uli Schlachter, vsp
  */
-public class ExaminePNModule extends AbstractModule {
+@AptModule
+public class ExaminePNModule extends AbstractModule implements Module {
 
 	@Override
 	public String getShortDescription() {

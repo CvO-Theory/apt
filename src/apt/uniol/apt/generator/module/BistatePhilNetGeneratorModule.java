@@ -22,7 +22,9 @@ package uniol.apt.generator.module;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.generator.philnet.BistatePhilNetGenerator;
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -33,7 +35,8 @@ import uniol.apt.module.exception.ModuleException;
  * Module for generating bistate philosopher nets.
  * @author Uli Schlachter, vsp
  */
-public class BistatePhilNetGeneratorModule extends AbstractModule {
+@AptModule
+public class BistatePhilNetGeneratorModule extends AbstractModule implements Module {
 
 	@Override
 	public String getShortDescription() {

@@ -22,6 +22,8 @@ package uniol.apt.extension;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.analysis.lts.extension.ExtendTransitionSystem;
 import uniol.apt.module.Category;
+import uniol.apt.module.AptModule;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 
@@ -29,7 +31,8 @@ import uniol.apt.module.ModuleInputSpec;
  * @author Renke Grunwald
  *
  */
-public class ExtendTSExplicitPVModule extends ExtendTSModule {
+@AptModule
+public class ExtendTSExplicitPVModule extends ExtendTSModule implements Module {
 	@Override
 	public String getName() {
 		return "extend_pv_lts";

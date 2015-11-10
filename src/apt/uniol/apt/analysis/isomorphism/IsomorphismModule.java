@@ -23,7 +23,9 @@ import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -34,7 +36,8 @@ import uniol.apt.module.exception.ModuleException;
  * Provide the isomorphism check for petri net's reachability graph as a module.
  * @author Maike Schwammberger, Uli Schlachter
  */
-public class IsomorphismModule extends AbstractModule {
+@AptModule
+public class IsomorphismModule extends AbstractModule implements Module {
 
 	@Override
 	public String getShortDescription() {

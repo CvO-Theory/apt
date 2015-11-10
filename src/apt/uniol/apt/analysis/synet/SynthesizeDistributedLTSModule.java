@@ -26,7 +26,9 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.renderer.RenderException;
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -39,7 +41,8 @@ import uniol.apt.module.exception.ModuleException;
  * @author Sören Dierkes
  *
  */
-public class SynthesizeDistributedLTSModule extends AbstractModule {
+@AptModule
+public class SynthesizeDistributedLTSModule extends AbstractModule implements Module {
 
 	@Override
 	public String getName() {

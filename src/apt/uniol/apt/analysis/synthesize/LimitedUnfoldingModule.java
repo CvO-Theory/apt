@@ -21,7 +21,9 @@ package uniol.apt.analysis.synthesize;
 
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -32,7 +34,8 @@ import uniol.apt.module.exception.ModuleException;
  * Provide the limited unfolding as a module.
  * @author Uli Schlachter
  */
-public class LimitedUnfoldingModule extends AbstractModule {
+@AptModule
+public class LimitedUnfoldingModule extends AbstractModule implements Module {
 	@Override
 	public String getShortDescription() {
 		return "Calculate the limited unfolding of a lts";

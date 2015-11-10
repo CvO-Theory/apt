@@ -26,7 +26,9 @@ import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.PnmlPNParser;
 
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -38,7 +40,8 @@ import uniol.apt.module.exception.ModuleException;
  *
  * @author Manuel Gieseking, Uli Schlachter
  */
-public class PNML2AptModule extends AbstractModule {
+@AptModule
+public class PNML2AptModule extends AbstractModule implements Module {
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {

@@ -31,7 +31,9 @@ import uniol.apt.analysis.connectivity.Connectivity;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -45,7 +47,8 @@ import static uniol.apt.adt.automaton.FiniteAutomatonUtility.fromLTS;
  * Convert a Petri net or LTS into a language-equivalent regular expression
  * @author Uli Schlachter
  */
-public class ToRegularExpressionModule extends AbstractModule {
+@AptModule
+public class ToRegularExpressionModule extends AbstractModule implements Module {
 
 	@Override
 	public String getShortDescription() {

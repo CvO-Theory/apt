@@ -21,7 +21,9 @@ package uniol.apt.analysis.cf;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
+import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -35,7 +37,8 @@ import uniol.apt.module.exception.ModuleException;
  * <p/>
  * @author Manuel Gieseking
  */
-public class ConflictFreeModule extends AbstractModule {
+@AptModule
+public class ConflictFreeModule extends AbstractModule implements Module {
 
 	private final static String SHORTDESCRIPTION = "Check if a plain Petri net is conflict-free";
 	private final static String LONGDESCRIPTION = "This module tests if a plain Petri net is conflict-free."
