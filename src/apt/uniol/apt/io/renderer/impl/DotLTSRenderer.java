@@ -30,8 +30,15 @@ import uniol.apt.io.renderer.Renderer;
  */
 @AptRenderer
 public class DotLTSRenderer extends AbstractSTRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
+	public final static String FORMAT = "dot";
+
 	public DotLTSRenderer() {
 		super("uniol/apt/io/renderer/impl/DotLTS.stg", "ts");
+	}
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
 	}
 }
 

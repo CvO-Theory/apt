@@ -17,28 +17,26 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.io.renderer.impl;
+package uniol.apt.io.renderer;
 
-import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.renderer.AptRenderer;
-import uniol.apt.io.renderer.Renderer;
+import uniol.apt.module.exception.ModuleException;
 
 /**
- * Renderer for the synet Petri net file format.
+ * RendererNotFoundException if someone tries to get a renderer for an unknown
+ * format.
  *
  * @author vsp
  */
-@AptRenderer
-public class SynetPNRenderer extends AbstractSTRenderer<PetriNet> implements Renderer<PetriNet> {
-	public final static String FORMAT = "synet";
+public class RendererNotFoundException extends ModuleException {
+	private static final long serialVersionUID = 0x1l;
 
-	public SynetPNRenderer() {
-		super("uniol/apt/io/renderer/impl/SynetPN.stg", "pn");
-	}
-
-	@Override
-	public String getFormat() {
-		return FORMAT;
+	/**
+	 * Constructor
+	 *
+	 * @param message The message
+	 */
+	public RendererNotFoundException(String message) {
+		super(message);
 	}
 }
 

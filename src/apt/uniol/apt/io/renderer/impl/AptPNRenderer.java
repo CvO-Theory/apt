@@ -40,6 +40,13 @@ import uniol.apt.io.renderer.RenderException;
  */
 @AptRenderer
 public class AptPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
+	public final static String FORMAT = "apt";
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
+	}
+
 	/**
 	 * Verify that the net can be expressed in APT file format.
 	 * @param pn the net to verify

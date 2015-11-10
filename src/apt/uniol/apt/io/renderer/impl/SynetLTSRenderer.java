@@ -38,6 +38,13 @@ import uniol.apt.util.StringComparator;
  */
 @AptRenderer
 public class SynetLTSRenderer extends AbstractRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
+	public final static String FORMAT = "synet";
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
+	}
+
 	@Override
 	public void render(TransitionSystem ts, Writer writer) throws RenderException, IOException {
 		// write file header

@@ -38,6 +38,13 @@ import uniol.apt.io.renderer.RenderException;
  */
 @AptRenderer
 public class AptLTSRenderer extends AbstractRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
+	public final static String FORMAT = "apt";
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
+	}
+
 	@Override
 	public void render(TransitionSystem ts, Writer writer) throws RenderException, IOException {
 		writer.append(".name \"").append(ts.getName()).append("\"\n");

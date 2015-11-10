@@ -44,6 +44,8 @@ import java.util.List;
  */
 @AptRenderer
 public class BagginsPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
+	public final static String FORMAT = "baggins";
+
 	static private class IdWeightPair {
 		public int id;
 		public int weight;
@@ -52,6 +54,11 @@ public class BagginsPNRenderer extends AbstractRenderer<PetriNet> implements Ren
 			this.id     = id;
 			this.weight = weight;
 		}
+	}
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
 	}
 
 	/**

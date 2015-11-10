@@ -41,6 +41,12 @@ import uniol.apt.io.renderer.RenderException;
  */
 @AptRenderer
 public class LoLAPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
+	public final static String FORMAT = "lola";
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
+	}
 
 	/**
 	 * Verify that the net can be expressed in LoLA file format.

@@ -36,6 +36,13 @@ import uniol.apt.io.renderer.Renderer;
  */
 @AptRenderer
 public class PnmlPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
+	public final static String FORMAT = "pnml";
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
+	}
+
 	@Override
 	public void render(PetriNet pn, Writer writer) throws IOException {
 		writer.append("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");

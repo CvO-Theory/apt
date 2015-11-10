@@ -36,6 +36,13 @@ import uniol.apt.io.renderer.RenderException;
  */
 @AptRenderer
 public class PetrifyLTSRenderer extends AbstractRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
+	public final static String FORMAT = "petrify";
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
+	}
+
 	@Override
 	public void render(TransitionSystem ts, Writer writer) throws RenderException, IOException {
 		// Petrify does not like:

@@ -17,29 +17,31 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.io.renderer.impl;
+package uniol.apt.io.renderer;
 
-import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.renderer.AptRenderer;
-import uniol.apt.io.renderer.Renderer;
+import java.util.Set;
 
 /**
- * Renderer for the synet Petri net file format.
+ * Interface which provides the correct parser for a given format.
  *
  * @author vsp
+ *
+ * @param <T> The class which the renderers should render.
  */
-@AptRenderer
-public class SynetPNRenderer extends AbstractSTRenderer<PetriNet> implements Renderer<PetriNet> {
-	public final static String FORMAT = "synet";
+public interface Renderers<T> {
+	/**
+	 * Get a renderer for a specific format
+	 * @param format The name of the format, to which the renderer should render
+	 * @return A renderer which can render the format
+	 * @throws RendererNotFoundException If no renderer for the given format is known.
+	 */
+	public Renderer<T> getRenderer(String format) throws RendererNotFoundException;
 
-	public SynetPNRenderer() {
-		super("uniol/apt/io/renderer/impl/SynetPN.stg", "pn");
-	}
-
-	@Override
-	public String getFormat() {
-		return FORMAT;
-	}
+	/**
+	 * Get all format names for which renderer are known
+	 * @return Set of the names of all supported formats
+	 */
+	public Set<String> getSupportedFormats();
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

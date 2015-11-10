@@ -30,6 +30,12 @@ import java.io.Writer;
  */
 public interface Renderer<G> {
 	/**
+	 * Which format does this parser understand?
+	 * @return name of the supported format
+	 */
+	public String getFormat();
+
+	/**
 	 * Render an object into a file
 	 *
 	 * @param obj the object to render

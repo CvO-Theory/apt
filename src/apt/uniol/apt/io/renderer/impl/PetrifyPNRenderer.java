@@ -39,6 +39,13 @@ import uniol.apt.io.renderer.RenderException;
  */
 @AptRenderer
 public class PetrifyPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
+	public final static String FORMAT = "petrify";
+
+	@Override
+	public String getFormat() {
+		return FORMAT;
+	}
+
 	@Override
 	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
 		// Petrify does not like:
