@@ -96,13 +96,9 @@ import uniol.apt.analysis.live.StronglyLiveModule;
 import uniol.apt.analysis.live.WeaklyLiveModule;
 import uniol.apt.analysis.on.OutputNonBranchingModule;
 import uniol.apt.analysis.persistent.PersistentModule;
-import uniol.apt.analysis.persistent.PersistentNetModule;
-import uniol.apt.analysis.persistent.PersistentTSModule;
 import uniol.apt.analysis.petrify.PetrifySynthesizeModule;
 import uniol.apt.analysis.plain.PlainModule;
 import uniol.apt.analysis.reversible.ReversibleModule;
-import uniol.apt.analysis.reversible.ReversibleNetModule;
-import uniol.apt.analysis.reversible.ReversibleTSModule;
 import uniol.apt.analysis.separation.LargestKModule;
 import uniol.apt.analysis.separation.StrongSeparationLengthModule;
 import uniol.apt.analysis.separation.StrongSeparationModule;
@@ -167,8 +163,6 @@ import uniol.apt.ui.ParametersParser;
 import uniol.apt.ui.ParametersTransformer;
 import uniol.apt.ui.ReturnValuesTransformer;
 import uniol.apt.ui.impl.DrawModule;
-import uniol.apt.ui.impl.DrawNetModule;
-import uniol.apt.ui.impl.DrawTSModule;
 import uniol.apt.ui.impl.HelpModule;
 import uniol.apt.ui.impl.SimpleParametersParser;
 import uniol.apt.ui.impl.parameter.CharacterParameterTransformation;
@@ -291,18 +285,6 @@ public class APT {
 		new WordInLanguageModule()
 	};
 
-	/**
-	 * All the internal modules that are used in APT. These modules can't be invoked by the user directly.
-	 */
-	private static final Module[] internalModules = {
-		new DrawNetModule(),
-		new DrawTSModule(),
-		new PersistentTSModule(),
-		new PersistentNetModule(),
-		new ReversibleTSModule(),
-		new ReversibleNetModule()
-	};
-
 	private static final ParametersParser parametersParser = new SimpleParametersParser();
 	private static final ParametersTransformer parametersTransformer = new ParametersTransformer();
 	private static final ReturnValuesTransformer returnValuesTransformer = new ReturnValuesTransformer();
@@ -322,7 +304,6 @@ public class APT {
 	 */
 	public static void registerModules() {
 		registry.registerModules(modules);
-		registry.registerModules(ModuleVisibility.INTERNAL, internalModules);
 
 		HelpModule helpModule = new HelpModule(registry);
 
