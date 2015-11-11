@@ -27,8 +27,9 @@
 
 	<!-- Checks for Headers                                -->
 	<!-- See http://checkstyle.sf.net/config_header.html   -->
-	<module name="Header">
+	<module name="RegexpHeader">
 		<property name="headerFile" value="header_java.txt"/>
+		<property name="multiLines" value="4"/>
 		<property name="fileExtensions" value="java,g,stg"/>
 	</module>
 
