@@ -21,13 +21,10 @@ package uniol.apt.analysis.synthesize;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -137,8 +134,8 @@ public class FindWordsModule extends AbstractModule {
 	}
 
 	static public void generateList(PNProperties properties, SortedSet<String> alphabet, Operation operation) {
-		Collection<String> currentLevel = Collections.singleton("");
-		Collection<String> nextLevel = new LinkedHashSet<>();
+		List<String> currentLevel = Collections.singletonList("");
+		List<String> nextLevel = new ArrayList<>();
 
 		boolean printSolvable = operation.printSolvable();
 		boolean printUnsolvable = operation.printUnsolvable();
@@ -166,7 +163,7 @@ public class FindWordsModule extends AbstractModule {
 					// "currentWord" after firing "c" once.
 					// Put differently: By prepending letters to solvable words, we are sure to
 					// generate all solvable words.
-					String word = c + currentWord;
+					String word = currentWord + c;
 					List<String> wordList = toList(word);
 
 					if (!properties.isKBounded()) {
@@ -177,8 +174,8 @@ public class FindWordsModule extends AbstractModule {
 						// For our purpose this means: If the prefix isn't solvable, then we
 						// already know that the word itself isn't solvable either.
 						// This is also important for the definition of "minimally unsolvable".
-						if (!currentLevel.contains(normalizeWord(
-								wordList.subList(0, wordList.size() - 1), alphabet)))
+						if (Collections.binarySearch(currentLevel, normalizeWord(
+								wordList.subList(1, wordList.size()), alphabet)) < 0)
 							continue;
 					}
 
@@ -199,6 +196,9 @@ public class FindWordsModule extends AbstractModule {
 								+ " yet it is non-deterministic?!", e);
 					}
 					if (synthesize.wasSuccessfullySeparated()) {
+						// Assert that the nextLevel list stays sorted
+						assert nextLevel.isEmpty()
+							|| nextLevel.get(nextLevel.size() - 1).compareTo(word) < 0;
 						nextLevel.add(word);
 						if (printSolvable)
 							System.out.println(word);
@@ -232,7 +232,7 @@ public class FindWordsModule extends AbstractModule {
 						+ " unsolvable words and " + nextLevel.size() + " solvable words.");
 			}
 			currentLevel = nextLevel;
-			nextLevel = new LinkedHashSet<>();
+			nextLevel = new ArrayList<>();
 		}
 	}
 
@@ -251,17 +251,15 @@ public class FindWordsModule extends AbstractModule {
 		StringBuilder result = new StringBuilder();
 		Map<String, String> morphism = new HashMap<>();
 		Iterator<String> alphabetIter = alphabet.iterator();
-		ListIterator<String> wordIter = word.listIterator(word.size());
 
-		while (wordIter.hasPrevious()) {
-			String letter = wordIter.previous();
+		for (String letter : word) {
 			String replacement = morphism.get(letter);
 			if (replacement == null) {
 				assert alphabetIter.hasNext();
 				replacement = alphabetIter.next();
 				morphism.put(letter, replacement);
 			}
-			result.insert(0, replacement);
+			result.append(replacement);
 		}
 		return result.toString();
 	}
