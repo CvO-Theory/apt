@@ -122,9 +122,7 @@ public class FindWordsModule extends AbstractModule {
 		String operation = input.getParameter("operation", String.class);
 
 		PNProperties properties = SynthesizeModule.Options.parseProperties(optionsStr).properties;
-		SortedSet<String> alphabet = new TreeSet<>(Arrays.asList(alphabetLetter.split("")));
-		// some Java versions include "" as first part of the splitted string => try to remove it
-		alphabet.remove("");
+		SortedSet<String> alphabet = new TreeSet<>(toList(alphabetLetter));
 
 		switch (operation) {
 			case "minimal_unsolvable":
@@ -139,8 +137,8 @@ public class FindWordsModule extends AbstractModule {
 	}
 
 	static public void generateList(PNProperties properties, SortedSet<String> alphabet, Operation operation) {
-		Collection<List<String>> currentLevel = Collections.singleton(Collections.<String>emptyList());
-		Collection<List<String>> nextLevel = new LinkedHashSet<>();
+		Collection<String> currentLevel = Collections.singleton("");
+		Collection<String> nextLevel = new LinkedHashSet<>();
 
 		boolean printSolvable = operation.printSolvable();
 		boolean printUnsolvable = operation.printUnsolvable();
@@ -159,7 +157,7 @@ public class FindWordsModule extends AbstractModule {
 
 		while (!currentLevel.isEmpty()) {
 			int numUnsolvable = 0;
-			for (List<String> currentWord : currentLevel) {
+			for (String currentWord : currentLevel) {
 				for (String c : alphabet) {
 					boolean newLetter = !currentWord.contains(c);
 
@@ -168,9 +166,8 @@ public class FindWordsModule extends AbstractModule {
 					// "currentWord" after firing "c" once.
 					// Put differently: By prepending letters to solvable words, we are sure to
 					// generate all solvable words.
-					List<String> word = new ArrayList<>();
-					word.add(c);
-					word.addAll(currentWord);
+					String word = c + currentWord;
+					List<String> wordList = toList(word);
 
 					if (!properties.isKBounded()) {
 						// If we have unbounded places, then every prefix of a solvable word is
@@ -180,12 +177,13 @@ public class FindWordsModule extends AbstractModule {
 						// For our purpose this means: If the prefix isn't solvable, then we
 						// already know that the word itself isn't solvable either.
 						// This is also important for the definition of "minimally unsolvable".
-						if (!currentLevel.contains(normalizeWord(word.subList(0, word.size() - 1), alphabet)))
+						if (!currentLevel.contains(normalizeWord(
+								wordList.subList(0, wordList.size() - 1), alphabet)))
 							continue;
 					}
 
 					// Is "word" PN-solvable with the given properties?
-					TransitionSystem ts = makeTS(word);
+					TransitionSystem ts = makeTS(wordList);
 					SynthesizePN synthesize;
 					try {
 						synthesize = new SynthesizePN.Builder(ts)
@@ -203,11 +201,11 @@ public class FindWordsModule extends AbstractModule {
 					if (synthesize.wasSuccessfullySeparated()) {
 						nextLevel.add(word);
 						if (printSolvable)
-							printWord(System.out, word);
+							System.out.println(word);
 					} else {
 						numUnsolvable++;
 						if (printUnsolvable) {
-							System.out.println(formatESSPFailure(word,
+							System.out.println(formatESSPFailure(wordList,
 								synthesize.getFailedEventStateSeparationProblems(),
 								true));
 						}
@@ -238,11 +236,19 @@ public class FindWordsModule extends AbstractModule {
 		}
 	}
 
+	// Transform a String into the list of its characters
+	static public List<String> toList(String word) {
+		List<String> result = new ArrayList<>(Arrays.asList(word.split("")));
+		// some Java versions include "" as first part of the splitted string => try to remove it
+		result.remove("");
+		return result;
+	}
+
 	// Normalize a word into the form that the above loop would generate it in. This means e.g. that the word ends
 	// with the first letter of the alphabet.
-	static public List<String> normalizeWord(List<String> word, SortedSet<String> alphabet)
+	static public String normalizeWord(List<String> word, SortedSet<String> alphabet)
 	{
-		List<String> result = new ArrayList<>();
+		StringBuilder result = new StringBuilder();
 		Map<String, String> morphism = new HashMap<>();
 		Iterator<String> alphabetIter = alphabet.iterator();
 		ListIterator<String> wordIter = word.listIterator(word.size());
@@ -255,16 +261,9 @@ public class FindWordsModule extends AbstractModule {
 				replacement = alphabetIter.next();
 				morphism.put(letter, replacement);
 			}
-			result.add(0, replacement);
+			result.insert(0, replacement);
 		}
-		return result;
-	}
-
-	static public void printWord(PrintStream stream, Collection<String> word) {
-		StringBuilder builder = new StringBuilder();
-		for (String c : word)
-			builder.append(c);
-		stream.println(builder.toString());
+		return result.toString();
 	}
 
 	@Override
