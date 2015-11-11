@@ -159,7 +159,6 @@ public class FindWordsModule extends AbstractModule {
 
 		while (!currentLevel.isEmpty()) {
 			int numUnsolvable = 0;
-			int currentLength = currentLevel.iterator().next().size() + 1;
 			for (List<String> currentWord : currentLevel) {
 				for (String c : alphabet) {
 					boolean newLetter = !currentWord.contains(c);
@@ -229,11 +228,13 @@ public class FindWordsModule extends AbstractModule {
 			}
 
 			// Done with this level, go to the next one
+			if (operation.printStatus()) {
+				int currentLength = currentLevel.iterator().next().length() + 1;
+				System.out.println("Done with length " + currentLength + ". There were " + numUnsolvable
+						+ " unsolvable words and " + nextLevel.size() + " solvable words.");
+			}
 			currentLevel = nextLevel;
 			nextLevel = new LinkedHashSet<>();
-			if (operation.printStatus())
-				System.out.println("Done with length " + currentLength + ". There were " + numUnsolvable
-						+ " unsolvable words and " + currentLevel.size() + " solvable words.");
 		}
 	}
 
