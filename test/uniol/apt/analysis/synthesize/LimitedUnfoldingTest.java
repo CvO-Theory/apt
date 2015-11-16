@@ -24,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.adt.matcher.Matchers.*;
 
 import uniol.apt.TestTSCollection;
+import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.deterministic.Deterministic;
 import uniol.apt.analysis.exception.NonDeterministicException;
@@ -127,6 +128,27 @@ public class LimitedUnfoldingTest {
 		assertThat(new Deterministic(unfold).isDeterministic(), is(true));
 		assertThat(LanguageEquivalence.checkLanguageEquivalence(unfold, originalSystem), is(nullValue()));
 		assertThat(new IsomorphismLogic(unfold, originalSystem, true).isIsomorphic(), is(false));
+	}
+
+	@Test
+	public void testCopyArcExtensions() throws Exception {
+		TransitionSystem originalSystem = TestTSCollection.getSingleStateTSWithLoop();
+		originalSystem.getArc("s0", "s0", "a").putExtension("extension", "value");
+		TransitionSystem unfold = LimitedUnfolding.calculateLimitedUnfolding(originalSystem);
+
+		State s0 = unfold.getInitialState();
+		Object value = "value";
+		assertThat(unfold.getArc(s0, s0, "a").getExtension("extension"), is(value));
+	}
+
+	@Test
+	public void testCopyStateExtensions() throws Exception {
+		TransitionSystem originalSystem = TestTSCollection.getSingleStateTSWithLoop();
+		originalSystem.getInitialState().putExtension("extension", "value");
+		TransitionSystem unfold = LimitedUnfolding.calculateLimitedUnfolding(originalSystem);
+
+		Object value = "value";
+		assertThat(unfold.getInitialState().getExtension("extension"), is(value));
 	}
 }
 

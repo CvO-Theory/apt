@@ -79,7 +79,7 @@ public class LimitedUnfolding  {
 					newTarget = createState(unfolding, stack, arc.getTarget());
 				}
 				// Create the new arc
-				unfolding.createArc(state, newTarget, arc.getLabel());
+				unfolding.createArc(state, newTarget, arc.getLabel()).copyExtensions(arc);
 			} else {
 				// Done with this state
 				stack.getFirst().getFirst().removeExtension(NEW_STATE_KEY);
@@ -93,6 +93,7 @@ public class LimitedUnfolding  {
 	static private State createState(TransitionSystem unfolding, Deque<Pair<State, Iterator<Arc>>> stack,
 			State next) {
 		State newState = unfolding.createState();
+		newState.copyExtensions(next);
 		next.putExtension(NEW_STATE_KEY, newState);
 		newState.putExtension(ORIGINAL_STATE_KEY, next);
 		stack.addFirst(new Pair<>(next, next.getPostsetEdges().iterator()));
