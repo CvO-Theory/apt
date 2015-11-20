@@ -69,9 +69,10 @@ public class PetrifyLTSSynthesize {
 		File tmpAutFile = null;
 		try {
 			tmpAutFile = File.createTempFile("petrifyAut", ".aut");
-			BufferedWriter bw = new BufferedWriter(new FileWriter(tmpAutFile));
-			bw.write(petrifyLts);
-			bw.close();
+			try (FileWriter fw = new FileWriter(tmpAutFile);
+					BufferedWriter bw = new BufferedWriter(fw)) {
+				bw.write(petrifyLts);
+			}
 
 			Process p;
 			try {
