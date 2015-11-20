@@ -89,37 +89,37 @@ public class PetrifyPNParserTest {
 		assertEquals(pImpl.getPostsetNodes().iterator().next().getId(), ta1.getId());
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Tried to create arc between two places 'p0' and 'p1'$")
 	public void testArcBetweenPlaces() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
 		p.parseString(".inputs\n.graph\np0 p1\n.marking { }\n.end\n");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Duplicate initial marking for place '<a,b>'$")
 	public void testDuplicateMarking() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
 		p.parseString(".inputs a b\n.graph\na b\nb a\n.marking { <a, b> <a, b> }\n.end\n");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Duplicate initial marking for place 'p'$")
 	public void testDuplicateMarking2() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
 		p.parseString(".inputs a b\n.graph\np a\np b\n.marking { p p }\n.end\n");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
-	public void testDuplicateMarking3() throws Exception {
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = ".*Arc with sourceId 'a' and targetId 'p' already exists in graph ''$")
+	public void testDuplicateArc() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
-		p.parseString(".inputs a b\n.graph\na p\na p\n.marking { p p }\n.end\n");
+		p.parseString(".inputs a b\n.graph\na p\na p\n.marking { p }\n.end\n");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^There is no implicit place between 'a' and 'b' whose initial marking can be set$")
 	public void testPlaceDoesNotExist() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
 		p.parseString(".inputs a b\n.graph\n.marking { <a, b> }\n.end\n");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^A non-existent event was split in 'c/1'$")
 	public void testSplitNonExistentEvent() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
 		p.parseString(".inputs a b\n.graph\na/0 b c/1\n.marking { <a, b> }\n.end\n");

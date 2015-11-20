@@ -28,7 +28,6 @@ import java.util.Map;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -90,9 +89,9 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 						if (!pn.containsPlace(target))
 							pn.createPlace(target);
 					} else if (!pn.containsTransition(target))
-						throw new ParseCancellationException(
-								"Tried to create arc between two places "
-								+ source + " and " + target);
+						throw new ParseRuntimeException(
+								"Tried to create arc between two places '"
+								+ source + "' and '" + target + "'");
 					pn.createFlow(source, target);
 				}
 			}
@@ -102,8 +101,8 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 		public void exitTokenExplicitPlace(PetrifyPNFormatParser.TokenExplicitPlaceContext ctx) {
 			Place p = pn.getPlace(ctx.ID().getText());
 			if (p.getInitialToken().getValue() != 0)
-				throw new ParseCancellationException( "Duplicate initial marking for place "
-						+ p.getId());
+				throw new ParseRuntimeException("Duplicate initial marking for place '"
+						+ p.getId() + "'");
 			p.setInitialToken(1);
 		}
 
@@ -113,12 +112,12 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 			String target = ctx.target.getText();
 			Place p = implicitPlaces.get(new Pair<>(source, target));
 			if (p == null)
-				throw new ParseCancellationException("There is no implicit place "
-							+ " between " + source + " and " + target
-							+ " whose initial marking can be set");
+				throw new ParseRuntimeException("There is no implicit place"
+							+ " between '" + source + "' and '" + target
+							+ "' whose initial marking can be set");
 			if (p.getInitialToken().getValue() != 0)
-				throw new ParseCancellationException(
-						"Duplicate initial marking for place " + p.getId());
+				throw new ParseRuntimeException(
+						"Duplicate initial marking for place '" + p.getId() + "'");
 			p.setInitialToken(1);
 		}
 
@@ -140,7 +139,7 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 				nodeIds.put(ctx, label);
 			else {
 				if (!pn.containsTransition(label))
-					throw new ParseCancellationException("A non-existent event was split in " + id);
+					throw new ParseRuntimeException("A non-existent event was split in '" + id + "'");
 				pn.createTransition(id).setLabel(label);
 				nodeIds.put(ctx, id);
 			}
@@ -161,13 +160,15 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 		ParseTree tree;
 		try {
 			tree = parser.pn();
-		} catch (ParseCancellationException ex) {
-			throw new ParseException(ex);
+		} catch (ParseRuntimeException ex) {
+			throw ex.getParseException();
 		}
 		PetriNet pn = new PetriNet();
 		try {
 			ParseTreeWalker.DEFAULT.walk(new PNListener(pn), tree);
-		} catch (DatastructureException | ParseCancellationException ex) {
+		} catch (ParseRuntimeException ex) {
+			throw ex.getParseException();
+		} catch (DatastructureException ex) {
 			throw new ParseException(ex);
 		}
 
