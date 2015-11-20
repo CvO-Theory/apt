@@ -29,7 +29,6 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
@@ -59,7 +58,7 @@ public class SynetPNParser extends AbstractParser<PetriNet> implements Parser<Pe
 			String loc = ctx.loc.getText();
 
 			if (!this.locations.add(loc))
-				throw new ParseCancellationException(new ParseException("Location already exists."));
+				throw new ParseRuntimeException("Location '" + loc + "' already exists");
 		}
 	}
 
@@ -82,7 +81,7 @@ public class SynetPNParser extends AbstractParser<PetriNet> implements Parser<Pe
 				ParserRuleContext parentCtx) {
 			if (locCtx == null) {
 				if (!this.locations.isEmpty()) {
-					throw new ParseCancellationException(extractPosition(parentCtx)
+					throw new ParseRuntimeException(extractPosition(parentCtx)
 							+ " Missing Location");
 				} else {
 					return;
@@ -91,8 +90,8 @@ public class SynetPNParser extends AbstractParser<PetriNet> implements Parser<Pe
 
 			String locText = locCtx.getText();
 			if (!this.locations.contains(locText))
-				throw new ParseCancellationException(new ParseException(extractPosition(locCtx)
-							+ " Unknown Location"));
+				throw new ParseRuntimeException(extractPosition(locCtx)
+							+ " Unknown Location '" + locText + "'");
 			ext.putExtension("location", locText);
 		}
 
@@ -154,8 +153,8 @@ public class SynetPNParser extends AbstractParser<PetriNet> implements Parser<Pe
 		ParseTree tree;
 		try {
 			tree               = parser.pn();
-		} catch (ParseCancellationException ex) {
-			throw new ParseException(ex.getMessage(), ex);
+		} catch (ParseRuntimeException ex) {
+			throw ex.getParseException();
 		}
 		PetriNet pn                = new PetriNet();
 		Set<String> locations      = new HashSet<>();
@@ -163,7 +162,9 @@ public class SynetPNParser extends AbstractParser<PetriNet> implements Parser<Pe
 			ParseTreeWalker.DEFAULT.walk(new LocationListener(locations), tree);
 			ParseTreeWalker.DEFAULT.walk(new PlaceTransitionListener(pn, locations), tree);
 			ParseTreeWalker.DEFAULT.walk(new FlowListener(pn), tree);
-		} catch (DatastructureException | ParseCancellationException ex) {
+		} catch (ParseRuntimeException ex) {
+			throw ex.getParseException();
+		} catch (DatastructureException ex) {
 			throw new ParseException(ex.getMessage(), ex);
 		}
 
