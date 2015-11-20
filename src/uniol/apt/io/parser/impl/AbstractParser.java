@@ -21,6 +21,7 @@ package uniol.apt.io.parser.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -36,8 +37,8 @@ import uniol.apt.io.parser.Parser;
 public abstract class AbstractParser<G> implements Parser<G> {
 	@Override
 	public G parseString(String input) throws ParseException {
-		try {
-			return parse(IOUtils.toInputStream(input));
+		try (InputStream is = IOUtils.toInputStream(input)) {
+			return parse(is);
 		} catch (IOException e) {
 			// This should never cause IOExceptions
 			throw new RuntimeException(e);
@@ -51,7 +52,9 @@ public abstract class AbstractParser<G> implements Parser<G> {
 
 	@Override
 	public G parseFile(File file) throws ParseException, IOException {
-		return parse(FileUtils.openInputStream(file));
+		try (InputStream is = FileUtils.openInputStream(file)) {
+			return parse(is);
+		}
 	}
 }
 
