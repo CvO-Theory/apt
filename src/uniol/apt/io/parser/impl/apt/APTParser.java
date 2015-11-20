@@ -51,7 +51,9 @@ public class APTParser {
 	 *                               all.
 	 */
 	public void parse(String path) throws IOException, ParseException {
-		parse(new FileInputStream(path));
+		try (FileInputStream is = new FileInputStream(path)) {
+			parse(is);
+		}
 	}
 
 	/**
@@ -67,22 +69,25 @@ public class APTParser {
 		pn = null;
 		ts = null;
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		StringBuilder builder = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			builder.append(line);
-			builder.append(System.getProperty("line.separator"));
+		try (InputStreamReader isr = new InputStreamReader(is);
+				BufferedReader reader = new BufferedReader(isr)) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				builder.append(line);
+				builder.append(System.getProperty("line.separator"));
+			}
 		}
 		String data = builder.toString();
-		is = new ByteArrayInputStream(data.getBytes());
 
-		if (data.matches("(?s).*\\.type\\s+(LTS|TS)(?s).*")) {
-			ts = new AptLTSParser().parse(is);
-		} else if (data.matches("(?s).*\\.type\\s+(LPN|PN)(?s).*")) {
-			pn = new AptPNParser().parse(is);
-		} else {
-			throw new ParseException("File type PN, LPN, TS, LTS needed.");
+		try (InputStream newIs = new ByteArrayInputStream(data.getBytes())) {
+			if (data.matches("(?s).*\\.type\\s+(LTS|TS)(?s).*")) {
+				ts = new AptLTSParser().parse(newIs);
+			} else if (data.matches("(?s).*\\.type\\s+(LPN|PN)(?s).*")) {
+				pn = new AptPNParser().parse(newIs);
+			} else {
+				throw new ParseException("File type PN, LPN, TS, LTS needed.");
+			}
 		}
 	}
 
