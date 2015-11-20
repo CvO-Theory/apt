@@ -27,7 +27,6 @@ import java.util.Set;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -215,8 +214,8 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 		ParseTree tree;
 		try {
 			tree             = parser.start();
-		} catch (ParseCancellationException ex) {
-			throw new ParseException(ex.getMessage(), ex);
+		} catch (ParseRuntimeException ex) {
+			throw ex.getParseException();
 		}
 		ParseTreeWalker walker   = new ParseTreeWalker();
 		Set<Symbol> alphabet     = new HashSet<>();

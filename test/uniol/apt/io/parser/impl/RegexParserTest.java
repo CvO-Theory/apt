@@ -132,7 +132,7 @@ public class RegexParserTest {
 		test("a|b&b?", union(getAtomic("a"), getAtomic("b")));
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: token recognition error at: '/a'$")
 	public void testComment4() throws Exception {
 		new RegexParser().parseString("/a");
 	}
@@ -172,97 +172,97 @@ public class RegexParserTest {
 		test("!(!a)", getAtomic("a"));
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: no viable alternative at input '\\)'$")
 	public void testClosingParen() throws Exception {
 		new RegexParser().parseString(")");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 5: extraneous input '\\)' expecting <EOF>$")
 	public void testClosingParenAfterExpr() throws Exception {
 		new RegexParser().parseString("(ab)*)");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 6: no viable alternative at input '\\(a\\*\\|b\\+'$")
 	public void testMissingClosingParen() throws Exception {
 		new RegexParser().parseString("(a*|b+");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 3: token recognition error at: '@'$")
 	public void testNotAllowedCharacter() throws Exception {
 		new RegexParser().parseString("ab?@d");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: token recognition error at: '<ab'$")
 	public void testBrokenID() throws Exception {
 		new RegexParser().parseString("<ab");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: token recognition error at: '<a<'$")
 	public void testBrokenID2() throws Exception {
 		new RegexParser().parseString("<a<");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: token recognition error at: '<'$")
 	public void testBrokenID3() throws Exception {
 		new RegexParser().parseString("<");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 5: mismatched input ',' expecting '}'$")
 	public void testBadRepeat1() throws Exception {
 		new RegexParser().parseString("a{1,1,1}");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 2: no viable alternative at input 'a\\{\\}'$")
 	public void testBadRepeat2() throws Exception {
 		new RegexParser().parseString("a{}");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 2: no viable alternative at input 'a\\{,'$")
 	public void testBadRepeat3() throws Exception {
 		new RegexParser().parseString("a{,42}");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 2: token recognition error at: 'b'$")
 	public void testBadRepeat4() throws Exception {
 		new RegexParser().parseString("a{b,ad}");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: no viable alternative at input '\\{'$")
 	public void testBadRepeat5() throws Exception {
 		new RegexParser().parseString("{1,}");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 5: token recognition error at: '\\{'$")
 	public void testBadRepeat6() throws Exception {
 		new RegexParser().parseString("a{1,2{1,}}");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: no viable alternative at input '\\{'$")
 	public void testBadRepeat7() throws Exception {
 		new RegexParser().parseString("{1,2}1{2,3}");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 2: token recognition error at: '-'$")
 	public void testBadRepeat8() throws Exception {
 		new RegexParser().parseString("a{-42}");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 2: no viable alternative at input '\\*'$")
 	public void testBadIntersection1() throws Exception {
 		new RegexParser().parseString("b&*b");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 2: no viable alternative at input '<EOF>'$")
 	public void testBadIntersection2() throws Exception {
 		new RegexParser().parseString("b&");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 2: no viable alternative at input '&'$")
 	public void testBadIntersection3() throws Exception {
 		new RegexParser().parseString("b&&b");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: no viable alternative at input '&'$")
 	public void testBadIntersection4() throws Exception {
 		new RegexParser().parseString("&a");
 	}
