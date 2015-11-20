@@ -51,16 +51,6 @@ public interface Renderer<G> {
 	public void renderFile(G obj, File file) throws RenderException, IOException;
 
 	/**
-	 * Render an object into a outputstream
-	 *
-	 * @param obj the object to render
-	 * @param os the outputstream
-	 * @throws RenderException if the renderer can't describe the object
-	 * @throws IOException if writing failes
-	 */
-	public void render(G obj, OutputStream os) throws RenderException, IOException;
-
-	/**
 	 * Render an object into a writer
 	 *
 	 * @param obj the object to render
