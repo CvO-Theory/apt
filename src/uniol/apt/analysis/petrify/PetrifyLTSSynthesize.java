@@ -92,31 +92,32 @@ public class PetrifyLTSSynthesize {
 				throw new PetrifyNotFoundException();
 			}
 
-			BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-			String line = "";
-			String net = "";
-			while ((line = br.readLine()) != null) {
-				net += line + "\n";
-				try {
-					p.waitFor();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+			try (InputStreamReader errorStream = new InputStreamReader(p.getErrorStream());
+					BufferedReader error = new BufferedReader(errorStream);
+					InputStreamReader brStream = new InputStreamReader(p.getInputStream());
+					BufferedReader br = new BufferedReader(brStream)) {
+				String line = "";
+				String net = "";
+				while ((line = br.readLine()) != null) {
+					net += line + "\n";
+					try {
+						p.waitFor();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
-			}
 
-			try {
-				pn_ = new PetrifyPNParser().parseString(net);
-			} catch (ParseException e) {
-				throw new ModuleException(e);
-			}
+				try {
+					pn_ = new PetrifyPNParser().parseString(net);
+				} catch (ParseException e) {
+					throw new ModuleException(e);
+				}
 
-			String errorStr = error.readLine();
-			if (errorStr != null) {
-				errorMsg_ = errorStr;
-				return false;
+				String errorStr = error.readLine();
+				if (errorStr != null) {
+					errorMsg_ = errorStr;
+					return false;
+				}
 			}
 
 			return true;
