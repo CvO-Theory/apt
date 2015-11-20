@@ -104,30 +104,31 @@ public class SynetSynthesizeDistributedLTS {
 				}
 			}
 
-			BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-			String line = "";
-			while ((line = br.readLine()) != null) {
-				if (line.contains("failures") || line.contains("not separated")) {
-					if (separationErrorMsg_ == null)
-						separationErrorMsg_ = "";
-					separationErrorMsg_ += line + "\n";
+			try (InputStreamReader errorStream = new InputStreamReader(p.getErrorStream());
+					BufferedReader error = new BufferedReader(errorStream);
+					InputStreamReader brStream = new InputStreamReader(p.getInputStream());
+					BufferedReader br = new BufferedReader(brStream)) {
+				String line = "";
+				while ((line = br.readLine()) != null) {
+					if (line.contains("failures") || line.contains("not separated")) {
+						if (separationErrorMsg_ == null)
+							separationErrorMsg_ = "";
+						separationErrorMsg_ += line + "\n";
+					}
+					try {
+						p.waitFor();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
-				try {
-					p.waitFor();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+
+				pn_ = new SynetPNParser().parseFile(tmpSaveFile.getAbsolutePath());
+
+				String errorStr = error.readLine();
+				if (errorStr != null) {
+					errorMsg_ = errorStr;
+					return false;
 				}
-			}
-
-			pn_ = new SynetPNParser().parseFile(tmpSaveFile.getAbsolutePath());
-
-			String errorStr = error.readLine();
-			if (errorStr != null) {
-				errorMsg_ = errorStr;
-				return false;
 			}
 			return true;
 		} finally {
