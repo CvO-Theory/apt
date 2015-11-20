@@ -121,7 +121,7 @@ public class PetrifyLTSParser extends AbstractParser<TransitionSystem> implement
 		} catch (ParseRuntimeException ex) {
 			throw ex.getParseException();
 		} catch (DatastructureException ex) {
-			throw new ParseException(ex);
+			throw new ParseException(ex.getMessage(), ex);
 		}
 		return lts;
 	}

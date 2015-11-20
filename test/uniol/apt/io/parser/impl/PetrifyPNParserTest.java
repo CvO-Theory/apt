@@ -107,7 +107,7 @@ public class PetrifyPNParserTest {
 		p.parseString(".inputs a b\n.graph\np a\np b\n.marking { p p }\n.end\n");
 	}
 
-	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = ".*Arc with sourceId 'a' and targetId 'p' already exists in graph ''$")
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Arc with sourceId 'a' and targetId 'p' already exists in graph ''$")
 	public void testDuplicateArc() throws Exception {
 		PetrifyPNParser p = new PetrifyPNParser();
 		p.parseString(".inputs a b\n.graph\na p\na p\n.marking { p }\n.end\n");
