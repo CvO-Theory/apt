@@ -73,14 +73,16 @@ public class SynetSynthesizeDistributedLTS {
 		File tmpSaveFile = null;
 		try {
 			tmpAutFile = File.createTempFile("synetAut", ".aut");
-			BufferedWriter bw = new BufferedWriter(new FileWriter(tmpAutFile));
-			bw.write(ltsSynetFormat);
-			bw.close();
+			try (FileWriter fw = new FileWriter(tmpAutFile);
+					BufferedWriter bw = new BufferedWriter(fw)) {
+				bw.write(ltsSynetFormat);
+			}
 
 			tmpDisFile = File.createTempFile("synetDis", ".dis");
-			BufferedWriter bw2 = new BufferedWriter(new FileWriter(tmpDisFile));
-			bw2.write(getDisString());
-			bw2.close();
+			try (FileWriter fw = new FileWriter(tmpDisFile);
+					BufferedWriter bw = new BufferedWriter(fw)) {
+				bw.write(getDisString());
+			}
 
 			tmpSaveFile = File.createTempFile("synetNet", ".net");
 
