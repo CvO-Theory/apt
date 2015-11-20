@@ -27,7 +27,6 @@ import java.util.Map;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
@@ -62,7 +61,7 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 		@Override
 		public void exitTs(AptLTSFormatParser.TsContext ctx) {
 			if (this.initCount < 1) {
-				throw new ParseCancellationException(new ParseException("Initial state not found"));
+				throw new ParseRuntimeException("Initial state not found");
 			}
 		}
 
@@ -110,8 +109,7 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 			for (Map.Entry<String, Object> entry : this.curOpts.entrySet()) {
 				if ("initial".equals(entry.getKey())) {
 					if (this.initCount++ > 0) {
-						throw new ParseCancellationException(new ParseException(
-								"Multiple states are marked as initial state."));
+						throw new ParseRuntimeException("Multiple states are marked as initial state");
 					}
 					this.ts.setInitialState(s);
 				} else {
@@ -142,7 +140,7 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 		public void exitArc(AptLTSFormatParser.ArcContext ctx) {
 			Map<String, Object> extensions = this.labelOpts.get(ctx.labell.getText());
 			if (extensions == null) {
-				throw new ParseCancellationException(new ParseException("Unknown label found"));
+				throw new ParseRuntimeException("Unknown label found");
 			}
 			Arc a = this.ts.createArc(ctx.src.getText(), ctx.dest.getText(), ctx.labell.getText());
 
@@ -167,15 +165,17 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 		ParseTree tree;
 		try {
 			tree              = parser.ts();
-		} catch (ParseCancellationException ex) {
-			throw new ParseException(ex.getMessage(), ex);
+		} catch (ParseRuntimeException ex) {
+			throw ex.getParseException();
 		}
 		TransitionSystem ts       = new TransitionSystem();
 		Map<String, Map<String, Object>> labelOpts = new HashMap<>();
 		try {
 			ParseTreeWalker.DEFAULT.walk(new NameDescStateLabelListener(ts, labelOpts), tree);
 			ParseTreeWalker.DEFAULT.walk(new ArcListener(ts, labelOpts), tree);
-		} catch (DatastructureException | ParseCancellationException ex) {
+		} catch (ParseRuntimeException ex) {
+			throw ex.getParseException();
+		} catch (DatastructureException ex) {
 			throw new ParseException(ex.getMessage(), ex);
 		}
 

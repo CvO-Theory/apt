@@ -95,7 +95,7 @@ public class AptLTSParserTest {
 		loopAsserts(ts);
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Node 's1' already exists in graph 'doubleNodes'$")
 	public void testDoubleNodes() throws Exception {
 		new AptLTSParser().parseFile("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-aut.apt");
 	}
@@ -105,24 +105,39 @@ public class AptLTSParserTest {
 		new AptLTSParser().parseFile("nets/not-parsable-test-nets/doubleInitialstate_shouldNotBeParsable-aut.apt");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 4 col 5: no viable alternative at input '<EOF>'$")
 	public void testMissingType() throws Exception {
 		new AptLTSParser().parseString(".name \"42\"\n.states foo\n.labels bar\n.arcs");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 3 col 0: no viable alternative at input '\\.type'$")
 	public void testTypeTwice() throws Exception {
 		new AptLTSParser().parseString(".name \"42\"\n.type LTS\n.type LTS\n.states foo\n.labels bar\n.arcs");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 2 col 0: no viable alternative at input '\\.name'$")
 	public void testNameTwice() throws Exception {
 		new AptLTSParser().parseString(".name \"42\"\n.name \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 3 col 0: no viable alternative at input '\\.description'$")
 	public void testDescriptionTwice() throws Exception {
 		new AptLTSParser().parseString(".name \"42\"\n.description \"42\"\n.description \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
+	}
+
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Initial state not found$")
+	public void testMissingInitialState() throws Exception {
+		new AptLTSParser().parseString(".name \"42\"\n.description \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
+	}
+
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Multiple states are marked as initial state$")
+	public void testDoubleInitialState() throws Exception {
+		new AptLTSParser().parseString(".name \"42\"\n.description \"42\"\n.type LTS\n.states foo[initial] bar[initial]\n.labels bar\n.arcs");
+	}
+
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Unknown label found$")
+	public void testUnknownLabel() throws Exception {
+		new AptLTSParser().parseString(".type LTS\n.states foo[initial]\n.labels\n.arcs foo a foo\n");
 	}
 }
 
