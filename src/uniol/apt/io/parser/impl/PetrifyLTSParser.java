@@ -28,7 +28,6 @@ import java.util.Set;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -63,8 +62,7 @@ public class PetrifyLTSParser extends AbstractParser<TransitionSystem> implement
 		public void exitInputs(PetrifyLTSFormatParser.InputsContext ctx) {
 			for (TerminalNode event : ctx.ID())
 				if (!this.alphabet.add(event.getText()))
-					throw new ParseCancellationException(new ParseException(
-								"Duplicate input " + event.getText()));
+					throw new ParseRuntimeException("Duplicate input '" + event.getText() + "'");
 		}
 
 		// Create a state if it does not yet exist
@@ -87,8 +85,7 @@ public class PetrifyLTSParser extends AbstractParser<TransitionSystem> implement
 				createState(target);
 
 				if (!this.alphabet.contains(event))
-					throw new ParseCancellationException(new ParseException(
-								"Unknown event " + event));
+					throw new ParseRuntimeException("Unknown event '" + event + "'");
 				lts.createArc(source, target, event);
 
 				source = target;
@@ -115,13 +112,15 @@ public class PetrifyLTSParser extends AbstractParser<TransitionSystem> implement
 		ParseTree tree;
 		try {
 			tree = parser.ts();
-		} catch (ParseCancellationException ex) {
-			throw new ParseException(ex);
+		} catch (ParseRuntimeException ex) {
+			throw ex.getParseException();
 		}
 		TransitionSystem lts = new TransitionSystem();
 		try {
 			ParseTreeWalker.DEFAULT.walk(new LTSListener(lts), tree);
-		} catch (DatastructureException | ParseCancellationException ex) {
+		} catch (ParseRuntimeException ex) {
+			throw ex.getParseException();
+		} catch (DatastructureException ex) {
 			throw new ParseException(ex);
 		}
 		return lts;

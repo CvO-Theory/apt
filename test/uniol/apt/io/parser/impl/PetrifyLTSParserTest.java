@@ -71,19 +71,19 @@ public class PetrifyLTSParserTest {
 		assertThat(lts.getInitialState(), nodeWithID("s0"));
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Duplicate input 'a'$")
 	public void testDuplicateInput() throws Exception {
 		PetrifyLTSParser p = new PetrifyLTSParser();
 		p.parseString(".inputs a a\n.state graph\ns0 a s1\n.marking { s0 }\n.end\n");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 4 col 14: extraneous input 's1' expecting '}'$")
 	public void testDuplicateMarking() throws Exception {
 		PetrifyLTSParser p = new PetrifyLTSParser();
 		p.parseString(".inputs a\n.state graph\ns0 a s1\n.marking { s0 s1 }\n.end\n");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Unknown event 'a'$")
 	public void testEventDoesNotExist() throws Exception {
 		PetrifyLTSParser p = new PetrifyLTSParser();
 		p.parseString(".inputs\n.state graph\ns0 a s1\n.marking {s0}\n.end\n");
