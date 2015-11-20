@@ -77,44 +77,41 @@ public class ExtendStateFile {
 	}
 
 	public void parse() throws IOException, ModuleException {
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		String line;
+		try (FileReader fr = new FileReader(file);
+				BufferedReader reader = new BufferedReader(fr)) {
+			String line;
 
-		while ((line = reader.readLine()) != null) {
-			if (line.length() - MINIMAL_CODE_PREFIX.length() != codeLength) {
-				reader.close();
-				throw new ModuleException("State file was created for different LTS or g. Delete file and try again.");
+			while ((line = reader.readLine()) != null) {
+				if (line.length() - MINIMAL_CODE_PREFIX.length() != codeLength) {
+					throw new ModuleException("State file was created for different LTS or g. Delete file and try again.");
+				}
+
+				if (line.startsWith(MINIMAL_CODE_PREFIX)) {
+					String codeString = line.substring(MINIMAL_CODE_PREFIX.length());
+					minimalCodes.add(codeStringToCode(codeString));
+					continue;
+				}
+
+				if (line.startsWith(CURRENT_CODE_PREFIX)) {
+					String codeString = line.substring(CURRENT_CODE_PREFIX.length());
+					currentCode = codeStringToCode(codeString);
+					continue;
+				}
+
+				throw new ModuleException(file.getAbsolutePath() + "is not a state file");
 			}
-
-			if (line.startsWith(MINIMAL_CODE_PREFIX)) {
-				String codeString = line.substring(MINIMAL_CODE_PREFIX.length());
-				minimalCodes.add(codeStringToCode(codeString));
-				continue;
-			}
-
-			if (line.startsWith(CURRENT_CODE_PREFIX)) {
-				String codeString = line.substring(CURRENT_CODE_PREFIX.length());
-				currentCode = codeStringToCode(codeString);
-				continue;
-			}
-
-			reader.close();
-			throw new ModuleException(file.getAbsolutePath() + "is not a state file");
 		}
-
-		reader.close();
 	}
 
 	public void render() throws IOException {
-		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		try (FileWriter fw = new FileWriter(file);
+				BufferedWriter writer = new BufferedWriter(fw)) {
+			for (BitSet code : minimalCodes) {
+				writer.write(MINIMAL_CODE_PREFIX + codeToCodeString(code) + "\n");
+			}
 
-		for (BitSet code : minimalCodes) {
-			writer.write(MINIMAL_CODE_PREFIX + codeToCodeString(code) + "\n");
+			writer.write(CURRENT_CODE_PREFIX + codeToCodeString(currentCode) + "\n");
 		}
-
-		writer.write(CURRENT_CODE_PREFIX + codeToCodeString(currentCode) + "\n");
-
-		writer.close();
 	}
 
 	public BitSet getCurrentCode() {
