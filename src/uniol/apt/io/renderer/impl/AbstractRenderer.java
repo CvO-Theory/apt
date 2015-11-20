@@ -45,19 +45,22 @@ public abstract class AbstractRenderer<G> implements Renderer<G> {
 
 	@Override
 	public void renderFile(G obj, File file) throws RenderException, IOException {
-		render(obj, new BufferedWriter(new OutputStreamWriter(FileUtils.openOutputStream(file), "UTF-8")));
+		try (OutputStream os = FileUtils.openOutputStream(file);
+				OutputStreamWriter osw = new OutputStreamWriter(os);
+				BufferedWriter bw = new BufferedWriter(osw)) {
+			render(obj, bw);
+		}
 	}
 
 	@Override
 	public String render(G obj) throws RenderException {
-		Writer writer = new StringBuilderWriter();
-		try {
+		try (Writer writer = new StringBuilderWriter()) {
 			render(obj, writer);
+			return writer.toString();
 		} catch (IOException e) {
 			// A StringWriter shouldn't throw IOExceptions
 			throw new RuntimeException(e);
 		}
-		return writer.toString();
 	}
 }
 
