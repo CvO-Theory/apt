@@ -88,7 +88,7 @@ public class AptPNParserTest {
 		sideConditionAsserts(net);
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Node 's1' already exists in graph 'doubleNodes'$")
 	public void testDoubleNodes() throws Exception {
 		new AptPNParser().parseFile("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-net.apt");
 	}
@@ -103,37 +103,37 @@ public class AptPNParserTest {
 		assertEquals(s3.getValue(), 1);
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: token recognition error at: '\\.u'$")
 	public void testUnknownAttributeNet() throws Exception {
 		new AptPNParser().parseFile("nets/not-parsable-test-nets/unknown-attribute.apt");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 8: token recognition error at: '// Comment without newline after'$")
 	public void testMissingNewlineAfterComment() throws Exception {
 		new AptPNParser().parseString(".type PN// Comment without newline after");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 2 col 16: no viable alternative at input '<EOF>'$")
 	public void testMissingType() throws Exception {
 		new AptPNParser().parseString(".places foo\n.transitions bar");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 4 col 0: no viable alternative at input '\\.type'$")
 	public void testTypeTwice() throws Exception {
 		new AptPNParser().parseString(".type PN\n.places foo\n.transitions bar\n.type LPN");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 5 col 0: no viable alternative at input '\\.name'$")
 	public void testNameTwice() throws Exception {
 		new AptPNParser().parseString(".type PN\n.name \"foo\"\n.places foo\n.transitions bar\n.name \"bar\"");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 5 col 0: no viable alternative at input '\\.description'$")
 	public void testDesciptionTwice() throws Exception {
 		new AptPNParser().parseString(".type PN\n.description \"foo\"\n.places foo\n.transitions bar\n.description \"bar\"");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 2 col 0: token recognition error at: '\\.initialM'$")
 	public void testInitialMarkingTwice() throws Exception {
 		new AptPNParser().parseString(".type PN\n.initialMarking {foo}\n.places foo\n.transitions bar\n.initialMarking");
 	}
