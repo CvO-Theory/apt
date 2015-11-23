@@ -26,8 +26,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.adt.matcher.Matchers.*;
 import uniol.apt.TestTSCollection;
 
-import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
 
@@ -125,6 +125,24 @@ public class AllSmallCyclesHavePVOneTest {
 					contains(arcThatConnects("s11", "s21"), arcThatConnects("s21", "s11")),
 					contains(arcThatConnects("s11", "s01"), arcThatConnects("s01", "s11"))
 					));
+	}
+
+	@Test
+	public void testWithUncomparableCycle() throws Exception {
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("s0", "s1");
+		ts.setInitialState("s0");
+
+		ts.createArc("s0", "s1", "a");
+		ts.createArc("s0", "s1", "b");
+		ts.createArc("s1", "s0", "a");
+		ts.createArc("s1", "s0", "b");
+
+		// This lts has three small cycles: a,b; a,a and b,b; obviously the last two don't have a Parikh-vector
+		// of all ones. However, the special thing is that they are incomparable to a PV of (1,1).
+		assertThat(checkCycles(ts), anyOf(
+					contains(arcThatConnectsVia("s0", "s1", "a"), arcThatConnectsVia("s1", "s0", "a")),
+					contains(arcThatConnectsVia("s0", "s1", "b"), arcThatConnectsVia("s1", "s0", "b"))));
 	}
 }
 
