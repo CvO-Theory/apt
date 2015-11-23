@@ -43,6 +43,23 @@ public class LimitedUnfolding  {
 	static final private String NEW_STATE_KEY = "NEW_STATE";
 	static final public String ORIGINAL_STATE_KEY = "ORIGINAL_STATE";
 
+	// A state of the depth-first search
+	static private class DFSState {
+		public final State oldState;
+		public final Iterator<Arc> oldStatePostset;
+
+		public DFSState(State oldState) {
+			this.oldState = oldState;
+			this.oldStatePostset = oldState.getPostsetEdges().iterator();
+		}
+
+		public Arc getNextArc() {
+			if (!oldStatePostset.hasNext())
+				return null;
+			return oldStatePostset.next();
+		}
+	}
+
 	/**
 	 * Calculate a limited unfolding.
 	 * This function does a depth-first iteration through the transition system. For each state that it reaches it
@@ -57,46 +74,44 @@ public class LimitedUnfolding  {
 			throw new NonDeterministicException(ts);
 
 		TransitionSystem unfolding = new TransitionSystem("Limited unfolding of " + ts.getName());
-		Deque<Pair<State, Iterator<Arc>>> stack = new LinkedList<>();
+		Deque<DFSState> stack = new LinkedList<>();
 		unfolding.setInitialState(createState(unfolding, stack, ts.getInitialState()));
 
 		while (!stack.isEmpty()) {
-			// Check if we iterated through the full postset
-			if (stack.getFirst().getSecond().hasNext()) {
-				// Recurse via one element from the state's postset
-				Arc arc = stack.getFirst().getSecond().next();
-
-				// Figure out where this arc goes to in the unfolding
-				State state = getNewState(stack.getFirst().getFirst());
-				State newTarget = getNewState(arc.getTarget());
-				if (newTarget == null) {
-					// We didn't examine this path in our current path from the root yet.
-					// This puts the new state at the front of the stack, so that the next iteration
-					// will handle the target state instead. Thus, we are really doing a depth-first
-					// search and at any given point in time only the nodes that are on a single
-					// path from the initial state to the current state have a NEW_STATE_KEY
-					// extension set.
-					newTarget = createState(unfolding, stack, arc.getTarget());
-				}
-				// Create the new arc
-				unfolding.createArc(state, newTarget, arc.getLabel()).copyExtensions(arc);
-			} else {
-				// Done with this state
-				stack.getFirst().getFirst().removeExtension(NEW_STATE_KEY);
+			// Recurse via one element from the current state's postset
+			Arc arc = stack.getFirst().getNextArc();
+			if (arc == null) {
+				// We handled the complete postset, done with this state
+				stack.getFirst().oldState.removeExtension(NEW_STATE_KEY);
 				stack.removeFirst();
+				continue;
 			}
+
+			// Figure out where this arc goes to in the unfolding
+			State state = getNewState(stack.getFirst().oldState);
+			State newTarget = getNewState(arc.getTarget());
+			if (newTarget == null) {
+				// We didn't examine this path in our current path from the root yet.
+				// This puts the new state at the front of the stack, so that the next iteration
+				// will handle the target state instead. Thus, we are really doing a depth-first
+				// search and at any given point in time only the nodes that are on a single
+				// path from the initial state to the current state have a NEW_STATE_KEY
+				// extension set.
+				newTarget = createState(unfolding, stack, arc.getTarget());
+			}
+			// Create the new arc
+			unfolding.createArc(state, newTarget, arc.getLabel()).copyExtensions(arc);
 		}
 
 		return unfolding;
 	}
 
-	static private State createState(TransitionSystem unfolding, Deque<Pair<State, Iterator<Arc>>> stack,
-			State next) {
+	static private State createState(TransitionSystem unfolding, Deque<DFSState> stack, State next) {
 		State newState = unfolding.createState();
 		newState.copyExtensions(next);
 		next.putExtension(NEW_STATE_KEY, newState);
 		newState.putExtension(ORIGINAL_STATE_KEY, next);
-		stack.addFirst(new Pair<>(next, next.getPostsetEdges().iterator()));
+		stack.addFirst(new DFSState(next));
 		return newState;
 	}
 
