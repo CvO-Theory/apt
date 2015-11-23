@@ -144,6 +144,20 @@ public class AllSmallCyclesHavePVOneTest {
 					contains(arcThatConnectsVia("s0", "s1", "a"), arcThatConnectsVia("s1", "s0", "a")),
 					contains(arcThatConnectsVia("s0", "s1", "b"), arcThatConnectsVia("s1", "s0", "b"))));
 	}
+
+	@Test
+	public void testWithDoubleCycle() throws Exception {
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("s0", "s1", "s2");
+		ts.setInitialState("s0");
+
+		ts.createArc("s0", "s1", "a");
+		ts.createArc("s1", "s2", "a");
+		ts.createArc("s2", "s1", "b");
+		ts.createArc("s1", "s0", "b");
+
+		checkCyclesHavePV1(ts);
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
