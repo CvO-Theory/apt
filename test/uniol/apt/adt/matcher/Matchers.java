@@ -96,6 +96,10 @@ public class Matchers extends org.hamcrest.Matchers {
 		return arcThatConnects(nodeWithID(sourceID), nodeWithID(targetID));
 	}
 
+	public static <T> Matcher<Arc> arcThatConnectsVia(String sourceID, String targetID, String label) {
+		return arcThatConnectsVia(nodeWithID(sourceID), nodeWithID(targetID), is(label));
+	}
+
 	public static <T> Matcher<Flow> flowThatConnects(Matcher<? super Node> sourceMatcher,
 			Matcher<? super Node> targetMatcher) {
 		return FlowThatConnectsMatcher.flowThatConnects(sourceMatcher, targetMatcher);
@@ -104,6 +108,11 @@ public class Matchers extends org.hamcrest.Matchers {
 	public static <T> Matcher<Arc> arcThatConnects(Matcher<? super State> sourceMatcher,
 			Matcher<? super State> targetMatcher) {
 		return ArcThatConnectsMatcher.arcThatConnects(sourceMatcher, targetMatcher);
+	}
+
+	public static <T> Matcher<Arc> arcThatConnectsVia(Matcher<? super State> sourceMatcher,
+			Matcher<? super State> targetMatcher, Matcher<? super String> labelMatcher) {
+		return ArcThatConnectsMatcher.arcThatConnectsVia(sourceMatcher, targetMatcher, labelMatcher);
 	}
 
 	public static <T> Matcher<Marking> markingThatIs(Map<String, Long> marking) {

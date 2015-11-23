@@ -27,6 +27,8 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 
+import static org.hamcrest.Matchers.anything;
+
 /**
  * Matcher to verify that the nodes of an arc match the given matchers.
  * @author Uli Schlachter, vsp
@@ -35,19 +37,23 @@ public class ArcThatConnectsMatcher extends TypeSafeDiagnosingMatcher<Arc> {
 
 	private final Matcher<? super State> sourceMatcher;
 	private final Matcher<? super State> targetMatcher;
+	private final Matcher<? super String> labelMatcher;
 
 	private ArcThatConnectsMatcher(Matcher<? super State> sourceMatcher,
-			Matcher<? super State> targetMatcher) {
+			Matcher<? super State> targetMatcher, Matcher<? super String> labelMatcher) {
 		this.sourceMatcher = sourceMatcher;
 		this.targetMatcher = targetMatcher;
+		this.labelMatcher = labelMatcher;
 	}
 
 	@Override
 	public void describeTo(Description description) {
 		description.appendText("Arc with source <");
 		sourceMatcher.describeTo(description);
-		description.appendText("> and target <");
+		description.appendText(">, target <");
 		targetMatcher.describeTo(description);
+		description.appendText("> and label <");
+		labelMatcher.describeTo(description);
 		description.appendText(">");
 	}
 
@@ -55,6 +61,7 @@ public class ArcThatConnectsMatcher extends TypeSafeDiagnosingMatcher<Arc> {
 	public boolean matchesSafely(Arc arc, Description description) {
 		State source = arc.getSource();
 		State target = arc.getTarget();
+		String label = arc.getLabel();
 
 		if (!sourceMatcher.matches(source)) {
 			description.appendText("Arc with source <");
@@ -72,13 +79,27 @@ public class ArcThatConnectsMatcher extends TypeSafeDiagnosingMatcher<Arc> {
 			return false;
 		}
 
+		if (!labelMatcher.matches(label)) {
+			description.appendText("Arc with label <");
+			labelMatcher.describeMismatch(label, description);
+			description.appendText(">");
+
+			return false;
+		}
+
 		return true;
+	}
+
+	@Factory
+	public static <T> Matcher<Arc> arcThatConnectsVia(Matcher<? super State> sourceMatcher,
+			Matcher<? super State> targetMatcher, Matcher<? super String> labelMatcher) {
+		return new ArcThatConnectsMatcher(sourceMatcher, targetMatcher, labelMatcher);
 	}
 
 	@Factory
 	public static <T> Matcher<Arc> arcThatConnects(Matcher<? super State> sourceMatcher,
 			Matcher<? super State> targetMatcher) {
-		return new ArcThatConnectsMatcher(sourceMatcher, targetMatcher);
+		return arcThatConnectsVia(sourceMatcher, targetMatcher, anything());
 	}
 }
 
