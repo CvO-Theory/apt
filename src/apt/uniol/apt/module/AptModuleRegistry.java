@@ -38,11 +38,13 @@ import org.apache.commons.io.LineIterator;
  *
  */
 public class AptModuleRegistry extends AbstractModuleRegistry {
+	public static final AptModuleRegistry INSTANCE = new AptModuleRegistry();
+
 	/**
 	 * Constructor
 	 */
 	@SuppressWarnings("unchecked")
-	public AptModuleRegistry() {
+	private AptModuleRegistry() {
 		ClassLoader cl = ClassLoader.getSystemClassLoader();
 		try {
 			Enumeration<URL> moduleNames = cl.getResources("META-INF/uniol/apt/compiler/"

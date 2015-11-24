@@ -118,7 +118,7 @@ public class APT {
 	private static final ParametersParser parametersParser = new SimpleParametersParser();
 	private static final ParametersTransformer parametersTransformer = new ParametersTransformer();
 	private static final ReturnValuesTransformer returnValuesTransformer = new ReturnValuesTransformer();
-	private static final ModuleRegistry registry = new AptModuleRegistry();
+	private static final ModuleRegistry registry = AptModuleRegistry.INSTANCE;
 
 	private static final PrintStream outPrinter = System.out;
 	private static final PrintStream errPrinter = System.err;

@@ -21,6 +21,7 @@ package uniol.apt.ui.impl;
 
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
+import uniol.apt.module.AptModuleRegistry;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
@@ -34,16 +35,8 @@ import uniol.apt.module.impl.ModuleUtils;
  * @author Renke Grunwald
  *
  */
+@AptModule
 public class HelpModule extends AbstractModule implements Module {
-	private ModuleRegistry registry;
-
-	/**
-	 * Constructor
-	 */
-	public HelpModule(ModuleRegistry registry) {
-		this.registry = registry;
-	}
-
 	@Override
 	public String getName() {
 		return "help";
@@ -63,7 +56,7 @@ public class HelpModule extends AbstractModule implements Module {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		String moduleName = input.getParameter("module_name", String.class);
-		Module module = registry.findModule(moduleName);
+		Module module = AptModuleRegistry.INSTANCE.findModule(moduleName);
 
 		if (module == null) {
 			throw new ModuleException("No such module: " + moduleName);
