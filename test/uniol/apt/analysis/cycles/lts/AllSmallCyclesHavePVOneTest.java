@@ -36,24 +36,25 @@ import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
  */
 @SuppressWarnings("unchecked") // I hate generics
 public class AllSmallCyclesHavePVOneTest {
-	static List<Arc> checkCycles(TransitionSystem ts) throws PreconditionFailedException {
-		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
-		if (check.smallCyclesHavePVOne()) {
-			assertThat(check.getCounterExample(), empty());
-			assertThat(check.noPV1CycleFound(), is(false));
-			return null;
-		}
-
-		assertThat(check.noPV1CycleFound(), is(true));
-		return check.getCounterExample();
-	}
-
 	static void checkCyclesHavePV1(TransitionSystem ts) throws PreconditionFailedException {
-		assertThat(checkCycles(ts), is(nullValue()));
+		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
+		assertThat(check.smallCyclesHavePVOne(), is(true));
+		assertThat(check.noPV1CycleFound(), is(false));
+		assertThat(check.getCounterExample(), empty());
 	}
 
 	static void checkCyclesLargerPV1(TransitionSystem ts) throws PreconditionFailedException {
-		assertThat(checkCycles(ts), empty());
+		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
+		assertThat(check.smallCyclesHavePVOne(), is(false));
+		assertThat(check.noPV1CycleFound(), is(true));
+		assertThat(check.getCounterExample(), empty());
+	}
+
+	static List<Arc> checkCyclesSmallerPV1(TransitionSystem ts) throws PreconditionFailedException {
+		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
+		assertThat(check.smallCyclesHavePVOne(), is(false));
+		assertThat(check.noPV1CycleFound(), is(true));
+		return check.getCounterExample();
 	}
 
 	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp = "TS  is not deterministic")
@@ -119,7 +120,7 @@ public class AllSmallCyclesHavePVOneTest {
 	@Test
 	public void testSmallerCycle() throws Exception {
 		TransitionSystem ts = TestTSCollection.getDifferentCyclesTS();
-		assertThat(checkCycles(ts), anyOf(
+		assertThat(checkCyclesSmallerPV1(ts), anyOf(
 					contains(arcThatConnects("s11", "s12"), arcThatConnects("s12", "s11")),
 					contains(arcThatConnects("s11", "s10"), arcThatConnects("s10", "s11")),
 					contains(arcThatConnects("s11", "s21"), arcThatConnects("s21", "s11")),
@@ -140,7 +141,10 @@ public class AllSmallCyclesHavePVOneTest {
 
 		// This lts has three small cycles: a,b; a,a and b,b; obviously the last two don't have a Parikh-vector
 		// of all ones. However, the special thing is that they are incomparable to a PV of (1,1).
-		assertThat(checkCycles(ts), anyOf(
+		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
+		assertThat(check.smallCyclesHavePVOne(), is(false));
+		assertThat(check.noPV1CycleFound(), is(false));
+		assertThat(check.getCounterExample(), anyOf(
 					contains(arcThatConnectsVia("s0", "s1", "a"), arcThatConnectsVia("s1", "s0", "a")),
 					contains(arcThatConnectsVia("s0", "s1", "b"), arcThatConnectsVia("s1", "s0", "b"))));
 	}
