@@ -27,6 +27,9 @@ import java.util.Set;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
+import org.apache.commons.collections4.Bag;
+import org.apache.commons.collections4.bag.HashBag;
+
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -83,17 +86,35 @@ public class AllSmallCyclesHavePVOne {
 		if (!new PersistentTS(ts, true).isPersistent())
 			throw new PreconditionFailedException("TS " + ts.getName() + " is not backwards persistent");
 
-		// By the above preconditions, every state is a home state, and all small cycles either have the same or
-		// have disjoint Parikh vectors. Let's check if all small cycles have Parikh vector 1. For this, we
-		// check that (a) we find such a cycle (b) no smaller cycle exists around the initial state.
-		Pair<Boolean, List<Arc>> result = check(ts, ts.getInitialState(), new HashSet<String>(),
+		// By totally reachability and reversibility, every state is a home state, so s0 is a home state. By
+		// corollary 4 of [1], deterministicity and persistency imply that for every cycle, there is a
+		// Parikh-equivalent cycle around a home state. Thus, we are only looking at small cycles around the
+		// initial state and can be sure to "see" every existing cycle. We will do this in two phases.
+		// [1]: A decomposition theorem for finite persistent transition systems. Eike Best and Philippe
+		// Darondeau. Acta Informatica (2009). DOI 10.1007/s00236-009-0095-6.
+
+		// In phase one we check that (a) we find a cycle around the initial state in which every event occurs
+		// exactly once, and (b) no smaller cycle exists around the initial state.
+		Pair<Boolean, List<Arc>> result = checkPhase1(ts, ts.getInitialState(), new HashSet<String>(),
 				new LinkedList<Arc>());
-		this.cycleWithPV1Found = result.getFirst();
-		this.counterExample = result.getSecond();
+		if (result.getFirst() == false || result.getSecond() != null) {
+			// Phase 1 failed
+			this.cycleWithPV1Found = result.getFirst();
+			this.counterExample = result.getSecond();
+		} else {
+			this.cycleWithPV1Found = result.getFirst();
+
+			// Phase one succeeded. In Phase two we check if there are any small cycles with Parikh vectors
+			// incomparable to the all-ones PV. An example for such a cycle would be a TS with a cycle (1,1)
+			// and another cycle (0,2).
+			this.counterExample = checkPhase2(ts, ts.getInitialState(), new HashBag<String>(),
+					new LinkedList<Arc>(), new HashSet<State>());
+		}
 	}
 
 	/**
-	 * Recursive implementation of the depth-first search that looks for cycles.
+	 * Recursive implementation of the depth-first search that looks for cycles with a Parikh vector of at most all
+	 * ones.
 	 * @param ts The transition system to examine
 	 * @param state The next state that should be followed.
 	 * @param firedEvents Set of events which were already fired on the path from the initial state.
@@ -101,7 +122,7 @@ public class AllSmallCyclesHavePVOne {
 	 * @return A pair were the first element is true if a cycle with Parikh vector 1 was found and the second
 	 * element is either null or a cycle with a smaller Parikh vector.
 	 */
-	static private Pair<Boolean, List<Arc>> check(TransitionSystem ts, State state, Set<String> firedEvents,
+	static private Pair<Boolean, List<Arc>> checkPhase1(TransitionSystem ts, State state, Set<String> firedEvents,
 			LinkedList<Arc> arcsFollowed) {
 		boolean success = false;
 		for (Arc arc : state.getPostsetEdges()) {
@@ -122,7 +143,7 @@ public class AllSmallCyclesHavePVOne {
 				}
 			} else {
 				// Recurse to this new state
-				Pair<Boolean, List<Arc>> result = check(ts, target, firedEvents, arcsFollowed);
+				Pair<Boolean, List<Arc>> result = checkPhase1(ts, target, firedEvents, arcsFollowed);
 				if (result.getSecond() != null)
 					return result;
 				success = success || result.getFirst();
@@ -135,6 +156,54 @@ public class AllSmallCyclesHavePVOne {
 			assert last == arc;
 		}
 		return new Pair<>(success, null);
+	}
+
+	/**
+	 * Recursive implementation of the depth-first search that looks for cycles with a Parikh vector incomparable to
+	 * (1, ..., 1).
+	 * @param ts The transition system to examine
+	 * @param state The next state that should be followed.
+	 * @param firedEvents Bag of events which were already fired on the path from the initial state.
+	 * @param arcsFollowed List of arcs that were followed from the initial state to this state.
+	 * @param statesVisited Set of states already visited on the current path.
+	 * @return Null if no incomparable cycle was found, else such a cycle.
+	 */
+	static private List<Arc> checkPhase2(TransitionSystem ts, State state, Bag<String> firedEvents,
+			LinkedList<Arc> arcsFollowed, Set<State> statesVisited) {
+		boolean newEntry = statesVisited.add(state);
+		assert newEntry == true : "State " + state + " was not yet visited";
+
+		for (Arc arc : state.getPostsetEdges()) {
+			firedEvents.add(arc.getLabel());
+			if (firedEvents.containsAll(ts.getAlphabet())) {
+				// We fired each event at least once and so the PV would be larger than (1, ..., 1).
+				firedEvents.remove(arc.getLabel(), 1);
+				continue;
+			}
+			arcsFollowed.addLast(arc);
+
+			State target = arc.getTarget();
+			if (target.equals(ts.getInitialState())) {
+				// Found a counter-example
+				return arcsFollowed;
+			} else {
+				// Recurse to this new state
+				List<Arc> result = checkPhase2(ts, target, firedEvents,
+						arcsFollowed, statesVisited);
+				if (result != null)
+					return result;
+			}
+
+			// Undo the modifications done above
+			boolean r = firedEvents.remove(arc.getLabel(), 1);
+			assert r == true;
+			Arc last = arcsFollowed.removeLast();
+			assert last == arc;
+		}
+
+		boolean r = statesVisited.remove(state);
+		assert r == true;
+		return null;
 	}
 
 	/**
