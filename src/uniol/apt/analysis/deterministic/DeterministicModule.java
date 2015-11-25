@@ -47,7 +47,8 @@ public class DeterministicModule extends AbstractModule {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("deterministic", Boolean.class, "deterministic", ModuleOutputSpec.PROPERTY_SUCCESS);
+		outputSpec.addReturnValue("deterministic", Boolean.class, "deterministic",
+				ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("state", State.class);
 		outputSpec.addReturnValue("label", String.class);
 	}

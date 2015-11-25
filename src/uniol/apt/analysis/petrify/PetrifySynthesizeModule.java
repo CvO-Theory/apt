@@ -54,7 +54,8 @@ public class PetrifySynthesizeModule extends AbstractModule {
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("synthesizable", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("error", String.class);
-		outputSpec.addReturnValue("pn", PetriNet.class, ModuleOutputSpec.PROPERTY_FILE, ModuleOutputSpec.PROPERTY_RAW);
+		outputSpec.addReturnValue("pn", PetriNet.class, ModuleOutputSpec.PROPERTY_FILE,
+				ModuleOutputSpec.PROPERTY_RAW);
 	}
 
 	@Override
@@ -74,7 +75,8 @@ public class PetrifySynthesizeModule extends AbstractModule {
 			} else {
 				output.setReturnValue("error", String.class, checkLTS.getError());
 			}
-		} catch (IOException e) {
+		} catch (IOException ex) {
+			throw new ModuleException(ex);
 		}
 	}
 

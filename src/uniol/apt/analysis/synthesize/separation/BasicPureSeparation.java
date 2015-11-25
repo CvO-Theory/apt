@@ -177,7 +177,8 @@ class BasicPureSeparation implements Separation {
 	 * @param locationMap Mapping describing how events should be distributed to locations.
 	 * @param event Optional event that surely consumes tokens from this region, or null.
 	 */
-	static private InequalitySystem[] requireDistributableNet(RegionUtility utility, String[] locationMap, String event) {
+	static private InequalitySystem[] requireDistributableNet(RegionUtility utility, String[] locationMap,
+			String event) {
 		Set<String> locations;
 		if (event == null) {
 			locations = new HashSet<>(Arrays.asList(locationMap));

@@ -29,8 +29,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import java.io.PrintStream;
-
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.exception.NonDeterministicException;
 import uniol.apt.module.AbstractModule;
@@ -47,7 +45,7 @@ import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
  * @author Uli Schlachter
  */
 public class FindWordsModule extends AbstractModule {
-	static public enum Operation {
+	static private enum Operation {
 		UNSOLVABLE(true, true, false),
 		SOLVABLE(true, false, true),
 		QUIET(false, false, false);
@@ -56,21 +54,21 @@ public class FindWordsModule extends AbstractModule {
 		private final boolean unsolvable;
 		private final boolean solvable;
 
-		Operation(boolean status, boolean unsolvable, boolean solvable) {
+		private Operation(boolean status, boolean unsolvable, boolean solvable) {
 			this.status = status;
 			this.unsolvable = unsolvable;
 			this.solvable = solvable;
 		}
 
-		public boolean printStatus() {
+		private boolean printStatus() {
 			return status;
 		}
 
-		public boolean printUnsolvable() {
+		private boolean printUnsolvable() {
 			return unsolvable;
 		}
 
-		public boolean printSolvable() {
+		private boolean printSolvable() {
 			return solvable;
 		}
 	}
@@ -85,14 +83,16 @@ public class FindWordsModule extends AbstractModule {
 		return getShortDescription() + ".\n\n"
 			+ "This module only prints a subset of all words. For this, an equivalence relation on words "
 			+ "is used were two words are equivalent if one can be created from the other by replacing "
-			+ "letters with other letters. For example, 'abc' and 'abd' are equivalent in this sense, since "
-			+ "c->d turns one into the other.\n"
-			+ "More concretely, words are generated so that the last letter of the word is the first letter "
-			+ "of the alphabet. Then, the next new letter from the end is the second letter of the alphabet, "
-			+ "and so on.\n"
+			+ "letters with other letters. For example, 'abc' and 'abd' are equivalent in this sense, "
+			+ "since c->d turns one into the other.\n"
+			+ "More concretely, words are generated so that the last letter of the word is the first "
+			+ "letter of the alphabet. Then, the next new letter from the end is the second letter of the "
+			+ "alphabet, and so on.\n"
 			+ "\nExample calls:\n\n"
-			+ " apt " + getName() + " safe solvable abc: Print all words solvable by safe Petri nets over the alphabet {a,b,c}\n"
-			+ " apt " + getName() + " none unsolvable ab: Print all minimally unsolvable words over the alphabet {a,b}\n";
+			+ " apt " + getName() + " safe solvable abc: Print all words solvable by safe Petri nets over "
+			+ "the alphabet {a,b,c}\n"
+			+ " apt " + getName() + " none unsolvable ab: Print all minimally unsolvable words over the "
+			+ "alphabet {a,b}\n";
 	}
 
 	@Override
@@ -103,7 +103,8 @@ public class FindWordsModule extends AbstractModule {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("options", String.class, "options");
-		inputSpec.addParameter("operation", String.class, "Choose between printing all 'minimal_unsolvable' words or all 'solvable' words");
+		inputSpec.addParameter("operation", String.class,
+				"Choose between printing all 'minimal_unsolvable' words or all 'solvable' words");
 		inputSpec.addParameter("alphabet", String.class, "Letters that should be part of the alphabet");
 	}
 
@@ -129,11 +130,12 @@ public class FindWordsModule extends AbstractModule {
 				generateList(properties, alphabet, Operation.SOLVABLE);
 				break;
 			default:
-				throw new ModuleException("Unknown operation '" + operation + "', valid options are 'minimal_unsolvable' and 'solvable'");
+				throw new ModuleException("Unknown operation '" + operation
+						+ "', valid options are 'minimal_unsolvable' and 'solvable'");
 		}
 	}
 
-	static public void generateList(PNProperties properties, SortedSet<String> alphabet, Operation operation) {
+	static private void generateList(PNProperties properties, SortedSet<String> alphabet, Operation operation) {
 		List<String> currentLevel = Collections.singletonList("");
 		List<String> nextLevel = new ArrayList<>();
 
@@ -149,7 +151,8 @@ public class FindWordsModule extends AbstractModule {
 				print = "minimal unsolvable";
 			else
 				print = "no";
-			System.out.println("Looking for " + print + " words from class " + properties.toString() + " over the alphabet " + alphabet);
+			System.out.println("Looking for " + print + " words from class " + properties.toString()
+					+ " over the alphabet " + alphabet);
 		}
 
 		while (!currentLevel.isEmpty()) {
@@ -237,7 +240,7 @@ public class FindWordsModule extends AbstractModule {
 	}
 
 	// Transform a String into the list of its characters
-	static public List<String> toList(String word) {
+	static private List<String> toList(String word) {
 		List<String> result = new ArrayList<>(Arrays.asList(word.split("")));
 		// some Java versions include "" as first part of the splitted string => try to remove it
 		result.remove("");
@@ -246,7 +249,7 @@ public class FindWordsModule extends AbstractModule {
 
 	// Normalize a word into the form that the above loop would generate it in. This means e.g. that the word ends
 	// with the first letter of the alphabet.
-	static public String normalizeWord(List<String> word, SortedSet<String> alphabet)
+	static private String normalizeWord(List<String> word, SortedSet<String> alphabet)
 	{
 		StringBuilder result = new StringBuilder();
 		Map<String, String> morphism = new HashMap<>();

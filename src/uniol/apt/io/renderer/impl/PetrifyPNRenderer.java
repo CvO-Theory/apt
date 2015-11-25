@@ -69,7 +69,7 @@ public class PetrifyPNRenderer extends AbstractRenderer<PetriNet> implements Ren
 		for (Place p : places) {
 			mark = pn.getInitialMarking().getToken(p).getValue();
 			if (mark > 1) {
-				throw new RenderException("Too many marks, Petrify is only able to read one bounded net");
+				throw new RenderException("Too many marks, Petrify is only able to read safe nets");
 			}
 
 			Set<Transition> preSet = p.getPreset();
@@ -82,14 +82,16 @@ public class PetrifyPNRenderer extends AbstractRenderer<PetriNet> implements Ren
 				}
 				if (!preSet.isEmpty()) {
 					for (Transition t : preSet) {
-						writer.append(t.getLabel()).append(" p").append(String.valueOf(placesCounter));
+						writer.append(t.getLabel()).append(" p")
+							.append(String.valueOf(placesCounter));
 						writer.append("\n");
 					}
 				}
 
 				if (!preSet.isEmpty()) {
 					for (Transition t : postSet) {
-						writer.append("p").append(String.valueOf(placesCounter)).append(" ").append(t.getLabel());
+						writer.append("p").append(String.valueOf(placesCounter)).append(" ")
+							.append(t.getLabel());
 						writer.append("\n");
 					}
 				}
@@ -113,7 +115,8 @@ public class PetrifyPNRenderer extends AbstractRenderer<PetriNet> implements Ren
 					if (!postSet.isEmpty()) {
 						Iterator<Transition> itr = postSet.iterator();
 						placesCounter++;
-						writer.append("p").append(String.valueOf(placesCounter)).append(" ").append(itr.next().getLabel());
+						writer.append("p").append(String.valueOf(placesCounter)).append(" ")
+							.append(itr.next().getLabel());
 						writer.append("\n");
 					} else {
 						writer.append("p").append(String.valueOf(++placesCounter));

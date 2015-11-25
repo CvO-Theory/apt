@@ -23,27 +23,27 @@ parser grammar RegexFormatParser;
 options { tokenVocab = RegexFormatLexer; }
 
 start       : expr EOF ;
-expr        : expr_or ;
-expr_or     : ex1=expr_and
-			(OR ex2=expr_or)?;
-expr_and    : ex1=expr_concat
-			(AND ex2=expr_and)?;
-expr_concat : ex1=expr_repeat
-			(ex2=expr_concat)?;
-expr_repeat : expr_negate STAR						# expr_repeat_star
-		| expr_negate OPT					# expr_repeat_opt
-		| expr_negate PLUS					# expr_repeat_plus
-		| expr_negate REPEATOPEN x=INT REPEATCLOSE		# expr_repeat_exact
-		| expr_negate REPEATOPEN x=INT COMMA REPEATCLOSE	# expr_repeat_least
-		| expr_negate REPEATOPEN x=INT COMMA y=INT REPEATCLOSE	# expr_repeat_minmax
-		| expr_negate						# expr_repeat_nothing
+expr        : exprOr ;
+exprOr     : ex1=exprAnd
+			(OR ex2=exprOr)?;
+exprAnd    : ex1=exprConcat
+			(AND ex2=exprAnd)?;
+exprConcat : ex1=exprRepeat
+			(ex2=exprConcat)?;
+exprRepeat : exprNegate STAR						# exprRepeatStar
+		| exprNegate OPT					# exprRepeatOpt
+		| exprNegate PLUS					# exprRepeatPlus
+		| exprNegate REPEATOPEN x=INT REPEATCLOSE		# exprRepeatExact
+		| exprNegate REPEATOPEN x=INT COMMA REPEATCLOSE		# exprRepeatLeast
+		| exprNegate REPEATOPEN x=INT COMMA y=INT REPEATCLOSE	# exprRepeatMinmax
+		| exprNegate						# exprRepeatNothing
 		;
-expr_negate : NEGATE? expr_id ;
-expr_id     : PAROPEN expr PARCLOSE	# expr_id_parentheses
-			| ATOM		# expr_id_atom
-			| ID		# expr_id_id
-			| EMPTY		# expr_id_empty
-			| EPSILON	# expr_id_epsilon
+exprNegate : NEGATE? exprId ;
+exprId     : PAROPEN expr PARCLOSE	# exprIdParentheses
+			| ATOM		# exprIdAtom
+			| ID		# exprIdId
+			| EMPTY		# exprIdEmpty
+			| EPSILON	# exprIdEpsilon
 			;
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

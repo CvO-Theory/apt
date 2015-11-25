@@ -84,7 +84,8 @@ public class IsomorphismModule extends AbstractModule {
 		boolean result = logic.isIsomorphic();
 		output.setReturnValue("isomorphic_reachability_graphs", Boolean.class, result);
 		if (result)
-			output.setReturnValue("isomorphism", Isomorphism.class, new Isomorphism(logic.getIsomorphism()));
+			output.setReturnValue("isomorphism", Isomorphism.class,
+					new Isomorphism(logic.getIsomorphism()));
 	}
 
 	@Override

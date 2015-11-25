@@ -66,7 +66,8 @@ public class Region {
 			if (i.compareTo(BigInteger.ZERO) < 0)
 				throw new IllegalArgumentException("Forward weight i=" + i + " must not be negative");
 		if (initialMarking.compareTo(BigInteger.ZERO) < 0)
-			throw new IllegalArgumentException("Initial marking " + initialMarking + " must not be negative");
+			throw new IllegalArgumentException("Initial marking " + initialMarking +
+					" must not be negative");
 	}
 
 	/**
@@ -209,7 +210,8 @@ public class Region {
 
 	@Override
 	public int hashCode() {
-		return 31 * (forwardWeights.hashCode() + 31 * backwardWeights.hashCode()) + getInitialMarking().hashCode();
+		return 31 * (forwardWeights.hashCode() + 31 * backwardWeights.hashCode())
+			+ getInitialMarking().hashCode();
 	}
 
 	/**
@@ -228,9 +230,9 @@ public class Region {
 		 */
 		public Builder(RegionUtility utility, List<BigInteger> backward, List<BigInteger> forward) {
 			if (backward.size() != utility.getNumberOfEvents())
-				throw new IllegalArgumentException("The backward list must contain one entry per event");
+				throw new IllegalArgumentException("The backward list must contain an entry per event");
 			if (forward.size() != utility.getNumberOfEvents())
-				throw new IllegalArgumentException("The forward list must contain one entry per event");
+				throw new IllegalArgumentException("The forward list must contain an entry per event");
 			this.utility = utility;
 			this.backwardList = new ArrayList<>(backward);
 			this.forwardList = new ArrayList<>(forward);
@@ -267,7 +269,7 @@ public class Region {
 		/**
 		 * Add a loop with the given weight around the given event. This means that the backward weight and the
 		 * forward weight are both increased by the given weight.
-		 * @param event The event on which a loop should be added.
+		 * @param index The event index on which a loop should be added.
 		 * @param weight The weight that should be added.
 		 * @return This builder instance.
 		 */
@@ -355,7 +357,8 @@ public class Region {
 					BigInteger value = BigInteger.ZERO;
 					List<BigInteger> pv = utility.getReachingParikhVector(state);
 					for (int i = 0; i < numEvents; i++)
-						value = value.add(pv.get(i).multiply(forwardList.get(i).subtract(backwardList.get(i))));
+						value = value.add(pv.get(i).multiply(forwardList.get(i)
+									.subtract(backwardList.get(i))));
 					initial = initial.max(value.negate());
 				} catch (UnreachableException e) {
 					continue;

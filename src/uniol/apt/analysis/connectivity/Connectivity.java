@@ -189,15 +189,16 @@ public class Connectivity {
 					done = false;
 					break;
 				} else if (stack.contains(current) && minNumbers.get(node) > minNumbers.get(current)) {
-					// Set our own minNumbers to current's depth search number if that one is smaller
+					// Set our own minNumbers to current's depth search number if it is smaller
 					minNumbers.put(node, Math.min(minNumbers.get(node), dfsNumbers.get(current)));
 				}
 			}
 
 			if (done) {
 				if (dfsNumbers.get(node).equals(minNumbers.get(node))) {
-					// We are the root of the current component, let's get it from the stack. All of the nodes on
-					// the stack up to the current node form a strongly connected component.
+					// We are the root of the current component, let's get it from the stack. All of
+					// the nodes on the stack up to the current node form a strongly connected
+					// component.
 					Component component = new Component();
 					INode<?, ?, ?> cur = null;
 

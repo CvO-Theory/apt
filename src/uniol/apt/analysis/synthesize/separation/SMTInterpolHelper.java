@@ -120,7 +120,8 @@ public class SMTInterpolHelper {
 				letTerms[event] = script.term("-", forwardWeight[event], backwardWeight[event]);
 			}
 		}
-		initialMarking = params[0] = script.variable("m0", script.sort("Int"));
+		params[0] = script.variable("m0", script.sort("Int"));
+		initialMarking = params[0];
 
 		List<Term> isRegion = new ArrayList<>();
 		isRegion.addAll(requireRegion(initialMarking, weight, backwardWeight, forwardWeight));
@@ -144,7 +145,8 @@ public class SMTInterpolHelper {
 		}
 
 		// Now we can define the "isRegion" function
-		Term isRegionTerm = collectTerms("and", isRegion.toArray(new Term[isRegion.size()]), script.term("true"));
+		Term isRegionTerm = collectTerms("and", isRegion.toArray(new Term[isRegion.size()]),
+				script.term("true"));
 		isRegionTerm = script.let(letVariables, letTerms, isRegionTerm);
 		script.defineFun("isRegion", params, script.sort("Bool"), isRegionTerm);
 	}
@@ -157,7 +159,8 @@ public class SMTInterpolHelper {
 	 * @return A term describing the marking of the given state.
 	 * @throws UnreachableException if the given state is unreachable.
 	 */
-	public Term evaluateReachingParikhVector(Term initialMarking, Term[] weight, State state) throws UnreachableException {
+	public Term evaluateReachingParikhVector(Term initialMarking, Term[] weight, State state)
+			throws UnreachableException {
 		Term result = evaluateParikhVector(weight,
 				utility.getReachingParikhVector(state));
 		return script.term("+", initialMarking, result);
@@ -193,7 +196,8 @@ public class SMTInterpolHelper {
 	 * @return A list of terms all together describing a region.
 	 * @return An inequality system prepared for calculating separating regions.
 	 */
-	private List<Term> requireRegion(Term initialMarking, Term[] weight, Term[] backwardWeight, Term[] forwardWeight) {
+	private List<Term> requireRegion(Term initialMarking, Term[] weight, Term[] backwardWeight,
+			Term[] forwardWeight) {
 		List<Term> result = new ArrayList<>();
 		Term zero = script.numeral(BigInteger.ZERO);
 

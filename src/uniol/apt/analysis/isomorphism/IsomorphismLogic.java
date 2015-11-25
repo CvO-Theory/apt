@@ -372,7 +372,8 @@ public class IsomorphismLogic {
 			}
 			while (s.curnode < numNodes) {
 				s.curnode++;
-				if (out1.containsKey(nodes1List.get(s.curnode - 1)) && !core1.containsKey(nodes1List.get(s.curnode - 1))) {
+				if (out1.containsKey(nodes1List.get(s.curnode - 1))
+						&& !core1.containsKey(nodes1List.get(s.curnode - 1))) {
 					return new Pair<>(nodes1List.get(s.curnode - 1), s.mint2out);
 				}
 			}
@@ -393,7 +394,8 @@ public class IsomorphismLogic {
 
 			while (s.curnode < numNodes) {
 				s.curnode++;
-				if (in1.containsKey(nodes1List.get(s.curnode - 1)) && !core1.containsKey(nodes1List.get(s.curnode - 1))) {
+				if (in1.containsKey(nodes1List.get(s.curnode - 1))
+						&& !core1.containsKey(nodes1List.get(s.curnode - 1))) {
 					return new Pair<>(nodes1List.get(s.curnode - 1), s.mint2in);
 				}
 			}
@@ -488,11 +490,11 @@ public class IsomorphismLogic {
 		State minn2m2;
 		boolean active;
 
-		public ExtendedState() {
+		ExtendedState() {
 			active = false;
 		}
 
-		public ExtendedState(ExtendedState s, int d, State newN, State newM) {
+		ExtendedState(ExtendedState s, int d, State newN, State newM) {
 			numin1 = s.numin1;
 			numin2 = s.numin2;
 			numout1 = s.numout1;

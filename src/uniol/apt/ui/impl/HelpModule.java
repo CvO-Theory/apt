@@ -36,6 +36,9 @@ import uniol.apt.module.impl.ModuleUtils;
 public class HelpModule extends AbstractModule {
 	private ModuleRegistry registry;
 
+	/**
+	 * Constructor
+	 */
 	public HelpModule(ModuleRegistry registry) {
 		this.registry = registry;
 	}
@@ -47,7 +50,8 @@ public class HelpModule extends AbstractModule {
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addOptionalParameter("module_name", String.class, "help", "Module name for which you want help");
+		inputSpec.addOptionalParameter("module_name", String.class, "help",
+				"Module name for which you want help");
 	}
 
 	@Override

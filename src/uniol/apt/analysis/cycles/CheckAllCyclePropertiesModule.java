@@ -62,7 +62,8 @@ public class CheckAllCyclePropertiesModule extends AbstractModule {
 		outputSpec.addReturnValue("same_parikh_vectors", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("counter_example_same", CycleCounterExample.class);
 
-		outputSpec.addReturnValue("same_or_mutually_disjoint_pv", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
+		outputSpec.addReturnValue("same_or_mutually_disjoint_pv", Boolean.class,
+				ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("counter_example_disjoint", CycleCounterExample.class);
 
 		outputSpec.addReturnValue("parikh_vectors", Set.class);
@@ -80,14 +81,16 @@ public class CheckAllCyclePropertiesModule extends AbstractModule {
 		// all smallest cycles have same Parikh vectors
 		boolean b = small.checkSamePVs(parikhs);
 		if (!b) {
-			output.setReturnValue("counter_example_same", CycleCounterExample.class, small.getCounterExample());
+			output.setReturnValue("counter_example_same", CycleCounterExample.class,
+					small.getCounterExample());
 		}
 		output.setReturnValue("same_parikh_vectors", Boolean.class, b);
 
 		// all smallest cycles have same or mutually disjoint Parikh vectors
 		boolean bo = small.checkSameOrMutallyDisjointPVs(parikhs);
 		if (!bo) {
-			output.setReturnValue("counter_example_disjoint", CycleCounterExample.class, small.getCounterExample());
+			output.setReturnValue("counter_example_disjoint", CycleCounterExample.class,
+					small.getCounterExample());
 		}
 		output.setReturnValue("same_or_mutually_disjoint_pv", Boolean.class, bo);
 
@@ -102,7 +105,8 @@ public class CheckAllCyclePropertiesModule extends AbstractModule {
 	@Override
 	public String getLongDescription() {
 		return "Check if all smallest cycles have same Parikh vectors, if all smallest cycles have"
-				+ " same or mutually disjoint Parikh vectors and it computes Parikh vectors of smallest cycles";
+				+ " same or mutually disjoint Parikh vectors and it computes Parikh vectors"
+				+ " of smallest cycles";
 	}
 
 	@Override

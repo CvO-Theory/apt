@@ -433,7 +433,8 @@ public class Bisimulation {
 	 * @param stack for which a List for a path is created.
 	 * @return a List of Pairs of two Nodes, which is not a bisimilar path.
 	 */
-	private List<Pair<State, State>> constructErrorPathPairs(Deque<Pair<Pair<State, State>, List<Pair<Arc, Pair<State, State>>>>> stack) {
+	private List<Pair<State, State>> constructErrorPathPairs(Deque<Pair<Pair<State, State>,
+			List<Pair<Arc, Pair<State, State>>>>> stack) {
 		for (Pair<Pair<State, State>, List<Pair<Arc, Pair<State, State>>>> element : stack) {
 			errorPath.addFirst(element.getFirst());
 		}

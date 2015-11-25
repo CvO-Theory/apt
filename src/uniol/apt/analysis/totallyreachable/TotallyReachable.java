@@ -36,9 +36,6 @@ import uniol.apt.util.SpanningTree;
 public class TotallyReachable {
 	private final State unreachableState;
 
-	/**
-	 * TODO: Document
-	 */
 	public static enum Algorithm {
 		SEARCH,
 		SPANNING_TREE

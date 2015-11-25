@@ -91,13 +91,15 @@ public class SynetSynthesizeDistributedLTS {
 			if (location_) {
 				try {
 					p = new ProcessBuilder("synet", "-r", "-o", tmpSaveFile.getAbsolutePath(), "-d",
-							tmpDisFile.getAbsolutePath(), tmpAutFile.getAbsolutePath()).start();
+							tmpDisFile.getAbsolutePath(), tmpAutFile.getAbsolutePath())
+						.start();
 				} catch (Exception e) {
 					throw new SynetNotFoundException();
 				}
 			} else {
 				try {
-					p = new ProcessBuilder("synet", "-r", "-o", tmpSaveFile.getAbsolutePath(), tmpAutFile.getAbsolutePath())
+					p = new ProcessBuilder("synet", "-r", "-o", tmpSaveFile.getAbsolutePath(),
+							tmpAutFile.getAbsolutePath())
 						.start();
 				} catch (Exception e) {
 					throw new SynetNotFoundException();
@@ -154,13 +156,14 @@ public class SynetSynthesizeDistributedLTS {
 		for (Arc e : edges) {
 			try {
 				if (e.getExtension("location") != null && !labelMem.contains(e.getLabel())) {
-					sb.append("(" + e.getLabel() + "," + e.getExtension("location").toString().replace("\"", "") + ")");
+					sb.append("(" + e.getLabel() + "," +
+							e.getExtension("location").toString().replace("\"", "") + ")");
 					sb.append("\n");
 					labelMem.add(e.getLabel());
 					location_ = true;
 				}
 			} catch (Exception ex) {
-
+				// ignore missing Locations
 			}
 		}
 		return sb.toString();

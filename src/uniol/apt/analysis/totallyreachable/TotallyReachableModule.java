@@ -48,7 +48,8 @@ public class TotallyReachableModule extends AbstractModule {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("totally_reachable", Boolean.class, "totally_reachable", ModuleOutputSpec.PROPERTY_SUCCESS);
+		outputSpec.addReturnValue("totally_reachable", Boolean.class, "totally_reachable",
+				ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("state", State.class);
 		outputSpec.addReturnValue("label", String.class);
 	}

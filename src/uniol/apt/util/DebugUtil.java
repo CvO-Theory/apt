@@ -82,7 +82,8 @@ final public class DebugUtil {
 
 	static public void debug(Object obj1, Object obj2, Object obj3) {
 		if (debugOutputEnabled)
-			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3));
+			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2)
+					+ Objects.toString(obj3));
 	}
 
 	static public void debug(Object obj1, Object obj2, Object obj3, Object obj4) {

@@ -37,7 +37,8 @@ import static org.apache.commons.collections4.iterators.PeekingIterator.peekingI
  * @param <E> The type of elements in the equivalence relation.
  * @author Uli Schlachter
  */
-public class EquivalenceRelation<E> extends AbstractCollection<Set<E>> implements Collection<Set<E>>, IEquivalenceRelation<E> {
+public class EquivalenceRelation<E> extends AbstractCollection<Set<E>>
+		implements Collection<Set<E>>, IEquivalenceRelation<E> {
 	// All equivalence classes have a "leader" which all other elements refer to. This leader is found by
 	// recursively following parents. The leader itself does not have a parent. This approach is used to speed up
 	// joinClasses(). This map contains the parents.

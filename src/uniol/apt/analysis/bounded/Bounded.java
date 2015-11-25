@@ -38,6 +38,8 @@ import uniol.apt.analysis.language.FiringSequence;
  * @author Uli Schlachter, vsp
  */
 public class Bounded {
+	private Bounded() { /* hide Constructor */ }
+
 	/**
 	 * Returns true if all places in the Petri net are bounded.
 	 * @param pn The Petri net to check.

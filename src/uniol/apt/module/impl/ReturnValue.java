@@ -46,8 +46,8 @@ public class ReturnValue {
 		return klass;
 	}
 
-	public String[] getProperties() {
-		return properties;
+	public boolean hasProperty(String property) {
+		return Arrays.asList(properties).contains(property);
 	}
 
 	@Override

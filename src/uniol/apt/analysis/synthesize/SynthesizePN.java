@@ -140,7 +140,8 @@ public class SynthesizePN {
 		/**
 		 * Create a SynthesizePN instance that synthesizes the given state up to language equivalence.
 		 * @return A synthesizePN instance that synthesizes the input up to language equivalence.
-		 * @throws MissingLocationException if the transition system for the utility has locations for only some events
+		 * @throws MissingLocationException if the transition system for the utility has locations for only some
+		 * events
 		 * @throws NonDeterministicException if the transition system is non-deterministic
 		 * @see LimitedUnfolding#calculateLimitedUnfolding
 		 */
@@ -153,7 +154,8 @@ public class SynthesizePN {
 		/**
 		 * Create a SynthesizePN instance that synthesizes the given state up to isomorphism.
 		 * @return A SynthesizePN instance that synthesizes the input up to isomorphism.
-		 * @throws MissingLocationException if the transition system for the utility has locations for only some events
+		 * @throws MissingLocationException if the transition system for the utility has locations for only some
+		 * events
 		 */
 		public SynthesizePN buildForIsomorphicBehavior() throws MissingLocationException {
 			if (this.utility == null)
@@ -547,7 +549,7 @@ public class SynthesizePN {
 	/**
 	 * Check if the PetriNet is a generalized T-Net. In a T-Net, every place has a preset and postset with at most
 	 * one entry. In a generalized T-Net, arc weights are allowed.
-	 * @param PetriNet The Petri net to check
+	 * @param pn The Petri net to check
 	 * @return true if the pn is a generalized T-Net.
 	 */
 	static public boolean isGeneralizedTNet(PetriNet pn) {
@@ -569,17 +571,19 @@ public class SynthesizePN {
 	/**
 	 * Check if the PetriNet is a generalized marked graph. In a marked graph, every place has a preset and postset
 	 * with exacly one entry. In a generalized marked graph, arc weights are allowed.
-	 * @param PetriNet The Petri net to check
+	 * @param pn The Petri net to check
 	 * @return true if the pn is a generalized marked graph.
 	 */
 	static public boolean isGeneralizedMarkedGraph(PetriNet pn) {
 		for (Place place : pn.getPlaces()) {
 			if (place.getPreset().size() != 1) {
-				debug("marked graph check: Preset of ", place.getId(), " doesn't have exactly one entry");
+				debug("marked graph check: Preset of ", place.getId(),
+						" doesn't have exactly one entry");
 				return false;
 			}
 			if (place.getPostset().size() != 1) {
-				debug("marked graph check: Postset of ", place.getId(), " doesn't have exactly one entry");
+				debug("marked graph check: Postset of ", place.getId(),
+						" doesn't have exactly one entry");
 				return false;
 			}
 		}
@@ -720,7 +724,8 @@ public class SynthesizePN {
 							currentState = states.next();
 							alphabet = peekingIterator(ts.getAlphabet().iterator());
 						} else {
-							if (!SeparationUtility.isEventEnabled(currentState, alphabet.peek()))
+							if (!SeparationUtility.isEventEnabled(currentState,
+										alphabet.peek()))
 								return true;
 							alphabet.next();
 						}

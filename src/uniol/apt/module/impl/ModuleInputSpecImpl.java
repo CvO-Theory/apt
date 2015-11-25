@@ -45,7 +45,8 @@ public class ModuleInputSpecImpl implements ModuleInputSpec {
 	@Override
 	public <T> void addOptionalParameter(String name, Class<T> klass, T defaultValue, String description,
 			String... properties) {
-		nameOptionalParameters.put(name, new OptionalParameter<T>(name, klass, defaultValue, description, properties));
+		nameOptionalParameters.put(name, new OptionalParameter<T>(name, klass, defaultValue, description,
+					properties));
 	}
 
 	public List<Parameter> getParameters() {

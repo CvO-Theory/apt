@@ -122,7 +122,8 @@ public class ExaminePNModule extends AbstractModule {
 		if (result.isBounded()) {
 			output.setReturnValue("k-bounded", Long.class, result.k);
 		}
-		output.setReturnValue("isolated_elements", Boolean.class, !Connectivity.findIsolatedElements(pn).isEmpty());
+		output.setReturnValue("isolated_elements", Boolean.class,
+				!Connectivity.findIsolatedElements(pn).isEmpty());
 		output.setReturnValue("strongly_connected", Boolean.class, Connectivity.isStronglyConnected(pn));
 		output.setReturnValue("weakly_connected", Boolean.class, Connectivity.isWeaklyConnected(pn));
 		if (result.isBounded()) {

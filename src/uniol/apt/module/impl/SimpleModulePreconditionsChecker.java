@@ -20,7 +20,6 @@
 package uniol.apt.module.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import uniol.apt.module.Module;
@@ -77,7 +76,7 @@ public class SimpleModulePreconditionsChecker implements ModulePreconditionsChec
 	public ReturnValue getMatchingReturnValue(Module checkingMod, String prop) {
 		for (ReturnValue retVal : ModuleUtils.getReturnValues(checkingMod)) {
 			if (retVal.getKlass().equals(Boolean.class)) {
-				if (Arrays.asList(retVal.getProperties()).contains(prop)) {
+				if (retVal.hasProperty(prop)) {
 					return retVal;
 				}
 			}

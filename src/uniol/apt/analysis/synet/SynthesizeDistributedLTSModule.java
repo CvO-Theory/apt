@@ -53,10 +53,12 @@ public class SynthesizeDistributedLTSModule extends AbstractModule {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("synthesize_distributed_lts", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
+		outputSpec.addReturnValue("synthesize_distributed_lts", Boolean.class,
+				ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("error", String.class);
 		outputSpec.addReturnValue("separationError", String.class);
-		outputSpec.addReturnValue("pn", PetriNet.class, ModuleOutputSpec.PROPERTY_FILE, ModuleOutputSpec.PROPERTY_RAW);
+		outputSpec.addReturnValue("pn", PetriNet.class, ModuleOutputSpec.PROPERTY_FILE,
+				ModuleOutputSpec.PROPERTY_RAW);
 	}
 
 	@Override

@@ -78,13 +78,15 @@ public class PetrifyLTSSynthesize {
 			try {
 				if (sndParameter_ != null) {
 					if (sndParameter_.equals("dead")) {
-						p = new ProcessBuilder("petrify", "-nolog", "-p", tmpAutFile.getAbsolutePath(), "-" + sndParameter_)
-								.start();
+						p = new ProcessBuilder("petrify", "-nolog", "-p",
+								tmpAutFile.getAbsolutePath(), "-" + sndParameter_)
+							.start();
 					} else {
 						throw new FalseParameterException();
 					}
 				} else {
-					p = new ProcessBuilder("petrify", "-nolog", "-p", tmpAutFile.getAbsolutePath()).start();
+					p = new ProcessBuilder("petrify", "-nolog", "-p", tmpAutFile.getAbsolutePath())
+						.start();
 				}
 			} catch (FalseParameterException e) {
 				throw new FalseParameterException();

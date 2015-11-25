@@ -144,7 +144,8 @@ class BasicImpureSeparation extends BasicPureSeparation implements Separation {
 		min = min.subtract(result.getBackwardWeight(eventIndex));
 		debug("Adding self-loop to event ", event, " with weight ", min);
 		assert min.compareTo(BigInteger.ZERO) > 0;
-		return new Region.Builder(result).addLoopAround(eventIndex, min).withInitialMarking(result.getInitialMarking());
+		return new Region.Builder(result).addLoopAround(eventIndex, min)
+			.withInitialMarking(result.getInitialMarking());
 	}
 }
 

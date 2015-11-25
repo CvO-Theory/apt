@@ -211,7 +211,8 @@ public class FiniteAutomatonUtility {
 	 */
 	static public DeterministicFiniteAutomaton negate(DeterministicFiniteAutomaton a, Set<Symbol> alphabet) {
 		if (!alphabet.containsAll(a.getAlphabet())) {
-			throw new IllegalArgumentException("Alphabet of the automaton isn't subset of the given alphabet.");
+			throw new IllegalArgumentException(
+					"Alphabet of the automaton isn't subset of the given alphabet.");
 		}
 
 		return getAutomaton(new NegationState(a.getInitialState(), new HashSet<>(alphabet)));
@@ -450,7 +451,8 @@ public class FiniteAutomatonUtility {
 	 * @param wordPredicate The predicate to check the words.
 	 * @return A word which conforms to the predicates.
 	 */
-	static public List<String> findPredicateWord(FiniteAutomaton a, Predicate<List<String>> prefixPredicate, Predicate<List<String>> wordPredicate) {
+	static public List<String> findPredicateWord(FiniteAutomaton a, Predicate<List<String>> prefixPredicate,
+			Predicate<List<String>> wordPredicate) {
 		MinimalDeterministicFiniteAutomaton dfa = minimizeInternal(a);
 		Deque<Pair<DFAState, Iterator<Symbol>>> trace = new ArrayDeque<>();
 		LinkedList<String> word = new LinkedList<>();
@@ -472,7 +474,8 @@ public class FiniteAutomatonUtility {
 					List<String> roWord = ListUtils.unmodifiableList(word);
 
 					if (prefixPredicate.evaluate(roWord)) {
-						trace.addLast(new Pair<>(nextState, nextState.getDefinedSymbols().iterator()));
+						trace.addLast(new Pair<>(nextState,
+									nextState.getDefinedSymbols().iterator()));
 
 						if (nextState.isFinalState() && wordPredicate.evaluate(roWord))
 							return word;

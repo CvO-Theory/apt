@@ -83,7 +83,8 @@ public class ExtendStateFile {
 
 			while ((line = reader.readLine()) != null) {
 				if (line.length() - MINIMAL_CODE_PREFIX.length() != codeLength) {
-					throw new ModuleException("State file was created for different LTS or g. Delete file and try again.");
+					throw new ModuleException("State file was created for different LTS or g. "
+							+ "Delete file and try again.");
 				}
 
 				if (line.startsWith(MINIMAL_CODE_PREFIX)) {

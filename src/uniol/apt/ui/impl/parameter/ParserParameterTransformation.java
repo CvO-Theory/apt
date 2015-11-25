@@ -21,6 +21,7 @@ package uniol.apt.ui.impl.parameter;
 
 import java.io.IOException;
 
+import uniol.apt.APT;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.module.exception.ModuleException;
@@ -42,7 +43,7 @@ public class ParserParameterTransformation<G> implements ParameterTransformation
 	@Override
 	public G transform(String filename) throws ModuleException {
 		try {
-			if (filename.equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)) {
+			if (filename.equals(APT.STANDARD_INPUT_SYMBOL)) {
 				return parser.parse(System.in);
 			}
 

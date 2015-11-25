@@ -49,7 +49,8 @@ public class DotLTSRenderer extends AbstractRenderer<TransitionSystem> implement
 		writer.append("digraph G {\n");
 		writer.append("node [shape = point, color=white, fontcolor=white]; start;");
 		writer.append("edge [fontsize=20]\n");
-		writer.append("node [fontsize=20,shape=circle,color=black, fontcolor=black, height=0.5,width=0.5,fixedsize=true];\n");
+		writer.append("node [fontsize=20,shape=circle,color=black, fontcolor=black, "
+				+ "height=0.5,width=0.5,fixedsize=true];\n");
 
 		Formatter nodeFormat = new Formatter(writer);
 

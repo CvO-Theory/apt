@@ -32,7 +32,8 @@ public class OptionalParameter<T> extends Parameter {
 
 	private final T defaultValue;
 
-	public OptionalParameter(String name, Class<T> klass, T defaultValue, String description, String... properties) {
+	public OptionalParameter(String name, Class<T> klass, T defaultValue, String description,
+			String... properties) {
 		super(name, klass, description, properties);
 		this.defaultValue = defaultValue;
 	}

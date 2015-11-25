@@ -71,7 +71,7 @@ public class ModuleUtils {
 		List<ReturnValue> fileReturnValues = new ArrayList<>();
 
 		for (ReturnValue returnValue : returnValues) {
-			if (Arrays.asList(returnValue.getProperties()).contains(ModuleOutputSpec.PROPERTY_FILE)) {
+			if (returnValue.hasProperty(ModuleOutputSpec.PROPERTY_FILE)) {
 				fileReturnValues.add(returnValue);
 			}
 		}

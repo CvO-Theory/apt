@@ -78,7 +78,7 @@ class MarkedGraphSeparation implements Separation {
 			// preconditions: reversible, deterministic, totally reachable, persistent, backward persistent.
 			if (!new AllSmallCyclesHavePVOne(ts).smallCyclesHavePVOne())
 				throw new UnsupportedPNPropertiesException();
-		} catch(PreconditionFailedException e) {
+		} catch (PreconditionFailedException e) {
 			throw new UnsupportedPNPropertiesException(e);
 		}
 

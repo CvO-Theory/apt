@@ -164,6 +164,7 @@
 		</module>
 		<module name="TodoComment">
 			<property name="severity" value="info"/>
+			<property name="format" value="(TODO)|(FIXME)|(XXX)"/>
 		</module>
 		<!-- <module name="UpperEll"/> -->
 

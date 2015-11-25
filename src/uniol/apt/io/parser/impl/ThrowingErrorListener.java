@@ -33,7 +33,7 @@ import org.antlr.v4.runtime.Recognizer;
 public class ThrowingErrorListener extends BaseErrorListener {
 	@Override
 	public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
-			String msg, RecognitionException e) throws ParseRuntimeException {
+			String msg, RecognitionException e) {
 		throw new ParseRuntimeException("line " + line + " col " + charPositionInLine + ": " + msg, e);
 	}
 }

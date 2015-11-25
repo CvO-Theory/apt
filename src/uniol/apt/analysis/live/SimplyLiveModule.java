@@ -69,7 +69,8 @@ public class SimplyLiveModule extends AbstractLiveModule {
 	}
 
 	@Override
-	protected void checkTransitionLiveness(ModuleOutput output, PetriNet pn, Transition transition) throws ModuleException {
+	protected void checkTransitionLiveness(ModuleOutput output, PetriNet pn, Transition transition)
+			throws ModuleException {
 		List<Transition> live = Live.checkSimplyLive(pn, transition);
 		output.setReturnValue("simply_live", Boolean.class, live != null);
 		if (live != null)

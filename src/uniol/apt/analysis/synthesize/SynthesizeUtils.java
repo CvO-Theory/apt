@@ -38,7 +38,8 @@ import uniol.apt.adt.ts.TransitionSystem;
 public class SynthesizeUtils {
 	private SynthesizeUtils() { /* hide constructor */ }
 
-	private static void appendSeparationFailure(StringBuilder result, Set<String> failures, boolean compressedFormat) {
+	private static void appendSeparationFailure(StringBuilder result, Set<String> failures,
+			boolean compressedFormat) {
 		if (failures.isEmpty())
 			return;
 
@@ -55,7 +56,8 @@ public class SynthesizeUtils {
 		result.append("]");
 	}
 
-	public static String formatESSPFailure(List<String> word, Map<String, Set<State>> separationFailures, boolean compressedFormat) {
+	public static String formatESSPFailure(List<String> word, Map<String, Set<State>> separationFailures,
+			boolean compressedFormat) {
 		if (separationFailures.isEmpty())
 			return null;
 

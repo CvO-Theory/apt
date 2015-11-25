@@ -98,7 +98,8 @@ public final class SeparationUtility {
 	 * @return An array containing the location for each event.
 	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
-	static public String[] getLocationMap(RegionUtility utility, PNProperties properties) throws MissingLocationException {
+	static public String[] getLocationMap(RegionUtility utility, PNProperties properties)
+			throws MissingLocationException {
 		// Build a mapping from events to locations. Yaaay. Need to iterate over all arcs...
 		String[] locationMap = new String[utility.getNumberOfEvents()];
 		boolean hadEventWithLocation = false;

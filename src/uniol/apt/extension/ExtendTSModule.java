@@ -40,7 +40,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Renke Grunwald
  *
  */
-public class ExtendTSModule extends AbstractModule {
+public class ExtendTSModule extends AbstractExtendTSModule {
 	@Override
 	public String getName() {
 		return "extend_lts";
@@ -53,122 +53,18 @@ public class ExtendTSModule extends AbstractModule {
 
 	@Override
 	public String getLongDescription() {
-		return "Generate extensions to a given LTS that are reversible, persistent. Also, all smallest cycles share the same parikh vector. This module can run in three different modes: It can generate the next possible extension to the given LTS, the next extension that satisfies the above properties or the next satisfying extension that is also minimal among satisfying extensions.";
+		return "Generate extensions to a given LTS that are reversible, persistent. Also, all smallest cycles "
+			+ "share the same parikh vector. This module can run in three different modes: It can generate "
+			+ "the next possible extension to the given LTS, the next extension that satisfies the above "
+			+ "properties or the next satisfying extension that is also minimal among satisfying "
+			+ "extensions.";
 	}
 
 	@Override
-	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addParameter("lts", TransitionSystem.class, "The LTS that is extended");
-		addRequire(inputSpec);
-		inputSpec.addParameter("g", Integer.class, "Maximum number of new nodes");
-		inputSpec.addParameter("mode", ExtendMode.class, "The mode (next, next_valid, next_minimal_valid)");
-		// TODO: Maybe use File.class and create a transformation
-		inputSpec.addParameter("state_file", String.class, "The file to load/save the state from/to");
-	}
+	void addRequire(ModuleInputSpec inputSpec) { /* empty */ }
 
 	@Override
-	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("valid", Boolean.class);
-		outputSpec.addReturnValue("minimal", Boolean.class);
-		outputSpec.addReturnValue("extended_lts", TransitionSystem.class, ModuleOutputSpec.PROPERTY_FILE, ModuleOutputSpec.PROPERTY_RAW);
-	}
-
-	@Override
-	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
-		TransitionSystem ts = input.getParameter("lts", TransitionSystem.class);
-		int g = input.getParameter("g", Integer.class);
-		ExtendMode mode = input.getParameter("mode", ExtendMode.class);
-		String stateFileName = input.getParameter("state_file", String.class);
-
-		File stateFile = new File(stateFileName);
-
-		// Alphabet size, TODO: Use getAlphabet().size() when it works
-		List<String> labels = new ArrayList<String>();
-		for (Arc e : ts.getEdges()) {
-			if (!labels.contains(e.getLabel()))
-				labels.add(e.getLabel());
-		}
-
-		// Number of possible edges
-		int codeLength = (ts.getNodes().size() + g);
-		codeLength *= codeLength  * labels.size();
-		ExtendStateFile state = new ExtendStateFile(stateFile, codeLength);
-
-		ExtendTransitionSystem extender;
-		BitSet currentCode = null;
-
-		if (stateFile.exists()) {
-			try {
-				state.parse();
-			} catch (IOException e) {
-				throw new ModuleException("Can't parse state file");
-			}
-
-			extender = new ExtendTransitionSystem(ts, g, state.getMinimalCodes());
-			currentCode = state.getCurrentCode();
-		} else {
-			extender = new ExtendTransitionSystem(ts, g);
-		}
-
-		initExtender(extender, input);
-
-		if (currentCode != null)
-			switch (mode) {
-				case Next:
-					extender.findNext();
-					break;
-				case NextValid:
-					extender.findNextValid(currentCode);
-					break;
-				case NextMinimalValid:
-					extender.findNextMinimal(currentCode);
-					break;
-			}
-		else {
-			switch (mode) {
-				case Next:
-					extender.findNext();
-					break;
-				case NextValid:
-					extender.findNextValid();
-					break;
-				case NextMinimalValid:
-					extender.findNextMinimal();
-					break;
-			}
-		}
-
-		BitSet newCode = extender.getLastGenerated();
-		boolean valid = extender.isLastGeneratedValid();
-		boolean minimal = false;
-
-		if (valid) {
-			minimal = extender.isLastGeneratedMinimal();
-		}
-
-		state.setMinimalCodes(extender.getListOfMinimals());
-		state.setCurrentCode(newCode);
-
-		TransitionSystem extendedTS = extender.buildLTS(newCode);
-
-		try {
-			state.render();
-		} catch (IOException e) {
-			throw new ModuleException("Can't render state file");
-		}
-
-		output.setReturnValue("extended_lts", TransitionSystem.class, extendedTS);
-		output.setReturnValue("valid", Boolean.class, valid);
-
-		if (valid) {
-			output.setReturnValue("minimal", Boolean.class, minimal);
-		} else {
-			output.setReturnValue("minimal", Boolean.class, null);
-		}
-	}
-
-	protected void addRequire(ModuleInputSpec inputSpec) {}
-	protected void initExtender(ExtendTransitionSystem extender, ModuleInput input) {}
+	void initExtender(ExtendTransitionSystem extender, ModuleInput input) { /* empty */ }
 
 	@Override
 	public Category[] getCategories() {

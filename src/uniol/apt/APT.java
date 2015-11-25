@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -192,6 +191,11 @@ import uniol.apt.ui.impl.returns.TrapsSiphonsListReturnValueTransformation;
  * @author Renke Grunwald
  */
 public class APT {
+	/**
+	 * Symbol that signals that a file should be read from the standard input.
+	 */
+	public static final String STANDARD_INPUT_SYMBOL = "-";
+
 
 	/**
 	 * All the modules that are used in APT.
@@ -328,8 +332,10 @@ public class APT {
 				new NetOrTSParameterTransformation());
 		parametersTransformer.addTransformation((Class<IGraph<?, ?, ?>>) (Class<?>) IGraph.class,
 				new GraphParameterTransformation());
-		parametersTransformer.addTransformation(MatrixFileFormat.class, new MatrixFileFormatParameterTransformation());
-		parametersTransformer.addTransformation(FiniteAutomaton.class, new FiniteAutomatonParameterTransformation());
+		parametersTransformer.addTransformation(MatrixFileFormat.class,
+				new MatrixFileFormatParameterTransformation());
+		parametersTransformer.addTransformation(FiniteAutomaton.class,
+				new FiniteAutomatonParameterTransformation());
 	}
 
 	/**
@@ -450,7 +456,7 @@ public class APT {
 			// First check if multiple parameters are signaled to be read from the standard input
 			for (int i = 0; i < numberOfUsedParameters; i++) {
 				// FIXME: This is hard-coded and could be way more flexible
-				if (moduleArgs[i].equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)
+				if (moduleArgs[i].equals(STANDARD_INPUT_SYMBOL)
 						&& (IGraph.class.isAssignableFrom(allParameters.get(i).getKlass())
 							|| PetriNetOrTransitionSystem.class.isAssignableFrom(
 								allParameters.get(i).getKlass()))) {
@@ -488,7 +494,7 @@ public class APT {
 				String filename = moduleArgs[i + numberOfUsedParameters];
 				fileArgs[i] = filename;
 
-				if (filename.equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)) {
+				if (filename.equals(STANDARD_INPUT_SYMBOL)) {
 					hasStandardOutputFileReturnValue = true;
 				}
 			}
@@ -510,10 +516,10 @@ public class APT {
 					String returnValueName = returnValues.get(i).getName();
 
 					boolean isRawReturnValue =
-						Arrays.asList(returnValues.get(i).getProperties()).contains(ModuleOutputSpec.PROPERTY_RAW);
+						returnValues.get(i).hasProperty(ModuleOutputSpec.PROPERTY_RAW);
 
 					boolean isFileReturnValue =
-						Arrays.asList(returnValues.get(i).getProperties()).contains(ModuleOutputSpec.PROPERTY_FILE);
+						returnValues.get(i).hasProperty(ModuleOutputSpec.PROPERTY_FILE);
 
 					// Print the return value to file without its name
 					if (isFileReturnValue) {
@@ -521,7 +527,7 @@ public class APT {
 						if (fileArgs.length > usedFileArgsCount) {
 							String filename = fileArgs[usedFileArgsCount];
 
-							if (filename.equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)) {
+							if (filename.equals(STANDARD_INPUT_SYMBOL)) {
 								outputs.add(outPrinter, false);
 							} else {
 								outputs.add(openOutput(filename), true);
@@ -573,7 +579,8 @@ public class APT {
 			outPrinter.flush();
 			System.exit(status.getValue());
 		} catch (ModuleException e) {
-			errPrinter.println("Error while invoking module '" + module.getName() + "':\n" + "  " + e.getMessage());
+			errPrinter.println(String.format("Error while invoking module '%s':\n  %s",
+						module.getName(), e.getMessage()));
 			errPrinter.flush();
 			System.exit(ExitStatus.ERROR.getValue());
 		}

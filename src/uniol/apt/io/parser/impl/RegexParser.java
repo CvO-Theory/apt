@@ -50,11 +50,11 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 			this.alphabet = alphabet;
 		}
 
-		public void exitExpr_id_atom(RegexFormatParser.Expr_id_atomContext ctx) {
+		public void exitExprIdAtom(RegexFormatParser.ExprIdAtomContext ctx) {
 			this.alphabet.add(new Symbol(ctx.ATOM().getText()));
 		}
 
-		public void exitExpr_id_id(RegexFormatParser.Expr_id_idContext ctx) {
+		public void exitExprIdId(RegexFormatParser.ExprIdIdContext ctx) {
 			String id = ctx.ID().getText();
 			this.alphabet.add(new Symbol(id.substring(1, id.length() - 1)));
 		}
@@ -63,7 +63,7 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 	private static class RegexListener extends RegexFormatParserBaseListener {
 		private final ParseTreeProperty<FiniteAutomaton> automatons;
 		private final Set<Symbol> alphabet;
-		FiniteAutomaton automaton;
+		private FiniteAutomaton automaton;
 
 		private RegexListener(Set<Symbol> alphabet) {
 			this.automatons = new ParseTreeProperty<>();
@@ -83,12 +83,12 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 		}
 
 		public void exitExpr(RegexFormatParser.ExprContext ctx) {
-			FiniteAutomaton automaton = this.automatons.get(ctx.expr_or());
+			FiniteAutomaton automaton = this.automatons.get(ctx.exprOr());
 			assert automaton != null;
 			this.automatons.put(ctx, automaton);
 		}
 
-		public void exitExpr_or(RegexFormatParser.Expr_orContext ctx) {
+		public void exitExprOr(RegexFormatParser.ExprOrContext ctx) {
 			FiniteAutomaton automaton = this.automatons.get(ctx.ex1);
 			assert automaton != null;
 			if (ctx.ex2 != null) {
@@ -99,7 +99,7 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 			this.automatons.put(ctx, automaton);
 		}
 
-		public void exitExpr_and(RegexFormatParser.Expr_andContext ctx) {
+		public void exitExprAnd(RegexFormatParser.ExprAndContext ctx) {
 			FiniteAutomaton automaton = this.automatons.get(ctx.ex1);
 			assert automaton != null;
 			if (ctx.ex2 != null) {
@@ -110,7 +110,7 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 			this.automatons.put(ctx, automaton);
 		}
 
-		public void exitExpr_concat(RegexFormatParser.Expr_concatContext ctx) {
+		public void exitExprConcat(RegexFormatParser.ExprConcatContext ctx) {
 			FiniteAutomaton automaton = this.automatons.get(ctx.ex1);
 			assert automaton != null;
 			if (ctx.ex2 != null) {
@@ -121,54 +121,54 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 			this.automatons.put(ctx, automaton);
 		}
 
-		public void exitExpr_repeat_star(RegexFormatParser.Expr_repeat_starContext ctx) {
-			FiniteAutomaton automaton = this.automatons.get(ctx.expr_negate());
+		public void exitExprRepeatStar(RegexFormatParser.ExprRepeatStarContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.exprNegate());
 			assert automaton != null;
 			this.automatons.put(ctx, kleeneStar(automaton));
 		}
 
-		public void exitExpr_repeat_opt(RegexFormatParser.Expr_repeat_optContext ctx) {
-			FiniteAutomaton automaton = this.automatons.get(ctx.expr_negate());
+		public void exitExprRepeatOpt(RegexFormatParser.ExprRepeatOptContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.exprNegate());
 			assert automaton != null;
 			this.automatons.put(ctx, optional(automaton));
 		}
 
-		public void exitExpr_repeat_plus(RegexFormatParser.Expr_repeat_plusContext ctx) {
-			FiniteAutomaton automaton = this.automatons.get(ctx.expr_negate());
+		public void exitExprRepeatPlus(RegexFormatParser.ExprRepeatPlusContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.exprNegate());
 			assert automaton != null;
 			this.automatons.put(ctx, kleenePlus(automaton));
 		}
 
-		public void exitExpr_repeat_exact(RegexFormatParser.Expr_repeat_exactContext ctx) {
-			FiniteAutomaton automaton = this.automatons.get(ctx.expr_negate());
+		public void exitExprRepeatExact(RegexFormatParser.ExprRepeatExactContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.exprNegate());
 			assert automaton != null;
 			int x = Integer.parseInt(ctx.x.getText());
 			this.automatons.put(ctx, repeat(automaton, x, x));
 		}
 
-		public void exitExpr_repeat_least(RegexFormatParser.Expr_repeat_leastContext ctx) {
-			FiniteAutomaton automaton = this.automatons.get(ctx.expr_negate());
+		public void exitExprRepeatLeast(RegexFormatParser.ExprRepeatLeastContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.exprNegate());
 			assert automaton != null;
 			int x = Integer.parseInt(ctx.x.getText());
 			this.automatons.put(ctx, concatenate(repeat(automaton, x, x), kleeneStar(automaton)));
 		}
 
-		public void exitExpr_repeat_minmax(RegexFormatParser.Expr_repeat_minmaxContext ctx) {
-			FiniteAutomaton automaton = this.automatons.get(ctx.expr_negate());
+		public void exitExprRepeatMinmax(RegexFormatParser.ExprRepeatMinmaxContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.exprNegate());
 			assert automaton != null;
 			int x = Integer.parseInt(ctx.x.getText());
 			int y = Integer.parseInt(ctx.y.getText());
 			this.automatons.put(ctx, repeat(automaton, x, y));
 		}
 
-		public void exitExpr_repeat_nothing(RegexFormatParser.Expr_repeat_nothingContext ctx) {
-			FiniteAutomaton automaton = this.automatons.get(ctx.expr_negate());
+		public void exitExprRepeatNothing(RegexFormatParser.ExprRepeatNothingContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.exprNegate());
 			assert automaton != null;
 			this.automatons.put(ctx, automaton);
 		}
 
-		public void exitExpr_negate(RegexFormatParser.Expr_negateContext ctx) {
-			FiniteAutomaton automaton = this.automatons.get(ctx.expr_id());
+		public void exitExprNegate(RegexFormatParser.ExprNegateContext ctx) {
+			FiniteAutomaton automaton = this.automatons.get(ctx.exprId());
 			assert automaton != null;
 			if (ctx.NEGATE() != null) {
 				automaton = negate(automaton, alphabet);
@@ -176,26 +176,26 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 			this.automatons.put(ctx, automaton);
 		}
 
-		public void exitExpr_id_parentheses(RegexFormatParser.Expr_id_parenthesesContext ctx) {
+		public void exitExprIdParentheses(RegexFormatParser.ExprIdParenthesesContext ctx) {
 			FiniteAutomaton automaton = this.automatons.get(ctx.expr());
 			assert automaton != null;
 			this.automatons.put(ctx, automaton);
 		}
 
-		public void exitExpr_id_atom(RegexFormatParser.Expr_id_atomContext ctx) {
+		public void exitExprIdAtom(RegexFormatParser.ExprIdAtomContext ctx) {
 			this.automatons.put(ctx, getAtomicLanguage(new Symbol(ctx.ATOM().getText())));
 		}
 
-		public void exitExpr_id_id(RegexFormatParser.Expr_id_idContext ctx) {
+		public void exitExprIdId(RegexFormatParser.ExprIdIdContext ctx) {
 			String id = ctx.ID().getText();
 			this.automatons.put(ctx, getAtomicLanguage(new Symbol(id.substring(1, id.length() - 1))));
 		}
 
-		public void exitExpr_id_empty(RegexFormatParser.Expr_id_emptyContext ctx) {
+		public void exitExprIdEmpty(RegexFormatParser.ExprIdEmptyContext ctx) {
 			this.automatons.put(ctx, getEmptyLanguage());
 		}
 
-		public void exitExpr_id_epsilon(RegexFormatParser.Expr_id_epsilonContext ctx) {
+		public void exitExprIdEpsilon(RegexFormatParser.ExprIdEpsilonContext ctx) {
 			this.automatons.put(ctx, getAtomicLanguage(Symbol.EPSILON));
 		}
 	}

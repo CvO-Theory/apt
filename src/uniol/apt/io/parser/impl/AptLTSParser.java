@@ -109,7 +109,8 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 			for (Map.Entry<String, Object> entry : this.curOpts.entrySet()) {
 				if ("initial".equals(entry.getKey())) {
 					if (this.initCount++ > 0) {
-						throw new ParseRuntimeException("Multiple states are marked as initial state");
+						throw new ParseRuntimeException(
+								"Multiple states are marked as initial state");
 					}
 					this.ts.setInitialState(s);
 				} else {

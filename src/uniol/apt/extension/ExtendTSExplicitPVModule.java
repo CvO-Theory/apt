@@ -42,7 +42,11 @@ public class ExtendTSExplicitPVModule extends ExtendTSModule {
 
 	@Override
 	public String getLongDescription() {
-		return "Generates extensions to a given LTS that are reversible, persistent. Also, all smallest cycles share the same parikh vector, which is provided by the user. This module can run in three different modes: It can generate the next possible extension to the given LTS, the next extension that satisfies the above properties or the next satisfying extension that is also minimal among satisfying extensions.";
+		return "Generates extensions to a given LTS that are reversible, persistent. Also, all smallest cycles "
+			+ "share the same parikh vector, which is provided by the user. This module can run in three "
+			+ "different modes: It can generate the next possible extension to the given LTS, the next "
+			+ "extension that satisfies the above properties or the next satisfying extension that is also "
+			+ "minimal among satisfying extensions.";
 	}
 
 	@Override

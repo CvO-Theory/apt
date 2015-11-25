@@ -51,7 +51,8 @@ public class GenerateStepNetModule extends AbstractModule {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("dot", String.class, ModuleOutputSpec.PROPERTY_FILE, ModuleOutputSpec.PROPERTY_RAW);
+		outputSpec.addReturnValue("dot", String.class, ModuleOutputSpec.PROPERTY_FILE,
+				ModuleOutputSpec.PROPERTY_RAW);
 	}
 
 	@Override

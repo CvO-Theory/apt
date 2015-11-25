@@ -52,6 +52,11 @@ import static uniol.apt.util.PowerSet.powerSet;
 public class GenerateStepNet {
 	static final public String TRANSITIONS_KEY = "TransitionsOfStep";
 
+	// templates for graphviz export
+	static final public String TS_NODE_TEMPLATE = "%1$s[label=\"%2$s\"]; // node for marking %3$s\n";
+	static final public String TS_INIT_TEMPLATE = "%1$s[label=\"%2$s\", shape=circle]; // node for marking %3$s\n";
+	static final public String TS_EDGE_TEMPLATE = "%1$s -> %2$s[label=\"%3$s\"];\n";
+
 	final private PetriNet pn;
 	final private PetriNet stepNet;
 	final private Collection<Marking> maximalReachableMarkings;
@@ -242,21 +247,19 @@ public class GenerateStepNet {
 	 */
 	public String renderCoverabilityGraphAsDot() {
 		CoverabilityGraph graph = CoverabilityGraph.get(getStepNet());
-		String TS_NODE_TEMPLATE         = "%1$s[label=\"%2$s\"]; // node for marking %3$s\n";
-		String TS_INITIAL_NODE_TEMPLATE = "%1$s[label=\"%2$s\", shape=circle]; // node for marking %3$s\n";
-		String TS_EDGE_TEMPLATE = "%1$s -> %2$s[label=\"%3$s\"];\n";
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("digraph G {\n");
 		sb.append("node [shape = point, color=white, fontcolor=white]; start;");
 		sb.append("edge [fontsize=20]\n");
-		sb.append("node [fontsize=20,shape=circle,color=black, fontcolor=black, height=0.5,width=0.5,fixedsize=true];\n");
+		sb.append("node [fontsize=20,shape=circle,color=black,fontcolor=black,"
+				+ "height=0.5,width=0.5,fixedsize=true];\n");
 
 		Formatter format = new Formatter(sb);
 
 		Map<CoverabilityGraphNode, String> nodeLabels = new HashMap<>();
 		nodeLabels.put(graph.getInitialNode(), "s0");
-		format.format(TS_INITIAL_NODE_TEMPLATE, "s0", "s0", graph.getInitialNode().getMarking().toString());
+		format.format(TS_INIT_TEMPLATE, "s0", "s0", graph.getInitialNode().getMarking().toString());
 		int nextState = 1;
 		for (CoverabilityGraphNode node : graph.getNodes()) {
 			if (!graph.getInitialNode().equals(node)) {

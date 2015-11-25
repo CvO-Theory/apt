@@ -670,7 +670,11 @@ public class Marking {
 		ensureConsistency();
 		StringBuilder strBuilder = new StringBuilder("[ ");
 		for (Place place : net.getPlaces()) {
-			strBuilder.append("[").append(place.getId()).append(":").append(getToken(place).toString()).append("] ");
+			strBuilder.append("[")
+				.append(place.getId())
+				.append(":")
+				.append(getToken(place).toString())
+				.append("] ");
 		}
 		strBuilder.append("]");
 		return strBuilder.toString();

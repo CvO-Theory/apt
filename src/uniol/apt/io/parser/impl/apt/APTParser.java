@@ -47,8 +47,7 @@ public class APTParser {
 	 * @param path the file with the data to parse.
 	 * <p/>
 	 * @throws IOException           thrown if the file could not be read.
-	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
-	 *                               all.
+	 * @throws ParseException        thrown if parsing fails.
 	 */
 	public void parse(String path) throws IOException, ParseException {
 		try (FileInputStream is = new FileInputStream(path)) {
@@ -62,8 +61,7 @@ public class APTParser {
 	 * @param is the inputstream with the data to parse.
 	 * <p/>
 	 * @throws IOException           thrown if the file could not be read.
-	 * @throws FormatException       thrown if any other problem with the format occurs. Is the super class of them
-	 *                               all.
+	 * @throws ParseException        thrown if parsing fails.
 	 */
 	public void parse(InputStream is) throws IOException, ParseException {
 		pn = null;

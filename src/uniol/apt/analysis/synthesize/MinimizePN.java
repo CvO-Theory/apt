@@ -67,7 +67,8 @@ public class MinimizePN {
 		try {
 			Set<Region> separatingRegions = synthesize.getSeparatingRegions();
 			while (!separatingRegions.isEmpty()) {
-				debug("Have solution with ", separatingRegions.size(), " regions, trying to find solution with one region less");
+				debug("Have solution with ", separatingRegions.size(),
+						" regions, trying to find solution with one region less");
 				Set<Region> newRegions = synthesizeWithLimit(separatingRegions.size() - 1);
 				if (newRegions == null)
 					break;
@@ -149,7 +150,8 @@ public class MinimizePN {
 					for (int event = 0; event < numberEvents; event++) {
 						String suffix = eventList.get(event) + "-" + i;
 						script.declareFun("e-" + suffix, new Sort[0], script.sort("Int"));
-						effects[i][event] = region[1 + event] = script.term("e-" + suffix);
+						region[1 + event] = script.term("e-" + suffix);
+						effects[i][event] = region[1 + event];
 					}
 				} else {
 					region = new Term[1 + 2 * numberEvents];
@@ -181,11 +183,14 @@ public class MinimizePN {
 				int candidateRegions = firstProblem ? 1 : limit;
 				Term[] problemSolved = new Term[candidateRegions];
 				for (int i = 0; i < candidateRegions; i++) {
-					Term term = helper.evaluateReachingParikhVector(script.term("m0-" + i), effects[i], problem.getFirst());
+					Term term = helper.evaluateReachingParikhVector(script.term("m0-" + i),
+							effects[i], problem.getFirst());
 					if (pure)
-						term = script.term("+", term, script.term("e-" + problem.getSecond() + "-" + i));
+						term = script.term("+", term,
+								script.term("e-" + problem.getSecond() + "-" + i));
 					else
-						term = script.term("-", term, script.term("b-" + problem.getSecond() + "-" + i));
+						term = script.term("-", term,
+								script.term("b-" + problem.getSecond() + "-" + i));
 					problemSolved[i] = script.term(">", script.numeral(BigInteger.ZERO), term);
 				}
 				script.assertTerm(collectTerms("or", problemSolved, script.term("false")));
@@ -194,13 +199,16 @@ public class MinimizePN {
 			if (onlyEventSeparation)
 				assert statesToSeparate.isEmpty();
 			else
-				for (Pair<State, State> problem : new SynthesizePN.DifferentPairsIterable<>(statesToSeparate)) {
+				for (Pair<State, State> problem :
+						new SynthesizePN.DifferentPairsIterable<>(statesToSeparate)) {
 					Term[] problemSolved = new Term[limit];
 					State state1 = problem.getFirst();
 					State state2 = problem.getSecond();
 					for (int i = 0; i < limit; i++) {
-						Term pv0 = helper.evaluateReachingParikhVector(script.term("m0-" + i), effects[i], state1);
-						Term pv1 = helper.evaluateReachingParikhVector(script.term("m0-" + i), effects[i], state2);
+						Term pv0 = helper.evaluateReachingParikhVector(script.term("m0-" + i),
+								effects[i], state1);
+						Term pv1 = helper.evaluateReachingParikhVector(script.term("m0-" + i),
+								effects[i], state2);
 						problemSolved[i] = script.term("not", script.term("=", pv0, pv1));
 					}
 					script.assertTerm(collectTerms("or", problemSolved, script.term("false")));
@@ -221,14 +229,17 @@ public class MinimizePN {
 				if (pure) {
 					List<BigInteger> weights = new ArrayList<>();
 					for (String event : eventList)
-						weights.add(getValue(model, script.term("e-" + event + "-" + numRegion)));
+						weights.add(getValue(model,
+									script.term("e-" + event + "-" + numRegion)));
 					r = Region.Builder.createPure(utility, weights);
 				} else {
 					List<BigInteger> backwardWeights = new ArrayList<>();
 					List<BigInteger> forwardWeights = new ArrayList<>();
 					for (String event : eventList) {
-						backwardWeights.add(getValue(model, script.term("b-" + event + "-" + numRegion)));
-						forwardWeights.add(getValue(model, script.term("f-" + event + "-" + numRegion)));
+						backwardWeights.add(getValue(model,
+									script.term("b-" + event + "-" + numRegion)));
+						forwardWeights.add(getValue(model,
+									script.term("f-" + event + "-" + numRegion)));
 					}
 					r = new Region.Builder(utility, backwardWeights, forwardWeights);
 				}

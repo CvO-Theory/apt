@@ -41,7 +41,8 @@ public class MatrixModule extends AbstractModule {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
-		inputSpec.addOptionalParameter("format", MatrixFileFormat.class, null, "The file format of the printed matrices");
+		inputSpec.addOptionalParameter("format", MatrixFileFormat.class, null,
+				"The file format of the printed matrices");
 	}
 
 	@Override
@@ -86,8 +87,8 @@ public class MatrixModule extends AbstractModule {
 
 	@Override
 	public String getLongDescription() {
-		// TODO Auto-generated method stub
-		return "Calculate forward, backward, and incidence matrices. The matrices can also be printed in the R and MATLAB format.";
+		return "Calculate forward, backward, and incidence matrices. The matrices can also be printed in the "
+			+ "R and MATLAB format.";
 	}
 
 	@Override

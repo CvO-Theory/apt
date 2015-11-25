@@ -258,9 +258,10 @@ public class ExtendTransitionSystem {
 		BitSet diff = (BitSet) code.clone();
 		diff.andNot(ltsCode);
 		int lastFreeBit = code.nextClearBit(0);
-		if (lastFreeBit >= numberOfPossibleEdges()) // All possible edges are
-													// already in place
+		if (lastFreeBit >= numberOfPossibleEdges()) {
+			// All possible edges are already in place
 			return null;
+		}
 		int additionalEdges = diff.cardinality();
 		int lastDiffBit = diff.nextSetBit(0);
 		boolean done;
@@ -332,7 +333,8 @@ public class ExtendTransitionSystem {
 			// lts.createState(ltsNodes.get(target));
 			// }
 
-			lts.createArc(lts.getNode(ltsNodes.get(source)), lts.getNode(ltsNodes.get(target)), ltsLabels.get(label));
+			lts.createArc(lts.getNode(ltsNodes.get(source)), lts.getNode(ltsNodes.get(target)),
+					ltsLabels.get(label));
 		}
 
 		return lts;

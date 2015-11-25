@@ -91,7 +91,8 @@ public class PersistentTS {
 					// Check if any of these is also reached by label2, then label1
 					boolean foundSharedState = false;
 					for (State node2 : postset.get(label2)) {
-						if (!Collections.disjoint(statesAfter12, getStatePostsetViaLabel(node2, label1))) {
+						if (!Collections.disjoint(statesAfter12,
+									getStatePostsetViaLabel(node2, label1))) {
 							foundSharedState = true;
 							break;
 						}

@@ -125,17 +125,20 @@ public class SynthesizeModule extends AbstractModule {
 		}
 	}
 
-	static public SynthesizePN runSynthesis(TransitionSystemForOptions tsForOpts, ModuleInput input, ModuleOutput output)
+	static public SynthesizePN runSynthesis(TransitionSystemForOptions tsForOpts, ModuleInput input,
+				ModuleOutput output)
 			throws ModuleException {
 		String quickFailStr = "quick-fail", verboseStr = "verbose";
-		Collection<String> languageEquivalenceStr = Arrays.asList("upto-language-equivalence", "language", "le");
+		Collection<String> languageEquivalenceStr = Arrays.asList("upto-language-equivalence", "language",
+				"le");
 		Collection<String> minimizeStr = Arrays.asList("minimize", "minimise", "minimal");
 		Set<String> supportedExtraOptions = new HashSet<>(Arrays.asList(quickFailStr, verboseStr));
 		supportedExtraOptions.addAll(languageEquivalenceStr);
 		supportedExtraOptions.addAll(minimizeStr);
 		supportedExtraOptions.addAll(tsForOpts.supportedExtraOptions());
 
-		Options options = Options.parseProperties(input.getParameter("options", String.class), supportedExtraOptions);
+		Options options = Options.parseProperties(input.getParameter("options", String.class),
+				supportedExtraOptions);
 		boolean quickFail = options.extraOptions.contains(quickFailStr);
 		boolean verbose = options.extraOptions.contains(verboseStr);
 		boolean languageEquivalence = !Collections.disjoint(options.extraOptions, languageEquivalenceStr);
@@ -280,7 +283,8 @@ public class SynthesizeModule extends AbstractModule {
 		 * @return A representation of the requested options
 		 * @throws ModuleException if the properties string is malformed
 		 */
-		static public Options parseProperties(String properties, Collection<String> supportedExtraOptions) throws ModuleException {
+		static public Options parseProperties(String properties, Collection<String> supportedExtraOptions)
+				throws ModuleException {
 			PNProperties result = new PNProperties();
 
 			// Explicitly allow empty string

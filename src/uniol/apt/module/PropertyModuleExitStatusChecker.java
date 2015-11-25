@@ -19,7 +19,6 @@
 
 package uniol.apt.module;
 
-import java.util.Arrays;
 import java.util.List;
 
 import uniol.apt.module.impl.ExitStatus;
@@ -56,7 +55,7 @@ public class PropertyModuleExitStatusChecker implements ModuleExitStatusChecker 
 			return false;
 		}
 
-		if (!Arrays.asList(returnValue.getProperties()).contains(ModuleOutputSpec.PROPERTY_SUCCESS)) {
+		if (!returnValue.hasProperty(ModuleOutputSpec.PROPERTY_SUCCESS)) {
 			return false;
 		}
 

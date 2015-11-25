@@ -21,6 +21,7 @@ package uniol.apt.ui.impl.parameter;
 
 import java.io.IOException;
 
+import uniol.apt.APT;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -36,19 +37,13 @@ import uniol.apt.ui.ParameterTransformation;
  *
  */
 public class NetOrTSParameterTransformation implements ParameterTransformation<PetriNetOrTransitionSystem> {
-
-	/**
-	 * Symbol that signals that a pn or lts should be read from the standard input.
-	 */
-	public static final String STANDARD_INPUT_SYMBOL = "-";
-
 	@Override
 	public PetriNetOrTransitionSystem transform(String filename) throws ModuleException {
 		APTParser parser = new APTParser();
 		boolean fromStandardInput = false;
 
 		try {
-			if (filename.equals(NetOrTSParameterTransformation.STANDARD_INPUT_SYMBOL)) {
+			if (filename.equals(APT.STANDARD_INPUT_SYMBOL)) {
 				fromStandardInput = true;
 				parser.parse(System.in);
 			} else {

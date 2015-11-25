@@ -63,7 +63,8 @@ public class WeaklyLiveModule extends AbstractLiveModule {
 	}
 
 	@Override
-	protected void checkTransitionLiveness(ModuleOutput output, PetriNet pn, Transition transition) throws ModuleException {
+	protected void checkTransitionLiveness(ModuleOutput output, PetriNet pn, Transition transition)
+			throws ModuleException {
 		boolean live = Live.checkWeaklyLive(pn, transition);
 		output.setReturnValue("weakly_live", Boolean.class, live);
 	}

@@ -72,7 +72,8 @@ public class StronglyLiveModule extends AbstractLiveModule {
 	}
 
 	@Override
-	protected void checkTransitionLiveness(ModuleOutput output, PetriNet pn, Transition transition) throws ModuleException {
+	protected void checkTransitionLiveness(ModuleOutput output, PetriNet pn, Transition transition)
+			throws ModuleException {
 		List<Transition> killingSequence = Live.findKillingFireSequence(pn, transition);
 		output.setReturnValue("strongly_live", Boolean.class, killingSequence == null);
 		if (killingSequence != null)

@@ -44,6 +44,8 @@ import static uniol.apt.adt.automaton.FiniteAutomatonUtility.statesIterable;
  * @author Uli Schlachter
  */
 public class AutomatonToRegularExpression {
+	private AutomatonToRegularExpression() { /* hide */ }
+
 	static private final String EPSILON_REGEX = "$";
 	static private final String EPSILON_REGEX_OR = "$|";
 
@@ -65,7 +67,8 @@ public class AutomatonToRegularExpression {
 		return regex1;
 	}
 
-	static private String automatonToRegularExpression(DeterministicFiniteAutomaton dfa, Collection<DFAState> states) {
+	static private String automatonToRegularExpression(DeterministicFiniteAutomaton dfa,
+			Collection<DFAState> states) {
 		Map<Pair<DFAState, DFAState>, Set<String>> mapping = getInitialMapping(dfa);
 		for (DFAState state : states)
 			mapping = handleNextState(dfa, mapping, state);
@@ -172,7 +175,8 @@ public class AutomatonToRegularExpression {
 		return true;
 	}
 
-	static private void add(Map<Pair<DFAState, DFAState>, Set<String>> mapping, DFAState state1, DFAState state2, Symbol symbol) {
+	static private void add(Map<Pair<DFAState, DFAState>, Set<String>> mapping, DFAState state1, DFAState state2,
+			Symbol symbol) {
 		if (symbol.isEpsilon()) {
 			add(mapping, state1, state2, EPSILON_REGEX);
 			return;
@@ -186,7 +190,8 @@ public class AutomatonToRegularExpression {
 			add(mapping, state1, state2, "<" + event + ">");
 	}
 
-	static private void add(Map<Pair<DFAState, DFAState>, Set<String>> mapping, DFAState state1, DFAState state2, String newRegex) {
+	static private void add(Map<Pair<DFAState, DFAState>, Set<String>> mapping, DFAState state1, DFAState state2,
+			String newRegex) {
 		if (newRegex.isEmpty())
 			return;
 
@@ -200,7 +205,8 @@ public class AutomatonToRegularExpression {
 		regex.add(newRegex);
 	}
 
-	static private String getRegex(Map<Pair<DFAState, DFAState>, Set<String>> mapping, DFAState state1, DFAState state2) {
+	static private String getRegex(Map<Pair<DFAState, DFAState>, Set<String>> mapping, DFAState state1,
+			DFAState state2) {
 		Set<String> regex = mapping.get(new Pair<>(state1, state2));
 		if (regex == null)
 			return null;

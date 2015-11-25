@@ -52,7 +52,7 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 
 		// Constructor that gets the parsing started. This only exists so that we have some kind of "fake local
 		// variables". The only caller is parsePN().
-		public Parser(PetriNet pn, InputStream is) throws ParseException, IOException {
+		private Parser(PetriNet pn, InputStream is) throws ParseException, IOException {
 			this.pn = pn;
 			Document doc = getDocument(is);
 
@@ -120,7 +120,8 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 		private String getAttribute(Element elem, String name) throws ParseException {
 			String result = elem.getAttribute(name);
 			if (result.equals(""))
-				throw new ParseException("Element <" + elem.getTagName() + "> does not have attribute " + name);
+				throw new ParseException("Element <" + elem.getTagName() + "> does not have attribute "
+						+ name);
 			return result;
 		}
 
@@ -156,7 +157,8 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 		private Element getChildNode(Element element, String... tags) throws ParseException {
 			Element result = getOptionalChildNode(element, tags);
 			if (result == null)
-				throw new ParseException("Did not find any children with a tag from " + Arrays.toString(tags));
+				throw new ParseException("Did not find any children with a tag from "
+						+ Arrays.toString(tags));
 			return result;
 		}
 

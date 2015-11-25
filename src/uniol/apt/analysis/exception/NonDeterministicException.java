@@ -32,7 +32,7 @@ public class NonDeterministicException extends PreconditionFailedException {
 	/**
 	 * Constructor creates a new NonDeterministicException saying that the given TransitionSystem is
 	 * non-deterministic.
-	 * @param lts A non-deterministic transition system.
+	 * @param ts A non-deterministic transition system.
 	 */
 	public NonDeterministicException(TransitionSystem ts) {
 		super("Transition system " + ts.getName() + " is non-deterministic, only deterministic inputs are"
