@@ -56,7 +56,7 @@ class CloseableCollection<T extends Closeable> implements Closeable {
 	@Override
 	public void close() throws IOException {
 		IOException err = null;
-		while (!array.isEmpty()) {
+		while (!objectsList.isEmpty()) {
 			Closeable c = objectsList.remove(0);
 			boolean close = needsCloseList.remove(0);
 			if (close)
