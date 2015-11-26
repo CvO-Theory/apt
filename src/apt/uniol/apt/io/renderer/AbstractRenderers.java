@@ -51,7 +51,7 @@ public class AbstractRenderers<T> implements Renderers<T> {
 
 		String className = clazz.getCanonicalName();
 
-		ClassLoader cl   = ClassLoader.getSystemClassLoader();
+		ClassLoader cl   = getClass().getClassLoader();
 		try {
 			Enumeration<URL> rendererNames = cl.getResources("META-INF/uniol/apt/compiler/"
 					+ Renderer.class.getCanonicalName() + "/" + className);

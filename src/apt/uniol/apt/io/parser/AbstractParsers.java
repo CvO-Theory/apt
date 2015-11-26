@@ -53,7 +53,7 @@ public class AbstractParsers<T> implements Parsers<T> {
 
 		String className = clazz.getCanonicalName();
 
-		ClassLoader cl   = ClassLoader.getSystemClassLoader();
+		ClassLoader cl   = getClass().getClassLoader();
 		try {
 			Enumeration<URL> parserNames = cl.getResources("META-INF/uniol/apt/compiler/"
 					+ Parser.class.getCanonicalName() + "/" + className);
