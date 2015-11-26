@@ -27,10 +27,9 @@ import uniol.apt.adt.pn.PetriNet;
  * @author vsp
  */
 public class PNParsers extends AbstractParsers<PetriNet> implements Parsers<PetriNet> {
-	/**
-	 * constructor
-	 */
-	public PNParsers() {
+	public static final PNParsers INSTANCE = new PNParsers();
+
+	private PNParsers() {
 		super(PetriNet.class);
 	}
 }

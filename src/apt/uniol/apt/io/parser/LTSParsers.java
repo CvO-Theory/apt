@@ -27,10 +27,9 @@ import uniol.apt.adt.ts.TransitionSystem;
  * @author vsp
  */
 public class LTSParsers extends AbstractParsers<TransitionSystem> implements Parsers<TransitionSystem> {
-	/**
-	 * constructor
-	 */
-	public LTSParsers() {
+	public static final LTSParsers INSTANCE = new LTSParsers();
+
+	private LTSParsers() {
 		super(TransitionSystem.class);
 	}
 }

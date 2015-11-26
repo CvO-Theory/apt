@@ -135,8 +135,6 @@ public class APT {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void addParametersTransformations() {
-		Parsers<PetriNet> pnParsers          = new PNParsers();
-		Parsers<TransitionSystem> ltsParsers = new LTSParsers();
 		parametersTransformer.addTransformation(String.class, new StringParameterTransformation());
 		parametersTransformer.addTransformation(Character.class, new CharacterParameterTransformation());
 		parametersTransformer.addTransformation(Integer.class, new IntegerParameterTransformation());
@@ -144,10 +142,10 @@ public class APT {
 		try {
 			parametersTransformer.addTransformation(PetriNet.class,
 					new ParserParameterTransformation<PetriNet>(
-						pnParsers.getParser("apt"), "Petri net"));
+						PNParsers.INSTANCE.getParser("apt"), "Petri net"));
 			parametersTransformer.addTransformation(TransitionSystem.class,
-					new ParserParameterTransformation<TransitionSystem>(ltsParsers.getParser("apt"),
-						"transition system"));
+					new ParserParameterTransformation<TransitionSystem>(
+						LTSParsers.INSTANCE.getParser("apt"), "transition system"));
 		} catch (ParserNotFoundException ex) {
 			errPrinter.println("Error finding apt parser: " + ex.getMessage());
 			errPrinter.flush();

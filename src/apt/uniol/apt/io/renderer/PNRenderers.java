@@ -27,10 +27,9 @@ import uniol.apt.adt.pn.PetriNet;
  * @author vsp
  */
 public class PNRenderers extends AbstractRenderers<PetriNet> implements Renderers<PetriNet> {
-	/**
-	 * constructor
-	 */
-	public PNRenderers() {
+	public final static PNRenderers INSTANCE = new PNRenderers();
+
+	private PNRenderers() {
 		super(PetriNet.class);
 	}
 }

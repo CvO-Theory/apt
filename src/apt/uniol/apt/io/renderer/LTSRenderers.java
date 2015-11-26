@@ -27,10 +27,9 @@ import uniol.apt.adt.ts.TransitionSystem;
  * @author vsp
  */
 public class LTSRenderers extends AbstractRenderers<TransitionSystem> implements Renderers<TransitionSystem> {
-	/**
-	 * constructor
-	 */
-	public LTSRenderers() {
+	public static final LTSRenderers INSTANCE = new LTSRenderers();
+
+	private LTSRenderers() {
 		super(TransitionSystem.class);
 	}
 }
