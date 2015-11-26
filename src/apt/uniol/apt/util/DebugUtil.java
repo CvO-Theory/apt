@@ -32,6 +32,7 @@ import java.util.Objects;
  * {@code
  * debug("Done with step ", step, " after ", time, " seconds");
  * }
+ * </pre>
  * The reason for doing things like this is to avoid the overhead of string concatenation if it is not necessary.
  * @author Uli Schlachter
  */
