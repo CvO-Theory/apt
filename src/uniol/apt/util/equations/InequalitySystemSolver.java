@@ -65,6 +65,9 @@ public class InequalitySystemSolver {
 	private final Deque<Integer> systemsLengthStack = new LinkedList<>();
 	private final Deque<Integer> variablesStack = new LinkedList<>();
 
+	/**
+	 * Constructor. Yes, it's that simple.
+	 */
 	public InequalitySystemSolver() {
 		// Java lazily initializes classes, so the helper will only be created on first use
 		Logger logger = Log4JInitializationHelper.INSTANCE.logger;
@@ -193,9 +196,11 @@ public class InequalitySystemSolver {
 		int index = 0;
 		for (InequalitySystem[] disjunction : systems) {
 			boolean foundSolution = false;
-			for (int i = 0; i < disjunction.length; i++)
-				if (foundSolution = disjunction[i].fulfilledBy(solution))
+			for (int i = 0; i < disjunction.length; i++) {
+				foundSolution = disjunction[i].fulfilledBy(solution);
+				if (foundSolution)
 					break;
+			}
 			if (!foundSolution && disjunction.length > 0) {
 				debug("Not a valid solution for sub-system with index ", index);
 				return false;

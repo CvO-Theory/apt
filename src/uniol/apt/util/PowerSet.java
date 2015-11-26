@@ -28,6 +28,7 @@ import java.util.List;
 
 /**
  * Calculate the power set of a collection.
+ * @param <E> The type of the elements.
  * @author Uli Schlachter
  */
 public class PowerSet<E> extends AbstractCollection<Collection<E>> {
@@ -165,6 +166,7 @@ public class PowerSet<E> extends AbstractCollection<Collection<E>> {
 	 * Produce the power set of a collection
 	 * @param c The collection whose power set should be generated
 	 * @return An iterable containing the power set of the given list
+	 * @param <E> The type of the elements.
 	 */
 	static public <E> PowerSet<E> powerSet(List<E> c) {
 		return new PowerSet<E>(c);

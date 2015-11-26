@@ -65,6 +65,14 @@ public class SMTInterpolHelper {
 		}
 	}
 
+	/**
+	 * Create a new instance of this class. This prepares an SMTInterpol instance so that Petri nets can be
+	 * synthesized. It does so by defining a function called 'isRegion'.
+	 * @param utility The region utility for which we are synthesizing.
+	 * @param properties The properties that the synthesized net should have.
+	 * @param locationMap The location mapping that should be obeyed.
+	 * @see getScript
+	 */
 	public SMTInterpolHelper(RegionUtility utility, PNProperties properties, String[] locationMap) {
 		this.utility = utility;
 		this.properties = properties;
@@ -245,11 +253,11 @@ public class SMTInterpolHelper {
 	 */
 	private List<Term> requireKBounded(Term initialMarking, Term[] weight, int k) {
 		List<Term> result = new ArrayList<>();
-		Term K = script.numeral(BigInteger.valueOf(k));
+		Term biK = script.numeral(BigInteger.valueOf(k));
 		for (State state : utility.getTransitionSystem().getNodes()) {
 			try {
 				Term term = evaluateReachingParikhVector(initialMarking, weight, state);
-				result.add(script.term("<=", term, K));
+				result.add(script.term("<=", term, biK));
 			} catch (UnreachableException e) {
 				continue;
 			}
@@ -378,6 +386,10 @@ public class SMTInterpolHelper {
 		}
 	}
 
+	/**
+	 * Get the prepared SMTInterpol script.
+	 * @return The script.
+	 */
 	public Script getScript() {
 		return script;
 	}

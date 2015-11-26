@@ -37,7 +37,7 @@ public class Isolated {
 	 * Checks a given Petri net for isolated elements. An isolated element is
 	 * an element that has no incoming and outgoing edges. (<=> the pre/postset is empty).
 	 *
-	 * @param pn
+	 * @param pn The Petri net to examine.
 	 * @return true when an isolated element has been found.
 	 */
 	public static boolean checkIsolated(PetriNet pn) {

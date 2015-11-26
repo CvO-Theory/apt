@@ -34,7 +34,10 @@ import static uniol.apt.adt.matcher.Matchers.*;
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked") // I hate generics
 public class PowerSetTest {
-	static private final Matcher<Collection<? extends Integer>> empty = empty();
+	static private Matcher<Collection<? extends Integer>> empty() {
+		// Just a helper method to defeat generics and the Java compiler...
+		return org.hamcrest.Matchers.empty();
+	}
 
 	@Test(expectedExceptions = { IllegalArgumentException.class })
 	public void testBitSetNegativeSize() {
@@ -89,14 +92,14 @@ public class PowerSetTest {
 	public void testOneElementList() {
 		PowerSet<Integer> power = PowerSet.powerSet(asList(0));
 		assertThat(power, hasSize(2));
-		assertThat(power, containsInAnyOrder(contains(0), empty));
+		assertThat(power, containsInAnyOrder(contains(0), empty()));
 	}
 
 	@Test
 	public void testTwoElementList() {
 		PowerSet<Integer> power = PowerSet.powerSet(asList(0, 1));
 		assertThat(power, hasSize(4));
-		assertThat(power, containsInAnyOrder(contains(0, 1), contains(0), contains(1), empty));
+		assertThat(power, containsInAnyOrder(contains(0, 1), contains(0), contains(1), empty()));
 	}
 }
 

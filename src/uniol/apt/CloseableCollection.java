@@ -27,28 +27,38 @@ import java.util.List;
 /**
  * Object which contains a List of Closeable objects, which can all get closed
  * with one method call.
- *
+ * @param <T> The type of member objects.
  * @author Uli Schlachter
  */
 class CloseableCollection<T extends Closeable> implements Closeable {
-	private final List<T> array = new ArrayList<>();
-	private final List<Boolean> needsClose = new ArrayList<>();
+	private final List<T> objectsList = new ArrayList<>();
+	private final List<Boolean> needsCloseList = new ArrayList<>();
 
+	/**
+	 * Get an object from this collection.
+	 * @param idx Zero-based index on the number of calls to {@link add}.
+	 * @return The object.
+	 */
 	public T get(int idx) {
-		return array.get(idx);
+		return objectsList.get(idx);
 	}
 
+	/**
+	 * Add a new object to this collection.
+	 * @param val The object.
+	 * @param needsClose If true, {@link close} will close this object.
+	 */
 	public void add(T val, boolean needsClose) {
-		this.array.add(val);
-		this.needsClose.add(needsClose);
+		objectsList.add(val);
+		needsCloseList.add(needsClose);
 	}
 
 	@Override
 	public void close() throws IOException {
 		IOException err = null;
 		while (!array.isEmpty()) {
-			Closeable c = array.remove(0);
-			boolean close = needsClose.remove(0);
+			Closeable c = objectsList.remove(0);
+			boolean close = needsCloseList.remove(0);
 			if (close)
 				try {
 					c.close();

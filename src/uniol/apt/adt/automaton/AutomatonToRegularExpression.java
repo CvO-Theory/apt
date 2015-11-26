@@ -49,6 +49,11 @@ public class AutomatonToRegularExpression {
 	static private final String EPSILON_REGEX = "$";
 	static private final String EPSILON_REGEX_OR = "$|";
 
+	/**
+	 * Get an equivalent regular expression for a finite automaton.
+	 * @param automaton The automaton to translate into a regex.
+	 * @return The regex for the automaton.
+	 */
 	static public String automatonToRegularExpression(FiniteAutomaton automaton) {
 		DeterministicFiniteAutomaton dfa = minimize(automaton);
 

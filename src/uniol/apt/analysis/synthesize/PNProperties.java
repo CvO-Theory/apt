@@ -230,6 +230,8 @@ public class PNProperties {
 
 	/**
 	 * Test if this properties instance a superset of another instance.
+	 * @param other The PNProperties instance to compare with.
+	 * @return True if all requirements done by the other instance are also enforced by this.
 	 */
 	public boolean containsAll(PNProperties other) {
 		if (other.isKBounded()) {

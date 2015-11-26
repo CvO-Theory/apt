@@ -71,7 +71,7 @@ class PlainPureSeparation extends BasicPureSeparation implements Separation {
 			for (Region region : utility.getRegionBasis())
 				inequality.add(region.getWeight(event));
 
-			system.addInequality( 1, ">=", inequality, "Plain for event " + event);
+			system.addInequality(1,  ">=", inequality, "Plain for event " + event);
 			system.addInequality(-1, "<=", inequality, "Plain for event " + event);
 		}
 

@@ -107,11 +107,11 @@ public class SynthesizePN {
 
 		/**
 		 * Set required properties for the synthesized Petri net.
-		 * @param properties the properties to satisfy.
+		 * @param props the properties to satisfy.
 		 * @return this
 		 */
-		public Builder setProperties(PNProperties properties) {
-			this.properties = properties;
+		public Builder setProperties(PNProperties props) {
+			this.properties = props;
 			return this;
 		}
 
@@ -130,10 +130,11 @@ public class SynthesizePN {
 		 * will stop after the first failure instead of going through all separation problems and trying to
 		 * solve them.
 		 * The quick fail mode default to false.
-		 * @param quickFail the new value for the quick fail mode.
+		 * @param qf the new value for the quick fail mode.
+		 * @return this
 		 */
-		public Builder setQuickFail(boolean quickFail) {
-			this.quickFail = quickFail;
+		public Builder setQuickFail(boolean qf) {
+			this.quickFail = qf;
 			return this;
 		}
 
@@ -172,6 +173,8 @@ public class SynthesizePN {
 	 * the same marking.
 	 * @param stateMappingExtension An extension key that will be used to map States. All states in the input
 	 * transition system must have this extension and it must refer to a State object.
+	 * @param quickFail If true, stop the calculation as soon as it is known that it won't be successful. If false,
+	 * try to solve all separation problems. Only if true will the list of failed problems be fully filled.
 	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
 	SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation,
@@ -511,6 +514,7 @@ public class SynthesizePN {
 	/**
 	 * Check if the PetriNet is a distributed implementation
 	 * @param utility The region utility that defines the required distribution
+	 * @param properties The properties instance to use; this is needed to handle ON correctly.
 	 * @param pn The PetriNet to check
 	 * @return true if the pn is suitably distributed.
 	 */

@@ -31,7 +31,6 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
-import uniol.apt.analysis.synthesize.SynthesizeWordModule;
 import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.io.parser.ParserTestUtils;
 
@@ -413,8 +412,7 @@ public class SeparationTestHelper {
 			properties = properties.setPure(true);
 			try {
 				sep = factory.createSeparation(new RegionUtility(ts), properties, new String[2]);
-			}
-			catch (UnsupportedPNPropertiesException f) {
+			} catch (UnsupportedPNPropertiesException f) {
 				// This test cannot be applied to the factory under test
 				return;
 			}

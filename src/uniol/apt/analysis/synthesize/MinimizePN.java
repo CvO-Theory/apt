@@ -55,6 +55,13 @@ public class MinimizePN {
 	private SMTInterpolHelper helper;
 	private Script script;
 
+	/**
+	 * Calculate a Petri net with a minimal number of places solving some PN-synthesis problem.
+	 * @param synthesize The SynthesizePN instance whose result should be minimized.
+	 * @throws UnsupportedOperationException If the given synthesize instance did not successfully separate its
+	 * input.
+	 * @see synthesizePetriNet
+	 */
 	public MinimizePN(SynthesizePN synthesize) {
 		this.synthesize = synthesize;
 		this.utility = synthesize.getUtility();
@@ -93,6 +100,10 @@ public class MinimizePN {
 		return Collections.unmodifiableSet(regions);
 	}
 
+	/**
+	 * Synthesize a Petri net with the minimal number of places.
+	 * @return A minimal Petri net.
+	 */
 	public PetriNet synthesizePetriNet() {
 		return synthesize.synthesizePetriNet(regions);
 	}
@@ -223,7 +234,7 @@ public class MinimizePN {
 
 			// Extract all regions
 			Model model = script.getModel();
-			Set<Region> regions = new HashSet<>();
+			Set<Region> result = new HashSet<>();
 			for (int numRegion = 0; numRegion < limit; numRegion++) {
 				Region.Builder r;
 				if (pure) {
@@ -244,10 +255,10 @@ public class MinimizePN {
 					r = new Region.Builder(utility, backwardWeights, forwardWeights);
 				}
 				BigInteger initialMarking = getValue(model, script.term("m0-" + numRegion));
-				regions.add(r.withInitialMarking(initialMarking));
+				result.add(r.withInitialMarking(initialMarking));
 			}
 
-			return regions;
+			return result;
 		} finally {
 			this.script = null;
 			this.helper = null;

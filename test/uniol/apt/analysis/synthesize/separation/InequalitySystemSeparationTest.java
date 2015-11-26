@@ -48,9 +48,8 @@ public class InequalitySystemSeparationTest {
 		}
 
 		@Override
-		public Separation createSeparation(RegionUtility utility, PNProperties properties,
-				String[] locationMap) {
-			return new InequalitySystemSeparation(utility, properties, locationMap);
+		public Separation createSeparation(RegionUtility utility, PNProperties props, String[] locationMap) {
+			return new InequalitySystemSeparation(utility, props, locationMap);
 		}
 	}
 

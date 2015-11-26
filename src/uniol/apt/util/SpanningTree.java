@@ -55,6 +55,9 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	 * of creating a new one.
 	 * @param graph The graph for which a spanning tree should be constructed.
 	 * @return A spanning tree.
+	 * @param <G> The type of the graph itself.
+	 * @param <E> The type of the edges.
+	 * @param <N> The type of the nodes.
 	 */
 	static public <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
 			SpanningTree<G, E, N> get(G graph) {
@@ -66,6 +69,9 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	 * it is re-used instead of creating a new one. This spanning tree will follow arcs backwards.
 	 * @param graph The graph for which a spanning tree should be constructed.
 	 * @return A spanning tree.
+	 * @param <G> The type of the graph itself.
+	 * @param <E> The type of the edges.
+	 * @param <N> The type of the nodes.
 	 */
 	static public <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
 			SpanningTree<G, E, N> getReversed(G graph) {
@@ -78,6 +84,9 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	 * @param graph The graph for which a spanning tree should be constructed.
 	 * @param startNode The start node for the spanning tree.
 	 * @return A spanning tree.
+	 * @param <G> The type of the graph itself.
+	 * @param <E> The type of the edges.
+	 * @param <N> The type of the nodes.
 	 */
 	static public <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
 			SpanningTree<G, E, N> get(G graph, N startNode) {
@@ -90,6 +99,9 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	 * @param graph The graph for which a spanning tree should be constructed.
 	 * @param startNode The start node for the spanning tree.
 	 * @return A spanning tree.
+	 * @param <G> The type of the graph itself.
+	 * @param <E> The type of the edges.
+	 * @param <N> The type of the nodes.
 	 */
 	static public <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
 			SpanningTree<G, E, N> getReversed(G graph, N startNode) {
@@ -103,6 +115,9 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	 * @param startNode The start node for the spanning tree.
 	 * @param forwardDirection If true, arcs are followed in forward direction, else backward direction.
 	 * @return A spanning tree.
+	 * @param <G> The type of the graph itself.
+	 * @param <E> The type of the edges.
+	 * @param <N> The type of the nodes.
 	 */
 	static private <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
 			SpanningTree<G, E, N> get(G graph, N startNode, boolean forwardDirection) {

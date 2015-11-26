@@ -27,6 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static java.math.BigInteger.ZERO;
+
 import uniol.apt.TestNetCollection;
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.pn.PetriNet;
@@ -152,7 +154,6 @@ public class SynthesizePNTest {
 		PNProperties properties = new PNProperties().setOutputNonbranching(true);
 		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
 
-		BigInteger ZERO = BigInteger.ZERO;
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// We know that there is a solution with three regions. Test that this really found an ON feasible set.
 		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
@@ -169,7 +170,6 @@ public class SynthesizePNTest {
 		PNProperties properties = new PNProperties().setTNet(true);
 		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
 
-		BigInteger ZERO = BigInteger.ZERO;
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// We know that there is a solution with four regions. Test that this really found a T-Net feasible set.
 		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
@@ -187,7 +187,6 @@ public class SynthesizePNTest {
 		PNProperties properties = new PNProperties().setMarkedGraph(true);
 		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
 
-		BigInteger ZERO = BigInteger.ZERO;
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// We know that there is a solution with four regions. Test that this really found a marked graph feasible set.
 		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(

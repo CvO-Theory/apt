@@ -120,8 +120,8 @@ public class PlainTest {
 
 	@DataProvider(name = "badNets")
 	private Object[][] createBadTestNets() {
-		return new Object[][]{ // TODO: Tests!
-			};
+		return new Object[][]{
+			{getACBCCLoopNet()}};
 	}
 
 	@Test(dataProvider = "goodNets")

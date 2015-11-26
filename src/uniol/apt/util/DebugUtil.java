@@ -25,12 +25,19 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * Helper functions for having debug output.
+ * Helper functions for having debug output. This class provides a debug() method which can be called with any number of
+ * arguments. These arguments are converted to strings, concatenated and printed.  For example, you can statically
+ * import the debug method and do this:
+ * <pre>
+ * {@code
+ * debug("Done with step ", step, " after ", time, " seconds");
+ * }
+ * The reason for doing things like this is to avoid the overhead of string concatenation if it is not necessary.
  * @author Uli Schlachter
  */
 final public class DebugUtil {
-	static final public boolean debugOutputEnabled = false || Boolean.getBoolean("apt.debug");
-	static final private ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>() {
+	static final public boolean OUTPUT_ENABLED = false || Boolean.getBoolean("apt.debug");
+	static final private ThreadLocal<DateFormat> DATE_FORMAT = new ThreadLocal<DateFormat>() {
 		@Override
 		protected DateFormat initialValue() {
 			return new SimpleDateFormat("HH:mm:ss.SSS");
@@ -44,7 +51,7 @@ final public class DebugUtil {
 	}
 
 	static private void printDebug(String prefix, String message) {
-		prefix = dateFormat.get().format(new Date()) + " " + prefix + ": ";
+		prefix = DATE_FORMAT.get().format(new Date()) + " " + prefix + ": ";
 		for (String line : message.split("\n"))
 			System.err.println(prefix + line);
 	}
@@ -60,46 +67,126 @@ final public class DebugUtil {
 		return klass.substring(index + 1);
 	}
 
+	/**
+	 * Generate a debug message if debugging output is enabled. This will print the message with a newline.
+	 * @param message The message
+	 */
 	static public void debug(String message) {
-		if (debugOutputEnabled)
+		if (OUTPUT_ENABLED)
 			printDebug(getCaller(), message);
 	}
 
+	/**
+	 * Generate a debug message. This is equivalent to:
+	 * <pre>
+	 * {@code
+	 * debug("");
+	 * }
+	 * </pre>
+	 */
 	static public void debug() {
-		if (debugOutputEnabled)
+		if (OUTPUT_ENABLED)
 			printDebug(getCaller(), "");
 	}
 
+	/**
+	 * Generate a debug message. This is equivalent to:
+	 * <pre>
+	 * {@code
+	 * debug(java.util.Objects.toString(obj));
+	 * }
+	 * </pre>
+	 * @param obj The object to print
+	 */
 	static public void debug(Object obj) {
-		if (debugOutputEnabled)
+		if (OUTPUT_ENABLED)
 			printDebug(getCaller(), Objects.toString(obj));
 	}
 
+	/**
+	 * Generate a debug message. This is equivalent to:
+	 * <pre>
+	 * {@code
+	 * debug(java.util.Objects.toString(obj1) + java.util.Objects.toString(obj2));
+	 * }
+	 * </pre>
+	 * @param obj1 The first object to print
+	 * @param obj2 The second object to print
+	 */
 	static public void debug(Object obj1, Object obj2) {
-		if (debugOutputEnabled)
+		if (OUTPUT_ENABLED)
 			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2));
 	}
 
+	/**
+	 * Generate a debug message. This is equivalent to:
+	 * <pre>
+	 * {@code
+	 * debug(Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3));
+	 * }
+	 * </pre>
+	 * @param obj1 The first object to print
+	 * @param obj2 The second object to print
+	 * @param obj3 The third object to print
+	 */
 	static public void debug(Object obj1, Object obj2, Object obj3) {
-		if (debugOutputEnabled)
+		if (OUTPUT_ENABLED)
 			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2)
 					+ Objects.toString(obj3));
 	}
 
+	/**
+	 * Generate a debug message. This is equivalent to:
+	 * <pre>
+	 * {@code
+	 * debug(Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3) + Objects.toString(obj4));
+	 * }
+	 * </pre>
+	 * @param obj1 The first object to print
+	 * @param obj2 The second object to print
+	 * @param obj3 The third object to print
+	 * @param obj4 The fourth object to print
+	 */
 	static public void debug(Object obj1, Object obj2, Object obj3, Object obj4) {
-		if (debugOutputEnabled)
+		if (OUTPUT_ENABLED)
 			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3)
 					+ Objects.toString(obj4));
 	}
 
+	/**
+	 * Generate a debug message. This is equivalent to:
+	 * <pre>
+	 * {@code
+	 * debug(Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3)
+	 *     + Objects.toString(obj4) + Objects.toString(obj5));
+	 * }
+	 * </pre>
+	 * @param obj1 The first object to print
+	 * @param obj2 The second object to print
+	 * @param obj3 The third object to print
+	 * @param obj4 The fourth object to print
+	 * @param obj5 The fifth object to print
+	 */
 	static public void debug(Object obj1, Object obj2, Object obj3, Object obj4, Object obj5) {
-		if (debugOutputEnabled)
+		if (OUTPUT_ENABLED)
 			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3)
 					+ Objects.toString(obj4) + Objects.toString(obj5));
 	}
 
+	/**
+	 * Generate a debug message. This is equivalent to:
+	 * <pre>
+	 * {@code
+	 * StringBuilder sb = new StringBuilder();
+	 * for (Object o : objs)
+	 *         sb.append(java.util.Objects.toString(o));
+	 * debug(sb.toString();
+	 * }
+	 * </pre>
+	 * @param objs The objects to print
+	 */
 	static public void debug(Object... objs) {
-		if (debugOutputEnabled) {
+		if (OUTPUT_ENABLED) {
 			StringBuilder sb = new StringBuilder();
 			for (Object o : objs)
 				sb.append(Objects.toString(o));

@@ -36,7 +36,7 @@ public class AutomatonToRegularExpressionTest {
 	private FiniteAutomaton parse(String str) {
 		try {
 			return new RegexParser().parseString(str);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

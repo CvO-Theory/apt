@@ -20,8 +20,8 @@
 package uniol.apt.adt.pn;
 
 import org.testng.annotations.Test;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -39,12 +39,12 @@ public class MarkingTest {
 	static private final Integer OMEGA = null;
 	private PetriNet pn;
 
-	@BeforeClass
+	@BeforeMethod
 	public void setupPN() {
 		pn = new PetriNet("foo");
 	}
 
-	@AfterClass
+	@AfterMethod
 	public void teardownPN() {
 		pn = null;
 	}
@@ -287,7 +287,6 @@ public class MarkingTest {
 
 	@Test
 	public void testToString() {
-		PetriNet pn = new PetriNet();
 		// Many places to increase changes of reordering
 		Place places[] = pn.createPlaces("p42", "p1", "a", "z", "b", "y", "j", "k");
 		places[0].setInitialToken(42);
