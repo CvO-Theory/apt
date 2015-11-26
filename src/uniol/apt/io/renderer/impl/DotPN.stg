@@ -29,10 +29,10 @@
  */
 pn(pn) ::= <<
 digraph PN {
-	node [fontsize=20,shape=rect,height=0.5,width=0.5,fixedsize=true];
+	node [fontsize=20,shape=circle,height=0.5,width=0.5,fixedsize=true];
 	<pn.places:place();separator="\n">
 
-	node [fontsize=20,shape=circle,height=0.5,width=0.5,fixedsize=true];
+	node [fontsize=20,shape=rect,height=0.5,width=0.5,fixedsize=true];
 	<pn.transitions:transition();separator="\n">
 
 	edge [fontsize=20]
@@ -54,7 +54,7 @@ transition(t) ::= <<
  * @param p Object describing the place (Needed properties: id and initialToken)
  */
 place(p) ::= <<
-<p.id>[label="<p.initialToken>", xlabel="<p.id>", shape=circle];
+<p.id>[label="<p.initialToken>", xlabel="<p.id>"];
 >>
 
 /**
