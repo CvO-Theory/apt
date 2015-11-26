@@ -1,0 +1,61 @@
+/*-
+ * APT - Analysis of Petri Nets and labeled Transition systems
+ * Copyright (C) 2015  vsp
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+/**
+ * Stringtemplate template group file for the Dot file format.
+ * @author: vsp
+ */
+
+/**
+ * Main template, the DotLTSRenderer uses this.
+ * @param places A list of all places in the net
+ * @param transitions A list of transitions of the net
+ */
+ts(ts) ::= <<
+digraph TS {
+	node [shape=point,color=white,fontcolor=white];
+	start;
+
+	node [fontsize=20,shape=circle,color=black,fontcolor=black,height=0.5,width=0.5,fixedsize=true];
+	<ts.nodes:state();separator="\n">
+
+	edge [fontsize=20];
+	start -> <ts.initialState.id>;
+	<ts.edges:arc();separator="\n">
+}
+
+>>
+
+/**
+ * Template for a single state
+ * @param s Object describing the state (Needed property: id)
+ */
+state(s) ::= <<
+<s.id>[label="<s.id>"];
+>>
+
+/**
+ * Template for an arc
+ * @param a an Object holding an arc (Needed properties: source and target, both must have an id property, and label)
+ */
+arc(a) ::= <<
+<a.source.id> -> <a.target.id> [label="<a.label>"];
+>>
+
+// vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
