@@ -19,8 +19,6 @@
 
 package uniol.apt.pnanalysis;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.Set;
 
 import uniol.apt.TestNetCollection;
@@ -38,7 +36,6 @@ import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
-import uniol.apt.io.renderer.impl.AptPNRenderer;
 import uniol.apt.module.exception.ModuleException;
 import uniol.tests.dataprovider.IntRangeDataProvider;
 import uniol.tests.dataprovider.annotations.IntRangeParameter;
@@ -87,23 +84,6 @@ public class PnAnalysisTest {
 		assertNotNull(net);
 		net = RandomTNetGenerator.reservoirSampling(6, 12);
 		assertNotNull(net);
-	}
-
-	@Test(enabled = false) // This test needs sometimes more than hour (instead of a minute) => disable it
-	public void testRandom() throws Exception {
-		PetriNet pn = ParserTestUtils.getAptPN("./nets/EB-PhD-Fundamenta.apt");
-		PnAnalysis ana = new PnAnalysis();
-		PetriNet net = ana.checkAllIsomorphicTSystemsForPetriNet(pn, 20, 10, true);
-		if (net != null) {
-			IsomorphismLogic logic = new IsomorphismLogic(pn, net, true);
-			assertTrue(logic.isIsomorphic());
-			AptPNRenderer renderer = new AptPNRenderer();
-			File file = new File("./nets/tnetIsomorphToEB-PhD-Fundamenta.apt");
-			try (FileWriter writer = new FileWriter(file, true)) {
-				writer.write(renderer.render(net));
-				writer.flush();
-			}
-		}
 	}
 
 	@Test(dataProvider = "IntRange", dataProviderClass = IntRangeDataProvider.class)
