@@ -22,11 +22,12 @@ package uniol.apt.analysis.synet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Set;
+
+import org.apache.commons.io.output.FileWriterWithEncoding;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.Arc;
@@ -73,13 +74,13 @@ public class SynetSynthesizeDistributedLTS {
 		File tmpSaveFile = null;
 		try {
 			tmpAutFile = File.createTempFile("synetAut", ".aut");
-			try (FileWriter fw = new FileWriter(tmpAutFile);
+			try (FileWriterWithEncoding fw = new FileWriterWithEncoding(tmpAutFile, "UTF-8");
 					BufferedWriter bw = new BufferedWriter(fw)) {
 				bw.write(ltsSynetFormat);
 			}
 
 			tmpDisFile = File.createTempFile("synetDis", ".dis");
-			try (FileWriter fw = new FileWriter(tmpDisFile);
+			try (FileWriterWithEncoding fw = new FileWriterWithEncoding(tmpDisFile, "UTF-8");
 					BufferedWriter bw = new BufferedWriter(fw)) {
 				bw.write(getDisString());
 			}
@@ -106,9 +107,9 @@ public class SynetSynthesizeDistributedLTS {
 				}
 			}
 
-			try (InputStreamReader errorStream = new InputStreamReader(p.getErrorStream());
+			try (InputStreamReader errorStream = new InputStreamReader(p.getErrorStream(), "UTF-8");
 					BufferedReader error = new BufferedReader(errorStream);
-					InputStreamReader brStream = new InputStreamReader(p.getInputStream());
+					InputStreamReader brStream = new InputStreamReader(p.getInputStream(), "UTF-8");
 					BufferedReader br = new BufferedReader(brStream)) {
 				String line = "";
 				while ((line = br.readLine()) != null) {

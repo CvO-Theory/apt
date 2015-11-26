@@ -207,7 +207,7 @@ public class TestTSCollection {
 	public static TransitionSystem getNonPersistentNonDeterministicTS() {
 		TransitionSystem ts = getPersistentNonDeterministicTS();
 
-		State r2 = ts.createState("r2");
+		ts.createState("r2");
 		ts.createArc("s0", "r2", "c");
 
 		return ts;
@@ -305,15 +305,15 @@ public class TestTSCollection {
 	public static TransitionSystem getDifferentCyclesTS() {
 		TransitionSystem ts = new TransitionSystem();
 
-		State s00 = ts.createState("s00");
-		State s10 = ts.createState("s10");
-		State s20 = ts.createState("s20");
-		State s01 = ts.createState("s01");
+		ts.createState("s00");
+		ts.createState("s10");
+		ts.createState("s20");
+		ts.createState("s01");
 		State s11 = ts.createState("s11");
-		State s21 = ts.createState("s21");
-		State s02 = ts.createState("s02");
-		State s12 = ts.createState("s12");
-		State s22 = ts.createState("s22");
+		ts.createState("s21");
+		ts.createState("s02");
+		ts.createState("s12");
+		ts.createState("s22");
 
 		ts.setInitialState(s11);
 
@@ -626,7 +626,7 @@ public class TestTSCollection {
 	public static TransitionSystem getACBCCLoopTS() {
 		TransitionSystem ts = new TransitionSystem();
 
-		State[] states = ts.createStates("s0", "s1", "s2", "s3", "s4");
+		ts.createStates("s0", "s1", "s2", "s3", "s4");
 		ts.setInitialState("s0");
 
 		ts.createArc("s0", "s1", "a");
@@ -641,7 +641,7 @@ public class TestTSCollection {
 	public static TransitionSystem getNeedsRegionForStateSeperationTS() {
 		TransitionSystem ts = new TransitionSystem();
 
-		State[] states = ts.createStates("s0", "s1", "s2", "s3", "s4");
+		ts.createStates("s0", "s1", "s2", "s3", "s4");
 		ts.setInitialState("s0");
 
 		ts.createArc("s0", "s1", "a");
@@ -655,7 +655,7 @@ public class TestTSCollection {
 	public static TransitionSystem getStateSeparationFailureTS() {
 		TransitionSystem ts = new TransitionSystem();
 
-		State[] states = ts.createStates("s0", "s1", "fail0", "fail1");
+		ts.createStates("s0", "s1", "fail0", "fail1");
 		ts.setInitialState("s0");
 
 		// The following two arcs mean that a and b must have the same effects

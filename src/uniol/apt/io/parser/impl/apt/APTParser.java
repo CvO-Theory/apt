@@ -20,11 +20,13 @@
 package uniol.apt.io.parser.impl.apt;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import org.apache.commons.io.IOUtils;
+
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
@@ -68,7 +70,7 @@ public class APTParser {
 		ts = null;
 
 		StringBuilder builder = new StringBuilder();
-		try (InputStreamReader isr = new InputStreamReader(is);
+		try (InputStreamReader isr = new InputStreamReader(is, "UTF-8");
 				BufferedReader reader = new BufferedReader(isr)) {
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -78,7 +80,7 @@ public class APTParser {
 		}
 		String data = builder.toString();
 
-		try (InputStream newIs = new ByteArrayInputStream(data.getBytes())) {
+		try (InputStream newIs = IOUtils.toInputStream(data)) {
 			if (data.matches("(?s).*\\.type\\s+(LTS|TS)(?s).*")) {
 				ts = new AptLTSParser().parse(newIs);
 			} else if (data.matches("(?s).*\\.type\\s+(LPN|PN)(?s).*")) {

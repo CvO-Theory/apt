@@ -22,12 +22,18 @@ package uniol.apt.extension;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
 
 import uniol.apt.module.exception.ModuleException;
 
@@ -77,8 +83,9 @@ public class ExtendStateFile {
 	}
 
 	public void parse() throws IOException, ModuleException {
-		try (FileReader fr = new FileReader(file);
-				BufferedReader reader = new BufferedReader(fr)) {
+		try (InputStream is = FileUtils.openInputStream(this.file);
+				Reader isr = new InputStreamReader(is, "UTF-8");
+				BufferedReader reader = new BufferedReader(isr)) {
 			String line;
 
 			while ((line = reader.readLine()) != null) {
@@ -105,8 +112,9 @@ public class ExtendStateFile {
 	}
 
 	public void render() throws IOException {
-		try (FileWriter fw = new FileWriter(file);
-				BufferedWriter writer = new BufferedWriter(fw)) {
+		try (OutputStream os = FileUtils.openOutputStream (this.file);
+				Writer osw = new OutputStreamWriter(os, "UTF-8");
+				Writer writer = new BufferedWriter(osw)) {
 			for (BitSet code : minimalCodes) {
 				writer.write(MINIMAL_CODE_PREFIX + codeToCodeString(code) + "\n");
 			}

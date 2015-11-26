@@ -22,9 +22,10 @@ package uniol.apt.analysis.petrify;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import org.apache.commons.io.output.FileWriterWithEncoding;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -69,7 +70,7 @@ public class PetrifyLTSSynthesize {
 		File tmpAutFile = null;
 		try {
 			tmpAutFile = File.createTempFile("petrifyAut", ".aut");
-			try (FileWriter fw = new FileWriter(tmpAutFile);
+			try (FileWriterWithEncoding fw = new FileWriterWithEncoding(tmpAutFile, "UTF-8");
 					BufferedWriter bw = new BufferedWriter(fw)) {
 				bw.write(petrifyLts);
 			}
@@ -94,23 +95,10 @@ public class PetrifyLTSSynthesize {
 				throw new PetrifyNotFoundException();
 			}
 
-			try (InputStreamReader errorStream = new InputStreamReader(p.getErrorStream());
-					BufferedReader error = new BufferedReader(errorStream);
-					InputStreamReader brStream = new InputStreamReader(p.getInputStream());
-					BufferedReader br = new BufferedReader(brStream)) {
-				String line = "";
-				String net = "";
-				while ((line = br.readLine()) != null) {
-					net += line + "\n";
-					try {
-						p.waitFor();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-
+			try (InputStreamReader errorStream = new InputStreamReader(p.getErrorStream(), "UTF-8");
+					BufferedReader error = new BufferedReader(errorStream)) {
 				try {
-					pn_ = new PetrifyPNParser().parseString(net);
+					pn_ = new PetrifyPNParser().parse(p.getInputStream());
 				} catch (ParseException e) {
 					throw new ModuleException(e);
 				}

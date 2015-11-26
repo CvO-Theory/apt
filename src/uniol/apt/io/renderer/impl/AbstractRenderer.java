@@ -46,7 +46,7 @@ public abstract class AbstractRenderer<G> implements Renderer<G> {
 	@Override
 	public void renderFile(G obj, File file) throws RenderException, IOException {
 		try (OutputStream os = FileUtils.openOutputStream(file);
-				OutputStreamWriter osw = new OutputStreamWriter(os);
+				OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
 				BufferedWriter bw = new BufferedWriter(osw)) {
 			render(obj, bw);
 		}

@@ -53,9 +53,9 @@ public class GenerateStepNet {
 	static final public String TRANSITIONS_KEY = "TransitionsOfStep";
 
 	// templates for graphviz export
-	static final public String TS_NODE_TEMPLATE = "%1$s[label=\"%2$s\"]; // node for marking %3$s\n";
-	static final public String TS_INIT_TEMPLATE = "%1$s[label=\"%2$s\", shape=circle]; // node for marking %3$s\n";
-	static final public String TS_EDGE_TEMPLATE = "%1$s -> %2$s[label=\"%3$s\"];\n";
+	static final public String TS_NODE_TEMPLATE = "%1$s[label=\"%2$s\"]; // node for marking %3$s%n";
+	static final public String TS_INIT_TEMPLATE = "%1$s[label=\"%2$s\", shape=circle]; // node for marking %3$s%n";
+	static final public String TS_EDGE_TEMPLATE = "%1$s -> %2$s[label=\"%3$s\"];%n";
 
 	final private PetriNet pn;
 	final private PetriNet stepNet;

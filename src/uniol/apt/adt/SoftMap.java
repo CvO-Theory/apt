@@ -176,11 +176,6 @@ public class SoftMap<K, V> implements Map<K, V> {
 	public String toString() {
 		return getMap().toString();
 	}
-
-	@Override
-	public Object clone() {
-		return new SoftMap<>(this);
-	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

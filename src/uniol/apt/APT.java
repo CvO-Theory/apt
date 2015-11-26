@@ -560,7 +560,7 @@ public class APT {
 					if (outputWithName[i])
 						out.print(returnValues.get(i).getName() + ": ");
 
-					OutputStreamWriter writer = new OutputStreamWriter(out);
+					OutputStreamWriter writer = new OutputStreamWriter(out, "UTF-8");
 					returnValuesTransformer.transform(writer,
 							values.get(i), returnValues.get(i).getKlass());
 					writer.flush();
@@ -579,7 +579,7 @@ public class APT {
 			outPrinter.flush();
 			System.exit(status.getValue());
 		} catch (ModuleException e) {
-			errPrinter.println(String.format("Error while invoking module '%s':\n  %s",
+			errPrinter.println(String.format("Error while invoking module '%s':%n  %s",
 						module.getName(), e.getMessage()));
 			errPrinter.flush();
 			System.exit(ExitStatus.ERROR.getValue());
@@ -608,7 +608,7 @@ public class APT {
 
 		if (file.exists())
 			throw new IOException("File '" + file + "' already exists");
-		return new PrintStream(FileUtils.openOutputStream(file));
+		return new PrintStream(FileUtils.openOutputStream(file), false, "UTF-8");
 	}
 
 	private static void printTooManyArgumentsAndExit(Module module) {

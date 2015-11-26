@@ -143,13 +143,13 @@ public class ModuleUtils {
 
 		sb.append("\n");
 		for (Parameter parameter : parameters) {
-			formatter.format("  %-10s %s\n", parameter.getName(), parameter.getDescription());
+			formatter.format("  %-10s %s%n", parameter.getName(), parameter.getDescription());
 		}
 		for (Parameter parameter : optionalParameters) {
-			formatter.format("  %-10s %s\n", parameter.getName(), parameter.getDescription());
+			formatter.format("  %-10s %s%n", parameter.getName(), parameter.getDescription());
 		}
 		for (ReturnValue value : fileReturnValues) {
-			formatter.format("  %-10s Optional file name for writing the output to\n", value.getName());
+			formatter.format("  %-10s Optional file name for writing the output to%n", value.getName());
 		}
 
 		formatter.close();

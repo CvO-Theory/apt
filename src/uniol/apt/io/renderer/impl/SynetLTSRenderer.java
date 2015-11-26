@@ -64,7 +64,7 @@ public class SynetLTSRenderer extends AbstractRenderer<TransitionSystem> impleme
 			String label = e.getLabel();
 			String source = e.getSource().getId();
 			String target = e.getTarget().getId();
-			writer.append(String.format("(%s, %s, %s)\n", rename.get(source), label, rename.get(target)));
+			writer.append(String.format("(%s, %s, %s)%n", rename.get(source), label, rename.get(target)));
 		}
 	}
 }

@@ -26,7 +26,7 @@ import uniol.apt.io.renderer.Renderer;
  * This class renders Petri nets in the dot graph file format
  * @author vsp
  */
-public class DotPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
+public class DotPNRenderer extends AbstractSTRenderer<PetriNet> implements Renderer<PetriNet> {
 	public DotPNRenderer() {
 		super("uniol/apt/io/renderer/impl/DotPN.stg", "pn");
 	}

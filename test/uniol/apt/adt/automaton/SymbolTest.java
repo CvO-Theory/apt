@@ -44,7 +44,7 @@ public class SymbolTest {
 		assertThat(a, not(equalTo(Symbol.EPSILON)));
 		assertThat(a.equals("a"), is(false));
 		assertThat(a, hasToString("[a]"));
-		assertThat(a.isEpsilon(), equalTo(false));
+		assertThat(a.isEpsilon(), is(false));
 		assertThat(a.getEvent(), is("a"));
 	}
 

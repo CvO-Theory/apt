@@ -19,6 +19,7 @@
 
 package uniol.apt.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +35,8 @@ import java.util.regex.Pattern;
  *
  * @author Thomas Strathmann
  */
-public class StringComparator implements Comparator<String> {
+public class StringComparator implements Comparator<String>, Serializable {
+	private static final long serialVersionUID = 0x1l;
 
 	private static final Pattern pattern =
 		Pattern.compile("(.*?)([0-9]+)");
