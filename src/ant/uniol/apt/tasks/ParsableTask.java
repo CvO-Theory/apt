@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +35,12 @@ import org.apache.tools.ant.types.FileSet;
 import static org.apache.tools.ant.Project.MSG_ERR;
 
 import uniol.apt.tasks.parsers.*;
-import uniol.apt.io.parser.impl.*;
+import uniol.apt.io.parser.LTSParsers;
+import uniol.apt.io.parser.PNParsers;
+import uniol.apt.io.parser.Parser;
+import uniol.apt.io.parser.ParserNotFoundException;
+import uniol.apt.io.parser.Parsers;
+import uniol.apt.io.parser.impl.RegexParser;
 
 /**
  * Ant task to verify that a list of files is parsable.
@@ -90,20 +96,12 @@ public class ParsableTask extends Task {
 		}
 
 		boolean fail = false;
-		AbstractParserTester[] testers = null;
+		List<AbstractParserTester> testers = new ArrayList<>();
 		try {
 			try {
-				testers = new AbstractParserTester[] {
-					new ParserTester<>(new AptPNParser(), outputdir),
-					new ParserTester<>(new AptLTSParser(), outputdir),
-					new ParserTester<>(new LoLAPNParser(), outputdir),
-					new ParserTester<>(new SynetPNParser(), outputdir),
-					new ParserTester<>(new SynetLTSParser(), outputdir),
-					new ParserTester<>(new PetrifyPNParser(), outputdir),
-					new ParserTester<>(new PetrifyLTSParser(), outputdir),
-					new ParserTester<>(new RegexParser(), outputdir),
-					new ParserTester<>(new PnmlPNParser(), outputdir),
-				};
+				testers.add(new ParserTester<>(new RegexParser(), outputdir));
+				testers.addAll(constructParserTesters(PNParsers.INSTANCE));
+				testers.addAll(constructParserTesters(LTSParsers.INSTANCE));
 			} catch (FileNotFoundException | UnsupportedEncodingException e) {
 				throw new BuildException(e);
 			}
@@ -127,8 +125,22 @@ public class ParsableTask extends Task {
 			throw new BuildException("Errors found; see above messages.");
 	}
 
+	private <G> List<AbstractParserTester> constructParserTesters(Parsers<G> parsers)
+			throws FileNotFoundException, UnsupportedEncodingException {
+		List<AbstractParserTester> ret = new ArrayList<>();
+		for (String format : parsers.getSupportedFormats()) {
+			try {
+				ret.add(new ParserTester<>(parsers.getParser(format), outputdir));
+			} catch (ParserNotFoundException ex) {
+				throw new BuildException("Internal error: Parsers class claims to support a format, "
+						+ "but can't provide a parser for it");
+			}
+		}
+		return ret;
+	}
+
 	/** Do the work */
-	private boolean parseFile(AbstractParserTester[] testers, File file, String fileName, boolean expectUnparsable) {
+	private boolean parseFile(Collection<AbstractParserTester> testers, File file, String fileName, boolean expectUnparsable) {
 		// Try various parsers and hope that one of them works, but always check all parsers to make sure they
 		// can handle unparsable files correctly.
 		boolean fail = false;
