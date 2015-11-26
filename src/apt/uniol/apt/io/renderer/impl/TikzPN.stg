@@ -1,0 +1,102 @@
+/*-
+ * APT - Analysis of Petri Nets and labeled Transition systems
+ * Copyright (C) 2015  vsp
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+/**
+ * Stringtemplate template group file for rendering Petri nets as Tikz pictures.
+ * @author: vsp
+ */
+
+/**
+ * Main template, the TikzPNRenderer uses this.
+ * @param pn The Petri net
+ */
+pn(pn) ::= <<
+% This document uses the tikz graph drawing capabilities.
+% More informations about them are in part IV of the TikZ & PGF manual
+\\documentclass{standalone}
+\\usepackage{ifluatex}
+\\ifluatex
+	% nothing ...
+\\else
+	\\errmessage{This documents needs processing by lualatex because of the tikz graph drawing functions}
+\\fi
+
+\\usepackage{fontspec}
+\\usepackage{tikz}
+
+\\usetikzlibrary{arrows,graphdrawing,petri,positioning}
+\\usegdlibrary{force}
+% other useful tikz graph drawing libraries: circular, layered, trees
+\\tikzset{>=latex'}
+
+\\begin{document}
+	% other graph drawing layouts: layered layout, tree layout, simple necklace layout
+	<pnpicture(pn,"auto,label position=left,node distance=2cm and 2cm,spring layout")>
+\\end{document}
+>>
+
+/**
+ * Template for a tikzpicture showing a Petri net
+ * @param pn The Petri net
+ * @param options optional options for the tikzpicture environment
+ */
+pnpicture(pn, options) ::= <<
+\\begin{tikzpicture}<if(options)>[<options>]<endif>
+	<pn.transitions:transition();separator="\n">
+	<pn.places:place();separator="\n">
+	<pn.transitions:edges();separator="\n">
+\\end{tikzpicture}
+>>
+
+/**
+ * Template for a single transition
+ * @param t Object describing the transition (Needed properties: id, label)
+ */
+transition(t) ::= <<
+\\node[transition,label={:<t.label>}](<t.id>){<t.id>};
+>>
+
+/**
+ * Template for a single place
+ * @param p Object describing the place (Needed properties: id and initialToken)
+ */
+place(p) ::= <<
+\\node[place,label={:<p.id>},tokens=<p.initialToken>](<p.id>){};
+>>
+
+/**
+ * Template for all edges coming from or leading to a transition
+ * @param t Object describing the transition (Needed properties: id, presetEdges and postsetEdges)
+ */
+edges(t) ::= <<
+\\draw (<t.id>)
+	<t.presetEdges:edge("pre");separator="\n">
+	<t.postsetEdges:edge("post");separator="\n">
+;
+>>
+
+/**
+ * Template for an edge
+ * @param a Object describing the arc (Needed properties: place and weight)
+ */
+edge(a,type) ::= <<
+edge[<type>]<\t>node {<a.weight>}<\t>(<a.place.id>)
+>>
+
+// vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
