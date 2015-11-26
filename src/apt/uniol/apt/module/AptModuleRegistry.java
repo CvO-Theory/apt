@@ -19,17 +19,10 @@
 
 package uniol.apt.module;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.util.ServiceLoader;
 
 import org.apache.commons.collections4.Trie;
 import org.apache.commons.collections4.trie.PatriciaTrie;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
 
 /**
  * Used to register modules that are used in APT.
@@ -40,61 +33,26 @@ import org.apache.commons.io.LineIterator;
 public class AptModuleRegistry extends AbstractModuleRegistry {
 	public static final AptModuleRegistry INSTANCE = new AptModuleRegistry();
 
-	/**
-	 * Constructor
-	 */
-	@SuppressWarnings("unchecked")
 	private AptModuleRegistry() {
-		ClassLoader cl = ClassLoader.getSystemClassLoader();
-		try {
-			Enumeration<URL> moduleNames = cl.getResources("META-INF/uniol/apt/compiler/"
-					+ Module.class.getCanonicalName());
-
-			while (moduleNames.hasMoreElements()) {
-				try (InputStream is = moduleNames.nextElement().openStream()) {
-					LineIterator lIter = IOUtils.lineIterator(is, "UTF-8");
-					while (lIter.hasNext()) {
-						String moduleName = lIter.next();
-						Class<? extends Module> moduleClass;
-						try {
-							moduleClass =
-								(Class<? extends Module>) cl.loadClass(moduleName);
-						} catch (ClassNotFoundException ex) {
-							throw new RuntimeException(String.format(
-									"Could not load class %s",
-									moduleName), ex);
-						}
-						Module module;
-						try {
-							module = moduleClass.newInstance();
-						} catch (ClassCastException
-								| IllegalAccessException
-								| InstantiationException ex) {
-							throw new RuntimeException(String.format(
-									"Could not instantiate %s",
-									moduleName), ex);
-						}
-						String name = module.getName();
-						if (name == null || name.equals("")
-								|| !name.equals(name.toLowerCase())) {
-							throw new RuntimeException(String.format(
-									"Module %s reports an invalid name: %s",
-									moduleName, name));
-						}
-						Module oldModule = findModule(name);
-						if (oldModule != null && !oldModule.getClass().equals(moduleClass)) {
-							throw new RuntimeException(String.format(
-									"Different modules claim, to have name %s:"
-									+ "%s and %s", name,
-									oldModule.getClass().getCanonicalName(),
-									moduleName));
-						}
-						registerModule(module);
-					}
-				}
+		super();
+		for (Module module : ServiceLoader.load(Module.class)) {
+			String moduleName = module.getClass().getCanonicalName();
+			String name = module.getName();
+			if (name == null || name.equals("")
+					|| !name.equals(name.toLowerCase())) {
+				throw new RuntimeException(String.format(
+						"Module %s reports an invalid name: %s",
+						moduleName, name));
 			}
-		} catch (IOException ex) {
-			throw new RuntimeException("Failed to discover modules", ex);
+			Module oldModule = findModule(name);
+			if (oldModule != null && !oldModule.getClass().equals(module.getClass())) {
+				throw new RuntimeException(String.format(
+						"Different modules claim, to have name %s:"
+						+ " %s and %s", name,
+						oldModule.getClass().getCanonicalName(),
+						moduleName));
+			}
+			registerModule(module);
 		}
 
 	}

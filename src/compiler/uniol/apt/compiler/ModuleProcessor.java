@@ -112,7 +112,7 @@ public class ModuleProcessor extends AbstractProcessor {
 			this.modules.add(className);
 		}
 
-		String resourceName = "META-INF/uniol/apt/compiler/" + this.interfaceName;
+		String resourceName = "META-INF/services/" + this.interfaceName;
 		try {
 			// read already listed modules
 			try {
