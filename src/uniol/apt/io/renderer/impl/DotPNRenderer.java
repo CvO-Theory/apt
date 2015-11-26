@@ -19,31 +19,16 @@
 
 package uniol.apt.io.renderer.impl;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import org.stringtemplate.v4.AutoIndentWriter;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
-
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.io.renderer.Renderer;
-import uniol.apt.io.renderer.RenderException;
 
 /**
  * This class renders Petri nets in the dot graph file format
  * @author vsp
  */
 public class DotPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
-	@Override
-	public void render(PetriNet pn, Writer writer) throws RenderException, IOException {
-		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/DotPN.stg");
-		ST pnTemplate = group.getInstanceOf("pn");
-
-		pnTemplate.add("pn", pn);
-
-		pnTemplate.write(new AutoIndentWriter(writer), new ThrowingErrorListener());
+	public DotPNRenderer() {
+		super("uniol/apt/io/renderer/impl/DotPN.stg", "pn");
 	}
 }
 
