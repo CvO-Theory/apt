@@ -32,7 +32,7 @@ import uniol.apt.module.ModuleInputSpec;
  *
  */
 @AptModule
-public class ExtendTSExplicitPVModule extends ExtendTSModule implements Module {
+public class ExtendTSExplicitPVModule extends AbstractExtendTSModule implements Module {
 	@Override
 	public String getName() {
 		return "extend_pv_lts";
