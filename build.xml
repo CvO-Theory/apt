@@ -290,6 +290,7 @@
 				<include name="**/*.class" />
 				<exclude name="uniol/apt/io/parser/impl/AptLTSFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/AptPNFormat*.class" />
+				<exclude name="uniol/apt/io/parser/impl/LoLAPNFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/RegexFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/SynetPNFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/SynetLTSFormat*.class" />
