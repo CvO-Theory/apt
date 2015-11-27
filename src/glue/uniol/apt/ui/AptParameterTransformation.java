@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2015       vsp
+ * Copyright (C) 2015 Uli Schlachter
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,26 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.compiler;
+package uniol.apt.ui;
 
-import uniol.apt.module.AptModule;
-import uniol.apt.module.Module;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Annotation processor which scans for an AptModule annotation, analyzes all classes marked by this
- * annotation and writes their names in a file in META-INF
- *
- * @author vsp
+ * Annotation marking {@link ParameterTransformation} implementations.
+ * @author Uli Schlachter
  */
-public class ModuleProcessor extends AbstractSPIServiceProcessor {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface AptParameterTransformation {
 	/**
-	 * Constructor
+	 * @return The type of parameters that is supported.
 	 */
-	public ModuleProcessor() {
-		super(AptModule.class, Module.class, false);
-	}
+	Class<?>[] value();
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

@@ -1,3 +1,4 @@
 uniol.apt.compiler.ModuleProcessor
 uniol.apt.compiler.ParserProcessor
 uniol.apt.compiler.RendererProcessor
+uniol.apt.compiler.ParameterTransformationProcessor
