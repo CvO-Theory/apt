@@ -60,10 +60,8 @@ import uniol.apt.analysis.snet.SNetResult;
 import uniol.apt.analysis.tnet.TNetResult;
 import uniol.apt.analysis.trapsAndSiphons.TrapsSiphonsList;
 import uniol.apt.extension.ExtendMode;
-import uniol.apt.io.parser.LTSParsers;
 import uniol.apt.io.parser.Parsers;
 import uniol.apt.io.parser.ParserNotFoundException;
-import uniol.apt.io.parser.PNParsers;
 import uniol.apt.module.AptModuleRegistry;
 import uniol.apt.module.Category;
 import uniol.apt.module.Module;
@@ -84,6 +82,8 @@ import uniol.apt.ui.ParametersTransformer;
 import uniol.apt.ui.impl.ParametersTransformerImpl;
 import uniol.apt.ui.impl.ReturnValuesTransformerImpl;
 import uniol.apt.ui.impl.SimpleParametersParser;
+import uniol.apt.ui.impl.parameter.AptLTSParserParameterTransformation;
+import uniol.apt.ui.impl.parameter.AptPNParserParameterTransformation;
 import uniol.apt.ui.impl.parameter.CharacterParameterTransformation;
 import uniol.apt.ui.impl.parameter.ExtendModeParameterTransformation;
 import uniol.apt.ui.impl.parameter.FiniteAutomatonParameterTransformation;
@@ -92,7 +92,6 @@ import uniol.apt.ui.impl.parameter.IntegerParameterTransformation;
 import uniol.apt.ui.impl.parameter.MatrixFileFormatParameterTransformation;
 import uniol.apt.ui.impl.parameter.NetOrTSParameterTransformation;
 import uniol.apt.ui.impl.parameter.ParikhVectorParameterTransformation;
-import uniol.apt.ui.impl.parameter.ParserParameterTransformation;
 import uniol.apt.ui.impl.parameter.StringParameterTransformation;
 import uniol.apt.ui.impl.parameter.WordParameterTransformation;
 import uniol.apt.ui.impl.returns.BooleanReturnValueTransformation;
@@ -146,11 +145,9 @@ public class APT {
 		parametersTransformer.addTransformation(Word.class, new WordParameterTransformation());
 		try {
 			parametersTransformer.addTransformation(PetriNet.class,
-					new ParserParameterTransformation<PetriNet>(
-						PNParsers.INSTANCE.getParser("apt"), "Petri net"));
+					new AptPNParserParameterTransformation());
 			parametersTransformer.addTransformation(TransitionSystem.class,
-					new ParserParameterTransformation<TransitionSystem>(
-						LTSParsers.INSTANCE.getParser("apt"), "transition system"));
+					new AptLTSParserParameterTransformation());
 		} catch (ParserNotFoundException ex) {
 			errPrinter.println("Error finding apt parser: " + ex.getMessage());
 			errPrinter.flush();
