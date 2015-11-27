@@ -28,6 +28,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.apt.APTParser;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
 /**
@@ -36,6 +37,7 @@ import uniol.apt.ui.ParameterTransformation;
  * @author Renke Grunwald
  *
  */
+@AptParameterTransformation(PetriNetOrTransitionSystem.class)
 public class NetOrTSParameterTransformation implements ParameterTransformation<PetriNetOrTransitionSystem> {
 	@Override
 	public PetriNetOrTransitionSystem transform(String filename) throws ModuleException {

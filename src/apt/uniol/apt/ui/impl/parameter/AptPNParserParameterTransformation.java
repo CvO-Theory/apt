@@ -22,11 +22,13 @@ package uniol.apt.ui.impl.parameter;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.io.parser.PNParsers;
 import uniol.apt.io.parser.ParserNotFoundException;
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
 /**
  * @author Uli Schlachter
  */
+@AptParameterTransformation(PetriNet.class)
 public class AptPNParserParameterTransformation extends ParserParameterTransformation<PetriNet>
 		implements ParameterTransformation<PetriNet> {
 	public AptPNParserParameterTransformation() throws ParserNotFoundException {

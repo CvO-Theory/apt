@@ -19,6 +19,7 @@
 
 package uniol.apt.ui.impl.parameter;
 
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
 import uniol.apt.module.exception.ModuleException;
@@ -29,6 +30,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Renke Grunwald
  *
  */
+@AptParameterTransformation(Integer.class)
 public class IntegerParameterTransformation implements ParameterTransformation<Integer> {
 	@Override
 	public Integer transform(String arg) throws ModuleException {

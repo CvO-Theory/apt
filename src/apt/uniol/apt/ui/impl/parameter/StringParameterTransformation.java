@@ -19,6 +19,7 @@
 
 package uniol.apt.ui.impl.parameter;
 
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
 /**
@@ -27,6 +28,7 @@ import uniol.apt.ui.ParameterTransformation;
  * @author Renke Grunwald
  *
  */
+@AptParameterTransformation(String.class)
 public class StringParameterTransformation implements ParameterTransformation<String> {
 	@Override
 	public String transform(String arg) {

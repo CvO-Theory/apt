@@ -21,12 +21,14 @@ package uniol.apt.ui.impl.parameter;
 
 import uniol.apt.extension.ExtendMode;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
 /**
  * @author Renke Grunwald
  *
  */
+@AptParameterTransformation(ExtendMode.class)
 public class ExtendModeParameterTransformation implements ParameterTransformation<ExtendMode> {
 	@Override
 	public ExtendMode transform(String mode) throws ModuleException {

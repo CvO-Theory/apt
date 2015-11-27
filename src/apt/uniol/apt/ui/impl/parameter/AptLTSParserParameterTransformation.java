@@ -22,11 +22,13 @@ package uniol.apt.ui.impl.parameter;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.LTSParsers;
 import uniol.apt.io.parser.ParserNotFoundException;
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
 /**
  * @author Uli Schlachter
  */
+@AptParameterTransformation(TransitionSystem.class)
 public class AptLTSParserParameterTransformation extends ParserParameterTransformation<TransitionSystem>
 		implements ParameterTransformation<TransitionSystem> {
 	public AptLTSParserParameterTransformation() throws ParserNotFoundException {

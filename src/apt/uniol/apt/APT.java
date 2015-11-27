@@ -37,7 +37,6 @@ import org.apache.commons.io.FileUtils;
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.INode;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
-import uniol.apt.adt.automaton.FiniteAutomaton;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
@@ -45,7 +44,6 @@ import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.algebra.MatrixFileFormat;
 import uniol.apt.analysis.bisimulation.NonBisimilarPath;
 import uniol.apt.analysis.connectivity.Component;
 import uniol.apt.analysis.connectivity.Components;
@@ -59,9 +57,6 @@ import uniol.apt.analysis.sideconditions.SideConditions;
 import uniol.apt.analysis.snet.SNetResult;
 import uniol.apt.analysis.tnet.TNetResult;
 import uniol.apt.analysis.trapsAndSiphons.TrapsSiphonsList;
-import uniol.apt.extension.ExtendMode;
-import uniol.apt.io.parser.Parsers;
-import uniol.apt.io.parser.ParserNotFoundException;
 import uniol.apt.module.AptModuleRegistry;
 import uniol.apt.module.Category;
 import uniol.apt.module.Module;
@@ -79,21 +74,9 @@ import uniol.apt.module.impl.ReturnValue;
 import uniol.apt.module.impl.SimpleModulePreconditionsChecker;
 import uniol.apt.ui.ParametersParser;
 import uniol.apt.ui.ParametersTransformer;
-import uniol.apt.ui.impl.ParametersTransformerImpl;
+import uniol.apt.ui.impl.AptParametersTransformer;
 import uniol.apt.ui.impl.ReturnValuesTransformerImpl;
 import uniol.apt.ui.impl.SimpleParametersParser;
-import uniol.apt.ui.impl.parameter.AptLTSParserParameterTransformation;
-import uniol.apt.ui.impl.parameter.AptPNParserParameterTransformation;
-import uniol.apt.ui.impl.parameter.CharacterParameterTransformation;
-import uniol.apt.ui.impl.parameter.ExtendModeParameterTransformation;
-import uniol.apt.ui.impl.parameter.FiniteAutomatonParameterTransformation;
-import uniol.apt.ui.impl.parameter.GraphParameterTransformation;
-import uniol.apt.ui.impl.parameter.IntegerParameterTransformation;
-import uniol.apt.ui.impl.parameter.MatrixFileFormatParameterTransformation;
-import uniol.apt.ui.impl.parameter.NetOrTSParameterTransformation;
-import uniol.apt.ui.impl.parameter.ParikhVectorParameterTransformation;
-import uniol.apt.ui.impl.parameter.StringParameterTransformation;
-import uniol.apt.ui.impl.parameter.WordParameterTransformation;
 import uniol.apt.ui.impl.returns.BooleanReturnValueTransformation;
 import uniol.apt.ui.impl.returns.ComponentsReturnValueTransformation;
 import uniol.apt.ui.impl.returns.INodeCollectionReturnValueTransformation;
@@ -119,7 +102,7 @@ public class APT {
 	public static final String STANDARD_INPUT_SYMBOL = "-";
 
 	private static final ParametersParser parametersParser = new SimpleParametersParser();
-	private static final ParametersTransformerImpl parametersTransformer = new ParametersTransformerImpl();
+	private static final ParametersTransformer parametersTransformer = AptParametersTransformer.INSTANCE;
 	private static final ReturnValuesTransformerImpl returnValuesTransformer = new ReturnValuesTransformerImpl();
 	private static final ModuleRegistry registry = AptModuleRegistry.INSTANCE;
 	private static final Trie<String, String> removedModules = new PatriciaTrie<>();
@@ -131,38 +114,6 @@ public class APT {
 	 * Hidden Constructor.
 	 */
 	private APT() {
-	}
-
-	/**
-	 * Add parameter transformations.
-	 * <p/>
-	 */
-	@SuppressWarnings("unchecked")
-	public static void addParametersTransformations() {
-		parametersTransformer.addTransformation(String.class, new StringParameterTransformation());
-		parametersTransformer.addTransformation(Character.class, new CharacterParameterTransformation());
-		parametersTransformer.addTransformation(Integer.class, new IntegerParameterTransformation());
-		parametersTransformer.addTransformation(Word.class, new WordParameterTransformation());
-		try {
-			parametersTransformer.addTransformation(PetriNet.class,
-					new AptPNParserParameterTransformation());
-			parametersTransformer.addTransformation(TransitionSystem.class,
-					new AptLTSParserParameterTransformation());
-		} catch (ParserNotFoundException ex) {
-			errPrinter.println("Error finding apt parser: " + ex.getMessage());
-			errPrinter.flush();
-			System.exit(ExitStatus.ERROR.getValue());
-		}
-		parametersTransformer.addTransformation(ExtendMode.class, new ExtendModeParameterTransformation());
-		parametersTransformer.addTransformation(ParikhVector.class, new ParikhVectorParameterTransformation());
-		parametersTransformer.addTransformation(PetriNetOrTransitionSystem.class,
-				new NetOrTSParameterTransformation());
-		parametersTransformer.addTransformation((Class<IGraph<?, ?, ?>>) (Class<?>) IGraph.class,
-				new GraphParameterTransformation());
-		parametersTransformer.addTransformation(MatrixFileFormat.class,
-				new MatrixFileFormatParameterTransformation());
-		parametersTransformer.addTransformation(FiniteAutomaton.class,
-				new FiniteAutomatonParameterTransformation());
 	}
 
 	/**
@@ -227,7 +178,6 @@ public class APT {
 	}
 
 	public static void main(String[] args) {
-		addParametersTransformations();
 		addReturnValuesTransformations();
 		addRemovedModules();
 

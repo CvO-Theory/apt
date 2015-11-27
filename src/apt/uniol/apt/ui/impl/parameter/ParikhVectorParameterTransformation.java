@@ -24,9 +24,11 @@ import java.util.Map;
 
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
 /** @author Renke Grunwald */
+@AptParameterTransformation(ParikhVector.class)
 public class ParikhVectorParameterTransformation implements ParameterTransformation<ParikhVector> {
 
 	@Override

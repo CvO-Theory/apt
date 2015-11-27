@@ -19,6 +19,7 @@
 
 package uniol.apt.ui.impl.parameter;
 
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
 import uniol.apt.module.exception.ModuleException;
@@ -27,6 +28,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Manuel Gieseking
  *
  */
+@AptParameterTransformation(Character.class)
 public class CharacterParameterTransformation implements ParameterTransformation<Character> {
 
 	@Override

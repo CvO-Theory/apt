@@ -23,12 +23,14 @@ import java.util.Arrays;
 
 import uniol.apt.analysis.language.Word;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
 /**
  * Transform a string into an instance of Word.
  * @author Uli Schlachter, Daniel
  */
+@AptParameterTransformation(Word.class)
 public class WordParameterTransformation implements ParameterTransformation<Word> {
 	static final public String SIGN_FOR_SINGLE_CHARACTERS = ":";
 

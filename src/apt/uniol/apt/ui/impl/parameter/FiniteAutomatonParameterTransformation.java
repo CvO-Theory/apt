@@ -23,11 +23,13 @@ import uniol.apt.adt.automaton.FiniteAutomaton;
 import uniol.apt.io.parser.impl.RegexParser;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
 /**
  * @author Uli Schlachter
  */
+@AptParameterTransformation(FiniteAutomaton.class)
 public class FiniteAutomatonParameterTransformation implements ParameterTransformation<FiniteAutomaton> {
 
 	@Override

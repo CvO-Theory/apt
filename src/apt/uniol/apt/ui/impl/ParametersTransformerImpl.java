@@ -33,7 +33,7 @@ import uniol.apt.ui.ParametersTransformer;
  *
  * @author Renke Grunwald
  */
-public class ParametersTransformerImpl implements ParametersTransformer {
+public abstract class ParametersTransformerImpl implements ParametersTransformer {
 	private Map<Class<?>, ParameterTransformation<?>> transformations = new HashMap<>();
 
 	/**
@@ -44,8 +44,9 @@ public class ParametersTransformerImpl implements ParametersTransformer {
 	 * @param transformation
 	 *            the actual transformation
 	 */
-	public <T> void addTransformation(Class<T> klass, ParameterTransformation<T> transformation) {
-		transformations.put(klass, transformation);
+	@SuppressWarnings("unchecked")
+	protected <T> ParameterTransformation<T> addTransformation(Class<T> klass, ParameterTransformation<T> transformation) {
+		return (ParameterTransformation<T>) transformations.put(klass, transformation);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -21,9 +21,11 @@ package uniol.apt.ui.impl.parameter;
 
 import uniol.apt.analysis.algebra.MatrixFileFormat;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
 /** @author Renke Grunwald */
+@AptParameterTransformation(MatrixFileFormat.class)
 public class MatrixFileFormatParameterTransformation implements ParameterTransformation<MatrixFileFormat> {
 
 	@Override

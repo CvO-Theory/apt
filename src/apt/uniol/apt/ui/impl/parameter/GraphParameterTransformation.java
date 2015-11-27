@@ -21,12 +21,14 @@ package uniol.apt.ui.impl.parameter;
 
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 import uniol.apt.module.exception.ModuleException;
 
 /**
  * @author Uli Schlachter
  */
+@AptParameterTransformation(IGraph.class)
 public class GraphParameterTransformation implements ParameterTransformation<IGraph<?, ?, ?>> {
 	@Override
 	public IGraph<?, ?, ?> transform(String arg) throws ModuleException {
