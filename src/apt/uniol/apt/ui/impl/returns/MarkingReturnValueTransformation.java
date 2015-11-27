@@ -26,6 +26,7 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Token;
+import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
@@ -33,6 +34,7 @@ import uniol.apt.ui.ReturnValueTransformation;
  *
  * @author Vincent Göbel
  */
+@AptReturnValueTransformation(Marking.class)
 public class MarkingReturnValueTransformation implements ReturnValueTransformation<Marking> {
 
 	@Override

@@ -24,12 +24,16 @@ import java.io.Writer;
 import java.util.Collection;
 
 import uniol.apt.adt.INode;
+import uniol.apt.analysis.connectivity.Component;
+import uniol.apt.analysis.language.FiringSequence;
+import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
  * @author Uli Schlachter
  * @param <T> the type of the node that is transformed into a string
  */
+@AptReturnValueTransformation({ FiringSequence.class, Component.class })
 public class INodeCollectionReturnValueTransformation<T extends Collection<? extends INode<?, ?, ?>>>
 	implements ReturnValueTransformation<T> {
 	@Override

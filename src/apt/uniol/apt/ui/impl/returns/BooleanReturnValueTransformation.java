@@ -22,6 +22,7 @@ package uniol.apt.ui.impl.returns;
 import java.io.IOException;
 import java.io.Writer;
 
+import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
@@ -30,6 +31,7 @@ import uniol.apt.ui.ReturnValueTransformation;
  * @author Renke Grunwald
  *
  */
+@AptReturnValueTransformation(Boolean.class)
 public class BooleanReturnValueTransformation implements
 		ReturnValueTransformation<Boolean> {
 

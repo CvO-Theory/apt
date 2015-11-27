@@ -25,12 +25,14 @@ import java.io.Writer;
 import uniol.apt.analysis.connectivity.Component;
 import uniol.apt.analysis.connectivity.Components;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
  * Transform all components of a graph into a string listing the IDs.
  * @author Uli Schlachter
  */
+@AptReturnValueTransformation(Components.class)
 public class ComponentsReturnValueTransformation implements ReturnValueTransformation<Components> {
 	@Override
 	public void transform(Writer output, Components components) throws ModuleException, IOException {

@@ -23,12 +23,17 @@ import java.io.IOException;
 import java.io.Writer;
 
 import uniol.apt.adt.INode;
+import uniol.apt.adt.pn.Place;
+import uniol.apt.adt.pn.Transition;
+import uniol.apt.adt.ts.State;
+import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
  * @author Uli Schlachter
  * @param <T> the type of the node that is transformed into a string
  */
+@AptReturnValueTransformation({ INode.class, State.class, Place.class, Transition.class })
 public class INodeReturnValueTransformation<T extends INode<?, ?, ?>> implements ReturnValueTransformation<T> {
 	@Override
 	public void transform(Writer output, T node) throws IOException {

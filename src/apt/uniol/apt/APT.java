@@ -35,28 +35,7 @@ import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.io.FileUtils;
 
 import uniol.apt.adt.IGraph;
-import uniol.apt.adt.INode;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
-import uniol.apt.adt.pn.Marking;
-import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Place;
-import uniol.apt.adt.pn.Transition;
-import uniol.apt.adt.ts.ParikhVector;
-import uniol.apt.adt.ts.State;
-import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.bisimulation.NonBisimilarPath;
-import uniol.apt.analysis.connectivity.Component;
-import uniol.apt.analysis.connectivity.Components;
-import uniol.apt.analysis.cycles.lts.CycleCounterExample;
-import uniol.apt.analysis.invariants.Vector;
-import uniol.apt.analysis.isomorphism.Isomorphism;
-import uniol.apt.analysis.language.FiringSequence;
-import uniol.apt.analysis.language.Word;
-import uniol.apt.analysis.language.WordList;
-import uniol.apt.analysis.sideconditions.SideConditions;
-import uniol.apt.analysis.snet.SNetResult;
-import uniol.apt.analysis.tnet.TNetResult;
-import uniol.apt.analysis.trapsAndSiphons.TrapsSiphonsList;
 import uniol.apt.module.AptModuleRegistry;
 import uniol.apt.module.Category;
 import uniol.apt.module.Module;
@@ -74,23 +53,10 @@ import uniol.apt.module.impl.ReturnValue;
 import uniol.apt.module.impl.SimpleModulePreconditionsChecker;
 import uniol.apt.ui.ParametersParser;
 import uniol.apt.ui.ParametersTransformer;
+import uniol.apt.ui.ReturnValuesTransformer;
 import uniol.apt.ui.impl.AptParametersTransformer;
-import uniol.apt.ui.impl.ReturnValuesTransformerImpl;
+import uniol.apt.ui.impl.AptReturnValuesTransformer;
 import uniol.apt.ui.impl.SimpleParametersParser;
-import uniol.apt.ui.impl.returns.BooleanReturnValueTransformation;
-import uniol.apt.ui.impl.returns.ComponentsReturnValueTransformation;
-import uniol.apt.ui.impl.returns.INodeCollectionReturnValueTransformation;
-import uniol.apt.ui.impl.returns.INodeReturnValueTransformation;
-import uniol.apt.ui.impl.returns.IsomorphismReturnValueTransformation;
-import uniol.apt.ui.impl.returns.MarkingReturnValueTransformation;
-import uniol.apt.ui.impl.returns.NetReturnValueTransformation;
-import uniol.apt.ui.impl.returns.NonBisimilarPathReturnValueTransformation;
-import uniol.apt.ui.impl.returns.SNetResultReturnValueTransformation;
-import uniol.apt.ui.impl.returns.StringArrayArrayReturnValueTransformation;
-import uniol.apt.ui.impl.returns.TNetResultReturnValueTransformation;
-import uniol.apt.ui.impl.returns.TSReturnValueTransformation;
-import uniol.apt.ui.impl.returns.ToStringReturnValueTransformation;
-import uniol.apt.ui.impl.returns.TrapsSiphonsListReturnValueTransformation;
 
 /**
  * @author Renke Grunwald
@@ -103,7 +69,7 @@ public class APT {
 
 	private static final ParametersParser parametersParser = new SimpleParametersParser();
 	private static final ParametersTransformer parametersTransformer = AptParametersTransformer.INSTANCE;
-	private static final ReturnValuesTransformerImpl returnValuesTransformer = new ReturnValuesTransformerImpl();
+	private static final ReturnValuesTransformer returnValuesTransformer = AptReturnValuesTransformer.INSTANCE;
 	private static final ModuleRegistry registry = AptModuleRegistry.INSTANCE;
 	private static final Trie<String, String> removedModules = new PatriciaTrie<>();
 
@@ -114,56 +80,6 @@ public class APT {
 	 * Hidden Constructor.
 	 */
 	private APT() {
-	}
-
-	/**
-	 * Add return value transformations.
-	 */
-	@SuppressWarnings("unchecked")
-	public static void addReturnValuesTransformations() {
-		returnValuesTransformer.addTransformation(Boolean.class, new BooleanReturnValueTransformation());
-		returnValuesTransformer.addTransformation(Component.class,
-				new INodeCollectionReturnValueTransformation<Component>());
-		returnValuesTransformer.addTransformation(Components.class,
-				new ComponentsReturnValueTransformation());
-		returnValuesTransformer.addTransformation(CycleCounterExample.class,
-				new ToStringReturnValueTransformation<CycleCounterExample>());
-		returnValuesTransformer.addTransformation(FiringSequence.class,
-				new INodeCollectionReturnValueTransformation<FiringSequence>());
-		returnValuesTransformer.addTransformation((Class<INode<?, ?, ?>>) (Class<?>) INode.class,
-				new INodeReturnValueTransformation<>());
-		returnValuesTransformer.addTransformation(Isomorphism.class,
-				new IsomorphismReturnValueTransformation());
-		returnValuesTransformer.addTransformation(Integer.class,
-				new ToStringReturnValueTransformation<Integer>());
-		returnValuesTransformer.addTransformation(Long.class,
-				new ToStringReturnValueTransformation<Long>());
-		returnValuesTransformer.addTransformation(Marking.class, new MarkingReturnValueTransformation());
-		returnValuesTransformer.addTransformation(State.class, new INodeReturnValueTransformation<State>());
-		returnValuesTransformer.addTransformation(NonBisimilarPath.class,
-				new NonBisimilarPathReturnValueTransformation());
-		returnValuesTransformer.addTransformation(ParikhVector.class,
-				new ToStringReturnValueTransformation<ParikhVector>());
-		returnValuesTransformer.addTransformation(PetriNet.class, new NetReturnValueTransformation());
-		returnValuesTransformer.addTransformation(Place.class, new INodeReturnValueTransformation<Place>());
-		returnValuesTransformer.addTransformation(SideConditions.class,
-				new ToStringReturnValueTransformation<SideConditions>());
-		returnValuesTransformer.addTransformation(SNetResult.class, new SNetResultReturnValueTransformation());
-		returnValuesTransformer.addTransformation(String.class,
-				new ToStringReturnValueTransformation<String>());
-		returnValuesTransformer.addTransformation(String[][].class,
-				new StringArrayArrayReturnValueTransformation());
-		returnValuesTransformer.addTransformation(TNetResult.class, new TNetResultReturnValueTransformation());
-		returnValuesTransformer.addTransformation(Transition.class,
-				new INodeReturnValueTransformation<Transition>());
-		returnValuesTransformer.addTransformation(TransitionSystem.class, new TSReturnValueTransformation());
-		returnValuesTransformer.addTransformation(TrapsSiphonsList.class,
-				new TrapsSiphonsListReturnValueTransformation());
-		returnValuesTransformer.addTransformation(Vector.class,
-				new ToStringReturnValueTransformation<Vector>());
-		returnValuesTransformer.addTransformation(Word.class, new ToStringReturnValueTransformation<Word>());
-		returnValuesTransformer.addTransformation(WordList.class,
-				new ToStringReturnValueTransformation<WordList>());
 	}
 
 	private static void addRemovedModules() {
@@ -178,7 +94,6 @@ public class APT {
 	}
 
 	public static void main(String[] args) {
-		addReturnValuesTransformations();
 		addRemovedModules();
 
 		parametersParser.parse(args);

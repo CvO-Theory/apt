@@ -24,6 +24,7 @@ import java.io.Writer;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.io.renderer.impl.AptPNRenderer;
+import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
 import uniol.apt.module.exception.ModuleException;
 
@@ -34,6 +35,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Vincent Göbel
  *
  */
+@AptReturnValueTransformation(PetriNet.class)
 public class NetReturnValueTransformation implements ReturnValueTransformation<PetriNet> {
 
 	@Override

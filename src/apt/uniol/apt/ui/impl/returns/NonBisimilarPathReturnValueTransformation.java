@@ -24,6 +24,7 @@ import java.io.Writer;
 
 import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.bisimulation.NonBisimilarPath;
+import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
 import uniol.apt.util.Pair;
 
@@ -34,6 +35,7 @@ import uniol.apt.util.Pair;
  * @author Raffaela Ferrari
  *
  */
+@AptReturnValueTransformation(NonBisimilarPath.class)
 public class NonBisimilarPathReturnValueTransformation implements ReturnValueTransformation<NonBisimilarPath> {
 
 	@Override

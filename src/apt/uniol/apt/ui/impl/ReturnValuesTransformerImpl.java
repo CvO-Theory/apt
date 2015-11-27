@@ -37,8 +37,9 @@ import uniol.apt.ui.ReturnValuesTransformer;
 public class ReturnValuesTransformerImpl implements ReturnValuesTransformer {
 	private Map<Class<?>, ReturnValueTransformation<?>> transformations = new HashMap<>();
 
-	public <T> void addTransformation(Class<T> klass, ReturnValueTransformation<T> transformation) {
-		transformations.put(klass, transformation);
+	@SuppressWarnings("unchecked")
+	protected <T> ReturnValueTransformation<T> addTransformation(Class<T> klass, ReturnValueTransformation<T> transformation) {
+		return (ReturnValueTransformation<T>) transformations.put(klass, transformation);
 	}
 
 	@SuppressWarnings("unchecked")

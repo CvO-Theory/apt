@@ -25,12 +25,14 @@ import java.util.Set;
 
 import uniol.apt.adt.pn.Place;
 import uniol.apt.analysis.trapsAndSiphons.TrapsSiphonsList;
+import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
  * Transform a list of traps/siphons into a string.
  * @author Uli Schlachter
  */
+@AptReturnValueTransformation(TrapsSiphonsList.class)
 public class TrapsSiphonsListReturnValueTransformation implements ReturnValueTransformation<TrapsSiphonsList> {
 	@Override
 	public void transform(Writer output, TrapsSiphonsList tsList) throws IOException {

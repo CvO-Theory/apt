@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import uniol.apt.analysis.tnet.TNetResult;
+import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
@@ -30,6 +31,7 @@ import uniol.apt.ui.ReturnValueTransformation;
  *
  * @author Daniel
  */
+@AptReturnValueTransformation(TNetResult.class)
 public class TNetResultReturnValueTransformation implements ReturnValueTransformation<TNetResult> {
 	@Override
 	public void transform(Writer output, TNetResult result) throws IOException {

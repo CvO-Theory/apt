@@ -26,11 +26,13 @@ import org.apache.commons.collections4.MapIterator;
 
 import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.isomorphism.Isomorphism;
+import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
  * @author Uli Schlachter
  */
+@AptReturnValueTransformation(Isomorphism.class)
 public class IsomorphismReturnValueTransformation implements ReturnValueTransformation<Isomorphism> {
 	@Override
 	public void transform(Writer output, Isomorphism isomorphism) throws IOException {

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import uniol.apt.analysis.snet.SNetResult;
+import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
 
 /**
@@ -30,6 +31,7 @@ import uniol.apt.ui.ReturnValueTransformation;
  *
  * @author Daniel
  */
+@AptReturnValueTransformation(SNetResult.class)
 public class SNetResultReturnValueTransformation implements ReturnValueTransformation<SNetResult> {
 	@Override
 	public void transform(Writer output, SNetResult result) throws IOException {

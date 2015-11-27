@@ -33,7 +33,6 @@ import uniol.apt.module.exception.ModuleException;
  *
  */
 public interface ReturnValuesTransformer {
-	Map<Class<?>, ReturnValueTransformation<?>> transformations = new HashMap<>();
 
 	public <T> ReturnValueTransformation<T> getTransformation(Class<T> klass);
 
