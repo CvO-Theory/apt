@@ -26,9 +26,12 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.collections4.Trie;
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.io.FileUtils;
 
 import uniol.apt.adt.IGraph;
@@ -119,6 +122,7 @@ public class APT {
 	private static final ParametersTransformer parametersTransformer = new ParametersTransformer();
 	private static final ReturnValuesTransformer returnValuesTransformer = new ReturnValuesTransformer();
 	private static final ModuleRegistry registry = AptModuleRegistry.INSTANCE;
+	private static final Trie<String, String> removedModules = new PatriciaTrie<>();
 
 	private static final PrintStream outPrinter = System.out;
 	private static final PrintStream errPrinter = System.err;
@@ -213,9 +217,21 @@ public class APT {
 				new ToStringReturnValueTransformation<WordList>());
 	}
 
+	private static void addRemovedModules() {
+		removedModules.put("apt2baggins", "Use pn_convert / lts_convert apt baggins instead.");
+		removedModules.put("apt2lola",    "Use pn_convert / lts_convert apt lola instead.");
+		removedModules.put("apt2petrify", "Use pn_convert / lts_convert apt petrify instead.");
+		removedModules.put("apt2pnml",    "Use pn_convert / lts_convert apt pnml instead.");
+		removedModules.put("apt2synet",   "Use pn_convert / lts_convert apt synet instead.");
+		removedModules.put("petrify2apt", "Use pn_convert / lts_convert petrify apt instead.");
+		removedModules.put("pnml2apt",    "Use pn_convert / lts_convert pnml apt instead.");
+		removedModules.put("synet2apt",   "Use pn_convert / lts_convert synet apt instead.");
+	}
+
 	public static void main(String[] args) {
 		addParametersTransformations();
 		addReturnValuesTransformations();
+		addRemovedModules();
 
 		parametersParser.parse(args);
 
@@ -465,6 +481,14 @@ public class APT {
 
 	private static void printNoSuchModuleAndExit(String moduleName) {
 		errPrinter.println("No such module: " + moduleName);
+
+		Map<String, String> messages = removedModules.prefixMap(moduleName);
+		if (messages.size() == 1) {
+			Map.Entry<String, String> entry = messages.entrySet().iterator().next();
+			errPrinter.println(String.format("The module '%s' was removed. %s",
+						entry.getKey(), entry.getValue()));
+		}
+
 		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
