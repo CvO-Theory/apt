@@ -1,6 +1,7 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
  * Copyright (C) 2012-2013  Members of the project group APT
+ * Copyright (C) 2015       vsp
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +20,21 @@
 
 package uniol.apt.ui.impl.parameter;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import uniol.apt.APT;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
-import uniol.apt.io.parser.impl.apt.APTParser;
+import uniol.apt.io.parser.impl.AptPNParser;
+import uniol.apt.io.parser.impl.AptLTSParser;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
@@ -34,37 +42,69 @@ import uniol.apt.ui.ParameterTransformation;
 /**
  * Use a filename to get either a Petri net or labeled transition system.
  *
- * @author Renke Grunwald
- *
+ * @author vsp
  */
 @AptParameterTransformation(PetriNetOrTransitionSystem.class)
 public class NetOrTSParameterTransformation implements ParameterTransformation<PetriNetOrTransitionSystem> {
 	@Override
 	public PetriNetOrTransitionSystem transform(String filename) throws ModuleException {
-		APTParser parser = new APTParser();
-		boolean fromStandardInput = false;
+		PetriNet pn = null;
+		ParseException pnEx = null;
+		TransitionSystem ts = null;
+		ParseException tsEx = null;
 
 		try {
+			InputStream is;
 			if (filename.equals(APT.STANDARD_INPUT_SYMBOL)) {
-				fromStandardInput = true;
-				parser.parse(System.in);
+				is = System.in;
 			} else {
-				parser.parse(filename);
+				is = FileUtils.openInputStream(new File(filename));
 			}
-		} catch (IOException e) {
-			throw new ModuleException("Cannot parse file '" + filename + "': File does not exist");
-		} catch (ParseException ex) {
-			throw new ModuleException("Can't parse Petri net or transition system: " + ex.getMessage());
+			InputStream[] isa = duplicateInputStream(is);
+			if (is != System.in)
+				is.close();
+			try (InputStream is0 = isa[0];
+					InputStream is1 = isa[1]) {
+				try {
+					pn = new AptPNParser().parse(is0);
+				} catch (ParseException ex) {
+					pnEx = ex;
+				}
+				try {
+					ts = new AptLTSParser().parse(is1);
+				} catch (ParseException ex) {
+					tsEx = ex;
+				}
+			}
+		} catch (IOException ex) {
+			throw new ModuleException("Can't read input: " + ex.getMessage());
 		}
 
-		PetriNet pn = parser.getPn();
-		TransitionSystem ts = parser.getTs();
+		if (pnEx == null && tsEx == null) {
+			throw new ModuleException("Parsers can't decide if the input is a Petri net or a transition "
+					+ "system.");
+		} else if (pnEx != null && tsEx != null) {
+			throw new ModuleException(
+					String.format("Input is neither a Petri net nor a transition system.%n"
+						+ "Petri net parser error: %s%nTransition system parser error: %s",
+						pnEx.getMessage(), tsEx.getMessage()));
+		}
 
 		if (pn != null) {
 			return new PetriNetOrTransitionSystem(pn);
 		} else {
+			assert ts != null;
 			return new PetriNetOrTransitionSystem(ts);
 		}
+	}
+
+	private InputStream[] duplicateInputStream(InputStream is) throws IOException {
+		byte[] buf        = IOUtils.toByteArray(is);
+		InputStream[] ret = new InputStream[2];
+		for (int i = 0; i < 2; i++) {
+			ret[i] = new ByteArrayInputStream(buf);
+		}
+		return ret;
 	}
 }
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
