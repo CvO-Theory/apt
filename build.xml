@@ -208,16 +208,23 @@
 		</xml-tests>
 	</target>
 
+	<macrodef name="invoke-testng">
+		<attribute name="outputdir"/>
+		<sequential>
+			<testng outputdir="reports/@{outputdir}" verbose="2" haltonfailure="true">
+				<!-- enable assertions -->
+				<jvmarg value="-ea" />
+				<classpath>
+					<path refid="test.class.path" />
+					<path refid="project.class.path" />
+				</classpath>
+				<xmlfileset file="testng.xml" />
+			</testng>
+		</sequential>
+	</macrodef>
+
 	<target name="test" depends="javac.tests,xml.tests" description="Run tests">
-		<testng outputdir="reports/testng" verbose="2" haltonfailure="true">
-			<!-- enable assertions -->
-			<jvmarg value="-ea" />
-			<classpath>
-				<path refid="test.class.path" />
-				<path refid="project.class.path" />
-			</classpath>
-			<xmlfileset file="testng.xml" />
-		</testng>
+		<invoke-testng outputdir="testng"/>
 	</target>
 
 	<target name="test-class" depends="javac.tests"
@@ -235,15 +242,7 @@
 				<filter token="CLASS" value="${class.name}"/>
 			</filterset>
 		</copy>
-		<testng outputDir="reports/testng-single-class-${class.name}" verbose="2">
-			<!-- enable assertions -->
-			<jvmarg value="-ea" />
-			<classpath>
-				<path refid="test.class.path" />
-				<path refid="project.class.path" />
-			</classpath>
-			<xmlfileset file="testng.xml" />
-		</testng>
+		<invoke-testng outputdir="testng-single-class-${class.name}" />
 	</target>
 
 	<target name="test-method" depends="javac.tests"
@@ -263,15 +262,7 @@
 				<filter token="TEST" value="${test.name}"/>
 			</filterset>
 		</copy>
-		<testng outputDir="reports/testng-single-method-${class.name}-${test.name}" verbose="2">
-			<!-- enable assertions -->
-			<jvmarg value="-ea" />
-			<classpath>
-				<path refid="test.class.path" />
-				<path refid="project.class.path" />
-			</classpath>
-			<xmlfileset file="testng.xml" />
-		</testng>
+		<invoke-testng outputdir="testng-single-class-${class.name}-${test.name}" />
 	</target>
 
 	<target name="javadoc" description="Generate documentation from java source">
