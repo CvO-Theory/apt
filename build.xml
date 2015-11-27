@@ -47,83 +47,29 @@
 
 	<!-- Antlr4 is called here -->
 	<target name="antlr" depends="antlr.checkforchanges" unless="antlr.nochanges">
-		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
-			<arg value="-o"/>
-			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
-			<arg value="-package"/>
-			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/RegexFormatLexer.g4"/>
-		</java>
-		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
-			<arg value="-o"/>
-			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
-			<arg value="-package"/>
-			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/RegexFormatParser.g4"/>
-		</java>
-		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
-			<arg value="-o"/>
-			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
-			<arg value="-package"/>
-			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/AptPNFormat.g4"/>
-		</java>
-		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
-			<arg value="-o"/>
-			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
-			<arg value="-package"/>
-			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/AptLTSFormat.g4"/>
-		</java>
-		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
-			<arg value="-o"/>
-			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
-			<arg value="-package"/>
-			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/SynetLTSFormat.g4"/>
-		</java>
-		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
-			<arg value="-o"/>
-			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
-			<arg value="-package"/>
-			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/SynetPNFormat.g4"/>
-		</java>
-		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
-			<arg value="-o"/>
-			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
-			<arg value="-package"/>
-			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/PetrifyLTSFormatLexer.g4"/>
-		</java>
-		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
-			<arg value="-o"/>
-			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
-			<arg value="-package"/>
-			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/PetrifyLTSFormatParser.g4"/>
-		</java>
-		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
-			<arg value="-o"/>
-			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
-			<arg value="-package"/>
-			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/PetrifyPNFormatLexer.g4"/>
-		</java>
-		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
-			<arg value="-o"/>
-			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
-			<arg value="-package"/>
-			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/PetrifyPNFormatParser.g4"/>
-		</java>
-		<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
-			<arg value="-o"/>
-			<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
-			<arg value="-package"/>
-			<arg value="uniol.apt.io.parser.impl"/>
-			<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/LoLAPNFormat.g4"/>
-		</java>
+		<macrodef name="call-antlr">
+			<attribute name="name" />
+			<sequential>
+				<java classpathref="project.class.path" classname="org.antlr.v4.Tool" fork="true" failonerror="true">
+					<arg value="-o"/>
+					<arg path="generated-src/apt/uniol/apt/io/parser/impl/"/>
+					<arg value="-package"/>
+					<arg value="uniol.apt.io.parser.impl"/>
+					<arg line="${basedir}/src/apt/uniol/apt/io/parser/impl/@{name}"/>
+				</java>
+			</sequential>
+		</macrodef>
+		<call-antlr name="AptLTSFormat.g4" />
+		<call-antlr name="AptPNFormat.g4" />
+		<call-antlr name="LoLAPNFormat.g4" />
+		<call-antlr name="PetrifyLTSFormatLexer.g4" />
+		<call-antlr name="PetrifyLTSFormatParser.g4" />
+		<call-antlr name="PetrifyPNFormatLexer.g4" />
+		<call-antlr name="PetrifyPNFormatParser.g4" />
+		<call-antlr name="RegexFormatLexer.g4" />
+		<call-antlr name="RegexFormatParser.g4" />
+		<call-antlr name="SynetLTSFormat.g4" />
+		<call-antlr name="SynetPNFormat.g4" />
 		<!-- Touch the time stamp file which antlr.checkforchanges checks for -->
 		<touch file="generated-src/antlr.stamp" mkdirs="true"/>
 	</target>
