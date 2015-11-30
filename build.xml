@@ -11,6 +11,10 @@
 		<pathelement location="classes/glue" />
 	</path>
 
+	<path id="apt.class.path">
+		<path refid="project.class.path" />
+	</path>
+
 	<path id="test.class.path">
 		<path refid="project.class.path" />
 		<pathelement location="lib/mockito-1.9.5-rc1/mockito-core-1.9.5-rc1.jar" />
@@ -75,18 +79,32 @@
 		<touch file="generated-src/antlr.stamp" mkdirs="true"/>
 	</target>
 
+	<macrodef name="javac-part">
+		<attribute name="name" />
+		<attribute name="src" default="src/@{name}" />
+		<attribute name="generated-src-with-colon" default="" />
+		<attribute name="classes" default="classes/@{name}" />
+		<attribute name="depend-classpath" default="" />
+		<attribute name="includeantruntime" default="false" />
+		<element name="extra-javac-args" optional="true" implicit="true" />
+		<sequential>
+			<mkdir dir="@{classes}"/>
+			<depend srcdir="@{src}@{generated-src-with-colon}" destdir="@{classes}" classpath="@{depend-classpath}" />
+			<javac includes="**" encoding="utf-8" destdir="@{classes}" source="1.7" target="1.7"
+					debug="true" debuglevel="lines,vars,source"
+					includeantruntime="@{includeantruntime}">
+				<src path="@{src}" />
+				<extra-javac-args/>
+				<classpath refid="@{name}.class.path"/>
+				<compilerarg value="-Xlint:all"/>
+			</javac>
+		</sequential>
+	</macrodef>
+
 	<target name="javac" description="Compile java source to bytecode" depends="antlr,javac.glue,javac.compiler">
-		<mkdir dir="classes/apt"/>
-		<depend srcdir="src/apt:generated-src/apt" destdir="classes/apt" classpath="classes/glue" />
-		<javac includes="**" encoding="utf-8"
-				destdir="classes/apt" source="1.7" target="1.7"
-				debug="true" debuglevel="lines,vars,source"
-				includeantruntime="false">
-			<src path="src/apt" />
+		<javac-part name="apt" depend-classpath="classes/glue" generated-src-with-colon=":generated-src/apt">
 			<src path="generated-src/apt" />
-			<classpath refid="project.class.path"/>
-			<compilerarg value="-Xlint:all"/>
-		</javac>
+		</javac-part>
 		<copy todir="classes/apt">
 			<fileset dir="src/apt">
 				<include name="**/*.stg" />
@@ -95,41 +113,16 @@
 	</target>
 
 	<target name="javac.glue" description="Compile java source to bytecode">
-		<mkdir dir="classes/glue"/>
-		<depend srcdir="src/glue" destdir="classes/glue" />
-		<javac srcdir="src/glue" includes="**" encoding="utf-8"
-				destdir="classes/glue" source="1.7" target="1.7"
-				debug="true" debuglevel="lines,vars,source"
-				includeantruntime="false">
-			<classpath refid="glue.class.path"/>
-			<compilerarg value="-Xlint:all"/>
-		</javac>
+		<javac-part name="glue" />
 	</target>
 
 	<target name="javac.ant" depends="javac" description="Compile ant task">
-		<mkdir dir="classes/ant"/>
-		<depend srcdir="src/ant" destdir="classes/ant" classpath="classes/apt" />
-		<javac srcdir="src/ant" includes="**" encoding="utf-8"
-				destdir="classes/ant" source="1.7" target="1.7"
-				debug="true" debuglevel="lines,vars,source"
-				includeantruntime="true">
-			<classpath refid="ant.class.path" />
-			<compilerarg value="-Xlint:all"/>
-		</javac>
+		<javac-part name="ant" depend-classpath="classes/apt" includeantruntime="true" />
 	</target>
 
 	<target name="javac.compiler" description="Compile annotation processors" depends="javac.glue">
 		<delete dir="classes/compiler/META-INF" failonerror="false" />
-		<mkdir dir="classes/compiler"/>
-		<depend srcdir="src/compiler" destdir="classes/compiler" />
-		<javac includes="**" encoding="utf-8"
-				destdir="classes/compiler" source="1.7" target="1.7"
-				debug="true" debuglevel="lines,vars,source"
-				includeantruntime="false">
-			<src path="src/compiler" />
-			<classpath refid="compiler.class.path" />
-			<compilerarg value="-Xlint:all"/>
-		</javac>
+		<javac-part name="compiler" depend-classpath="classes/glue" />
 		<copy todir="classes/compiler">
 			<fileset dir="src/compiler">
 				<include name="META-INF/**" />
@@ -138,15 +131,7 @@
 	</target>
 
 	<target name="javac.test" depends="javac" description="Compile test code">
-		<mkdir dir="test-classes"/>
-		<depend srcdir="test" destdir="test-classes" classpath="classes/apt" />
-		<javac srcdir="test" includes="**" encoding="utf-8"
-				destdir="test-classes" source="1.7" target="1.7"
-				debug="true" debuglevel="lines,vars,source"
-				includeantruntime="false">
-			<classpath refid="test.class.path" />
-			<compilerarg value="-Xlint:all"/>
-		</javac>
+		<javac-part name="test" src="test" classes="test-classes" depend-classpath="classes/apt" />
 	</target>
 
 	<target name="verify-parsers" depends="javac.ant" description="Verify all of the net collection is parsable.">
