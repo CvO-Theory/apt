@@ -31,6 +31,7 @@
 	</path>
 
 	<path id="compiler.class.path">
+		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
 		<pathelement location="classes/glue" />
 	</path>
 
@@ -121,6 +122,7 @@
 	</target>
 
 	<target name="javac.compiler" description="Compile annotation processors" depends="javac.glue">
+		<delete dir="classes/compiler/META-INF" failonerror="false" />
 		<mkdir dir="classes/compiler"/>
 		<depend srcdir="src/compiler" destdir="classes/compiler" />
 		<javac includes="**" encoding="utf-8"
@@ -130,10 +132,8 @@
 			<src path="src/compiler" />
 			<classpath>
 				<path refid="compiler.class.path" />
-				<path refid="project.class.path" />
 			</classpath>
 			<compilerarg value="-Xlint:all"/>
-			<compilerarg value="-proc:none"/>
 		</javac>
 		<copy todir="classes/compiler">
 			<fileset dir="src/compiler">
