@@ -12,6 +12,7 @@
 	</path>
 
 	<path id="test.class.path">
+		<path refid="project.class.path" />
 		<pathelement location="lib/mockito-1.9.5-rc1/mockito-core-1.9.5-rc1.jar" />
 		<pathelement location="lib/objenesis-1.2/objenesis-1.2.jar" />
 		<pathelement location="lib/testng-6.9.9/testng-6.9.9.jar" />
@@ -22,6 +23,7 @@
 	</path>
 
 	<path id="ant.class.path">
+		<path refid="project.class.path" />
 		<pathelement location="lib/asm-4.1/asm-4.1.jar" />
 		<pathelement location="classes/ant" />
 	</path>
@@ -113,10 +115,7 @@
 				destdir="classes/ant" source="1.7" target="1.7"
 				debug="true" debuglevel="lines,vars,source"
 				includeantruntime="true">
-			<classpath>
-				<path refid="project.class.path" />
-				<path refid="ant.class.path" />
-			</classpath>
+			<classpath refid="ant.class.path" />
 			<compilerarg value="-Xlint:all"/>
 		</javac>
 	</target>
@@ -130,9 +129,7 @@
 				debug="true" debuglevel="lines,vars,source"
 				includeantruntime="false">
 			<src path="src/compiler" />
-			<classpath>
-				<path refid="compiler.class.path" />
-			</classpath>
+			<classpath refid="compiler.class.path" />
 			<compilerarg value="-Xlint:all"/>
 		</javac>
 		<copy todir="classes/compiler">
@@ -149,20 +146,14 @@
 				destdir="test-classes" source="1.7" target="1.7"
 				debug="true" debuglevel="lines,vars,source"
 				includeantruntime="false">
-			<classpath>
-				<path refid="test.class.path" />
-				<path refid="project.class.path" />
-			</classpath>
+			<classpath refid="test.class.path" />
 			<compilerarg value="-Xlint:all"/>
 		</javac>
 	</target>
 
 	<target name="verify-parsers" depends="javac.ant" description="Verify all of the net collection is parsable.">
 		<taskdef name="parsers-verify" classname="uniol.apt.tasks.ParsableTask">
-			<classpath>
-				<path refid="project.class.path" />
-				<path refid="ant.class.path" />
-			</classpath>
+			<classpath refid="ant.class.path" />
 		</taskdef>
 
 		<parsers-verify outputdir="reports/parsers">
@@ -180,10 +171,7 @@
 
 	<target name="verify-modules" depends="javac.ant" description="Verify the use of parameters in modules.">
 		<taskdef name="module-verify" classname="uniol.apt.tasks.ModuleParameterVerifyTask">
-			<classpath>
-				<path refid="project.class.path" />
-				<path refid="ant.class.path" />
-			</classpath>
+			<classpath refid="ant.class.path" />
 		</taskdef>
 
 		<module-verify>
@@ -195,10 +183,7 @@
 
 	<target name="xml.tests" depends="javac.ant">
 		<taskdef name="xml-tests" classname="uniol.apt.tasks.WriteTestsXML">
-			<classpath>
-				<path refid="project.class.path" />
-				<path refid="ant.class.path" />
-			</classpath>
+			<classpath refid="ant.class.path" />
 		</taskdef>
 
 		<xml-tests output="testng.xml">
@@ -214,10 +199,7 @@
 			<testng outputdir="reports/@{outputdir}" verbose="2" haltonfailure="true">
 				<!-- enable assertions -->
 				<jvmarg value="-ea" />
-				<classpath>
-					<path refid="test.class.path" />
-					<path refid="project.class.path" />
-				</classpath>
+				<classpath refid="test.class.path" />
 				<xmlfileset file="testng.xml" />
 			</testng>
 		</sequential>
@@ -275,10 +257,7 @@
 			<fileset dir="src/compiler" includes="**/*.java"/>
 			<fileset dir="src/glue" includes="**/*.java"/>
 			<fileset dir="test" includes="**/*.java"/>
-			<classpath>
-				<path refid="test.class.path" />
-				<path refid="project.class.path" />
-			</classpath>
+			<classpath refid="test.class.path" />
 		</javadoc>
 	</target>
 
@@ -291,10 +270,7 @@
 			<fileset dir="src/compiler" includes="**/*"/>
 			<fileset dir="src/glue" includes="**/*"/>
 			<fileset dir="test" includes="**/*"/>
-			<classpath>
-				<path refid="test.class.path" />
-				<path refid="project.class.path" />
-			</classpath>
+			<classpath refid="test.class.path" />
 		</checkstyle>
 	</target>
 
@@ -317,7 +293,6 @@
 				outputFile="reports/findbugs.xml" >
 			<auxClasspath>
 				<path refid="test.class.path" />
-				<path refid="project.class.path" />
 			</auxClasspath>
 			<sourcePath>
 				<pathelement location="src/apt" />
@@ -361,10 +336,7 @@
 		<delete file="reports/jacoco/jacoco.exec"/>
 		<coverage destfile="reports/jacoco/jacoco.exec">
 			<testng outputdir="reports/testng" verbose="1">
-				<classpath>
-					<path refid="test.class.path" />
-					<path refid="project.class.path" />
-				</classpath>
+				<classpath refid="test.class.path" />
 				<xmlfileset file="testng.xml" />
 			</testng>
 		</coverage>
