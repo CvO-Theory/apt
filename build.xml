@@ -28,9 +28,7 @@
 		<pathelement location="classes/ant" />
 	</path>
 
-	<path id="glue.class.path">
-		<pathelement location="classes/glue" />
-	</path>
+	<path id="glue.class.path" />
 
 	<path id="compiler.class.path">
 		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
