@@ -12,3 +12,4 @@ script:
   - ant test
   - ant jar
   - ant verify-parsers
+  - ./apt.sh draw nets/crashkurs-cc1-net.apt
