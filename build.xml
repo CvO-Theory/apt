@@ -117,7 +117,7 @@
 	</target>
 
 	<target name="javac.ant" depends="javac" description="Compile ant task">
-		<javac-part name="ant" depend-classpath="classes/apt" includeantruntime="true" />
+		<javac-part name="ant" depend-classpath="classes/apt:classes/glue" includeantruntime="true" />
 	</target>
 
 	<target name="javac.compiler" description="Compile annotation processors" depends="javac.glue">
@@ -131,7 +131,7 @@
 	</target>
 
 	<target name="javac.test" depends="javac" description="Compile test code">
-		<javac-part name="test" src="test" classes="test-classes" depend-classpath="classes/apt" />
+		<javac-part name="test" src="test" classes="test-classes" depend-classpath="classes/apt:classes/glue" />
 	</target>
 
 	<target name="verify-parsers" depends="javac.ant" description="Verify all of the net collection is parsable.">
