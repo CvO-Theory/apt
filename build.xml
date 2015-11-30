@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project name="apt" default="javac.tests" basedir=".">
+<project name="apt" default="javac.test" basedir=".">
 	<path id="project.class.path">
 		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
 		<pathelement location="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
@@ -137,7 +137,7 @@
 		</copy>
 	</target>
 
-	<target name="javac.tests" depends="javac" description="Compile test code">
+	<target name="javac.test" depends="javac" description="Compile test code">
 		<mkdir dir="test-classes"/>
 		<depend srcdir="test" destdir="test-classes" classpath="classes/apt" />
 		<javac srcdir="test" includes="**" encoding="utf-8"
@@ -179,16 +179,16 @@
 		</module-verify>
 	</target>
 
-	<target name="xml.tests" depends="javac.ant">
-		<taskdef name="xml-tests" classname="uniol.apt.tasks.WriteTestsXML">
+	<target name="xml.test" depends="javac.ant">
+		<taskdef name="xml-test" classname="uniol.apt.tasks.WriteTestsXML">
 			<classpath refid="ant.class.path" />
 		</taskdef>
 
-		<xml-tests output="testng.xml">
+		<xml-test output="testng.xml">
 			<classfileset dir="test-classes" >
 				<include name="**/*Test.class" />
 			</classfileset>
-		</xml-tests>
+		</xml-test>
 	</target>
 
 	<macrodef name="invoke-testng">
@@ -203,11 +203,11 @@
 		</sequential>
 	</macrodef>
 
-	<target name="test" depends="javac.tests,xml.tests" description="Run tests">
+	<target name="test" depends="javac.test,xml.test" description="Run tests">
 		<invoke-testng outputdir="testng"/>
 	</target>
 
-	<target name="test-class" depends="javac.tests"
+	<target name="test-class" depends="javac.test"
 		description="run a specific test class. Requires class.name property set to fully qualified name of test class">
 		<condition property="propsSpecified">
 			<and>
@@ -225,7 +225,7 @@
 		<invoke-testng outputdir="testng-single-class-${class.name}" />
 	</target>
 
-	<target name="test-method" depends="javac.tests"
+	<target name="test-method" depends="javac.test"
 		description="run a specific test method. Requires class.name property set to fully qualified name of test class and test.name property set to method name">
 		<condition property="propsSpecified">
 			<and>
@@ -259,7 +259,7 @@
 		</javadoc>
 	</target>
 
-	<target name="checkstyle" depends="javac.tests">
+	<target name="checkstyle" depends="javac.test">
 		<mkdir dir="reports" />
 		<checkstyle config="checkstyle.xml" failOnViolation="false">
 			<formatter type="xml" tofile="reports/checkstyle.xml"/>
@@ -282,7 +282,7 @@
 		<fail message="FindBugs was not found. Try -Dfindbugs.home=/path/to/findbugs."/>
 	</target>
 
-	<target name="findbugs.run" depends="javac,javac.tests" if="findbugs.present">
+	<target name="findbugs.run" depends="javac,javac.test" if="findbugs.present">
 		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
 			classpath="${findbugs.home}/lib/findbugs-ant.jar" />
 		<mkdir dir="reports" />
@@ -328,7 +328,7 @@
 		<fail message="JaCoCo was not found. Try -Djacoco.jar=/path/to/jacocoant.jar."/>
 	</target>
 
-	<target name="jacoco.run" depends="javac.tests,xml.tests" if="jacoco.present">
+	<target name="jacoco.run" depends="javac.test,xml.test" if="jacoco.present">
 		<taskdef resource="org/jacoco/ant/antlib.xml" classpath="${jacoco.jar}"/>
 
 		<delete file="reports/jacoco/jacoco.exec"/>
