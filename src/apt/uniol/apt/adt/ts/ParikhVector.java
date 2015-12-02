@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeMap;
 import uniol.apt.adt.exception.StructureException;
 
@@ -38,9 +37,10 @@ import uniol.apt.adt.exception.StructureException;
  */
 public class ParikhVector {
 
-	// Mapping of labels and occurences
-	private Map<String, Integer> pv = new TreeMap<>();
 	private TransitionSystem ts;
+	// Mapping of labels and occurrences
+	private List<String> labelList;
+	private List<Integer> occurrenceList;
 	private long rev = -1;
 
 	/**
@@ -53,20 +53,12 @@ public class ParikhVector {
 	 */
 	public static ParikhVector add(ParikhVector p1, ParikhVector p2) {
 		assert p1.ts == p2.ts;
-		List<String> list = new ArrayList<>();
-		for (String label : p1.getPV().keySet()) {
-			int count = p1.getPV().get(label);
-			for (int i = 0; i < count; ++i) {
-				list.add(label);
-			}
-		}
-		for (String label : p2.getPV().keySet()) {
-			int count = p2.getPV().get(label);
-			for (int i = 0; i < count; ++i) {
-				list.add(label);
-			}
-		}
-		return new ParikhVector(p1.ts, list);
+		p1.ensureConsistency();
+		p2.ensureConsistency();
+		Map<String, Integer> pv = new TreeMap<>();
+		for (int i = 0; i < p1.labelList.size(); i++)
+			pv.put(p1.labelList.get(i), p1.occurrenceList.get(i) + p2.occurrenceList.get(i));
+		return new ParikhVector(p1.ts, pv);
 	}
 
 	/**
@@ -77,7 +69,7 @@ public class ParikhVector {
 	 */
 	public ParikhVector(TransitionSystem ts, String... sequence) {
 		this.ts = ts;
-		computePv(ts.getAlphabet(), Arrays.asList(sequence));
+		computePv(Arrays.asList(sequence));
 	}
 
 	/**
@@ -88,28 +80,33 @@ public class ParikhVector {
 	 */
 	public ParikhVector(TransitionSystem ts, List<String> sequence) {
 		this.ts = ts;
-		computePv(ts.getAlphabet(), sequence);
+		computePv(sequence);
 	}
 
 	/**
 	 * Creates a parikh vector with a given mapping and the alphabet from the given TransitionSystem.
 	 * <p/>
 	 * @param ts the TransitionSystem the pv belongs to.
-	 * @param pv the mapping from labels to occurences.
+	 * @param pv the mapping from labels to occurrences.
 	 */
 	public ParikhVector(TransitionSystem ts, Map<String, Integer> pv) {
+		this(pv);
 		this.ts = ts;
-		this.pv = new TreeMap<>(pv);
 	}
 
 	/**
 	 * Creates a parikh vector with a given mapping. Before using this pv it is needed to connect the pv to a
 	 * TransitionSystem.
 	 * <p/>
-	 * @param pv the mapping from labels to occurences.
+	 * @param pv the mapping from labels to occurrences.
 	 */
 	public ParikhVector(Map<String, Integer> pv) {
-		this.pv = new TreeMap<>(pv);
+		this.labelList = new ArrayList<>(pv.keySet());
+		Collections.sort(this.labelList);
+
+		this.occurrenceList = new ArrayList<>(pv.size());
+		for (String label : labelList)
+			this.occurrenceList.add(pv.get(label));
 	}
 
 	/**
@@ -128,41 +125,36 @@ public class ParikhVector {
 	 */
 	private void ensureConsistency() {
 		if (rev != ts.getLabelRev()) {
-			Set<String> alphabet = ts.getAlphabet();
-			for (String label : pv.keySet()) {
-				if (!alphabet.contains(label)) {
-					pv.remove(label);
-				}
-			}
-			for (String label : alphabet) {
-				if (!pv.containsKey(label)) {
-					pv.put(label, 0);
-				}
+			List<String> oldLabelList = this.labelList;
+			List<Integer> oldOccurrenceList = this.occurrenceList;
+
+			this.labelList = new ArrayList<>(ts.getAlphabet());
+			this.occurrenceList = new ArrayList<>(this.labelList.size());
+			Collections.sort(this.labelList);
+
+			for (String label : this.labelList) {
+				int idx = oldLabelList.indexOf(label);
+				if (idx == -1)
+					this.occurrenceList.add(0);
+				else
+					this.occurrenceList.add(oldOccurrenceList.get(idx));
 			}
 			rev = ts.getLabelRev();
 		}
 	}
 
 	/**
-	 * Creates the mapping of labels to occurences in this parikh vector from a given alphabet and sequence.
+	 * Creates the mapping of labels to occurrences in this parikh vector from a given alphabet and sequence.
 	 * <p/>
-	 * @param alphabet the alphabet for the mapping
-	 * @param sequence the sequence from which the occurences are calculated
+	 * @param sequence the sequence from which the occurrences are calculated
 	 */
-	private void computePv(Set<String> alphabet, List<String> sequence) {
-		for (String string : sequence) {
-			Integer i = pv.get(string);
-			if (i == null) {
-				i = 0;
-			}
-			pv.put(string, ++i);
-		}
-		for (String label : alphabet) {
-			Integer count = pv.get(label);
-			if (count == null) {
-				pv.put(label, 0);
-			}
-		}
+	private void computePv(List<String> sequence) {
+		this.labelList = new ArrayList<>(ts.getAlphabet());
+		this.occurrenceList = new ArrayList<>(labelList.size());
+		Collections.sort(this.labelList);
+		for (String label : labelList)
+			this.occurrenceList.add(Collections.frequency(sequence, label));
+		this.rev = ts.getLabelRev();
 	}
 
 	/**
@@ -170,26 +162,23 @@ public class ParikhVector {
 	 * than the other parikh vector. That means true if all components are smaller than the other but the vector are
 	 * not the same.
 	 * <p/>
-	 * @param v2 the parikh vector to compare with.
+	 * @param pv2 the parikh vector to compare with.
 	 * <p/>
 	 * @return true, when this parikh vector is smaller than v2.
 	 * <p/>
 	 * @throws StructureException is thrown if the labelsets of the parikh vectors are not the same.
 	 */
-	public boolean lessThan(ParikhVector v2) {
+	public boolean lessThan(ParikhVector pv2) {
 		ensureConsistency();
-		Map<String, Integer> pv2 = v2.getPV();
-		if (!Objects.equals(pv.keySet(), pv2.keySet())) {
+		if (!Objects.equals(this.labelList, pv2.labelList)) {
 			throw new StructureException("Parikhvectors are not operating on the same alphabet.");
 		}
 		boolean ret = false;
-		for (Map.Entry<String, Integer> entry : pv.entrySet()) {
-			String label = entry.getKey();
-			if (entry.getValue().intValue() > pv2.get(label).intValue()) {
+		for (int i = 0; i < this.labelList.size(); i++) {
+			if (this.occurrenceList.get(i) > pv2.occurrenceList.get(i))
 				return false;
-			} else if (entry.getValue().intValue() != pv2.get(label).intValue()) {
+			if (this.occurrenceList.get(i) != pv2.occurrenceList.get(i))
 				ret = true;
-			}
 		}
 		return ret;
 	}
@@ -198,67 +187,73 @@ public class ParikhVector {
 	 * Checks two parikh vectors if they are the same or mutally disjoint. Mutally disjoint means that it is false
 	 * if there exists a component which is in both vectors not equal to zero.
 	 * <p/>
-	 * @param v2 the parikh vector to compare with.
+	 * @param pv2 the parikh vector to compare with.
 	 * <p/>
 	 * @return true if the parikh vectors are the same or mutally disjoint.
 	 * <p/>
 	 * @throws StructureException is thrown if the labelsets of the parikh vectors are not the same.
 	 */
-	public boolean sameOrMutuallyDisjoint(ParikhVector v2) {
+	public boolean sameOrMutuallyDisjoint(ParikhVector pv2) {
 		ensureConsistency();
-		Map<String, Integer> pv2 = v2.getPV();
-		if (!Objects.equals(pv.keySet(), pv2.keySet())) {
+		if (!Objects.equals(this.labelList, pv2.labelList)) {
 			throw new StructureException("Parikhvectors are not operating on the same alphabet.");
 		}
 		boolean same = true;
 		boolean disjoint = true;
-		for (Map.Entry<String, Integer> entry : pv.entrySet()) {
-			String label = entry.getKey();
-			if (entry.getValue().intValue() != 0 && pv2.get(label).intValue() != 0) {
-				disjoint = false;
-			}
-			if (entry.getValue().intValue() != pv2.get(label).intValue()) {
-				same = false;
-			}
+		for (int i = 0; i < this.labelList.size(); i++) {
+			disjoint &= this.occurrenceList.get(i) == 0 || pv2.occurrenceList.get(i) == 0;
+			same &= this.occurrenceList.get(i) == pv2.occurrenceList.get(i);
 		}
 		return disjoint || same;
 	}
 
 	/**
-	 * Returns the occurences of the given label in this parikh vector.
+	 * Returns the occurrences of the given label in this parikh vector.
 	 * <p/>
-	 * @param c the label to get the occurences from.
+	 * @param c the label to get the occurrences from.
 	 * <p/>
-	 * @return the number of occurences of the given label in this parikh vector.
+	 * @return the number of occurrences of the given label in this parikh vector.
 	 */
 	public int get(String c) {
 		ensureConsistency();
-		return pv.get(c);
+		int idx = this.labelList.indexOf(c);
+		if (idx < 0)
+			return 0;
+		return this.occurrenceList.get(idx);
 	}
 
 	/**
-	 * Returns the occurences of the labels in this parikh vector in lexical order.
+	 * Returns the occurrences of the labels in this parikh vector in lexical order.
 	 * <p/>
 	 * @return the parikh vector integers.
 	 */
 	public Integer[] getPVLexicalOrder() {
 		ensureConsistency();
-		return pv.values().toArray(new Integer[pv.size()]);
+
+		// The labelList should always be sorted, check this!
+		List<String> copy = Collections.emptyList();
+		assert (copy = new ArrayList<>(labelList)) != null;
+		Collections.sort(copy);
+		assert copy.equals(labelList) : "The label list is not sorted: " + labelList;
+
+		return occurrenceList.toArray(new Integer[occurrenceList.size()]);
 	}
 
 	/**
-	 * Returns the mapping from labels to occurences of this parikh vector.
+	 * Returns the mapping from labels to occurrences of this parikh vector.
 	 * <p/>
-	 * @return the mapping from labels to occurences.
+	 * @return the mapping from labels to occurrences.
 	 */
 	public Map<String, Integer> getPV() {
 		ensureConsistency();
+		Map<String, Integer> pv = new TreeMap<>();
+		for (int i = 0; i < this.labelList.size(); i++)
+			pv.put(labelList.get(i), occurrenceList.get(i));
 		return Collections.unmodifiableMap(pv);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		ensureConsistency();
 		if (obj == null || !(obj instanceof ParikhVector)) {
 			return false;
 		}
@@ -266,24 +261,22 @@ public class ParikhVector {
 			return true;
 		}
 		ParikhVector other = (ParikhVector) obj;
-		return Objects.equals(this.pv, other.getPV());
+		ensureConsistency();
+		other.ensureConsistency();
+		return Objects.equals(this.labelList, other.labelList)
+			&& Objects.equals(this.occurrenceList, other.occurrenceList);
 	}
 
 	@Override
 	public int hashCode() {
 		ensureConsistency();
-		int hash = 7;
-		hash = 53 * hash + Objects.hashCode(this.pv);
-		return hash;
+		return this.occurrenceList.hashCode();
 	}
 
 	@Override
 	public String toString() {
 		ensureConsistency();
-		if (pv == null) {
-			return "";
-		}
-		return pv.toString();
+		return getPV().toString();
 	}
 }
 
