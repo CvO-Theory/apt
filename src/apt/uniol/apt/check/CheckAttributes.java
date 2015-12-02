@@ -357,7 +357,11 @@ public class CheckAttributes {
 	 */
 	private boolean checkReversible() {
 		ReversibleNet reversible = new ReversibleNet(this.petriNet);
-		reversible.check();
+		try {
+			reversible.check();
+		} catch (UnboundedException e) {
+			return false;
+		}
 		return reversible.isReversible();
 	}
 
@@ -368,7 +372,11 @@ public class CheckAttributes {
 	 */
 	private boolean checkPersistent() {
 		PersistentNet persistent = new PersistentNet(this.petriNet);
-		persistent.check();
+		try {
+			persistent.check();
+		} catch (UnboundedException e) {
+			return false;
+		}
 		return persistent.isPersistent();
 	}
 

@@ -23,6 +23,7 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
+import uniol.apt.analysis.exception.UnboundedException;
 
 /**
  * Check if a given Petri net is reversible.
@@ -46,10 +47,10 @@ public class ReversibleNet {
 	 *
 	 * If the coverability LTS is reversible, so is the original PN.
 	 */
-	public void check() {
+	public void check() throws UnboundedException {
 
 		TransitionSystem ts;
-		ts = CoverabilityGraph.get(pn_).toCoverabilityLTS();
+		ts = CoverabilityGraph.get(pn_).toReachabilityLTS();
 
 		ReversibleTS ltsPersistent = new ReversibleTS(ts);
 		ltsPersistent.check();

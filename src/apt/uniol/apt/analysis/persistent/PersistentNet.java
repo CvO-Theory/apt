@@ -23,6 +23,7 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
+import uniol.apt.analysis.exception.UnboundedException;
 
 /**
  * Check if a given Petri net is persistent.
@@ -48,10 +49,10 @@ public class PersistentNet {
 	 *
 	 * If the reachability LTS is persistent, so is the original PN.
 	 */
-	public void check() {
+	public void check() throws UnboundedException {
 
 		TransitionSystem ts;
-		ts = CoverabilityGraph.get(pn_).toCoverabilityLTS();
+		ts = CoverabilityGraph.get(pn_).toReachabilityLTS();
 
 		PersistentTS ltsPersistent = new PersistentTS(ts);
 		deterministic_ = ltsPersistent.isPersistent();
