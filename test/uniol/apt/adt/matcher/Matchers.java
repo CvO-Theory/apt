@@ -26,6 +26,8 @@ import org.hamcrest.Matcher;
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.subgraph.SubEdge;
+import uniol.apt.adt.subgraph.SubNode;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.INode;
@@ -100,6 +102,10 @@ public class Matchers extends org.hamcrest.Matchers {
 		return arcThatConnectsVia(nodeWithID(sourceID), nodeWithID(targetID), is(label));
 	}
 
+	public static <T> Matcher<SubEdge<?, ?, ?>> subEdgeThatConnects(String sourceID, String targetID) {
+		return subEdgeThatConnects(nodeWithID(sourceID), nodeWithID(targetID));
+	}
+
 	public static <T> Matcher<Flow> flowThatConnects(Matcher<? super Node> sourceMatcher,
 			Matcher<? super Node> targetMatcher) {
 		return FlowThatConnectsMatcher.flowThatConnects(sourceMatcher, targetMatcher);
@@ -113,6 +119,11 @@ public class Matchers extends org.hamcrest.Matchers {
 	public static <T> Matcher<Arc> arcThatConnectsVia(Matcher<? super State> sourceMatcher,
 			Matcher<? super State> targetMatcher, Matcher<? super String> labelMatcher) {
 		return ArcThatConnectsMatcher.arcThatConnectsVia(sourceMatcher, targetMatcher, labelMatcher);
+	}
+
+	public static <T> Matcher<SubEdge<?, ?, ?>> subEdgeThatConnects(Matcher<? super SubNode<?, ?, ?>> sourceMatcher,
+			Matcher<? super SubNode<?, ?, ?>> targetMatcher) {
+		return SubEdgeThatConnectsMatcher.subEdgeThatConnects(sourceMatcher, targetMatcher);
 	}
 
 	public static <T> Matcher<Marking> markingThatIs(Map<String, Long> marking) {
