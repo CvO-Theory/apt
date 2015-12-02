@@ -37,23 +37,18 @@ import uniol.apt.util.Pair;
  * <p/>
  * @author Manuel Gieseking
  */
-public class ComputeSmallestCyclesFloydWarshall {
-
-	/**
-	 * Hidden constructor.
-	 */
-	private ComputeSmallestCyclesFloydWarshall() {
-	}
-
+class ComputeSmallestCyclesFloydWarshall extends AbstractComputeSmallestCycles {
 	/**
 	 * Calculation the smallest cycles and parikh vectors of the given transitionsystem with an adaption of the
 	 * algorithm of Floyd-Warshall.
-	 * <p/>
 	 * @param ts - The transitionsystem to compute the cycles and parikh vectors from.
-	 * <p/>
+	 * @param smallest - flag which tells if really all or just the smallest should be saved. (Storage vs. Time)
 	 * @return a list of smallest cycles with their parikh vectors.
 	 */
-	public static Set<Pair<List<String>, ParikhVector>> calculate(TransitionSystem ts) {
+	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts, boolean smallest) {
+		if (!smallest)
+			throw new IllegalArgumentException("Algorithm can only calculate smallest cycles");
+
 		// Complexity all in all
 		// time: O(|V|^3*|E|^4)
 		// place: O(|V|^4*|E|^3)

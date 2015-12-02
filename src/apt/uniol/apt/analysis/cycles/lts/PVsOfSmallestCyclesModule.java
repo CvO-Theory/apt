@@ -59,8 +59,9 @@ public class PVsOfSmallestCyclesModule extends AbstractModule implements Module 
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("graph", PetriNetOrTransitionSystem.class,
 			"The Petri net or LTS that should be examined");
-		inputSpec.addOptionalParameter("algo", Character.class, 'd', "Parameter 'f' for the adapted "
-			+ "Floyd-Warshall algorithm and 'd' for the algorithm using the depth first search.");
+		inputSpec.addOptionalParameter("algo", Character.class,
+				ComputeSmallestCyclesAlgorithms.getDefaultAlgorithmChar(),
+				ComputeSmallestCyclesAlgorithms.getAlgorithmCharDescription());
 	}
 
 	@Override
@@ -73,18 +74,15 @@ public class PVsOfSmallestCyclesModule extends AbstractModule implements Module 
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
 		Character algo = input.getParameter("algo", Character.class);
-		ComputeSmallestCycles.Algorithm alg = (algo == 'f')
-			? ComputeSmallestCycles.Algorithm.FloydWarshall : ComputeSmallestCycles.Algorithm.DFS;
+		ComputeSmallestCycles prog = ComputeSmallestCyclesAlgorithms.getAlgorithm(algo);
 		TransitionSystem ts = g.getTs();
 		PetriNet pn = g.getNet();
 		Set<Pair<List<String>, ParikhVector>> parikhs = null;
 		if (ts != null) {
-			ComputeSmallestCycles prog = new ComputeSmallestCycles();
-			parikhs = prog.computePVsOfSmallestCycles(ts, alg);
+			parikhs = prog.computePVsOfSmallestCycles(ts);
 		} else if (pn != null) {
-			CyclesPVs prog = new CyclesPVs(pn);
-			prog.calc(alg);
-			parikhs = prog.getCycles();
+			CyclesPVs pnProg = new CyclesPVs(prog);
+			parikhs = pnProg.calcCycles(pn);
 		}
 		output.setReturnValue("output", Set.class, parikhs);
 		output.setReturnValue("output_format", String.class, "[(cycle, parikh vector), ... ]");

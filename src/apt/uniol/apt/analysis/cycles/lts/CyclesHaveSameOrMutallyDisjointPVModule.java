@@ -54,8 +54,9 @@ public class CyclesHaveSameOrMutallyDisjointPVModule extends AbstractModule impl
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("graph", PetriNetOrTransitionSystem.class,
 			"The Petri net or LTS that should be examined");
-		inputSpec.addOptionalParameter("algo", Character.class, 'd', "Parameter 'f' for the adapted "
-			+ "Floyd-Warshall algorithm and 'd' for the algorithm using the depth first search.");
+		inputSpec.addOptionalParameter("algo", Character.class,
+				ComputeSmallestCyclesAlgorithms.getDefaultAlgorithmChar(),
+				ComputeSmallestCyclesAlgorithms.getAlgorithmCharDescription());
 	}
 
 	@Override
@@ -68,20 +69,18 @@ public class CyclesHaveSameOrMutallyDisjointPVModule extends AbstractModule impl
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
 		Character algo = input.getParameter("algo", Character.class);
-		ComputeSmallestCycles.Algorithm alg = (algo == 'f')
-			? ComputeSmallestCycles.Algorithm.FloydWarshall : ComputeSmallestCycles.Algorithm.DFS;
+		ComputeSmallestCycles prog = ComputeSmallestCyclesAlgorithms.getAlgorithm(algo);
 		TransitionSystem ts = g.getTs();
 		PetriNet pn = g.getNet();
 		boolean ret = false;
 		CycleCounterExample ex = null;
 		if (ts != null) {
-			ComputeSmallestCycles prog = new ComputeSmallestCycles();
-			ret = prog.checkSameOrMutallyDisjointPVs(ts, alg);
+			ret = prog.checkSameOrMutallyDisjointPVs(ts);
 			ex = prog.getCounterExample();
 		} else if (pn != null) {
-			CyclesHaveSameOrMutuallyPV prog = new CyclesHaveSameOrMutuallyPV(pn);
-			ret = prog.check(alg);
-			ex = prog.getCounterExample();
+			CyclesHaveSameOrMutuallyPV pnProg = new CyclesHaveSameOrMutuallyPV(pn);
+			ret = pnProg.check(prog);
+			ex = pnProg.getCounterExample();
 		}
 		if (!ret) {
 			output.setReturnValue("counterExamples", CycleCounterExample.class, ex);

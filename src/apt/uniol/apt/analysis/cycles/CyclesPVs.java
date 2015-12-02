@@ -19,7 +19,6 @@
 
 package uniol.apt.analysis.cycles;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -37,35 +36,26 @@ import uniol.apt.util.Pair;
  * @author Manuel Gieseking
  */
 public class CyclesPVs {
-
-	private PetriNet pn_;
-	private Set<Pair<List<String>, ParikhVector>> cycles_;
+	private ComputeSmallestCycles algo;
 
 	/**
 	 * Constructor.
-	 * <p/>
-	 * @param pn - PetriNet to analysise.
+	 * @param algo {@Link ComputeSmallestCycles} instance to use for the calculations
 	 */
-	public CyclesPVs(PetriNet pn) {
-		pn_ = pn;
+	public CyclesPVs(ComputeSmallestCycles algo) {
+		this.algo = algo;
 	}
 
 	/**
 	 * Calculates the parikh vectors of the smallest cycles of an Petri Net.
-	 * <p/>
-	 * @param algo - which algorithm should be used for computing the smallest cycles.
-	 * <p/>
+	 * @param pn Petri net to analyze
+	 * @return smallest cycles of the reachability graph of the Petri net
 	 * @throws UnboundedException if net is not bounded.
 	 */
-	public void calc(ComputeSmallestCycles.Algorithm algo) throws UnboundedException {
-		TransitionSystem ts = CoverabilityGraph.get(pn_).toReachabilityLTS();
+	public Set<Pair<List<String>, ParikhVector>> calcCycles(PetriNet pn) throws UnboundedException {
+		TransitionSystem ts = CoverabilityGraph.get(pn).toReachabilityLTS();
 
-		ComputeSmallestCycles cycle = new ComputeSmallestCycles();
-		cycles_ = cycle.computePVsOfSmallestCycles(ts, algo);
-	}
-
-	public Set<Pair<List<String>, ParikhVector>> getCycles() {
-		return Collections.unmodifiableSet(cycles_);
+		return this.algo.computePVsOfSmallestCycles(ts);
 	}
 }
 

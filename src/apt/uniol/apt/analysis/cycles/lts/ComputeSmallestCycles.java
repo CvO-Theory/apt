@@ -27,172 +27,74 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.util.Pair;
 
 /**
- * This class offers algorithms for computing smallest cycles and parikh vectors, checking if all smallest cycles having
- * the same parikh vector, or having the same or mutually disjoint parikh vectors.
- * <p/>
- * For the calculation of the parikh vectors and cycles exists the possibility to choose between two algorithms: an
- * adaption of the Floyd-Warshall algorithm for finding the shortest passes in a graph, and a method which uses the
- * depth first search to compute the smallest cycles.
- * <p/>
+ * This is an interface for  algorithms for computing smallest cycles and parikh vectors, checking if all smallest
+ * cycles having the same parikh vector, or having the same or mutually disjoint parikh vectors.
  * @author Chris, Manuel
  */
-public class ComputeSmallestCycles {
-
-	private CycleCounterExample counterExample; // Stored countercycles
-	private final static Algorithm STANDARD = Algorithm.DFS;
-
-	/**
-	 * Enumeration for choosing which algorithm should be used.
-	 */
-	public enum Algorithm {
-
-		DFS,
-		FloydWarshall
-	}
-
-	/**
-	 * Computes the parikh vectors of all smallest cycles of an labeled transition system. (Requirement A10)
-	 * <p/>
-	 * Uses the standard algorithm (Depth-First-Search).
-	 * <p/>
-	 * @param ts - the transitionsystem to compute the cycles from.
-	 * <p/>
-	 * @return a list of the smallest cycles and their parikh vectors.
-	 */
-	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts) {
-		return computePVsOfSmallestCycles(ts, STANDARD);
-	}
-
-	/**
-	 * Checks a labeled transition system if all smallest cycles have the same or mutally disjoint parikh vectors.
-	 * (Requirement A8b)
-	 * <p/>
-	 * Uses the standard algorithm (Depth-First-Search).
-	 * <p/>
-	 * @param ts - the transition system to examine.
-	 * <p/>
-	 * @return true if the smallest cycles of the given transitionsystem have the same or mutally disjoint parikh
-	 *         vectors.
-	 */
-	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts) {
-		return checkSameOrMutallyDisjointPVs(ts, STANDARD);
-	}
-
-	/**
-	 * Checks a labeled transition system if all smallest cycles have the same parikh vector. (Requirement A8a)
-	 * <p/>
-	 * Uses the standard algorithm (Depth-First-Search).
-	 * <p/>
-	 * @param ts - the transition system to examine.
-	 * <p/>
-	 * @return true if the smallest cycles of the given transitionsystem have the same parikh vectors.
-	 */
-	public boolean checkSamePVs(TransitionSystem ts) {
-		return checkSamePVs(ts, STANDARD);
-	}
-
+public interface ComputeSmallestCycles {
 	/**
 	 * Computes the parikh vectors of all smallest cycles of an labeled transition system. (Requirement A10)
 	 * <p/>
 	 * @param ts   - the transitionsystem to compute the cycles from.
 	 * <p/>
-	 * @param algo - the algorithm to use for computing the smallest cycles and their parikh vectors.
-	 * <p/>
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 */
-	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts, Algorithm algo) {
-		return computePVsOfSmallestCycles(ts, algo, true);
-	}
+	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts);
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same or mutally disjoint parikh vectors.
 	 * (Requirement A8b)
 	 * <p/>
 	 * @param ts   - the transition system to examine.
-	 * @param algo - the algorithm to use for computing the smallest cycles and their parikh vectors.
 	 * <p/>
 	 * @return true if the smallest cycles of the given transitionsystem have the same or mutally disjoint parikh
 	 *         vectors.
 	 */
-	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts, Algorithm algo) {
-		return checkSameOrMutallyDisjointPVs(ts, algo, true);
-	}
+	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts);
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same parikh vector. (Requirement A8a)
 	 * <p/>
 	 * @param ts   - the transition system to examine.
-	 * @param algo - the algorithm to use for computing the smallest cycles and their parikh vectors.
 	 * <p/>
 	 * @return true if the smallest cycles of the given transitionsystem have the same parikh vectors.
 	 */
-	public boolean checkSamePVs(TransitionSystem ts, Algorithm algo) {
-		return checkSamePVs(ts, algo, true);
-	}
+	public boolean checkSamePVs(TransitionSystem ts);
 
 	/**
 	 * Computes the parikh vectors of all smallest cycles of an labeled transition system. (Requirement A10)
 	 * <p/>
 	 * @param ts       - the transitionsystem to compute the cycles from.
-	 * @param algo     - the algorithm to use for computing the smallest cycles and their parikh vectors.
-	 * @param smallest - Just used if algo==DFS ! Flag which tells if all or just the smallest should be saved.
+	 * @param smallest - Flag which tells if all or just the smallest should be saved.
 	 *                 (Storage vs. Time)
 	 * <p/>
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 */
-	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts, Algorithm algo,
-		boolean smallest) {
-		if (algo == Algorithm.DFS) {
-			ComputeSmallestCyclesDFS c = new ComputeSmallestCyclesDFS();
-			return c.computePVsOfSmallestCycles(ts, smallest);
-		} else {
-			return ComputeSmallestCyclesFloydWarshall.calculate(ts);
-		}
-	}
+	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts, boolean smallest);
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same or mutally disjoint parikh vectors.
 	 * (Requirement A8b)
 	 * <p/>
 	 * @param ts       - the transition system to examine.
-	 * @param algo     - the algorithm to use for computing the smallest cycles and their parikh vectors.
-	 * @param smallest - Just used if algo==DFS ! Flag which tells if all or just the smallest should be saved.
+	 * @param smallest - Flag which tells if all or just the smallest should be saved.
 	 *                 (Storage vs. Time)
 	 * <p/>
 	 * @return true if the smallest cycles of the given transitionsystem have the same or mutally disjoint parikh
 	 *         vectors.
 	 */
-	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts, Algorithm algo, boolean smallest) {
-		Set<Pair<List<String>, ParikhVector>> pvs;
-		if (algo == Algorithm.DFS) {
-			ComputeSmallestCyclesDFS c = new ComputeSmallestCyclesDFS();
-			pvs = c.computePVsOfSmallestCycles(ts, smallest);
-		} else {
-			pvs = ComputeSmallestCyclesFloydWarshall.calculate(ts);
-		}
-		return checkSameOrMutallyDisjointPVs(pvs);
-	}
+	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts, boolean smallest);
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same parikh vector. (Requirement A8a)
 	 * <p/>
 	 * @param ts       - the transition system to examine.
-	 * @param algo     - the algorithm to use for computing the smallest cycles and their parikh vectors.
-	 * @param smallest - Just used if algo==DFS ! Flag which tells if all or just the smallest should be saved.
+	 * @param smallest - Flag which tells if all or just the smallest should be saved.
 	 *                 (Storage vs. Time)
 	 * <p/>
 	 * @return true if the smallest cycles of the given transitionsystem have the same parikh vectors.
 	 */
-	public boolean checkSamePVs(TransitionSystem ts, Algorithm algo, boolean smallest) {
-		Set<Pair<List<String>, ParikhVector>> pvs;
-		if (algo == Algorithm.DFS) {
-			ComputeSmallestCyclesDFS c = new ComputeSmallestCyclesDFS();
-			pvs = c.computePVsOfSmallestCycles(ts, smallest);
-		} else {
-			pvs = ComputeSmallestCyclesFloydWarshall.calculate(ts);
-		}
-		return checkSamePVs(pvs);
-	}
+	public boolean checkSamePVs(TransitionSystem ts, boolean smallest);
 
 	/**
 	 * Checks whether in the given set of cycles and parikh vectors all cycles have the same or mutally disjoint
@@ -202,20 +104,7 @@ public class ComputeSmallestCycles {
 	 * <p/>
 	 * @return true if the cycles have the same or mutally disjoint parikh vectors.
 	 */
-	public boolean checkSameOrMutallyDisjointPVs(Set<Pair<List<String>, ParikhVector>> cycles) {
-		counterExample = null;
-		for (Pair<List<String>, ParikhVector> pair : cycles) {
-			for (Pair<List<String>, ParikhVector> pair1 : cycles) {
-				if (pair1 != pair) {
-					if (!pair.getSecond().sameOrMutuallyDisjoint(pair1.getSecond())) {
-						counterExample = new CycleCounterExample(pair, pair1);
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
+	public boolean checkSameOrMutallyDisjointPVs(Set<Pair<List<String>, ParikhVector>> cycles);
 
 	/**
 	 * Checks whether in the given set of cycles and parikh vectors all cycles have the same parikh vector.
@@ -224,20 +113,7 @@ public class ComputeSmallestCycles {
 	 * <p/>
 	 * @return true if the cycles have the same parikh vectors.
 	 */
-	public boolean checkSamePVs(Set<Pair<List<String>, ParikhVector>> cycles) {
-		counterExample = null;
-		for (Pair<List<String>, ParikhVector> pair : cycles) {
-			for (Pair<List<String>, ParikhVector> pair1 : cycles) {
-				if (pair1 != pair) {
-					if (!pair.getSecond().equals(pair1.getSecond())) {
-						counterExample = new CycleCounterExample(pair, pair1);
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
+	public boolean checkSamePVs(Set<Pair<List<String>, ParikhVector>> cycles);
 
 	/**
 	 * Function for returning a counter example (as requirements A8a, A8b, A10 state that two counter-examples
@@ -245,9 +121,7 @@ public class ComputeSmallestCycles {
 	 * <p/>
 	 * @return counterexample.
 	 */
-	public CycleCounterExample getCounterExample() {
-		return counterExample;
-	}
+	public CycleCounterExample getCounterExample();
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

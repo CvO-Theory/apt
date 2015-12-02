@@ -56,13 +56,12 @@ public class CyclesHaveSamePV {
 	 * <p/>
 	 * @throws UnboundedException thrown if the net is not bounded.
 	 */
-	public boolean check(ComputeSmallestCycles.Algorithm algo) throws UnboundedException {
+	public boolean check(ComputeSmallestCycles algo) throws UnboundedException {
 		TransitionSystem ts = CoverabilityGraph.get(pn_).toReachabilityLTS();
 
-		ComputeSmallestCycles cycle = new ComputeSmallestCycles();
-		if (!cycle.checkSamePVs(ts, algo)) {
+		if (!algo.checkSamePVs(ts)) {
 			errorMsg_ = "Not same parikh vectors";
-			counterExample_ = cycle.getCounterExample();
+			counterExample_ = algo.getCounterExample();
 			return false;
 		}
 		return true;

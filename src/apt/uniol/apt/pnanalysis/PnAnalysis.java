@@ -38,6 +38,7 @@ import uniol.apt.analysis.isomorphism.IsomorphismLogic.ExtendedState;
 import uniol.apt.analysis.persistent.PersistentTS;
 import uniol.apt.analysis.plain.Plain;
 import uniol.apt.analysis.cycles.lts.ComputeSmallestCycles;
+import uniol.apt.analysis.cycles.lts.ComputeSmallestCyclesAlgorithms;
 import uniol.apt.analysis.reversible.ReversibleTS;
 import uniol.apt.analysis.separation.LargestK;
 import uniol.apt.analysis.snet.SNet;
@@ -88,7 +89,7 @@ public class PnAnalysis {
 		TransitionSystem reachabilitylts1 = cover.toReachabilityLTS();
 
 		// Check preconditions for lts
-		ComputeSmallestCycles sc = new ComputeSmallestCycles();
+		ComputeSmallestCycles sc = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm();
 		if (!sc.checkSamePVs(reachabilitylts1)) {
 			throw new PreconditionFailedException("Not all smallest cycles have the"
 				+ " same parikh vectors.");

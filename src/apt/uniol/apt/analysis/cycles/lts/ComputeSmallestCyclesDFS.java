@@ -38,7 +38,7 @@ import uniol.apt.util.Pair;
  * <p/>
  * @author Manuel Gieseking
  */
-public class ComputeSmallestCyclesDFS {
+class ComputeSmallestCyclesDFS extends AbstractComputeSmallestCycles {
 
 	private TransitionSystem tsys;
 	private Set<Pair<List<String>, ParikhVector>> cycles;
@@ -46,9 +46,7 @@ public class ComputeSmallestCyclesDFS {
 	/**
 	 * Checks whether the given cycle is a smallest cycle and if it is so and another greater is in the list of the
 	 * cycles, this one will be kicked.
-	 * <p/>
 	 * @param pair - the cycle to check.
-	 * <p/>
 	 * @return true if the cycle is a smallest cycle.
 	 */
 	private boolean isSmallestCycle(Pair<List<String>, ParikhVector> pair) {
@@ -69,10 +67,8 @@ public class ComputeSmallestCyclesDFS {
 	/**
 	 * Computes the parikh vectors of all smallest cycles of a labeled transition system with a algorithm using the
 	 * depth first search. (Requirement A10)
-	 * <p/>
 	 * @param ts       - the transitionsystem to examine.
 	 * @param smallest - flag which tells if really all or just the smallest should be saved. (Storage vs. Time)
-	 * <p/>
 	 * @return a list of the smallest cycles of a given transitionsystem an their parikh vectors.
 	 */
 	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts, boolean smallest) {
@@ -103,10 +99,8 @@ public class ComputeSmallestCyclesDFS {
 	 * Calculates the smallest cycles and their parikh vectors. It is important to notice, that in most cases if
 	 * abcd is an cycle, that also bcda, cdab, etc. with the same parikh vector are cycle but won't be saved
 	 * additionaly. Just in cases that two different passes coming the cycles, than they will be saved.
-	 * <p/>
 	 * @param ts       - the transitionsystem to examine.
 	 * @param smallest - flag which tells if really all or just the smallest should be saved. (Storage vs. Time)
-	 * <p/>
 	 * @return a set of cycles and the belonging parikh vectors.
 	 */
 	private Set<Pair<List<String>, ParikhVector>> calculate(TransitionSystem ts, boolean smallest) {
@@ -124,7 +118,6 @@ public class ComputeSmallestCyclesDFS {
 
 	/**
 	 * Depth first search function which is recursivly used to compute the smallest cycles.
-	 * <p/>
 	 * @param node     - the starting node
 	 * @param sequence - a stack of all the visited nodes.
 	 * @param labels   - a stack with the visited labels for the parikh vectors.
@@ -140,11 +133,7 @@ public class ComputeSmallestCyclesDFS {
 			List<String> cycle = new LinkedList<>(sequence.subList(idx, sequence.size()));
 			List<String> cycleParikh = new LinkedList<>(labels.subList(idx, sequence.size()));
 			Pair<List<String>, ParikhVector> pair = new Pair<>(cycle, new ParikhVector(tsys, cycleParikh));
-			if (smallest) {
-				if (isSmallestCycle(pair)) {
-					cycles.add(pair);
-				}
-			} else {
+			if (!smallest || isSmallestCycle(pair)) {
 				cycles.add(pair);
 			}
 			return;

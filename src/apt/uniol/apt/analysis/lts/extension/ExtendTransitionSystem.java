@@ -32,6 +32,7 @@ import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.cycles.lts.ComputeSmallestCycles;
+import uniol.apt.analysis.cycles.lts.ComputeSmallestCyclesAlgorithms;
 import uniol.apt.analysis.persistent.PersistentTS;
 import uniol.apt.analysis.reversible.ReversibleTS;
 import uniol.apt.util.Pair;
@@ -366,7 +367,7 @@ public class ExtendTransitionSystem {
 	private boolean check(TransitionSystem ts) {
 		PersistentTS p = new PersistentTS(ts);
 		ReversibleTS r = new ReversibleTS(ts);
-		ComputeSmallestCycles s = new ComputeSmallestCycles();
+		ComputeSmallestCycles s = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm();
 
 
 		if (!p.isPersistent() || !r.isReversible() || !s.checkSamePVs(ts))
@@ -385,7 +386,7 @@ public class ExtendTransitionSystem {
 	 * @return True if one parikh vector is found.
 	 */
 	private boolean checkSamePVs(TransitionSystem ts, ParikhVector v) {
-		ComputeSmallestCycles s = new ComputeSmallestCycles();
+		ComputeSmallestCycles s = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm();
 		Set<Pair<List<String>, ParikhVector>> pvs = s.computePVsOfSmallestCycles(ts);
 		for (Pair<List<String>, ParikhVector> pair : pvs) {
 			if (pair.getSecond().equals(v)) {
