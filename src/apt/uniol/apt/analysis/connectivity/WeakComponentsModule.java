@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis.connectivity;
 
+import java.util.Set;
+
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
@@ -30,6 +32,7 @@ import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
 import uniol.apt.adt.IGraph;
+import uniol.apt.adt.INode;
 
 /**
  * Provide the weak components test as a module.
@@ -61,8 +64,14 @@ public class WeakComponentsModule extends AbstractModule implements Module {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		IGraph<?, ?, ?> graph = input.getParameter("graph", IGraph.class);
-		Components components = Connectivity.getWeaklyConnectedComponents(graph);
-		output.setReturnValue("weak_components", Components.class, components);
+		Set<? extends Set<? extends INode<?, ?, ?>>> components = run(graph);
+		output.setReturnValue("weak_components", Components.class, new Components(components));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>>
+			Set<? extends Set<? extends INode<?, ?, ?>>> run(IGraph<?, ?, ?> graph) {
+		return Connectivity.getWeaklyConnectedComponents((G) graph);
 	}
 
 	@Override

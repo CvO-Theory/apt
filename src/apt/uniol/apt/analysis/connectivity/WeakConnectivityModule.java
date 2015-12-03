@@ -20,6 +20,7 @@
 package uniol.apt.analysis.connectivity;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
@@ -66,14 +67,20 @@ public class WeakConnectivityModule extends AbstractModule implements Module {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		IGraph<?, ?, ?> graph = input.getParameter("graph", IGraph.class);
-		Components components = Connectivity.getWeaklyConnectedComponents(graph);
+		Set<? extends Set<? extends INode<?, ?, ?>>> components = run(graph);
 		boolean connected = components.size() <= 1;
 		output.setReturnValue("weakly_connected", Boolean.class, connected);
 		if (!connected) {
-			Iterator<Component> it = components.iterator();
+			Iterator<? extends Set<? extends INode<?, ?, ?>>> it = components.iterator();
 			output.setReturnValue("witness_node1", INode.class, it.next().iterator().next());
 			output.setReturnValue("witness_node2", INode.class, it.next().iterator().next());
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>>
+			Set<? extends Set<? extends INode<?, ?, ?>>> run(IGraph<?, ?, ?> graph) {
+		return Connectivity.getWeaklyConnectedComponents((G) graph);
 	}
 
 	@Override

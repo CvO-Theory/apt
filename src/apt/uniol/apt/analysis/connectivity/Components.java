@@ -19,7 +19,11 @@
 
 package uniol.apt.analysis.connectivity;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
+
+import uniol.apt.adt.INode;
 
 /**
  * This class represents all components of a graph. It is needed for the module system.
@@ -27,6 +31,23 @@ import java.util.HashSet;
  */
 public class Components extends HashSet<Component> {
 	public static final long serialVersionUID = 0x1l;
+
+	/**
+	 * Constructor.
+	 */
+	public Components() {
+	}
+
+	/**
+	 * Copy constructor.
+	 * @param c The collection to copy
+	 */
+	public Components(Collection<? extends Set<? extends INode<?, ?, ?>>> c) {
+		super();
+		for (Set<? extends INode<?, ?, ?>> s : c)
+			add(new Component(s));
+	}
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

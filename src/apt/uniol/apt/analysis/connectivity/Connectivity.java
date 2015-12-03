@@ -61,7 +61,7 @@ public class Connectivity {
 	 * @param graph The graph whose weak connectivity should be checked.
 	 * @return true if the graph is weakly connected.
 	 */
-	public static boolean isWeaklyConnected(IGraph<?, ?, ?> graph) {
+	public static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>> boolean isWeaklyConnected(G graph) {
 		return getWeaklyConnectedComponents(graph).size() <= 1;
 	}
 
@@ -72,19 +72,20 @@ public class Connectivity {
 	 * @param graph The graph whose strong connectivity should be checked.
 	 * @return A partition of the graph's nodes into components.
 	 */
-	public static Components getWeaklyConnectedComponents(IGraph<?, ?, ?> graph) {
-		Collection<INode<?, ?, ?>> unhandled = new HashSet<>();
-		Components result = new Components();
+	public static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>>
+			Set<? extends Set<N>> getWeaklyConnectedComponents(G graph) {
+		Collection<N> unhandled = new HashSet<>();
+		Set<Set<N>> result = new HashSet<>();
 
 		// As long as not all of the graph's nodes were visited...
 		unhandled.addAll(graph.getNodes());
 		while (!unhandled.isEmpty()) {
 			// ...get a random node and handle its component
-			Iterator<INode<?, ?, ?>> it = unhandled.iterator();
-			INode<?, ?, ?> node = it.next();
+			Iterator<N> it = unhandled.iterator();
+			N node = it.next();
 			it.remove();
 
-			Component component = getWeaklyConnectedComponent(node);
+			Set<N> component = getWeaklyConnectedComponent(node);
 			unhandled.removeAll(component);
 			result.add(component);
 		}
@@ -96,9 +97,9 @@ public class Connectivity {
 	 * @param node The node whose component should be calculated.
 	 * @return The node's component.
 	 */
-	private static Component getWeaklyConnectedComponent(INode<?, ?, ?> node) {
-		Component result = new Component();
-		Deque<INode<?, ?, ?>> unvisited = new LinkedList<>();
+	public static <N extends INode<?, ?, N>> Set<N> getWeaklyConnectedComponent(N node) {
+		Set<N> result = new HashSet<>();
+		Deque<N> unvisited = new LinkedList<>();
 		unvisited.add(node);
 		result.add(node);
 
@@ -106,14 +107,14 @@ public class Connectivity {
 			node = unvisited.removeLast();
 
 			// Handle the node's preset. All of those nodes belong to this node's component.
-			for (INode<?, ?, ?> curNode : node.getPresetNodes()) {
+			for (N curNode : node.getPresetNodes()) {
 				// If this was not yet already handled, add to unvisited
 				if (result.add(curNode))
 					unvisited.add(curNode);
 			}
 
 			// Handle the node's postset in the same way.
-			for (INode<?, ?, ?> curNode : node.getPostsetNodes()) {
+			for (N curNode : node.getPostsetNodes()) {
 				// If this was not yet already handled, add to unvisited
 				if (result.add(curNode))
 					unvisited.add(curNode);
