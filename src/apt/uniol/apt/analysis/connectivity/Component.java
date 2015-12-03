@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.connectivity;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 import uniol.apt.adt.INode;
@@ -29,6 +30,20 @@ import uniol.apt.adt.INode;
  */
 public class Component extends HashSet<INode<?, ?, ?>> {
 	public static final long serialVersionUID = 0x1l;
+
+	/**
+	 * Constructor.
+	 */
+	public Component() {
+	}
+
+	/**
+	 * Copy constructor.
+	 * @param c The collection to copy
+	 */
+	public Component(Collection<? extends INode<?, ?, ?>> c) {
+		super(c);
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

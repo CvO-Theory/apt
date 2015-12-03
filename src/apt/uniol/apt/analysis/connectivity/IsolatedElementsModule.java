@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis.connectivity;
 
+import java.util.Set;
+
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
@@ -30,6 +32,7 @@ import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
 import uniol.apt.adt.IGraph;
+import uniol.apt.adt.INode;
 
 /**
  * Provide the isolated elements test as a module.
@@ -61,8 +64,14 @@ public class IsolatedElementsModule extends AbstractModule implements Module {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		IGraph<?, ?, ?> graph = input.getParameter("graph", IGraph.class);
-		Component collection = Connectivity.findIsolatedElements(graph);
-		output.setReturnValue("isolated_elements", Component.class, collection);
+		Set<? extends INode<?, ?, ?>> collection = run(graph);
+		output.setReturnValue("isolated_elements", Component.class, new Component(collection));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>>
+			Set<? extends INode<G, ?, N>> run(IGraph<?, ?, ?> graph) {
+		return Connectivity.findIsolatedElements((G) graph);
 	}
 
 	@Override

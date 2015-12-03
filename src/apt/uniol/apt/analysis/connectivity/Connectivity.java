@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.INode;
@@ -44,9 +45,9 @@ public class Connectivity {
 	 * @param graph The graph whose weak connectivity should be checked.
 	 * @return All isolated elements of the graph.
 	 */
-	public static Component findIsolatedElements(IGraph<?, ?, ?> graph) {
-		Component result = new Component();
-		for (INode<?, ?, ?> node : graph.getNodes()) {
+	public static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>> Set<N> findIsolatedElements(G graph) {
+		Set<N> result = new HashSet<>();
+		for (N node : graph.getNodes()) {
 			if (node.getPresetNodes().isEmpty() && node.getPostsetNodes().isEmpty()) {
 				result.add(node);
 			}

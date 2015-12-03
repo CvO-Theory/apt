@@ -87,7 +87,8 @@ public class ConnectivityTest {
 		}
 	}
 
-	private void testGraph(IGraph<?, ?, ?> graph, String[] isolated, String[][] weak, String[][] strong) {
+	private <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>>
+			void testGraph(G graph, String[] isolated, String[][] weak, String[][] strong) {
 		// First we need to collect our matchers
 		Collection<Matcher<? super INode<?, ?, ?>>> isolatedMatchers = new ArrayList<>();
 		Collection<Matcher<? super Iterable<? extends INode<?, ?, ?>>>> weakMatchers = new ArrayList<>();
@@ -121,7 +122,8 @@ public class ConnectivityTest {
 		assertEquals(strong.length <= 1, callModule(graph, new StrongConnectivityModule()));
 	}
 
-	private void testStronglyConnected(IGraph<?, ?, ?> graph) {
+	private <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>>
+			void testStronglyConnected(G graph) {
 		Collection<String> ids = new ArrayList<>();
 		for (INode<?, ?, ?> node : graph.getNodes()) {
 			ids.add(node.getId());
