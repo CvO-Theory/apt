@@ -99,6 +99,7 @@ class ComputeSmallestCyclesFloydWarshall extends AbstractComputeSmallestCycles {
 							// place: O(0)
 							if (p2.getPv().lessThan(p1.getPv())) {
 								add = false;
+								break;
 							}
 						}
 						if (add) {
