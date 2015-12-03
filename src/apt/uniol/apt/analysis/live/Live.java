@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class implements various liveness tests for Petri nets.
@@ -117,7 +118,7 @@ public class Live {
 		 * infinitely often.
 		 */
 		TransitionSystem lts = CoverabilityGraph.get(pn).toReachabilityLTS();
-		Components components = Connectivity.getStronglyConnectedComponents(lts);
+		Set<? extends Set<State>> components = Connectivity.getStronglyConnectedComponents(lts);
 		for (Arc edge : lts.getEdges()) {
 			// Look for edges labeled with our transition...
 			Transition trans = (Transition) edge.getExtension(Transition.class.getName());
@@ -127,7 +128,7 @@ public class Live {
 			// ...where both endpoints are in the same component
 			State source = edge.getSource();
 			State target = edge.getTarget();
-			for (Component component : components) {
+			for (Set<State> component : components) {
 				if (component.contains(source)) {
 					if (component.contains(target))
 						// Both nodes in the same component

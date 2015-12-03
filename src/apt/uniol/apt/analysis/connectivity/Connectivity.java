@@ -130,7 +130,7 @@ public class Connectivity {
 	 * @param graph The graph whose strong connectivity should be checked.
 	 * @return true if the graph is strongly connected.
 	 */
-	public static boolean isStronglyConnected(IGraph<?, ?, ?> graph) {
+	public static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>> boolean isStronglyConnected(G graph) {
 		return getStronglyConnectedComponents(graph).size() <= 1;
 	}
 
@@ -142,10 +142,11 @@ public class Connectivity {
 	 * @param graph The graph that should be examined.
 	 * @return A partition of the graph's nodes into components.
 	 */
-	public static Components getStronglyConnectedComponents(IGraph<?, ?, ?> graph) {
-		Components result = new Components();
-		Map<INode<?, ?, ?>, Integer> dfsNumbers = new HashMap<>();
-		Map<INode<?, ?, ?>, Integer> minNumbers = new HashMap<>();
+	public static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>>
+			Set<? extends Set<N>> getStronglyConnectedComponents(G graph) {
+		Set<Set<N>> result = new HashSet<>();
+		Map<N, Integer> dfsNumbers = new HashMap<>();
+		Map<N, Integer> minNumbers = new HashMap<>();
 		int counter = 0;
 
 		// Implemented per 'Algorithmische Datenstrukturen' Sommersemester 2012, algorithm 13.
@@ -159,7 +160,7 @@ public class Connectivity {
 		// of the nodes on this list up to the root form a strongly connected component.
 
 		// Handle all of the graph's nodes.
-		for (INode<?, ?, ?> node : graph.getNodes()) {
+		for (N node : graph.getNodes()) {
 			if (!dfsNumbers.containsKey(node)) {
 				counter = handleStronglyConnectedComponents(node, result, dfsNumbers, minNumbers,
 						counter);
@@ -173,15 +174,15 @@ public class Connectivity {
 	 * Compute the strongly connected components reachable from node.
 	 * No, I will not explain the parameters.
 	 */
-	private static int handleStronglyConnectedComponents(INode<?, ?, ?> node, Components result,
-			Map<INode<?, ?, ?>, Integer> dfsNumbers, Map<INode<?, ?, ?>, Integer> minNumbers, int counter) {
-		Deque<INode<?, ?, ?>> callers = new LinkedList<>();
-		Deque<INode<?, ?, ?>> stack = new LinkedList<>();
+	private static <N extends INode<?, ?, N>> int handleStronglyConnectedComponents(N node, Set<Set<N>> result,
+			Map<N, Integer> dfsNumbers, Map<N, Integer> minNumbers, int counter) {
+		Deque<N> callers = new LinkedList<>();
+		Deque<N> stack = new LinkedList<>();
 
 		counter = visitNode(node, dfsNumbers, minNumbers, counter, stack);
 		do {
 			boolean done = true;
-			for (INode<?, ?, ?> current : node.getPostsetNodes()) {
+			for (N current : node.getPostsetNodes()) {
 				if (!dfsNumbers.containsKey(current)) {
 					// 'current' was not visited yet
 					callers.addLast(node);
@@ -201,8 +202,8 @@ public class Connectivity {
 					// We are the root of the current component, let's get it from the stack. All of
 					// the nodes on the stack up to the current node form a strongly connected
 					// component.
-					Component component = new Component();
-					INode<?, ?, ?> cur = null;
+					Set<N> component = new HashSet<>();
+					N cur = null;
 
 					while (cur != node) {
 						cur = stack.removeLast();
@@ -211,7 +212,7 @@ public class Connectivity {
 					result.add(component);
 				}
 
-				INode<?, ?, ?> next = callers.pollLast();
+				N next = callers.pollLast();
 				if (next != null)
 					// Set our own minNumber to current's number if that one is smaller
 					minNumbers.put(next, Math.min(minNumbers.get(next), minNumbers.get(node)));
@@ -228,8 +229,8 @@ public class Connectivity {
 	 * Update the data structures for the visit of a new node.
 	 * Nope, the parameters aren't explained here either.
 	 */
-	private static int visitNode(INode<?, ?, ?> node, Map<INode<?, ?, ?>, Integer> dfsNumbers,
-			Map<INode<?, ?, ?>, Integer> minNumbers, int counter, Deque<INode<?, ?, ?>> stack) {
+	private static <N extends INode<?, ?, ?>> int visitNode(N node, Map<N, Integer> dfsNumbers,
+			Map<N, Integer> minNumbers, int counter, Deque<N> stack) {
 		// Node should not have been visited before.
 		assert !dfsNumbers.containsKey(node);
 		assert !minNumbers.containsKey(node);

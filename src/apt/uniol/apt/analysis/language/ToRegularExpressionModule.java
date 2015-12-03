@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import uniol.apt.adt.INode;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -87,14 +86,14 @@ public class ToRegularExpressionModule extends AbstractModule implements Module 
 	// one node from each strongly connected component which cannot reach any other component. This guarantees that
 	// the prefix language of the regular expression will be the prefix language of the lts.
 	private static Set<State> chooseFinalNodes(TransitionSystem ts) {
-		Set<? extends Set<INode<?, ?, ?>>> components = Connectivity.getStronglyConnectedComponents(ts);
-		Iterator<? extends Set<INode<?, ?, ?>>> it = components.iterator();
+		Set<? extends Set<State>> components = Connectivity.getStronglyConnectedComponents(ts);
+		Iterator<? extends Set<State>> it = components.iterator();
 		while (it.hasNext()) {
-			Set<INode<?, ?, ?>> component = it.next();
+			Set<State> component = it.next();
 			boolean skip = false;
 
-			for (INode<?, ?, ?> node : component) {
-				for (INode<?, ?, ?> following : node.getPostsetNodes())
+			for (State node : component) {
+				for (State following : node.getPostsetNodes())
 					if (!component.contains(following)) {
 						skip = true;
 						break;
@@ -106,7 +105,7 @@ public class ToRegularExpressionModule extends AbstractModule implements Module 
 				it.remove();
 		}
 		Set<State> result = new HashSet<>();
-		for (Set<INode<?, ?, ?>> component : components)
+		for (Set<State> component : components)
 			result.add(ts.getNode(component.iterator().next().getId()));
 		return result;
 	}
