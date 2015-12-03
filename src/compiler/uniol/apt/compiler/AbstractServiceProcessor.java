@@ -24,10 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
@@ -56,22 +56,25 @@ import org.apache.commons.io.LineIterator;
  * @author vsp
  */
 public abstract class AbstractServiceProcessor extends AbstractProcessor {
-	private final Class<? extends Annotation> annotationClass;
-	private final String interfaceName;
+	protected final Class<? extends Annotation> annotationClass;
+	protected final String interfaceName;
+	protected final boolean allowGenerics;
 
-	private Elements elements;
-	private Types types;
+	protected Elements elements;
+	protected Types types;
 	private Filer filer;
 	private Messager messager;
+	private boolean finished;
 
 	/**
 	 * Constructor
 	 *
 	 * @param annotationClass Class object which describes the annotation
 	 * @param interfaceClass Class object which describes the interface which the annotated classes must implement
+	 * @param allowGenerics Are generic implementations of the interface allowed? Else, they are an error
 	 */
-	protected AbstractServiceProcessor(Class<? extends Annotation> annotationClass, Class<?> interfaceClass) {
-		this(annotationClass, interfaceClass.getCanonicalName());
+	protected AbstractServiceProcessor(Class<? extends Annotation> annotationClass, Class<?> interfaceClass, boolean allowGenerics) {
+		this(annotationClass, interfaceClass.getCanonicalName(), allowGenerics);
 	}
 
 	/**
@@ -80,22 +83,29 @@ public abstract class AbstractServiceProcessor extends AbstractProcessor {
 	 * @param annotationClass Class object which describes the annotation
 	 * @param interfaceName Full Name of the interface which describes the interface which the annotated classes
 	 * must implement
+	 * @param allowGenerics Are generic implementations of the interface allowed? Else, they are an error
 	 */
-	protected AbstractServiceProcessor(Class<? extends Annotation> annotationClass, String interfaceName) {
+	protected AbstractServiceProcessor(Class<? extends Annotation> annotationClass, String interfaceName, boolean allowGenerics) {
 		this.annotationClass = annotationClass;
 		this.interfaceName   = interfaceName;
+		this.allowGenerics   = allowGenerics;
 	}
 
-	private Map<String, Set<String>> services;
+	/**
+	 * Function that is called on every annotated class that is visited. During {@link process}, every class that is
+	 * annotated with our annotation has some sanity-checks applied (e.g. does it implement the required interface)
+	 * and then this function is called on it.
+	 * @param classEle The TypeElement that represents the class that is being compiled.
+	 * @param className The name of the class represented by classEle.
+	 */
+	abstract protected void visitClass(TypeElement classEle, String className);
 
-	private Set<String> getSet(String produces) {
-		Set<String> ret = this.services.get(produces);
-		if (ret == null) {
-			ret = new HashSet<>();
-			this.services.put(produces, ret);
-		}
-		return ret;
-	}
+	/**
+	 * Function that is called after all annotation processing is finished.
+	 * This is where output should be produced.
+	 * @see writeResourceList
+	 */
+	abstract protected void produceOutput();
 
 	@Override
 	public synchronized void init(ProcessingEnvironment procEnv) {
@@ -104,8 +114,7 @@ public abstract class AbstractServiceProcessor extends AbstractProcessor {
 		this.types    = procEnv.getTypeUtils();
 		this.filer    = processingEnv.getFiler();
 		this.messager = processingEnv.getMessager();
-
-		this.services  = new HashMap<>();
+		this.finished = false;
 	}
 
 	@Override
@@ -122,7 +131,7 @@ public abstract class AbstractServiceProcessor extends AbstractProcessor {
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-		if (this.services == null) // only run in the first round
+		if (this.finished) // only run in the first round
 			return false;
 
 		for (Element ele : roundEnv.getElementsAnnotatedWith(this.annotationClass)) {
@@ -131,52 +140,49 @@ public abstract class AbstractServiceProcessor extends AbstractProcessor {
 			}
 			TypeElement classEle = (TypeElement) ele;
 			String className     = classEle.getQualifiedName().toString();
-			TypeMirror searched = this.types.erasure(this.elements.getTypeElement(this.interfaceName)
-					.asType());
-			for (TypeMirror actual : classEle.getInterfaces()) {
-				if (this.types.isSameType(this.types.erasure(actual), searched)) {
-					String produces = MyTypes.asDeclaredType(actual).getTypeArguments().get(0)
-						.toString();
-					getSet(produces).add(className);
-				}
-			}
+			visitClass(classEle, className);
 		}
 
-		String resourcePrefix = "META-INF/uniol/apt/compiler/" + this.interfaceName + "/";
-		try {
-			for (Map.Entry<String, Set<String>> entry: this.services.entrySet()) {
-				String resourceName = resourcePrefix + entry.getKey();
-				// read already listed services
-				try {
-					FileObject fo = this.filer.getResource(StandardLocation.CLASS_OUTPUT, "",
-							resourceName);
-					try (InputStream is = fo.openInputStream()) {
-						LineIterator lIter = IOUtils.lineIterator(is, "UTF-8");
-						while (lIter.hasNext()) {
-							String parserName = lIter.next();
-							getSet(entry.getKey()).add(parserName);
-						}
-					}
-				} catch (FileNotFoundException ex) {
-					/* It's ok if the resource can't get found; we only skip reading it */
-				}
+		produceOutput();
 
-				// write new list
-				FileObject fo = this.filer.createResource(StandardLocation.CLASS_OUTPUT, "",
-						resourceName);
-				Writer writer = fo.openWriter();
-				for (String line : entry.getValue()) {
-					writer.append(line + "\n");
-				}
-				writer.close();
-			}
-		} catch (IOException ex) {
-			error("Caught IOException: %s", ex.getMessage());
-		}
-
-		this.services = null; // prevent running in subsequent rounds
+		this.finished = true; // prevent running in subsequent rounds
 
 		return true;
+	}
+
+	/**
+	 * Function that writes a resource list into the class output directory.
+	 * Existing entries are preserved. This means that this function only ever adds new entries.
+	 * @param resourceName Name of the file in which the resource list should be saved.
+	 * @param entries Entries that should be added to the list.
+	 * @throws IOException In case I/O errors occur.
+	 */
+	protected void writeResourceList(String resourceName, Collection<String> entries) throws IOException {
+		entries = new TreeSet<>(entries);
+
+		// read already listed services
+		try {
+			FileObject fo = this.filer.getResource(StandardLocation.CLASS_OUTPUT, "",
+					resourceName);
+			try (InputStream is = fo.openInputStream()) {
+				LineIterator lIter = IOUtils.lineIterator(is, "UTF-8");
+				while (lIter.hasNext()) {
+					String entry = lIter.next();
+					entries.add(entry);
+				}
+			}
+		} catch (FileNotFoundException ex) {
+			/* It's ok if the resource can't get found; we only skip reading it */
+		}
+
+		// write new list
+		FileObject fo = this.filer.createResource(StandardLocation.CLASS_OUTPUT, "",
+				resourceName);
+		Writer writer = fo.openWriter();
+		for (String entry : entries) {
+			writer.append(entry + "\n");
+		}
+		writer.close();
 	}
 
 	private boolean isValidClass(Element ele) {
@@ -206,13 +212,13 @@ public abstract class AbstractServiceProcessor extends AbstractProcessor {
 			}
 		}
 		if (!found) {
-			error(classEle, "Class %s doesn't implement interface %s<?>.",
+			error(classEle, "Class %s doesn't implement interface %s.",
 					classEle.getQualifiedName().toString(),
 					this.interfaceName);
 			return false;
 		}
 
-		if (!classEle.getTypeParameters().isEmpty()) {
+		if (!allowGenerics && !classEle.getTypeParameters().isEmpty()) {
 			error(classEle, "Class %s is generic.", classEle.getQualifiedName().toString());
 			return false;
 		}
@@ -232,14 +238,14 @@ public abstract class AbstractServiceProcessor extends AbstractProcessor {
 		return false;
 	}
 
-	private void error(String fmt, Object... args) {
+	protected void error(String fmt, Object... args) {
 		this.messager.printMessage(Diagnostic.Kind.ERROR, String.format(fmt, args));
-		this.services = null; // we had an error, don't try to run in subsequent rounds
+		this.finished = true; // we had an error, don't try to run in subsequent rounds
 	}
 
-	private void error(Element ele, String fmt, Object... args) {
+	protected void error(Element ele, String fmt, Object... args) {
 		this.messager.printMessage(Diagnostic.Kind.ERROR, String.format(fmt, args), ele);
-		this.services = null; // we had an error, don't try to run in subsequent rounds
+		this.finished = true; // we had an error, don't try to run in subsequent rounds
 	}
 }
 

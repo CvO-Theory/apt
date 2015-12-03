@@ -28,7 +28,7 @@ import uniol.apt.io.parser.Parser;
  *
  * @author vsp
  */
-public class ParserProcessor extends AbstractServiceProcessor {
+public class ParserProcessor extends AbstractAptServiceProcessor {
 	/**
 	 * Constructor
 	 */

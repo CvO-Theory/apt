@@ -28,7 +28,7 @@ import uniol.apt.io.renderer.Renderer;
  *
  * @author vsp
  */
-public class RendererProcessor extends AbstractServiceProcessor {
+public class RendererProcessor extends AbstractAptServiceProcessor {
 	/**
 	 * Constructor
 	 */
