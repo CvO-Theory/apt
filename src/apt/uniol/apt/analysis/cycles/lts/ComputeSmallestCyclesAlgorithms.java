@@ -50,7 +50,8 @@ public class ComputeSmallestCyclesAlgorithms {
 	public static String getAlgorithmCharDescription() {
 		return "Select the algorithm to use:"
 			+ " 'd' selects an depth first search algorithm;"
-			+ " 'f' selects an adapted Floyd-Warshall algorithm";
+			+ " 'f' selects an adapted Floyd-Warshall algorithm;"
+			+ " 'j' selects Johnson's algorithm";
 	}
 
 	/**
@@ -67,6 +68,9 @@ public class ComputeSmallestCyclesAlgorithms {
 				break;
 			case 'd':
 				algo = new ComputeSmallestCyclesDFS();
+				break;
+			case 'j':
+				algo = new ComputeSmallestCyclesJohnson();
 				break;
 			default:
 				throw new IllegalArgumentException("Unknown algorithm requested");
