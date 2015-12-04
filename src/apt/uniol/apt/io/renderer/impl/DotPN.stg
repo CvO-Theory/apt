@@ -59,7 +59,7 @@ place(p) ::= <<
 
 /**
  * Template for an arc
- * @param a an Object holding an arc (Needed properties: source and target, both must hav an id property)
+ * @param a an Object holding an arc (Needed properties: source and target, both must have an id property)
  */
 arc(a) ::= <<
 <a.source.id> -> <a.target.id> [xlabel="<a.weight>"];
