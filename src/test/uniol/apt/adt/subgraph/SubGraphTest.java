@@ -206,6 +206,32 @@ public class SubGraphTest {
 		SubGraph<TransitionSystem, Arc, State> subGraph2 = getSubGraphByNodeIDs(graph, new HashSet<>(Arrays.asList("s0")));
 		getSubGraphByNodeIDs(graph, states).getPresetEdges(subGraph2.getNode("s0"));
 	}
+
+	@Test
+	public void testPlainTNetReachabilityTSSubGraphIDs() {
+		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
+		Set<String> states = new HashSet<>(Arrays.asList("s0", "s1", "s2", "s3"));
+		SubGraph<TransitionSystem, Arc, State> subGraph = getSubGraphByNodeIDs(graph, states);
+
+		states = new HashSet<>(Arrays.asList("s1", "s2"));
+		SubGraph<TransitionSystem, Arc, State> subGraph2 = getSubGraphByNodeIDs(graph, states);
+
+		assertThat(subGraph.getFlatSubGraphByNodeIDs(states), equalTo(subGraph2));
+	}
+
+	@Test
+	public void testPlainTNetReachabilityTSSubGraphNodes() {
+		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
+		Set<String> states = new HashSet<>(Arrays.asList("s0", "s1", "s2", "s3"));
+		SubGraph<TransitionSystem, Arc, State> subGraph = getSubGraphByNodeIDs(graph, states);
+
+		states = new HashSet<>(Arrays.asList("s1", "s2"));
+		SubGraph<TransitionSystem, Arc, State> subGraph2 = getSubGraphByNodeIDs(graph, states);
+
+		assertThat(subGraph.getFlatSubGraphByNodes(new HashSet<>(Arrays.asList(
+							subGraph.getNode("s1"), subGraph.getNode("s2")))),
+				equalTo(subGraph2));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
