@@ -54,6 +54,7 @@ import uniol.apt.analysis.plain.Plain;
 import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.synthesize.separation.Separation;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
+import uniol.apt.util.DifferentPairsIterable;
 import uniol.apt.util.EquivalenceRelation;
 import uniol.apt.util.Pair;
 
@@ -741,59 +742,6 @@ public class SynthesizePN {
 					if (!hasNext())
 						throw new NoSuchElementException();
 					return new Pair<>(currentState, alphabet.next());
-				}
-
-				@Override
-				public void remove() {
-					throw new UnsupportedOperationException();
-				}
-			};
-		}
-	}
-
-	/**
-	 * Iterable for iterating over all pairs of different elements of a given set. Note that it is assumed that the
-	 * order of the elements does not matter, so only one of (a, b) and (b, a) will be returned.
-	 */
-	static public class DifferentPairsIterable<E> implements Iterable<Pair<E, E>> {
-		private final Set<E> set;
-
-		/**
-		 * Construct a new instance of this iterable for the given base set.
-		 * @param set The set whose pairs should be returned.
-		 */
-		public DifferentPairsIterable(Set<E> set) {
-			this.set = set;
-		}
-
-		@Override
-		public Iterator<Pair<E, E>> iterator() {
-			return new Iterator<Pair<E, E>>() {
-				private Set<E> remainingElements = new HashSet<>(set);
-				private Iterator<E> iter = emptyIterator();
-				private E currentElement = null;
-
-				@Override
-				public boolean hasNext() {
-					while (!iter.hasNext()) {
-						if (remainingElements.isEmpty())
-							return false;
-
-						Iterator<E> nextElement = remainingElements.iterator();
-						currentElement = nextElement.next();
-						nextElement.remove();
-
-						iter = remainingElements.iterator();
-					}
-
-					return true;
-				}
-
-				@Override
-				public Pair<E, E> next() {
-					if (!hasNext())
-						throw new NoSuchElementException();
-					return new Pair<>(currentElement, iter.next());
 				}
 
 				@Override

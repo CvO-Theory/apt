@@ -39,6 +39,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.synthesize.separation.SMTInterpolHelper;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
+import uniol.apt.util.DifferentPairsIterable;
 import uniol.apt.util.Pair;
 
 import static uniol.apt.util.DebugUtil.debug;
@@ -211,7 +212,7 @@ public class MinimizePN {
 				assert statesToSeparate.isEmpty();
 			else
 				for (Pair<State, State> problem :
-						new SynthesizePN.DifferentPairsIterable<>(statesToSeparate)) {
+						new DifferentPairsIterable<>(statesToSeparate)) {
 					Term[] problemSolved = new Term[limit];
 					State state1 = problem.getFirst();
 					State state2 = problem.getSecond();
