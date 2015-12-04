@@ -81,8 +81,8 @@ import uniol.apt.module.impl.ReturnValue;
 import uniol.apt.module.impl.SimpleModulePreconditionsChecker;
 import uniol.apt.ui.ParametersParser;
 import uniol.apt.ui.ParametersTransformer;
-import uniol.apt.ui.ReturnValuesTransformer;
 import uniol.apt.ui.impl.ParametersTransformerImpl;
+import uniol.apt.ui.impl.ReturnValuesTransformerImpl;
 import uniol.apt.ui.impl.SimpleParametersParser;
 import uniol.apt.ui.impl.parameter.CharacterParameterTransformation;
 import uniol.apt.ui.impl.parameter.ExtendModeParameterTransformation;
@@ -121,7 +121,7 @@ public class APT {
 
 	private static final ParametersParser parametersParser = new SimpleParametersParser();
 	private static final ParametersTransformerImpl parametersTransformer = new ParametersTransformerImpl();
-	private static final ReturnValuesTransformer returnValuesTransformer = new ReturnValuesTransformer();
+	private static final ReturnValuesTransformerImpl returnValuesTransformer = new ReturnValuesTransformerImpl();
 	private static final ModuleRegistry registry = AptModuleRegistry.INSTANCE;
 	private static final Trie<String, String> removedModules = new PatriciaTrie<>();
 

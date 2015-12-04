@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.ui;
+package uniol.apt.ui.impl;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.ui.ReturnValueTransformation;
+import uniol.apt.ui.ReturnValuesTransformer;
 
 /**
  * This is just the reverse of {@link ParametersTransformer}.
@@ -32,12 +34,28 @@ import uniol.apt.module.exception.ModuleException;
  * @author Renke Grunwald
  *
  */
-public interface ReturnValuesTransformer {
-	Map<Class<?>, ReturnValueTransformation<?>> transformations = new HashMap<>();
+public class ReturnValuesTransformerImpl implements ReturnValuesTransformer {
+	private Map<Class<?>, ReturnValueTransformation<?>> transformations = new HashMap<>();
 
-	public <T> ReturnValueTransformation<T> getTransformation(Class<T> klass);
+	public <T> void addTransformation(Class<T> klass, ReturnValueTransformation<T> transformation) {
+		transformations.put(klass, transformation);
+	}
 
-	public <T> void transform(Writer output, Object arg, Class<T> klass) throws ModuleException, IOException;
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> ReturnValueTransformation<T> getTransformation(Class<T> klass) {
+		// FIXME: Can these casts be avoided?
+		return (ReturnValueTransformation<T>) transformations.get(klass);
+	}
+
+	@Override
+	public <T> void transform(Writer output, Object arg, Class<T> klass) throws ModuleException, IOException {
+		ReturnValueTransformation<T> transformation = getTransformation(klass);
+		if (transformation == null)
+			output.write(arg.toString());
+		else
+			transformation.transform(output, klass.cast(arg));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
