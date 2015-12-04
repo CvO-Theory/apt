@@ -69,6 +69,7 @@ public class BoundedModule extends AbstractModule implements Module {
 		outputSpec.addReturnValue("witness_place", Place.class);
 		outputSpec.addReturnValue("witness_firing_sequence", FiringSequence.class);
 		outputSpec.addReturnValue("witness_firing_sequence_cycle", FiringSequence.class);
+		outputSpec.addReturnValue("smallest_K", Long.class);
 	}
 
 	@Override
@@ -83,6 +84,10 @@ public class BoundedModule extends AbstractModule implements Module {
 			boundedResult = result.isKBounded(k);
 		}
 		output.setReturnValue("bounded", Boolean.class, boundedResult);
+
+		// Return the smallest k for which the net is k-bounded.
+		output.setReturnValue("smallest_K", Long.class, result.k);
+
 		if (!boundedResult) {
 			output.setReturnValue("witness_place", Place.class, result.unboundedPlace);
 			if (k != null) {
