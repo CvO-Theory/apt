@@ -70,7 +70,7 @@ public class IsolatedElementsModule extends AbstractModule implements Module {
 
 	@SuppressWarnings("unchecked")
 	private static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>>
-			Set<? extends INode<G, ?, N>> run(IGraph<?, ?, ?> graph) {
+			Set<? extends INode<?, ?, ?>> run(IGraph<?, ?, ?> graph) {
 		return Connectivity.findIsolatedElements((G) graph);
 	}
 
