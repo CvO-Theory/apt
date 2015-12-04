@@ -19,9 +19,6 @@
 
 package uniol.apt.ui;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.exception.NoSuchTransformationException;
 
@@ -30,33 +27,15 @@ import uniol.apt.module.exception.NoSuchTransformationException;
  * transform a given parameter string to an object of a specific type.
  *
  * @author Renke Grunwald
- *
  */
-public class ParametersTransformer {
-	Map<Class<?>, ParameterTransformation<?>> transformations = new HashMap<>();
-
-	/**
-	 * Adds a transformation.
-	 *
-	 * @param klass
-	 *            the type of the resulting object
-	 * @param transformation
-	 *            the actual transformation
-	 */
-	public <T> void addTransformation(Class<T> klass, ParameterTransformation<T> transformation) {
-		transformations.put(klass, transformation);
-	}
-
+public interface ParametersTransformer {
 	/**
 	 * Gets the transformation that can transform objects of the given type.
 	 *
 	 * @param klass the type of the object the transformation transforms
 	 * @return the transformation
 	 */
-	@SuppressWarnings("unchecked")
-	public <T> ParameterTransformation<T> getTransformation(Class<T> klass) {
-		return (ParameterTransformation<T>) transformations.get(klass);
-	}
+	public <T> ParameterTransformation<T> getTransformation(Class<T> klass);
 
 	/**
 	 * Transforms a parameter string to an object of a specific type.
@@ -67,18 +46,9 @@ public class ParametersTransformer {
 	 *            the type of the object the parameter string should be
 	 *            transformed to
 	 * @return the transformed object
-	 * @throws ModuleException
+	 * @throws NoSuchTransformationException
 	 */
-	public Object transform(String arg, Class<?> klass) throws ModuleException {
-		ParameterTransformation<?> transformation = transformations.get(klass);
-		if (transformation == null)
-			throw new NoSuchTransformationException(klass);
-		Object obj = transformation.transform(arg);
-		if (obj == null)
-			throw new NullPointerException("Parameter transformation for class " + klass + " returned "
-					+ "null when given the argument '" + arg + "'");
-		return obj;
-	}
+	public Object transform(String arg, Class<?> klass) throws ModuleException;
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
