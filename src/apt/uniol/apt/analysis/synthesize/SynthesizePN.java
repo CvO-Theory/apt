@@ -47,6 +47,7 @@ import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.exception.NonDeterministicException;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.exception.UnboundedException;
+import uniol.apt.analysis.homogenous.Homogenous;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.analysis.language.LanguageEquivalence;
 import uniol.apt.analysis.on.OutputNonBranching;
@@ -625,6 +626,7 @@ public class SynthesizePN {
 		} catch (PreconditionFailedException e) {
 			assert false : regions;
 		}
+		assert !properties.isHomogenous() || new Homogenous().check(pn) == null : regions;
 
 		try {
 			if (!onlyEventSeparation)

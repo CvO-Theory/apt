@@ -41,6 +41,8 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
+import uniol.apt.util.DifferentPairsIterable;
+import uniol.apt.util.Pair;
 
 /**
  * Helper class for solving separation problems.
@@ -151,6 +153,8 @@ public class SMTInterpolHelper {
 			isRegion.addAll(requireTNetOrMarkedGraph(backwardWeight, properties.isMarkedGraph()));
 			isRegion.addAll(requireTNetOrMarkedGraph(forwardWeight, properties.isMarkedGraph()));
 		}
+		if (properties.isHomogenous())
+			isRegion.addAll(requireHomogenous(backwardWeight));
 
 		// Now we can define the "isRegion" function
 		Term isRegionTerm = collectTerms("and", isRegion.toArray(new Term[isRegion.size()]),
@@ -375,6 +379,26 @@ public class SMTInterpolHelper {
 		return Collections.singletonList(collectTerms("or", result, script.term("true")));
 	}
 
+	/**
+	 * Add the needed inequalities so that the system may only produce homogenous regions for the given weights.
+	 * @param backwardWeight Terms representing the weights of transitions.
+	 * @return The needed terms.
+	 */
+	private List<Term> requireHomogenous(Term[] backwardWeight) {
+		final int numberEvents = utility.getNumberOfEvents();
+		List<Term> result = new ArrayList<>();
+		Term zero = script.numeral(BigInteger.ZERO);
+
+		for (Pair<Term, Term> weightPair : new DifferentPairsIterable<>(Arrays.asList(backwardWeight))) {
+			result.add(script.term("or",
+					script.term("=", zero, weightPair.getFirst()),
+					script.term("=", zero, weightPair.getSecond()),
+					script.term("=", weightPair.getFirst(), weightPair.getSecond())
+				));
+		}
+
+		return result;
+	}
 	private Term collectTerms(String operation, Term[] terms, Term def) {
 		switch (terms.length) {
 			case 0:

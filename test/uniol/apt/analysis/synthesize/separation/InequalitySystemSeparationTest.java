@@ -74,6 +74,10 @@ public class InequalitySystemSeparationTest {
 		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
 						new InequalitySystemSeparationFactory(properties), false, true, false)));
 
+		properties = new PNProperties().setHomogenous(true);
+		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
+						new InequalitySystemSeparationFactory(properties))));
+
 		return tests.toArray(new Object[tests.size()]);
 	}
 }

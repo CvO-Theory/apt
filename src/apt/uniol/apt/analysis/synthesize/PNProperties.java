@@ -37,6 +37,7 @@ public class PNProperties {
 	private boolean markedgraph = false;
 	private boolean outputNonbranching = false;
 	private boolean conflictFree = false;
+	private boolean homogenous = false;
 
 	/**
 	 * Create a new, empty Petri net properties instance.
@@ -56,6 +57,7 @@ public class PNProperties {
 		markedgraph = other.markedgraph;
 		outputNonbranching = other.outputNonbranching;
 		conflictFree = other.conflictFree;
+		homogenous = other.homogenous;
 	}
 
 	/**
@@ -229,6 +231,25 @@ public class PNProperties {
 	}
 
 	/**
+	 * Return true if this property description requires a homogenous PN.
+	 * @return true if homogenous.
+	 */
+	public boolean isHomogenous() {
+		return homogenous;
+	}
+
+	/**
+	 * Create a new instance which differs from this one in the specified homogenous requirement.
+	 * @param value whether homogenous should be required.
+	 * @return A new PNProperties which expresses the same properties as this instance, plus homogenous.
+	 */
+	public PNProperties setHomogenous(boolean value) {
+		PNProperties result = new PNProperties(this);
+		result.homogenous = value;
+		return result;
+	}
+
+	/**
 	 * Test if this properties instance a superset of another instance.
 	 * @param other The PNProperties instance to compare with.
 	 * @return True if all requirements done by the other instance are also enforced by this.
@@ -250,6 +271,8 @@ public class PNProperties {
 			return false;
 		if (other.isConflictFree() && !isConflictFree())
 			return false;
+		if (other.isHomogenous() && !isHomogenous())
+			return false;
 		return true;
 	}
 
@@ -268,8 +291,10 @@ public class PNProperties {
 			hashCode |= 1 << 4;
 		if (conflictFree)
 			hashCode |= 1 << 5;
+		if (homogenous)
+			hashCode |= 1 << 6;
 		if (isKBounded())
-			hashCode |= getKForKBounded() << 6;
+			hashCode |= getKForKBounded() << 7;
 		return hashCode;
 	}
 
@@ -291,6 +316,8 @@ public class PNProperties {
 		if (outputNonbranching != other.outputNonbranching)
 			return false;
 		if (conflictFree != other.conflictFree)
+			return false;
+		if (homogenous != other.homogenous)
 			return false;
 		return true;
 	}
@@ -315,6 +342,8 @@ public class PNProperties {
 			tmpList.add("output-nonbranching");
 		if (isConflictFree())
 			tmpList.add("conflict-free");
+		if (isHomogenous())
+			tmpList.add("homogenous");
 
 		if (tmpList.isEmpty())
 			return "[]";

@@ -116,6 +116,12 @@ public class SynthesizeModuleTest {
 	}
 
 	@Test
+	public void testHomogenous() throws Exception {
+		PNProperties properties = new PNProperties().setHomogenous(true);
+		assertThat(parse("homogenous"), equalTo(properties));
+	}
+
+	@Test
 	public void testExtraArgs() throws Exception {
 		PNProperties properties = new PNProperties().setOutputNonbranching(true);
 		assertThat(parse("foo,bAr,on,baz", Arrays.asList("foo", "bar", "foobar", "baz"),
