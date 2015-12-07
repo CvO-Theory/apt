@@ -178,8 +178,9 @@ public class Connectivity {
 			Map<N, Integer> dfsNumbers, Map<N, Integer> minNumbers, int counter) {
 		Deque<N> callers = new LinkedList<>();
 		Deque<N> stack = new LinkedList<>();
+		Set<N> stackAsSet = new HashSet<>();
 
-		counter = visitNode(node, dfsNumbers, minNumbers, counter, stack);
+		counter = visitNode(node, dfsNumbers, minNumbers, counter, stack, stackAsSet);
 		do {
 			boolean done = true;
 			for (N current : node.getPostsetNodes()) {
@@ -188,10 +189,10 @@ public class Connectivity {
 					callers.addLast(node);
 					node = current;
 
-					counter = visitNode(node, dfsNumbers, minNumbers, counter, stack);
+					counter = visitNode(node, dfsNumbers, minNumbers, counter, stack, stackAsSet);
 					done = false;
 					break;
-				} else if (stack.contains(current) && minNumbers.get(node) > minNumbers.get(current)) {
+				} else if (stackAsSet.contains(current) && minNumbers.get(node) > minNumbers.get(current)) {
 					// Set our own minNumbers to current's depth search number if it is smaller
 					minNumbers.put(node, Math.min(minNumbers.get(node), dfsNumbers.get(current)));
 				}
@@ -207,6 +208,8 @@ public class Connectivity {
 
 					while (cur != node) {
 						cur = stack.removeLast();
+						boolean removed = stackAsSet.remove(cur);
+						assert removed;
 						component.add(cur);
 					}
 					result.add(component);
@@ -222,6 +225,7 @@ public class Connectivity {
 
 		assert callers.isEmpty();
 		assert stack.isEmpty();
+		assert stackAsSet.isEmpty();
 		return counter;
 	}
 
@@ -230,7 +234,7 @@ public class Connectivity {
 	 * Nope, the parameters aren't explained here either.
 	 */
 	private static <N extends INode<?, ?, ?>> int visitNode(N node, Map<N, Integer> dfsNumbers,
-			Map<N, Integer> minNumbers, int counter, Deque<N> stack) {
+			Map<N, Integer> minNumbers, int counter, Deque<N> stack, Set<N> stackAsSet) {
 		// Node should not have been visited before.
 		assert !dfsNumbers.containsKey(node);
 		assert !minNumbers.containsKey(node);
@@ -239,6 +243,8 @@ public class Connectivity {
 		dfsNumbers.put(node, counter);
 		minNumbers.put(node, counter);
 		stack.add(node);
+		boolean added = stackAsSet.add(node);
+		assert added;
 
 		return counter;
 	}
