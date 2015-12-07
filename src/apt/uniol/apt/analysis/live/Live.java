@@ -31,8 +31,10 @@ import uniol.apt.analysis.connectivity.Connectivity;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.coverability.CoverabilityGraphNode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -219,11 +221,14 @@ public class Live {
 
 	// Recursively remove the preset from the set of nodes
 	static private void handleStronglyLiveNode(Collection<State> nodes, State node) {
-		if (!nodes.remove(node))
-			// node was already handled
-			return;
-		for (State n : node.getPresetNodes())
-			handleStronglyLiveNode(nodes, n);
+		Deque<State> toRemove = new ArrayDeque<>();
+		toRemove.add(node);
+		while (!toRemove.isEmpty()) {
+			node = toRemove.remove();
+			if (nodes.remove(node))
+				// Node was not yet handled
+				toRemove.addAll(node.getPresetNodes());
+		}
 	}
 }
 
