@@ -29,6 +29,7 @@ import uniol.apt.analysis.connectivity.Component;
 import uniol.apt.analysis.connectivity.Components;
 import uniol.apt.analysis.connectivity.Connectivity;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
+import uniol.apt.analysis.coverability.CoverabilityGraphEdge;
 import uniol.apt.analysis.coverability.CoverabilityGraphNode;
 
 import java.util.ArrayDeque;
@@ -67,16 +68,13 @@ public class Live {
 	 * @param pn The Petri net that should be examined.
 	 * @param transition The transition that is checked.
 	 * @return A firable firing sequence that ends with the given transition, or null.
-	 * @throws UnboundedException If the reachability graph is unbounded.
 	 */
-	static public List<Transition> checkSimplyLive(PetriNet pn, Transition transition) throws UnboundedException {
-		TransitionSystem lts = CoverabilityGraph.get(pn).toReachabilityLTS();
-		for (Arc arc : lts.getEdges()) {
-			Transition trans = (Transition) arc.getExtension(Transition.class.getName());
+	static public List<Transition> checkSimplyLive(PetriNet pn, Transition transition) {
+		for (CoverabilityGraphEdge arc : CoverabilityGraph.get(pn).getEdges()) {
+			Transition trans = arc.getTransition();
 			if (trans.equals(transition)) {
 				// We found an edge which actually fires this transition!
-				CoverabilityGraphNode source = (CoverabilityGraphNode)
-					arc.getSource().getExtension(CoverabilityGraphNode.class.getName());
+				CoverabilityGraphNode source = arc.getSource();
 				List<Transition> result = new ArrayList<>(source.getFiringSequence());
 				result.add(transition);
 				return result;
