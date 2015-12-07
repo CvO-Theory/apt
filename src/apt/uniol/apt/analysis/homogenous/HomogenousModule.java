@@ -70,7 +70,7 @@ public class HomogenousModule extends AbstractModule implements Module {
 
 	@Override
 	public String getTitle() {
-		return "Asymmetric Choice";
+		return "Homogenous";
 	}
 
 	@Override
