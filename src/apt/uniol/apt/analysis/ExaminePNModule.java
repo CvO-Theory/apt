@@ -107,10 +107,6 @@ public class ExaminePNModule extends AbstractModule implements Module {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 		BoundedResult result = Bounded.checkBounded(pn);
-		PersistentNet persistent = new PersistentNet(pn);
-		ReversibleNet reversible = new ReversibleNet(pn);
-		persistent.check();
-		reversible.check();
 		boolean plain = new Plain().checkPlain(pn);
 		output.setReturnValue("plain", Boolean.class, plain);
 		output.setReturnValue("pure", Boolean.class, Pure.checkPure(pn));
@@ -134,16 +130,20 @@ public class ExaminePNModule extends AbstractModule implements Module {
 		output.setReturnValue("strongly_connected", Boolean.class, Connectivity.isStronglyConnected(pn));
 		output.setReturnValue("weakly_connected", Boolean.class, Connectivity.isWeaklyConnected(pn));
 		if (result.isBounded()) {
+			PersistentNet persistent = new PersistentNet(pn);
+			ReversibleNet reversible = new ReversibleNet(pn);
+			persistent.check();
+			reversible.check();
 			output.setReturnValue("bcf", Boolean.class, new BCF().check(pn) == null);
 			output.setReturnValue("bicf", Boolean.class, new BiCF().check(pn) == null);
 			output.setReturnValue("strongly_live", Boolean.class,
 				Live.findNonStronglyLiveTransition(pn) == null);
 			output.setReturnValue("weakly_live", Boolean.class,
 				Live.findNonWeaklyLiveTransition(pn) == null);
+			output.setReturnValue("persistent", Boolean.class, persistent.isPersistent());
+			output.setReturnValue("reversible", Boolean.class, reversible.isReversible());
 		}
 		output.setReturnValue("simply_live", Boolean.class, Live.findDeadTransition(pn) == null);
-		output.setReturnValue("persistent", Boolean.class, persistent.isPersistent());
-		output.setReturnValue("reversible", Boolean.class, reversible.isReversible());
 		output.setReturnValue("homogenous", Boolean.class, new Homogenous().check(pn) == null);
 		output.setReturnValue("asymmetric_choice", Boolean.class, new AsymmetricChoice().check(pn) == null);
 	}
