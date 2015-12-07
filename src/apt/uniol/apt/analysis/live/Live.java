@@ -92,8 +92,10 @@ public class Live {
 	 * @throws UnboundedException If the reachability graph is unbounded.
 	 */
 	static public Transition findNonWeaklyLiveTransition(PetriNet pn) throws UnboundedException {
+		TransitionSystem lts = CoverabilityGraph.get(pn).toReachabilityLTS();
+		Set<? extends Set<State>> components = Connectivity.getStronglyConnectedComponents(lts);
 		for (Transition t : pn.getTransitions())
-			if (!checkWeaklyLive(pn, t))
+			if (!checkWeaklyLive(lts, components, t))
 				return t;
 		return null;
 	}
@@ -107,6 +109,20 @@ public class Live {
 	 * @throws UnboundedException If the reachability graph is unbounded.
 	 */
 	static public boolean checkWeaklyLive(PetriNet pn, Transition transition) throws UnboundedException {
+		TransitionSystem lts = CoverabilityGraph.get(pn).toReachabilityLTS();
+		Set<? extends Set<State>> components = Connectivity.getStronglyConnectedComponents(lts);
+		return checkWeaklyLive(lts, components, transition);
+	}
+
+	/**
+	 * Check if a transition is weakly live.
+	 * @param lts The reachability graph of a PetriNet, generated via {@link CoverabilityGraph#toReachabilityLTS}.
+	 * @param components The strongly connected components of the lts.
+	 * @param transition The transition that should be checked.
+	 * @return true If the transition is weakly live, else false.
+	 */
+	static private boolean checkWeaklyLive(TransitionSystem lts, Set<? extends Set<State>> components,
+			Transition transition) {
 		/* We are working with bounded Petri nets. Thus, an infinite fire sequence creates a circle in the
 		 * reachability graph. This means that there exists an edge for our transition in the graph which is
 		 * taken infinitely often. This means that both nodes of the transition belong to the same strongly
@@ -117,8 +133,6 @@ public class Live {
 		 * component, there obviously can't be an infinite fire sequence which contains the transition
 		 * infinitely often.
 		 */
-		TransitionSystem lts = CoverabilityGraph.get(pn).toReachabilityLTS();
-		Set<? extends Set<State>> components = Connectivity.getStronglyConnectedComponents(lts);
 		for (Arc edge : lts.getEdges()) {
 			// Look for edges labeled with our transition...
 			Transition trans = (Transition) edge.getExtension(Transition.class.getName());
