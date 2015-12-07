@@ -19,12 +19,12 @@
 
 package uniol.apt.analysis.connectivity;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -99,7 +99,7 @@ public class Connectivity {
 	 */
 	public static <N extends INode<?, ?, N>> Set<N> getWeaklyConnectedComponent(N node) {
 		Set<N> result = new HashSet<>();
-		Deque<N> unvisited = new LinkedList<>();
+		Deque<N> unvisited = new ArrayDeque<>();
 		unvisited.add(node);
 		result.add(node);
 
@@ -176,8 +176,8 @@ public class Connectivity {
 	 */
 	private static <N extends INode<?, ?, N>> int handleStronglyConnectedComponents(N node, Set<Set<N>> result,
 			Map<N, Integer> dfsNumbers, Map<N, Integer> minNumbers, int counter) {
-		Deque<N> callers = new LinkedList<>();
-		Deque<N> stack = new LinkedList<>();
+		Deque<N> callers = new ArrayDeque<>();
+		Deque<N> stack = new ArrayDeque<>();
 		Set<N> stackAsSet = new HashSet<>();
 
 		counter = visitNode(node, dfsNumbers, minNumbers, counter, stack, stackAsSet);
