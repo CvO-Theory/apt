@@ -54,6 +54,16 @@ public class PnmlPNParserTest {
 		assertThat(actual, netWithSameStructureAs(expected));
 		assertThat(actual.getName(), is("Net-One"));
 	}
+
+	@Test
+	public void testEmptyNetEmptyID() throws Exception {
+		PetriNet actual = new PnmlPNParser().parseString(
+				"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><pnml><net id=\"\" type=\"P/T net\">" +
+				"</net></pnml>");
+		PetriNet expected = new PetriNet();
+		assertThat(actual, netWithSameStructureAs(expected));
+		assertThat(actual.getName(), is(""));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

@@ -122,11 +122,10 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 
 		// Get an attribute of an element or throw an exception if it doesn't have such an attribute
 		private String getAttribute(Element elem, String name) throws ParseException {
-			String result = elem.getAttribute(name);
-			if (result.equals(""))
+			if (!elem.hasAttribute(name))
 				throw new ParseException("Element <" + elem.getTagName() + "> does not have attribute "
 						+ name);
-			return result;
+			return elem.getAttribute(name);
 		}
 
 		// Get the text inside of this element
