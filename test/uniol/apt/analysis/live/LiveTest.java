@@ -55,10 +55,11 @@ public class LiveTest {
 		testLiveNet(getOneTransitionNoPlaceNet(), true);
 	}
 
-	@Test(expectedExceptions = UnboundedException.class)
+	@Test
 	public void testTokenGeneratorNetSimply() throws Exception {
 		PetriNet pn = getTokenGeneratorNet();
-		Live.checkSimplyLive(pn, pn.getTransition("t1"));
+		Transition t1 = pn.getTransition("t1");
+		assertThat(Live.checkSimplyLive(pn, t1), contains(t1));
 	}
 
 	@Test(expectedExceptions = UnboundedException.class)
