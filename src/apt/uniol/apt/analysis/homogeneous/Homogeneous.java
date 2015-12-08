@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.homogenous;
+package uniol.apt.analysis.homogeneous;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,18 +29,18 @@ import uniol.apt.adt.pn.Place;
 import uniol.apt.util.Pair;
 
 /**
- * Checks whether a given plain Petri net is an homogenous net.
+ * Checks whether a given plain Petri net is an homogeneous net.
  *
- * A Petri net is an homogenous net if:
+ * A Petri net is an homogeneous net if:
  * ∀p∈P:∀t₁,t₂∈p°: F(p,t₁)=F(p,t₂)
  *
  * @author vsp
  */
-public class Homogenous {
+public class Homogeneous {
 	/**
-	 * Checks whether a given Petri net is a homogenous net.
+	 * Checks whether a given Petri net is a homogeneous net.
 	 * @param net the petri net to check.
-	 * @return a pair of arcs which is a counterexample if the Petri net doesn't fulfill the propertey, null if
+	 * @return a pair of arcs which is a counterexample if the Petri net doesn't fulfill the property, null if
 	 * it fulfills the property.
 	 */
 	public Pair<Flow, Flow> check(PetriNet net) {

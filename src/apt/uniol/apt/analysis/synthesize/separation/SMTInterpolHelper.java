@@ -153,8 +153,8 @@ public class SMTInterpolHelper {
 			isRegion.addAll(requireTNetOrMarkedGraph(backwardWeight, properties.isMarkedGraph()));
 			isRegion.addAll(requireTNetOrMarkedGraph(forwardWeight, properties.isMarkedGraph()));
 		}
-		if (properties.isHomogenous())
-			isRegion.addAll(requireHomogenous(backwardWeight));
+		if (properties.isHomogeneous())
+			isRegion.addAll(requireHomogeneous(backwardWeight));
 
 		// Now we can define the "isRegion" function
 		Term isRegionTerm = collectTerms("and", isRegion.toArray(new Term[isRegion.size()]),
@@ -380,11 +380,11 @@ public class SMTInterpolHelper {
 	}
 
 	/**
-	 * Add the needed inequalities so that the system may only produce homogenous regions for the given weights.
+	 * Add the needed inequalities so that the system may only produce homogeneous regions for the given weights.
 	 * @param backwardWeight Terms representing the weights of transitions.
 	 * @return The needed terms.
 	 */
-	private List<Term> requireHomogenous(Term[] backwardWeight) {
+	private List<Term> requireHomogeneous(Term[] backwardWeight) {
 		final int numberEvents = utility.getNumberOfEvents();
 		List<Term> result = new ArrayList<>();
 		Term zero = script.numeral(BigInteger.ZERO);

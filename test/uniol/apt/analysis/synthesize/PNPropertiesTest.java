@@ -92,10 +92,10 @@ public class PNPropertiesTest {
 		properties = properties.setMarkedGraph(true);
 		assertThat(properties, containsAll(properties2));
 
-		properties2 = properties2.setHomogenous(true);
+		properties2 = properties2.setHomogeneous(true);
 		assertThat(properties, not(containsAll(properties2)));
 
-		properties = properties.setHomogenous(true);
+		properties = properties.setHomogeneous(true);
 		assertThat(properties, containsAll(properties2));
 	}
 
@@ -118,10 +118,10 @@ public class PNPropertiesTest {
 		properties2 = properties2.setPlain(true);
 		assertThat(properties.hashCode(), equalTo(properties2.hashCode()));
 
-		properties = properties.setHomogenous(true);
+		properties = properties.setHomogeneous(true);
 		assertThat(properties, not(equalTo(properties2)));
 
-		properties2 = properties2.setHomogenous(true);
+		properties2 = properties2.setHomogeneous(true);
 		assertThat(properties.hashCode(), equalTo(properties2.hashCode()));
 	}
 
@@ -148,8 +148,8 @@ public class PNPropertiesTest {
 		properties = properties.setMarkedGraph(true);
 		assertThat(properties, hasToString("[safe, marked-graph, output-nonbranching]"));
 
-		properties = properties.setHomogenous(true);
-		assertThat(properties, hasToString("[safe, marked-graph, output-nonbranching, homogenous]"));
+		properties = properties.setHomogeneous(true);
+		assertThat(properties, hasToString("[safe, marked-graph, output-nonbranching, homogeneous]"));
 	}
 }
 

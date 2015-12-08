@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.homogenous;
+package uniol.apt.analysis.homogeneous;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
@@ -34,14 +34,14 @@ import uniol.apt.module.exception.ModuleException;
 import uniol.apt.util.Pair;
 
 /**
- * Checks whether a given plain Petri net is an homogenous net.
+ * Checks whether a given plain Petri net is an homogeneous net.
  * @author vsp
  */
 @AptModule
-public class HomogenousModule extends AbstractModule implements Module {
+public class HomogeneousModule extends AbstractModule implements Module {
 	@Override
 	public String getName() {
-		return "homogenous";
+		return "homogeneous";
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class HomogenousModule extends AbstractModule implements Module {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("homogenous", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
+		outputSpec.addReturnValue("homogeneous", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
 		outputSpec.addReturnValue("witness1", Flow.class);
 		outputSpec.addReturnValue("witness2", Flow.class);
 	}
@@ -59,9 +59,9 @@ public class HomogenousModule extends AbstractModule implements Module {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("net", PetriNet.class);
-		Homogenous homogenous = new Homogenous();
-		Pair<Flow, Flow> counterexample = homogenous.check(pn);
-		output.setReturnValue("homogenous", Boolean.class, counterexample == null);
+		Homogeneous homogeneous = new Homogeneous();
+		Pair<Flow, Flow> counterexample = homogeneous.check(pn);
+		output.setReturnValue("homogeneous", Boolean.class, counterexample == null);
 		if (counterexample != null) {
 			output.setReturnValue("witness1", Flow.class, counterexample.getFirst());
 			output.setReturnValue("witness2", Flow.class, counterexample.getSecond());
@@ -70,17 +70,17 @@ public class HomogenousModule extends AbstractModule implements Module {
 
 	@Override
 	public String getTitle() {
-		return "Homogenous";
+		return "Homogeneous";
 	}
 
 	@Override
 	public String getShortDescription() {
-		return "Check if a Petri net is homogenous";
+		return "Check if a Petri net is homogeneous";
 	}
 
 	@Override
 	public String getLongDescription() {
-		return getShortDescription() + ".\n\nA Petri net is an homogenous net if " +
+		return getShortDescription() + ".\n\nA Petri net is an homogeneous net if " +
 			"∀p∈P:∀t₁,t₂∈p°: F(p,t₁)=F(p,t₂)";
 	}
 

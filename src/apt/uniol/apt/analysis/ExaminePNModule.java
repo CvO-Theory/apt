@@ -38,7 +38,7 @@ import uniol.apt.analysis.cf.ConflictFree;
 import uniol.apt.analysis.connectivity.Connectivity;
 import uniol.apt.analysis.fc.FreeChoice;
 import uniol.apt.analysis.fcnet.FCNet;
-import uniol.apt.analysis.homogenous.Homogenous;
+import uniol.apt.analysis.homogeneous.Homogeneous;
 import uniol.apt.analysis.live.Live;
 import uniol.apt.analysis.on.OutputNonBranching;
 import uniol.apt.analysis.persistent.PersistentNet;
@@ -99,7 +99,7 @@ public class ExaminePNModule extends AbstractModule implements Module {
 		outputSpec.addReturnValue("simply_live", Boolean.class);
 		outputSpec.addReturnValue("persistent", Boolean.class);
 		outputSpec.addReturnValue("reversible", Boolean.class);
-		outputSpec.addReturnValue("homogenous", Boolean.class);
+		outputSpec.addReturnValue("homogeneous", Boolean.class);
 		outputSpec.addReturnValue("asymmetric_choice", Boolean.class);
 	}
 
@@ -144,7 +144,7 @@ public class ExaminePNModule extends AbstractModule implements Module {
 			output.setReturnValue("reversible", Boolean.class, reversible.isReversible());
 		}
 		output.setReturnValue("simply_live", Boolean.class, Live.findDeadTransition(pn) == null);
-		output.setReturnValue("homogenous", Boolean.class, new Homogenous().check(pn) == null);
+		output.setReturnValue("homogeneous", Boolean.class, new Homogeneous().check(pn) == null);
 		output.setReturnValue("asymmetric_choice", Boolean.class, new AsymmetricChoice().check(pn) == null);
 	}
 

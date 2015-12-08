@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.homogenous;
+package uniol.apt.analysis.homogeneous;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -42,7 +42,7 @@ import uniol.tests.dataprovider.IntRangeDataProvider;
 import uniol.tests.dataprovider.annotations.IntRangeParameter;
 
 /** @author vsp */
-public class HomogenousTest {
+public class HomogeneousTest {
 
 	private CycleGenerator cycleGenerator;
 	private BistatePhilNetGenerator biStatePhilNetGenerator;
@@ -66,11 +66,11 @@ public class HomogenousTest {
 	}
 
 	private boolean testNet(PetriNet pn) {
-		return new Homogenous().check(pn) == null;
+		return new Homogeneous().check(pn) == null;
 	}
 
 	private boolean testNetModule(PetriNet pn) throws Exception {
-		HomogenousModule module = new HomogenousModule();
+		HomogeneousModule module = new HomogeneousModule();
 		ModuleInvoker invoker = new ModuleInvoker();
 		return (Boolean) (invoker.invoke(module, pn).get(0));
 	}

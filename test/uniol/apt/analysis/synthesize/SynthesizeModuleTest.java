@@ -116,9 +116,9 @@ public class SynthesizeModuleTest {
 	}
 
 	@Test
-	public void testHomogenous() throws Exception {
-		PNProperties properties = new PNProperties().setHomogenous(true);
-		assertThat(parse("homogenous"), equalTo(properties));
+	public void testHomogeneous() throws Exception {
+		PNProperties properties = new PNProperties().setHomogeneous(true);
+		assertThat(parse("homogeneous"), equalTo(properties));
 	}
 
 	@Test
