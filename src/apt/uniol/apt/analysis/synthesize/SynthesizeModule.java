@@ -77,7 +77,7 @@ public class SynthesizeModule extends AbstractModule implements Module {
 		inputSpec.addParameter("options", String.class,
 				"Comma separated list of options,"
 				+ " can be verbose, none, safe, [k]-bounded, pure, plain, tnet, marked-graph,"
-				+ " output-nonbranching (on), conflict-free (cf), homogenous, "
+				+ " output-nonbranching (on), conflict-free (cf), homogenous,"
 				+ " upto-language-equivalence (language, le), minimize" + extra1 + "."
 				+ " Special options are verbose (print detail information about the regions),"
 				+ " quick-fail (fail quickly when the result 'success: No' is known)" + extra2 + " and"

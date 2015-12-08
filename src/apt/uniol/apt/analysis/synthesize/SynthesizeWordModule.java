@@ -83,7 +83,7 @@ public class SynthesizeWordModule extends AbstractModule implements Module {
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
-		SynthesizeModule.requireCommon(inputSpec, " ,cycle",
+		SynthesizeModule.requireCommon(inputSpec, ", cycle",
 				", cycle (form a cyclic word w^* from the input instead of solving w directly)");
 		inputSpec.addParameter("word", Word.class, "The word that should be synthesized");
 	}
