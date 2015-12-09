@@ -37,6 +37,7 @@ import uniol.apt.io.renderer.RenderException;
 public abstract class AbstractSTRenderer<G> extends AbstractRenderer<G> {
 	private final STGroup group;
 	private final String templateName;
+	private final String format;
 
 	/**
 	 * Constructor
@@ -44,9 +45,10 @@ public abstract class AbstractSTRenderer<G> extends AbstractRenderer<G> {
 	 * @param templateFile file name of the template file
 	 * @param templateName name of the main rule in the template file
 	 */
-	protected AbstractSTRenderer(String templateFile, String templateName) {
+	protected AbstractSTRenderer(String templateFile, String templateName, String format) {
 		this.group        = new STGroupFile(templateFile);
 		this.templateName = templateName;
+		this.format       = format;
 	}
 
 	@Override
@@ -54,6 +56,11 @@ public abstract class AbstractSTRenderer<G> extends AbstractRenderer<G> {
 		ST template = this.group.getInstanceOf(this.templateName);
 		template.add(this.templateName, obj);
 		template.write(new AutoIndentWriter(writer), new ThrowingErrorListener());
+	}
+
+	@Override
+	public String getFormat() {
+		return this.format;
 	}
 }
 

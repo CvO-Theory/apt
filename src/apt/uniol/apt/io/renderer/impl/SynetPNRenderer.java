@@ -30,15 +30,8 @@ import uniol.apt.io.renderer.Renderer;
  */
 @AptRenderer
 public class SynetPNRenderer extends AbstractSTRenderer<PetriNet> implements Renderer<PetriNet> {
-	public final static String FORMAT = "synet";
-
 	public SynetPNRenderer() {
-		super("uniol/apt/io/renderer/impl/SynetPN.stg", "pn");
-	}
-
-	@Override
-	public String getFormat() {
-		return FORMAT;
+		super("uniol/apt/io/renderer/impl/SynetPN.stg", "pn", "synet");
 	}
 }
 
