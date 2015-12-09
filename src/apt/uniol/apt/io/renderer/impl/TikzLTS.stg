@@ -18,62 +18,52 @@
  */
 
 /**
- * Stringtemplate template group file for rendering Petri nets as Tikz pictures.
+ * Stringtemplate template group file for rendering transitions systems as Tikz pictures.
  * @author: vsp
  */
 
 import "uniol/apt/io/renderer/impl/Tikz.stg"
 
 /**
- * Main template, the TikzPNRenderer uses this.
- * @param pn The Petri net
+ * Main template, the TikzLTSRenderer uses this.
+ * @param ts The transition system
  */
-pn(pn) ::= <<
+ts(ts) ::= <<
 <preamble()>
 
 \\begin{document}
 	% other graph drawing layouts: layered layout, tree layout, simple necklace layout
-	<pnpicture(pn,"auto,label position=left,node distance=2cm and 2cm,spring layout")>
+	<tspicture(ts,"auto,label position=left,node distance=2cm and 2cm,spring layout")>
 \\end{document}
 >>
 
 /**
- * Template for a tikzpicture showing a Petri net
- * @param pn The Petri net
+ * Template for a tikzpicture showing a transition system
+ * @param ts The transition system
  * @param options optional options for the tikzpicture environment
  */
-pnpicture(pn, options) ::= <<
+tspicture(ts, options) ::= <<
 \\begin{tikzpicture}<if(options)>[<options>]<endif>
-	<pn.transitions:transition();separator="\n">
-	<pn.places:place();separator="\n">
-	<pn.transitions:edges();separator="\n">
+	<ts.nodes:state();separator="\n">
+	<ts.nodes:edges();separator="\n">
 \\end{tikzpicture}
 >>
 
 /**
- * Template for a single transition
- * @param t Object describing the transition (Needed properties: id, label)
+ * Template for a single state
+ * @param s Object describing the state
  */
-transition(t) ::= <<
-\\node[transition,label={:<t.label>}](<t.id>){<t.id>};
+state(s) ::= <<
+\\node[state](<s.id>){<s.id>};
 >>
 
 /**
- * Template for a single place
- * @param p Object describing the place (Needed properties: id and initialToken)
+ * Template for all edges going out from a state
+ * @param s Object describing the state (Needed properties: id and postsetEdges)
  */
-place(p) ::= <<
-\\node[place,label={:<p.id>},tokens=<p.initialToken>](<p.id>){};
->>
-
-/**
- * Template for all edges coming from or leading to a transition
- * @param t Object describing the transition (Needed properties: id, presetEdges and postsetEdges)
- */
-edges(t) ::= <<
-\\draw (<t.id>)
-	<t.presetEdges:edge("pre");separator="\n">
-	<t.postsetEdges:edge("post");separator="\n">
+edges(s) ::= <<
+\\draw (<s.id>)
+	<s.postsetEdges:edge();separator="\n">
 ;
 >>
 
@@ -81,8 +71,8 @@ edges(t) ::= <<
  * Template for an edge
  * @param a Object describing the arc (Needed properties: place and weight)
  */
-edge(a,type) ::= <<
-edge[<type>]<\t>node {<a.weight>}<\t>(<a.place.id>)
+edge(a) ::= <<
+edge[->]<\t>node {<a.label>}<\t>(<a.target.id>)
 >>
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
