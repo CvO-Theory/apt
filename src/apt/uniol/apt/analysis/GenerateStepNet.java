@@ -178,7 +178,7 @@ public class GenerateStepNet {
 				if (transitions.contains(flow.getTarget()))
 					requiredOnPlace += flow.getWeight();
 			}
-			requiredToken.put(place, new Token(requiredOnPlace));
+			requiredToken.put(place, Token.valueOf(requiredOnPlace));
 		}
 
 		// Is there any reachable marking which has enough token for this step to fire?

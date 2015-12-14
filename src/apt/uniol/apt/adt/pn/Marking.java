@@ -113,7 +113,7 @@ public class Marking {
 				+ "places in graph '" + this.net.getName() + "'.");
 		}
 		for (int i = 0; i < orderedTokenCounts.length; i++)
-			this.tokenList.add(new Token(orderedTokenCounts[i]));
+			this.tokenList.add(Token.valueOf(orderedTokenCounts[i]));
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class Marking {
 				throw new StructureException("place '" + entry.getKey() + "' does not belong to net '"
 					+ this.net.getName() + "'.");
 			}
-			this.tokenList.set(idx, new Token(entry.getValue()));
+			this.tokenList.set(idx, Token.valueOf(entry.getValue()));
 		}
 		ensureConsistency();
 	}
@@ -311,7 +311,7 @@ public class Marking {
 	 * @throws IllegalArgumentException thrown if a token count is less than zero.
 	 */
 	public Marking setTokenCount(Place p, int m) {
-		return setTokenCount(p, new Token(m));
+		return setTokenCount(p, Token.valueOf(m));
 	}
 
 	/**
@@ -326,7 +326,7 @@ public class Marking {
 	 */
 	@Deprecated
 	public void setToken(Place p, int m) {
-		this.setToken(p, new Token(m));
+		this.setToken(p, Token.valueOf(m));
 	}
 
 	/**

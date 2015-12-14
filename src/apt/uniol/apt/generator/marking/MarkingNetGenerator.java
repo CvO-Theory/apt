@@ -110,10 +110,10 @@ public class MarkingNetGenerator implements Iterable<PetriNet> {
 				// A Petri net should never have an omega in its initial marking.
 				// However, let's better be safe than sorry.
 				if (!mark.isOmega()) {
-					mark = new Token(mark.getValue() + token);
+					mark = Token.valueOf(mark.getValue() + token);
 				}
 			} else {
-				mark = new Token(token);
+				mark = Token.valueOf(token);
 			}
 			p.setInitialToken(mark);
 		}

@@ -39,7 +39,7 @@ public class MarkingIntegrationTest {
 		pn.createFlow(t, p);
 		p.setInitialToken(1);
 
-		assertEquals(pn.getInitialMarking().getToken(p), new Token(1));
+		assertEquals(pn.getInitialMarking().getToken(p), Token.valueOf(1));
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class MarkingIntegrationTest {
 		pn.createFlow(p, t2);
 		p.setInitialToken(1);
 
-		assertEquals(pn.getInitialMarking().getToken(p), new Token(1));
+		assertEquals(pn.getInitialMarking().getToken(p), Token.valueOf(1));
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public class MarkingIntegrationTest {
 		PetriNet pn = new PetriNet("foo");
 		Place p = pn.createPlace("place");
 
-		assertEquals(pn.getInitialMarking().getToken(p), new Token(0));
+		assertEquals(pn.getInitialMarking().getToken(p), Token.valueOf(0));
 	}
 
 	private long getTokenCountConcurrentDiamondNet(Marking m) {

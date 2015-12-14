@@ -1238,7 +1238,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 */
 	boolean getTransitionIsFireable(String id, Marking m) {
 		for (Flow f : this.getPresetEdges(id)) {
-			if (m.getToken(f.getPlace()).compareTo(new Token(f.getWeight())) < 0) {
+			if (m.getToken(f.getPlace()).compareTo(Token.valueOf(f.getWeight())) < 0) {
 				return false;
 			}
 		}

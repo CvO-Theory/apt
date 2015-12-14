@@ -65,7 +65,9 @@ public class Token implements Comparable<Token> {
 	 * @param v the initial value.
 	 * <p/>
 	 * @throws IllegalArgumentException if the given value is less than zero.
+	 * @deprecated Use {@link valueOf} instead.
 	 */
+	@Deprecated
 	public Token(long v) {
 		this(v, true);
 	}
@@ -102,7 +104,7 @@ public class Token implements Comparable<Token> {
 		if (this.v + t < 0) {
 			throw new IllegalArgumentException("this.v + v < 0");
 		}
-		return new Token(this.v + t);
+		return valueOf(this.v + t);
 	}
 
 	/**

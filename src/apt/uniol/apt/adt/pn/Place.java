@@ -68,7 +68,7 @@ public class Place extends Node {
 	 * @param t the number of tokens on this place.
 	 */
 	public void setInitialToken(long t) {
-		setInitialToken(new Token(t));
+		setInitialToken(Token.valueOf(t));
 	}
 
 	/**

@@ -104,7 +104,7 @@ public class BoundedResult {
 		if (isKBounded(n) || n < 0)
 			return null;
 
-		Token target = new Token(n);
+		Token target = Token.valueOf(n);
 		Marking m = pn.getInitialMarking();
 		List<Transition> result = new ArrayList<>();
 		// Does the initial marking already exceed bound n?
