@@ -19,13 +19,14 @@
 
 package uniol.apt.analysis.coverability;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
+import static java.util.Collections.reverse;
 
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.Transition;
@@ -39,7 +40,7 @@ import uniol.apt.adt.pn.Transition;
 public class CoverabilityGraphNode {
 	private final CoverabilityGraph graph;
 	private final Marking marking;
-	private final List<Transition> firingSequence;
+	private final Transition reachingTransition;
 	private final CoverabilityGraphNode parent;
 	private final CoverabilityGraphNode covered;
 	private Set<CoverabilityGraphEdge> postsetEdges;
@@ -58,14 +59,7 @@ public class CoverabilityGraphNode {
 		this.marking = marking;
 		this.parent = parent;
 		this.covered = covered;
-		List<Transition> sequence = new LinkedList<>();
-		if (parent != null) {
-			sequence.addAll(parent.firingSequence);
-			sequence.add(transition);
-		} else {
-			assert transition == null;
-		}
-		this.firingSequence = unmodifiableList(sequence);
+		this.reachingTransition = transition;
 	}
 
 	/**
@@ -100,7 +94,14 @@ public class CoverabilityGraphNode {
 	 * @see getFiringSequenceFromCoveredNode
 	 */
 	public List<Transition> getFiringSequence() {
-		return this.firingSequence;
+		List<Transition> result = new ArrayList<>();
+		CoverabilityGraphNode node = this;
+		while (node.reachingTransition != null) {
+			result.add(node.reachingTransition);
+			node = node.parent;
+		}
+		reverse(result);
+		return unmodifiableList(result);
 	}
 
 	/**
@@ -116,7 +117,8 @@ public class CoverabilityGraphNode {
 		if (this.covered == null)
 			return null;
 		int coveredSequenceLength = this.covered.getFiringSequence().size();
-		return this.firingSequence.subList(coveredSequenceLength, this.firingSequence.size());
+		List<Transition> firingSequence = getFiringSequence();
+		return firingSequence.subList(coveredSequenceLength, firingSequence.size());
 	}
 
 	/**
