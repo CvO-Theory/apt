@@ -127,7 +127,7 @@ public class CoverabilityGraph {
 	private CoverabilityGraph(PetriNet pn, boolean reachabilityGraph) {
 		this.pn = pn;
 		this.reachabilityGraph = reachabilityGraph;
-		addNode(null, pn.getInitialMarking(), null, null);
+		getNode(null, pn.getInitialMarking(), null, null);
 	}
 
 	/**
@@ -170,10 +170,12 @@ public class CoverabilityGraph {
 			Marking newMarking = t.fire(marking);
 			// checkCover() will also change the marking of the Petri net if some OMEGAs are created!
 			Pair<CoverabilityGraphNode, Marking> covered = checkCover(newMarking, node);
+			CoverabilityGraphNode target;
 			if (covered == null)
-				result.add(addArc(t, newMarking, node, null));
+				target = getNode(t, newMarking, node, null);
 			else
-				result.add(addArc(t, covered.getSecond(), node, covered.getFirst()));
+				target = getNode(t, covered.getSecond(), node, covered.getFirst());
+			result.add(new CoverabilityGraphEdge(t, node, target));
 		}
 
 		return result;
@@ -200,43 +202,23 @@ public class CoverabilityGraph {
 	}
 
 	/**
-	 * Add a new arc to the LTS.
-	 * The arc starts in the marking given at the top of the current path.
-	 * @param transition The transition for the arc.
-	 * @param cur The marking to which the arc goes to.
-	 * @param from The marking from which the arc originates.
+	 * Get a node from the coverability graph, creating it if it does not yet exist.
+	 * @param transition The transition which reaches this new state.
+	 * @param cur The marking belonging to the state.
+	 * @param from The marking from which the transition reaches this marking.
 	 * @param covered node whose marking is covered by the given marking (or null if none)
 	 */
-	private CoverabilityGraphEdge addArc(Transition transition, Marking cur, CoverabilityGraphNode from,
+	private CoverabilityGraphNode getNode(Transition transition, Marking cur, CoverabilityGraphNode from,
 			CoverabilityGraphNode covered) {
 		CoverabilityGraphNode state = states.get(cur);
 		if (state == null) {
-			state = addNode(transition, cur, from, covered);
+			state = new CoverabilityGraphNode(this, transition, cur, from, covered);
+			states.put(cur, state);
+			nodes.add(state);
+			// Append it to the tail of the unvisited nodes so that we do a breadth-first search
+			unvisited.addLast(state);
 		}
-
-		return new CoverabilityGraphEdge(transition, from, state);
-	}
-
-	/**
-	 * Add a node for the given marking to the LTS.
-	 * Precondition: There is no node for that marking yet.
-	 * @param mark The marking for which a node should be created.
-	 * @param parent The parent of this marking. Used for tracing the path to the root.
-	 * @param covered node whose marking is covered by the given marking (or null if none)
-	 * @return the new node.
-	 */
-	private CoverabilityGraphNode addNode(Transition transition, Marking mark, CoverabilityGraphNode parent,
-			CoverabilityGraphNode covered) {
-		assert states.get(mark) == null;
-
-		// Copy the marking to make sure no one else messes with it.
-		mark = new Marking(mark);
-		CoverabilityGraphNode node = new CoverabilityGraphNode(this, transition, mark, parent, covered);
-		states.put(mark, node);
-		nodes.add(node);
-		// Append it to the tail of the unvisited nodes so that we do a breadth-first search
-		unvisited.addLast(node);
-		return node;
+		return state;
 	}
 
 	/**
