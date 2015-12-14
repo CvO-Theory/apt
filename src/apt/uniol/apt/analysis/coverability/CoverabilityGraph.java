@@ -20,11 +20,9 @@
 package uniol.apt.analysis.coverability;
 
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,8 +57,8 @@ public class CoverabilityGraph {
 	private final PetriNet pn;
 	// Map from visited markings to the corresponding nodes
 	private final Map<Marking, CoverabilityGraphNode> states = new HashMap<>();
-	// List of nodes which were generated but whose enabled transitions weren't handled yet.
-	private final Deque<CoverabilityGraphNode> unvisited = new LinkedList<>();
+	// Index into nodes; all entries before this index already generated their postset.
+	private int indexOfFirstUnvisited = 0;
 	// List of nodes that were already visited, this is a list to implement iterators.
 	private final List<CoverabilityGraphNode> nodes = new ArrayList<>();
 	// Are we generating a coverability or a reachability graph?
@@ -144,12 +142,12 @@ public class CoverabilityGraph {
 	private boolean visitNode() {
 		// Pick a random, unvisited node
 		// (Here: breadth-first search so that we have short paths to the initial node in checkCover())
-		CoverabilityGraphNode node = unvisited.pollFirst();
-		if (node == null)
+		if (indexOfFirstUnvisited >= nodes.size())
 			return false;
 
 		// Make the node generate its postset
-		node.getPostsetEdges();
+		nodes.get(indexOfFirstUnvisited).getPostsetEdges();
+		indexOfFirstUnvisited++;
 		return true;
 	}
 
@@ -215,8 +213,6 @@ public class CoverabilityGraph {
 			state = new CoverabilityGraphNode(this, transition, cur, from, covered);
 			states.put(cur, state);
 			nodes.add(state);
-			// Append it to the tail of the unvisited nodes so that we do a breadth-first search
-			unvisited.addLast(state);
 		}
 		return state;
 	}
