@@ -33,6 +33,25 @@ public class Token implements Comparable<Token> {
 	public final static Token OMEGA = new Token(-1, false);
 	public final static Token ZERO = new Token(0);
 
+	private static Token[] tokenCache;
+	static {
+		tokenCache = new Token[256];
+		tokenCache[0] = ZERO;
+		for (int i = 1; i < tokenCache.length; i++)
+			tokenCache[i] = new Token(i);
+	}
+
+	/**
+	 * Returns a Token instance for the given value.
+	 * @param v The token's value
+	 * @return A token instance for that value
+	 */
+	public static Token valueOf(long v) {
+		if (v >= 0 && v < tokenCache.length)
+			return tokenCache[(int) v];
+		return new Token(v);
+	}
+
 	private Token(long v, boolean checkValue) {
 		if (checkValue && v < 0) {
 			throw new IllegalArgumentException("v<0");
