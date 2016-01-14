@@ -110,7 +110,9 @@ public class AutomatonToRegularExpressionTest {
 		FiniteAutomaton aut = getTestDFA();
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
 		assertThat(findWordDifference(roundTrip(aut), parse("(ab)*|(ba)*")), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("(b(ab)*a|a(ba)*b)?"));
+		assertThat(automatonToRegularExpression(aut), anyOf(
+					is("(b(ab)*a|a(ba)*b)?"),
+					is("(a(ba)*b|b(ab)*a)?")));
 	}
 
 	@Test
@@ -122,7 +124,9 @@ public class AutomatonToRegularExpressionTest {
 
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
 		assertThat(findWordDifference(roundTrip(aut), parse("(ab)*a|(ba)*b|(a|b)*(aa|bb)(a|b)*")), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("b(ab)*(b|aa|(b|aa)(a?|b)+)|a(ba)*(a|bb|(a|bb)(a?|b)+)|b|b(ab)*|a|a(ba)*"));
+		assertThat(automatonToRegularExpression(aut), anyOf(
+					is("b(ab)*(b|aa|(b|aa)(a?|b)+)|a(ba)*(a|bb|(a|bb)(a?|b)+)|b|b(ab)*|a|a(ba)*"),
+					is("a(ba)*(a|bb|(a|bb)(b?|a)+)|b(ab)*(b|aa|(b|aa)(b?|a)+)|a|a(ba)*|b|b(ab)*")));
 	}
 
 	@Test
@@ -155,7 +159,9 @@ public class AutomatonToRegularExpressionTest {
 		FiniteAutomaton aut = fromPrefixLanguageLTS(
 				TestTSCollection.getPersistentTS());
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("a?|b|ab|ba"));
+		assertThat(automatonToRegularExpression(aut), anyOf(
+					is("a?|b|ab|ba"),
+					is("b?|a|ba|ab")));
 	}
 
 	@Test
