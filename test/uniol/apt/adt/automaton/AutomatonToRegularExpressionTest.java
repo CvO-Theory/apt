@@ -77,21 +77,21 @@ public class AutomatonToRegularExpressionTest {
 	public void testKleeneStar() {
 		FiniteAutomaton aut = kleeneStar(getAtomicLanguage(new Symbol("a")));
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("$|a|a*"));
+		assertThat(automatonToRegularExpression(aut), is("a*"));
 	}
 
 	@Test
 	public void testKleenePlus() {
 		FiniteAutomaton aut = kleenePlus(getAtomicLanguage(new Symbol("a")));
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("a|aa*"));
+		assertThat(automatonToRegularExpression(aut), is("a+"));
 	}
 
 	@Test
 	public void testOptional() {
 		FiniteAutomaton aut = optional(getAtomicLanguage(new Symbol("a")));
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("$|a"));
+		assertThat(automatonToRegularExpression(aut), is("a?"));
 	}
 
 	private FiniteAutomaton getTestDFA() {
@@ -110,8 +110,7 @@ public class AutomatonToRegularExpressionTest {
 		FiniteAutomaton aut = getTestDFA();
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
 		assertThat(findWordDifference(roundTrip(aut), parse("(ab)*|(ba)*")), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), anyOf(
-					is("$|ab|ab(ab)*|ba|ba(ba)*"), is("$|ba|ba(ba)*|ab|ab(ab)*")));
+		assertThat(automatonToRegularExpression(aut), is("(b(ab)*a|a(ba)*b)?"));
 	}
 
 	@Test
@@ -123,9 +122,7 @@ public class AutomatonToRegularExpressionTest {
 
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
 		assertThat(findWordDifference(roundTrip(aut), parse("(ab)*a|(ba)*b|(a|b)*(aa|bb)(a|b)*")), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), anyOf(
-				is("(b|b(ab)*)(ab)*(b|aa|(b|aa)(a|b)*)|(a|a(ba)*)(ba)*(a|bb|(a|bb)(a|b)*)|b|b(ab)*|a|a(ba)*"),
-				is("(a|a(ba)*)(ba)*(a|bb|(a|bb)(b|a)*)|(b|b(ab)*)(ab)*(b|aa|(b|aa)(b|a)*)|a|a(ba)*|b|b(ab)*")));
+		assertThat(automatonToRegularExpression(aut), is("b(ab)*(b|aa|(b|aa)(a?|b)+)|a(ba)*(a|bb|(a|bb)(a?|b)+)|b|b(ab)*|a|a(ba)*"));
 	}
 
 	@Test
@@ -137,7 +134,7 @@ public class AutomatonToRegularExpressionTest {
 		FiniteAutomaton aut = intersection(dfa1, dfa2);
 
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("$|ab(aab)*a"));
+		assertThat(automatonToRegularExpression(aut), is("(aba)*"));
 	}
 
 	@Test
@@ -150,7 +147,7 @@ public class AutomatonToRegularExpressionTest {
 
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
 		assertThat(findWordDifference(roundTrip(aut), parse("(a|ab)*")), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("$|a(a|ba)*b|a|a(a|ba)*"));
+		assertThat(automatonToRegularExpression(aut), is("a+|(a+b)*a+|(a+b)*"));
 	}
 
 	@Test
@@ -158,7 +155,7 @@ public class AutomatonToRegularExpressionTest {
 		FiniteAutomaton aut = fromPrefixLanguageLTS(
 				TestTSCollection.getPersistentTS());
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), anyOf(is("$|a|b|ab|ba"), is("$|b|a|ba|ab")));
+		assertThat(automatonToRegularExpression(aut), is("a?|b|ab|ba"));
 	}
 
 	@Test
@@ -166,7 +163,7 @@ public class AutomatonToRegularExpressionTest {
 		FiniteAutomaton aut = fromPrefixLanguageLTS(
 				TestTSCollection.getNotTotallyReachableTS());
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("$|a"));
+		assertThat(automatonToRegularExpression(aut), is("a?"));
 	}
 
 	@Test
@@ -174,7 +171,7 @@ public class AutomatonToRegularExpressionTest {
 		FiniteAutomaton aut = fromPrefixLanguageLTS(
 				TestTSCollection.getNonDeterministicTS());
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("$|a"));
+		assertThat(automatonToRegularExpression(aut), is("a?"));
 	}
 
 	@Test
@@ -182,7 +179,7 @@ public class AutomatonToRegularExpressionTest {
 		FiniteAutomaton aut = fromPrefixLanguageLTS(
 				TestTSCollection.getSingleStateSingleTransitionTS());
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("$|<NotA>|<NotA>*"));
+		assertThat(automatonToRegularExpression(aut), is("<NotA>*"));
 	}
 
 	@Test
@@ -198,7 +195,41 @@ public class AutomatonToRegularExpressionTest {
 		FiniteAutomaton aut = fromPrefixLanguageLTS(
 				TestTSCollection.getPathTS());
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
-		assertThat(automatonToRegularExpression(aut), is("$|a|ab|abc|abca|abcab*"));
+		assertThat(automatonToRegularExpression(aut), is("a?|ab|abc|abca|abcab*"));
+	}
+
+	@Test
+	public void testSubsume() {
+		FiniteAutomaton a = getAtomicLanguage(new Symbol("a"));
+		FiniteAutomaton aut = union(repeat(a, 7, 7), repeat(a, 2, 9));
+		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
+		assertThat(automatonToRegularExpression(aut), is("a{2,9}"));
+	}
+
+	@Test
+	public void testIncorrectSubsume() {
+		// a{2,3}|a{7,9}
+		FiniteAutomaton a = getAtomicLanguage(new Symbol("a"));
+		FiniteAutomaton aut = union(repeat(a, 2, 3), repeat(a, 7, 9));
+		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
+		assertThat(automatonToRegularExpression(aut), is("a{7,9}|aaa|aa"));
+	}
+
+	@Test
+	public void testIncorrectSubsume2() {
+		// a{2,3}|a{7,}
+		FiniteAutomaton a = getAtomicLanguage(new Symbol("a"));
+		FiniteAutomaton aut = union(repeat(a, 2, 3), concatenate(repeat(a, 7, 7), kleeneStar(a)));
+		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
+		assertThat(automatonToRegularExpression(aut), is("a{2,3}|a{7,}"));
+	}
+
+	@Test
+	public void testRepetitionWithLowerBound() {
+		FiniteAutomaton a = getAtomicLanguage(new Symbol("a"));
+		FiniteAutomaton aut = concatenate(repeat(a, 3, 3), kleeneStar(a));
+		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
+		assertThat(automatonToRegularExpression(aut), is("a{3,}"));
 	}
 }
 
