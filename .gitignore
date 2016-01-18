@@ -10,7 +10,6 @@ classes/
 doc/
 reports/
 generated-src/
-test-classes/
 testng.xml
 /dist/
 /build/
