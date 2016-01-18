@@ -1,45 +1,50 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="apt" default="javac.test" basedir=".">
-	<path id="project.class.path">
-		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
+	<path id="lib.class.path">
 		<pathelement location="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
 		<pathelement location="lib/smtinterpol-2.1-219-g60cc1b6/smtinterpol.jar"/>
-		<pathelement location="classes/module" />
 		<pathelement location="classes/lib" />
+	</path>
+
+	<path id="glue.class.path">
 		<pathelement location="classes/glue" />
-		<pathelement location="classes/main" />
+	</path>
+
+	<path id="io.class.path">
+		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
+		<pathelement location="lib/antlr-4.5.1/antlr-runtime-4.5.1.jar" />
+		<pathelement location="lib/stringtemplate-4.0.8/ST-4.0.8.jar" />
+		<path refid="lib.class.path" />
+		<path refid="glue.class.path" />
+		<!-- Needed so that the annotation processor is run -->
+		<pathelement location="classes/compiler" />
 		<pathelement location="classes/io" />
 	</path>
 
 	<path id="module.class.path">
-		<path refid="project.class.path" />
+		<path refid="lib.class.path" />
+		<path refid="io.class.path" />
+		<path refid="glue.class.path" />
+		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
 		<pathelement location="lib/sat4j-2.3.2/org.sat4j.core.jar"/>
 		<!-- Needed so that the annotation processor is run -->
 		<pathelement location="classes/compiler" />
+		<pathelement location="classes/module" />
 	</path>
 
 	<path id="main.class.path">
-		<path refid="project.class.path" />
-	</path>
-
-	<path id="io.class.path">
-		<pathelement location="lib/antlr-4.5.1/antlr-runtime-4.5.1.jar" />
-		<pathelement location="lib/stringtemplate-4.0.8/ST-4.0.8.jar" />
-		<path refid="project.class.path" />
-		<!-- Needed so that the annotation processor is run -->
-		<pathelement location="classes/compiler" />
-	</path>
-
-	<path id="lib.class.path">
-		<pathelement location="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
-		<pathelement location="lib/smtinterpol-2.1-219-g60cc1b6/smtinterpol.jar"/>
+		<path refid="lib.class.path" />
+		<path refid="io.class.path" />
+		<path refid="glue.class.path" />
+		<path refid="module.class.path" />
+		<pathelement location="classes/main" />
 	</path>
 
 	<path id="test.class.path">
-		<path refid="project.class.path" />
-		<path refid="lib.class.path" />
+		<path refid="glue.class.path" />
 		<path refid="io.class.path" />
-		<path refid="modules.class.path" />
+		<path refid="lib.class.path" />
+		<path refid="module.class.path" />
 		<pathelement location="lib/mockito-1.9.5-rc1/mockito-core-1.9.5-rc1.jar" />
 		<pathelement location="lib/objenesis-1.2/objenesis-1.2.jar" />
 		<pathelement location="lib/testng-6.9.9/testng-6.9.9.jar" />
@@ -50,12 +55,11 @@
 	</path>
 
 	<path id="ant.class.path">
-		<path refid="project.class.path" />
+		<path refid="lib.class.path" />
+		<path refid="io.class.path" />
 		<pathelement location="lib/asm-4.1/asm-4.1.jar" />
 		<pathelement location="classes/ant" />
 	</path>
-
-	<path id="glue.class.path" />
 
 	<path id="compiler.class.path">
 		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
