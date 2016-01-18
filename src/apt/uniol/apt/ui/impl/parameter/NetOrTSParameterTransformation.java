@@ -28,7 +28,6 @@ import java.io.InputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import uniol.apt.APT;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -46,6 +45,11 @@ import uniol.apt.ui.ParameterTransformation;
  */
 @AptParameterTransformation(PetriNetOrTransitionSystem.class)
 public class NetOrTSParameterTransformation implements ParameterTransformation<PetriNetOrTransitionSystem> {
+	/**
+	 * Symbol that signals that a file should be read from the standard input.
+	 */
+	public static final String STANDARD_INPUT_SYMBOL = "-";
+
 	@Override
 	public PetriNetOrTransitionSystem transform(String filename) throws ModuleException {
 		PetriNet pn = null;
@@ -55,7 +59,7 @@ public class NetOrTSParameterTransformation implements ParameterTransformation<P
 
 		try {
 			InputStream is;
-			if (filename.equals(APT.STANDARD_INPUT_SYMBOL)) {
+			if (filename.equals(STANDARD_INPUT_SYMBOL)) {
 				is = System.in;
 			} else {
 				is = FileUtils.openInputStream(new File(filename));

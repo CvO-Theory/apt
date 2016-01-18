@@ -10,12 +10,17 @@
 		<pathelement location="classes/apt" />
 		<pathelement location="classes/lib" />
 		<pathelement location="classes/glue" />
+		<pathelement location="classes/main" />
 	</path>
 
 	<path id="apt.class.path">
 		<path refid="project.class.path" />
 		<!-- Needed so that the annotation processor is run -->
 		<pathelement location="classes/compiler" />
+	</path>
+
+	<path id="main.class.path">
+		<path refid="project.class.path" />
 	</path>
 
 	<path id="lib.class.path">
@@ -113,7 +118,9 @@
 		</sequential>
 	</macrodef>
 
-	<target name="javac" description="Compile java source to bytecode" depends="antlr,javac.glue,javac.compiler,javac.lib">
+	<target name="javac" description="Compile java source to bytecode" depends="javac.apt,javac.main" />
+
+	<target name="javac.apt" description="Compile java source to bytecode" depends="antlr,javac.glue,javac.compiler,javac.lib">
 		<javac-part name="apt" depend-classpath="classes/glue" generated-src-with-colon=":generated-src/apt">
 			<src path="generated-src/apt" />
 		</javac-part>
@@ -126,6 +133,10 @@
 
 	<target name="javac.lib" description="Compile java source to bytecode">
 		<javac-part name="lib" />
+	</target>
+
+	<target name="javac.main" description="Compile java source to bytecode" depends="javac.apt">
+		<javac-part name="main" />
 	</target>
 
 	<target name="javac.glue" description="Compile java source to bytecode">
@@ -147,7 +158,7 @@
 	</target>
 
 	<target name="javac.test" depends="javac" description="Compile test code">
-		<javac-part name="test" src="src/test" depend-classpath="classes/apt:classes/lib:classes/glue" />
+		<javac-part name="test" src="src/test" depend-classpath="classes/apt:classes/lib:classes/glue:classes/main" />
 	</target>
 
 	<target name="verify-parsers" depends="javac.ant" description="Verify all of the net collection is parsable.">
@@ -254,6 +265,7 @@
 				docencoding="UTF-8" access="private">
 			<fileset dir="src/apt" includes="**/*.java"/>
 			<fileset dir="src/lib" includes="**/*.java"/>
+			<fileset dir="src/main" includes="**/*.java"/>
 			<fileset dir="src/compiler" includes="**/*.java"/>
 			<fileset dir="src/glue" includes="**/*.java"/>
 			<fileset dir="src/test" includes="**/*.java"/>
@@ -268,6 +280,7 @@
 			<formatter type="plain" tofile="reports/checkstyle.txt"/>
 			<fileset dir="src/apt" includes="**/*"/>
 			<fileset dir="src/lib" includes="**/*"/>
+			<fileset dir="src/main" includes="**/*"/>
 			<fileset dir="src/compiler" includes="**/*"/>
 			<fileset dir="src/glue" includes="**/*"/>
 			<fileset dir="src/test" includes="**/*"/>
@@ -298,6 +311,7 @@
 			<sourcePath>
 				<pathelement location="src/apt" />
 				<pathelement location="src/lib" />
+				<pathelement location="src/main" />
 				<pathelement location="src/test" />
 			</sourcePath>
 			<fileset dir="classes/apt">
@@ -312,6 +326,9 @@
 				<exclude name="uniol/apt/io/parser/impl/PetrifyLTSFormat*.class" />
 			</fileset>
 			<fileset dir="classes/lib">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="classes/main">
 				<include name="**/*.class" />
 			</fileset>
 			<fileset dir="classes/compiler">
@@ -356,10 +373,12 @@
 				<classfiles>
 					<fileset dir="classes/apt/"/>
 					<fileset dir="classes/lib/"/>
+					<fileset dir="classes/main/"/>
 				</classfiles>
 				<sourcefiles>
 					<fileset dir="src/apt/"/>
 					<fileset dir="src/lib/"/>
+					<fileset dir="src/main/"/>
 				</sourcefiles>
 			</structure>
 
@@ -381,6 +400,7 @@
 		<jar destfile="apt.jar">
 			<fileset dir="classes/apt/" />
 			<fileset dir="classes/lib/" />
+			<fileset dir="classes/main/" />
 			<fileset dir="classes/glue/" />
 			<zipfileset includes="**/*.class" src="lib/commons-io-2.4/commons-io-2.4.jar" />
 			<zipfileset includes="**/*.class" src="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />

@@ -21,7 +21,6 @@ package uniol.apt.ui.impl.parameter;
 
 import java.io.IOException;
 
-import uniol.apt.APT;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.module.exception.ModuleException;
@@ -32,6 +31,11 @@ import uniol.apt.ui.ParameterTransformation;
  *
  */
 public class ParserParameterTransformation<G> implements ParameterTransformation<G> {
+	/**
+	 * Symbol that signals that a file should be read from the standard input.
+	 */
+	public static final String STANDARD_INPUT_SYMBOL = "-";
+
 	private final Parser<G> parser;
 	private final String objectName;
 
@@ -43,7 +47,7 @@ public class ParserParameterTransformation<G> implements ParameterTransformation
 	@Override
 	public G transform(String filename) throws ModuleException {
 		try {
-			if (filename.equals(APT.STANDARD_INPUT_SYMBOL)) {
+			if (filename.equals(STANDARD_INPUT_SYMBOL)) {
 				return parser.parse(System.in);
 			}
 

@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
-import uniol.apt.APT;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.AbstractParsers;
@@ -43,6 +42,11 @@ import uniol.apt.module.exception.ModuleException;
  * @author Uli Schlachter
  */
 public abstract class AbstractConvertModule<T> extends AbstractModule implements Module {
+	/**
+	 * Symbol that signals that a file should be read from the standard input.
+	 */
+	public static final String STANDARD_INPUT_SYMBOL = "-";
+
 	private final AbstractParsers<T> parsers;
 	private final AbstractRenderers<T> renderers;
 
@@ -111,7 +115,7 @@ public abstract class AbstractConvertModule<T> extends AbstractModule implements
 		T obj;
 		try {
 			Parser<T> parser = parsers.getParser(inputFormat);
-			if (filename.equals(APT.STANDARD_INPUT_SYMBOL))
+			if (filename.equals(STANDARD_INPUT_SYMBOL))
 				obj = parser.parse(System.in);
 			else
 				obj = parser.parseFile(filename);
