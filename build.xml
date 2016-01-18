@@ -8,6 +8,7 @@
 		<pathelement location="lib/sat4j-2.3.2/org.sat4j.core.jar"/>
 		<pathelement location="lib/smtinterpol-2.1-219-g60cc1b6/smtinterpol.jar"/>
 		<pathelement location="classes/apt" />
+		<pathelement location="classes/lib" />
 		<pathelement location="classes/glue" />
 	</path>
 
@@ -17,8 +18,14 @@
 		<pathelement location="classes/compiler" />
 	</path>
 
+	<path id="lib.class.path">
+		<pathelement location="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
+		<pathelement location="lib/smtinterpol-2.1-219-g60cc1b6/smtinterpol.jar"/>
+	</path>
+
 	<path id="test.class.path">
 		<path refid="project.class.path" />
+		<path refid="lib.class.path" />
 		<pathelement location="lib/mockito-1.9.5-rc1/mockito-core-1.9.5-rc1.jar" />
 		<pathelement location="lib/objenesis-1.2/objenesis-1.2.jar" />
 		<pathelement location="lib/testng-6.9.9/testng-6.9.9.jar" />
@@ -106,7 +113,7 @@
 		</sequential>
 	</macrodef>
 
-	<target name="javac" description="Compile java source to bytecode" depends="antlr,javac.glue,javac.compiler">
+	<target name="javac" description="Compile java source to bytecode" depends="antlr,javac.glue,javac.compiler,javac.lib">
 		<javac-part name="apt" depend-classpath="classes/glue" generated-src-with-colon=":generated-src/apt">
 			<src path="generated-src/apt" />
 		</javac-part>
@@ -115,6 +122,10 @@
 				<include name="**/*.stg" />
 			</fileset>
 		</copy>
+	</target>
+
+	<target name="javac.lib" description="Compile java source to bytecode">
+		<javac-part name="lib" />
 	</target>
 
 	<target name="javac.glue" description="Compile java source to bytecode">
@@ -136,7 +147,7 @@
 	</target>
 
 	<target name="javac.test" depends="javac" description="Compile test code">
-		<javac-part name="test" src="src/test" depend-classpath="classes/apt:classes/glue" />
+		<javac-part name="test" src="src/test" depend-classpath="classes/apt:classes/lib:classes/glue" />
 	</target>
 
 	<target name="verify-parsers" depends="javac.ant" description="Verify all of the net collection is parsable.">
@@ -242,6 +253,7 @@
 				Encoding="UTF-8" charset="UTF-8"
 				docencoding="UTF-8" access="private">
 			<fileset dir="src/apt" includes="**/*.java"/>
+			<fileset dir="src/lib" includes="**/*.java"/>
 			<fileset dir="src/compiler" includes="**/*.java"/>
 			<fileset dir="src/glue" includes="**/*.java"/>
 			<fileset dir="src/test" includes="**/*.java"/>
@@ -255,6 +267,7 @@
 			<formatter type="xml" tofile="reports/checkstyle.xml"/>
 			<formatter type="plain" tofile="reports/checkstyle.txt"/>
 			<fileset dir="src/apt" includes="**/*"/>
+			<fileset dir="src/lib" includes="**/*"/>
 			<fileset dir="src/compiler" includes="**/*"/>
 			<fileset dir="src/glue" includes="**/*"/>
 			<fileset dir="src/test" includes="**/*"/>
@@ -284,6 +297,7 @@
 			</auxClasspath>
 			<sourcePath>
 				<pathelement location="src/apt" />
+				<pathelement location="src/lib" />
 				<pathelement location="src/test" />
 			</sourcePath>
 			<fileset dir="classes/apt">
@@ -296,6 +310,9 @@
 				<exclude name="uniol/apt/io/parser/impl/SynetLTSFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/PetrifyPNFormat*.class" />
 				<exclude name="uniol/apt/io/parser/impl/PetrifyLTSFormat*.class" />
+			</fileset>
+			<fileset dir="classes/lib">
+				<include name="**/*.class" />
 			</fileset>
 			<fileset dir="classes/compiler">
 				<include name="**/*.class" />
@@ -338,9 +355,11 @@
 			<structure name="APT">
 				<classfiles>
 					<fileset dir="classes/apt/"/>
+					<fileset dir="classes/lib/"/>
 				</classfiles>
 				<sourcefiles>
 					<fileset dir="src/apt/"/>
+					<fileset dir="src/lib/"/>
 				</sourcefiles>
 			</structure>
 
@@ -361,6 +380,7 @@
 		description="Build a jar file containing all the needed stuff to run the apt tool.">
 		<jar destfile="apt.jar">
 			<fileset dir="classes/apt/" />
+			<fileset dir="classes/lib/" />
 			<fileset dir="classes/glue/" />
 			<zipfileset includes="**/*.class" src="lib/commons-io-2.4/commons-io-2.4.jar" />
 			<zipfileset includes="**/*.class" src="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
