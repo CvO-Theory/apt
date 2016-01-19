@@ -183,9 +183,7 @@ public class EquationSystem {
 			}
 		}
 
-		/**
-		 * Invert variable y_j in all equations.
-		 */
+		// Invert variable y_j in all equations.
 		private void invertVariableY(int j) {
 			debug("Inverting variable y_", j);
 			for (int i = 0; i < equations1.size(); i++) {
@@ -198,9 +196,7 @@ public class EquationSystem {
 			}
 		}
 
-		/**
-		 * Remove variable y_j from all equations.
-		 */
+		// Remove variable y_j from all equations.
 		private void removeVariable(int j) {
 			debug("Removing variable y_", j);
 			for (int i = 0; i < equations1.size(); i++)
@@ -209,9 +205,7 @@ public class EquationSystem {
 				equations2.get(i).set(j, BigInteger.ZERO);
 		}
 
-		/**
-		 * Substitute variable y_variableIndex with y_variableIndex + factor * y_addendIndex in all equations.
-		 */
+		// Substitute variable y_variableIndex with y_variableIndex + factor * y_addendIndex in all equations.
 		private void substituteVariable(int variableIndex, BigInteger factor, int addendIndex) {
 			debug("Substituting variable y_", variableIndex, " with y_", variableIndex, " + ",
 					factor, " * y_", addendIndex);
@@ -221,10 +215,8 @@ public class EquationSystem {
 				substituteVariable(equations2.get(i), variableIndex, factor, addendIndex);
 		}
 
-		/**
-		 * Substitute variable y_variableIndex with y_variableIndex + factor * y_addendIndex in the given
-		 * equation.
-		 */
+		// Substitute variable y_variableIndex with y_variableIndex + factor * y_addendIndex in the given
+		// equation.
 		private static void substituteVariable(List<BigInteger> equation, int variableIndex, BigInteger factor,
 				int addendIndex) {
 			BigInteger addend = equation.get(addendIndex);

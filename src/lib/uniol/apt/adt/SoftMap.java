@@ -53,9 +53,7 @@ public class SoftMap<K, V> implements Map<K, V> {
 		map = new SoftReference<Map<K, V>>(new HashMap<>(m));
 	}
 
-	/**
-	 * Get or create the underlying map of this SoftMap.
-	 */
+	// Get or create the underlying map of this SoftMap.
 	private Map<K, V> getMap() {
 		Map<K, V> result = map.get();
 		if (result == null) {

@@ -73,6 +73,7 @@ public class Token implements Comparable<Token> {
 	 * Adds a given value to this token. If one value is OMEGA so the value of this token will be OMEGA.
 	 * @param t The token to add.
 	 * @throws IllegalArgumentException if the argument is null.
+	 * @return The sum of both token instances.
 	 */
 	Token add(Token t) {
 		if (t == null) {
@@ -90,6 +91,7 @@ public class Token implements Comparable<Token> {
 	 * Adds a given value to this token. If this token is OMEGA so it stays by OMEGA.
 	 * @param t The value to add.
 	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
+	 * @return The sum of this token instance and the given value.
 	 */
 	Token add(long t) {
 		if (this.isOmega())

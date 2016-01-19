@@ -149,7 +149,7 @@ public class InequalitySystemSolver {
 	}
 
 	/**
-	 * Push the current solver state onto a stack. All following modifications can be undone via {@link pop()}.
+	 * Push the current solver state onto a stack. All following modifications can be undone via {@link #pop()}.
 	 * @return This solver instance
 	 */
 	public InequalitySystemSolver push() {
@@ -161,7 +161,7 @@ public class InequalitySystemSolver {
 
 	/**
 	 * Pop the last disjunction that was added from the solver context.
-	 * This undoes the effects of the last call to {@link push()}.
+	 * This undoes the effects of the last call to {@link #push()}.
 	 * @return This solver instance
 	 */
 	public InequalitySystemSolver pop() {
