@@ -57,6 +57,7 @@ import uniol.apt.ui.ReturnValuesTransformer;
 import uniol.apt.ui.impl.AptParametersTransformer;
 import uniol.apt.ui.impl.AptReturnValuesTransformer;
 import uniol.apt.ui.impl.SimpleParametersParser;
+import uniol.apt.ui.impl.UIUtils;
 
 /**
  * @author Renke Grunwald
@@ -316,7 +317,7 @@ public class APT {
 	private static void printTooManyArgumentsAndExit(Module module) throws ModuleException {
 		errPrinter.println("Too many arguments");
 		errPrinter.println();
-		errPrinter.println(ModuleUtils.getModuleUsage(module, parametersTransformer));
+		errPrinter.println(UIUtils.getModuleUsage(module, parametersTransformer));
 		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
@@ -324,7 +325,7 @@ public class APT {
 	private static void printTooFewArgumentsAndExit(Module module) throws ModuleException {
 		errPrinter.println("Too few arguments");
 		errPrinter.println();
-		errPrinter.println(ModuleUtils.getModuleUsage(module, parametersTransformer));
+		errPrinter.println(UIUtils.getModuleUsage(module, parametersTransformer));
 		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}

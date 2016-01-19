@@ -22,7 +22,6 @@ package uniol.apt.module.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Formatter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,10 +29,6 @@ import uniol.apt.module.Category;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutputSpec;
-import uniol.apt.module.exception.NoSuchTransformationException;
-import uniol.apt.ui.ParametersTransformer;
-
-import static org.apache.commons.collections4.ListUtils.union;
 
 /**
  * Some utility methods to simplify work with the module system.
@@ -117,61 +112,6 @@ public class ModuleUtils {
 		}
 
 		return modulesByCategory;
-	}
-
-	public static String getModuleUsage(Module module, ParametersTransformer parametersTransformer) throws NoSuchTransformationException {
-		List<Parameter> parameters = getParameters(module);
-		List<OptionalParameter<?>> optionalParameters = getOptionalParameters(module);
-		List<ReturnValue> fileReturnValues = getFileReturnValues(module);
-
-		StringBuilder sb = new StringBuilder();
-		Formatter formatter = new Formatter(sb);
-		formatter.format("Usage: apt %s", module.getName());
-
-		for (Parameter parameter : parameters) {
-			formatter.format(" <%s>", parameter.getName());
-		}
-
-		for (OptionalParameter<?> optionalParameter : optionalParameters) {
-			Object object = optionalParameter.getDefaultValue();
-			if (object != null) {
-				formatter.format(" [<%s>=%s]", optionalParameter.getName(), object.toString());
-			} else {
-				formatter.format(" [<%s>]", optionalParameter.getName());
-			}
-		}
-
-		for (ReturnValue fileReturnValue : fileReturnValues) {
-			formatter.format(" [<%s>]", fileReturnValue.getName());
-		}
-
-		sb.append("\n");
-		for (Parameter parameter : parameters) {
-			formatter.format("  %-10s %s%n", parameter.getName(), parameter.getDescription());
-		}
-		for (Parameter parameter : optionalParameters) {
-			formatter.format("  %-10s %s%n", parameter.getName(), parameter.getDescription());
-		}
-		for (ReturnValue value : fileReturnValues) {
-			formatter.format("  %-10s Optional file name for writing the output to%n", value.getName());
-		}
-
-		formatter.format("\n%s", module.getLongDescription());
-
-		boolean printedHeader = false;
-		for (Parameter parameter : union(parameters, optionalParameters)) {
-			String desc = parametersTransformer.getTransformationDescription(parameter.getKlass());
-			if ("".equals(desc))
-				continue;
-
-			if (!printedHeader)
-				formatter.format("%n%nFormat descriptions of parameters:");
-			printedHeader = true;
-			formatter.format("%n%n%s:%n%s", parameter.getName(), desc);
-		}
-
-		formatter.close();
-		return sb.toString();
 	}
 }
 

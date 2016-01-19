@@ -29,7 +29,7 @@ import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.ModuleRegistry;
 import uniol.apt.module.exception.ModuleException;
-import uniol.apt.module.impl.ModuleUtils;
+import uniol.apt.ui.impl.UIUtils;
 
 /**
  * @author Renke Grunwald
@@ -62,7 +62,7 @@ public class HelpModule extends AbstractModule implements Module {
 			throw new ModuleException("No such module: " + moduleName);
 		}
 
-		String information = ModuleUtils.getModuleUsage(module, AptParametersTransformer.INSTANCE);
+		String information = UIUtils.getModuleUsage(module, AptParametersTransformer.INSTANCE);
 		output.setReturnValue("information", String.class, information);
 	}
 
