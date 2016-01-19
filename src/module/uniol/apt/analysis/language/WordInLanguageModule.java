@@ -29,7 +29,6 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
-import uniol.apt.ui.impl.parameter.WordParameterTransformation;
 
 /**
  * Provide the word-in-prefix-language check as a module.
@@ -41,11 +40,6 @@ public class WordInLanguageModule extends AbstractModule implements Module {
 	@Override
 	public String getShortDescription() {
 		return "Check if a word is in a Petri net's prefix language";
-	}
-
-	@Override
-	public String getLongDescription() {
-		return WordParameterTransformation.getDescription();
 	}
 
 	@Override

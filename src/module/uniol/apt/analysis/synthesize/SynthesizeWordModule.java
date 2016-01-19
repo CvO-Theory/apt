@@ -35,7 +35,6 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
-import uniol.apt.ui.impl.parameter.WordParameterTransformation;
 import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
 
 /**
@@ -72,8 +71,7 @@ public class SynthesizeWordModule extends AbstractModule implements Module {
 			+ "The above produces the following output:\n\n"
 			+ " separationFailurePoints: a, a, a [a]\n\n"
 			+ "This means that there is no 2-bounded Petri Net where three a's are firable in sequence, "
-			+ "but not also a fourth one can occur.\n\n\n"
-			+ WordParameterTransformation.getDescription();
+			+ "but not also a fourth one can occur.";
 	}
 
 	@Override

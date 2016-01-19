@@ -35,7 +35,6 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
-import uniol.apt.ui.impl.parameter.WordParameterTransformation;
 
 /**
  * Try to fire a given sequence in a Petri net.
@@ -54,8 +53,7 @@ public class FireSequenceModule extends AbstractModule implements Module {
 	public String getLongDescription() {
 		return getShortDescription() + ". This module tries to fire a given sequence of transitions in a"
 			+ " Petri net. It will report the longest enabled prefix of the sequence and print the marking"
-			+ " that is reached at the end.\n"
-			+ WordParameterTransformation.getDescription();
+			+ " that is reached at the end.";
 	}
 
 	@Override
