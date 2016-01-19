@@ -206,7 +206,7 @@ public abstract class AbstractServiceProcessor extends AbstractProcessor {
 		TypeMirror expected = this.types.erasure(this.elements.getTypeElement(this.interfaceName).asType());
 		boolean found = false;
 		for (TypeMirror actual : classEle.getInterfaces()) {
-			if (this.types.isSameType(this.types.erasure(actual), expected)) {
+			if (this.types.isAssignable(actual, expected)) {
 				found = true;
 				break;
 			}
