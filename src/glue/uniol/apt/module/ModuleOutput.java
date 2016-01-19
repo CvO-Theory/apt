@@ -32,13 +32,11 @@ public interface ModuleOutput {
 	 * Sets the value of the parameter for the given name. The value has to be
 	 * an instance of the given class.
 	 *
-	 * @param name
-	 *            name of the parameter
-	 * @param klass
-	 *            class of the parameter
-	 * @param value
-	 *            the value of the parameter
-	 * @throws ModuleException
+	 * @param name name of the parameter
+	 * @param klass class of the parameter
+	 * @param value the value of the parameter
+	 * @param <T> the type of the return value
+	 * @throws ModuleException When the wrong type for the return value is used compared to {@link Module#provide}.
 	 */
 	public <T> void setReturnValue(String name, Class<T> klass, T value) throws ModuleException;
 }

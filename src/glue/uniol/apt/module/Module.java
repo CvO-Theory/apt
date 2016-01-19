@@ -83,7 +83,7 @@ public interface Module {
 	 * @param output
 	 *            storage of the outputs
 	 * @see uniol.apt.module.impl.ExampleModule#run(ModuleInput, ModuleOutput) for an example implementation
-	 * @throws ModuleException
+	 * @throws ModuleException On various kinds of errors that prevent the module from working.
 	 */
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException;
 

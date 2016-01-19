@@ -30,13 +30,10 @@ public interface ModuleInputSpec {
 	 * Specifies a parameter of a module. The order of calls of this method
 	 * matters.
 	 *
-	 * @param name
-	 *            name of the paramter
-	 * @param klass
-	 *            class of the parameter
+	 * @param name name of the paramter
+	 * @param klass class of the parameter
 	 * @param documentation user-readable documentation for this parameter
-	 * @param properties
-	 *            required properties
+	 * @param properties required properties
 	 */
 	public void addParameter(String name, Class<?> klass, String documentation, String... properties);
 
@@ -47,15 +44,12 @@ public interface ModuleInputSpec {
 	 * dependent on other parameters it can be set to null and handled in the
 	 * module itself.
 	 *
-	 * @param name
-	 *            name of the parameter
-	 * @param klass
-	 *            class of the parameter
-	 * @param defaultValue
-	 *            the default value (may be null)
+	 * @param name name of the parameter
+	 * @param klass class of the parameter
+	 * @param defaultValue the default value (may be null)
 	 * @param documentation user-readable documentation for this parameter
-	 * @param properties
-	 *            required properties
+	 * @param properties required properties
+	 * @param <T> the type of the parameter
 	 */
 	public <T> void addOptionalParameter(String name, Class<T> klass,
 			T defaultValue, String documentation, String... properties);

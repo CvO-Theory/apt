@@ -30,10 +30,9 @@ public interface ModuleInput {
 	 * Gets the value of the parameter for the given name. The value is cast
 	 * according to the given class.
 	 *
-	 * @param name
-	 *            the name of the parameter
-	 * @param klass
-	 *            the class of the parameter
+	 * @param name the name of the parameter
+	 * @param klass the class of the parameter
+	 * @param <T> the type of the parameter
 	 * @return value for the parameter (cast to the given class)
 	 */
 	public <T> T getParameter(String name, Class<T> klass);
