@@ -40,10 +40,10 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 	/**
 	 * Adds a transformation.
 	 *
-	 * @param klass
-	 *            the type of the resulting object
-	 * @param transformation
-	 *            the actual transformation
+	 * @param klass the class of the resulting object
+	 * @param transformation the actual transformation
+	 * @param <T> the type of the resulting object
+	 * @return the resulting, transformed object
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T> ParameterTransformation<T> addTransformation(Class<T> klass, ParameterTransformation<T> transformation) {

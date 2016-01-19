@@ -45,7 +45,7 @@ public interface ParametersParser {
 	/**
 	 * Gets all parameter names of the module in the command-line string.
 	 *
-	 * @param moduleName
+	 * @param moduleName The name of the module whose arguments should be returned
 	 * @return the parameter names
 	 */
 	public String[] getModuleArguments(String moduleName);

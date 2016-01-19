@@ -32,7 +32,8 @@ public interface ParametersTransformer {
 	/**
 	 * Gets the transformation that can transform objects of the given type.
 	 *
-	 * @param klass the type of the object the transformation transforms
+	 * @param klass the class of the object the transformation transforms
+	 * @param <T> the type of the object the transformation transforms
 	 * @return the transformation
 	 */
 	public <T> ParameterTransformation<T> getTransformation(Class<T> klass);
@@ -42,7 +43,7 @@ public interface ParametersTransformer {
 	 *
 	 * @param klass the type of the object the transformation transforms
 	 * @return the description or an empty string
-	 * @throws NoSuchTransformationException
+	 * @throws NoSuchTransformationException When no suitable transformation is available
 	 */
 	public String getTransformationDescription(Class<?> klass) throws NoSuchTransformationException;
 
@@ -55,7 +56,7 @@ public interface ParametersTransformer {
 	 *            the type of the object the parameter string should be
 	 *            transformed to
 	 * @return the transformed object
-	 * @throws NoSuchTransformationException
+	 * @throws NoSuchTransformationException When no suitable transformation is available
 	 */
 	public Object transform(String arg, Class<?> klass) throws ModuleException;
 }
