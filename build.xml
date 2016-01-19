@@ -47,6 +47,7 @@
 		<path refid="io.class.path" />
 		<path refid="lib.class.path" />
 		<path refid="module.class.path" />
+		<path refid="main.class.path" />
 		<pathelement location="lib/mockito-1.9.5-rc1/mockito-core-1.9.5-rc1.jar" />
 		<pathelement location="lib/objenesis-1.2/objenesis-1.2.jar" />
 		<pathelement location="lib/testng-6.9.9/testng-6.9.9.jar" />
