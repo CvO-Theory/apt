@@ -24,7 +24,7 @@ import uniol.apt.io.parser.ParseException;
 /**
  * A runtime exception used internally in parsers to abort the parse. This is used in places where a
  * {@link ParseException} cannot be used directly, because it is a checked exception. This exception then has to be
- * caught at a suitable place and the result of {@link getParseException()} should be thrown.
+ * caught at a suitable place and the result of {@link #getParseException()} should be thrown.
  * @author Uli Schlachter
  */
 class ParseRuntimeException extends RuntimeException {

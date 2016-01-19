@@ -48,10 +48,7 @@ public class LoLAPNRenderer extends AbstractRenderer<PetriNet> implements Render
 		return FORMAT;
 	}
 
-	/**
-	 * Verify that the net can be expressed in LoLA file format.
-	 * @param pn the net to verify
-	 */
+	// Verify that the net can be expressed in LoLA file format.
 	private static void verifyNet(PetriNet pn) throws RenderException {
 		if (pn.getTransitions().isEmpty()) {
 			throw new RenderException("Cannot express Petri nets without transitions in the LoLA "

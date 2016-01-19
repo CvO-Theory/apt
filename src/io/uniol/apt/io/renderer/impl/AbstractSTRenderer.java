@@ -44,6 +44,7 @@ public abstract class AbstractSTRenderer<G> extends AbstractRenderer<G> {
 	 *
 	 * @param templateFile file name of the template file
 	 * @param templateName name of the main rule in the template file
+	 * @param format The name of the supported file format
 	 */
 	protected AbstractSTRenderer(String templateFile, String templateName, String format) {
 		this.group        = new STGroupFile(templateFile);

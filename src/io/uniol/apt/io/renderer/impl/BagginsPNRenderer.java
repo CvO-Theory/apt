@@ -61,10 +61,7 @@ public class BagginsPNRenderer extends AbstractRenderer<PetriNet> implements Ren
 		return FORMAT;
 	}
 
-	/**
-	 * Verify that the net can be expressed in BAGGINS file format.
-	 * @param pn the net to verify
-	 */
+	// Verify that the net can be expressed in BAGGINS file format.
 	private static void verifyNet(PetriNet pn) throws RenderException {
 		if (pn.getTransitions().isEmpty()) {
 			// untested, maybe BAGGINS supports this unimportant feature ...

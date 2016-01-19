@@ -47,10 +47,7 @@ public class AptPNRenderer extends AbstractRenderer<PetriNet> implements Rendere
 		return FORMAT;
 	}
 
-	/**
-	 * Verify that the net can be expressed in APT file format.
-	 * @param pn the net to verify
-	 */
+	// Verify that the net can be expressed in APT file format.
 	private static void verifyNet(PetriNet pn) throws RenderException {
 		if (pn.getInitialMarking().hasOmega()) {
 			throw new RenderException("Cannot express an initial marking with at least one OMEGA"
