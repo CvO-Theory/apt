@@ -37,6 +37,8 @@
 		<path refid="io.class.path" />
 		<path refid="glue.class.path" />
 		<path refid="module.class.path" />
+		<!-- Needed so that the annotation processor is run -->
+		<pathelement location="classes/compiler" />
 		<pathelement location="classes/main" />
 	</path>
 
@@ -422,10 +424,25 @@
 
 	<target name="jar" depends="verify-modules"
 		description="Build a jar file containing all the needed stuff to run the apt tool.">
-		<jar destfile="apt.jar">
-			<fileset dir="classes/module/" />
+		<!-- Our annotation processing creates files under META-INF that
+		     needs to be merged, do so.
+		  -->
+		<concat destfile="classes/META-INF/services/uniol.apt.module.Module">
+			<fileset dir="classes">
+				<include name="*/META-INF/services/uniol.apt.module.Module"/>
+			</fileset>
+		</concat>
+		<jar destfile="apt.jar" duplicate="fail">
+			<fileset dir="classes">
+				<include name="META-INF/services/uniol.apt.module.Module"/>
+			</fileset>
+			<fileset dir="classes/module/">
+				<exclude name="META-INF/services/uniol.apt.module.Module"/>
+			</fileset>
 			<fileset dir="classes/lib/" />
-			<fileset dir="classes/main/" />
+			<fileset dir="classes/main/">
+				<exclude name="META-INF/services/uniol.apt.module.Module"/>
+			</fileset>
 			<fileset dir="classes/io/" />
 			<fileset dir="classes/glue/" />
 			<zipfileset includes="**/*.class" src="lib/commons-io-2.4/commons-io-2.4.jar" />
