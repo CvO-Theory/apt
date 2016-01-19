@@ -30,6 +30,10 @@ import uniol.apt.module.Category;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutputSpec;
+import uniol.apt.module.exception.NoSuchTransformationException;
+import uniol.apt.ui.ParametersTransformer;
+
+import static org.apache.commons.collections4.ListUtils.union;
 
 /**
  * Some utility methods to simplify work with the module system.
@@ -115,7 +119,7 @@ public class ModuleUtils {
 		return modulesByCategory;
 	}
 
-	public static String getModuleUsage(Module module) {
+	public static String getModuleUsage(Module module, ParametersTransformer parametersTransformer) throws NoSuchTransformationException {
 		List<Parameter> parameters = getParameters(module);
 		List<OptionalParameter<?>> optionalParameters = getOptionalParameters(module);
 		List<ReturnValue> fileReturnValues = getFileReturnValues(module);
@@ -152,9 +156,21 @@ public class ModuleUtils {
 			formatter.format("  %-10s Optional file name for writing the output to%n", value.getName());
 		}
 
-		formatter.close();
+		formatter.format("\n%s", module.getLongDescription());
 
-		sb.append("\n" + module.getLongDescription());
+		boolean printedHeader = false;
+		for (Parameter parameter : union(parameters, optionalParameters)) {
+			String desc = parametersTransformer.getTransformationDescription(parameter.getKlass());
+			if ("".equals(desc))
+				continue;
+
+			if (!printedHeader)
+				formatter.format("%n%nFormat descriptions of parameters:");
+			printedHeader = true;
+			formatter.format("%n%n%s:%n%s", parameter.getName(), desc);
+		}
+
+		formatter.close();
 		return sb.toString();
 	}
 }

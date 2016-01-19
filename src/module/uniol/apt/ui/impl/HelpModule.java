@@ -62,7 +62,7 @@ public class HelpModule extends AbstractModule implements Module {
 			throw new ModuleException("No such module: " + moduleName);
 		}
 
-		String information = ModuleUtils.getModuleUsage(module);
+		String information = ModuleUtils.getModuleUsage(module, AptParametersTransformer.INSTANCE);
 		output.setReturnValue("information", String.class, information);
 	}
 

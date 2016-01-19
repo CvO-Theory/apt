@@ -131,15 +131,15 @@ public class APT {
 
 		String[] moduleArgs = parametersParser.getModuleArguments(moduleName);
 
-		if (moduleArgs.length < parameters.size()) {
-			printTooFewArgumentsAndExit(module);
-		}
-
-		if (moduleArgs.length > allParameters.size() + fileReturnValues.size()) {
-			printTooManyArgumentsAndExit(module);
-		}
-
 		try {
+			if (moduleArgs.length < parameters.size()) {
+				printTooFewArgumentsAndExit(module);
+			}
+
+			if (moduleArgs.length > allParameters.size() + fileReturnValues.size()) {
+				printTooManyArgumentsAndExit(module);
+			}
+
 			// Number of parameters for which values are provided
 			int numberOfUsedParameters;
 
@@ -313,18 +313,18 @@ public class APT {
 		return new PrintStream(FileUtils.openOutputStream(file), false, "UTF-8");
 	}
 
-	private static void printTooManyArgumentsAndExit(Module module) {
+	private static void printTooManyArgumentsAndExit(Module module) throws ModuleException {
 		errPrinter.println("Too many arguments");
 		errPrinter.println();
-		errPrinter.println(ModuleUtils.getModuleUsage(module));
+		errPrinter.println(ModuleUtils.getModuleUsage(module, parametersTransformer));
 		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
-	private static void printTooFewArgumentsAndExit(Module module) {
+	private static void printTooFewArgumentsAndExit(Module module) throws ModuleException {
 		errPrinter.println("Too few arguments");
 		errPrinter.println();
-		errPrinter.println(ModuleUtils.getModuleUsage(module));
+		errPrinter.println(ModuleUtils.getModuleUsage(module, parametersTransformer));
 		errPrinter.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
