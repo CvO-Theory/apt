@@ -145,8 +145,10 @@ public class TestTSForBisimulation {
 
 	/**
 	 * <pre>
+	 * {@code
 	 *  p0 -a> p1 -b> p2 <c- (self loop)
 	 *            \b> p3 <d- (self loop)
+	 * }
 	 * </pre>
 	 * @return
 	 */
@@ -170,10 +172,12 @@ public class TestTSForBisimulation {
 
 	/**
 	 * <pre>
+	 * {@code
 	 *  q0 -a> q1 -b> q4 <d- (self loop)
 	 *     \a> q2 \b\
 	 *          |\-b->q3 <c- (self loop)
 	 *           \b-> q5 <d- (self loop)
+	 * }
 	 * </pre>
 	 * @return
 	 */

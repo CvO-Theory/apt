@@ -60,10 +60,12 @@ public class TestNetsForSiphonsAndTraps {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * s0 -> a -> s1    s2        s3
 	 * ^          |      ^
 	 * |          v      |
 	 * |--------- b -----|
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getIsolatedElementNet() {
@@ -75,7 +77,9 @@ public class TestNetsForSiphonsAndTraps {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * s0 -> a -> s1 -> b -> s2
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getDualityTestNet1() {
@@ -87,7 +91,9 @@ public class TestNetsForSiphonsAndTraps {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * s0 <- a <- s1 <- b <- s2
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getDualityTestNet2() {
@@ -97,12 +103,14 @@ public class TestNetsForSiphonsAndTraps {
 	/**
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * c <----------
 	 * |           |
 	 * v           |
 	 * s1 -> a -> s3 <- b <- s2
 	 * ^     |
 	 * |_____|
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getSiphonAndTrapNet() {
@@ -114,7 +122,9 @@ public class TestNetsForSiphonsAndTraps {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * a -> s0
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getNetWithNoTotalSiphon() {
@@ -126,7 +136,9 @@ public class TestNetsForSiphonsAndTraps {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * s0 -> a
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getNetWithNoTotalTrap() {
@@ -138,6 +150,7 @@ public class TestNetsForSiphonsAndTraps {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * p1->t1          t5<-s5
 	 * ^   |  ^      /^^   ^
 	 * |   v    \   / /|   |
@@ -151,6 +164,7 @@ public class TestNetsForSiphonsAndTraps {
 	 * |   |  / ^      |   |
 	 * |   v / /       v   |
 	 * t4<-t3          t7->s8
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getNonFCTrapSiphonNet() {
@@ -162,6 +176,7 @@ public class TestNetsForSiphonsAndTraps {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * p1->t1->p2<-t2<-p3
 	 * ^   ^   |       ^
 	 * |   |   v       |
@@ -169,6 +184,7 @@ public class TestNetsForSiphonsAndTraps {
 	 * ^   ^   |       ^
 	 * |   |   v       |
 	 * p6<-t6<-p7->t7->p8
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getFCTrapSiphonNet() {

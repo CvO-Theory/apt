@@ -81,7 +81,9 @@ public class TestNetCollection {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * [] -> 0
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getTokenGeneratorNet() {
@@ -101,7 +103,9 @@ public class TestNetCollection {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * [] <- 1 -> []
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getDeadlockNet() {
@@ -125,6 +129,7 @@ public class TestNetCollection {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 *      1
 	 *    / ^ \
 	 *   v  |  v
@@ -132,6 +137,7 @@ public class TestNetCollection {
 	 *   \  ^  /
 	 *    v | v
 	 *      0
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getNonPersistentNet() {
@@ -161,6 +167,7 @@ public class TestNetCollection {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 *     []      []
 	 *   ^ | ^   ^ | ^
 	 *  /  v  \ /  v  \
@@ -168,6 +175,7 @@ public class TestNetCollection {
 	 *  ^  |  ^ ^  |  ^
 	 *   \ v /   \ v /
 	 *     []      []
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getPersistentBiCFNet() {
@@ -212,6 +220,7 @@ public class TestNetCollection {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 *     []      []
 	 *   ^ | ^   ^ | ^
 	 *  /  v  \ /  v  \
@@ -219,6 +228,7 @@ public class TestNetCollection {
 	 *  ^  |  ^ ^  |  ^
 	 *   \ v /   \ v /
 	 *     []      []
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getPersistentBiCFNetWithMarks(int m1, int m2, int m3, int m4, int m5) {
@@ -262,10 +272,12 @@ public class TestNetCollection {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * 1   1
 	 * |   |
 	 * v   v
 	 * [] []
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getConcurrentDiamondNet() {
@@ -291,10 +303,12 @@ public class TestNetCollection {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * 1             1
 	 * |             |
 	 * v             v
 	 * [] <-> 1 <-> []
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getConflictingDiamondNet() {
@@ -327,11 +341,13 @@ public class TestNetCollection {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * ta1 ->  p2 -> tb1 ->  p4 -> tc
 	 *  ^             ^            ^
 	 *  |             |            |
 	 *  v             v            v
 	 *  p1 -> ta2 ->  p3 -> tb2 -> p5
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getABCLanguageNet() {
@@ -381,7 +397,9 @@ public class TestNetCollection {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * 0 -> td   tl
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getDeadTransitionNet() {
@@ -398,7 +416,9 @@ public class TestNetCollection {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * 0 -> td
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getDeadNet() {
@@ -419,7 +439,9 @@ public class TestNetCollection {
 	 *
 	 * @return PN:
 	 * <pre>
+	 * {@code
 	 * [] []
+	 * }
 	 * </pre>
 	 */
 	public static PetriNet getMultiArcNet() {
