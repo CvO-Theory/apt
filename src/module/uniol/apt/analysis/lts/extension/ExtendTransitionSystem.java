@@ -83,13 +83,6 @@ public class ExtendTransitionSystem {
 		knownMinimalValids = new ArrayList<>();
 	}
 
-	/**
-	 * Second constructor, if there is already a list of minimals.
-	 *
-	 * @param lts
-	 * @param g
-	 * @param minimals
-	 */
 	public ExtendTransitionSystem(TransitionSystem lts, int g, List<BitSet> minimals) {
 		this(lts, g);
 		knownMinimalValids = minimals;
@@ -123,7 +116,7 @@ public class ExtendTransitionSystem {
 	/**
 	 * If there is already a code for an lts, this method has to be used.
 	 *
-	 * @param oldCode
+	 * @param oldCode The old code to start the search from
 	 */
 	public void findNextValid(BitSet oldCode) {
 		BitSet code = nextCode(oldCode);
@@ -361,7 +354,7 @@ public class ExtendTransitionSystem {
 	/**
 	 * Checks the three conditions: persistent, reversible and if the smalles cycles
 	 * have the same parikh vector.
-	 * @param ts
+	 * @param ts The transition system to check
 	 * @return True if the conditions are true
 	 */
 	private boolean check(TransitionSystem ts) {
@@ -381,8 +374,8 @@ public class ExtendTransitionSystem {
 
 	/**
 	 * Checks for a given parikh vector if one parikh vector of the smallest cylces is the same.
-	 * @param ts
-	 * @param v
+	 * @param ts The transition system to check
+	 * @param v The Parikh vector to find
 	 * @return True if one parikh vector is found.
 	 */
 	private boolean checkSamePVs(TransitionSystem ts, ParikhVector v) {

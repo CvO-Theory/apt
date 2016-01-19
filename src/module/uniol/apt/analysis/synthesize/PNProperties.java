@@ -48,6 +48,7 @@ public class PNProperties {
 	/**
 	 * Create a copy of a PNProperties instance. This is not public because this class is immutable and thus doesn't
 	 * need a public copy constructor.
+	 * @param other The instance to copy.
 	 */
 	private PNProperties(PNProperties other) {
 		kBounded = other.kBounded;

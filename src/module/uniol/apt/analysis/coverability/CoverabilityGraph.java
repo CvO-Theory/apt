@@ -205,6 +205,7 @@ public class CoverabilityGraph {
 	 * @param cur The marking belonging to the state.
 	 * @param from The marking from which the transition reaches this marking.
 	 * @param covered node whose marking is covered by the given marking (or null if none)
+	 * @return The node for the given marking.
 	 */
 	private CoverabilityGraphNode getNode(Transition transition, Marking cur, CoverabilityGraphNode from,
 			CoverabilityGraphNode covered) {
@@ -313,7 +314,9 @@ public class CoverabilityGraph {
 
 	/**
 	 * Turn this coverability graph into a labeled transition system.
+	 * @param onlyReachability Should only a reachability graph be generated?
 	 * @return The new transition system.
+	 * @throws UnboundedException Thrown if the reachability graph of an unbounded Petri net should be generated.
 	 */
 	private TransitionSystem toLTS(boolean onlyReachability) throws UnboundedException {
 		String name = (onlyReachability ? "Reachability" : "Coverability") + " graph of " + this.pn.getName();

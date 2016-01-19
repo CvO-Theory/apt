@@ -46,6 +46,7 @@ public class ReversibleNet {
 	 * 2) checks whether it is reversible.
 	 *
 	 * If the coverability LTS is reversible, so is the original PN.
+	 * @throws UnboundedException If the examined Petri net is unbounded
 	 */
 	public void check() throws UnboundedException {
 

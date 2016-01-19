@@ -45,7 +45,7 @@ public class CoverabilityGraphEdge {
 
 	/**
 	 * Get the transition that this edge was fired for.
-	 * * @return the transition.
+	 * @return the transition.
 	 */
 	public Transition getTransition() {
 		return this.transition;

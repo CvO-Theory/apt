@@ -47,8 +47,8 @@ public class PropertyModuleExitStatusChecker implements ModuleExitStatusChecker 
 
 	/**
 	 *
-	 * @param returnValue
-	 * @return boolean
+	 * @param returnValue The return value to check
+	 * @return true if this return value indicates success
 	 */
 	public boolean isSuccessProperty(ReturnValue returnValue) {
 		if (!returnValue.getKlass().equals(Boolean.class)) {

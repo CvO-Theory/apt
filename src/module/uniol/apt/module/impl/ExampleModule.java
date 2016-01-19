@@ -62,17 +62,6 @@ public class ExampleModule extends AbstractModule implements Module {
 		output.setReturnValue("lower_case_string", String.class, lowerCaseString);
 	}
 
-	/**
-	 * Example run-method.
-	 * @param string
-	 * @return
-	 */
-	public List<Object> run(String string) {
-		List<Object> values = new ArrayList<>();
-		values.add(string.toLowerCase());
-		return values;
-	}
-
 	@Override
 	public String getTitle() {
 		return "Example Module";

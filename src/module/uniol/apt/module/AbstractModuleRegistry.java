@@ -56,7 +56,7 @@ public abstract class AbstractModuleRegistry implements ModuleRegistry {
 	/**
 	 * Register a module such that it's used in APT.
 	 *
-	 * @param module
+	 * @param module The module that should be registered
 	 */
 	protected void registerModule(Module module) {
 		modulesEntries.put(module.getName(), module);

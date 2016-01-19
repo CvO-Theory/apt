@@ -123,6 +123,7 @@ public class MarkingNetGenerator implements Iterable<PetriNet> {
 
 	/**
 	 * Check if this marking marks the required places.
+	 * @param marking The marking to check.
 	 * @return true if everything is ok
 	 */
 	private boolean checkRequiredPlaces(Map<String, Integer> marking) {

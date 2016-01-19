@@ -61,8 +61,8 @@ public class SynetSynthesizeDistributedLTS {
 	 * Check if the given labeled transition system is synthesizable by Synet.
 	 *
 	 * @return true if synthesizable.
-	 * @throws SynetNotFoundException
-	 * @throws IOException
+	 * @throws SynetNotFoundException Thrown if synet cannot be started
+	 * @throws IOException Thrown if an error occurs while reading synet's output
 	 * @throws ParseException Thrown if the synet output can't be parsed.
 	 * @throws RenderException Thrown if the input lts cannot be represented in the synet format.
 	 */

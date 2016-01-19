@@ -485,9 +485,7 @@ public class SmartChanceGenerator {
 		return true;
 	}
 
-	/**
-	 * Adds a place to the net.
-	 */
+	// Adds a place to the net.
 	private Object addPlace() {
 		int sizeT = net.getTransitions().size();
 		int sizeP = net.getPlaces().size();
@@ -512,9 +510,7 @@ public class SmartChanceGenerator {
 		return p;
 	}
 
-	/**
-	 * Adds a transition to the net
-	 */
+	// Adds a transition to the net
 	private Object addTransition() {
 		int sizeT = net.getTransitions().size();
 		int sizeP = net.getPlaces().size();
@@ -539,9 +535,7 @@ public class SmartChanceGenerator {
 		return t;
 	}
 
-	/**
-	 * Randomly increments one mark in the net
-	 */
+	// Randomly increments one mark in the net
 	private Object addMark() {
 		try {
 			Place p = net.getPlace("p" + rnd.nextInt(net.getPlaces().size()));
@@ -552,9 +546,7 @@ public class SmartChanceGenerator {
 		}
 	}
 
-	/**
-	 * Randomly increases the weight of an arc in the net.
-	 */
+	// Randomly increases the weight of an arc in the net.
 	private Object addWeight() {
 		try {
 			Set<Flow> edges = net.getEdges();
@@ -572,9 +564,7 @@ public class SmartChanceGenerator {
 		return null;
 	}
 
-	/**
-	 * Randomly adds an arc to the net.
-	 */
+	// Randomly adds an arc to the net.
 	private Object addArc() {
 		Transition t = net.getTransition("t" + rnd.nextInt(net.getTransitions().size()));
 		Place p = net.getPlace("p" + rnd.nextInt(net.getPlaces().size()));
@@ -604,7 +594,7 @@ public class SmartChanceGenerator {
 		/**
 		 * Constructor.
 		 *
-		 * @param obj
+		 * @param obj the modified object.
 		 * @param mod the modification type.
 		 */
 		private ModificationStep(Object obj, ModificationType mod) {

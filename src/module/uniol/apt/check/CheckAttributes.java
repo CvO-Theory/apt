@@ -401,6 +401,7 @@ public class CheckAttributes {
 	 *
 	 * @param stronglyCheck stronglyCheck
 	 * @param k k
+	 * @param maxLength TODO: Figure out what this parameter does
 	 * @return bool
 	 *              true: is not separable
 	 *              false: is separable OR unbounded OR k not ok OR do not know

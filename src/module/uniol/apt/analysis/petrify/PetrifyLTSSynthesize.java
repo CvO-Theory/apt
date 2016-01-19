@@ -59,8 +59,8 @@ public class PetrifyLTSSynthesize {
 	 * created.
 	 *
 	 * @return boolean
-	 * @throws IOException
-	 * @throws ModuleException
+	 * @throws IOException Thrown if an I/O error occurs while reading the output
+	 * @throws ModuleException Thrown on any other kind of error
 	 */
 	public boolean check() throws IOException, ModuleException {
 		PetrifyLTSRenderer pf = new PetrifyLTSRenderer();
@@ -135,7 +135,7 @@ public class PetrifyLTSSynthesize {
 
 	/**
 	 * Setter for the "dead"-parameter
-	 * @param par
+	 * @param par The value for the parameter
 	 */
 	public void setSndParameter(String par) {
 		sndParameter_ = par;

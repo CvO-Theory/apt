@@ -90,11 +90,11 @@ class TNetIterator implements Iterator<PetriNet> {
 	 * transition of the generated petri net. Since a place can only have a single outgoing arcs, this is enough to
 	 * describe the presets of all transitions in the generated t-net. So this argument describes the *size* of a
 	 * transition's preset. The sum of this lists elements describes the number of places in the generated net.
-	 *
 	 * @param placePresetList Each place in a t-net has a single transition in its preset. The i-th element of this
 	 * list describes the index of the transition that is in the i-th place's preset. So, this argument actually
 	 * describes the postsets of all transitions in the generated t-net. The size of this list matches the generated
 	 * petri net's number of places, too.
+	 * @return The crated t-net
 	 */
 	private static PetriNet createNet(List<Integer> transitionPresetSizeList, Deque<Integer> placePresetList) {
 		PetriNet pn = new PetriNet();

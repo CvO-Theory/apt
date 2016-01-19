@@ -81,8 +81,8 @@ public class SynthesizePN {
 
 	/**
 	 * Builder class for creating instances of SynthesizePN. You create an instance of this class, give it all the
-	 * state that you want and then use one of the {@link buildForIsomorphicBehavior()} and {@link
-	 * buildForLanguageEquivalence()} methods to create a SynthesizePN instance.
+	 * state that you want and then use one of the {@link #buildForIsomorphicBehavior()} and {@link
+	 * #buildForLanguageEquivalence()} methods to create a SynthesizePN instance.
 	 */
 	static public class Builder {
 		private RegionUtility utility;
@@ -509,6 +509,7 @@ public class SynthesizePN {
 
 	/**
 	 * Was only event/state separation solved or also state separation?
+	 * @return true if only event/state separation was solved
 	 */
 	public boolean onlyEventSeparation() {
 		return onlyEventSeparation;

@@ -176,6 +176,7 @@ class BasicPureSeparation implements Separation {
 	 * @param utility Utility instance for which a separation problem is being solved.
 	 * @param locationMap Mapping describing how events should be distributed to locations.
 	 * @param event Optional event that surely consumes tokens from this region, or null.
+	 * @return The needed inequalities
 	 */
 	static private InequalitySystem[] requireDistributableNet(RegionUtility utility, String[] locationMap,
 			String event) {

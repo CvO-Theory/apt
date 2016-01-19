@@ -43,6 +43,8 @@ public class Connectivity {
 	/**
 	 * Compute all isolated elements of a graph. A node is isolated if it has no edges.
 	 * @param graph The graph whose weak connectivity should be checked.
+	 * @param <G> The type of the graph that is examine.
+	 * @param <N> The type of the graph's nodes.
 	 * @return All isolated elements of the graph.
 	 */
 	public static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>> Set<N> findIsolatedElements(G graph) {
@@ -59,6 +61,8 @@ public class Connectivity {
 	 * Check if a graph is weakly connected. A graph is weakly connected if it has just a single weakly connected
 	 * component.
 	 * @param graph The graph whose weak connectivity should be checked.
+	 * @param <G> The type of the graph that is examine.
+	 * @param <N> The type of the graph's nodes.
 	 * @return true if the graph is weakly connected.
 	 */
 	public static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>> boolean isWeaklyConnected(G graph) {
@@ -70,6 +74,8 @@ public class Connectivity {
 	 * The weakly connected component of a node is the set of nodes that are reachable from it while ignoring the
 	 * direction of edges. All weakly connected components form a partition of the graph's nodes.
 	 * @param graph The graph whose strong connectivity should be checked.
+	 * @param <G> The type of the graph that is examine.
+	 * @param <N> The type of the graph's nodes.
 	 * @return A partition of the graph's nodes into components.
 	 */
 	public static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>>
@@ -95,6 +101,7 @@ public class Connectivity {
 	/**
 	 * Get the weakly connected component of a given node.
 	 * @param node The node whose component should be calculated.
+	 * @param <N> The type of the graph's nodes.
 	 * @return The node's component.
 	 */
 	public static <N extends INode<?, ?, N>> Set<N> getWeaklyConnectedComponent(N node) {
@@ -128,6 +135,8 @@ public class Connectivity {
 	 * Check if a graph is strongly connected. A graph is strongly connected if it just has a single strongly
 	 * connected component.
 	 * @param graph The graph whose strong connectivity should be checked.
+	 * @param <G> The type of the graph that is examine.
+	 * @param <N> The type of the graph's nodes.
 	 * @return true if the graph is strongly connected.
 	 */
 	public static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>> boolean isStronglyConnected(G graph) {
@@ -140,6 +149,8 @@ public class Connectivity {
 	 * following edges forwards ("in the direction of the arrow"). All strongly connected components form a
 	 * partition of the graph's nodes.
 	 * @param graph The graph that should be examined.
+	 * @param <G> The type of the graph that is examine.
+	 * @param <N> The type of the graph's nodes.
 	 * @return A partition of the graph's nodes into components.
 	 */
 	public static <G extends IGraph<G, ?, N>, N extends INode<G, ?, N>>
@@ -170,7 +181,7 @@ public class Connectivity {
 		return result;
 	}
 
-	/**
+	/*
 	 * Compute the strongly connected components reachable from node.
 	 * No, I will not explain the parameters.
 	 */
@@ -229,7 +240,7 @@ public class Connectivity {
 		return counter;
 	}
 
-	/**
+	/*
 	 * Update the data structures for the visit of a new node.
 	 * Nope, the parameters aren't explained here either.
 	 */

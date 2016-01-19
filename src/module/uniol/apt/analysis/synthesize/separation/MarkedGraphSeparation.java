@@ -115,9 +115,7 @@ class MarkedGraphSeparation implements Separation {
 		return result;
 	}
 
-	/**
-	 * Calculate the required regions.
-	 */
+	// Calculate the required regions.
 	private List<Region> calculateRegions() {
 		List<Region> result = new LinkedList<>();
 		// For each state with only a single following node... (aka: sequentializing state)

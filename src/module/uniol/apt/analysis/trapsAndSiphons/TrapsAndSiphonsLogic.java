@@ -80,9 +80,7 @@ public class TrapsAndSiphonsLogic {
 		}
 	}
 
-	/**
-	 * Starts algorithm.
-	 */
+	// Starts algorithm.
 	private void start() throws ContradictionException, TimeoutException {
 		// Get CNF for given pn
 		computeCNF(placesList);

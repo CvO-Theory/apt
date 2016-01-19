@@ -42,7 +42,7 @@ public class PersistentNet {
 		pn_ = pn;
 	}
 
-	/**
+	/*
 	 * This method
 	 * 1) generates the reachability LTS and
 	 * 2) checks whether it is persistent.

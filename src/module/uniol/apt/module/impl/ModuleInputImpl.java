@@ -41,8 +41,8 @@ public class ModuleInputImpl implements ModuleInput {
 	/**
 	 * Set the parameter in modules
 	 *
-	 * @param name
-	 * @param obj
+	 * @param name The name of the parameter
+	 * @param obj The value of the parameter
 	 */
 	public void setParameter(String name, Object obj) {
 		nameParameters.put(name, obj);

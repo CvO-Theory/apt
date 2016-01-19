@@ -126,8 +126,7 @@ public class IsomorphismLogic {
 
 	/**
 	 * Returns result of algorithm.
-	 *
-	 * @return
+	 * @return True if the inputs are isomorphic to each other
 	 */
 	public boolean isIsomorphic() {
 		return result;

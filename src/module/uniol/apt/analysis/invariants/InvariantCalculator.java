@@ -96,6 +96,7 @@ public class InvariantCalculator {
 	 * Calculates for a given matrix the P+ = {j | c_hj &gt; 0} and P- = {j | c_hj
 	 * less 0} sets for each row.
 	 * @param matC - the matrix from which the sets should be calculated.
+	 * @return The result of the calculation
 	 */
 	private static List<PpPm> calcPpPm(Matrix matC) {
 		final List<PpPm> result = new ArrayList<>();
