@@ -282,7 +282,8 @@
 		<javadoc encoding="utf-8" destdir="./doc/javadoc" author="true"
 				version="true" use="true" charset="UTF-8"
 				docencoding="UTF-8" access="private"
-				classpathref="test.class.path">
+				classpathref="test.class.path"
+				failonerror="true">
 			<packageset dir="src/module"/>
 			<packageset dir="src/lib"/>
 			<packageset dir="src/main"/>

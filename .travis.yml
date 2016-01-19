@@ -13,3 +13,4 @@ script:
   - ant jar
   - ant verify-parsers
   - ./apt.sh draw nets/crashkurs-cc1-net.apt
+  - ant javadoc
