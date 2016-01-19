@@ -43,6 +43,7 @@ public class ParserTestUtils {
 	 *
 	 * @param fileName name of the file which contains the Petri net
 	 * @throws ParserSkipException if any problem occurs
+	 * @return The parsed Petri net.
 	 */
 	public static PetriNet getAptPN(String fileName) {
 		try {
@@ -57,6 +58,7 @@ public class ParserTestUtils {
 	 *
 	 * @param fileName name of the file which contains the labelled transition system
 	 * @throws ParserSkipException if any problem occurs
+	 * @return The parsed transition system.
 	 */
 	public static TransitionSystem getAptLTS(String fileName) {
 		try {

@@ -217,17 +217,21 @@ public class TestNetCollection {
 	 * Marking is variable.
 	 *
 	 * @author vsp, Daniel (just added "withMarks")
-	 *
+	 * @param m1 The number of token on place p1.
+	 * @param m2 The number of token on place p2.
+	 * @param m3 The number of token on place p3.
+	 * @param m4 The number of token on place p4.
+	 * @param m5 The number of token on place p5.
 	 * @return PN:
 	 * <pre>
 	 * {@code
-	 *     []      []
+	 *    [a]     [b]
 	 *   ^ | ^   ^ | ^
 	 *  /  v  \ /  v  \
-	 *  1  0   1   0  1
+	 * p1 p2  p3  p4  p5
 	 *  ^  |  ^ ^  |  ^
 	 *   \ v /   \ v /
-	 *     []      []
+	 *    [c]     [d]
 	 * }
 	 * </pre>
 	 */
@@ -455,6 +459,7 @@ public class TestNetCollection {
 
 	/**
 	 * Construct a Petri net whose reachability graph is a circle that is labelled with transitions a, c, b, c, c.
+	 * @return Some PN
 	 */
 	public static PetriNet getACBCCLoopNet() {
 		PetriNet pn = new PetriNet("ACBCCLoopNet");

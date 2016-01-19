@@ -53,6 +53,8 @@ public class RendererTestUtils {
 	 * @param nodes The nodes that should be transformed
 	 * @param comparator The comparator that the resulting TreeSet uses
 	 * @param arcComparator The comparator which sorts the pre- and postsets of nodes.
+	 * @param <T> The type of elements in the set.
+	 * @return The equivalent sorted nodes.
 	 */
 	private static <T extends Node<?, Flow, uniol.apt.adt.pn.Node>> Set<T> getNodeSet(Class<? extends T> klass,
 		Set<? extends T> nodes, Comparator<Node<?, ?, ?>> comparator,
@@ -72,6 +74,7 @@ public class RendererTestUtils {
 	 * Return a modified view on the given {@link PetriNet} which returns
 	 * places, transitions and arcs as sorted sets.
 	 * @param pn The {@link PetriNet} to wrap
+	 * @return The modified view.
 	 */
 	static PetriNet getSortedNet(PetriNet pn) {
 		/* Create a mockito spy for the Petri net which sorts everything */

@@ -281,8 +281,7 @@ public class TestNetsForSeparation {
 	 * 2-initial marking.
 	 * alive, reversible, FC
 	 * not 2-separable
-	 *
-	 * @return
+	 * @return PetriNet
 	 */
 	public static PetriNet getNoSeparableLiveRevFC() {
 		PetriNet pn = new PetriNet();

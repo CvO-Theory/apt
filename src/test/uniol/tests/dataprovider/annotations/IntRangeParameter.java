@@ -34,12 +34,12 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD, ElementType.TYPE })
 public @interface IntRangeParameter {
 	/**
-	 * Start of the integer range.
+	 * @return Start of the integer range.
 	 */
 	int start() default 1;
 
 	/**
-	 * End of the integer range.
+	 * @return End of the integer range.
 	 */
 	int end();
 }

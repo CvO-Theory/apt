@@ -47,9 +47,7 @@ import uniol.apt.adt.ts.State;
  */
 public class IsomorphismTest {
 
-	/**
-	 * Test strong isomorphism (which includes weak isomorphism)
-	 */
+	// Test strong isomorphism (which includes weak isomorphism)
 	private BidiMap<State, State> testIsomorphism(TransitionSystem lts1, TransitionSystem lts2) {
 		IsomorphismLogic logic1 = new IsomorphismLogic(lts1, lts2, false);
 		assertTrue(logic1.isIsomorphic());
@@ -59,9 +57,7 @@ public class IsomorphismTest {
 		return logic1.getIsomorphism();
 	}
 
-	/**
-	 * Test weak isomorphism, but non-strong isomorphism.
-	 */
+	// Test weak isomorphism, but non-strong isomorphism.
 	private BidiMap<State, State> testWeakIsomorphism(TransitionSystem lts1, TransitionSystem lts2) {
 		IsomorphismLogic logic1 = new IsomorphismLogic(lts1, lts2, false);
 		assertTrue(logic1.isIsomorphic());
@@ -71,9 +67,7 @@ public class IsomorphismTest {
 		return logic1.getIsomorphism();
 	}
 
-	/**
-	 * Test not non-weak isomorphism (which includes non-strong isomorphism)
-	 */
+	// Test not non-weak isomorphism (which includes non-strong isomorphism)
 	private void testNonWeakIsomorphism(TransitionSystem lts1, TransitionSystem lts2) {
 		IsomorphismLogic logic = new IsomorphismLogic(lts1, lts2, false);
 		assertFalse(logic.isIsomorphic());
@@ -86,7 +80,7 @@ public class IsomorphismTest {
 	//Tests for strong isomorphic nets:
 
 	@Test
-	public void testIsomorphicWithItSelf() throws IOException {
+	public void testIsomorphicWithItSelf() {
 		BidiMap<State, State> isomorphism = testIsomorphism(getTs3A(), getTs3A());
 		assertTrue(isomorphism.size() == 3);
 		assertThat(isomorphism, allOf(
@@ -97,7 +91,7 @@ public class IsomorphismTest {
 	}
 
 	@Test
-	public void testIsomorphicNets1() throws IOException {
+	public void testIsomorphicNets1() {
 		BidiMap<State, State> isomorphism = testIsomorphism(getTs3A(), getTs3B());
 		assertTrue(isomorphism.size() == 3);
 		assertThat(isomorphism, allOf(
@@ -112,14 +106,14 @@ public class IsomorphismTest {
 	 * except that the labels are exchanged.
 	 */
 	@Test
-	public void testIsomorphicNets2() throws IOException {
+	public void testIsomorphicNets2() {
 		BidiMap<State, State> isomorphism = testIsomorphism(getIsoTs1A(), getIsoTs1B());
 		assertTrue(isomorphism.size() == 1);
 		assertThat(isomorphism, hasEntry(nodeWithID("s0"), nodeWithID("s0")));
 	}
 
 	@Test
-	public void testIsomorphicNets3() throws IOException {
+	public void testIsomorphicNets3() {
 		BidiMap<State, State> isomorphism = testIsomorphism(getIsoTs2A(), getIsoTs2B());
 		assertTrue(isomorphism.size() == 1);
 		assertThat(isomorphism, hasEntry(nodeWithID("s0"), nodeWithID("s0")));
@@ -132,22 +126,22 @@ public class IsomorphismTest {
 	 * net with one place and no transition.
 	 */
 	@Test
-	public void testEmptyNet() throws IOException {
+	public void testEmptyNet() {
 		testNonWeakIsomorphism(getSingleStateTS(), getSingleStateTSWithLoop());
 	}
 
 	@Test
-	public void testNonIsomorphicNets1() throws IOException {
+	public void testNonIsomorphicNets1() {
 		testNonWeakIsomorphism(getTs1A(), getTs1B());
 	}
 
 	@Test
-	public void testNonIsomorphicNets2() throws IOException {
+	public void testNonIsomorphicNets2() {
 		testNonWeakIsomorphism(getTs2A(), getTs2B());
 	}
 
 	@Test
-	public void testNonIsomorphicNets3() throws IOException {
+	public void testNonIsomorphicNets3() {
 		testNonWeakIsomorphism(getTs4A(), getTs4B());
 	}
 
@@ -159,7 +153,7 @@ public class IsomorphismTest {
 	 * but their initial nodes don't map to each other)
 	 */
 	@Test
-	public void testNonIsomorphicNets3Own() throws IOException {
+	public void testNonIsomorphicNets3Own() {
 		BidiMap<State, State> isomorphism = testWeakIsomorphism(getIsoTs3A(), getIsoTs3B());
 		assertTrue(isomorphism.size() == 2);
 		assertThat(isomorphism, allOf(
@@ -172,7 +166,7 @@ public class IsomorphismTest {
 	 * and that edge is not easily reachable, but needs four firings before it appears.
 	 */
 	@Test
-	public void testNonIsomorphicNets4() throws IOException {
+	public void testNonIsomorphicNets4() {
 		testNonWeakIsomorphism(getIsoTs4A(), getIsoTs4B());
 	}
 

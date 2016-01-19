@@ -150,7 +150,7 @@ public class TestTSForBisimulation {
 	 *            \b> p3 <d- (self loop)
 	 * }
 	 * </pre>
-	 * @return
+	 * @return The above TS
 	 */
 	public static TransitionSystem getTestTS4A() {
 		TransitionSystem ts = new TransitionSystem();
@@ -179,7 +179,7 @@ public class TestTSForBisimulation {
 	 *           \b-> q5 <d- (self loop)
 	 * }
 	 * </pre>
-	 * @return
+	 * @return The above TS
 	 */
 	public static TransitionSystem getTestTS4B() {
 		TransitionSystem ts = new TransitionSystem();
