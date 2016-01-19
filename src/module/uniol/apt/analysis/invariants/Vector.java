@@ -24,7 +24,6 @@ import java.util.Collection;
 
 /**
  * Representing a vector used to give a covering vector for t- or s-invariants. Just a overriden toString-method.
- * <p/>
  * @author Manuel Gieseking
  */
 public class Vector extends ArrayList<Integer> {
@@ -39,7 +38,6 @@ public class Vector extends ArrayList<Integer> {
 
 	/**
 	 * Constructor with a given list of integers.
-	 * <p/>
 	 * @param c - the integers to put to this vector.
 	 */
 	public Vector(Collection<? extends Integer> c) {

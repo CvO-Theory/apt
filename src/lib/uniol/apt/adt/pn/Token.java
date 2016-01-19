@@ -24,7 +24,6 @@ import java.util.Objects;
 /**
  * The Token class is used to represent a token on a place. It also implements Omega functionality for the coverability
  * graph.
- * <p/>
  * @author Manuel Gieseking
  */
 public class Token implements Comparable<Token> {
@@ -61,9 +60,7 @@ public class Token implements Comparable<Token> {
 
 	/**
 	 * Constructor initialising a token with a given value.
-	 * <p/>
 	 * @param v the initial value.
-	 * <p/>
 	 * @throws IllegalArgumentException if the given value is less than zero.
 	 * @deprecated Use {@link valueOf} instead.
 	 */
@@ -74,9 +71,7 @@ public class Token implements Comparable<Token> {
 
 	/**
 	 * Adds a given value to this token. If one value is OMEGA so the value of this token will be OMEGA.
-	 * <p/>
 	 * @param t The token to add.
-	 * <p/>
 	 * @throws IllegalArgumentException if the argument is null.
 	 */
 	Token add(Token t) {
@@ -93,9 +88,7 @@ public class Token implements Comparable<Token> {
 
 	/**
 	 * Adds a given value to this token. If this token is OMEGA so it stays by OMEGA.
-	 * <p/>
 	 * @param t The value to add.
-	 * <p/>
 	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
 	 */
 	Token add(long t) {
@@ -109,7 +102,6 @@ public class Token implements Comparable<Token> {
 
 	/**
 	 * Returns the value of this token. That means a natural number or -1 if this token is representing OMEGA.
-	 * <p/>
 	 * @return if isOmega() == true then -1 else the natural number of token count.
 	 */
 	public long getValue() {
@@ -118,7 +110,6 @@ public class Token implements Comparable<Token> {
 
 	/**
 	 * Returns if this token represents OMEGA or not.
-	 * <p/>
 	 * @return true, if this instance is representing OMEGA.
 	 */
 	public boolean isOmega() {

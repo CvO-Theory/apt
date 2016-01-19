@@ -23,7 +23,6 @@ import uniol.apt.adt.IGraph;
 
 /**
  * The NoSuchNodeException is thrown if the node, which is tried to achieve, does not exists.
- * <p/>
  * @author Manuel Gieseking
  */
 public class NoSuchNodeException extends DatastructureException {
@@ -33,7 +32,6 @@ public class NoSuchNodeException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new NoSuchNodeException with given message.
-	 * <p/>
 	 * @param g The graph where the node does not exist.
 	 * @param nodeId Name of the non existing node.
 	 */
@@ -44,7 +42,6 @@ public class NoSuchNodeException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new NoSuchNodeException with a given cause.
-	 * <p/>
 	 * @param g The graph where the node does not exist.
 	 * @param nodeId Name of the non existing node.
 	 * @param cause The cause for this exception as Throwable.
@@ -56,7 +53,6 @@ public class NoSuchNodeException extends DatastructureException {
 
 	/**
 	 * Returns the id of the node which causes this exception.
-	 * <p/>
 	 * @return the id of the node causing the exception.
 	 */
 	public String getNodeId() {

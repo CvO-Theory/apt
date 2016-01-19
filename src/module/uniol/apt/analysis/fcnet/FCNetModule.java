@@ -32,12 +32,10 @@ import uniol.apt.module.exception.ModuleException;
 
 /**
  * This module tests if a plain Petri net ist restricted-free-choice. That is:
- * <p/>
  * <code>
  *              \forall t_1,t_s\in T\colon{}^\bullet t_1\cap{}^\bullet t_2\neq\es\impl|{}^\bullet t_1|=
  *              |{}^\bullet t_2|=1
  * </code>
- * <p/>
  * @author Manuel Gieseking
  */
 @AptModule

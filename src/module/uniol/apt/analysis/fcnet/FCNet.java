@@ -28,11 +28,8 @@ import uniol.apt.analysis.plain.Plain;
 
 /**
  * Precondition: plain Petri net
- * <p/>
  * Testing if a plain Petri net ist restricted-free-choice. That is:
- * <p/>
  * \forall t_1,t_2\in T\colon{}^\bullet t_1\cap{}^\bullet t_2\neq\es\impl|{}^\bullet t_1|=|{}^\bullet t_2|=1
- * <p/>
  * @author Manuel Gieseking
  */
 public class FCNet {
@@ -41,7 +38,6 @@ public class FCNet {
 
 	/**
 	 * Constructor.
-	 * <p/>
 	 * @param pn - the net which should be checked.
 	 */
 	public FCNet(PetriNet pn) {
@@ -50,13 +46,9 @@ public class FCNet {
 
 	/**
 	 * Precondition: plain Petri net
-	 * <p/>
 	 * Testing if a plain Petri net ist restricted-free-choice. That is:
-	 * <p/>
 	 * \forall t_1,t_s\in T\colon{}^\bullet t_1\cap{}^\bullet t_2\neq\es\impl|{}^\bullet t_1|=|{}^\bullet t_2|=1
-	 * <p/>
 	 * @return true if the Petri net ist free-choice
-	 * <p/>
 	 * @throws PreconditionFailedException thrown if the given petri net is not plain.
 	 */
 	public boolean check() throws PreconditionFailedException {

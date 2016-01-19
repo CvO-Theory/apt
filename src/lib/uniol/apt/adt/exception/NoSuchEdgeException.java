@@ -23,7 +23,6 @@ import uniol.apt.adt.IGraph;
 
 /**
  * The NoSuchEdgeException is thrown if the edge, which is tried to achieve, does not exists.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class NoSuchEdgeException extends DatastructureException {
@@ -32,7 +31,6 @@ public class NoSuchEdgeException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new NoSuchEdgeException.
-	 * <p/>
 	 * @param g        The graph where the node does not exist.
 	 * @param sourceId Name of the source node of the non existing edge.
 	 * @param targetId Name of the target node of the non existing edge.
@@ -43,7 +41,6 @@ public class NoSuchEdgeException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new NoSuchEdgeException.
-	 * <p/>
 	 * @param g        The graph where the node does not exist.
 	 * @param sourceId Name of the source node of the non existing edge.
 	 * @param targetId Name of the target node of the non existing edge.
@@ -56,7 +53,6 @@ public class NoSuchEdgeException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new NoSuchEdgeException with a given cause.
-	 * <p/>
 	 * @param g        The graph where the node does not exist.
 	 * @param sourceId Name of the source node of the non existing edge.
 	 * @param targetId Name of the target node of the non existing edge.
@@ -69,7 +65,6 @@ public class NoSuchEdgeException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new NoSuchEdgeException.
-	 * <p/>
 	 * @param g        The graph where the node does not exist.
 	 * @param sourceId Name of the source node of the non existing edge.
 	 * @param targetId Name of the target node of the non existing edge.

@@ -26,7 +26,6 @@ import uniol.apt.adt.ts.TransitionSystem;
  * A class that stores either a Petri net or a labeled transition system. The purpose of this class is to allow modules
  * to take either a Petri net or labeled transition system; in particular, modules that check properties (e.g.
  * reversibility) that apply to both Petri nets and labeled transition benefit from this class.
- * <p/>
  * @author Renke Grunwald
  */
 public class PetriNetOrTransitionSystem {
@@ -36,7 +35,6 @@ public class PetriNetOrTransitionSystem {
 
 	/**
 	 * Store a Petri net.
-	 * <p/>
 	 * @param net the Petri net
 	 */
 	public PetriNetOrTransitionSystem(PetriNet net) {
@@ -45,7 +43,6 @@ public class PetriNetOrTransitionSystem {
 
 	/**
 	 * Store a labeled transition system.
-	 * <p/>
 	 * @param ts the labeled transition system
 	 */
 	public PetriNetOrTransitionSystem(TransitionSystem ts) {
@@ -54,7 +51,6 @@ public class PetriNetOrTransitionSystem {
 
 	/**
 	 * Gets the stored Petri net or null.
-	 * <p/>
 	 * @return Petri net or null
 	 */
 	public PetriNet getNet() {
@@ -63,7 +59,6 @@ public class PetriNetOrTransitionSystem {
 
 	/**
 	 * Gets the stored labeled transition system or null.
-	 * <p/>
 	 * @return Labeled transition or null
 	 */
 	public TransitionSystem getTs() {

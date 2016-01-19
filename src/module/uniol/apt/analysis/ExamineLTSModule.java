@@ -47,7 +47,6 @@ import uniol.apt.util.Pair;
 
 /**
  * Provide various checks in a single module.
- * <p/>
  * @author Uli Schlachter, vsp
  */
 @AptModule

@@ -29,22 +29,16 @@ import uniol.apt.analysis.plain.Plain;
 
 /**
  * Checks whether a given plain Petri net is a free choice net. That is:
- * <p/>
  * \forall t1,t2 \in T: ^{\bullet}t1 \Cap ^{\bullet}t2 \neq \emptyset \Rightarrow ^{\bullet}t1 \eq ^{\bullet}t2.
- * <p/>
  * @author Dennis-Michael Borde
  */
 public class FreeChoice {
 
 	/**
 	 * Checks whether a given plain Petri net is a free choice net. That is:
-	 * <p/>
 	 * \forall t1,t2 \in T: ^{\bullet}t1 \Cap ^{\bullet}t2 \neq \emptyset \Rightarrow ^{\bullet}t1 \eq ^{\bullet}t2.
-	 * <p/>
 	 * @param net - the petri net to check.
-	 * <p/>
 	 * @return true if the given net fullfills the freechoice property.
-	 * <p/>
 	 * @throws PreconditionFailedException thrown if the net is not plain.
 	 */
 	public boolean check(PetriNet net) throws PreconditionFailedException {

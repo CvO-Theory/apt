@@ -32,9 +32,7 @@ import uniol.apt.module.exception.ModuleException;
 
 /**
  * This module tests if a plain Petri net ist conflict-free. That is:
- * <p/>
  * <code>\forall s \in S: \mid s^\bullet \mid \leq 1 \vee s^\bullet \subset ^\bullet s</code>
- * <p/>
  * @author Manuel Gieseking
  */
 @AptModule

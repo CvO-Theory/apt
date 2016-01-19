@@ -40,7 +40,6 @@ import uniol.apt.util.Pair;
 
 /**
  * This module computes Parikh vectors of smallest cycles of a lts.
- * <p/>
  * @author Manuel Gieseking
  */
 @AptModule

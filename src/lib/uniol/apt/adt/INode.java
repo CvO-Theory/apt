@@ -25,17 +25,13 @@ import uniol.apt.adt.extension.IExtensible;
 /**
  * INode<G,E,N> is an abstract interface to a common node. It is possible to retrieve a view of the pre- and postsets as
  * edge sets as well as node sets.
- * <p/>
  * The generic parameter define what types are used for the graph and edges as well as the node itself. This allows to
  * extend any node in a typesafe manner at compiletime. Additionally one may add any data to the node using the
  * IExtensible interface methods at runtime.
- * <p/>
  * For examples have a look at the pn.Place, pn.Transition, ts.Transition or Node classes.
- * <p/>
  * @param <G> The type of the graph.
  * @param <E> The type of the edge itself.
  * @param <N> The type of the nodes.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public interface INode<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
@@ -43,42 +39,36 @@ public interface INode<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N ex
 
 	/**
 	 * Returns the id of the node.
-	 * <p/>
 	 * @return A string containing the id.
 	 */
 	public String getId();
 
 	/**
 	 * Retrieves the graph this node is part of.
-	 * <p/>
 	 * @return A graph of given type G.
 	 */
 	public G getGraph();
 
 	/**
 	 * Retrieves a view of all nodes which have an outgoing edge to this node.
-	 * <p/>
 	 * @return A unmodifiable set of nodes of given type N.
 	 */
 	public Set<N> getPresetNodes();
 
 	/**
 	 * Retrieves a view of all nodes which have an incoming edge from this node.
-	 * <p/>
 	 * @return A unmodifiable set of nodes of given type N.
 	 */
 	public Set<N> getPostsetNodes();
 
 	/**
 	 * Retrieves a view of all edges targeting this node.
-	 * <p/>
 	 * @return A unmodifiable set of edges of given type E.
 	 */
 	public Set<E> getPresetEdges();
 
 	/**
 	 * Retrieves a view of all edges beginning in this node.
-	 * <p/>
 	 * @return A unmodifiable set of edges of given type E.
 	 */
 	public Set<E> getPostsetEdges();

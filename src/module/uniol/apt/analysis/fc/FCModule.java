@@ -32,9 +32,7 @@ import uniol.apt.module.exception.ModuleException;
 
 /**
  * Checks whether a given plain Petri net is a free choice net. That is:
- * <p/>
  * \forall t1,t2 \in T: ^{\bullet}t1 \Cap ^{\bullet}t2 \neq \emptyset \Rightarrow ^{\bullet}t1 \eq ^{\bullet}t2.
- * <p/>
  * @author Dennis-Michael Borde
  */
 @AptModule

@@ -24,9 +24,7 @@ import uniol.apt.adt.pn.Transition;
 
 /**
  * This module tests if a Petri net is concurrency-preserving. That is:
- * <p/>
  * <code>\forall t \in T: \mid t^\bullet \mid = \mid {}^\bullet t \mid </code>
- * <p/>
  * @author Manuel Gieseking
  */
 public class ConcurrencyPreserving {
@@ -36,7 +34,6 @@ public class ConcurrencyPreserving {
 
 	/**
 	 * Constructor.
-	 * <p/>
 	 * @param pn - the net which should be checked.
 	 */
 	public ConcurrencyPreserving(PetriNet pn) {
@@ -45,9 +42,7 @@ public class ConcurrencyPreserving {
 
 	/**
 	 * Testing if a Petri net is concurrency-preserving. That is:
-	 * <p/>
 	 * \forall t \in T: \mid t^\bullet \mid = \mid {}^\bullet t \mid
-	 * <p/>
 	 * @return true if the Petri net is concurrency-preserving.
 	 */
 	public boolean check() {

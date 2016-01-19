@@ -47,7 +47,6 @@ import static org.apache.commons.collections4.iterators.EmptyIterator.emptyItera
 
 /**
  * Represents a Transitionsystem. With states, arcs and an alphabet.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State>
@@ -74,7 +73,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Creates a new TransitionSystem with the given name.
-	 * <p/>
 	 * @param name the name of the transitionsystem as String.
 	 */
 	public TransitionSystem(String name) {
@@ -83,7 +81,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Copy-Constructor. Attention all extensions will be copied by reference.
-	 * <p/>
 	 * @param ts the transition system that gets copied.
 	 */
 	public TransitionSystem(TransitionSystem ts) {
@@ -105,9 +102,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Sets the initial state of the TransitionSystem.
-	 * <p/>
 	 * @param state the state which should get inital.
-	 * <p/>
 	 * @throws IllegalArgumentException on passing an empty state.
 	 * @throws NoSuchNodeException      thrown if the state does not exist in this TransitionSystem.
 	 */
@@ -120,9 +115,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Sets the initial state of the TransitionSystem.
-	 * <p/>
 	 * @param id the id of the state which should get initial.
-	 * <p/>
 	 * @throws IllegalArgumentException on passing an empty id.
 	 * @throws NoSuchNodeException      if the state with the id does not exist in this TransitionSystem.
 	 */
@@ -139,9 +132,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Returns the initial state of this TransitionSystem.
-	 * <p/>
 	 * @return the initial state.
-	 * <p/>
 	 * @throws StructureException if the initial state is not set.
 	 */
 	public State getInitialState() {
@@ -179,13 +170,10 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Creates an arc with an id for the source node, an id for the target node and a label.
-	 * <p/>
 	 * @param sourceId the id of the source state.
 	 * @param targetId the id of the target state.
 	 * @param label    the label this arc will receive.
-	 * <p/>
 	 * @return the created arc.
-	 * <p/>
 	 * @throws ArcExistsException       if a arc with this sourceId, targetId and label already exists in this
 	 *                                  TransitionSystem.
 	 * @throws NoSuchNodeException      if one of the nodes does not exist in this TransitionSystem.
@@ -211,13 +199,10 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Creates an arc from one state (source) to another state (target) with the label.
-	 * <p/>
 	 * @param source the source state.
 	 * @param target the target state.
 	 * @param label  the label this arc will receive.
-	 * <p/>
 	 * @return the created arc.
-	 * <p/>
 	 * @throws ArcExistsException       if a arc with this source, target and label already exists in this
 	 *                                  TransitionSystem.
 	 * @throws NoSuchNodeException      if one of the nodes does not exist in this TransitionSystem.
@@ -236,11 +221,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	/**
 	 * Creates an arc with the same source node, target node and label as the given arc and copies the extensions
 	 * from the arc marked as to copy to the new arc.
-	 * <p/>
 	 * @param arc the arc to copy.
-	 * <p/>
 	 * @return the created arc.
-	 * <p/>
 	 * @throws ArcExistsException       if a arc with the same source node, target node and label as the given arc
 	 *                                  already exists in this TransitionSystem.
 	 * @throws NoSuchNodeException      if one of the nodes (target node or source node of the given arc) does not
@@ -275,11 +257,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Creates a new state with the given id
-	 * <p/>
 	 * @param id the id of the state.
-	 * <p/>
 	 * @return the created state.
-	 * <p/>
 	 * @throws NodeExistsException      if the state with this id already exists in this TransitionSystem.
 	 * @throws IllegalArgumentException upon passing a null element.
 	 */
@@ -297,7 +276,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	/**
 	 * Creates a new state with an auto-generated id. The id has the form sx with x the next free integer id in this
 	 * TransitionSystem. For example s0, s1, etc..
-	 * <p/>
 	 * @return the newly created state.
 	 */
 	public State createState() {
@@ -312,11 +290,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	/**
 	 * Creates a new state in this TransitionSystem by copying the id from another state and copying the extensions
 	 * from the state marked as to copy to the new state.
-	 * <p/>
 	 * @param state the state to get the id and extensions.
-	 * <p/>
 	 * @return the newly created state.
-	 * <p/>
 	 * @throws IllegalArgumentException if the passed state is null.
 	 * @throws NodeExistsException      if the given state in this TransitionSystem already exists.
 	 */
@@ -332,11 +307,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	/**
 	 * Creates a few new states in this TransitionSystem by copying the id from the given states and copying the
 	 * extensions from the states marked as to copy to the new state.
-	 * <p/>
 	 * @param stateList a list of states to get the id and extensions of those states.
-	 * <p/>
 	 * @return a list of the newly created states.
-	 * <p/>
 	 * @throws IllegalArgumentException if the passed array of states is null.
 	 * @throws NodeExistsException      if one state of the given list in this TransitionSystem already exists.
 	 */
@@ -353,11 +325,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Creates a few new states in this TransitionSystem by the given ids.
-	 * <p/>
 	 * @param idList a list of ids
-	 * <p/>
 	 * @return a list of the newly created states.
-	 * <p/>
 	 * @throws IllegalArgumentException if the passed array of ids is null.
 	 * @throws NodeExistsException      if one id of the list in this TransitionSystem already exists.
 	 */
@@ -374,9 +343,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Creates #count new states in this TransitionSystem with a auto generated ids.
-	 * <p/>
 	 * @param count how many states should be created.
-	 * <p/>
 	 * @return a list of the newly created states.
 	 */
 	public State[] createStates(int count) {
@@ -390,11 +357,9 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	/**
 	 * Removes the arc with the sourceId, targetI and label from this TransitionSystem if exists. It also updates
 	 * the alphabet, if the removing arc was the only arc with this label.
-	 * <p/>
 	 * @param sourceId the source state id.
 	 * @param targetId the target state id.
 	 * @param label    the label of the arc which want to be removed.
-	 * <p/>
 	 * @throws IllegalArgumentException on passing null to any argument.
 	 * @throws NoSuchNodeException      if the node does not exist in this TransitionSystem.
 	 * @throws NoSuchEdgeException      if there is no arc with given sourceId, targetId and label in this
@@ -439,9 +404,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	/**
 	 * Removes the given arc from this TransitionSystem by searching an arc with the same source, target and label
 	 * as the given arc. It also updates the alphabet, if the removing arc was the only arc with it's label.
-	 * <p/>
 	 * @param a the arc which want to be removed.
-	 * <p/>
 	 * @throws StructureException       if the arc does not belong to the TransitionSystem. That mean it was not
 	 *                                  created by this TransitionSystem.
 	 * @throws IllegalArgumentException on passing null to any argument.
@@ -463,9 +426,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 * Removes the state with the id from the TransitionSystem. It also sets the initial state of this
 	 * TransitionSystem to null if the state belonging to this id has been the initial state of this
 	 * TransitionSystem.
-	 * <p/>
 	 * @param id the id of the state which should be removed.
-	 * <p/>
 	 * @throws NoSuchNodeException      if there is no state with the given id in this TransitionSystem.
 	 * @throws IllegalArgumentException on passing null to any argument.
 	 */
@@ -502,9 +463,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Removes the given state from the TransitionSystem by searching a node with the same id as the given state.
-	 * <p/>
 	 * @param state the state to remove.
-	 * <p/>
 	 * @throws StructureException       if the state does not belong to the TransitionSystem. That mean was not
 	 *                                  created by this TransitionSystem.
 	 * @throws IllegalArgumentException on passing null to any argument.
@@ -523,13 +482,10 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Gets the arc with the sourceId, targetId and label from this TransitionSystem.
-	 * <p/>
 	 * @param sourceId the source state id of this arc.
 	 * @param targetId the target state id of this arc.
 	 * @param label    the label of the arc.
-	 * <p/>
 	 * @return the arc.
-	 * <p/>
 	 * @throws IllegalArgumentException on passing null to any argument.
 	 * @throws NoSuchNodeException      if some of the nodes given by there id's does not exist in this
 	 *                                  TransitionSystem.
@@ -556,13 +512,10 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Gets the arc with the source, target and label from this TransitionSystem.
-	 * <p/>
 	 * @param source the source state of the arc.
 	 * @param target the target state of the arc.
 	 * @param label  the label of the arc.
-	 * <p/>
 	 * @return the arc.
-	 * <p/>
 	 * @throws IllegalArgumentException on passing null to any argument.
 	 * @throws NoSuchNodeException      if the node does not exist.
 	 * @throws NoSuchEdgeException      if the arc given by the id's of source an target node and the label does not
@@ -590,7 +543,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Gets a view of the alphabet of the TransitionSystem as an unmodifiableSortedSet.
-	 * <p/>
 	 * @return the alphabet of this TransitionSystem.
 	 */
 	public Set<String> getAlphabet() {
@@ -599,13 +551,10 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Creates an arc key to find or save an arc by it's primary key, that mean it's sourceId, targetId and label.
-	 * <p/>
 	 * @param sourceId the source node's id.
 	 * @param targetId the target node's id.
 	 * @param label    the label of the arc.
-	 * <p/>
 	 * @return the ArcKey.
-	 * <p/>
 	 * @throws NoSuchNodeException thrown if one of the states does not exist in this TransitionSystem.
 	 */
 	private ArcKey createArcKey(String sourceId, String targetId, String label) {
@@ -621,12 +570,10 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	/**
 	 * Sets a new label to the arc identified by it's sourceId, targetId and the old label. It also updates the
 	 * alphabet.
-	 * <p/>
 	 * @param sourceId the source node's id of the arc.
 	 * @param targetId the target node's id of the arc.
 	 * @param oldLabel the old label of the arc.
 	 * @param newLabel the new label of the arc.
-	 * <p/>
 	 * @throws NoSuchNodeException      if one of the nodes does not exist in this TransitionSystem.
 	 * @throws IllegalArgumentException if one argument is null.
 	 * @throws ArcExistsException       thrown if there already exists an arc with sourceId, targetId and the new
@@ -665,7 +612,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Updates the alphabet by incrementing the occurrences of this label or if it's new adding it to the alphabet.
-	 * <p/>
 	 * @param label the label to add.
 	 */
 	private void addLabel(String label) {
@@ -676,7 +622,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	/**
 	 * Removes a label from the alphabet. That mean decrementing the occurrences of this label or if it's the last
 	 * occurrences deleting it from the alphabet.
-	 * <p/>
 	 * @param label the label to remove.
 	 */
 	private void removeLabel(String label) {
@@ -695,7 +640,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Returns the revision number of the label. For example for the parikh vectors to see, if they have to update.
-	 * <p/>
 	 * @return the revision number of the label.
 	 */
 	public long getLabelRev() {
@@ -704,11 +648,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Retrieves the node with the given id.
-	 * <p/>
 	 * @param id The id of the node as a String.
-	 * <p/>
 	 * @return a reference object of a state identified by the id.
-	 * <p/>
 	 * @throws IllegalArgumentException thrown if null is passed to the method.
 	 * @throws NoSuchNodeException      thrown if no node with the id exists in this transitionsystem.
 	 */
@@ -770,9 +711,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Calculates the preset nodes of a node with the given id.
-	 * <p/>
 	 * @param id - the id of the node
-	 * <p/>
 	 * @return the preset nodes of the given node.
 	 */
 	private Set<State> calcPresetNodes(String id) {
@@ -789,9 +728,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Calculates the postset nodes of a node with the given id.
-	 * <p/>
 	 * @param id - the id of the node
-	 * <p/>
 	 * @return the postset nodes of the given node.
 	 */
 	private Set<State> calcPostsetNodes(String id) {
@@ -808,11 +745,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Retrieves a view of all nodes which have an outgoing edge to the node identified by the id.
-	 * <p/>
 	 * @param id the id of a node.
-	 * <p/>
 	 * @return a unmodifiable set of states.
-	 * <p/>
 	 * @throws IllegalArgumentException thrown if null is passed to the method.
 	 * @throws NoSuchNodeException      thrown if no node with the given id exists in this graph.
 	 */
@@ -829,11 +763,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Retrieves a view of all nodes which have an incoming edge from the node with the given id.
-	 * <p/>
 	 * @param id The id of a node.
-	 * <p/>
 	 * @return A unmodifiable set of states.
-	 * <p/>
 	 * @throws IllegalArgumentException thrown if null is passed to the method.
 	 * @throws NoSuchNodeException      thrown if no node with the given id exists in this graph.
 	 */
@@ -850,11 +781,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Retrieves a view of all edges targeting the node with the given id.
-	 * <p/>
 	 * @param id The id of a node.
-	 * <p/>
 	 * @return A unmodifiable set of arcs.
-	 * <p/>
 	 * @throws IllegalArgumentException thrown if null is passed to the method.
 	 * @throws NoSuchNodeException      thrown if no node with the given id exists in this graph.
 	 */
@@ -872,11 +800,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Retrieves a view of all edges beginning in the node with the given id.
-	 * <p/>
 	 * @param id The id of a node.
-	 * <p/>
 	 * @return A unmodifiable set of arcs.
-	 * <p/>
 	 * @throws IllegalArgumentException thrown if null is passed to the method.
 	 * @throws NoSuchNodeException      thrown if no node with the given id exists in this graph.
 	 */
@@ -894,11 +819,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Retrieves a view of all edges beginning in the given node.
-	 * <p/>
 	 * @param node The node.
-	 * <p/>
 	 * @return A unmodifiable set of arcs.
-	 * <p/>
 	 * @throws IllegalArgumentException thrown if null is passed to the method.
 	 * @throws NoSuchNodeException      thrown if no node with the given id exists in this graph.
 	 * @throws StructureException       thrown if the given node does not belong to this graph.
@@ -917,11 +839,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Retrieves a view of all nodes which have an incoming edge from the given node.
-	 * <p/>
 	 * @param node The node.
-	 * <p/>
 	 * @return A unmodifiable set of states.
-	 * <p/>
 	 * @throws IllegalArgumentException thrown if null is passed to the method.
 	 * @throws NoSuchNodeException      thrown if no node with the given id exists in this graph.
 	 * @throws StructureException       thrown if the given node does not belong to this graph.
@@ -940,11 +859,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Retrieves a view of all edges targeting the given node.
-	 * <p/>
 	 * @param node The node.
-	 * <p/>
 	 * @return A unmodifiable set of arcs.
-	 * <p/>
 	 * @throws IllegalArgumentException thrown if null is passed to the method.
 	 * @throws NoSuchNodeException      thrown if no node with the given id exists in this graph.
 	 * @throws StructureException       thrown if the given node does not belong to this graph.
@@ -963,11 +879,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 
 	/**
 	 * Retrieves a view of all nodes which have an outgoing edge to the given node
-	 * <p/>
 	 * @param node the node.
-	 * <p/>
 	 * @return a unmodifiable set of states.
-	 * <p/>
 	 * @throws IllegalArgumentException thrown if null is passed to the method.
 	 * @throws NoSuchNodeException      thrown if no node with the given id exists in this graph.
 	 * @throws StructureException       thrown if the given node does not belong to this graph.

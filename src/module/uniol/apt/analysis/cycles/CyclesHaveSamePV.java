@@ -28,9 +28,7 @@ import uniol.apt.analysis.cycles.lts.CycleCounterExample;
 
 /**
  * Check if all smallest cycles have same parikh vectors for the given Petri net
- * <p/>
  * @author Sören
- * <p/>
  */
 public class CyclesHaveSamePV {
 
@@ -40,7 +38,6 @@ public class CyclesHaveSamePV {
 
 	/**
 	 * Constructor.
-	 * <p/>
 	 * @param pn the net to check.
 	 */
 	public CyclesHaveSamePV(PetriNet pn) {
@@ -49,11 +46,8 @@ public class CyclesHaveSamePV {
 
 	/**
 	 * Check if all smallest cycles have same parikh vectors for the given Petri Net
-	 * <p/>
 	 * @param algo - which algorithm should be used for computing the smallest cycles.
-	 * <p/>
 	 * @return boolean
-	 * <p/>
 	 * @throws UnboundedException thrown if the net is not bounded.
 	 */
 	public boolean check(ComputeSmallestCycles algo) throws UnboundedException {

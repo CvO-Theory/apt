@@ -25,7 +25,6 @@ import java.util.Set;
 
 /**
  * The Transition class for PetriNets.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class Transition extends Node {
@@ -34,7 +33,6 @@ public class Transition extends Node {
 
 	/**
 	 * Constructor to create a transition with the given id in the given Petri net.
-	 * <p/>
 	 * @param net the PetriNet this Transition belongs to.
 	 * @param id the id this Transition should have.
 	 */
@@ -45,7 +43,6 @@ public class Transition extends Node {
 	/**
 	 * Constructor copying a given transition to the given Petri net. The constructor also copies the references of
 	 * the extensions.
-	 * <p/>
 	 * @param net the net this Transtion belongs to.
 	 * @param t the Transition which should be copied.
 	 */
@@ -56,7 +53,6 @@ public class Transition extends Node {
 
 	/**
 	 * Gets the label of this Transition.
-	 * <p/>
 	 * @return the label of this Transition.
 	 */
 	public String getLabel() {
@@ -66,7 +62,6 @@ public class Transition extends Node {
 	/**
 	 * Sets the label of the Transition. To maintain consistency it's just a delegate to the petri net. So it also
 	 * changes if it's necessary the alphabet of the net this Transition belongs to.
-	 * <p/>
 	 * @param l the label to set.
 	 */
 	public void setLabel(String l) {
@@ -76,9 +71,7 @@ public class Transition extends Node {
 	/**
 	 * Checks if the transition is fireable under a given marking. To maintain consistency it's just a delegate to
 	 * the petri net.
-	 * <p/>
 	 * @param m the marking of the petrinet.
-	 * <p/>
 	 * @return true when the transition is fireable.
 	 */
 	public boolean isFireable(Marking m) {
@@ -88,9 +81,7 @@ public class Transition extends Node {
 	/**
 	 * Fires this transition under a given marking. To maintain consistency it's just a delegate to the petri net.
 	 * It is not changing the given marking.
-	 * <p/>
 	 * @param m the marking.
-	 * <p/>
 	 * @return the resulting marking upon firing this transition.
 	 */
 	public Marking fire(Marking m) {
@@ -99,7 +90,6 @@ public class Transition extends Node {
 
 	/**
 	 * Gets the preset for this transition. It is just casting the nodes of getPresetNodes in Places.
-	 * <p/>
 	 * @return the preset of this transition.
 	 */
 	public Set<Place> getPreset() {
@@ -116,7 +106,6 @@ public class Transition extends Node {
 
 	/**
 	 * Gets the postset for this transition. It is just casting the nodes of getPostsetNodes in Places.
-	 * <p/>
 	 * @return the postset of this transition.
 	 */
 	public Set<Place> getPostset() {

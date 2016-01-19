@@ -35,7 +35,6 @@ import uniol.apt.module.exception.ModuleException;
 
 /**
  * This module checks whether all smallest cycles of a lts have same or mutually disjoint Parikh vectors
- * <p/>
  * @author Manuel Gieseking
  */
 @AptModule

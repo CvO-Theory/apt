@@ -22,14 +22,12 @@ package uniol.apt.adt.extension;
 /**
  * The IExtensible interface describes an advanced object consisting of an id and a key \rightarrow value property
  * mapping.
- * <p/>
  * @author Dennis-Michael Borde
  */
 public interface IExtensible {
 
 	/**
 	 * Saves the given value using the key as identifier.
-	 * <p/>
 	 * @param key   An identifying key as string.
 	 * @param value Any value.
 	 */
@@ -43,9 +41,7 @@ public interface IExtensible {
 
 	/**
 	 * Retrieves the saved value using the given key as identifier.
-	 * <p/>
 	 * @param key An identifying key as string.
-	 * <p/>
 	 * @return The saved value.
 	 */
 	public Object getExtension(String key);

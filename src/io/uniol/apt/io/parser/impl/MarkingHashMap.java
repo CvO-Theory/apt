@@ -24,7 +24,6 @@ import java.util.HashMap;
 /**
  * A mapping from ids of places to token counts with the functionality of adding the token count if a key already
  * exists.
- * <p/>
  * @author Manuel Gieseking
  */
 public class MarkingHashMap extends HashMap<String, Integer> {
@@ -34,10 +33,8 @@ public class MarkingHashMap extends HashMap<String, Integer> {
 	/**
 	 * Associates the given token count as value to the as key given id of the place. If the key already exists it
 	 * adds the token count to the previously existing token count.
-	 * <p/>
 	 * @param key   - the id of the place.
 	 * @param value - the token count.
-	 * <p/>
 	 * @return the previously token count if it has been existed.
 	 */
 	@Override

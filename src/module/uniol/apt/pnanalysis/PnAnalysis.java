@@ -51,26 +51,21 @@ import uniol.apt.util.Pair;
  * the reachability graph of the given Petri net. Therefore the Petri net has to fulfill some preconditions: - is plain
  * - the initial marking is a k-marking with k >= 2 - is bounded - is reversible - is persistent - all smallest cycles
  * the same parikh vector
- * <p/>
  * @author Raffaela Ferrari, Björn von der Linde
- * <p/>
  */
 public class PnAnalysis {
 
 	/**
 	 * Checks for a given Petri net depending on g and k, if there is a T-system, whose reachability graph is
 	 * isomorph to the reachability graph of the given Petri net.
-	 * <p/>
 	 * @param pn       the given Petri net, for which the check has to be performed.
 	 * @param g        maximum number of places, for which T-systems should be tested.
 	 * @param k        maximum number of tokens, for which T-systems should be tested. If k is null, the standard
 	 *                 value is 10 for T-system, which aren't cycles, and for cycles all numbers of tokens will be
 	 *                 tested at the standard
 	 * @param randomly if true, only one randomly selected T-system is checked, otherwise all T-systems are checked
-	 * <p/>
 	 * @return null, if no T-systems are found, otherwise the first found T-system, whose reachability graph is
 	 *         isomorph to the reachability graph of the given Petri net
-	 * <p/>
 	 * @throws PreconditionFailedException is thrown, if the given Petri net breaks one of the preconditions.
 	 */
 	public PetriNet checkAllIsomorphicTSystemsForPetriNet(PetriNet pn, Integer g, Integer k, boolean randomly)
@@ -142,12 +137,9 @@ public class PnAnalysis {
 
 	/**
 	 * Check if the reachability graph of the given Petri net is isomorph to the reachability graph of a T-system.
-	 * <p/>
 	 * @param t1      the reachability graph of the given Petri net
 	 * @param tSystem the T-system, for which the reachability graph is checked for isomorphie
-	 * <p/>
 	 * @return true, if the reachability graphs are isomorph, otherwise false
-	 * <p/>
 	 * @throws UnboundedException is thrown, if the T-system is unbounded.
 	 */
 	private boolean isIsomorphic(TransitionSystem t1, PetriNet tSystem) throws UnboundedException {
@@ -172,13 +164,11 @@ public class PnAnalysis {
 	 * For a given transitions-system t1 and a T-System tSystem, labels in tSystem will be adjusted, so that a found
 	 * weak isomorphism (isomorphism that ignores labels) between both systems may be a strong isomorphism
 	 * (isomorphism, that doesn't ignore labels)
-	 * <p/>
 	 * @param t1              Reachability-Graph of given pn
 	 * @param t2              Reachability-Graph of given T-System
 	 * @param tSystem         T-System to be checked if isomorphic
 	 * @param isomorphicPairs State with isomorphic pairs of nodes, that were found for weak isomorphism ("weak":
 	 *                        labels are ignored)
-	 * <p/>
 	 * @return true if t1 and tSystem are strong isomorphic ("strong": labels are not ignored)
 	 */
 	private boolean adjustLabels(TransitionSystem t1, TransitionSystem t2, PetriNet tSystem,
@@ -243,13 +233,11 @@ public class PnAnalysis {
 	 * shows, if there is a isomorphic ExtendedState in isomorphicPairs, in which n is a state of the postset states
 	 * of the first state and m is a state of the postset states of the second state of the given ExtendedState. If
 	 * true, then it will be added to the List.
-	 * <p/>
 	 * @param isomorphicPairs State with isomorphic pairs of nodes, that were found for weak isomorphism ("weak":
 	 *                        labels are ignored)
 	 * @param exState         ExtendedState, for which postset isomorphic ExtendedState should be found
 	 * @param t1              Reachability-Graph of given pn
 	 * @param t2              Reachability-Graph of given t-system
-	 * <p/>
 	 * @return a List of ExtendedStates
 	 */
 	private List<ExtendedState> getNextIsomorphicPairs(Deque<ExtendedState> isomorphicPairs, ExtendedState exState,

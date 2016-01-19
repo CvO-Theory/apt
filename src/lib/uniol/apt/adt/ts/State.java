@@ -23,14 +23,12 @@ import uniol.apt.adt.Node;
 
 /**
  * State is the node class of the TransitionSystem.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class State extends Node<TransitionSystem, Arc, State> {
 
 	/**
 	 * Constructor.
-	 * <p/>
 	 * @param ts the Transitionsystem the state belongs to.
 	 * @param id the id of the state.
 	 */
@@ -41,7 +39,6 @@ public class State extends Node<TransitionSystem, Arc, State> {
 	/**
 	 * Constructor for copying a given state to a given transistionsystem. The constructor also copies the
 	 * references of the extensions.
-	 * <p/>
 	 * @param ts the transitionsystem the state belongs to.
 	 * @param s  the state to copy.
 	 */

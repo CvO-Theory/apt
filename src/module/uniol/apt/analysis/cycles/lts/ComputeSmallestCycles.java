@@ -34,9 +34,7 @@ import uniol.apt.util.Pair;
 public interface ComputeSmallestCycles {
 	/**
 	 * Computes the parikh vectors of all smallest cycles of an labeled transition system. (Requirement A10)
-	 * <p/>
 	 * @param ts   - the transitionsystem to compute the cycles from.
-	 * <p/>
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 */
 	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts);
@@ -44,9 +42,7 @@ public interface ComputeSmallestCycles {
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same or mutally disjoint parikh vectors.
 	 * (Requirement A8b)
-	 * <p/>
 	 * @param ts   - the transition system to examine.
-	 * <p/>
 	 * @return true if the smallest cycles of the given transitionsystem have the same or mutally disjoint parikh
 	 *         vectors.
 	 */
@@ -54,20 +50,16 @@ public interface ComputeSmallestCycles {
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same parikh vector. (Requirement A8a)
-	 * <p/>
 	 * @param ts   - the transition system to examine.
-	 * <p/>
 	 * @return true if the smallest cycles of the given transitionsystem have the same parikh vectors.
 	 */
 	public boolean checkSamePVs(TransitionSystem ts);
 
 	/**
 	 * Computes the parikh vectors of all smallest cycles of an labeled transition system. (Requirement A10)
-	 * <p/>
 	 * @param ts       - the transitionsystem to compute the cycles from.
 	 * @param smallest - Flag which tells if all or just the smallest should be saved.
 	 *                 (Storage vs. Time)
-	 * <p/>
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 */
 	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts, boolean smallest);
@@ -75,11 +67,9 @@ public interface ComputeSmallestCycles {
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same or mutally disjoint parikh vectors.
 	 * (Requirement A8b)
-	 * <p/>
 	 * @param ts       - the transition system to examine.
 	 * @param smallest - Flag which tells if all or just the smallest should be saved.
 	 *                 (Storage vs. Time)
-	 * <p/>
 	 * @return true if the smallest cycles of the given transitionsystem have the same or mutally disjoint parikh
 	 *         vectors.
 	 */
@@ -87,11 +77,9 @@ public interface ComputeSmallestCycles {
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same parikh vector. (Requirement A8a)
-	 * <p/>
 	 * @param ts       - the transition system to examine.
 	 * @param smallest - Flag which tells if all or just the smallest should be saved.
 	 *                 (Storage vs. Time)
-	 * <p/>
 	 * @return true if the smallest cycles of the given transitionsystem have the same parikh vectors.
 	 */
 	public boolean checkSamePVs(TransitionSystem ts, boolean smallest);
@@ -99,18 +87,14 @@ public interface ComputeSmallestCycles {
 	/**
 	 * Checks whether in the given set of cycles and parikh vectors all cycles have the same or mutally disjoint
 	 * parikh vectors.
-	 * <p/>
 	 * @param cycles - a list of cycles and parikh vectors which should be examined.
-	 * <p/>
 	 * @return true if the cycles have the same or mutally disjoint parikh vectors.
 	 */
 	public boolean checkSameOrMutallyDisjointPVs(Set<Pair<List<String>, ParikhVector>> cycles);
 
 	/**
 	 * Checks whether in the given set of cycles and parikh vectors all cycles have the same parikh vector.
-	 * <p/>
 	 * @param cycles - a list of cycles and parikh vectors which should be examined.
-	 * <p/>
 	 * @return true if the cycles have the same parikh vectors.
 	 */
 	public boolean checkSamePVs(Set<Pair<List<String>, ParikhVector>> cycles);
@@ -118,7 +102,6 @@ public interface ComputeSmallestCycles {
 	/**
 	 * Function for returning a counter example (as requirements A8a, A8b, A10 state that two counter-examples
 	 * should be found in case the condition of the parikh vectors is not met).
-	 * <p/>
 	 * @return counterexample.
 	 */
 	public CycleCounterExample getCounterExample();

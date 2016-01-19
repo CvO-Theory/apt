@@ -27,7 +27,6 @@ import uniol.apt.util.Pair;
 
 /**
  * A Matrix specified for the invariant module.
- * <p/>
  * @author Manuel Gieseking, Dennis-Michael Borde
  */
 public class Matrix implements Iterable<List<Integer>> {
@@ -38,10 +37,8 @@ public class Matrix implements Iterable<List<Integer>> {
 
 	/**
 	 * Returns the identity matrix with given col and row count.
-	 * <p/>
 	 * @param m - the row count of the identity matrix.
 	 * @param n - the col count of the identity matrix.
-	 * <p/>
 	 * @return the identity matrix with the given col and row count.
 	 */
 	public static Matrix identity(int m, int n) {
@@ -57,7 +54,6 @@ public class Matrix implements Iterable<List<Integer>> {
 
 	/**
 	 * Constructor for a new Matrix with the given col and row count.
-	 * <p/>
 	 * @param m - the row count of the resulting matrix.
 	 * @param n - the col count of the resulting matrix.
 	 */
@@ -77,7 +73,6 @@ public class Matrix implements Iterable<List<Integer>> {
 
 	/**
 	 * Constructor for a new Matrix with the values from the given array.
-	 * <p/>
 	 * @param src - the template to create the matrix from.
 	 */
 	public Matrix(int[][] src) {
@@ -97,7 +92,6 @@ public class Matrix implements Iterable<List<Integer>> {
 
 	/**
 	 * Returns the count of rows of this matrix.
-	 * <p/>
 	 * @return the count of rows of this matrix.
 	 */
 	public int getRowCount() {
@@ -106,7 +100,6 @@ public class Matrix implements Iterable<List<Integer>> {
 
 	/**
 	 * Returns the count of cols of this matrix.
-	 * <p/>
 	 * @return the count of cols of this matrix.
 	 */
 	public int getColumnCount() {
@@ -115,9 +108,7 @@ public class Matrix implements Iterable<List<Integer>> {
 
 	/**
 	 * Returns the row with the given index in this matrix. Changes to this row will have affect to this matrix.
-	 * <p/>
 	 * @param i - the index of the wished row of this matrix.
-	 * <p/>
 	 * @return the row with the given index in this matrix.
 	 */
 	public List<Integer> getRow(int i) {
@@ -126,9 +117,7 @@ public class Matrix implements Iterable<List<Integer>> {
 
 	/**
 	 * Returns a copy of the column with the given index of this matrix.
-	 * <p/>
 	 * @param i - the index of the wished column of this matrix.
-	 * <p/>
 	 * @return a copy of the column with the given index of this matrix.
 	 */
 	public List<Integer> getColumn(int i) {
@@ -142,7 +131,6 @@ public class Matrix implements Iterable<List<Integer>> {
 	/**
 	 * Returns a row which has at least one component different from zero. It also returns the index of the column
 	 * where a component not equal to zero was found. If such a row does not exists, than null.
-	 * <p/>
 	 * @return the index of the column with a none zero component and the addicted row or null if not existent.
 	 */
 	public Pair<Integer, List<Integer>> getNoneZeroRow() {
@@ -159,7 +147,6 @@ public class Matrix implements Iterable<List<Integer>> {
 	/**
 	 * Returns a row and it's index in this matrix which has at least one negative component. If such a row does not
 	 * exists, than null.
-	 * <p/>
 	 * @return the index of row and the row itself, which has at least one negative component or null if not
 	 *         existent.
 	 */
@@ -177,7 +164,6 @@ public class Matrix implements Iterable<List<Integer>> {
 
 	/**
 	 * Deletes the column with the given index from this matrix.
-	 * <p/>
 	 * @param j - the index of the column which should be deleted.
 	 */
 	public void deleteColumn(int j) {
@@ -189,7 +175,6 @@ public class Matrix implements Iterable<List<Integer>> {
 
 	/**
 	 * Appends a given column to this matrix. That means adding the given column from the right side to this matrix.
-	 * <p/>
 	 * @param column - the column to append.
 	 */
 	public void appendColumn(List<Integer> column) {
@@ -202,7 +187,6 @@ public class Matrix implements Iterable<List<Integer>> {
 
 	/**
 	 * Checks if this matrix only contains of components equal to zero.
-	 * <p/>
 	 * @return true if this matrix has just components equal to zero.
 	 */
 	public boolean isZero() {

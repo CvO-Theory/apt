@@ -21,7 +21,6 @@ package uniol.apt.adt.exception;
 
 /**
  * A StructureException is thrown if an operation breaks the structural consistency of e.g. a graph or net.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class StructureException extends DatastructureException {
@@ -30,7 +29,6 @@ public class StructureException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new StructureException with given message.
-	 * <p/>
 	 * @param message A string containing a describing message.
 	 */
 	public StructureException(String message) {
@@ -39,7 +37,6 @@ public class StructureException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new StructureException with given message and cause.
-	 * <p/>
 	 * @param message A string containing a describing message.
 	 * @param cause   The cause for this exception as Throwable.
 	 */

@@ -25,7 +25,6 @@ import uniol.apt.adt.Edge;
 /**
  * A flow represents an edge of a petri net. It goes from one place to a transition or from one transition to a place. A
  * flow can have a weight.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class Flow extends Edge<PetriNet, Flow, Node> {
@@ -34,7 +33,6 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 
 	/**
 	 * Constructor to create a new Flow with given sourceId, targetId and weight.
-	 * <p/>
 	 * @param net      the net this flow belongs to.
 	 * @param sourceId the source node's id.
 	 * @param targetId the target node's id.
@@ -48,7 +46,6 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 	/**
 	 * Constructor for copying a flow to another petri net. The constructor also copies the references of the
 	 * extensions.
-	 * <p/>
 	 * @param net the net this flow should belong to.
 	 * @param f   the flow which should be copied.
 	 */
@@ -59,7 +56,6 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 
 	/**
 	 * Sets the weight of this flow. To maintain consistency it's just a delegate to the petri net.
-	 * <p/>
 	 * @param w the weight to set.
 	 */
 	public void setWeight(int w) {
@@ -68,7 +64,6 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 
 	/**
 	 * Gets the weight of this flow.
-	 * <p/>
 	 * @return the weight of this flow.
 	 */
 	public int getWeight() {
@@ -77,7 +72,6 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 
 	/**
 	 * Gets the place for this flow. To maintain consistency it's just a delegate to the petri net.
-	 * <p/>
 	 * @return the place of the flow.
 	 */
 	public Place getPlace() {
@@ -86,7 +80,6 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 
 	/**
 	 * Gets the transition for this flow. To maintain consistency it's just a delegate to the petri net.
-	 * <p/>
 	 * @return the transition of the flow.
 	 */
 	public Transition getTransition() {
@@ -95,7 +88,6 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 
 	/**
 	 * Gets the source node's id for this flow.
-	 * <p/>
 	 * @return the source node's id of this flow.
 	 */
 	String getSourceId() {
@@ -104,7 +96,6 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 
 	/**
 	 * Gets the target node's id for this flow.
-	 * <p/>
 	 * @return the target node's id of this flow.
 	 */
 	String getTargetId() {
@@ -114,9 +105,7 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 	/**
 	 * Compares this flow to another by checking there weight, source- and targetid. Also checking if the belong to
 	 * the same net.
-	 * <p/>
 	 * @param obj - the other object to compare to
-	 * <p/>
 	 * @return true if the label, source- and targetid are equal and the reference of petri net are the same.
 	 */
 	public boolean compare(Object obj) {

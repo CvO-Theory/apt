@@ -24,11 +24,9 @@ import uniol.apt.adt.extension.Extensible;
 /**
  * Represents an edge of type E in a graph of type G with nodes of type N having a id of the source node and target
  * node.
- * <p/>
  * @param <G> the graph the edge belongs to.
  * @param <E> the edge class itself.
  * @param <N> the node class belonging to the graph.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class Edge<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
@@ -39,7 +37,6 @@ public class Edge<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends
 
 	/**
 	 * Constructor for creating an arc with the sourceId and targetId in the given graph.
-	 * <p/>
 	 * @param graph    The graph this Edge belongs to.
 	 * @param sourceId the source node's id.
 	 * @param targetId the target node's id.
@@ -52,7 +49,6 @@ public class Edge<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends
 
 	/**
 	 * Constructor for copying an arc. The constructor also copies the references of the extensions.
-	 * <p/>
 	 * @param graph the graph this edge belongs to
 	 * @param e     the edge that should get copied.
 	 */

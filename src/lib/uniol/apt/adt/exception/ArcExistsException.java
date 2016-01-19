@@ -25,7 +25,6 @@ import uniol.apt.adt.ts.ArcKey;
 /**
  * The ArcExistsException is thrown if an arc is added to a TS where an other arc with the same source, target and label
  * already exists
- * <p/>
  * @author Manuel Gieseking
  */
 public class ArcExistsException extends DatastructureException {
@@ -34,7 +33,6 @@ public class ArcExistsException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new ArcExistsException for a given Graph and a given ArcKey.
-	 * <p/>
 	 * @param g   The graph where the arc already exists.
 	 * @param key The ArcKey which already exists.
 	 */
@@ -46,7 +44,6 @@ public class ArcExistsException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new ArcExistsException for a given Graph and the given ArcKey.
-	 * <p/>
 	 * @param g     The graph where the arc already exists.
 	 * @param key   The ArcKey which already exists.
 	 * @param cause The cause for this exception as Throwable.

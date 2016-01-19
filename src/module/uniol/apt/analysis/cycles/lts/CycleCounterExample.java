@@ -26,7 +26,6 @@ import uniol.apt.util.Pair;
 
 /**
  * Datastructure for storing two counterexamples for the module.
- * <p/>
  * @author Manuel Gieseking
  */
 public class CycleCounterExample {
@@ -36,7 +35,6 @@ public class CycleCounterExample {
 
 	/**
 	 * Constructor for creating a new counter example for the cycles.
-	 * <p/>
 	 * @param first  - the cycle and the belonging parikhvector.
 	 * @param second - the cycle and the belonging parikhvector.
 	 */
@@ -57,7 +55,6 @@ public class CycleCounterExample {
 
 	/**
 	 * Returns the first counter example.
-	 * <p/>
 	 * @return the first counter example.
 	 */
 	public Pair<List<String>, ParikhVector> getFirst() {
@@ -66,7 +63,6 @@ public class CycleCounterExample {
 
 	/**
 	 * Sets the first counter example.
-	 * <p/>
 	 * @param first - the first counter example to set.
 	 */
 	public void setFirst(Pair<List<String>, ParikhVector> first) {
@@ -75,7 +71,6 @@ public class CycleCounterExample {
 
 	/**
 	 * Returns the second counter example.
-	 * <p/>
 	 * @return the second counter example.
 	 */
 	public Pair<List<String>, ParikhVector> getSecond() {
@@ -84,7 +79,6 @@ public class CycleCounterExample {
 
 	/**
 	 * Sets the first counter example.
-	 * <p/>
 	 * @param second - the second counter example to set.
 	 */
 	public void setSecond(Pair<List<String>, ParikhVector> second) {

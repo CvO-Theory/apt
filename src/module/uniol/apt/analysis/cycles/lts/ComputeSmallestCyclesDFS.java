@@ -35,7 +35,6 @@ import uniol.apt.util.Pair;
 /**
  * This class offers the possibility to compute the smallest cycles and parikh vectors of a transitionsystem with a
  * algorithm using the depth first search.
- * <p/>
  * @author Manuel Gieseking
  */
 class ComputeSmallestCyclesDFS extends AbstractComputeSmallestCycles {

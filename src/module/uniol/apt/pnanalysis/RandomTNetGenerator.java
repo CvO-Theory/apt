@@ -32,7 +32,6 @@ import uniol.apt.generator.tnet.TNetGenerator;
 
 /**
  * Generates random t-nets and systems.
- * <p/>
  * @author Manuel Gieseking
  */
 public class RandomTNetGenerator {
@@ -45,9 +44,7 @@ public class RandomTNetGenerator {
 
 	/**
 	 * Creates a t-net with maximal g places.
-	 * <p/>
 	 * @param g the maximal number of places.
-	 * <p/>
 	 * @return a random created t-net.
 	 */
 	public static PetriNet createRandomTNet(int g) {
@@ -165,10 +162,8 @@ public class RandomTNetGenerator {
 
 	/**
 	 * Creates a t-system with maximal g places and maximal k token on every place.
-	 * <p/>
 	 * @param g the maximal number of places.
 	 * @param k the maximal number of token on a place.
-	 * <p/>
 	 * @return a random created t-system.
 	 */
 	public static PetriNet createRandomTSystem(int g, int k) {
@@ -187,10 +182,8 @@ public class RandomTNetGenerator {
 	/**
 	 * Creates a t-system with maximal g places and maximal k token on every place. with the reservoir sampling
 	 * algorithm. Attention it's only suitable for small number of places and token.
-	 * <p/>
 	 * @param g the maximal number of places.
 	 * @param k the maximal number of token
-	 * <p/>
 	 * @return a random created t-system.
 	 */
 	public static PetriNet reservoirSampling(int g, int k) {

@@ -129,10 +129,8 @@ class ComputeSmallestCyclesJohnson extends AbstractComputeSmallestCycles {
 	/**
 	 * Computes the parikh vectors of all smallest cycles of a labeled transition system with a algorithm using
 	 * Johnson's algorithm. (Requirement A10)
-	 * <p/>
 	 * @param ts       - the transitionsystem to examine.
 	 * @param smallest - flag which tells if really all or just the smallest should be saved. (Storage vs. Time)
-	 * <p/>
 	 * @return a list of the smallest cycles of a given transitionsystem an their parikh vectors.
 	 */
 	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts, boolean smallest) {

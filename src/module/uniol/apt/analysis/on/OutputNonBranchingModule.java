@@ -32,9 +32,7 @@ import uniol.apt.module.exception.ModuleException;
 
 /**
  * This module tests if a Petri net is output-nonbranching. That is:
- * <p/>
  * <code>\forall s \in S: \mid s^\bullet \mid \leq 1</code>
- * <p/>
  * @author Manuel Gieseking
  */
 @AptModule

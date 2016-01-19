@@ -23,7 +23,6 @@ import java.util.HashSet;
 
 /**
  * A set of parikh vectors and there sequences. It is used for getting a weight between to nodes in a transitionsystem.
- * <p/>
  * @author Manuel Gieseking
  */
 public class Weight extends HashSet<PVwithSequence> {
@@ -33,10 +32,8 @@ public class Weight extends HashSet<PVwithSequence> {
 	/**
 	 * Adds to weight together to a new one. That means their sequences will be concatenate and their parikh vectors
 	 * added.
-	 * <p/>
 	 * @param w1 - First weight for addition. Left side of the concatenation.
 	 * @param w2 - Second weight for addition. Right side of the concatenation.
-	 * <p/>
 	 * @return a new generated weight, with the addition of the parikh vectors and concatenation of the sequences of
 	 *         the given weights.
 	 */

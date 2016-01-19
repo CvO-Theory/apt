@@ -32,9 +32,7 @@ import uniol.apt.module.exception.ModuleException;
 
 /**
  * This module tests if a Petri net is concurrency-preserving. That is:
- * <p/>
  * <code>\forall t \in T: \mid t^\bullet \mid = \mid {}^\bullet t \mid </code>
- * <p/>
  * @author Manuel Gieseking
  */
 @AptModule

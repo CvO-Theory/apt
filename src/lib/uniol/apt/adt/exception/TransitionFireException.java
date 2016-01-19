@@ -21,7 +21,6 @@ package uniol.apt.adt.exception;
 
 /**
  * A TransitionFireException is thrown if a transition is fired though the current marking does not allow it.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class TransitionFireException extends DatastructureException {
@@ -30,7 +29,6 @@ public class TransitionFireException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new TransitionFireException with given message.
-	 * <p/>
 	 * @param message A string containing a describing message.
 	 */
 	public TransitionFireException(String message) {
@@ -39,7 +37,6 @@ public class TransitionFireException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new TransitionFireException with a given message and cause.
-	 * <p/>
 	 * @param message A string containing a describing message.
 	 * @param cause   The cause for this exception as Throwable.
 	 */

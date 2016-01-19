@@ -25,14 +25,12 @@ import java.util.Set;
 
 /**
  * The Place class for PetriNets.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class Place extends Node {
 
 	/**
 	 * Constructor to create a place with the given id in the given Petri net.
-	 * <p/>
 	 * @param net the net this place belongs to.
 	 * @param id  the id this place should have.
 	 */
@@ -43,7 +41,6 @@ public class Place extends Node {
 	/**
 	 * Constructor copying a given place to the given Petri net. The constructor also copies the references of the
 	 * extensions.
-	 * <p/>
 	 * @param net the net this place belongs to.
 	 * @param p   the Place which should be copied.
 	 */
@@ -54,7 +51,6 @@ public class Place extends Node {
 	/**
 	 * Gets the token of the initialmarking of the net for this place. To maintain consistency it's just a delegate
 	 * to the petri net.
-	 * <p/>
 	 * @return the initial token.
 	 */
 	public Token getInitialToken() {
@@ -64,7 +60,6 @@ public class Place extends Node {
 	/**
 	 * Sets the intial token for this place. That means it changes the initialmarking of the Petrinet this place
 	 * belongs to.
-	 * <p/>
 	 * @param t the number of tokens on this place.
 	 */
 	public void setInitialToken(long t) {
@@ -74,7 +69,6 @@ public class Place extends Node {
 	/**
 	 * Gets the initial token of this place. That means it changes the initialmarking of the Petrinet this place
 	 * belongs to. To maintain consistency it's just a delegate to the petri net.
-	 * <p/>
 	 * @param t the token object.
 	 */
 	public void setInitialToken(Token t) {
@@ -83,7 +77,6 @@ public class Place extends Node {
 
 	/**
 	 * Gets the preset for this place. It is just casting the nodes of getPresetNodes in Transitions.
-	 * <p/>
 	 * @return the preset of this place.
 	 */
 	public Set<Transition> getPreset() {
@@ -98,7 +91,6 @@ public class Place extends Node {
 
 	/**
 	 * Gets the postset for this place. It is just casting the nodes of getPostsetNodes in Transitions.
-	 * <p/>
 	 * @return the postset of this place.
 	 */
 	public Set<Transition> getPostset() {

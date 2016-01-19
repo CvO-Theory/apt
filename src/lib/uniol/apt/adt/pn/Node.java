@@ -22,14 +22,12 @@ package uniol.apt.adt.pn;
 /**
  * Represents a node of a Petri net. That means it can either be a Transition or a Place. It's just a class for hiding
  * the Generics.
- * <p/>
  * @author Manuel Gieseking
  */
 public class Node extends uniol.apt.adt.Node<PetriNet, Flow, Node> {
 
 	/**
 	 * Constructor for creating a Node.
-	 * <p/>
 	 * @param net the net this node belongs to.
 	 * @param id  the id this node should have.
 	 */
@@ -39,7 +37,6 @@ public class Node extends uniol.apt.adt.Node<PetriNet, Flow, Node> {
 
 	/**
 	 * Constructor for copying a Node. The constructor also copies the references of the extensions.
-	 * <p/>
 	 * @param net the net this node belongs to.
 	 * @param n   the node that should get copied.
 	 */

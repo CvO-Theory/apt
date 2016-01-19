@@ -34,7 +34,6 @@ import uniol.apt.util.Pair;
 
 /**
  * This class offers an adaption of the Floyd-Warshall algorithm for computing smallest cycles and parikh vectors.
- * <p/>
  * @author Manuel Gieseking
  */
 class ComputeSmallestCyclesFloydWarshall extends AbstractComputeSmallestCycles {

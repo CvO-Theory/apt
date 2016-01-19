@@ -28,7 +28,6 @@ import uniol.apt.adt.pn.Transition;
 
 /**
  * Class for compute and return a backward-, forward and incidencematrix by a given PN
- * <p/>
  * @author Björn von der Linde
  */
 public class Matrix {
@@ -42,7 +41,6 @@ public class Matrix {
 
 	/**
 	 * Constructor
-	 * <p/>
 	 * @param net Petri net
 	 */
 	public Matrix(PetriNet net) {
@@ -67,7 +65,6 @@ public class Matrix {
 
 	/**
 	 * computes the forwardmatrix of a given PN
-	 * <p/>
 	 * @return forwardmatrix
 	 */
 	public String[][] getStringForward() {
@@ -105,7 +102,6 @@ public class Matrix {
 
 	/**
 	 * computes the backwardmatrix of a given PN
-	 * <p/>
 	 * @return backwardmatrix
 	 */
 	public String[][] getStringBackward() {
@@ -139,7 +135,6 @@ public class Matrix {
 
 	/**
 	 * computes the incidencematrix of a given PN: C = F - B
-	 * <p/>
 	 * @return incidencematirx
 	 */
 	public String[][] getStringIncidence() {
@@ -168,7 +163,6 @@ public class Matrix {
 
 	/**
 	 * generates the input for R
-	 * <p/>
 	 * @return Matrix as String
 	 */
 	public String getRMatrices() {
@@ -264,7 +258,6 @@ public class Matrix {
 	 */
 	/**
 	 * Creates MatLab String.
-	 * <p/>
 	 * @return Matrix as String
 	 */
 	public String getMatLabMatrices() {

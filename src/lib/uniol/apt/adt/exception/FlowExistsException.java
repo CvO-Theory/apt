@@ -25,7 +25,6 @@ import uniol.apt.adt.IGraph;
 /**
  * The FlowExistsException is thrown if an flow is added to a petri net where an other flow with the same source, target
  * already exists.
- * <p/>
  * @author Manuel Gieseking
  */
 public class FlowExistsException extends DatastructureException {
@@ -34,7 +33,6 @@ public class FlowExistsException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new FlowExistsException for a given Graph and EdgeKey.
-	 * <p/>
 	 * @param g   The graph where the flow already exists.
 	 * @param key The EdgeKey which already exists.
 	 */
@@ -45,7 +43,6 @@ public class FlowExistsException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new FlowExistsException for a given Graph and EdgeKey.
-	 * <p/>
 	 * @param g     The graph where the flow already exists.
 	 * @param key   The Edgekey which already exists.
 	 * @param cause The cause for this exception as Throwable.

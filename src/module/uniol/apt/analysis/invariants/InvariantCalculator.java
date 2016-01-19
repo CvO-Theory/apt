@@ -41,7 +41,6 @@ import uniol.apt.util.Pair;
  * based on the paper of D'Anna and Trigila "Concurrent system analysis using
  * Petri nets – an optimised algorithm for finding net invariants", Mario D'Anna
  * and Sebastiano Trigila, Computer Communications vol 11, no. 4 august 1988.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class InvariantCalculator {
@@ -76,7 +75,6 @@ public class InvariantCalculator {
 
 		/**
 		 * Constructor creates the sets P- and P+ for a given row.
-		 * <p/>
 		 * @param h - the row from which the sets should be created.
 		 */
 		public PpPm(List<Integer> h) {
@@ -97,7 +95,6 @@ public class InvariantCalculator {
 	/**
 	 * Calculates for a given matrix the P+ = {j | c_hj > 0} and P- = {j | c_hj
 	 * less 0} sets for each row.
-	 * <p/>
 	 * @param matC - the matrix from which the sets should be calculated.
 	 */
 	private static List<PpPm> calcPpPm(Matrix matC) {
@@ -111,9 +108,7 @@ public class InvariantCalculator {
 	/**
 	 * Checks if some row of the given matrix satisfy P+ == {} xor P- == {} and
 	 * return this row or null if such a row do not exists.
-	 * <p/>
 	 * @param pppms - the list of all rows with P+ and P- sets.
-	 * <p/>
 	 * @return the row which satisfy P+ == {} xor P- == {} or null if not
 	 * existent.
 	 */
@@ -145,7 +140,6 @@ public class InvariantCalculator {
 
 		/**
 		 * Constructor to save the data.
-		 * <p/>
 		 * @param k - the first columnindex where a component ist less
 		 * respectivly greater than zero.
 		 * @param h - the whole row.
@@ -161,9 +155,7 @@ public class InvariantCalculator {
 	/**
 	 * Checks if there exists a row in the given matrix such that |P+| == 1 or
 	 * |P-| == 1 and returns the row or null if such a row do not exists.
-	 * <p/>
 	 * @param pppms the list of all rows with P+ and P- sets.
-	 * <p/>
 	 * @return the row which satisfy |P+| == 1 or |P-| == 1 or null if not
 	 * existent.
 	 */
@@ -181,9 +173,7 @@ public class InvariantCalculator {
 	/**
 	 * Calculates the invariants with the algorithm based on
 	 * http://pipe2.sourceforge.net/documents/PIPE-Report.pdf (page 19).
-	 * <p/>
 	 * @param mat - the matrix to calculate the invariants from.
-	 * <p/>
 	 * @return a generator set of the invariants.
 	 */
 	private static Set<List<Integer>> calcInvariantsPIPE(int[][] mat) {
@@ -311,9 +301,7 @@ public class InvariantCalculator {
 	/**
 	 * Calculates the invariants with the algorithm based on
 	 * http://de.scribd.com/doc/49919842/Pn-ESTII (slide 88)
-	 * <p/>
 	 * @param mat matrix to calculate the invariants from.
-	 * <p/>
 	 * @return a generator set of the invariants.
 	 */
 	private static Set<List<Integer>> calcInvariantsFarkas(int[][] mat) {
@@ -407,9 +395,7 @@ public class InvariantCalculator {
 
 	/**
 	 * Transposes the given matrix.
-	 * <p/>
 	 * @param mat - the matrix to transpose.
-	 * <p/>
 	 * @return the transposed matrix.
 	 */
 	private static int[][] transposeMatrix(int[][] mat) {
@@ -430,9 +416,7 @@ public class InvariantCalculator {
 	/**
 	 * Calculates the s-invariants of the the given petri net with the pipe
 	 * algorithm.
-	 * <p/>
 	 * @param pn - the petri net to calculate the s-invariants from.
-	 * <p/>
 	 * @return a generator set of the invariants.
 	 */
 	public static Set<List<Integer>> calcSInvariants(PetriNet pn) {
@@ -442,11 +426,9 @@ public class InvariantCalculator {
 	/**
 	 * Calculates the s-invariants of the the given petri net with the given
 	 * algorithm.
-	 * <p/>
 	 * @param pn - the petri net to calculate the s-invariants from.
 	 * @param algo - the algorithm with which the invariants should be
 	 * calculated.
-	 * <p/>
 	 * @return a generator set of the invariants.
 	 */
 	public static Set<List<Integer>> calcSInvariants(PetriNet pn, InvariantAlgorithm algo) {
@@ -463,9 +445,7 @@ public class InvariantCalculator {
 	/**
 	 * Calculates the t-invariants of the the given petri net with the pipe
 	 * algorithm.
-	 * <p/>
 	 * @param pn - the petri net to calculate the t-invariants from.
-	 * <p/>
 	 * @return a generator set of the invariants.
 	 */
 	public static Set<List<Integer>> calcTInvariants(PetriNet pn) {
@@ -475,11 +455,9 @@ public class InvariantCalculator {
 	/**
 	 * Calculates the t-invariants of the the given petri net with the given
 	 * algorithm.
-	 * <p/>
 	 * @param pn - the petri net to calculate the t-invariants from.
 	 * @param algo - the algorithm with which the invariants should be
 	 * calculated.
-	 * <p/>
 	 * @return a generator set of the invariants.
 	 */
 	public static Set<List<Integer>> calcTInvariants(PetriNet pn, InvariantAlgorithm algo) {
@@ -499,9 +477,7 @@ public class InvariantCalculator {
 	 * Checks whether the the given petri net is covered by s-invariants with
 	 * the pipe algorithm. Returns the invariant which covers or null if not
 	 * existent.
-	 * <p/>
 	 * @param pn - the petri net to check covered.
-	 * <p/>
 	 * @return the invariant which covers or null if it is not covered.
 	 */
 	public static Vector coveredBySInvariants(PetriNet pn) {
@@ -512,10 +488,8 @@ public class InvariantCalculator {
 	 * Checks whether the the given petri net is covered by s-invariants with
 	 * the given algorithm. Returns the invariant which covers or null if not
 	 * existent.
-	 * <p/>
 	 * @param pn - the petri net to check covered.
 	 * @param algo - the algorithm with which it should be checked.
-	 * <p/>
 	 * @return the invariant which covers or null if it is not covered.
 	 */
 	public static Vector coveredBySInvariants(PetriNet pn, InvariantAlgorithm algo) {
@@ -526,10 +500,8 @@ public class InvariantCalculator {
 	/**
 	 * Checks whether the the given petri net is covered by the given s-invariants.
 	 * Returns the invariant which covers or null if not existent.
-	 * <p/>
 	 * @param pn - the petri net to check covered.
 	 * @param invariants - the invariants which should be tested if they cover.
-	 * <p/>
 	 * @return the invariant which covers or null if it is not covered.
 	 */
 	public static Vector coveredBySInvariants(PetriNet pn, Set<List<Integer>> invariants) {
@@ -554,9 +526,7 @@ public class InvariantCalculator {
 	 * Checks whether the the given petri net is covered by t-invariants with
 	 * the pipe algorithm. Returns the invariant which covers or null if not
 	 * existent.
-	 * <p/>
 	 * @param pn - the petri net to check covered.
-	 * <p/>
 	 * @return the invariant which covers or null if it is not covered.
 	 */
 	public static Vector coveredByTInvariants(PetriNet pn) {
@@ -567,10 +537,8 @@ public class InvariantCalculator {
 	 * Checks whether the the given petri net is covered by t-invariants with
 	 * the given algorithm. Returns the invariant which covers or null if not
 	 * existent.
-	 * <p/>
 	 * @param pn - the petri net to check covered.
 	 * @param algo - the algorithm with which it should be checked.
-	 * <p/>
 	 * @return the invariant which covers or null if it is not covered.
 	 */
 	public static Vector coveredByTInvariants(PetriNet pn, InvariantAlgorithm algo) {
@@ -581,10 +549,8 @@ public class InvariantCalculator {
 	/**
 	 * Checks whether the the given petri net is covered by the given t-invariants.
 	 * Returns the invariant which covers or null if not existent.
-	 * <p/>
 	 * @param pn - the petri net to check covered.
 	 * @param invariants - the invariants which should be tested if they cover.
-	 * <p/>
 	 * @return the invariant which covers or null if it is not covered.
 	 */
 	public static Vector coveredByTInvariants(PetriNet pn, Set<List<Integer>> invariants) {

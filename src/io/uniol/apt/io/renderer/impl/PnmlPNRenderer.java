@@ -31,7 +31,6 @@ import uniol.apt.io.renderer.Renderer;
 
 /**
  * Renderer for the pnml format. It is optimized for the format PIPE http://pipe2.sourceforge.net/ likes to read.
- * <p/>
  * @author Manuel Gieseking
  */
 @AptRenderer

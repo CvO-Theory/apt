@@ -28,9 +28,7 @@ import uniol.apt.analysis.exception.UnboundedException;
 
 /**
  * Check if cycles same or mutually disjoint parikh vectors for the given Petri Net
- * <p/>
  * @author Sören
- * <p/>
  */
 public class CyclesHaveSameOrMutuallyPV {
 
@@ -40,7 +38,6 @@ public class CyclesHaveSameOrMutuallyPV {
 
 	/**
 	 * Constructor.
-	 * <p/>
 	 * @param pn - the net to examine.
 	 */
 	public CyclesHaveSameOrMutuallyPV(PetriNet pn) {
@@ -49,11 +46,8 @@ public class CyclesHaveSameOrMutuallyPV {
 
 	/**
 	 * Check if cycles same or mutually disjoint parikh vectors for the given Petri net.
-	 * <p/>
 	 * @param algo - which algorithm should be used for computing the smallest cycles.
-	 * <p/>
 	 * @return boolean
-	 * <p/>
 	 * @throws UnboundedException thrown if the net is not bounded.
 	 */
 	public boolean check(ComputeSmallestCycles algo) throws UnboundedException {

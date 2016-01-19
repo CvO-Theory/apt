@@ -23,7 +23,6 @@ import uniol.apt.adt.IGraph;
 
 /**
  * The NodeExistsException is thrown if it is tried to create a node which already exists in the graph.
- * <p/>
  * @author Manuel Gieseking
  */
 public class NodeExistsException extends DatastructureException {
@@ -32,7 +31,6 @@ public class NodeExistsException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new NodeExistsException with the given id of the existing node.
-	 * <p/>
 	 * @param g      The graph where the node does not exist.
 	 * @param nodeId Name of the already existing node.
 	 */
@@ -42,7 +40,6 @@ public class NodeExistsException extends DatastructureException {
 
 	/**
 	 * Constructor creates a new NodeExistsException with a given cause.
-	 * <p/>
 	 * @param g      The graph where the node already exists.
 	 * @param nodeId Name of the existing node.
 	 * @param cause  The cause for this exception as Throwable.

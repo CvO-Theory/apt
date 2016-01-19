@@ -21,7 +21,6 @@ package uniol.apt.adt;
 
 /**
  * An EdgeKey is used to store and find edges by it's primary key: ids of the source node and target node.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class EdgeKey {
@@ -31,7 +30,6 @@ public class EdgeKey {
 
 	/**
 	 * Constructor for creating a new EdgeKey.
-	 * <p/>
 	 * @param sourceId the id of the source node.
 	 * @param targetId the id of the target node.
 	 */
@@ -65,7 +63,6 @@ public class EdgeKey {
 
 	/**
 	 * Gets the source node id.
-	 * <p/>
 	 * @return the sourceId.
 	 */
 	public String getSourceId() {
@@ -74,7 +71,6 @@ public class EdgeKey {
 
 	/**
 	 * Gets the target node id.
-	 * <p/>
 	 * @return the targetId.
 	 */
 	public String getTargetId() {

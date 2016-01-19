@@ -25,11 +25,9 @@ import uniol.apt.adt.extension.Extensible;
 /**
  * An implementation of the interface INode for just delegating the pre- and postset methodes to the graph of the type
  * G.
- * <p/>
  * @param <G> The type of the graph.
  * @param <E> The type of the edge itself.
  * @param <N> The type of the nodes.
- * <p/>
  * @see INode
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
@@ -41,7 +39,6 @@ public abstract class Node<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, 
 
 	/**
 	 * Constructor for creating a Node
-	 * <p/>
 	 * @param graph the graph this node belongs to.
 	 * @param id    the id this node should have.
 	 */
@@ -52,7 +49,6 @@ public abstract class Node<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, 
 
 	/**
 	 * Constructor for copying a Node. The constructor also copies the references of the extensions.
-	 * <p/>
 	 * @param graph the graph this node belongs to.
 	 * @param n     the node that should get copied.
 	 */

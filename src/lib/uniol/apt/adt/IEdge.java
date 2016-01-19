@@ -24,17 +24,13 @@ import uniol.apt.adt.extension.IExtensible;
 /**
  * IEdge<G,E,N> is an abstract interface to a common directed edge. It is possible to set as well as retrieve the source
  * and target nodes as well as to retrieve the parenting graph.
- * <p/>
  * The generic parameter define what types are used for the graph and nodes as well as the edge itself. This allows to
  * extend any edge in a typesafe manner at compiletime. Additionally one may add any data to the edge using the
  * IExtensible interface methods at runtime.
- * <p/>
  * For examples have a look at the Edge, pn.Flow or ts.Arc classes.
- * <p/>
  * @param <G> The type of the graph.
  * @param <E> The type of the edge itself.
  * @param <N> The type of the nodes.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public interface IEdge<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
@@ -42,21 +38,18 @@ public interface IEdge<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N ex
 
 	/**
 	 * Retrieves the graph this edge is part of.
-	 * <p/>
 	 * @return A graph of given type G.
 	 */
 	public G getGraph();
 
 	/**
 	 * Retrieves the source node of this directed edge.
-	 * <p/>
 	 * @return A node of given type N.
 	 */
 	public N getSource();
 
 	/**
 	 * Retrieves the target node of this directed edge.
-	 * <p/>
 	 * @return A node of given type N.
 	 */
 	public N getTarget();

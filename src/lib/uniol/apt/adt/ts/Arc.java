@@ -23,7 +23,6 @@ import uniol.apt.adt.Edge;
 
 /**
  * Arcs serve as edges in a TransitionSystem. They have a source node's id, a target node's id and a label.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class Arc extends Edge<TransitionSystem, Arc, State> {
@@ -32,7 +31,6 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 
 	/**
 	 * Constructor.
-	 * <p/>
 	 * @param ts       the TransitionSystem this arc belongs to.
 	 * @param sourceId the id of the source node.
 	 * @param targetId the id of the target node.
@@ -46,7 +44,6 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 	/**
 	 * Constructor for copying a Arc to another transitionsystem. The constructor also copies the references of the
 	 * extensions.
-	 * <p/>
 	 * @param ts the TransitionSystem.
 	 * @param a  the arc.
 	 */
@@ -57,7 +54,6 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 
 	/**
 	 * Gets the label of the arc.
-	 * <p/>
 	 * @return the label.
 	 */
 	public String getLabel() {
@@ -66,7 +62,6 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 
 	/**
 	 * Gets the label of the arc. To maintain consistency it's just a delegate to the transitionsystem.
-	 * <p/>
 	 * @param label the label to set.
 	 */
 	public void setLabel(String label) {
@@ -75,7 +70,6 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 
 	/**
 	 * Gets the source node's id.
-	 * <p/>
 	 * @return the source node's id
 	 */
 	public String getSourceId() {
@@ -84,7 +78,6 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 
 	/**
 	 * Gets the target node's id.
-	 * <p/>
 	 * @return the target node's id
 	 */
 	public String getTargetId() {

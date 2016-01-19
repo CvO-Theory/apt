@@ -24,7 +24,6 @@ import uniol.apt.adt.EdgeKey;
 
 /**
  * This class serves for storing the key of an Arc.
- * <p/>
  * @author Manuel Gieseking
  */
 public class ArcKey extends EdgeKey {
@@ -33,7 +32,6 @@ public class ArcKey extends EdgeKey {
 
 	/**
 	 * Constructor.
-	 * <p/>
 	 * @param sourceId the source node id
 	 * @param targetId the target node it
 	 * @param label    the label of the arc
@@ -80,7 +78,6 @@ public class ArcKey extends EdgeKey {
 
 	/**
 	 * Gets the label of this ArcKey.
-	 * <p/>
 	 * @return the label.
 	 */
 	public String getLabel() {

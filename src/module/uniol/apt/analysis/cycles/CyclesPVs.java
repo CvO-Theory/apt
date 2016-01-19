@@ -32,7 +32,6 @@ import uniol.apt.util.Pair;
 
 /**
  * Calculates the parikh vectors of the smallest cycles of an Petri Net.
- * <p/>
  * @author Manuel Gieseking
  */
 public class CyclesPVs {

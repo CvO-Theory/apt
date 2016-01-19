@@ -30,9 +30,7 @@ import uniol.apt.adt.exception.StructureException;
 
 /**
  * Data structure for representing a parikh vector.
- * <p/>
  * At each access the consistency of the labels of the parikh vector is checked with the transitionsystem.
- * <p/>
  * @author Manuel Gieseking
  */
 public class ParikhVector {
@@ -45,10 +43,8 @@ public class ParikhVector {
 
 	/**
 	 * Combines two parikh vectors to one new.
-	 * <p/>
 	 * @param p1 - the first to add.
 	 * @param p2 - the second to add.
-	 * <p/>
 	 * @return the combination of p1 and p2.
 	 */
 	public static ParikhVector add(ParikhVector p1, ParikhVector p2) {
@@ -63,7 +59,6 @@ public class ParikhVector {
 
 	/**
 	 * Creates a parikh vector with a given sequence and the alphabet from the given TransitionSystem.
-	 * <p/>
 	 * @param ts       the TransitionSystem the pv belongs to.
 	 * @param sequence the sequence of labels.
 	 */
@@ -74,7 +69,6 @@ public class ParikhVector {
 
 	/**
 	 * Creates a parikh vector with a given sequence and the alphabet from the given TransitionSystem.
-	 * <p/>
 	 * @param ts       the TransitionSystem the pv belongs to.
 	 * @param sequence the sequence of labels.
 	 */
@@ -85,7 +79,6 @@ public class ParikhVector {
 
 	/**
 	 * Creates a parikh vector with a given mapping and the alphabet from the given TransitionSystem.
-	 * <p/>
 	 * @param ts the TransitionSystem the pv belongs to.
 	 * @param pv the mapping from labels to occurrences.
 	 */
@@ -97,7 +90,6 @@ public class ParikhVector {
 	/**
 	 * Creates a parikh vector with a given mapping. Before using this pv it is needed to connect the pv to a
 	 * TransitionSystem.
-	 * <p/>
 	 * @param pv the mapping from labels to occurrences.
 	 */
 	public ParikhVector(Map<String, Integer> pv) {
@@ -111,7 +103,6 @@ public class ParikhVector {
 
 	/**
 	 * Connects a given TransistionSystem to this parikh vector.
-	 * <p/>
 	 * @param tranSys the TransitionSystem the pv belongs to.
 	 */
 	public void connectToTransitionSystem(TransitionSystem tranSys) {
@@ -145,7 +136,6 @@ public class ParikhVector {
 
 	/**
 	 * Creates the mapping of labels to occurrences in this parikh vector from a given alphabet and sequence.
-	 * <p/>
 	 * @param sequence the sequence from which the occurrences are calculated
 	 */
 	private void computePv(List<String> sequence) {
@@ -161,11 +151,8 @@ public class ParikhVector {
 	 * Compares one parikh vector with another parikh vector and returns true, when the parikh vector is smaller
 	 * than the other parikh vector. That means true if all components are smaller than the other but the vector are
 	 * not the same.
-	 * <p/>
 	 * @param pv2 the parikh vector to compare with.
-	 * <p/>
 	 * @return true, when this parikh vector is smaller than v2.
-	 * <p/>
 	 * @throws StructureException is thrown if the labelsets of the parikh vectors are not the same.
 	 */
 	public boolean lessThan(ParikhVector pv2) {
@@ -186,11 +173,8 @@ public class ParikhVector {
 	/**
 	 * Checks two parikh vectors if they are the same or mutally disjoint. Mutally disjoint means that it is false
 	 * if there exists a component which is in both vectors not equal to zero.
-	 * <p/>
 	 * @param pv2 the parikh vector to compare with.
-	 * <p/>
 	 * @return true if the parikh vectors are the same or mutally disjoint.
-	 * <p/>
 	 * @throws StructureException is thrown if the labelsets of the parikh vectors are not the same.
 	 */
 	public boolean sameOrMutuallyDisjoint(ParikhVector pv2) {
@@ -209,9 +193,7 @@ public class ParikhVector {
 
 	/**
 	 * Returns the occurrences of the given label in this parikh vector.
-	 * <p/>
 	 * @param c the label to get the occurrences from.
-	 * <p/>
 	 * @return the number of occurrences of the given label in this parikh vector.
 	 */
 	public int get(String c) {
@@ -224,7 +206,6 @@ public class ParikhVector {
 
 	/**
 	 * Returns the occurrences of the labels in this parikh vector in lexical order.
-	 * <p/>
 	 * @return the parikh vector integers.
 	 */
 	public Integer[] getPVLexicalOrder() {
@@ -241,7 +222,6 @@ public class ParikhVector {
 
 	/**
 	 * Returns the mapping from labels to occurrences of this parikh vector.
-	 * <p/>
 	 * @return the mapping from labels to occurrences.
 	 */
 	public Map<String, Integer> getPV() {

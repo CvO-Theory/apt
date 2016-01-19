@@ -30,9 +30,7 @@ import static org.testng.Assert.assertEquals;
 
 /**
  * Test wether the Petrify parser works.
- * <p/>
  * @author Sören
- * <p/>
  */
 public class PetrifyPNParserTest {
 	@Test

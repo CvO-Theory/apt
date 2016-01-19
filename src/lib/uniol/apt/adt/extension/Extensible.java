@@ -31,7 +31,6 @@ import uniol.apt.util.Pair;
  * The Extensible class describes an advanced object consisting of an id and a
  * key \rightarrow value property mapping and for every object a flag is saved
  * if the object should by copied (referenzcopy), if the owner object is copied.
- * <p/>
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class Extensible implements IExtensible {
@@ -51,7 +50,6 @@ public class Extensible implements IExtensible {
 	/**
 	 * Saves the given value using the key as identifier with the flag to copy
 	 * this object by coping the owner object.
-	 * <p/>
 	 * @param key An identifying key as string.
 	 * @param value Any value.
 	 */
@@ -62,7 +60,6 @@ public class Extensible implements IExtensible {
 
 	/**
 	 * Saves the given value using the key as identifier with the copy flag.
-	 * <p/>
 	 * @param key An identifying key as string.
 	 * @param value Any value.
 	 * @param copy The flag if this object should be copied.
@@ -82,11 +79,8 @@ public class Extensible implements IExtensible {
 
 	/**
 	 * Retrieves the saved value using the key as identifier.
-	 * <p/>
 	 * @param key An identifying key as string.
-	 * <p/>
 	 * @return The saved value.
-	 * <p/>
 	 * @throws StructureException thrown if the key is not found.
 	 */
 	@Override
@@ -101,7 +95,6 @@ public class Extensible implements IExtensible {
 	/**
 	 * Calculates a list of pairs key-value of all extentions. Attention it's a
 	 * referenzcopy!
-	 * <p/>
 	 * @return A list of key-value-pairs of all extentions.
 	 */
 	public List<Pair<String, Object>> getExtensions() {
@@ -116,7 +109,6 @@ public class Extensible implements IExtensible {
 	/**
 	 * Calculates a list of pairs key-value which should be copied. Attention
 	 * it's a referenzcopy!
-	 * <p/>
 	 * @return A list of pair key-value-pairs which should be copied.
 	 */
 	public List<Pair<String, Object>> getCopyExtensions() {
@@ -133,7 +125,6 @@ public class Extensible implements IExtensible {
 	/**
 	 * Copies the extentions from the given Extensible, marked as to copy, to
 	 * this extension list. Attention it's just a reference copy!
-	 * <p/>
 	 * @param e The Extensible to copy from.
 	 */
 	public final void copyExtensions(Extensible e) {

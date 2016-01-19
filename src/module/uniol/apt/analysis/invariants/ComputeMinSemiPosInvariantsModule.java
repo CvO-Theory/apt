@@ -37,7 +37,6 @@ import uniol.apt.module.exception.ModuleException;
 
 /**
  * This module computes all semipositive S- or T-invariants.
- * <p/>
  * @author Manuel Gieseking
  */
 @AptModule

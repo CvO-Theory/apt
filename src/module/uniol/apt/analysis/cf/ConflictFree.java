@@ -26,9 +26,7 @@ import uniol.apt.analysis.plain.Plain;
 
 /**
  * This module tests if a plain Petri net is conflict-free. That is:
- * <p/>
  * <code>\forall s \in S: \mid s^\bullet \mid \leq 1 \vee s^\bullet \subset ^\bullet s</code>
- * <p/>
  * @author Manuel Gieseking
  */
 public class ConflictFree {
@@ -37,7 +35,6 @@ public class ConflictFree {
 
 	/**
 	 * Creates a new instance for checking the conflict free property of a given petri net.
-	 * <p/>
 	 * @param pn - the petri net to check.
 	 */
 	public ConflictFree(PetriNet pn) {
@@ -46,13 +43,9 @@ public class ConflictFree {
 
 	/**
 	 * Precondition: plain Petri net
-	 * <p/>
 	 * Testing if a plain Petri net is conflict-free. That is:
-	 * <p/>
 	 * \forall s \in S: \mid s^\bullet \mid \leq 1 \vee s^\bullet \subset ^\bullet s
-	 * <p/>
 	 * @return true if the Petri net is conflict free
-	 * <p/>
 	 * @throws PreconditionFailedException thrown if the given net is not plain.
 	 */
 	public boolean check() throws PreconditionFailedException {

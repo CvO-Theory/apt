@@ -32,7 +32,6 @@ import uniol.apt.module.exception.ModuleException;
 
 /**
  * Module for generating a random t-net or t-system.
- *<p/>
  * @author Manuel Gieseking
  */
 @AptModule

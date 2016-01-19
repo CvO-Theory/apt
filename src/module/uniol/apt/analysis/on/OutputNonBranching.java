@@ -24,9 +24,7 @@ import uniol.apt.adt.pn.Place;
 
 /**
  * This module tests if a Petri net is output-nonbranching. That is:
- * <p/>
  * <code>\forall s \in S: \mid s^\bullet \mid \leq 1</code>
- * <p/>
  * @author Manuel Gieseking
  */
 public class OutputNonBranching {
@@ -35,7 +33,6 @@ public class OutputNonBranching {
 
 	/**
 	 * Constructor.
-	 * <p/>
 	 * @param pn - the net which should be checked.
 	 */
 	public OutputNonBranching(PetriNet pn) {
@@ -44,9 +41,7 @@ public class OutputNonBranching {
 
 	/**
 	 * Testing if a Petri net is output-nonbranching. That is:
-	 * <p/>
 	 * \forall s \in S: \mid s^\bullet \mid \leq 1
-	 * <p/>
 	 * @return true if the Petri net is output-nonbranching.
 	 */
 	public boolean check() {

@@ -32,9 +32,7 @@ import uniol.apt.adt.exception.StructureException;
 /**
  * The Marking class represents the marking of a petri net. It stores the places of the net and the count of tokens on
  * the places in a hashmap.
- * <p/>
  * At each access the consistency of the places of the marking is checked with the petri net.
- * <p/>
  * @author Manuel Gieseking
  */
 public class Marking {
@@ -46,7 +44,6 @@ public class Marking {
 
 	/**
 	 * Constructor. Sets the tokencount of every place of the given petri net to zero.
-	 * <p/>
 	 * @param net - the net for that the marking is created.
 	 */
 	public Marking(PetriNet net) {
@@ -60,7 +57,6 @@ public class Marking {
 
 	/**
 	 * Copy-Constructor.
-	 * <p/>
 	 * @param m - the marking that serves as template for creating the copy.
 	 */
 	public Marking(Marking m) {
@@ -70,10 +66,8 @@ public class Marking {
 
 	/**
 	 * Constructor.
-	 * <p/>
 	 * @param net The net for which the marking instance gets created.
 	 * @param m   A marking from which the mapping from places to token is copied.
-	 * <p/>
 	 * @throws StructureException if the places of the given net and tokenmap do not fit.
 	 */
 	public Marking(PetriNet net, Marking m) {
@@ -83,10 +77,8 @@ public class Marking {
 
 	/**
 	 * Constructor.
-	 * <p/>
 	 * @param net The net for which the marking instance gets created.
 	 * @param m   A mapping from Place ids to tokens.
-	 * <p/>
 	 * @throws StructureException if the places of the given net and tokenmap do not fit.
 	 */
 	public Marking(PetriNet net, Map<String, Integer> m) {
@@ -96,10 +88,8 @@ public class Marking {
 
 	/**
 	 * Set the Marking for the given net.
-	 * <p/>
 	 * @param net                - the net the marking belongs to.
 	 * @param orderedTokenCounts - list of token count for the places in lexical order.
-	 * <p/>
 	 * @throws StructureException       thrown if the size of places in the given net and the length of the list of
 	 *                                  tokens does not fit.
 	 * @throws IllegalArgumentException thrown if a token count is less than zero.
@@ -118,7 +108,6 @@ public class Marking {
 
 	/**
 	 * Copies the marking in the instance.
-	 * <p/>
 	 * @param m The marking that serves as template for copying the marking.
 	 */
 	private void setMarking(Marking m) {
@@ -140,9 +129,7 @@ public class Marking {
 
 	/**
 	 * Sets the marking of this instance according to the given mapping.
-	 * <p/>
 	 * @param m a mapping of how many tokens are on the places.
-	 * <p/>
 	 * @throws StructureException if the places of the given net and tokenmap do not fit.
 	 */
 	private void setMarking(Map<String, Integer> m) {
@@ -161,7 +148,6 @@ public class Marking {
 
 	/**
 	 * Returns the corresponding net of this marking.
-	 * <p/>
 	 * @return A PetriNet reference to the net.
 	 */
 	public PetriNet getNet() {
@@ -170,9 +156,7 @@ public class Marking {
 
 	/**
 	 * Fires the given transitions and creates a new marking.
-	 * <p/>
 	 * @param t - the transitions that should be fired.
-	 * <p/>
 	 * @return the marking reached after firing the transitions
 	 */
 	public Marking fireTransitions(Transition... t) {
@@ -186,9 +170,7 @@ public class Marking {
 
 	/**
 	 * Fires the given transitions by changing this marking.
-	 * <p/>
 	 * @param t - the transitions that should be fired.
-	 * <p/>
 	 * @return this marking, changed by firing the transitions.
 	 * @deprecated Markings should be used immutably. Use {@link fireTransitions} instead.
 	 */
@@ -203,10 +185,8 @@ public class Marking {
 
 	/**
 	 * Sets the given token(s) on a place with the given id.
-	 * <p/>
 	 * @param placeId the place id.
 	 * @param m       the token.
-	 * <p/>
 	 * @return A copy of this marking with the given modification.
 	 * @throws StructureException if the places of this net and the given token do not fit.
 	 */
@@ -216,10 +196,8 @@ public class Marking {
 
 	/**
 	 * Sets the given token(s) on a place with the given id.
-	 * <p/>
 	 * @param placeId the place id.
 	 * @param m       the token.
-	 * <p/>
 	 * @throws StructureException if the places of this net and the given token do not fit.
 	 * @deprecated Markings should be used immutably. Use {@link setTokenCount} instead.
 	 */
@@ -230,10 +208,8 @@ public class Marking {
 
 	/**
 	 * Sets the given token(s) on a place with the given id.
-	 * <p/>
 	 * @param placeId the place id.
 	 * @param m       the token.
-	 * <p/>
 	 * @return A copy of this marking with the given modification.
 	 * @throws StructureException       thrown if the places of this net and the given token do not fit.
 	 * @throws IllegalArgumentException thrown if a token count is less than zero.
@@ -244,10 +220,8 @@ public class Marking {
 
 	/**
 	 * Sets the given token(s) on a place with the given id.
-	 * <p/>
 	 * @param placeId the place id.
 	 * @param m       the token.
-	 * <p/>
 	 * @throws StructureException       thrown if the places of this net and the given token do not fit.
 	 * @throws IllegalArgumentException thrown if a token count is less than zero.
 	 * @deprecated Markings should be used immutably. Use {@link setTokenCount} instead.
@@ -259,10 +233,8 @@ public class Marking {
 
 	/**
 	 * Sets the given token(s) on a given place.
-	 * <p/>
 	 * @param p the place.
 	 * @param m the token.
-	 * <p/>
 	 * @return A copy of this marking with the given modification.
 	 * @throws StructureException if the the given place don't belong to the net of this marking.
 	 */
@@ -281,10 +253,8 @@ public class Marking {
 
 	/**
 	 * Sets the given token(s) on a given place.
-	 * <p/>
 	 * @param p the place.
 	 * @param m the token.
-	 * <p/>
 	 * @throws StructureException if the the given place don't belong to the net of this marking.
 	 * @deprecated Markings should be used immutably. Use {@link setTokenCount} instead.
 	 */
@@ -302,10 +272,8 @@ public class Marking {
 
 	/**
 	 * Sets the given token(s) on a given place.
-	 * <p/>
 	 * @param p the place.
 	 * @param m the number of tokens on this place.
-	 * <p/>
 	 * @return A copy of this marking with the given modification.
 	 * @throws StructureException       if the the given place don't belong to the net of this marking.
 	 * @throws IllegalArgumentException thrown if a token count is less than zero.
@@ -316,10 +284,8 @@ public class Marking {
 
 	/**
 	 * Sets the given token(s) on a given place.
-	 * <p/>
 	 * @param p the place.
 	 * @param m the number of tokens on this place.
-	 * <p/>
 	 * @throws StructureException       if the the given place don't belong to the net of this marking.
 	 * @throws IllegalArgumentException thrown if a token count is less than zero.
 	 * @deprecated Markings should be used immutably. Use {@link setTokenCount} instead.
@@ -331,10 +297,8 @@ public class Marking {
 
 	/**
 	 * Adds the given token(s) to a given place.
-	 * <p/>
 	 * @param id the place id.
 	 * @param m  the number of tokens that get added.
-	 * <p/>
 	 * @return A copy of this marking with the given modification.
 	 * @throws NoSuchNodeException thrown if the place with the given id don't exists in the net.
 	 */
@@ -345,10 +309,8 @@ public class Marking {
 
 	/**
 	 * Adds the given token(s) to a given place.
-	 * <p/>
 	 * @param id the place id.
 	 * @param m  the number of tokens that get added.
-	 * <p/>
 	 * @throws NoSuchNodeException thrown if the place with the given id don't exists in the net.
 	 * @deprecated Markings should be used immutably. Use {@link addTokenCount} instead.
 	 */
@@ -360,10 +322,8 @@ public class Marking {
 
 	/**
 	 * Adds the given token(s) to a given place.
-	 * <p/>
 	 * @param p the place.
 	 * @param m the token.
-	 * <p/>
 	 * @return A copy of this marking with the given modification.
 	 * @throws NoSuchNodeException if the place does not exist in the given net.
 	 */
@@ -378,10 +338,8 @@ public class Marking {
 
 	/**
 	 * Adds the given token(s) to a given place.
-	 * <p/>
 	 * @param p the place.
 	 * @param m the token.
-	 * <p/>
 	 * @throws NoSuchNodeException if the place does not exist in the given net.
 	 * @deprecated Markings should be used immutably. Use {@link addTokenCount} instead.
 	 */
@@ -396,10 +354,8 @@ public class Marking {
 
 	/**
 	 * Adds the given token(s) to a place with the given id.
-	 * <p/>
 	 * @param id the place id.
 	 * @param m  the number of tokens that get added.
-	 * <p/>
 	 * @return A copy of this marking with the given modification.
 	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
 	 * @throws NoSuchNodeException      if the place does not exist in the given net.
@@ -411,10 +367,8 @@ public class Marking {
 
 	/**
 	 * Adds the given token(s) to a place with the given id.
-	 * <p/>
 	 * @param id the place id.
 	 * @param m  the number of tokens that get added.
-	 * <p/>
 	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
 	 * @throws NoSuchNodeException      if the place does not exist in the given net.
 	 * @deprecated Markings should be used immutably. Use {@link addTokenCount} instead.
@@ -427,10 +381,8 @@ public class Marking {
 
 	/**
 	 * Adds the given token(s) to a given place.
-	 * <p/>
 	 * @param p the place.
 	 * @param m the number of tokens that get added.
-	 * <p/>
 	 * @return A copy of this marking with the given modification.
 	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
 	 * @throws NoSuchNodeException      if the place does not exist in the given net.
@@ -447,10 +399,8 @@ public class Marking {
 
 	/**
 	 * Adds the given token(s) to a given place.
-	 * <p/>
 	 * @param p the place.
 	 * @param m the number of tokens that get added.
-	 * <p/>
 	 * @throws IllegalArgumentException if the result of this addition would be less than zero.
 	 * @throws NoSuchNodeException      if the place does not exist in the given net.
 	 * @deprecated Markings should be used immutably. Use {@link addTokenCount} instead.
@@ -466,11 +416,8 @@ public class Marking {
 
 	/**
 	 * Returns the token count of the given place with the given id.
-	 * <p/>
 	 * @param id a string containing an id of a place in the corresponding net.
-	 * <p/>
 	 * @return a value representing the token count.
-	 * <p/>
 	 * @throws NoSuchNodeException thrown if the place with the given id does not belong to the net.
 	 */
 	public Token getToken(String id) {
@@ -480,11 +427,8 @@ public class Marking {
 
 	/**
 	 * Returns the token count of the given place.
-	 * <p/>
 	 * @param p a place of the corresponding net.
-	 * <p/>
 	 * @return a value representing the token count.
-	 * <p/>
 	 * @throws StructureException  thrown if the place belong to an other net.
 	 * @throws NoSuchNodeException thrown if the place with the given id does not exists in the net.
 	 */
@@ -526,11 +470,8 @@ public class Marking {
 	/**
 	 * Check if this object covers the given other marking. If the other marking is covered, a new marking is
 	 * returned with has suitable omegas added. Else, null is returned.
-	 * <p/>
 	 * @param o The marking that should be covered.
-	 * <p/>
 	 * @return A marking with added omegas, or null if this does not cover the other marking.
-	 * <p/>
 	 * @author Uli Schlachter, Manuel Gieseking
 	 */
 	public Marking cover(Marking o) {
@@ -567,11 +508,8 @@ public class Marking {
 	/**
 	 * Check if this object covers the given other marking. If the other marking is covered, suitable omegas are
 	 * added to this object.
-	 * <p/>
 	 * @param o The marking that should be covered.
-	 * <p/>
 	 * @return true if the given marking gets covered
-	 * <p/>
 	 * @author Uli Schlachter, Manuel Gieseking
 	 * @deprecated Markings should be used immutably. Use {@link cover} instead.
 	 */
@@ -608,7 +546,6 @@ public class Marking {
 
 	/**
 	 * Check if the marking contains at least one omega.
-	 * <p/>
 	 * @return true if the mapping contains at least one omega token.
 	 */
 	public boolean hasOmega() {

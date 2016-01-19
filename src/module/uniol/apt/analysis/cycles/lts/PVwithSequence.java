@@ -27,7 +27,6 @@ import uniol.apt.adt.ts.ParikhVector;
 /**
  * A datastructure for saving a parikh vector and a sequence. It is not checked if they are belonging together but it is
  * intended.
- * <p/>
  * @author Manuel Gieseking
  */
 public class PVwithSequence {
@@ -37,7 +36,6 @@ public class PVwithSequence {
 
 	/**
 	 * Creates a new PVwithSequence by saving the giving parikh vector and sequence.
-	 * <p/>
 	 * @param pv       - the parikh vector to save.
 	 * @param sequence - the string sequence to save.
 	 */
@@ -49,10 +47,8 @@ public class PVwithSequence {
 	/**
 	 * Adds to given PVwithSequences together to a new one. That means their sequences will be concatenate and their
 	 * parikh vectors added.
-	 * <p/>
 	 * @param first  - the first parikh vector and sequence to add. The left side of the concatenation.
 	 * @param second - the second parikh vector and sequence to add. The right side of the concatenation.
-	 * <p/>
 	 * @return a new generated parikh vector with sequence, with the addition of the parikh vectors and
 	 *         concatenation of the sequences of the given parikh vectors with there sequences.
 	 */
@@ -68,10 +64,8 @@ public class PVwithSequence {
 	 * Glues to given PVwithSequences together to a new one. That means their parikh vectors will be added and there
 	 * sequences will be concatenated, but the last component of the first sequence is replaced by the first
 	 * component of the second sequence.
-	 * <p/>
 	 * @param first  - the first parikh vector and sequence to glue. The left side of the concatenation.
 	 * @param second - the second parikh vector and sequence to glue. The right side of the concatenation.
-	 * <p/>
 	 * @return a new generated parikh vector with sequence, with the addition of the parikh vectors and gluing
 	 *         concatenation of the sequences of the given parikh vectors with there sequences.
 	 */
@@ -86,7 +80,6 @@ public class PVwithSequence {
 
 	/**
 	 * Returns the parikh vector.
-	 * <p/>
 	 * @return the parikh vector.
 	 */
 	public ParikhVector getPv() {
@@ -95,7 +88,6 @@ public class PVwithSequence {
 
 	/**
 	 * Sets the parikh vector.
-	 * <p/>
 	 * @param pv - the parikh vector to set.
 	 */
 	public void setPv(ParikhVector pv) {
@@ -104,7 +96,6 @@ public class PVwithSequence {
 
 	/**
 	 * Returns the sequence of strings.
-	 * <p/>
 	 * @return the sequence of strings.
 	 */
 	public List<String> getSequence() {
@@ -113,7 +104,6 @@ public class PVwithSequence {
 
 	/**
 	 * Sets the sequence of strings.
-	 * <p/>
 	 * @param sequence - the sequence of strings to set.
 	 */
 	public void setSequence(List<String> sequence) {

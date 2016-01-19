@@ -35,7 +35,6 @@ import uniol.apt.module.exception.ModuleException;
 
 /**
  * This module tests if a Petri net is covered by an S- or a T-invariant.
- * <p/>
  * @author Dennis Borde, Manuel Gieseking
  */
 @AptModule

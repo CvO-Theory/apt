@@ -25,7 +25,6 @@ import java.util.Iterator;
 
 /**
  * Some methods for mathematical calculations like gcd and modulo.
- * <p/>
  * @author Manuel Gieseking
  */
 public class MathTools {
@@ -38,9 +37,7 @@ public class MathTools {
 
 	/**
 	 * Calculates the gcd of a given set of BigIntegers.
-	 * <p/>
 	 * @param set - the BigIntegers to calculate the gcd from.
-	 * <p/>
 	 * @return the gcd of the BigIntegers of the given set.
 	 */
 	public static BigInteger gcdBigInteger(Collection<BigInteger> set) {
@@ -57,9 +54,7 @@ public class MathTools {
 
 	/**
 	 * Calculates the gcd of a given set of integers.
-	 * <p/>
 	 * @param set - the integers to calculate the gcd from.
-	 * <p/>
 	 * @return the gcd of the integers of the given set.
 	 */
 	public static int gcd(Collection<Integer> set) {
@@ -76,10 +71,8 @@ public class MathTools {
 
 	/**
 	 * Calculates the gcd of two integers.
-	 * <p/>
 	 * @param a - first integer for calculating the gcd.
 	 * @param b - second integer for calculating the gcd.
-	 * <p/>
 	 * @return the gcd of the two given integers.
 	 */
 	public static int gcd(int a, int b) {
@@ -92,10 +85,8 @@ public class MathTools {
 
 	/**
 	 * Calculates the mathematical modulo, so that it's given the positive value.
-	 * <p/>
 	 * @param a - divisor.
 	 * @param b - dividend.
-	 * <p/>
 	 * @return a modulo b.
 	 */
 	public static int mod(int a, int b) {
