@@ -24,13 +24,13 @@ import uniol.apt.io.parser.impl.RegexParser;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.AptParameterTransformation;
-import uniol.apt.ui.ParameterTransformation;
+import uniol.apt.ui.DescribedParameterTransformation;
 
 /**
  * @author Uli Schlachter
  */
 @AptParameterTransformation(FiniteAutomaton.class)
-public class FiniteAutomatonParameterTransformation implements ParameterTransformation<FiniteAutomaton> {
+public class FiniteAutomatonParameterTransformation implements DescribedParameterTransformation<FiniteAutomaton> {
 
 	@Override
 	public FiniteAutomaton transform(String regularExpression) throws ModuleException {
@@ -41,11 +41,8 @@ public class FiniteAutomatonParameterTransformation implements ParameterTransfor
 		}
 	}
 
-	/**
-	 * Get a description on the accepted format for words that this class can parse.
-	 * @return A human readable description.
-	 */
-	static public String getDescription() {
+	@Override
+	public String getFormatDescription() {
 		return "Let's start with an example: (abc?)*\nThis regular expression describes the language where"
 			+ " every word consists of a sequence of 'a', then 'b', then an optional 'c'. This sequence can"
 			+ " be repeated infinitely often or never at all.\n\n"

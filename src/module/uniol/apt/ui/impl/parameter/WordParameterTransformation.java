@@ -24,14 +24,14 @@ import java.util.Arrays;
 import uniol.apt.analysis.language.Word;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.AptParameterTransformation;
-import uniol.apt.ui.ParameterTransformation;
+import uniol.apt.ui.DescribedParameterTransformation;
 
 /**
  * Transform a string into an instance of Word.
  * @author Uli Schlachter, Daniel
  */
 @AptParameterTransformation(Word.class)
-public class WordParameterTransformation implements ParameterTransformation<Word> {
+public class WordParameterTransformation implements DescribedParameterTransformation<Word> {
 	static final public String SIGN_FOR_SINGLE_CHARACTERS = ":";
 
 	@Override
@@ -64,11 +64,8 @@ public class WordParameterTransformation implements ParameterTransformation<Word
 		return word;
 	}
 
-	/**
-	 * Get a description on the accepted format for words that this class can parse.
-	 * @return A human readable description.
-	 */
-	static public String getDescription() {
+	@Override
+	public String getFormatDescription() {
 		return "Words can be specified in two different forms.\n" +
 			"The first format includes explicit delimiters between events. " +
 			"For delimiters, either commas, semicolons or spaces are allowed. " +
