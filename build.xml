@@ -281,15 +281,15 @@
 		<mkdir dir="./doc/javadoc"/>
 		<javadoc encoding="utf-8" destdir="./doc/javadoc" author="true"
 				version="true" use="true" charset="UTF-8"
-				docencoding="UTF-8" access="private">
-			<fileset dir="src/module" includes="**/*.java"/>
-			<fileset dir="src/lib" includes="**/*.java"/>
-			<fileset dir="src/main" includes="**/*.java"/>
-			<fileset dir="src/io" includes="**/*.java"/>
-			<fileset dir="src/compiler" includes="**/*.java"/>
-			<fileset dir="src/glue" includes="**/*.java"/>
-			<fileset dir="src/test" includes="**/*.java"/>
-			<classpath refid="test.class.path" />
+				docencoding="UTF-8" access="private"
+				classpathref="test.class.path">
+			<packageset dir="src/module"/>
+			<packageset dir="src/lib"/>
+			<packageset dir="src/main"/>
+			<packageset dir="src/io"/>
+			<packageset dir="src/compiler"/>
+			<packageset dir="src/glue"/>
+			<packageset dir="src/test"/>
 		</javadoc>
 	</target>
 
