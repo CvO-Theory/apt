@@ -20,7 +20,7 @@
 package uniol.apt.analysis.cycles.lts;
 
 /**
- * Factory for {@Link ComputeSmallestCycles} instances
+ * Factory for {@link ComputeSmallestCycles} instances
  *
  * @author vsp
  */
@@ -29,14 +29,14 @@ public class ComputeSmallestCyclesAlgorithms {
 
 	/**
 	 * Get the default implementation
-	 * @return {@Link ComputeSmallestCycles} instance using the default algorithm
+	 * @return {@link ComputeSmallestCycles} instance using the default algorithm
 	 */
 	public static ComputeSmallestCycles getDefaultAlgorithm() {
 		return new ComputeSmallestCyclesDFS();
 	}
 
 	/**
-	 * Get the character which selects the default implementation in {@Link #getAlgorithm(char)}.
+	 * Get the character which selects the default implementation in {@link #getAlgorithm(char)}.
 	 * @return Character which selects the default implementation
 	 */
 	public static char getDefaultAlgorithmChar() {
@@ -55,10 +55,10 @@ public class ComputeSmallestCyclesAlgorithms {
 	}
 
 	/**
-	 * Get a specific implementation of the {@Link ComputeSmallestCycles} interface
+	 * Get a specific implementation of the {@link ComputeSmallestCycles} interface
 	 *
 	 * @param selection (User) input to select the algorithm
-	 * @return {@Link ComputeSmallestCycles} instance which uses the requested algorithm
+	 * @return {@link ComputeSmallestCycles} instance which uses the requested algorithm
 	 */
 	public static ComputeSmallestCycles getAlgorithm(char selection) {
 		ComputeSmallestCycles algo;

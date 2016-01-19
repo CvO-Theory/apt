@@ -27,7 +27,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.util.Pair;
 
 /**
- * This is a base class for implementing algorithms against the {@Link ComputeSmallestCycles} interface
+ * This is a base class for implementing algorithms against the {@link ComputeSmallestCycles} interface
  * @author Chris, Manuel
  */
 public abstract class AbstractComputeSmallestCycles implements ComputeSmallestCycles {

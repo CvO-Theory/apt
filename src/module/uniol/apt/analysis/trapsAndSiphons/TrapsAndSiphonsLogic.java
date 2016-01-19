@@ -82,8 +82,6 @@ public class TrapsAndSiphonsLogic {
 
 	/**
 	 * Starts algorithm.
-	 *
-	 * @throws Exception
 	 */
 	private void start() throws ContradictionException, TimeoutException {
 		// Get CNF for given pn

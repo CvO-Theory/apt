@@ -49,9 +49,6 @@ public class IsomorphismTest {
 
 	/**
 	 * Test strong isomorphism (which includes weak isomorphism)
-	 *
-	 * @param pn1
-	 * @param pn2
 	 */
 	private BidiMap<State, State> testIsomorphism(TransitionSystem lts1, TransitionSystem lts2) {
 		IsomorphismLogic logic1 = new IsomorphismLogic(lts1, lts2, false);
@@ -64,9 +61,6 @@ public class IsomorphismTest {
 
 	/**
 	 * Test weak isomorphism, but non-strong isomorphism.
-	 *
-	 * @param pn1
-	 * @param pn2
 	 */
 	private BidiMap<State, State> testWeakIsomorphism(TransitionSystem lts1, TransitionSystem lts2) {
 		IsomorphismLogic logic1 = new IsomorphismLogic(lts1, lts2, false);
@@ -79,9 +73,6 @@ public class IsomorphismTest {
 
 	/**
 	 * Test not non-weak isomorphism (which includes non-strong isomorphism)
-	 *
-	 * @param pn1
-	 * @param pn2
 	 */
 	private void testNonWeakIsomorphism(TransitionSystem lts1, TransitionSystem lts2) {
 		IsomorphismLogic logic = new IsomorphismLogic(lts1, lts2, false);
@@ -119,9 +110,6 @@ public class IsomorphismTest {
 	/**
 	 * The nets IsoNet1A and IsoNet1B are identically,
 	 * except that the labels are exchanged.
-	 *
-	 * @throws IOException
-	 * @throws ModuleException
 	 */
 	@Test
 	public void testIsomorphicNets2() throws IOException {
@@ -142,9 +130,6 @@ public class IsomorphismTest {
 	/**
 	 * A net with one transition and no place isn't isomorphic to another
 	 * net with one place and no transition.
-	 *
-	 * @throws IOException
-	 * @throws ModuleException
 	 */
 	@Test
 	public void testEmptyNet() throws IOException {
@@ -172,9 +157,6 @@ public class IsomorphismTest {
 	 * Test to check, if the initial nodes are mapped correctly
 	 * (IsoNet3A and IsoNet4a have isomorphic reachability graphs,
 	 * but their initial nodes don't map to each other)
-	 *
-	 * @throws IOException
-	 * @throws ModuleException
 	 */
 	@Test
 	public void testNonIsomorphicNets3Own() throws IOException {
@@ -188,9 +170,6 @@ public class IsomorphismTest {
 	/**
 	 * IsoNet4A and IsoNet4B are "almost isomorphic". There is just a single edge of difference
 	 * and that edge is not easily reachable, but needs four firings before it appears.
-	 *
-	 * @throws IOException
-	 * @throws ModuleException
 	 */
 	@Test
 	public void testNonIsomorphicNets4() throws IOException {

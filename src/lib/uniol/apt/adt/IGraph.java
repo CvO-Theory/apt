@@ -23,7 +23,7 @@ import java.util.Set;
 import uniol.apt.adt.extension.IExtensible;
 
 /**
- * {@link IGraph<G,E,N>} is an abstract interface to a common graph. It is possible to retrieve the current nodes and edges of
+ * {@link IGraph} is an abstract interface to a common graph. It is possible to retrieve the current nodes and edges of
  * this graph or a single node by its id. Furthermore it provides the possibility the retrieve the preset and postset
  * nodes or edges of a node.
  * The generic parameter define what types are used for the edges and nodes as well as the graph itself. This allows to

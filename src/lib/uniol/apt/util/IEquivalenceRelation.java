@@ -21,7 +21,7 @@ package uniol.apt.util;
 
 /**
  * Implementations of this interface can decide if two objects are equivalent to each other in some sense. This is
- * mainly used for {@link EquivalenceRelation.refine}.
+ * mainly used for {@link EquivalenceRelation#refine}.
  * @param <E> The type of elements that can be compared.
  * @author Uli Schlachter
  */

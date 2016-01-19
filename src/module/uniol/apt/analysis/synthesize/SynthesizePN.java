@@ -81,7 +81,8 @@ public class SynthesizePN {
 
 	/**
 	 * Builder class for creating instances of SynthesizePN. You create an instance of this class, give it all the
-	 * state that you want and then use the {@link build()} method to create a SynthesizePN instance.
+	 * state that you want and then use one of the {@link buildForIsomorphicBehavior()} and {@link
+	 * buildForLanguageEquivalence()} methods to create a SynthesizePN instance.
 	 */
 	static public class Builder {
 		private RegionUtility utility;
@@ -128,7 +129,7 @@ public class SynthesizePN {
 
 		/**
 		 * Set the quick fail mode for the SynthesizePN instance. Use quick fail mode if only the result from
-		 * {@link SynthesizePN.wasSuccessfullySeparated()} is interesting for you. In this case, SynthesizePN
+		 * {@link SynthesizePN#wasSuccessfullySeparated()} is interesting for you. In this case, SynthesizePN
 		 * will stop after the first failure instead of going through all separation problems and trying to
 		 * solve them.
 		 * The quick fail mode default to false.

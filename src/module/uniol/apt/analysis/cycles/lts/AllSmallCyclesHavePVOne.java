@@ -225,7 +225,7 @@ public class AllSmallCyclesHavePVOne {
 	}
 
 	/**
-	 * Check if all small cycles have Parikh vector 1. This is equivalent to !noPV1CycleFound() &&
+	 * Check if all small cycles have Parikh vector 1. This is equivalent to !noPV1CycleFound() &amp;&amp;
 	 * getCounterExample().isEmpty().
 	 * @return True if all small cycles have Parikh vector 1.
 	 */

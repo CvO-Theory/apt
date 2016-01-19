@@ -29,7 +29,7 @@ import uniol.apt.ui.ReturnValueTransformation;
 import uniol.apt.ui.ReturnValuesTransformer;
 
 /**
- * This is just the reverse of {@link ParametersTransformer}.
+ * This is just the reverse of {@link ParametersTransformerImpl}.
  *
  * @author Renke Grunwald
  *

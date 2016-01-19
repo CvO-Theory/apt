@@ -25,7 +25,7 @@ import java.util.Set;
 import uniol.apt.adt.extension.Extensible;
 
 /**
- * {@link AbstractGraph<G,E,N>} is an abstract implementation of the {@link IGraph<G,E,N>} interface. It extends {@link
+ * {@link AbstractGraph} is an abstract implementation of the {@link IGraph} interface. It extends {@link
  * Extensible} and adds an implementation of the listener methods. To invoke listeners, the {@link invokeListeners}
  * method can be called.
  * @param <G> The type of the graph itself.

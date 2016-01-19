@@ -39,7 +39,7 @@ public class CyclesPVs {
 
 	/**
 	 * Constructor.
-	 * @param algo {@Link ComputeSmallestCycles} instance to use for the calculations
+	 * @param algo {@link ComputeSmallestCycles} instance to use for the calculations
 	 */
 	public CyclesPVs(ComputeSmallestCycles algo) {
 		this.algo = algo;
