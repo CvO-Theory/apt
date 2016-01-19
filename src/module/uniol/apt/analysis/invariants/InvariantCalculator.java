@@ -61,7 +61,7 @@ public class InvariantCalculator {
 	}
 
 	/**
-	 * A class for holding the sets P+ = {j | c_hj > 0} and P- = {j | c_hj less
+	 * A class for holding the sets P+ = {j | c_hj &gt; 0} and P- = {j | c_hj less
 	 * 0} for a given row.
 	 */
 	private static class PpPm {
@@ -93,7 +93,7 @@ public class InvariantCalculator {
 	}
 
 	/**
-	 * Calculates for a given matrix the P+ = {j | c_hj > 0} and P- = {j | c_hj
+	 * Calculates for a given matrix the P+ = {j | c_hj &gt; 0} and P- = {j | c_hj
 	 * less 0} sets for each row.
 	 * @param matC - the matrix from which the sets should be calculated.
 	 */

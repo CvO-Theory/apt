@@ -61,7 +61,7 @@ public class SeparationLogic {
 	 *
 	 * @param petriNet Net which will be checked
 	 * @param stronglyCheck check strong or weakly
-	 * @param initK Value for k, k == 0 -> compute the maximum k and use it. k must be "ok" - see separation class
+	 * @param initK Value for k, k == 0 -&gt; compute the maximum k and use it. k must be "ok" - see separation class
 	 * @param chosenFiringSequence check this given firing sequence - null for unused
 	 * @param maxLength check all sequences up this length - must be greater than 0
 	 *        - unused if chosenFiringSequence was set

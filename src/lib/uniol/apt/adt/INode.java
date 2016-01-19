@@ -23,7 +23,7 @@ import java.util.Set;
 import uniol.apt.adt.extension.IExtensible;
 
 /**
- * INode<G,E,N> is an abstract interface to a common node. It is possible to retrieve a view of the pre- and postsets as
+ * {@link INode<G,E,N>} is an abstract interface to a common node. It is possible to retrieve a view of the pre- and postsets as
  * edge sets as well as node sets.
  * The generic parameter define what types are used for the graph and edges as well as the node itself. This allows to
  * extend any node in a typesafe manner at compiletime. Additionally one may add any data to the node using the

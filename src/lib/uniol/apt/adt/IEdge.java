@@ -22,8 +22,8 @@ package uniol.apt.adt;
 import uniol.apt.adt.extension.IExtensible;
 
 /**
- * IEdge<G,E,N> is an abstract interface to a common directed edge. It is possible to set as well as retrieve the source
- * and target nodes as well as to retrieve the parenting graph.
+ * {@link IEdge<G,E,N>} is an abstract interface to a common directed edge. It is possible to set as well as retrieve
+ * the source and target nodes as well as to retrieve the parenting graph.
  * The generic parameter define what types are used for the graph and nodes as well as the edge itself. This allows to
  * extend any edge in a typesafe manner at compiletime. Additionally one may add any data to the edge using the
  * IExtensible interface methods at runtime.

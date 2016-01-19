@@ -61,7 +61,7 @@ public class FirableSequences {
 	 * ta should be fired again
 	 * Array will be [2,0] and [1,1]
 	 * tt should be fired
-	 * Array will be [3,0] and [4,1] and [1,4] - avoid doubles -> [3,0] and [4,1] */
+	 * Array will be [3,0] and [4,1] and [1,4] - avoid doubles -&gt; [3,0] and [4,1] */
 	private HashMap<Integer, ArrayList<ArrayList<String>>> firingSequencesMap = new HashMap<>();
 
 	private int hashMapCounter = 0;

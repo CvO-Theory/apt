@@ -138,7 +138,7 @@ public class RegionUtility {
 
 	/**
 	 * Get the Parikh vector for an edge. This Parikh vector is Psi_t = Psi_s + e_i - Psi_{s'} for an edge
-	 * t = s--[a_i]->s'.
+	 * t = s--[a_i]-&gt;s'.
 	 * @param edge The edge to examine.
 	 * @return The edge's Parikh vector or an empty list if none exists.
 	 * @throws UnreachableException if the given state is unreachable from the initial state

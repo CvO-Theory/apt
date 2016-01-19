@@ -66,7 +66,7 @@ public class InequalitySystem extends AbstractCollection<InequalitySystem.Inequa
 		}
 
 		/**
-		 * Compare a value via this comparator. For example, GREATER_THAN.compare(3, 4) would check that 3 > 4
+		 * Compare a value via this comparator. For example, GREATER_THAN.compare(3, 4) would check that 3 &gt; 4
 		 * and thus return false.
 		 * @param left The left side
 		 * @param right The right side
@@ -93,8 +93,8 @@ public class InequalitySystem extends AbstractCollection<InequalitySystem.Inequa
 		}
 
 		/**
-		 * Return the comparator which is described by the given string. Must be one of "<=", "<", "=", ">",
-		 * ">=".
+		 * Return the comparator which is described by the given string. Must be one of "&lt;=", "&lt;", "=",
+		 * "&gt;", "&gt;=".
 		 * @param str String representation of comparator.
 		 * @return The matching comparator.
 		 */

@@ -43,7 +43,7 @@ public class Separation {
 	 *
 	 * @param petriNet petriNet Net which will be checked
 	 * @param stronglyCheck stronglyCheck check strong or weakly
-	 * @param initK initK Value for k, k == 0 -> compute the maximum k and use it
+	 * @param initK initK Value for k, k == 0 -&gt; compute the maximum k and use it
 	 * @param chosenFiringSequence check this given firing sequence
 	 * @param verbose if true method will not stop after first counterexample
 	 * @throws UnboundedException Unbounded exception
@@ -113,7 +113,7 @@ public class Separation {
 	 *
 	 * @param petriNet petriNet Net which will be checked
 	 * @param stronglyCheck stronglyCheck check strong or weakly
-	 * @param initK initK Value for k, k == 0 -> compute the maximum k and use it
+	 * @param initK initK Value for k, k == 0 -&gt; compute the maximum k and use it
 	 * @param maxLength maxLength check all sequences up this length
 	 * @param verbose outputs every firing sequence
 	 * @throws UnboundedException Unbounded exception

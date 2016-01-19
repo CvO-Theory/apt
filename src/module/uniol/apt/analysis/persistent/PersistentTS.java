@@ -35,6 +35,8 @@ import uniol.apt.adt.ts.TransitionSystem;
  * Checks whether an LTS for persistance. The system is persistent, if it satisfies the "small diamond property".
  *
  * TODO: explain SDP
+ * <pre>
+ * {@code
  *           a
  * (s0) ------------> (s1)
  *   |                  |
@@ -43,9 +45,9 @@ import uniol.apt.adt.ts.TransitionSystem;
  *   |                  |
  *   V       a          V
  * (s2) ------------> (s4)
- *
- *Above: Mini-example of an persistent LTS
- *
+ * }
+ * </pre>
+ * Above: Mini-example of an persistent LTS
  * @author Vincent Göbel, Uli Schlachter
  */
 public class PersistentTS {

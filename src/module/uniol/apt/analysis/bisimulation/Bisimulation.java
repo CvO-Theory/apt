@@ -39,9 +39,9 @@ import uniol.apt.util.Pair;
 
 /**
  * Check,
- * 1. if there are two labeled Petri nets -> if the reachability graphs of two labeled Petri nets are bisimilar.
- * 2. if there are two transition system ->  if the given transition systems are bisimilar.
- * 3. if tthere is a labeled Petri net and a transition system -> if the reachability graph of the Petri net and
+ * 1. if there are two labeled Petri nets -&gt; if the reachability graphs of two labeled Petri nets are bisimilar.
+ * 2. if there are two transition system -&gt;  if the given transition systems are bisimilar.
+ * 3. if tthere is a labeled Petri net and a transition system -&gt; if the reachability graph of the Petri net and
  *      the transition system are bisimilar.
  * @author Raffaela Ferrari
  */
@@ -59,9 +59,9 @@ public class Bisimulation {
 
 	/**
 	 * Check,
-	 * 1. if there are two labeled Petri nets -> if the reachability graphs of two labeled Petri nets are bisimilar.
-	 * 2. if there are two transition system ->  if the given transition systems are bisimilar.
-	 * 3. if tthere is a labeled Petri net and a transition system -> if the reachability graph of the Petri net and
+	 * 1. if there are two labeled Petri nets -&gt; if the reachability graphs of two labeled Petri nets are bisimilar.
+	 * 2. if there are two transition system -&gt;  if the given transition systems are bisimilar.
+	 * 3. if tthere is a labeled Petri net and a transition system -&gt; if the reachability graph of the Petri net and
 	 *      the transition system are bisimilar.
 	 * @param pnOrLts1 The first labeled Petri net or transition system.
 	 * @param pnOrLts2 The second labeled Petri net or transition system.

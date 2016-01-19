@@ -49,7 +49,7 @@ import uniol.apt.util.Pair;
 /**
  * Checks for a given Petri net depending on g and k, if there is a T-system, whose reachability graph is isomorph to
  * the reachability graph of the given Petri net. Therefore the Petri net has to fulfill some preconditions: - is plain
- * - the initial marking is a k-marking with k >= 2 - is bounded - is reversible - is persistent - all smallest cycles
+ * - the initial marking is a k-marking with k &gt;= 2 - is bounded - is reversible - is persistent - all smallest cycles
  * the same parikh vector
  * @author Raffaela Ferrari, Björn von der Linde
  */
