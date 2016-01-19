@@ -24,6 +24,7 @@ import java.util.Map;
 
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.exception.NoSuchTransformationException;
+import uniol.apt.ui.DescribedParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 import uniol.apt.ui.ParametersTransformer;
 
@@ -53,6 +54,16 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 	@Override
 	public <T> ParameterTransformation<T> getTransformation(Class<T> klass) {
 		return (ParameterTransformation<T>) transformations.get(klass);
+	}
+
+	@Override
+	public String getTransformationDescription(Class<?> klass) throws NoSuchTransformationException {
+		ParameterTransformation<?> transformation = transformations.get(klass);
+		if (transformation == null)
+			throw new NoSuchTransformationException(klass);
+		if (!(transformation instanceof DescribedParameterTransformation))
+			return "";
+		return ((DescribedParameterTransformation) transformation).getFormatDescription();
 	}
 
 	@Override

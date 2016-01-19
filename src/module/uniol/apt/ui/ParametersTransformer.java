@@ -38,6 +38,15 @@ public interface ParametersTransformer {
 	public <T> ParameterTransformation<T> getTransformation(Class<T> klass);
 
 	/**
+	 * Gets the description of the transformation for the given klass.
+	 *
+	 * @param klass the type of the object the transformation transforms
+	 * @return the description or an empty string
+	 * @throws NoSuchTransformationException
+	 */
+	public String getTransformationDescription(Class<?> klass) throws NoSuchTransformationException;
+
+	/**
 	 * Transforms a parameter string to an object of a specific type.
 	 *
 	 * @param arg
