@@ -117,12 +117,15 @@
 		<attribute name="name" />
 		<attribute name="src" default="src/@{name}" />
 		<attribute name="generated-src-with-colon" default="" />
-		<attribute name="depend-classpath" default="" />
 		<attribute name="includeantruntime" default="false" />
 		<element name="extra-javac-args" optional="true" implicit="true" />
 		<sequential>
 			<mkdir dir="classes/@{name}"/>
-			<depend srcdir="@{src}@{generated-src-with-colon}" destdir="classes/@{name}" classpath="@{depend-classpath}" />
+			<depend srcdir="@{src}@{generated-src-with-colon}" destdir="classes/@{name}">
+				<classpath>
+					<dirset dir="classes/" includes="*" />
+				</classpath>
+			</depend>
 			<javac includes="**" encoding="utf-8" destdir="classes/@{name}" source="1.7" target="1.7"
 					debug="true" debuglevel="lines,vars,source"
 					includeantruntime="@{includeantruntime}">
@@ -149,7 +152,7 @@
 	</target>
 
 	<target name="javac.io" description="Compile java source to bytecode" depends="antlr,javac.glue,javac.lib">
-		<javac-part name="io" depend-classpath="classes/glue" generated-src-with-colon=":generated-src/io">
+		<javac-part name="io" generated-src-with-colon=":generated-src/io">
 			<src path="generated-src/io" />
 		</javac-part>
 		<copy todir="classes/io">
@@ -164,12 +167,12 @@
 	</target>
 
 	<target name="javac.ant" depends="javac" description="Compile ant task">
-		<javac-part name="ant" depend-classpath="classes/module:classes/glue" includeantruntime="true" />
+		<javac-part name="ant" includeantruntime="true" />
 	</target>
 
 	<target name="javac.compiler" description="Compile annotation processors" depends="javac.glue">
 		<delete dir="classes/compiler/META-INF" failonerror="false" />
-		<javac-part name="compiler" depend-classpath="classes/glue" />
+		<javac-part name="compiler" />
 		<copy todir="classes/compiler">
 			<fileset dir="src/compiler">
 				<include name="META-INF/**" />
@@ -178,7 +181,7 @@
 	</target>
 
 	<target name="javac.test" depends="javac" description="Compile test code">
-		<javac-part name="test" src="src/test" depend-classpath="classes/module:classes/lib:classes/glue:classes/main:classes/io" />
+		<javac-part name="test" src="src/test" />
 	</target>
 
 	<target name="verify-parsers" depends="javac.ant" description="Verify all of the net collection is parsable.">
