@@ -423,6 +423,9 @@
 		<delete dir="./doc/javadoc" failonerror="false" />
 		<delete dir="generated-src" failonerror="false" />
 		<delete file="apt.jar" failonerror="false" />
+		<delete file="apt-lib.jar" failonerror="false" />
+		<delete file="apt-io.jar" failonerror="false" />
+		<delete file="apt-modules.jar" failonerror="false" />
 		<delete file="testng.xml" failonerror="false" />
 	</target>
 
@@ -436,19 +439,28 @@
 				<include name="*/META-INF/services/uniol.apt.module.Module"/>
 			</fileset>
 		</concat>
+		<jar destfile="apt-lib.jar" duplicate="fail">
+			<fileset dir="classes/glue/" />
+			<fileset dir="classes/lib/" />
+		</jar>
+		<jar destfile="apt-io.jar" duplicate="fail">
+			<fileset dir="classes/io/" />
+		</jar>
+		<jar destfile="apt-module.jar" duplicate="fail">
+			<fileset dir="classes/module/" />
+		</jar>
 		<jar destfile="apt.jar" duplicate="fail">
 			<fileset dir="classes">
 				<include name="META-INF/services/uniol.apt.module.Module"/>
 			</fileset>
-			<fileset dir="classes/module/">
+			<zipfileset src="apt-lib.jar" />
+			<zipfileset src="apt-io.jar" />
+			<zipfileset src="apt-module.jar">
 				<exclude name="META-INF/services/uniol.apt.module.Module"/>
-			</fileset>
-			<fileset dir="classes/lib/" />
+			</zipfileset>
 			<fileset dir="classes/main/">
 				<exclude name="META-INF/services/uniol.apt.module.Module"/>
 			</fileset>
-			<fileset dir="classes/io/" />
-			<fileset dir="classes/glue/" />
 			<zipfileset includes="**/*.class" src="lib/commons-io-2.4/commons-io-2.4.jar" />
 			<zipfileset includes="**/*.class" src="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
 			<zipfileset includes="**/*.class" src="lib/antlr-4.5.1/antlr-runtime-4.5.1.jar" />
