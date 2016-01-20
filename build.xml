@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project name="apt" default="javac.test" basedir=".">
+<project name="apt" default="javac" basedir=".">
 	<path id="lib.class.path">
 		<pathelement location="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
 		<pathelement location="lib/smtinterpol-2.1-219-g60cc1b6/smtinterpol.jar"/>
@@ -137,21 +137,21 @@
 		</sequential>
 	</macrodef>
 
-	<target name="javac" description="Compile java source to bytecode" depends="javac.module,javac.main" />
+	<target name="javac" description="Compile java source to bytecode" depends="javac.test" />
 
-	<target name="javac.module" description="Compile java source to bytecode" depends="antlr,javac.glue,javac.compiler,javac.lib,javac.io">
+	<target name="javac.module" depends="javac.compiler,javac.io">
 		<javac-part name="module" />
 	</target>
 
-	<target name="javac.lib" description="Compile java source to bytecode">
+	<target name="javac.lib">
 		<javac-part name="lib" />
 	</target>
 
-	<target name="javac.main" description="Compile java source to bytecode" depends="javac.module">
+	<target name="javac.main" depends="javac.module">
 		<javac-part name="main" />
 	</target>
 
-	<target name="javac.io" description="Compile java source to bytecode" depends="antlr,javac.glue,javac.lib">
+	<target name="javac.io" depends="antlr,javac.glue,javac.lib">
 		<javac-part name="io" generated-src-with-colon=":generated-src/io">
 			<src path="generated-src/io" />
 		</javac-part>
@@ -162,15 +162,15 @@
 		</copy>
 	</target>
 
-	<target name="javac.glue" description="Compile java source to bytecode">
+	<target name="javac.glue">
 		<javac-part name="glue" />
 	</target>
 
-	<target name="javac.ant" depends="javac" description="Compile ant task">
+	<target name="javac.ant" depends="javac.io">
 		<javac-part name="ant" includeantruntime="true" />
 	</target>
 
-	<target name="javac.compiler" description="Compile annotation processors" depends="javac.glue">
+	<target name="javac.compiler" depends="javac.glue">
 		<delete dir="classes/compiler/META-INF" failonerror="false" />
 		<javac-part name="compiler" />
 		<copy todir="classes/compiler">
@@ -180,7 +180,7 @@
 		</copy>
 	</target>
 
-	<target name="javac.test" depends="javac" description="Compile test code">
+	<target name="javac.test" depends="javac.main">
 		<javac-part name="test" src="src/test" />
 	</target>
 
@@ -214,7 +214,7 @@
 		</module-verify>
 	</target>
 
-	<target name="xml.test" depends="javac.ant">
+	<target name="xml.test" depends="javac.ant,javac.test">
 		<taskdef name="xml-test" classname="uniol.apt.tasks.WriteTestsXML">
 			<classpath refid="ant.class.path" />
 		</taskdef>
@@ -297,7 +297,7 @@
 		</javadoc>
 	</target>
 
-	<target name="checkstyle" depends="javac.test">
+	<target name="checkstyle" depends="javac">
 		<mkdir dir="reports" />
 		<checkstyle config="checkstyle.xml" failOnViolation="false">
 			<formatter type="xml" tofile="reports/checkstyle.xml"/>
@@ -323,7 +323,7 @@
 		<fail message="FindBugs was not found. Try -Dfindbugs.home=/path/to/findbugs."/>
 	</target>
 
-	<target name="findbugs.run" depends="javac,javac.test" if="findbugs.present">
+	<target name="findbugs.run" depends="javac" if="findbugs.present">
 		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
 			classpath="${findbugs.home}/lib/findbugs-ant.jar" />
 		<mkdir dir="reports" />
@@ -382,7 +382,7 @@
 		<fail message="JaCoCo was not found. Try -Djacoco.jar=/path/to/jacocoant.jar."/>
 	</target>
 
-	<target name="jacoco.run" depends="javac.test,xml.test" if="jacoco.present">
+	<target name="jacoco.run" depends="javac,xml.test" if="jacoco.present">
 		<taskdef resource="org/jacoco/ant/antlib.xml" classpath="${jacoco.jar}"/>
 
 		<delete file="reports/jacoco/jacoco.exec"/>
