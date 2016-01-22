@@ -265,10 +265,34 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 	/**
 	 * Get the path from the start node.
 	 * @param node The node whose path to return.
+	 * @return The path from the start node to this node. The first entry will be the outgoing edge from the start
+	 * node, the last one will be the edge leading to the given node.
+	 */
+	public List<E> getEdgePathFromStart(N node) {
+		if (!predecessorMap.containsKey(node) && !node.equals(startNode)) {
+			return Collections.emptyList();
+		}
+
+		// Possible optimization: Cache the result
+		List<E> result = new ArrayList<>();
+
+		while (node != null) {
+			if (predecessorMap.containsKey(node))
+				result.add(predecessorMap.get(node));
+			node = getPredecessor(node);
+		}
+
+		Collections.reverse(result);
+		return Collections.unmodifiableList(result);
+	}
+
+	/**
+	 * Get the path from the start node.
+	 * @param node The node whose path to return.
 	 * @return The path from the start node to this node. The first entry will be the start node, the last one will
 	 * be the given node.
 	 */
-	public List<N> getPathFromStart(N node) {
+	public List<N> getNodePathFromStart(N node) {
 		if (!predecessorMap.containsKey(node) && !node.equals(startNode)) {
 			return Collections.emptyList();
 		}

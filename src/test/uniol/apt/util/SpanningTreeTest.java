@@ -35,6 +35,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.adt.matcher.Matchers.*;
 
 /** @author Uli Schlachter */
+@SuppressWarnings("unchecked")
 public class SpanningTreeTest {
 	static private SpanningTree<TransitionSystem, Arc, State> get(TransitionSystem ts) {
 		return SpanningTree.<TransitionSystem, Arc, State>get(ts);
@@ -131,7 +132,9 @@ public class SpanningTreeTest {
 		assertThat(tree.getPredecessor(s0), is(equalTo(null)));
 		assertThat(tree.getPredecessorEdge(s0), is(equalTo(null)));
 
-		assertThat(tree.getPathFromStart(s0), contains(s0));
+		assertThat(tree.getNodePathFromStart(s0), contains(s0));
+
+		assertThat(tree.getEdgePathFromStart(s0), empty());
 	}
 
 	@Test
@@ -209,10 +212,23 @@ public class SpanningTreeTest {
 					arcThatConnects(forward, "s1", "s3")).or(
 					arcThatConnects(forward, "s2", "s3"))));
 
-		assertThat(tree.getPathFromStart(s0), contains(s0));
-		assertThat(tree.getPathFromStart(s1), contains(s0, s1));
-		assertThat(tree.getPathFromStart(s2), contains(s0, s2));
-		assertThat(tree.getPathFromStart(s3), anyOf(contains(s0, s1, s3), contains(s0, s2, s3)));
+		assertThat(tree.getNodePathFromStart(s0), contains(s0));
+		assertThat(tree.getNodePathFromStart(s1), contains(s0, s1));
+		assertThat(tree.getNodePathFromStart(s2), contains(s0, s2));
+		assertThat(tree.getNodePathFromStart(s3), anyOf(contains(s0, s1, s3), contains(s0, s2, s3)));
+
+		assertThat(tree.getEdgePathFromStart(s0), empty());
+		assertThat(tree.getEdgePathFromStart(s1), contains(arcThatConnects(forward, "s0", "s1")));
+		assertThat(tree.getEdgePathFromStart(s2), contains(arcThatConnects(forward, "s0", "s2")));
+		if (forward) {
+			assertThat(tree.getEdgePathFromStart(s3), anyOf(
+					contains(arcThatConnects("s0", "s1"), arcThatConnects("s1", "s3")),
+					contains(arcThatConnects("s0", "s2"), arcThatConnects("s2", "s3"))));
+		} else {
+			assertThat(tree.getEdgePathFromStart(s3), anyOf(
+					contains(arcThatConnects("s1", "s0"), arcThatConnects("s3", "s1")),
+					contains(arcThatConnects("s2", "s0"), arcThatConnects("s3", "s2"))));
+		}
 	}
 
 	@Test
@@ -246,9 +262,13 @@ public class SpanningTreeTest {
 		assertThat(tree.getPredecessorEdge(t), is(arcThatConnects("s", "t")));
 		assertThat(tree.getPredecessorEdge(v), is(arcThatConnects("s", "v")));
 
-		assertThat(tree.getPathFromStart(s), contains(s));
-		assertThat(tree.getPathFromStart(t), contains(s, t));
-		assertThat(tree.getPathFromStart(v), contains(s, v));
+		assertThat(tree.getNodePathFromStart(s), contains(s));
+		assertThat(tree.getNodePathFromStart(t), contains(s, t));
+		assertThat(tree.getNodePathFromStart(v), contains(s, v));
+
+		assertThat(tree.getEdgePathFromStart(s), empty());
+		assertThat(tree.getEdgePathFromStart(t), contains(arcThatConnects("s", "t")));
+		assertThat(tree.getEdgePathFromStart(v), contains(arcThatConnects("s", "v")));
 	}
 
 	@Test
@@ -272,9 +292,13 @@ public class SpanningTreeTest {
 		assertThat(tree.getPredecessorEdge(t), is(equalTo(null)));
 		assertThat(tree.getPredecessorEdge(v), is(equalTo(null)));
 
-		assertThat(tree.getPathFromStart(s), contains(s));
-		assertThat(tree.getPathFromStart(t), empty());
-		assertThat(tree.getPathFromStart(v), empty());
+		assertThat(tree.getNodePathFromStart(s), contains(s));
+		assertThat(tree.getNodePathFromStart(t), empty());
+		assertThat(tree.getNodePathFromStart(v), empty());
+
+		assertThat(tree.getEdgePathFromStart(s), empty());
+		assertThat(tree.getEdgePathFromStart(t), empty());
+		assertThat(tree.getEdgePathFromStart(v), empty());
 	}
 
 	@Test
@@ -306,10 +330,17 @@ public class SpanningTreeTest {
 		assertThat(tree.getPredecessorEdge(s1),
 				is(either(arcThatConnects("l", "s1")).or(arcThatConnects("r", "s1"))));
 
-		assertThat(tree.getPathFromStart(s0), contains(s0));
-		assertThat(tree.getPathFromStart(l), contains(s0, l));
-		assertThat(tree.getPathFromStart(r), contains(s0, r));
-		assertThat(tree.getPathFromStart(s1), anyOf(contains(s0, l, s1), contains(s0, r, s1)));
+		assertThat(tree.getNodePathFromStart(s0), contains(s0));
+		assertThat(tree.getNodePathFromStart(l), contains(s0, l));
+		assertThat(tree.getNodePathFromStart(r), contains(s0, r));
+		assertThat(tree.getNodePathFromStart(s1), anyOf(contains(s0, l, s1), contains(s0, r, s1)));
+
+		assertThat(tree.getEdgePathFromStart(s0), empty());
+		assertThat(tree.getEdgePathFromStart(l), contains(arcThatConnects("s0", "l")));
+		assertThat(tree.getEdgePathFromStart(r), contains(arcThatConnects("s0", "r")));
+		assertThat(tree.getEdgePathFromStart(s1), anyOf(
+					contains(arcThatConnects("s0", "l"), arcThatConnects("l", "s1")),
+					contains(arcThatConnects("s0", "r"), arcThatConnects("r", "s1"))));
 	}
 
 	@Test
@@ -333,9 +364,13 @@ public class SpanningTreeTest {
 		assertThat(tree.getPredecessorEdge(s1), is(arcThatConnects("s0", "s1")));
 		assertThat(tree.getPredecessorEdge(fail), is(equalTo(null)));
 
-		assertThat(tree.getPathFromStart(s0), contains(s0));
-		assertThat(tree.getPathFromStart(s1), contains(s0, s1));
-		assertThat(tree.getPathFromStart(fail), is(empty()));
+		assertThat(tree.getNodePathFromStart(s0), contains(s0));
+		assertThat(tree.getNodePathFromStart(s1), contains(s0, s1));
+		assertThat(tree.getNodePathFromStart(fail), is(empty()));
+
+		assertThat(tree.getEdgePathFromStart(s0), empty());
+		assertThat(tree.getEdgePathFromStart(s1), contains(arcThatConnects("s0", "s1")));
+		assertThat(tree.getEdgePathFromStart(fail), empty());
 	}
 }
 
