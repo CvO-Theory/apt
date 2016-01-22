@@ -146,11 +146,11 @@
 		<javac-part name="lib" />
 	</target>
 
-	<target name="javac.main" depends="javac.module">
+	<target name="javac.main" depends="javac.module,javac.compiler">
 		<javac-part name="main" />
 	</target>
 
-	<target name="javac.io" depends="antlr,javac.glue,javac.lib">
+	<target name="javac.io" depends="antlr,javac.compiler,javac.lib">
 		<javac-part name="io" generated-src-with-colon=":generated-src/io">
 			<src path="generated-src/io" />
 		</javac-part>
