@@ -296,7 +296,7 @@
 			<packageset dir="src/compiler"/>
 			<packageset dir="src/glue"/>
 			<packageset dir="src/test"/>
-			<packageset dir="generated-src"/>
+			<packageset dir="generated-src/io"/>
 		</javadoc>
 	</target>
 
