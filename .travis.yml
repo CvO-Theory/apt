@@ -9,8 +9,11 @@ notifications:
   on_failure: always
   on_success: change
 script:
-  - ant test
-  - ant jar
   - ant verify-parsers
+  - ant clean
+  - ant jar
   - ./apt.sh draw nets/crashkurs-cc1-net.apt
+  - ant clean
   - ant javadoc
+  - ant clean
+  - ant test
