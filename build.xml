@@ -210,6 +210,9 @@
 			<fileset dir="classes/module" >
 				<include name="**/*Module.class" />
 			</fileset>
+			<fileset dir="classes/main" >
+				<include name="**/*Module.class" />
+			</fileset>
 		</module-verify>
 	</target>
 
