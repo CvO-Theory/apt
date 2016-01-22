@@ -282,7 +282,7 @@
 		<invoke-testng outputdir="testng-single-class-${class.name}-${test.name}" />
 	</target>
 
-	<target name="javadoc" description="Generate documentation from java source">
+	<target name="javadoc" depends="antlr" description="Generate documentation from java source">
 		<mkdir dir="./doc/javadoc"/>
 		<javadoc encoding="utf-8" destdir="./doc/javadoc" author="true"
 				version="true" use="true" charset="UTF-8"
@@ -296,6 +296,7 @@
 			<packageset dir="src/compiler"/>
 			<packageset dir="src/glue"/>
 			<packageset dir="src/test"/>
+			<packageset dir="generated-src"/>
 		</javadoc>
 	</target>
 
