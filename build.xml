@@ -136,7 +136,7 @@
 		</sequential>
 	</macrodef>
 
-	<target name="javac" description="Compile java source to bytecode" depends="javac.test" />
+	<target name="javac" description="Compile java source to bytecode" depends="javac.test,javac.ant" />
 
 	<target name="javac.module" depends="javac.compiler,javac.io">
 		<javac-part name="module" />
