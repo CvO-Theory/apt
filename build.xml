@@ -201,7 +201,7 @@
 		</parsers-verify>
 	</target>
 
-	<target name="verify-modules" depends="javac.ant" description="Verify the use of parameters in modules.">
+	<target name="verify-modules" depends="javac" description="Verify the use of parameters in modules.">
 		<taskdef name="module-verify" classname="uniol.apt.tasks.ModuleParameterVerifyTask">
 			<classpath refid="ant.class.path" />
 		</taskdef>
