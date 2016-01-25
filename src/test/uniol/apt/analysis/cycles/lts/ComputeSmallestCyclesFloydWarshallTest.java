@@ -233,6 +233,16 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertTrue(testCycleAndParikh(c, "[s2, s1, s2]", "b", "c"));
 		assertTrue(testCycleAndParikh(c, "[s1, s2, s1]", "b", "c"));
 	}
+
+	@Test
+	public void testRemovalOfNonSmallCycles() {
+		ComputeSmallestCycles calc = createComputeSmallestCycles();
+		Set<Pair<List<String>, ParikhVector>> c = calc.computePVsOfSmallestCycles(getRemovalOfNonSmallCyclesTS());
+		assertEquals(c.size(), 3);
+		assertTrue(testCycleAndParikh(c, "[7, 8, 9, 7]", "a", "b", "c"));
+		assertTrue(testCycleAndParikh(c, "[8, 9, 7, 8]", "a", "b", "c"));
+		assertTrue(testCycleAndParikh(c, "[9, 7, 8, 9]", "a", "b", "c"));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

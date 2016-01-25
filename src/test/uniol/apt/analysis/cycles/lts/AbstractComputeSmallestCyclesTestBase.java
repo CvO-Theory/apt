@@ -122,6 +122,34 @@ public abstract class AbstractComputeSmallestCyclesTestBase {
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 	}
 
+	protected TransitionSystem getRemovalOfNonSmallCyclesTS() {
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
+		ts.setInitialState("0");
+		ts.createArc("0", "1", "a");
+		ts.createArc("1", "2", "b");
+		ts.createArc("2", "3", "c");
+		ts.createArc("3", "4", "a");
+		ts.createArc("4", "5", "b");
+		ts.createArc("4", "6", "c");
+		ts.createArc("5", "0", "c");
+		ts.createArc("6", "0", "b");
+
+		// Just for reachability
+		ts.createArc("4", "7", "whatever");
+
+		// The datastructures make sure that state "0" stays the first state in getNodes() and thus the
+		// implementation in ComputeSmallestCyclesJohnson will find cycles going through that state first. Thus,
+		// when this state is reached, two cycles with Parikh vector 2*[a,b,c] are currently known. The bug that
+		// we are testing is that only one of these will be removed when the following cycle is found.
+
+		ts.createArc("7", "8", "a");
+		ts.createArc("8", "9", "b");
+		ts.createArc("9", "7", "c");
+
+		return ts;
+	}
+
 	protected boolean testCycleAndParikh(Set<Pair<List<String>, ParikhVector>> c, String cycle, String... parikh) {
 		for (Pair<List<String>, ParikhVector> pair : c) {
 			if (pair.getFirst().toString().equals(cycle)
