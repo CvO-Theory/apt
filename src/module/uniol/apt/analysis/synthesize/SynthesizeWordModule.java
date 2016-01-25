@@ -51,7 +51,10 @@ public class SynthesizeWordModule extends AbstractModule implements Module {
 
 	@Override
 	public String getLongDescription() {
-		return getShortDescription() + ". This module tries to synthesize a Petri Net whose prefix language "
+		return getShortDescription() + ".\n\n"
+			+ SynthesizeModule.getOptionsDescription("cycle, ", " - cycle: Form a cyclic word representing"
+					+ " w^* instead of solving the input word w directly\n")
+			+ "\n\nThis module tries to synthesize a Petri Net whose prefix language "
 			+ "contains only the specified word. Thus, no other words are firable. If this fails, a list "
 			+ " of separation failures is printed.\n\nExample calls:\n\n"
 			+ " apt " + getName() + " none a,b,a,b\n\n"
@@ -81,8 +84,7 @@ public class SynthesizeWordModule extends AbstractModule implements Module {
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
-		SynthesizeModule.requireCommon(inputSpec, ", cycle",
-				", cycle (form a cyclic word w^* from the input instead of solving w directly)");
+		SynthesizeModule.requireCommon(inputSpec);
 		inputSpec.addParameter("word", Word.class, "The word that should be synthesized");
 	}
 

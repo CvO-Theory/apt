@@ -57,7 +57,8 @@ public class SynthesizeModule extends AbstractModule implements Module {
 
 	@Override
 	public String getLongDescription() {
-		return getShortDescription() + ".\n\nExample calls:\n\n"
+		return getShortDescription() + ".\n\n"
+			+ getOptionsDescription() + "\n\nExample calls:\n\n"
 			+ " apt " + getName() + " none lts.apt\n"
 			+ " apt " + getName() + " 3-bounded lts.apt\n"
 			+ " apt " + getName() + " pure,safe lts.apt\n"
@@ -69,19 +70,36 @@ public class SynthesizeModule extends AbstractModule implements Module {
 		return "synthesize";
 	}
 
-	static public void requireCommon(ModuleInputSpec inputSpec) {
-		requireCommon(inputSpec, "", "");
+	static public String getOptionsDescription() {
+		return getOptionsDescription("", "");
 	}
 
-	static public void requireCommon(ModuleInputSpec inputSpec, String extra1, String extra2) {
-		inputSpec.addParameter("options", String.class,
-				"Comma separated list of options,"
-				+ " can be verbose, none, safe, [k]-bounded, pure, plain, tnet, marked-graph,"
-				+ " output-nonbranching (on), conflict-free (cf), homogeneous,"
-				+ " upto-language-equivalence (language, le), minimize" + extra1 + "."
-				+ " Special options are verbose (print detail information about the regions),"
-				+ " quick-fail (fail quickly when the result 'success: No' is known)" + extra2 + " and"
-				+ " minimize (minimize the number of places in the solution).");
+	static public String getOptionsDescription(String extraOptions, String extraOptionsDescriptions) {
+		return "Supported options are: none, [k]-bounded, safe, pure, plain, tnet, marked-graph,"
+			+ " output-nonbranching (on), conflict-free (cf), homogeneous,"
+			+ " upto-language-equivalence (language, le), " + extraOptions + "minimize (minimal), verbose "
+			+ "and quick-fail.\n\nThe meaning of these options is as follows:\n"
+			+ " - none: No further requirements are made.\n"
+			+ " - [k]-bounded: In every reachable marking, every place contains at most [k] tokens.\n"
+			+ " - safe: Equivalent to 1-bounded.\n"
+			+ " - pure: Every transition either consumes or produces tokens on a place, but noth both"
+			+ " (=no side-conditions).\n"
+			+ " - plain: Every flow has a weight of at most one.\n"
+			+ " - tnet: Every place's preset and postset contains at most one entry.\n"
+			+ " - marked-graph: Every place's preset and postset contains exactly one entry.\n"
+			+ " - output-nonbranching: Every place's postset contains at most one entry.\n"
+			+ " - conflict-free: The Petri net is plain and every place either has at most one entry in"
+			+ " its postset or its preset is contained in its postset.\n"
+			+ " - homogeneous: All outgoing flows from a place have the same weight.\n"
+			+ " - minimize: The Petri net has as few places as possible.\n"
+			+ extraOptionsDescriptions
+			+ "The following options only affect the output, but not the produced Petri net:\n"
+			+ " - verbose: Print details about each calculated region/place.\n"
+			+ " - quick-fail: Stop the algorithm when the result 'success: No' is clear.";
+	}
+
+	static public void requireCommon(ModuleInputSpec inputSpec) {
+		inputSpec.addParameter("options", String.class, "Comma separated list of options");
 	}
 
 	@Override
