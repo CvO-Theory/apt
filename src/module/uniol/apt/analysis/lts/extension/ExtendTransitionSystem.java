@@ -50,7 +50,6 @@ public class ExtendTransitionSystem {
 	private final BitSet ltsCode;
 	private final ArrayList<String> ltsNodes;
 	private final ArrayList<String> ltsLabels;
-	private ParikhVector givenPV = null;
 	private List<BitSet> knownMinimalValids;
 
 	private BitSet lastGenerated;
@@ -362,31 +361,10 @@ public class ExtendTransitionSystem {
 		ReversibleTS r = new ReversibleTS(ts);
 		ComputeSmallestCycles s = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm();
 
-
 		if (!p.isPersistent() || !r.isReversible() || !s.checkSamePVs(ts))
 			return false;
 
-		if (givenPV != null && !checkSamePVs(ts, givenPV))
-			return false;
-
 		return true;
-	}
-
-	/**
-	 * Checks for a given parikh vector if one parikh vector of the smallest cylces is the same.
-	 * @param ts The transition system to check
-	 * @param v The Parikh vector to find
-	 * @return True if one parikh vector is found.
-	 */
-	private boolean checkSamePVs(TransitionSystem ts, ParikhVector v) {
-		ComputeSmallestCycles s = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm();
-		Set<Pair<List<String>, ParikhVector>> pvs = s.computePVsOfSmallestCycles(ts);
-		for (Pair<List<String>, ParikhVector> pair : pvs) {
-			if (pair.getSecond().equals(v)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public BitSet getLTSCode() {
@@ -395,10 +373,6 @@ public class ExtendTransitionSystem {
 
 	public List<BitSet> getListOfMinimals() {
 		return this.knownMinimalValids;
-	}
-
-	public void setGivenPV(ParikhVector pv) {
-		this.givenPV = pv;
 	}
 
 	public BitSet getLastGenerated() {
