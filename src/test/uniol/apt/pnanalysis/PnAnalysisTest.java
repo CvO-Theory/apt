@@ -111,7 +111,7 @@ public class PnAnalysisTest {
 		assertTrue(dead < 2, "dead < 2");
 	}
 
-	@Test(enabled = false)
+	@Test
 	public void test() throws Exception {
 		PetriNet pn = ParserTestUtils.getAptPN("./nets/EB-PhD-Fundamenta.apt");
 		PnAnalysis ana = new PnAnalysis();
