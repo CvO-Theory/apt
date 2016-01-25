@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.cycles.lts;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,26 @@ import uniol.apt.util.Pair;
  */
 public abstract class AbstractComputeSmallestCycles implements ComputeSmallestCycles {
 	private CycleCounterExample counterExample; // Stored countercycles
+
+	protected void addCycle(Set<Pair<List<String>, ParikhVector>> cycles, boolean smallest,
+			Pair<List<String>, ParikhVector> pair) {
+		if (smallest) {
+			Iterator<Pair<List<String>, ParikhVector>> iter = cycles.iterator();
+			while (iter.hasNext()) {
+				Pair<List<String>, ParikhVector> pair2 = iter.next();
+				int comp = pair2.getSecond().tryCompareTo(pair.getSecond());
+				if (comp < 0) {
+					// pairs2 has a smaller Parikh vector
+					return;
+				}
+				if (comp > 0) {
+					// This vector is smaller than pair2.
+					iter.remove();
+				}
+			}
+		}
+		cycles.add(pair);
+	}
 
 	@Override
 	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts) {

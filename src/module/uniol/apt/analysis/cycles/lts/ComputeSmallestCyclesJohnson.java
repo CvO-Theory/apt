@@ -208,25 +208,6 @@ class ComputeSmallestCyclesJohnson extends AbstractComputeSmallestCycles {
 		}
 		b.set(state, new HashSet<Integer>());
 	}
-
-	private void addCycle(Set<Pair<List<String>, ParikhVector>> cycles, boolean smallest,
-			Pair<List<String>, ParikhVector> pair) {
-		if (smallest) {
-			for (Pair<List<String>, ParikhVector> pair2 : cycles) {
-				int comp = pair2.getSecond().tryCompareTo(pair.getSecond());
-				if (comp < 0) {
-					// pairs2 has a smaller Parikh vector
-					return;
-				}
-				if (comp > 0) {
-					// This vector is smaller than pair2.
-					cycles.remove(pair2);
-					break;
-				}
-			}
-		}
-		cycles.add(pair);
-	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

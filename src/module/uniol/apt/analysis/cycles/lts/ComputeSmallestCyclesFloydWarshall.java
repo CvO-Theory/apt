@@ -129,19 +129,8 @@ class ComputeSmallestCyclesFloydWarshall extends AbstractComputeSmallestCycles {
 		// time: O(|V|^2*|E|^2)
 		// place: O(|V|^3*|E|^3)
 		Set<Pair<List<String>, ParikhVector>> out = new HashSet<>();
-		for (Pair<List<String>, ParikhVector> pair1 : cycles) {
-			boolean lt = true;
-			for (Pair<List<String>, ParikhVector> pair2 : cycles) {
-				if (pair1 != pair2) {
-					if (pair2.getSecond().tryCompareTo(pair1.getSecond()) < 0) {
-						lt = false;
-						break;
-					}
-				}
-			}
-			if (lt) {
-				out.add(pair1);
-			}
+		for (Pair<List<String>, ParikhVector> pair : cycles) {
+			addCycle(out, true, pair);
 		}
 		return out;
 	}

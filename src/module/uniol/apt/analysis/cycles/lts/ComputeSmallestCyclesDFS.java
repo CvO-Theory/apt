@@ -43,30 +43,6 @@ class ComputeSmallestCyclesDFS extends AbstractComputeSmallestCycles {
 	private Set<Pair<List<String>, ParikhVector>> cycles;
 
 	/**
-	 * Checks whether the given cycle is a smallest cycle and if it is so and another greater is in the list of the
-	 * cycles, this one will be kicked.
-	 * @param pair - the cycle to check.
-	 * @return true if the cycle is a smallest cycle.
-	 */
-	private boolean isSmallestCycle(Pair<List<String>, ParikhVector> pair) {
-		Pair<List<String>, ParikhVector> kick = null;
-		for (Pair<List<String>, ParikhVector> pair2 : cycles) {
-			int comp = pair2.getSecond().tryCompareTo(pair.getSecond());
-			if (comp < 0) {
-				// pairs2 has a smaller Parikh vector
-				return false;
-			}
-			if (comp > 0) {
-				// This vector is smaller than pair2.
-				kick = pair2;
-				break;
-			}
-		}
-		cycles.remove(kick);
-		return true;
-	}
-
-	/**
 	 * Computes the parikh vectors of all smallest cycles of a labeled transition system with a algorithm using the
 	 * depth first search. (Requirement A10)
 	 * @param ts       - the transitionsystem to examine.
@@ -75,26 +51,7 @@ class ComputeSmallestCyclesDFS extends AbstractComputeSmallestCycles {
 	 */
 	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts, boolean smallest) {
 		// compute cycles
-		Set<Pair<List<String>, ParikhVector>> out = calculate(ts, smallest);
-		if (!smallest) {
-			// Compare smallest cycles.
-			out = new HashSet<>();
-			for (Pair<List<String>, ParikhVector> pair1 : cycles) {
-				boolean lt = true;
-				for (Pair<List<String>, ParikhVector> pair2 : cycles) {
-					if (pair1 != pair2) {
-						if (pair2.getSecond().tryCompareTo(pair1.getSecond()) < 0) {
-							lt = false;
-							break;
-						}
-					}
-				}
-				if (lt) {
-					out.add(pair1);
-				}
-			}
-		}
-		return out;
+		return calculate(ts, smallest);
 	}
 
 	/**
@@ -135,9 +92,7 @@ class ComputeSmallestCyclesDFS extends AbstractComputeSmallestCycles {
 			List<String> cycle = new LinkedList<>(sequence.subList(idx, sequence.size()));
 			List<String> cycleParikh = new LinkedList<>(labels.subList(idx, sequence.size()));
 			Pair<List<String>, ParikhVector> pair = new Pair<>(cycle, new ParikhVector(cycleParikh));
-			if (!smallest || isSmallestCycle(pair)) {
-				cycles.add(pair);
-			}
+			addCycle(cycles, smallest, pair);
 			return;
 		}
 
