@@ -63,7 +63,7 @@ class ComputeSmallestCyclesFloydWarshall extends AbstractComputeSmallestCycles {
 			if (w == null) {
 				w = new Weight();
 			}
-			ParikhVector pv = new ParikhVector(ts, arc.getLabel());
+			ParikhVector pv = new ParikhVector(arc.getLabel());
 			List<String> seq = new ArrayList<>();
 			seq.add(source.getId());
 			seq.add(target.getId());
@@ -96,7 +96,7 @@ class ComputeSmallestCyclesFloydWarshall extends AbstractComputeSmallestCycles {
 						for (PVwithSequence p2 : erg) {
 							// time: O(|E|)
 							// place: O(0)
-							if (p2.getPv().lessThan(p1.getPv())) {
+							if (p2.getPv().tryCompareTo(p1.getPv()) < 0) {
 								add = false;
 								break;
 							}
@@ -133,7 +133,7 @@ class ComputeSmallestCyclesFloydWarshall extends AbstractComputeSmallestCycles {
 			boolean lt = true;
 			for (Pair<List<String>, ParikhVector> pair2 : cycles) {
 				if (pair1 != pair2) {
-					if (pair2.getSecond().lessThan(pair1.getSecond())) {
+					if (pair2.getSecond().tryCompareTo(pair1.getSecond()) < 0) {
 						lt = false;
 						break;
 					}

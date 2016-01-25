@@ -115,7 +115,7 @@ public class ComputeSmallestCyclesDFSTest extends AbstractComputeSmallestCyclesT
 		assertTrue(calc.checkSamePVs(ts));
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 1);
-		assertTrue(testCycleAndParikh(c, "[s1, s2, s3]", "{a=2, b=0, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2, s3]", "{a=2, d=1}"));
 	}
 
 	@Test
@@ -127,9 +127,9 @@ public class ComputeSmallestCyclesDFSTest extends AbstractComputeSmallestCyclesT
 		assertFalse(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 2);
 		//bcd
-		assertTrue(testCycleAndParikh(c, "[s1, s2, s3]", "{a=0, b=1, c=1, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2, s3]", "{b=1, c=1, d=1}"));
 		//bbb
-		assertTrue(testCycleAndParikh(c, "[s1, s4, s5]", "{a=0, b=3, c=0, d=0}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s4, s5]", "{b=3}"));
 	}
 
 	@Test
@@ -141,7 +141,7 @@ public class ComputeSmallestCyclesDFSTest extends AbstractComputeSmallestCyclesT
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 1);
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s1, s3, s4, s5]", "{a=0, b=3, c=0, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s3, s4, s5]", "{b=3, d=1}"));
 	}
 
 	@Test
@@ -153,9 +153,9 @@ public class ComputeSmallestCyclesDFSTest extends AbstractComputeSmallestCyclesT
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 2);
 		//bcdbb
-		assertTrue(testCycleAndParikh(c, "[s1, s2, s3, s4, s5]", "{a=0, b=3, c=1, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2, s3, s4, s5]", "{b=3, c=1, d=1}"));
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s1, s6, s3, s4, s5]", "{a=0, b=3, c=1, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s6, s3, s4, s5]", "{b=3, c=1, d=1}"));
 	}
 
 	@Test
@@ -167,13 +167,13 @@ public class ComputeSmallestCyclesDFSTest extends AbstractComputeSmallestCyclesT
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 4);
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s0]", "{a=1, b=0, c=0, d=0}"));
+		assertTrue(testCycleAndParikh(c, "[s0]", "{a=1}"));
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s1]", "{a=0, b=1, c=0, d=0}"));
+		assertTrue(testCycleAndParikh(c, "[s1]", "{b=1}"));
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s2]", "{a=0, b=0, c=1, d=0}"));
+		assertTrue(testCycleAndParikh(c, "[s2]", "{c=1}"));
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s3]", "{a=0, b=0, c=0, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s3]", "{d=1}"));
 	}
 
 	@Test
@@ -184,10 +184,10 @@ public class ComputeSmallestCyclesDFSTest extends AbstractComputeSmallestCyclesT
 		assertFalse(calc.checkSamePVs(ts));
 		assertFalse(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 4);
-		assertTrue(testCycleAndParikh(c, "[s0, s1]", "{a=1, b=1, c=0}"));
-		assertTrue(testCycleAndParikh(c, "[s1, s2]", "{a=1, b=1, c=0}"));
-		assertTrue(testCycleAndParikh(c, "[s0, s3]", "{a=1, b=1, c=0}"));
-		assertTrue(testCycleAndParikh(c, "[s3, s4, s5, s6]", "{a=1, b=0, c=3}"));
+		assertTrue(testCycleAndParikh(c, "[s0, s1]", "{a=1, b=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2]", "{a=1, b=1}"));
+		assertTrue(testCycleAndParikh(c, "[s0, s3]", "{a=1, b=1}"));
+		assertTrue(testCycleAndParikh(c, "[s3, s4, s5, s6]", "{a=1, c=3}"));
 	}
 
 	@Test
@@ -198,10 +198,10 @@ public class ComputeSmallestCyclesDFSTest extends AbstractComputeSmallestCyclesT
 		assertFalse(calc.checkSamePVs(ts));
 		assertFalse(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 4);
-		assertTrue(testCycleAndParikh(c, "[s0, s1]", "{a=1, b=1, c=0}"));
-		assertTrue(testCycleAndParikh(c, "[s0, s2]", "{a=1, b=0, c=1}"));
-		assertTrue(testCycleAndParikh(c, "[s2, s1]", "{a=0, b=1, c=1}"));
-		assertTrue(testCycleAndParikh(c, "[s1, s2]", "{a=0, b=1, c=1}"));
+		assertTrue(testCycleAndParikh(c, "[s0, s1]", "{a=1, b=1}"));
+		assertTrue(testCycleAndParikh(c, "[s0, s2]", "{a=1, c=1}"));
+		assertTrue(testCycleAndParikh(c, "[s2, s1]", "{b=1, c=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2]", "{b=1, c=1}"));
 	}
 }
 

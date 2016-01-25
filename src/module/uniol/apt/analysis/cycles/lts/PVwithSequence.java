@@ -53,7 +53,7 @@ public class PVwithSequence {
 	 *         concatenation of the sequences of the given parikh vectors with there sequences.
 	 */
 	public static PVwithSequence add(PVwithSequence first, PVwithSequence second) {
-		ParikhVector p = ParikhVector.add(first.getPv(), second.getPv());
+		ParikhVector p = first.getPv().add(second.getPv());
 		List<String> list = new ArrayList<>();
 		list.addAll(first.getSequence());
 		list.addAll(second.getSequence());
@@ -70,7 +70,7 @@ public class PVwithSequence {
 	 *         concatenation of the sequences of the given parikh vectors with there sequences.
 	 */
 	public static PVwithSequence glue(PVwithSequence first, PVwithSequence second) {
-		ParikhVector p = ParikhVector.add(first.getPv(), second.getPv());
+		ParikhVector p = first.getPv().add(second.getPv());
 		List<String> list = new ArrayList<>();
 		list.addAll(first.getSequence());
 		list.remove(list.size() - 1);

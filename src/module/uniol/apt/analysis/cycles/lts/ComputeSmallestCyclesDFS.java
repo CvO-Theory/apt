@@ -51,10 +51,13 @@ class ComputeSmallestCyclesDFS extends AbstractComputeSmallestCycles {
 	private boolean isSmallestCycle(Pair<List<String>, ParikhVector> pair) {
 		Pair<List<String>, ParikhVector> kick = null;
 		for (Pair<List<String>, ParikhVector> pair2 : cycles) {
-			if (pair2.getSecond().lessThan(pair.getSecond())) {
+			int comp = pair2.getSecond().tryCompareTo(pair.getSecond());
+			if (comp < 0) {
+				// pairs2 has a smaller Parikh vector
 				return false;
 			}
-			if (pair.getSecond().lessThan(pair2.getSecond())) {
+			if (comp > 0) {
+				// This vector is smaller than pair2.
 				kick = pair2;
 				break;
 			}
@@ -80,7 +83,7 @@ class ComputeSmallestCyclesDFS extends AbstractComputeSmallestCycles {
 				boolean lt = true;
 				for (Pair<List<String>, ParikhVector> pair2 : cycles) {
 					if (pair1 != pair2) {
-						if (pair2.getSecond().lessThan(pair1.getSecond())) {
+						if (pair2.getSecond().tryCompareTo(pair1.getSecond()) < 0) {
 							lt = false;
 							break;
 						}
@@ -131,7 +134,7 @@ class ComputeSmallestCyclesDFS extends AbstractComputeSmallestCycles {
 			idx = sequence.size() - idx;
 			List<String> cycle = new LinkedList<>(sequence.subList(idx, sequence.size()));
 			List<String> cycleParikh = new LinkedList<>(labels.subList(idx, sequence.size()));
-			Pair<List<String>, ParikhVector> pair = new Pair<>(cycle, new ParikhVector(tsys, cycleParikh));
+			Pair<List<String>, ParikhVector> pair = new Pair<>(cycle, new ParikhVector(cycleParikh));
 			if (!smallest || isSmallestCycle(pair)) {
 				cycles.add(pair);
 			}

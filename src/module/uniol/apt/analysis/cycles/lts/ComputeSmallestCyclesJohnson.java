@@ -179,7 +179,7 @@ class ComputeSmallestCyclesJohnson extends AbstractComputeSmallestCycles {
 				// cycle found
 				List<String> sCycle = new ArrayList<>(sStack);
 				List<String> lCycle = new ArrayList<>(lStack);
-				addCycle(cycles, smallest, new Pair<>(sCycle, new ParikhVector(ts, lCycle)));
+				addCycle(cycles, smallest, new Pair<>(sCycle, new ParikhVector(lCycle)));
 				foundCycle = true;
 			} else if (!blocked[arc.getSecond()]) {
 				foundCycle |= doDfs(ts, adjacencies, states, s, arc.getSecond(), sStack, lStack, blocked, b,
@@ -213,10 +213,13 @@ class ComputeSmallestCyclesJohnson extends AbstractComputeSmallestCycles {
 			Pair<List<String>, ParikhVector> pair) {
 		if (smallest) {
 			for (Pair<List<String>, ParikhVector> pair2 : cycles) {
-				if (pair2.getSecond().lessThan(pair.getSecond())) {
+				int comp = pair2.getSecond().tryCompareTo(pair.getSecond());
+				if (comp < 0) {
+					// pairs2 has a smaller Parikh vector
 					return;
 				}
-				if (pair.getSecond().lessThan(pair2.getSecond())) {
+				if (comp > 0) {
+					// This vector is smaller than pair2.
 					cycles.remove(pair2);
 					break;
 				}
