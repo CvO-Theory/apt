@@ -62,7 +62,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	private final Map<String, Map<ArcKey, Arc>> postsetEdges = new HashMap<>();
 	private int numArcs = 0;
 	private State initialState = null;
-	private long labelRev = 0;
 
 	/**
 	 * Creates a new TransitionSystem with no name (e.g. "").
@@ -95,7 +94,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 				addArc(entry.getKey(), new Arc(this, entry.getValue()));
 			}
 		}
-		this.labelRev = ts.labelRev;
 		this.initialState = states.get(ts.getInitialState().getId());
 		copyExtensions(ts);
 	}
@@ -616,7 +614,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 */
 	private void addLabel(String label) {
 		alphabet.add(label);
-		++labelRev;
 	}
 
 	/**
@@ -626,7 +623,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 */
 	private void removeLabel(String label) {
 		alphabet.remove(label, 1);
-		++labelRev;
 	}
 
 	public void setName(String name) {
@@ -636,14 +632,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	@Override
 	public String getName() {
 		return this.name;
-	}
-
-	/**
-	 * Returns the revision number of the label. For example for the parikh vectors to see, if they have to update.
-	 * @return the revision number of the label.
-	 */
-	public long getLabelRev() {
-		return labelRev;
 	}
 
 	/**
