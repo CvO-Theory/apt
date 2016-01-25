@@ -83,30 +83,13 @@ public class ParikhVector {
 	 * @param pv the mapping from labels to occurrences.
 	 */
 	public ParikhVector(TransitionSystem ts, Map<String, Integer> pv) {
-		this(pv);
-		this.ts = ts;
-	}
-
-	/**
-	 * Creates a parikh vector with a given mapping. Before using this pv it is needed to connect the pv to a
-	 * TransitionSystem.
-	 * @param pv the mapping from labels to occurrences.
-	 */
-	public ParikhVector(Map<String, Integer> pv) {
 		this.labelList = new ArrayList<>(pv.keySet());
 		Collections.sort(this.labelList);
 
 		this.occurrenceList = new ArrayList<>(pv.size());
 		for (String label : labelList)
 			this.occurrenceList.add(pv.get(label));
-	}
-
-	/**
-	 * Connects a given TransistionSystem to this parikh vector.
-	 * @param tranSys the TransitionSystem the pv belongs to.
-	 */
-	public void connectToTransitionSystem(TransitionSystem tranSys) {
-		this.ts = tranSys;
+		this.ts = ts;
 	}
 
 	/**
