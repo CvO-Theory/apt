@@ -20,10 +20,12 @@
 package uniol.apt.pnanalysis;
 
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import uniol.apt.adt.pn.PetriNet;
@@ -193,6 +195,7 @@ public class PnAnalysis {
 					}
 				}
 				boolean transitionFound = false;
+				Map<Arc, String> labelsToChange = new HashMap<>();
 				for (Arc edge : t2.getPostsetEdges(m)) {
 					if (edge.getTarget().equals(firstOfL.getM())) {
 						if (!edge.getLabel().equals(label)
@@ -200,17 +203,20 @@ public class PnAnalysis {
 							for (Arc t2Edge : t2.getEdges()) {
 								if ((!edge.equals(t2Edge))
 									&& edge.getLabel().equals(t2Edge.getLabel())) {
-									t2Edge.setLabel(label);
+									labelsToChange.put(t2Edge, label);
 								}
 							}
 							tSystem.getTransition(edge.getLabel()).setLabel(label);
-							edge.setLabel(label);
+							labelsToChange.put(edge, label);
 							labels.add(label);
 							transitionFound = true;
 						} else if (edge.getLabel().equals(label)) {
 							transitionFound = true;
 						}
 					}
+				}
+				for (Map.Entry<Arc, String> entry : labelsToChange.entrySet()) {
+					entry.getKey().setLabel(entry.getValue());
 				}
 				if (transitionFound) {
 					if (!w.contains(firstOfL)) {
