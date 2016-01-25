@@ -50,9 +50,9 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertTrue(calc.checkSamePVs(ts));
 		assertEquals(c.size(), 3);
-		assertTrue(testCycleAndParikh(c, "[s0, s1, s2, s0]", "{a=1, b=1, c=1}"));
-		assertTrue(testCycleAndParikh(c, "[s1, s2, s0, s1]", "{a=1, b=1, c=1}"));
-		assertTrue(testCycleAndParikh(c, "[s2, s0, s1, s2]", "{a=1, b=1, c=1}"));
+		assertTrue(testCycleAndParikh(c, "[s0, s1, s2, s0]", "a", "b", "c"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2, s0, s1]", "a", "b", "c"));
+		assertTrue(testCycleAndParikh(c, "[s2, s0, s1, s2]", "a", "b", "c"));
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertTrue(calc.checkSamePVs(ts));
 		assertEquals(c.size(), 1);
-		assertTrue(testCycleAndParikh(c, "[s, s]", "{a=1}"));
+		assertTrue(testCycleAndParikh(c, "[s, s]", "a"));
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertTrue(calc.checkSamePVs(ts));
 		assertEquals(c.size(), 1);
-		assertTrue(testCycleAndParikh(c, "[s0, s0]", "{NotA=1}"));
+		assertTrue(testCycleAndParikh(c, "[s0, s0]", "NotA"));
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertTrue(calc.checkSamePVs(ts));
 		assertEquals(c.size(), 1);
-		assertTrue(testCycleAndParikh(c, "[s1, s1]", "{NotA=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s1]", "NotA"));
 	}
 
 	@Test
@@ -96,8 +96,8 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertTrue(calc.checkSamePVs(ts));
 		assertEquals(c.size(), 2);
-		assertTrue(testCycleAndParikh(c, "[s, t, s]", "{a=2}"));
-		assertTrue(testCycleAndParikh(c, "[t, s, t]", "{a=2}"));
+		assertTrue(testCycleAndParikh(c, "[s, t, s]", "a", "a"));
+		assertTrue(testCycleAndParikh(c, "[t, s, t]", "a", "a"));
 	}
 
 	@Test
@@ -108,10 +108,10 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertTrue(calc.checkSamePVs(ts));
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 4);
-		assertTrue(testCycleAndParikh(c, "[s0, s1, s2, s3, s0]", "{a=1, b=1, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s1, s2, s3, s0, s1]", "{a=1, b=1, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s2, s3, s0, s1, s2]", "{a=1, b=1, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s3, s0, s1, s2, s3]", "{a=1, b=1, c=1, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s0, s1, s2, s3, s0]", "a", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2, s3, s0, s1]", "a", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s2, s3, s0, s1, s2]", "a", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s3, s0, s1, s2, s3]", "a", "b", "c", "d"));
 	}
 
 	@Test
@@ -122,9 +122,9 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertTrue(calc.checkSamePVs(ts));
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 3);
-		assertTrue(testCycleAndParikh(c, "[s1, s2, s3, s1]", "{a=2, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s2, s3, s1, s2]", "{a=2, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s3, s1, s2, s3]", "{a=2, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2, s3, s1]", "a", "a", "d"));
+		assertTrue(testCycleAndParikh(c, "[s2, s3, s1, s2]", "a", "a", "d"));
+		assertTrue(testCycleAndParikh(c, "[s3, s1, s2, s3]", "a", "a", "d"));
 	}
 
 	@Test
@@ -134,13 +134,13 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		Set<Pair<List<String>, ParikhVector>> c = calc.computePVsOfSmallestCycles(ts);
 		assertEquals(c.size(), 6);
 		//bcd
-		assertTrue(testCycleAndParikh(c, "[s1, s2, s3, s1]", "{b=1, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s2, s3, s1, s2]", "{b=1, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s3, s1, s2, s3]", "{b=1, c=1, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2, s3, s1]", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s2, s3, s1, s2]", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s3, s1, s2, s3]", "b", "c", "d"));
 		//bbb
-		assertTrue(testCycleAndParikh(c, "[s1, s4, s5, s1]", "{b=3}"));
-		assertTrue(testCycleAndParikh(c, "[s4, s5, s1, s4]", "{b=3}"));
-		assertTrue(testCycleAndParikh(c, "[s5, s1, s4, s5]", "{b=3}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s4, s5, s1]", "b", "b", "b"));
+		assertTrue(testCycleAndParikh(c, "[s4, s5, s1, s4]", "b", "b", "b"));
+		assertTrue(testCycleAndParikh(c, "[s5, s1, s4, s5]", "b", "b", "b"));
 	}
 
 	@Test
@@ -152,10 +152,10 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 4);
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s1, s3, s4, s5, s1]", "{b=3, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s3, s4, s5, s1, s3]", "{b=3, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s4, s5, s1, s3, s4]", "{b=3, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s5, s1, s3, s4, s5]", "{b=3, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s3, s4, s5, s1]", "b", "b", "b", "d"));
+		assertTrue(testCycleAndParikh(c, "[s3, s4, s5, s1, s3]", "b", "b", "b", "d"));
+		assertTrue(testCycleAndParikh(c, "[s4, s5, s1, s3, s4]", "b", "b", "b", "d"));
+		assertTrue(testCycleAndParikh(c, "[s5, s1, s3, s4, s5]", "b", "b", "b", "d"));
 	}
 
 	@Test
@@ -167,17 +167,17 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 10);
 		//bcdbb
-		assertTrue(testCycleAndParikh(c, "[s1, s2, s3, s4, s5, s1]", "{b=3, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s2, s3, s4, s5, s1, s2]", "{b=3, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s3, s4, s5, s1, s2, s3]", "{b=3, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s4, s5, s1, s2, s3, s4]", "{b=3, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s5, s1, s2, s3, s4, s5]", "{b=3, c=1, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2, s3, s4, s5, s1]", "b", "b", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s2, s3, s4, s5, s1, s2]", "b", "b", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s3, s4, s5, s1, s2, s3]", "b", "b", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s4, s5, s1, s2, s3, s4]", "b", "b", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s5, s1, s2, s3, s4, s5]", "b", "b", "b", "c", "d"));
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s1, s6, s3, s4, s5, s1]", "{b=3, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s6, s3, s4, s5, s1, s6]", "{b=3, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s3, s4, s5, s1, s6, s3]", "{b=3, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s4, s5, s1, s6, s3, s4]", "{b=3, c=1, d=1}"));
-		assertTrue(testCycleAndParikh(c, "[s5, s1, s6, s3, s4, s5]", "{b=3, c=1, d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s6, s3, s4, s5, s1]", "b", "b", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s6, s3, s4, s5, s1, s6]", "b", "b", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s3, s4, s5, s1, s6, s3]", "b", "b", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s4, s5, s1, s6, s3, s4]", "b", "b", "b", "c", "d"));
+		assertTrue(testCycleAndParikh(c, "[s5, s1, s6, s3, s4, s5]", "b", "b", "b", "c", "d"));
 	}
 
 	@Test
@@ -189,13 +189,13 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 4);
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s0, s0]", "{a=1}"));
+		assertTrue(testCycleAndParikh(c, "[s0, s0]", "a"));
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s1, s1]", "{b=1}"));
+		assertTrue(testCycleAndParikh(c, "[s1, s1]", "b"));
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s2, s2]", "{c=1}"));
+		assertTrue(testCycleAndParikh(c, "[s2, s2]", "c"));
 		//bdbb
-		assertTrue(testCycleAndParikh(c, "[s3, s3]", "{d=1}"));
+		assertTrue(testCycleAndParikh(c, "[s3, s3]", "d"));
 	}
 
 	@Test
@@ -206,16 +206,16 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertFalse(calc.checkSamePVs(ts));
 		assertFalse(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 10);
-		assertTrue(testCycleAndParikh(c, "[s0, s1, s0]", "{a=1, b=1}"));
-		assertTrue(testCycleAndParikh(c, "[s1, s2, s1]", "{a=1, b=1}"));
-		assertTrue(testCycleAndParikh(c, "[s0, s3, s0]", "{a=1, b=1}"));
-		assertTrue(testCycleAndParikh(c, "[s1, s0, s1]", "{a=1, b=1}"));
-		assertTrue(testCycleAndParikh(c, "[s2, s1, s2]", "{a=1, b=1}"));
-		assertTrue(testCycleAndParikh(c, "[s3, s0, s3]", "{a=1, b=1}"));
-		assertTrue(testCycleAndParikh(c, "[s3, s4, s5, s6, s3]", "{a=1, c=3}"));
-		assertTrue(testCycleAndParikh(c, "[s4, s5, s6, s3, s4]", "{a=1, c=3}"));
-		assertTrue(testCycleAndParikh(c, "[s5, s6, s3, s4, s5]", "{a=1, c=3}"));
-		assertTrue(testCycleAndParikh(c, "[s6, s3, s4, s5, s6]", "{a=1, c=3}"));
+		assertTrue(testCycleAndParikh(c, "[s0, s1, s0]", "a", "b"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2, s1]", "a", "b"));
+		assertTrue(testCycleAndParikh(c, "[s0, s3, s0]", "a", "b"));
+		assertTrue(testCycleAndParikh(c, "[s1, s0, s1]", "a", "b"));
+		assertTrue(testCycleAndParikh(c, "[s2, s1, s2]", "a", "b"));
+		assertTrue(testCycleAndParikh(c, "[s3, s0, s3]", "a", "b"));
+		assertTrue(testCycleAndParikh(c, "[s3, s4, s5, s6, s3]", "a", "c", "c", "c"));
+		assertTrue(testCycleAndParikh(c, "[s4, s5, s6, s3, s4]", "a", "c", "c", "c"));
+		assertTrue(testCycleAndParikh(c, "[s5, s6, s3, s4, s5]", "a", "c", "c", "c"));
+		assertTrue(testCycleAndParikh(c, "[s6, s3, s4, s5, s6]", "a", "c", "c", "c"));
 	}
 
 	@Test
@@ -226,12 +226,12 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 		assertFalse(calc.checkSamePVs(ts));
 		assertFalse(calc.checkSameOrMutallyDisjointPVs(ts));
 		assertEquals(c.size(), 6);
-		assertTrue(testCycleAndParikh(c, "[s0, s1, s0]", "{a=1, b=1}"));
-		assertTrue(testCycleAndParikh(c, "[s0, s2, s0]", "{a=1, c=1}"));
-		assertTrue(testCycleAndParikh(c, "[s1, s0, s1]", "{a=1, b=1}"));
-		assertTrue(testCycleAndParikh(c, "[s2, s0, s2]", "{a=1, c=1}"));
-		assertTrue(testCycleAndParikh(c, "[s2, s1, s2]", "{b=1, c=1}"));
-		assertTrue(testCycleAndParikh(c, "[s1, s2, s1]", "{b=1, c=1}"));
+		assertTrue(testCycleAndParikh(c, "[s0, s1, s0]", "a", "b"));
+		assertTrue(testCycleAndParikh(c, "[s0, s2, s0]", "a", "c"));
+		assertTrue(testCycleAndParikh(c, "[s1, s0, s1]", "a", "b"));
+		assertTrue(testCycleAndParikh(c, "[s2, s0, s2]", "a", "c"));
+		assertTrue(testCycleAndParikh(c, "[s2, s1, s2]", "b", "c"));
+		assertTrue(testCycleAndParikh(c, "[s1, s2, s1]", "b", "c"));
 	}
 }
 

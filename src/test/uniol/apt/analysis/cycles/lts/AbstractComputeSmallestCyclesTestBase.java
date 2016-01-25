@@ -122,10 +122,10 @@ public abstract class AbstractComputeSmallestCyclesTestBase {
 		assertTrue(calc.checkSameOrMutallyDisjointPVs(ts));
 	}
 
-	protected boolean testCycleAndParikh(Set<Pair<List<String>, ParikhVector>> c, String cycle, String parikh) {
+	protected boolean testCycleAndParikh(Set<Pair<List<String>, ParikhVector>> c, String cycle, String... parikh) {
 		for (Pair<List<String>, ParikhVector> pair : c) {
 			if (pair.getFirst().toString().equals(cycle)
-				&& pair.getSecond().toString().equals(parikh)) {
+				&& pair.getSecond().equals(new ParikhVector(parikh))) {
 				return true;
 			}
 		}
