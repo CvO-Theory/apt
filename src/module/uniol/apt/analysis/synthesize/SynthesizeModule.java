@@ -75,7 +75,8 @@ public class SynthesizeModule extends AbstractModule implements Module {
 	}
 
 	static public String getOptionsDescription(String extraOptions, String extraOptionsDescriptions) {
-		return "Supported options are: none, [k]-bounded, safe, pure, plain, tnet, marked-graph,"
+		return "Supported options are: none, [k]-bounded, safe, pure, plain, tnet,"
+			+ " generalized-marked-graph (gmg), marked-graph (mg), generalized-output-nonbranching (gon)"
 			+ " output-nonbranching (on), conflict-free (cf), homogeneous,"
 			+ " upto-language-equivalence (language, le), " + extraOptions + "minimize (minimal), verbose "
 			+ "and quick-fail.\n\nThe meaning of these options is as follows:\n"
@@ -86,8 +87,10 @@ public class SynthesizeModule extends AbstractModule implements Module {
 			+ " (=no side-conditions).\n"
 			+ " - plain: Every flow has a weight of at most one.\n"
 			+ " - tnet: Every place's preset and postset contains at most one entry.\n"
-			+ " - marked-graph: Every place's preset and postset contains exactly one entry.\n"
-			+ " - output-nonbranching: Every place's postset contains at most one entry.\n"
+			+ " - generalized-marked-graph: Every place's preset and postset contains exactly one entry.\n"
+			+ " - marked-graph: generalized-marked-graph + plain.\n"
+			+ " - generalized-output-nonbranching: Every place's postset contains at most one entry.\n"
+			+ " - output-nonbranching: generalized-output-nonbranching + plain.\n"
 			+ " - conflict-free: The Petri net is plain and every place either has at most one entry in"
 			+ " its postset or its preset is contained in its postset.\n"
 			+ " - homogeneous: All outgoing flows from a place have the same weight.\n"
@@ -337,12 +340,21 @@ public class SynthesizeModule extends AbstractModule implements Module {
 					case "tnet":
 						result = result.setTNet(true);
 						break;
-					case "marked-graph":
+					case "generalized-marked-graph":
+					case "gmg":
 						result = result.setMarkedGraph(true);
+						break;
+					case "marked-graph":
+					case "mg":
+						result = result.setMarkedGraph(true).setPlain(true);
+						break;
+					case "generalized-output-nonbranching":
+					case "gon":
+						result = result.setOutputNonbranching(true);
 						break;
 					case "output-nonbranching":
 					case "on":
-						result = result.setOutputNonbranching(true);
+						result = result.setOutputNonbranching(true).setPlain(true);
 						break;
 					case "conflict-free":
 					case "cf":

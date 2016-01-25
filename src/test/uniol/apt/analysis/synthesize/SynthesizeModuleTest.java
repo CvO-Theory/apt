@@ -81,8 +81,26 @@ public class SynthesizeModuleTest {
 
 	@Test
 	public void testMarkedGraph() throws Exception {
-		PNProperties properties = new PNProperties().setMarkedGraph(true);
+		PNProperties properties = new PNProperties().setMarkedGraph(true).setPlain(true);
 		assertThat(parse("marked-Graph"), equalTo(properties));
+	}
+
+	@Test
+	public void testMarkedGraph2() throws Exception {
+		PNProperties properties = new PNProperties().setMarkedGraph(true).setPlain(true);
+		assertThat(parse("mg"), equalTo(properties));
+	}
+
+	@Test
+	public void testMarkedGraph3() throws Exception {
+		PNProperties properties = new PNProperties().setMarkedGraph(true);
+		assertThat(parse("generalIzed-marked-graph"), equalTo(properties));
+	}
+
+	@Test
+	public void testMarkedGraph4() throws Exception {
+		PNProperties properties = new PNProperties().setMarkedGraph(true);
+		assertThat(parse("gmg"), equalTo(properties));
 	}
 
 	@Test
@@ -94,12 +112,24 @@ public class SynthesizeModuleTest {
 	@Test
 	public void testOutputNonbranching() throws Exception {
 		PNProperties properties = new PNProperties().setOutputNonbranching(true);
+		assertThat(parse("generalized-output-nonbranching"), equalTo(properties));
+	}
+
+	@Test
+	public void testOutputNonbranching2() throws Exception {
+		PNProperties properties = new PNProperties().setOutputNonbranching(true).setPlain(true);
 		assertThat(parse("output-nonbranching"), equalTo(properties));
 	}
 
 	@Test
 	public void testON() throws Exception {
 		PNProperties properties = new PNProperties().setOutputNonbranching(true);
+		assertThat(parse("gON"), equalTo(properties));
+	}
+
+	@Test
+	public void testON2() throws Exception {
+		PNProperties properties = new PNProperties().setOutputNonbranching(true).setPlain(true);
 		assertThat(parse("ON"), equalTo(properties));
 	}
 
@@ -123,7 +153,7 @@ public class SynthesizeModuleTest {
 
 	@Test
 	public void testExtraArgs() throws Exception {
-		PNProperties properties = new PNProperties().setOutputNonbranching(true);
+		PNProperties properties = new PNProperties().setOutputNonbranching(true).setPlain(true);
 		assertThat(parse("foo,bAr,on,baz", Arrays.asList("foo", "bar", "foobar", "baz"),
 					Arrays.asList("foo", "bar", "baz")),
 				equalTo(properties));
