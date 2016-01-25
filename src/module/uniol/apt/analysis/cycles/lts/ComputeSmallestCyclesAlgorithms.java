@@ -32,7 +32,7 @@ public class ComputeSmallestCyclesAlgorithms {
 	 * @return {@link ComputeSmallestCycles} instance using the default algorithm
 	 */
 	public static ComputeSmallestCycles getDefaultAlgorithm() {
-		return new ComputeSmallestCyclesDFS();
+		return new ComputeSmallestCyclesJohnson();
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class ComputeSmallestCyclesAlgorithms {
 	 * @return Character which selects the default implementation
 	 */
 	public static char getDefaultAlgorithmChar() {
-		return 'd';
+		return 'j';
 	}
 
 	/**
