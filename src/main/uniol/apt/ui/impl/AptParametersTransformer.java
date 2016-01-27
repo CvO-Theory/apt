@@ -34,7 +34,8 @@ public class AptParametersTransformer extends ParametersTransformerImpl {
 	public static final AptParametersTransformer INSTANCE = new AptParametersTransformer();
 
 	private AptParametersTransformer() {
-		for (ParameterTransformation<?> transform : ServiceLoader.load(ParameterTransformation.class)) {
+		for (ParameterTransformation<?> transform : ServiceLoader.load(ParameterTransformation.class,
+					getClass().getClassLoader())) {
 			String transformName = transform.getClass().getCanonicalName();
 
 			AptParameterTransformation annotation = transform.getClass()

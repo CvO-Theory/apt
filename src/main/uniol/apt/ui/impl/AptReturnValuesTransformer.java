@@ -33,7 +33,8 @@ public class AptReturnValuesTransformer extends ReturnValuesTransformerImpl {
 	public static final AptReturnValuesTransformer INSTANCE = new AptReturnValuesTransformer();
 
 	private AptReturnValuesTransformer() {
-		for (ReturnValueTransformation<?> transform : ServiceLoader.load(ReturnValueTransformation.class)) {
+		for (ReturnValueTransformation<?> transform : ServiceLoader.load(ReturnValueTransformation.class,
+					getClass().getClassLoader())) {
 			String transformName = transform.getClass().getCanonicalName();
 
 			AptReturnValueTransformation annotation = transform.getClass()

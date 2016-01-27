@@ -35,7 +35,7 @@ public class AptModuleRegistry extends AbstractModuleRegistry {
 
 	private AptModuleRegistry() {
 		super();
-		for (Module module : ServiceLoader.load(Module.class)) {
+		for (Module module : ServiceLoader.load(Module.class, getClass().getClassLoader())) {
 			String moduleName = module.getClass().getCanonicalName();
 			String name = module.getName();
 			if (name == null || name.equals("")
