@@ -474,6 +474,20 @@
 				<attribute name="Main-Class" value="uniol.apt.APT" />
 			</manifest>
 		</jar>
+
+		<taskdef name="service-verify" classname="uniol.apt.tasks.ServiceVerifyTask">
+			<classpath location="classes/ant" />
+		</taskdef>
+
+		<service-verify jar="apt.jar ">
+			<load class="uniol.apt.io.parser.PNParsers" member="INSTANCE" />
+			<load class="uniol.apt.io.parser.LTSParsers" member="INSTANCE" />
+			<load class="uniol.apt.io.renderer.PNRenderers" member="INSTANCE" />
+			<load class="uniol.apt.io.renderer.LTSRenderers" member="INSTANCE" />
+			<load class="uniol.apt.ui.impl.AptParametersTransformer" member="INSTANCE" />
+			<load class="uniol.apt.ui.impl.AptReturnValuesTransformer" member="INSTANCE" />
+			<load class="uniol.apt.module.AptModuleRegistry" member="INSTANCE" />
+		</service-verify>
 	</target>
 	<import file="build.local.xml" optional="true"/>
 </project>
