@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 import static uniol.apt.util.DebugUtil.debug;
+import static uniol.apt.util.DebugUtil.debugFormat;
 
 /**
  * Representation of an equation system.
@@ -185,7 +186,7 @@ public class EquationSystem {
 
 		// Invert variable y_j in all equations.
 		private void invertVariableY(int j) {
-			debug("Inverting variable y_", j);
+			debugFormat("Inverting variable y_%d", j);
 			for (int i = 0; i < equations1.size(); i++) {
 				List<BigInteger> equation = equations1.get(i);
 				equation.set(j, equation.get(j).negate());
@@ -198,7 +199,7 @@ public class EquationSystem {
 
 		// Remove variable y_j from all equations.
 		private void removeVariable(int j) {
-			debug("Removing variable y_", j);
+			debugFormat("Removing variable y_%d", j);
 			for (int i = 0; i < equations1.size(); i++)
 				equations1.get(i).set(j, BigInteger.ZERO);
 			for (int i = 0; i < equations2.size(); i++)
@@ -207,8 +208,8 @@ public class EquationSystem {
 
 		// Substitute variable y_variableIndex with y_variableIndex + factor * y_addendIndex in all equations.
 		private void substituteVariable(int variableIndex, BigInteger factor, int addendIndex) {
-			debug("Substituting variable y_", variableIndex, " with y_", variableIndex, " + ",
-					factor, " * y_", addendIndex);
+			debugFormat("Substituting variable y_%d with y_%d + %d * y_%d",
+					variableIndex, variableIndex, factor, addendIndex);
 			for (int i = 0; i < equations1.size(); i++)
 				substituteVariable(equations1.get(i), variableIndex, factor, addendIndex);
 			for (int i = 0; i < equations2.size(); i++)

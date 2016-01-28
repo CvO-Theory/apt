@@ -43,6 +43,7 @@ import uniol.apt.util.DifferentPairsIterable;
 import uniol.apt.util.Pair;
 
 import static uniol.apt.util.DebugUtil.debug;
+import static uniol.apt.util.DebugUtil.debugFormat;
 
 /**
  * Synthesize a minimal Petri Net from a transition system.
@@ -75,8 +76,8 @@ public class MinimizePN {
 		try {
 			Set<Region> separatingRegions = synthesize.getSeparatingRegions();
 			while (!separatingRegions.isEmpty()) {
-				debug("Have solution with ", separatingRegions.size(),
-						" regions, trying to find solution with one region less");
+				debugFormat("Have solution with %d regions, trying to find solution with "
+						+ "one region less", separatingRegions.size());
 				Set<Region> newRegions = synthesizeWithLimit(separatingRegions.size() - 1);
 				if (newRegions == null)
 					break;

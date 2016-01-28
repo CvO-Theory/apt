@@ -62,6 +62,7 @@ import uniol.apt.util.Pair;
 import static uniol.apt.analysis.synthesize.LimitedUnfolding.ORIGINAL_STATE_KEY;
 import static uniol.apt.analysis.synthesize.LimitedUnfolding.calculateLimitedUnfolding;
 import static uniol.apt.util.DebugUtil.debug;
+import static uniol.apt.util.DebugUtil.debugFormat;
 
 /**
  * Synthesize a Petri Net from a transition system.
@@ -261,8 +262,8 @@ public class SynthesizePN {
 			}
 
 			partition = newPartition;
-			debug("After region ", region, ", still have ", partition.size(), " families (",
-					discarded, " resulting singular families discarded)");
+			debugFormat("After region %s, still have %d families (%d resulting singular families discarded)",
+					region, partition.size(), discarded);
 			if (partition.isEmpty())
 				break;
 		}
@@ -285,7 +286,7 @@ public class SynthesizePN {
 					calculateUnseparatedStates(ts.getNodes(), regions))) {
 			State state = problem.getFirst();
 			State otherState = problem.getSecond();
-			debug("Trying to separate ", state,  " from ", otherState);
+			debugFormat("Trying to separate %s from %s", state, otherState);
 			Region r = null;
 			for (Region region : regions)
 				if (SeparationUtility.isSeparatingRegion(region, state, otherState)) {
@@ -320,7 +321,7 @@ public class SynthesizePN {
 		for (Pair<State, String> problem : new EventStateSeparationProblems(ts)) {
 			State state = problem.getFirst();
 			String event = problem.getSecond();
-			debug("Trying to separate ", state, " from event '", event, "'");
+			debugFormat("Trying to separate %s from event '%s'", state, event);
 			Region r = null;
 			for (Region region : regions)
 				if (SeparationUtility.isSeparatingRegion(region, state, event)) {
@@ -430,7 +431,7 @@ public class SynthesizePN {
 	 */
 	static public void minimizeRegions(RegionUtility utility, Set<Region> requiredRegions,
 			boolean onlyEventSeparation) {
-		Set<Region> allRegions = Collections.unmodifiableSet(new HashSet<>(requiredRegions));
+		int numInputRegions = requiredRegions.size();
 		Set<Region> remainingRegions = new HashSet<>(requiredRegions);
 		requiredRegions.clear();
 
@@ -454,8 +455,7 @@ public class SynthesizePN {
 
 		debug("List of required regions:");
 		debug(requiredRegions);
-		debug("Picked ", requiredRegions.size(), " required regions out of ",
-				allRegions.size(), " input regions");
+		debugFormat("Picked %d required regions out of %d input regions", requiredRegions.size(), numInputRegions);
 	}
 
 	/**
