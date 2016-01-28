@@ -213,8 +213,8 @@ public class InequalitySystemSolver {
 	static private List<BigInteger> handleSolution(Script script, int numVariables) {
 		LBool isSat = script.checkSat();
 		if (isSat != LBool.SAT) {
-			debug("SMTInterpol produced unsat: " + isSat.toString());
-			assert isSat == LBool.UNSAT;
+			debug("SMTInterpol produced unsat: ", isSat);
+			assert isSat == LBool.UNSAT : isSat;
 			return Collections.emptyList();
 		}
 
