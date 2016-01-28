@@ -70,10 +70,10 @@ final public class DebugUtil {
 
 	/**
 	 * Generate a formatted debug message if debugging output is enabled. The arguments are passed to {@link
-	 * String.format} and the result is printed with a newline appended.
-	 * @param message The message
+	 * String#format} and the result is printed with a newline appended.
+	 * @param format The format string
 	 * @param args Formatting arguments
-	 * @see String.format
+	 * @see String#format
 	 */
 	static public void debugFormat(String format, Object... args) {
 		if (OUTPUT_ENABLED)
