@@ -94,6 +94,14 @@ public class PersistentModule extends AbstractModule implements Module {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + ".\n\n"
+			+ "A LTS is persistent if for all reachable states s and enabled labels a, b (a≠b),"
+			+ " there is a state r so that both s[ab>r and s[ba>r."
+			+ " A Petri net is persistent if its reachability graph is persistent.";
+	}
+
+	@Override
 	public Category[] getCategories() {
 		return new Category[]{Category.PN, Category.LTS};
 	}

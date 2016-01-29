@@ -39,7 +39,17 @@ public class GenerateStepNetModule extends AbstractModule implements Module {
 
 	@Override
 	public String getShortDescription() {
-		return "Calculate the concurrent coverability graph of a Petri net in the step semantics.";
+		return "Calculate the concurrent coverability graph of a Petri net in the step semantics";
+	}
+
+	@Override
+	public String getLongDescription() {
+		return getShortDescription() + "."
+			+ " In the step semantics, instead of individual transitions, sets of transitions called"
+			+ " 'a step' are fired. When a step fires, first all of its transition consume token and only"
+			+ " afterwards produce tokens."
+			+ " Put differently, on each place at least as many token have to be present as the sum of the"
+			+ " arc weights of the transitions in a step require.";
 	}
 
 	@Override

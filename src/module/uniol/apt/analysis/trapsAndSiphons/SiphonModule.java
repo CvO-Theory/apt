@@ -44,6 +44,13 @@ public class SiphonModule extends AbstractModule implements Module {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + "."
+			+ " A siphon is a set of places so that every transition consuming tokens from one of these"
+			+ " places also produces tokens on at least one place in the set.";
+	}
+
+	@Override
 	public String getName() {
 		return "siphons";
 	}

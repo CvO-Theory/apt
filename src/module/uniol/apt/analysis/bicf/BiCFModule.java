@@ -47,6 +47,14 @@ public class BiCFModule extends AbstractModule implements Module {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + ".\n\n"
+			+ "A Petri net is BiCF if in every reachable marking M and for any enabled pair of transitions"
+			+ " (M[a>, M[b> and a ≠ b), enough tokens for both transitions are present"
+			+ " (∀p∈P: M(p) ≥ F(p, a) + F(p, b)).";
+	}
+
+	@Override
 	public String getName() {
 		return "bicf";
 	}

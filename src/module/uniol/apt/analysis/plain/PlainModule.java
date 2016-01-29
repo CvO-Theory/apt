@@ -70,6 +70,12 @@ public class PlainModule extends AbstractModule implements Module {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + "."
+			+ " A Petri net is plain if all arc weights are at most 1.";
+	}
+
+	@Override
 	public Category[] getCategories() {
 		return new Category[]{Category.PN};
 	}

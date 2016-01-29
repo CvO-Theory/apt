@@ -44,6 +44,13 @@ public class TrapsModule extends AbstractModule implements Module {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + "."
+			+ " A trap is a set of places so that every transition producing tokens on one of these"
+			+ " places also consumes tokens from at least one place in the set.";
+	}
+
+	@Override
 	public String getName() {
 		return "traps";
 	}

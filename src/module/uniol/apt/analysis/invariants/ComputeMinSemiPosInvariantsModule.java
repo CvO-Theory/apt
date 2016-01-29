@@ -118,6 +118,14 @@ public class ComputeMinSemiPosInvariantsModule extends AbstractModule implements
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + ".\n\n"
+			+ "An invariant is a semi-positive vector from the nullspace of the incidence matrix C."
+			+ " For a T-invariant x≥0 this means C*x=0 and a S-invariant x≥0 satisfies Cᵀ*x=0."
+			+ " This module finds the set of generators for all S- or T-invariants.";
+	}
+
+	@Override
 	public Category[] getCategories() {
 		return new Category[]{Category.PN};
 	}

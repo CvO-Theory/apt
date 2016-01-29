@@ -54,6 +54,13 @@ public class TNetModule extends AbstractModule implements Module {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + "."
+			+ " In a T-net, the preset and postset of any place has at most one entry"
+			+ " (plus the net is plain).";
+	}
+
+	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined", "plain");
 	}

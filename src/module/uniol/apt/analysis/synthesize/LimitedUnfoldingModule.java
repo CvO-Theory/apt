@@ -42,6 +42,14 @@ public class LimitedUnfoldingModule extends AbstractModule implements Module {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + "."
+			+ " The limited unfolding, as defined in 'Petri Net Synthesis' (E. Badouel, L. Bernardinello"
+			+ " and P. Darondeau) eliminates paths that reach the same state (where possible) without"
+			+ " changing the language of the LTS.";
+	}
+
+	@Override
 	public String getName() {
 		return "limited_unfolding";
 	}

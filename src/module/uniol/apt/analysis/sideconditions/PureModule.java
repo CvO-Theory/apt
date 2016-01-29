@@ -69,6 +69,13 @@ public class PureModule extends AbstractModule implements Module {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + "."
+			+ " A Petri net is pure if there are no side conditions."
+			+ " A side condition is a loop between a place p and a transition t (F(p,t)> 0 and F(t,p)>0).";
+	}
+
+	@Override
 	public Category[] getCategories() {
 		return new Category[]{Category.PN};
 	}

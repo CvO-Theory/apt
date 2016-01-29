@@ -95,6 +95,13 @@ public class ReversibleModule extends AbstractModule implements Module {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + "."
+			+ " A LTS is reversible if every reachable state can reach the initial state again."
+			+ " A Petri net is reversible if its reachability graph is reversible.";
+	}
+
+	@Override
 	public Category[] getCategories() {
 		return new Category[]{Category.PN, Category.LTS};
 	}

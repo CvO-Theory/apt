@@ -47,6 +47,13 @@ public class BCFModule extends AbstractModule implements Module {
 	}
 
 	@Override
+	public String getLongDescription() {
+		return getShortDescription() + ".\n\n"
+			+ "A Petri net is BCF if in every reachable marking M and for any enabled pair of transitions"
+			+ " (M[a>, M[b> and a ≠ b), the presets of the transitions is disjoint (°a∩°b=∅).";
+	}
+
+	@Override
 	public String getName() {
 		return "bcf";
 	}
