@@ -145,7 +145,8 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 				if (!pn.containsTransition(label))
 					throw new ParseRuntimeException("A non-existent event was split in '" + id
 							+ "'");
-				pn.createTransition(id).setLabel(label);
+				if (!pn.containsTransition(id))
+					pn.createTransition(id).setLabel(label);
 				nodeIds.put(ctx, id);
 			}
 		}
