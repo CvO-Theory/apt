@@ -19,6 +19,9 @@
 
 package uniol.apt.io.parser.impl;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.testng.annotations.Test;
 
 import uniol.apt.io.parser.ParseException;
@@ -85,6 +88,32 @@ public class PetrifyPNParserTest {
 		assertEquals(p0.getPostsetNodes().iterator().next().getId(), ta.getId());
 		assertEquals(ta.getPostsetNodes().iterator().next().getId(), pImpl.getId());
 		assertEquals(pImpl.getPostsetNodes().iterator().next().getId(), ta1.getId());
+	}
+
+	@Test
+	public void testABBAA() throws Exception {
+		// Actual output of petrify (except for comments) when synthesizing a solution to the word "abbaa"
+		PetriNet pn = new PetrifyPNParser().parseString(".model abbaa.g\n.inputs  a b\n.graph\na a/2\nb b/1\n"
+				+ "a/1 b\nb/1 a\np0 a/1\n.marking { p0 }\n.end\n");
+		assertEquals(pn.getTransitions().size(), 5);
+		assertEquals(pn.getPlaces().size(), 5);
+		assertEquals(pn.getEdges().size(), 9);
+
+		Place place = pn.getPlace("p0");
+		assertEquals(place.getInitialToken().getValue(), 1);
+
+		for (String nextTransition : Arrays.asList("a/1", "b", "b/1", "a", "a/2")) {
+			Transition t = pn.getTransition(nextTransition);
+			assertEquals(t.getPresetEdges().size(), 1);
+			assertEquals(t.getPresetNodes(), Collections.singleton(place));
+			if ("a/2".equals(nextTransition)) {
+				assertEquals(t.getPostsetEdges().size(), 0);
+			} else {
+				assertEquals(t.getPostsetEdges().size(), 1);
+				place = t.getPostsetEdges().iterator().next().getPlace();
+				assertEquals(place.getInitialToken().getValue(), 0);
+			}
+		}
 	}
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Tried to create arc between two places 'p0' and 'p1'$")
