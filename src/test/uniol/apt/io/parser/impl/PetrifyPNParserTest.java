@@ -27,6 +27,7 @@ import org.testng.annotations.Test;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
+import uniol.apt.adt.pn.Token;
 import uniol.apt.adt.pn.Transition;
 
 import static org.testng.Assert.assertEquals;
@@ -57,6 +58,22 @@ public class PetrifyPNParserTest {
 		PetriNet pn = new PetrifyPNParser().parseString(".inputs\n.graph\n\n.marking{}\n.end\n");
 		assertEquals(pn.getTransitions().size(), 0);
 		assertEquals(pn.getPlaces().size(), 0);
+	}
+
+	@Test
+	public void testInitialMarking() throws Exception {
+		PetriNet pn = new PetrifyPNParser().parseString(".inputs\n.graph\nfoo\n.marking{foo=3}\n.end\n");
+		assertEquals(pn.getTransitions().size(), 0);
+		assertEquals(pn.getPlaces().size(), 1);
+		assertEquals(pn.getPlace("foo").getInitialToken(), Token.valueOf(3));
+	}
+
+	@Test
+	public void testInitialMarking2() throws Exception {
+		PetriNet pn = new PetrifyPNParser().parseString(".inputs a\n.graph\na a\n.marking{<a,a>=42}\n.end\n");
+		assertEquals(pn.getTransitions().size(), 1);
+		assertEquals(pn.getPlaces().size(), 1);
+		assertEquals(pn.getPlace("<a,a>").getInitialToken(), Token.valueOf(42));
 	}
 
 	@Test

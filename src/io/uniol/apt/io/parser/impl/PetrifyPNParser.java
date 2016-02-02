@@ -107,7 +107,11 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 			if (p.getInitialToken().getValue() != 0)
 				throw new ParseRuntimeException("Duplicate initial marking for place '"
 						+ p.getId() + "'");
-			p.setInitialToken(1);
+			int initial = 1;
+			if (ctx.INT() != null) {
+				initial = Integer.parseInt(ctx.INT().getText());
+			}
+			p.setInitialToken(initial);
 		}
 
 		@Override
@@ -122,7 +126,11 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 			if (p.getInitialToken().getValue() != 0)
 				throw new ParseRuntimeException(
 						"Duplicate initial marking for place '" + p.getId() + "'");
-			p.setInitialToken(1);
+			int initial = 1;
+			if (ctx.INT() != null) {
+				initial = Integer.parseInt(ctx.INT().getText());
+			}
+			p.setInitialToken(initial);
 		}
 
 		@Override

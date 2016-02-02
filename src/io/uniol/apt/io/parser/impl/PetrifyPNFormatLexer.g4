@@ -31,10 +31,12 @@ CURLY_CLOSE	: '}';
 ANGLE_OPEN	: '<';
 ANGLE_CLOSE	: '>';
 COMMA		: ',';
+EQUAL		: '=';
 NL		: '\n';
 
 EVENT		: [a-zA-Z_] [a-zA-Z0-9_:\-]* '/' [0-9]+ ;
 ID		: [a-zA-Z_] [a-zA-Z0-9_:\-]*;
+INT		: [1-9][0-9]*;
 
 COMMENT		: '#' ~('\n')* -> skip;
 WS		: (' ' | '\r' | '\t')+ -> skip;

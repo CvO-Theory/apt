@@ -31,8 +31,8 @@ flows		: flow*;
 flow		: source=event flow_target* nl;
 flow_target	: event;
 marking		: MARKING CURLY_OPEN token* CURLY_CLOSE nl;
-token		: ID                                                      # tokenExplicitPlace
-		| ANGLE_OPEN source=event COMMA target=event ANGLE_CLOSE  # tokenImplicitPlace
+token		: ID (EQUAL INT)?                                                     # tokenExplicitPlace
+		| ANGLE_OPEN source=event COMMA target=event ANGLE_CLOSE (EQUAL INT)? # tokenImplicitPlace
 		;
 end		: END nl;
 nl		: NL+;
