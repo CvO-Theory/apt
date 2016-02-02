@@ -79,6 +79,22 @@ public class ParikhVector {
 	}
 
 	/**
+	 * Create a new ParikhVector where the given event occurs n times less often.
+	 * @param event Which event should occur less often?
+	 * @param n How many times should it occur less?
+	 * @return The new ParikhVector or null, if the given event doesn't occur often enough in the original
+	 * ParikhVector
+	 */
+	public ParikhVector tryRemove(String event, int n) {
+		ParikhVector result = new ParikhVector(this);
+		if (result.occurrenceBag.remove(event, n)) {
+			return result;
+		} else {
+			return null;
+		}
+	}
+
+	/**
 	 * Compare this Parikh vector with the given Parikh vector. Returns a negative integer, zero, or a positive
 	 * integer if this object is less than, equal to, or greater than the specified object, just as {@link
 	 * Comparable#compareTo} does. However, if the Parikh vectors are incomparable, zero is also returned.
