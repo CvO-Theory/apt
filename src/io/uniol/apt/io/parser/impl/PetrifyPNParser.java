@@ -79,14 +79,18 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 				pn.createPlace(source);
 
 			for (PetrifyPNFormatParser.Flow_targetContext targetCtx : ctx.flow_target()) {
+				int weight = 1;
+				if (targetCtx.INT() != null) {
+					weight = Integer.parseInt(targetCtx.INT().getText());
+				}
 				String target = nodeIds.get(targetCtx.event());
 				if (sourceIsTransition && pn.containsTransition(target)) {
 					// Create an implicit place
 					Pair<String, String> pair = new Pair<>(source, target);
 					String placeName = "<" + source + "," + target + ">";
 					implicitPlaces.put(pair, pn.createPlace(placeName));
-					pn.createFlow(source, placeName);
-					pn.createFlow(placeName, target);
+					pn.createFlow(source, placeName, weight);
+					pn.createFlow(placeName, target, weight);
 				} else {
 					// This is an explicit place, figure out which ID is the transition
 					if (sourceIsTransition) {
@@ -96,7 +100,7 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 						throw new ParseRuntimeException(
 								"Tried to create arc between two places '"
 								+ source + "' and '" + target + "'");
-					pn.createFlow(source, target);
+					pn.createFlow(source, target, weight);
 				}
 			}
 		}

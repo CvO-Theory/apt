@@ -26,6 +26,8 @@ TRANSITIONS	: '.inputs' | '.outputs' | '.internal' | '.dummy';
 GRAPH		: '.graph';
 MARKING		: '.marking';
 END		: '.end';
+PAREN_OPEN	: '(';
+PAREN_CLOSE	: ')';
 CURLY_OPEN	: '{';
 CURLY_CLOSE	: '}';
 ANGLE_OPEN	: '<';
