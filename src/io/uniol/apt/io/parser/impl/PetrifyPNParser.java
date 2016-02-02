@@ -66,7 +66,7 @@ public class PetrifyPNParser extends AbstractParser<PetriNet> implements Parser<
 		}
 
 		@Override
-		public void exitInputs(PetrifyPNFormatParser.InputsContext ctx) {
+		public void exitTransitions(PetrifyPNFormatParser.TransitionsContext ctx) {
 			for (TerminalNode event : ctx.ID())
 				pn.createTransition(event.getText());
 		}

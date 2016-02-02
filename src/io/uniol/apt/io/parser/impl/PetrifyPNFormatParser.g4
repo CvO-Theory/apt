@@ -23,9 +23,9 @@ parser grammar PetrifyPNFormatParser;
 
 options { tokenVocab = PetrifyPNFormatLexer; }
 
-pn		: nl? model? inputs? type flows marking end;
+pn		: nl? model? transitions? type flows marking end;
 model		: MODEL NAME nl;
-inputs		: INPUTS ID* nl;
+transitions	: TRANSITIONS ID* nl;
 type		: GRAPH nl;
 flows		: flow*;
 flow		: source=event flow_target* nl;

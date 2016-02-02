@@ -22,7 +22,7 @@
 lexer grammar PetrifyPNFormatLexer;
 
 MODEL		: '.model' -> mode(MODEL_MODE);
-INPUTS		: '.inputs';
+TRANSITIONS	: '.inputs' | '.outputs' | '.internal' | '.dummy';
 GRAPH		: '.graph';
 MARKING		: '.marking';
 END		: '.end';
