@@ -24,17 +24,22 @@ import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.io.renderer.Renderer;
 
 import static uniol.apt.TestNetCollection.*;
 import static uniol.apt.adt.matcher.Matchers.*;
 
 /** @author Uli Schlachter */
 public class GenetPNRendererTest {
-	private String render(PetriNet pn) throws Exception {
-		return new GenetPNRenderer().render(RendererTestUtils.getSortedNet(pn));
+	protected Renderer<PetriNet> getRenderer() {
+		return new GenetPNRenderer();
 	}
 
-	private void test(PetriNet pn, String expectedString) throws Exception {
+	protected String render(PetriNet pn) throws Exception {
+		return getRenderer().render(RendererTestUtils.getSortedNet(pn));
+	}
+
+	protected void test(PetriNet pn, String expectedString) throws Exception {
 		assertThat(render(pn), is(expectedString));
 	}
 

@@ -1,6 +1,7 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
  * Copyright (C) 2012-2013  Members of the project group APT
+ * Copyright (C) 2016 Uli Schlachter
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,37 +20,31 @@
 
 package uniol.apt.io.renderer.impl;
 
-import uniol.apt.adt.pn.Flow;
+import org.testng.annotations.Test;
+
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Place;
-import uniol.apt.io.renderer.AptRenderer;
 import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
 
-/**
- * Creates a string which returns a Petri net or transition system in the Petrify-format.
- * @author Uli Schlachter
- *
- */
-@AptRenderer
-public class PetrifyPNRenderer extends GenetPNRenderer implements Renderer<PetriNet> {
+import static uniol.apt.TestNetCollection.*;
+
+/** @author Uli Schlachter */
+public class PetrifyPNRendererTest extends GenetPNRendererTest {
 	@Override
-	public String getFormat() {
-		return "petrify";
+	protected Renderer<PetriNet> getRenderer() {
+		return new PetrifyPNRenderer();
 	}
 
-	// Verify that the net can be expressed in petrify file format.
 	@Override
-	protected void verifyNet(PetriNet pn) throws RenderException {
-		super.verifyNet(pn);
-		for (Flow f : pn.getEdges())
-			if (f.getWeight() != 1)
-				throw new RenderException("Only flow weight 1 can be expressed"
-						+ " in the Petrify file format");
-		for (Place p : pn.getPlaces())
-			if (pn.getInitialMarking().getToken(p).getValue() > 1)
-				throw new RenderException("Cannot express token counts above 1 in"
-						+ " the initial marking in the Petrify file format");
+	@Test(expectedExceptions = RenderException.class, expectedExceptionsMessageRegExp = ".*initial marking.*")
+	public void checkPersistentBiCFNet() throws Exception {
+		render(getPersistentBiCFNet());
+	}
+
+	@Override
+	@Test(expectedExceptions = RenderException.class, expectedExceptionsMessageRegExp = ".*flow weight 1.*")
+	public void testACBCCLoopNet() throws Exception {
+		render(getACBCCLoopNet());
 	}
 }
 
