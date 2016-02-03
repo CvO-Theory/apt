@@ -1,0 +1,49 @@
+/*-
+ * APT - Analysis of Petri Nets and labeled Transition systems
+ * Copyright (C) 2016 Uli Schlachter
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+/**
+ * Main template, the GenetPNRenderer uses this.
+ * We ignore the name since e.g. spaces are not supported in the name.
+ */
+pn(name,transitions,marking,edge) ::= <<
+.inputs <transitions:{t|<t.id>};separator=" ">
+.graph
+<edge:edge()>
+.marking {<marking:initToken();separator=" ">}
+.end
+>>
+
+/**
+ * Template for a single edge
+ */
+edge(e) ::= <<
+
+<e.source.id> <e.target.id><if(!e.weightOne)>(<e.weight>)<endif>
+>>
+
+/**
+ * Template for a weighted place.
+ * This is used for markings and pre- and postsets of transitions.
+ * @param pw an Object holding an place (As place property, it must hav an id property) and a weight (as weight property)
+ */
+initToken(pw) ::= <<
+<pw.place.id><if(!pw.tokenOne)>=<pw.token><endif>
+>>
+
+// vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
