@@ -90,13 +90,17 @@ public class RendererTestUtils {
 
 			@Override
 			public int compare(Flow o1, Flow o2) {
-				return nodeComparator.compare(o1.getPlace(), o2.getPlace());
+				int cmp = nodeComparator.compare(o1.getSource(), o2.getSource());
+				if (cmp != 0)
+					return cmp;
+				return nodeComparator.compare(o1.getTarget(), o2.getTarget());
 			}
 		};
 		Set<Place> places = getNodeSet(Place.class, pn.getPlaces(),
 			nodeComparator, arcComparator);
 		Set<Transition> transitions = getNodeSet(Transition.class, pn.getTransitions(),
 			nodeComparator, arcComparator);
+		Set<Flow> flows = getOrderedSet(pn.getEdges(), arcComparator);
 
 		Marking initialMarking = mock(Marking.class);
 		Marking orig = pn.getInitialMarking();
@@ -108,6 +112,7 @@ public class RendererTestUtils {
 		when(newPN.getPlaces()).thenReturn(places);
 		when(newPN.getTransitions()).thenReturn(transitions);
 		when(newPN.getInitialMarking()).thenReturn(initialMarking);
+		when(newPN.getEdges()).thenReturn(flows);
 		return newPN;
 	}
 }

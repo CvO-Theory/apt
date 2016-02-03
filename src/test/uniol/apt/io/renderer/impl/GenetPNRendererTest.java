@@ -56,13 +56,13 @@ public class GenetPNRendererTest {
 	@Test
 	public void testNonPersistentNet() throws Exception {
 		test(getNonPersistentNet(), ".inputs a b c\n.graph\n"
-				+ "p1 b\np1 a\na p2\np2 c\nb p2\nc p1\n.marking {p1}\n.end");
+				+ "a p2\nb p2\nc p1\np1 a\np1 b\np2 c\n.marking {p1}\n.end");
 	}
 
 	@Test
 	public void checkPersistentBiCFNet() throws Exception {
 		test(getPersistentBiCFNet(), ".inputs a b c d\n.graph\n"
-				+ "p1 a\na p2\np2 c\nb p4\np3 a\np3 b\nc p1\nc p3\np4 d\nd p5\nd p3\np5 b\n"
+				+ "a p2\nb p4\nc p1\nc p3\nd p3\nd p5\np1 a\np2 c\np3 a\np3 b\np4 d\np5 b\n"
 				+ ".marking {p1 p3=2 p5}\n.end");
 	}
 
@@ -80,7 +80,7 @@ public class GenetPNRendererTest {
 	@Test
 	public void testACBCCLoopNet() throws Exception {
 		test(getACBCCLoopNet(), ".inputs a b c\n.graph\n"
-				+ "p0 c\na p3(3)\np1 a(3)\nb p0(3)\np2 b(3)\nc p1\nc p2\np3 c\n"
+				+ "a p3(3)\nb p0(3)\nc p1\nc p2\np0 c\np1 a(3)\np2 b(3)\np3 c\n"
 				+ ".marking {p0 p1=3}\n.end");
 	}
 }
