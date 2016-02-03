@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -100,7 +101,7 @@ public class ParsableTask extends Task {
 		try {
 			try {
 				testers.add(new ParserTester<>(new RegexParser(), outputdir));
-				testers.addAll(constructParserTesters(PNParsers.INSTANCE));
+				testers.addAll(constructParserTesters(PNParsers.INSTANCE, "genet"));
 				testers.addAll(constructParserTesters(LTSParsers.INSTANCE));
 			} catch (FileNotFoundException | UnsupportedEncodingException e) {
 				throw new BuildException(e);
@@ -125,10 +126,12 @@ public class ParsableTask extends Task {
 			throw new BuildException("Errors found; see above messages.");
 	}
 
-	private <G> List<AbstractParserTester> constructParserTesters(Parsers<G> parsers)
+	private <G> List<AbstractParserTester> constructParserTesters(Parsers<G> parsers, String... skip)
 			throws FileNotFoundException, UnsupportedEncodingException {
 		List<AbstractParserTester> ret = new ArrayList<>();
 		for (String format : parsers.getSupportedFormats()) {
+			if (Arrays.asList(skip).contains(format))
+				continue;
 			try {
 				ret.add(new ParserTester<>(parsers.getParser(format), outputdir));
 			} catch (ParserNotFoundException ex) {
