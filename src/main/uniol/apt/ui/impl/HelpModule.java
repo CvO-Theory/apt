@@ -19,6 +19,8 @@
 
 package uniol.apt.ui.impl;
 
+import java.util.Collection;
+
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.AptModuleRegistry;
@@ -56,7 +58,18 @@ public class HelpModule extends AbstractModule implements Module {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		String moduleName = input.getParameter("module_name", String.class);
-		Module module = AptModuleRegistry.INSTANCE.findModule(moduleName);
+		ModuleRegistry registry = AptModuleRegistry.INSTANCE;
+		Collection<Module> foundModules = registry.findModulesByPrefix(moduleName);
+
+		Module module = null;
+
+		if (foundModules.size() == 1) {
+			// Only one possible module, we just found it
+			module = foundModules.iterator().next();
+		} else {
+			// Ambiguous, but maybe the name isn't a partial name after all
+			module = registry.findModule(moduleName);
+		}
 
 		if (module == null) {
 			throw new ModuleException("No such module: " + moduleName);
