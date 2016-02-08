@@ -23,27 +23,7 @@ package uniol.apt.analysis.algebra;
  * @author Renke Grunwald
  */
 public enum MatrixFileFormat {
-
-	R("R"), MATLAB("Matlab");
-	private String name;
-
-	private MatrixFileFormat(String name) {
-		this.name = name;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public static MatrixFileFormat forName(String name) {
-		for (MatrixFileFormat format : MatrixFileFormat.values()) {
-			if (format.getName().equalsIgnoreCase(name)) {
-				return format;
-			}
-		}
-
-		return null;
-	}
+	R, MATLAB;
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

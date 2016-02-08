@@ -26,32 +26,11 @@ import uniol.apt.ui.ParameterTransformation;
 
 /** @author Renke Grunwald */
 @AptParameterTransformation(MatrixFileFormat.class)
-public class MatrixFileFormatParameterTransformation implements ParameterTransformation<MatrixFileFormat> {
-
-	@Override
-	public MatrixFileFormat transform(String formatName) throws ModuleException {
-		MatrixFileFormat format = MatrixFileFormat.forName(formatName);
-
-		if (format == null) {
-			StringBuilder builder = new StringBuilder("Unknown format. Available formats: ");
-
-			for (int i = 0; i < MatrixFileFormat.values().length; i++) {
-				MatrixFileFormat otherFormat = MatrixFileFormat.values()[i];
-				builder.append(otherFormat.getName());
-
-				if (i != MatrixFileFormat.values().length - 1) {
-					builder.append(", ");
-				}
-			}
-
-			builder.append(".");
-
-			throw new ModuleException(builder.toString());
-		}
-
-		return format;
+public class MatrixFileFormatParameterTransformation extends AbstractMapParameterTransformation<MatrixFileFormat>
+		implements ParameterTransformation<MatrixFileFormat> {
+	public MatrixFileFormatParameterTransformation() {
+		super(MatrixFileFormat.values());
 	}
-
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

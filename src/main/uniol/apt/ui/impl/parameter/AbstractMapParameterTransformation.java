@@ -19,6 +19,7 @@
 
 package uniol.apt.ui.impl.parameter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import uniol.apt.module.exception.ModuleException;
@@ -30,24 +31,39 @@ import uniol.apt.ui.ParameterTransformation;
  * @author Uli Schlachter
  */
 public abstract class AbstractMapParameterTransformation<T> implements ParameterTransformation<T> {
-	private final Map<String, T> values;
+	private final Map<String, T> map;
 
 	/**
 	 * Constructor.
 	 * @param values A map containing the values understood by this transformation.
 	 */
 	public AbstractMapParameterTransformation(Map<String, T> values) {
-		this.values = values;
+		this.map = values;
+	}
+
+	/**
+	 * Constructor which uses the toString() method of some values to get a string representation.
+	 * @param values A collection containing all possible values.
+	 */
+	@SafeVarargs
+	public AbstractMapParameterTransformation(T... values) {
+		this(new HashMap<String, T>());
+		for (T value : values) {
+			T old = map.put(value.toString().toLowerCase(), value);
+			if (old != null)
+				throw new IllegalArgumentException("Duplicate values for "
+						+ value.toString() + " and " + old.toString());
+		}
 	}
 
 	@Override
 	public T transform(String arg) throws ModuleException {
-		T result = values.get(arg);
+		T result = map.get(arg.toLowerCase());
 		if (result != null)
 			return result;
 
 		throw new ModuleException(String.format("Unsupported argument '%s'. Valid options are %s.",
-					arg, values.keySet()));
+					arg, map.keySet()));
 	}
 }
 
