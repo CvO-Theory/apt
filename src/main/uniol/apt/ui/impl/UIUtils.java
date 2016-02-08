@@ -55,25 +55,24 @@ public class UIUtils {
 			formatter.format(" <%s>", parameter.getName());
 		}
 
-		for (OptionalParameter<?> optionalParameter : optionalParameters) {
-			Object object = optionalParameter.getDefaultValue();
-			if (object != null) {
-				formatter.format(" [<%s>=%s]", optionalParameter.getName(), object.toString());
-			} else {
-				formatter.format(" [<%s>]", optionalParameter.getName());
-			}
+		for (Parameter parameter : optionalParameters) {
+			formatter.format(" [<%s>]", parameter.getName());
 		}
 
 		for (ReturnValue fileReturnValue : fileReturnValues) {
 			formatter.format(" [<%s>]", fileReturnValue.getName());
 		}
-
 		sb.append("\n");
+
 		for (Parameter parameter : parameters) {
 			formatter.format("  %-10s %s%n", parameter.getName(), parameter.getDescription());
 		}
-		for (Parameter parameter : optionalParameters) {
-			formatter.format("  %-10s %s%n", parameter.getName(), parameter.getDescription());
+		for (OptionalParameter<?> parameter : optionalParameters) {
+			Object object = parameter.getDefaultValue();
+			String extra = "";
+			if (object != null)
+				extra = String.format(" The default value is '%s'.", object.toString());
+			formatter.format("  %-10s %s%s%n", parameter.getName(), parameter.getDescription(), extra);
 		}
 		for (ReturnValue value : fileReturnValues) {
 			formatter.format("  %-10s Optional file name for writing the output to%n", value.getName());
