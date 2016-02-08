@@ -19,8 +19,11 @@
 
 package uniol.apt.ui.impl.parameter;
 
+import java.util.Map;
+import java.util.HashMap;
+import static java.util.Collections.unmodifiableMap;
+
 import uniol.apt.extension.ExtendMode;
-import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 
@@ -29,15 +32,19 @@ import uniol.apt.ui.ParameterTransformation;
  *
  */
 @AptParameterTransformation(ExtendMode.class)
-public class ExtendModeParameterTransformation implements ParameterTransformation<ExtendMode> {
-	@Override
-	public ExtendMode transform(String mode) throws ModuleException {
-		switch (mode) {
-		case("next"): return ExtendMode.Next;
-		case("next_valid"): return ExtendMode.NextValid;
-		case("next_minimal_valid"): return ExtendMode.NextMinimalValid;
-		default: throw new ModuleException("Invalid mode");
-		}
+public class ExtendModeParameterTransformation extends AbstractMapParameterTransformation<ExtendMode>
+		implements ParameterTransformation<ExtendMode> {
+	private static final Map<String, ExtendMode> values;
+	static {
+		Map<String, ExtendMode> map = new HashMap<>();
+		map.put("next", ExtendMode.Next);
+		map.put("next_valid", ExtendMode.NextValid);
+		map.put("next_minimal_valid", ExtendMode.NextMinimalValid);
+		values = unmodifiableMap(map);
+	}
+
+	public ExtendModeParameterTransformation() {
+		super(values);
 	}
 }
 
