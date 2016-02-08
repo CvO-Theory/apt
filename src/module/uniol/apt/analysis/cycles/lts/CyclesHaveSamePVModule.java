@@ -57,7 +57,7 @@ public class CyclesHaveSamePVModule extends AbstractModule implements Module {
 			"The LTS or Petri net that should be examined");
 		inputSpec.addOptionalParameterWithDefault("algo", ComputeSmallestCyclesAlgorithms.class,
 				ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm(),
-				String.valueOf(ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().getChar()),
+				String.valueOf(ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().toString().toLowerCase()),
 				ComputeSmallestCyclesAlgorithms.getAlgorithmCharDescription());
 	}
 

@@ -60,7 +60,7 @@ public class PVsOfSmallestCyclesModule extends AbstractModule implements Module 
 			"The Petri net or LTS that should be examined");
 		inputSpec.addOptionalParameterWithDefault("algo", ComputeSmallestCyclesAlgorithms.class,
 				ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm(),
-				String.valueOf(ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().getChar()),
+				String.valueOf(ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().toString().toLowerCase()),
 				ComputeSmallestCyclesAlgorithms.getAlgorithmCharDescription());
 	}
 

@@ -34,16 +34,8 @@ import uniol.apt.ui.ParameterTransformation;
 @AptParameterTransformation(InvariantAlgorithm.class)
 public class InvariantAlgorithmParameterTransformation extends AbstractMapParameterTransformation<InvariantAlgorithm>
 		implements ParameterTransformation<InvariantAlgorithm> {
-	private static final Map<String, InvariantAlgorithm> values;
-	static {
-		Map<String, InvariantAlgorithm> map = new HashMap<>();
-		map.put("f", InvariantAlgorithm.FARKAS);
-		map.put("p", InvariantAlgorithm.PIPE);
-		values = unmodifiableMap(map);
-	}
-
 	public InvariantAlgorithmParameterTransformation() {
-		super(values);
+		super(InvariantAlgorithm.values());
 	}
 }
 

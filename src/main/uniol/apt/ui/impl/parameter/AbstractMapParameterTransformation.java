@@ -22,6 +22,9 @@ package uniol.apt.ui.impl.parameter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections4.Trie;
+import org.apache.commons.collections4.trie.PatriciaTrie;
+
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.ParameterTransformation;
 
@@ -31,14 +34,14 @@ import uniol.apt.ui.ParameterTransformation;
  * @author Uli Schlachter
  */
 public abstract class AbstractMapParameterTransformation<T> implements ParameterTransformation<T> {
-	private final Map<String, T> map;
+	private final Trie<String, T> map;
 
 	/**
 	 * Constructor.
 	 * @param values A map containing the values understood by this transformation.
 	 */
 	public AbstractMapParameterTransformation(Map<String, T> values) {
-		this.map = values;
+		this.map = new PatriciaTrie<>(values);
 	}
 
 	/**
@@ -47,7 +50,7 @@ public abstract class AbstractMapParameterTransformation<T> implements Parameter
 	 */
 	@SafeVarargs
 	public AbstractMapParameterTransformation(T... values) {
-		this(new HashMap<String, T>());
+		this.map = new PatriciaTrie<>();
 		for (T value : values) {
 			T old = map.put(value.toString().toLowerCase(), value);
 			if (old != null)
@@ -58,9 +61,15 @@ public abstract class AbstractMapParameterTransformation<T> implements Parameter
 
 	@Override
 	public T transform(String arg) throws ModuleException {
-		T result = map.get(arg.toLowerCase());
+		String lowerCaseArg = arg.toLowerCase();
+		T result = map.get(lowerCaseArg);
 		if (result != null)
 			return result;
+
+		// If this is a unique prefix of an option, return that option
+		Map<String, T> prefix = map.prefixMap(lowerCaseArg);
+		if (prefix.size() == 1)
+			return prefix.entrySet().iterator().next().getValue();
 
 		throw new ModuleException(String.format("Unsupported argument '%s'. Valid options are %s.",
 					arg, map.keySet()));

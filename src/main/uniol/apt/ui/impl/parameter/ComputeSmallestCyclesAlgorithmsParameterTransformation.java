@@ -31,18 +31,8 @@ import uniol.apt.ui.ParameterTransformation;
 @AptParameterTransformation(ComputeSmallestCyclesAlgorithms.class)
 public class ComputeSmallestCyclesAlgorithmsParameterTransformation extends AbstractMapParameterTransformation<ComputeSmallestCyclesAlgorithms>
 		implements ParameterTransformation<ComputeSmallestCyclesAlgorithms> {
-	private static final Map<String, ComputeSmallestCyclesAlgorithms> values;
-	static {
-		Map<String, ComputeSmallestCyclesAlgorithms> map = new HashMap<>();
-		for (ComputeSmallestCyclesAlgorithms alg : ComputeSmallestCyclesAlgorithms.values()) {
-			map.put(String.valueOf(alg.getChar()), alg);
-			map.put(alg.toString().toLowerCase(), alg);
-		}
-		values = unmodifiableMap(map);
-	}
-
 	public ComputeSmallestCyclesAlgorithmsParameterTransformation() {
-		super(values);
+		super(ComputeSmallestCyclesAlgorithms.values());
 	}
 }
 
