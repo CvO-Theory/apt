@@ -295,7 +295,7 @@
 			<packageset dir="src/io"/>
 			<packageset dir="src/compiler"/>
 			<packageset dir="src/glue"/>
-			<packageset dir="src/test"/>
+			<!-- Not included: test, ant -->
 			<packageset dir="generated-src/io"/>
 		</javadoc>
 	</target>
