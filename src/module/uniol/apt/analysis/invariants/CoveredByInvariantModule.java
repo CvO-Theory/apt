@@ -52,7 +52,7 @@ public class CoveredByInvariantModule extends AbstractModule implements Module {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("net", PetriNet.class, "The Petri net that should be examined");
-		inputSpec.addParameter("inv", Character.class, "Parameter 's' for s-invariants "
+		inputSpec.addParameter("inv", InvariantKind.class, "Parameter 's' for s-invariants "
 			+ "and 't' for t-invariants.");
 		inputSpec.addOptionalParameterWithDefault("algo", InvariantCalculator.InvariantAlgorithm.class,
 				InvariantCalculator.InvariantAlgorithm.PIPE, "p",
@@ -69,19 +69,22 @@ public class CoveredByInvariantModule extends AbstractModule implements Module {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("net", PetriNet.class);
-		Character para = input.getParameter("inv", Character.class);
+		InvariantKind kind = input.getParameter("inv", InvariantKind.class);
 		InvariantCalculator.InvariantAlgorithm algo = input.getParameter("algo",
 				InvariantCalculator.InvariantAlgorithm.class);
 		Vector invariant;
 		Set<? extends Node> nodes;
-		if (para == 's') {
-			invariant = InvariantCalculator.coveredBySInvariants(pn, algo);
-			nodes = pn.getPlaces();
-		} else if (para == 't') {
-			invariant = InvariantCalculator.coveredByTInvariants(pn, algo);
-			nodes = pn.getTransitions();
-		} else {
-			throw new ModuleException("Parameter for " + getName() + " has to be [s/t]");
+		switch (kind) {
+			case S:
+				invariant = InvariantCalculator.coveredBySInvariants(pn, algo);
+				nodes = pn.getPlaces();
+				break;
+			case T:
+				invariant = InvariantCalculator.coveredByTInvariants(pn, algo);
+				nodes = pn.getTransitions();
+				break;
+			default:
+				throw new ModuleException("Parameter for " + getName() + " has to be [s/t]");
 		}
 		output.setReturnValue("covered by invariant", Boolean.class, invariant != null);
 		// Mapping
