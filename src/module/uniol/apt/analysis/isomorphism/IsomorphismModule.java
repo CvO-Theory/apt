@@ -55,7 +55,7 @@ public class IsomorphismModule extends AbstractModule implements Module {
 				"The first Petri net or transition system that should be examined");
 		inputSpec.addParameter("pn_or_ts2", PetriNetOrTransitionSystem.class,
 				"The second Petri net or transition system that should be examined");
-		inputSpec.addOptionalParameter("dontCheckLabels", String.class, null,
+		inputSpec.addOptionalParameterWithoutDefault("dontCheckLabels", String.class,
 				"do not check arc labels (default is to check labels)");
 	}
 

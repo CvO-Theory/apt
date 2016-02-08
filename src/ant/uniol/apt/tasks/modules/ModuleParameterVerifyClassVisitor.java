@@ -19,6 +19,7 @@
 
 package uniol.apt.tasks.modules;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.objectweb.asm.ClassReader;
@@ -36,10 +37,12 @@ import uniol.apt.module.ModuleOutputSpec;
 public class ModuleParameterVerifyClassVisitor extends ClassVisitor {
 	private final ModuleParameterVerifyMethodVisitor provideVisitor   =
 			new ModuleParameterVerifyMethodVisitor(ModuleOutputSpec.class, "addReturnValue");
-	private final ModuleParameterVerifyMethodVisitor optionalVisitor   =
-			new ModuleParameterVerifyMethodVisitor(ModuleInputSpec.class, "addOptionalParameter", provideVisitor);
+	private final ModuleParameterVerifyMethodVisitor optionalVisitor1 =
+			new ModuleParameterVerifyMethodVisitor(ModuleInputSpec.class, "addOptionalParameterWithoutDefault", provideVisitor);
+	private final ModuleParameterVerifyMethodVisitor optionalVisitor2 =
+			new ModuleParameterVerifyMethodVisitor(ModuleInputSpec.class, "addOptionalParameterWithDefault", optionalVisitor1);
 	private final ModuleParameterVerifyMethodVisitor requireVisitor   =
-			new ModuleParameterVerifyMethodVisitor(ModuleInputSpec.class, "addParameter", optionalVisitor);
+			new ModuleParameterVerifyMethodVisitor(ModuleInputSpec.class, "addParameter", optionalVisitor2);
 	private final ModuleParameterVerifyMethodVisitor runInputVisitor  =
 			new ModuleParameterVerifyMethodVisitor(ModuleInput.class, "getParameter", requireVisitor);
 	private final ModuleParameterVerifyMethodVisitor runOutputVisitor =
@@ -88,7 +91,10 @@ public class ModuleParameterVerifyClassVisitor extends ClassVisitor {
 	 * @return Mapping of requested optional parameters to types or DIFFERENT_TYPES_DETECTED_TYPE if they have more than one type
 	 */
 	public Map<String, Type> getOptionalInputs() {
-		return optionalVisitor.getParameterMap();
+		Map<String, Type> result = new HashMap<>();
+		result.putAll(optionalVisitor1.getParameterMap());
+		result.putAll(optionalVisitor2.getParameterMap());
+		return result;
 	}
 
 	/**

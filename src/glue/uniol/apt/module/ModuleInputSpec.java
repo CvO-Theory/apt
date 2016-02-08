@@ -39,20 +39,33 @@ public interface ModuleInputSpec {
 
 	/**
 	 * Specifies a optional parameter of a module. The order of calls of this
-	 * method matters; however, optional parameters always appear last. A
-	 * default value can be set for optional parameters. If the default value is
-	 * dependent on other parameters it can be set to null and handled in the
-	 * module itself.
+	 * method matters; however, optional parameters always appear last. The
+	 * default value will be null.
 	 *
 	 * @param name name of the parameter
 	 * @param klass class of the parameter
-	 * @param defaultValue the default value (may be null)
 	 * @param documentation user-readable documentation for this parameter
 	 * @param properties required properties
 	 * @param <T> the type of the parameter
 	 */
-	public <T> void addOptionalParameter(String name, Class<T> klass,
-			T defaultValue, String documentation, String... properties);
+	public <T> void addOptionalParameterWithoutDefault(String name, Class<T> klass,
+			String documentation, String... properties);
+
+	/**
+	 * Specifies a optional parameter of a module. The order of calls of this
+	 * method matters; however, optional parameters always appear last. A
+	 * default value is provided.
+	 *
+	 * @param name name of the parameter
+	 * @param klass class of the parameter
+	 * @param defaultValue the default value
+	 * @param defaultValueString a string representation of the default value
+	 * @param documentation user-readable documentation for this parameter
+	 * @param properties required properties
+	 * @param <T> the type of the parameter
+	 */
+	public <T> void addOptionalParameterWithDefault(String name, Class<T> klass,
+			T defaultValue, String defaultValueString, String documentation, String... properties);
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

@@ -51,7 +51,7 @@ public class CycleNetGeneratorModule extends AbstractModule implements Module {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("n", Integer.class, "The argument for the Petri net generator");
-		inputSpec.addOptionalParameter("init", Integer.class, 1, "The number of token in the initial marking");
+		inputSpec.addOptionalParameterWithDefault("init", Integer.class, 1, "1", "The number of token in the initial marking");
 	}
 
 	@Override

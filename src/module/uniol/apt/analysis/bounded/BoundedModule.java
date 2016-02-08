@@ -60,7 +60,7 @@ public class BoundedModule extends AbstractModule implements Module {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
-		inputSpec.addOptionalParameter("k", Integer.class, null, "If given, k-boundedness is checked");
+		inputSpec.addOptionalParameterWithoutDefault("k", Integer.class, "If given, k-boundedness is checked");
 	}
 
 	@Override

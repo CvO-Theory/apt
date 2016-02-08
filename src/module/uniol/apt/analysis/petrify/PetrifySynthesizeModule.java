@@ -50,7 +50,7 @@ public class PetrifySynthesizeModule extends AbstractModule implements Module {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("lts", TransitionSystem.class, "The LTS that should be examined");
-		inputSpec.addOptionalParameter("dead", String.class, null, "If the given LTS is dead");
+		inputSpec.addOptionalParameterWithoutDefault("dead", String.class, "If the given LTS is dead");
 	}
 
 	@Override

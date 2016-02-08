@@ -55,8 +55,9 @@ public class CyclesHaveSamePVModule extends AbstractModule implements Module {
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("graph", PetriNetOrTransitionSystem.class,
 			"The LTS or Petri net that should be examined");
-		inputSpec.addOptionalParameter("algo", Character.class,
+		inputSpec.addOptionalParameterWithDefault("algo", Character.class,
 				ComputeSmallestCyclesAlgorithms.getDefaultAlgorithmChar(),
+				String.valueOf(ComputeSmallestCyclesAlgorithms.getDefaultAlgorithmChar()),
 				ComputeSmallestCyclesAlgorithms.getAlgorithmCharDescription());
 	}
 

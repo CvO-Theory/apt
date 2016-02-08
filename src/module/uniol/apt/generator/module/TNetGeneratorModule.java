@@ -61,7 +61,7 @@ public class TNetGeneratorModule extends AbstractModule implements Module {
 		inputSpec.addParameter("np", Integer.class, "The maximum number of place for the Petri nets");
 		inputSpec.addParameter("nt", Integer.class, "The maximum number of transitions for the Petri nets");
 		inputSpec.addParameter("m", Integer.class, "The maximum number of token for the Petri nets");
-		inputSpec.addOptionalParameter("directory", String.class, "output",
+		inputSpec.addOptionalParameterWithDefault("directory", String.class, "output", "output",
 			"Directory for writing the results to");
 	}
 

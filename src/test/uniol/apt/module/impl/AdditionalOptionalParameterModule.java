@@ -46,7 +46,7 @@ public class AdditionalOptionalParameterModule extends AbstractModule {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("mandatory", String.class, "");
-		inputSpec.addOptionalParameter("optional", Object.class, defaultValue, "");
+		inputSpec.addOptionalParameterWithDefault("optional", Object.class, defaultValue, "", "");
 	}
 
 	@Override

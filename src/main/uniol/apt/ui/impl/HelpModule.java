@@ -44,7 +44,7 @@ public class HelpModule extends AbstractModule implements Module {
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addOptionalParameter("module_name", String.class, "help",
+		inputSpec.addOptionalParameterWithDefault("module_name", String.class, "help", "help",
 				"Module name for which you want help");
 	}
 

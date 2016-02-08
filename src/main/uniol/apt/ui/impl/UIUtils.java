@@ -68,10 +68,10 @@ public class UIUtils {
 			formatter.format("  %-10s %s%n", parameter.getName(), parameter.getDescription());
 		}
 		for (OptionalParameter<?> parameter : optionalParameters) {
-			Object object = parameter.getDefaultValue();
+			Object def = parameter.getDefaultValueString();
 			String extra = "";
-			if (object != null)
-				extra = String.format(" The default value is '%s'.", object.toString());
+			if (def != null)
+				extra = String.format(" The default value is '%s'.", def);
 			formatter.format("  %-10s %s%s%n", parameter.getName(), parameter.getDescription(), extra);
 		}
 		for (ReturnValue value : fileReturnValues) {

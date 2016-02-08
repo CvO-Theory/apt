@@ -68,8 +68,8 @@ public class StrongSeparationLengthModule extends AbstractModule implements Modu
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
 		inputSpec.addParameter("length", Integer.class, "Maximum length of firing sequences");
-		inputSpec.addOptionalParameter("k", Integer.class, 0, "Value of k");
-		inputSpec.addOptionalParameter("verbose", String.class, "", "Optional more output");
+		inputSpec.addOptionalParameterWithDefault("k", Integer.class, 0, "0", "Value of k");
+		inputSpec.addOptionalParameterWithDefault("verbose", String.class, "", "", "Optional more output");
 	}
 
 	@Override

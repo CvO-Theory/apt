@@ -54,9 +54,9 @@ public class PnAnalysisModule extends AbstractModule implements Module {
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
 		inputSpec.addParameter("g", Integer.class, "maximum size of places of the checked T-systems");
-		inputSpec.addOptionalParameter("k", Integer.class, null, "maximum number of token of the checked"
+		inputSpec.addOptionalParameterWithoutDefault("k", Integer.class, "maximum number of token of the checked"
 			+ " T-systems");
-		inputSpec.addOptionalParameter("randomly", String.class, "", "Parameter, which say, that a randomly "
+		inputSpec.addOptionalParameterWithDefault("randomly", String.class, "", "", "Parameter, which say, that a randomly "
 			+ "selected T-system is checked with g as maximum size of places.");
 	}
 

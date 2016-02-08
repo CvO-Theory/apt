@@ -44,7 +44,7 @@ public class MatrixModule extends AbstractModule implements Module {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
-		inputSpec.addOptionalParameter("format", MatrixFileFormat.class, null,
+		inputSpec.addOptionalParameterWithoutDefault("format", MatrixFileFormat.class,
 				"The file format of the printed matrices");
 	}
 

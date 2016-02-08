@@ -50,7 +50,7 @@ public class RandomTNetGeneratorModule extends AbstractModule implements Module 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("g", Integer.class, "maximum count of places of the returned t-net.");
-		inputSpec.addOptionalParameter("k", Integer.class, null, "maximum number of token of a place in the"
+		inputSpec.addOptionalParameterWithoutDefault("k", Integer.class, "maximum number of token of a place in the"
 			+ " t-net.");
 	}
 

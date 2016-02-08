@@ -54,8 +54,8 @@ public class CoveredByInvariantModule extends AbstractModule implements Module {
 		inputSpec.addParameter("net", PetriNet.class, "The Petri net that should be examined");
 		inputSpec.addParameter("inv", Character.class, "Parameter 's' for s-invariants "
 			+ "and 't' for t-invariants.");
-		inputSpec.addOptionalParameter("algo", Character.class, 'p', "Parameter 'f' for farkas algorithm and"
-			+ " 'p' for the adapted farkas algorithm of pipe.");
+		inputSpec.addOptionalParameterWithDefault("algo", Character.class, 'p', "p",
+				"Parameter 'f' for farkas algorithm and 'p' for the adapted farkas algorithm of pipe.");
 	}
 
 	@Override

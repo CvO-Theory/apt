@@ -91,13 +91,13 @@ public class CheckModule extends AbstractModule implements Module {
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("maxSeconds", Integer.class, "Max. execution time in seconds");
 		inputSpec.addParameter("generator", String.class, "Generator");
-		inputSpec.addOptionalParameter("attribute1", String.class, null, "Attribute 1");
-		inputSpec.addOptionalParameter("attribute2", String.class, null, "Attribute 2");
-		inputSpec.addOptionalParameter("attribute3", String.class, null, "Attribute 3");
-		inputSpec.addOptionalParameter("attribute4", String.class, null, "Attribute 4");
-		inputSpec.addOptionalParameter("attribute5", String.class, null, "Attribute 5");
-		inputSpec.addOptionalParameter("attribute6", String.class, null, "Attribute 6");
-		inputSpec.addOptionalParameter("attribute7", String.class, null, "Attribute 7");
+		inputSpec.addOptionalParameterWithoutDefault("attribute1", String.class, "Attribute 1");
+		inputSpec.addOptionalParameterWithoutDefault("attribute2", String.class, "Attribute 2");
+		inputSpec.addOptionalParameterWithoutDefault("attribute3", String.class, "Attribute 3");
+		inputSpec.addOptionalParameterWithoutDefault("attribute4", String.class, "Attribute 4");
+		inputSpec.addOptionalParameterWithoutDefault("attribute5", String.class, "Attribute 5");
+		inputSpec.addOptionalParameterWithoutDefault("attribute6", String.class, "Attribute 6");
+		inputSpec.addOptionalParameterWithoutDefault("attribute7", String.class, "Attribute 7");
 	}
 
 	@Override

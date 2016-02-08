@@ -31,15 +31,21 @@ import java.util.Objects;
 public class OptionalParameter<T> extends Parameter {
 
 	private final T defaultValue;
+	private final String defaultValueString;
 
-	public OptionalParameter(String name, Class<T> klass, T defaultValue, String description,
-			String... properties) {
+	public OptionalParameter(String name, Class<T> klass, T defaultValue, String defaultValueString,
+			String description, String... properties) {
 		super(name, klass, description, properties);
 		this.defaultValue = defaultValue;
+		this.defaultValueString = defaultValueString;
 	}
 
 	public T getDefaultValue() {
 		return defaultValue;
+	}
+
+	public String getDefaultValueString() {
+		return defaultValueString;
 	}
 
 	@Override

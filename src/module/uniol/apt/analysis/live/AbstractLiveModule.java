@@ -41,7 +41,7 @@ abstract public class AbstractLiveModule extends AbstractModule implements Modul
 	@Override
 	final public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
-		inputSpec.addOptionalParameter("transition", String.class, null,
+		inputSpec.addOptionalParameterWithoutDefault("transition", String.class,
 			"A transition that should be checked for liveness");
 	}
 

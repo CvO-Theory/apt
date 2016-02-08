@@ -58,8 +58,9 @@ public class PVsOfSmallestCyclesModule extends AbstractModule implements Module 
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("graph", PetriNetOrTransitionSystem.class,
 			"The Petri net or LTS that should be examined");
-		inputSpec.addOptionalParameter("algo", Character.class,
+		inputSpec.addOptionalParameterWithDefault("algo", Character.class,
 				ComputeSmallestCyclesAlgorithms.getDefaultAlgorithmChar(),
+				String.valueOf(ComputeSmallestCyclesAlgorithms.getDefaultAlgorithmChar()),
 				ComputeSmallestCyclesAlgorithms.getAlgorithmCharDescription());
 	}
 
