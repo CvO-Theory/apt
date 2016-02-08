@@ -56,7 +56,8 @@ public class ComputeMinSemiPosInvariantsModule extends AbstractModule implements
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
 		inputSpec.addParameter("inv", Character.class, "Parameter 's' for s-invariants "
 			+ "and 't' for t-invariants.");
-		inputSpec.addOptionalParameterWithDefault("algo", Character.class, 'p', "p",
+		inputSpec.addOptionalParameterWithDefault("algo", InvariantCalculator.InvariantAlgorithm.class,
+				InvariantCalculator.InvariantAlgorithm.PIPE, "p",
 				"Parameter 'f' for Farkas algorithm and 'p' for the adapted Farkas algorithm of PIPE.");
 	}
 
@@ -70,16 +71,15 @@ public class ComputeMinSemiPosInvariantsModule extends AbstractModule implements
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
 		Character para = input.getParameter("inv", Character.class);
-		Character algo = input.getParameter("algo", Character.class);
+		InvariantCalculator.InvariantAlgorithm algo = input.getParameter("algo",
+				InvariantCalculator.InvariantAlgorithm.class);
 		Set<List<Integer>> invariants = null;
 		Set<? extends Node> nodes;
-		InvariantCalculator.InvariantAlgorithm alg = (algo == 'f')
-			? InvariantCalculator.InvariantAlgorithm.FARKAS : InvariantCalculator.InvariantAlgorithm.PIPE;
 		if (para == 's') {
-			invariants = InvariantCalculator.calcSInvariants(pn, alg);
+			invariants = InvariantCalculator.calcSInvariants(pn, algo);
 			nodes = pn.getPlaces();
 		} else if (para == 't') {
-			invariants = InvariantCalculator.calcTInvariants(pn, alg);
+			invariants = InvariantCalculator.calcTInvariants(pn, algo);
 			nodes = pn.getTransitions();
 		} else {
 			throw new ModuleException("Parameter for " + getName() + " has to be [s/t]");

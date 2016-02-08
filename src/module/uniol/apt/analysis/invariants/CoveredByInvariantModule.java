@@ -54,7 +54,8 @@ public class CoveredByInvariantModule extends AbstractModule implements Module {
 		inputSpec.addParameter("net", PetriNet.class, "The Petri net that should be examined");
 		inputSpec.addParameter("inv", Character.class, "Parameter 's' for s-invariants "
 			+ "and 't' for t-invariants.");
-		inputSpec.addOptionalParameterWithDefault("algo", Character.class, 'p', "p",
+		inputSpec.addOptionalParameterWithDefault("algo", InvariantCalculator.InvariantAlgorithm.class,
+				InvariantCalculator.InvariantAlgorithm.PIPE, "p",
 				"Parameter 'f' for farkas algorithm and 'p' for the adapted farkas algorithm of pipe.");
 	}
 
@@ -69,16 +70,15 @@ public class CoveredByInvariantModule extends AbstractModule implements Module {
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("net", PetriNet.class);
 		Character para = input.getParameter("inv", Character.class);
-		Character algo = input.getParameter("algo", Character.class);
-		InvariantCalculator.InvariantAlgorithm alg = (algo == 'f')
-			? InvariantCalculator.InvariantAlgorithm.FARKAS : InvariantCalculator.InvariantAlgorithm.PIPE;
+		InvariantCalculator.InvariantAlgorithm algo = input.getParameter("algo",
+				InvariantCalculator.InvariantAlgorithm.class);
 		Vector invariant;
 		Set<? extends Node> nodes;
 		if (para == 's') {
-			invariant = InvariantCalculator.coveredBySInvariants(pn, alg);
+			invariant = InvariantCalculator.coveredBySInvariants(pn, algo);
 			nodes = pn.getPlaces();
 		} else if (para == 't') {
-			invariant = InvariantCalculator.coveredByTInvariants(pn, alg);
+			invariant = InvariantCalculator.coveredByTInvariants(pn, algo);
 			nodes = pn.getTransitions();
 		} else {
 			throw new ModuleException("Parameter for " + getName() + " has to be [s/t]");
