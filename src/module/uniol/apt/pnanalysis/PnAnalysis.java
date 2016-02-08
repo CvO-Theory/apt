@@ -86,7 +86,7 @@ public class PnAnalysis {
 		TransitionSystem reachabilitylts1 = cover.toReachabilityLTS();
 
 		// Check preconditions for lts
-		ComputeSmallestCycles sc = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm();
+		ComputeSmallestCycles sc = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().getInstance();
 		if (!sc.checkSamePVs(reachabilitylts1)) {
 			throw new PreconditionFailedException("Not all smallest cycles have the"
 				+ " same parikh vectors.");

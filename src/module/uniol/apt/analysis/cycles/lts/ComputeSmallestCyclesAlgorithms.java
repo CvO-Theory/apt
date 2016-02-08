@@ -21,26 +21,50 @@ package uniol.apt.analysis.cycles.lts;
 
 /**
  * Factory for {@link ComputeSmallestCycles} instances
- *
- * @author vsp
+ * @author vsp, Uli Schlachter
  */
-public class ComputeSmallestCyclesAlgorithms {
-	private ComputeSmallestCyclesAlgorithms() { /* hide constructor */ }
+public enum ComputeSmallestCyclesAlgorithms {
+	FLOYD_WARSHALL('f') {
+		@Override
+		public ComputeSmallestCycles getInstance() {
+			return new ComputeSmallestCyclesFloydWarshall();
+		}
+	},
+	DFS('d') {
+		@Override
+		public ComputeSmallestCycles getInstance() {
+			return new ComputeSmallestCyclesDFS();
+		}
+	},
+	JOHNSON('j') {
+		@Override
+		public ComputeSmallestCycles getInstance() {
+			return new ComputeSmallestCyclesJohnson();
+		}
+	};
 
-	/**
-	 * Get the default implementation
-	 * @return {@link ComputeSmallestCycles} instance using the default algorithm
-	 */
-	public static ComputeSmallestCycles getDefaultAlgorithm() {
-		return new ComputeSmallestCyclesJohnson();
+	private final char character;
+
+	ComputeSmallestCyclesAlgorithms(char character) {
+		this.character = character;
 	}
 
 	/**
-	 * Get the character which selects the default implementation in {@link #getAlgorithm(char)}.
-	 * @return Character which selects the default implementation
+	 * Get the character which selects this algorithm
+	 * @return Character which selects this algorithm
 	 */
-	public static char getDefaultAlgorithmChar() {
-		return 'j';
+	public char getChar() {
+		return character;
+	}
+
+	public abstract ComputeSmallestCycles getInstance();
+
+	/**
+	 * Get the default algorithm.
+	 * @return The default algorithm
+	 */
+	public static ComputeSmallestCyclesAlgorithms getDefaultAlgorithm() {
+		return JOHNSON;
 	}
 
 	/**
@@ -52,30 +76,6 @@ public class ComputeSmallestCyclesAlgorithms {
 			+ " 'd' selects an depth first search algorithm;"
 			+ " 'f' selects an adapted Floyd-Warshall algorithm;"
 			+ " 'j' selects Johnson's algorithm";
-	}
-
-	/**
-	 * Get a specific implementation of the {@link ComputeSmallestCycles} interface
-	 *
-	 * @param selection (User) input to select the algorithm
-	 * @return {@link ComputeSmallestCycles} instance which uses the requested algorithm
-	 */
-	public static ComputeSmallestCycles getAlgorithm(char selection) {
-		ComputeSmallestCycles algo;
-		switch (selection) {
-			case 'f':
-				algo = new ComputeSmallestCyclesFloydWarshall();
-				break;
-			case 'd':
-				algo = new ComputeSmallestCyclesDFS();
-				break;
-			case 'j':
-				algo = new ComputeSmallestCyclesJohnson();
-				break;
-			default:
-				throw new IllegalArgumentException("Unknown algorithm requested");
-		}
-		return algo;
 	}
 }
 

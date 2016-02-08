@@ -96,7 +96,7 @@ public class ExamineLTSModule extends AbstractModule implements Module {
 			!Connectivity.findIsolatedElements(lts).isEmpty());
 		output.setReturnValue("strongly_connected", Boolean.class, Connectivity.isStronglyConnected(lts));
 		output.setReturnValue("weakly_connected", Boolean.class, Connectivity.isWeaklyConnected(lts));
-		ComputeSmallestCycles csc = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm();
+		ComputeSmallestCycles csc = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().getInstance();
 		Set<Pair<List<String>, ParikhVector>> vecs = csc.computePVsOfSmallestCycles(lts);
 		output.setReturnValue("same_parikh_vectors", Boolean.class, csc.checkSamePVs(vecs));
 		output.setReturnValue("same_or_mutually_disjoint_pv", Boolean.class,

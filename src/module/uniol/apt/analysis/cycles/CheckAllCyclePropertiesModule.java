@@ -79,7 +79,7 @@ public class CheckAllCyclePropertiesModule extends AbstractModule implements Mod
 		TransitionSystem ts = CoverabilityGraph.get(pn).toReachabilityLTS();
 
 		// Compute Parikh vectors of smallest cycles
-		ComputeSmallestCycles small = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm();
+		ComputeSmallestCycles small = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().getInstance();
 		Set<Pair<List<String>, ParikhVector>> parikhs = small.computePVsOfSmallestCycles(ts);
 		output.setReturnValue("parikh_vectors", Set.class, parikhs);
 		// all smallest cycles have same Parikh vectors

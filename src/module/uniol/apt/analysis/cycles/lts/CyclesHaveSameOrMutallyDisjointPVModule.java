@@ -53,9 +53,9 @@ public class CyclesHaveSameOrMutallyDisjointPVModule extends AbstractModule impl
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("graph", PetriNetOrTransitionSystem.class,
 			"The Petri net or LTS that should be examined");
-		inputSpec.addOptionalParameterWithDefault("algo", Character.class,
-				ComputeSmallestCyclesAlgorithms.getDefaultAlgorithmChar(),
-				String.valueOf(ComputeSmallestCyclesAlgorithms.getDefaultAlgorithmChar()),
+		inputSpec.addOptionalParameterWithDefault("algo", ComputeSmallestCyclesAlgorithms.class,
+				ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm(),
+				String.valueOf(ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().getChar()),
 				ComputeSmallestCyclesAlgorithms.getAlgorithmCharDescription());
 	}
 
@@ -68,8 +68,7 @@ public class CyclesHaveSameOrMutallyDisjointPVModule extends AbstractModule impl
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
-		Character algo = input.getParameter("algo", Character.class);
-		ComputeSmallestCycles prog = ComputeSmallestCyclesAlgorithms.getAlgorithm(algo);
+		ComputeSmallestCycles prog = input.getParameter("algo", ComputeSmallestCyclesAlgorithms.class).getInstance();
 		TransitionSystem ts = g.getTs();
 		PetriNet pn = g.getNet();
 		boolean ret = false;

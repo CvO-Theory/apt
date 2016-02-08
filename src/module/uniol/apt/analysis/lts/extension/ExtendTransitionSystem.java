@@ -359,7 +359,7 @@ public class ExtendTransitionSystem {
 	private boolean check(TransitionSystem ts) {
 		PersistentTS p = new PersistentTS(ts);
 		ReversibleTS r = new ReversibleTS(ts);
-		ComputeSmallestCycles s = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm();
+		ComputeSmallestCycles s = ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().getInstance();
 
 		if (!p.isPersistent() || !r.isReversible() || !s.checkSamePVs(ts))
 			return false;
