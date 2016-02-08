@@ -112,7 +112,7 @@ public class ExtendStateFile {
 	}
 
 	public void render() throws IOException {
-		try (OutputStream os = FileUtils.openOutputStream (this.file);
+		try (OutputStream os = FileUtils.openOutputStream(this.file);
 				Writer osw = new OutputStreamWriter(os, "UTF-8");
 				Writer writer = new BufferedWriter(osw)) {
 			for (BitSet code : minimalCodes) {

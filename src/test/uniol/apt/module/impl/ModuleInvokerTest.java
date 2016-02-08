@@ -66,14 +66,7 @@ public class ModuleInvokerTest {
 	public void testAllowAtLeastOneNullReturnValues() throws ModuleException {
 		Module module = new TestReturnValuesModule("Hello", null);
 		ModuleInvoker invoker = new ModuleInvoker();
-
-		List<Object> values = null;
-
-		try {
-			values = invoker.invoke(module);
-		} catch (ModuleInvocationException e) {
-
-		}
+		List<Object> values = invoker.invoke(module);
 
 		assertTrue(values != null);
 	}

@@ -226,9 +226,9 @@ public class TrapsAndSiphonsTest {
 	@Test
 	public void testDualityNet1() {
 		String[][] minimalTraps = {
-			{"s2"},};
+			{"s2"}, };
 		String[][] minimalSiphons = {
-			{"s0"},};
+			{"s0"}, };
 		testTrapSiphons(getDualityTestNet1(), minimalTraps, minimalSiphons);
 	}
 

@@ -30,7 +30,7 @@ import static org.apache.commons.collections4.iterators.EmptyIterator.emptyItera
 /**
  * Iterable for iterating over all pairs of different elements of a given collection. Note that it is assumed that the
  * order of the elements does not matter, so only one of (a, b) and (b, a) will be returned.
- *
+ * @param <E> The type of elements that are investigated.
  * @author Uli Schlachter
  */
 public class DifferentPairsIterable<E> implements Iterable<Pair<E, E>> {
