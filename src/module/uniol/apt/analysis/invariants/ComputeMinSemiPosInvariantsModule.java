@@ -56,8 +56,8 @@ public class ComputeMinSemiPosInvariantsModule extends AbstractModule implements
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");
 		inputSpec.addParameter("inv", Character.class, "Parameter 's' for s-invariants "
 			+ "and 't' for t-invariants.");
-		inputSpec.addOptionalParameter("algo", Character.class, 'p', "Parameter 'f' for farkas algorithmen and"
-			+ " 'p' for the adapted farkas algorithmen of pipe.");
+		inputSpec.addOptionalParameter("algo", Character.class, 'p', "Parameter 'f' for Farkas algorithm and"
+			+ " 'p' for the adapted Farkas algorithm of PIPE.");
 	}
 
 	@Override
