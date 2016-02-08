@@ -141,23 +141,9 @@ class ComputeSmallestCyclesJohnson extends AbstractComputeSmallestCycles {
 		while (s < states.size()) {
 			List<Collection<Pair<String, Integer>>> adjacencies = constructAdjacencies(ts, states, s);
 
-			boolean[] blocked = new boolean[states.size()];
-			Arrays.fill(blocked, s, states.size(), false);
-			List<Set<Integer>> b = new ArrayList<>();
-			for (int i = 0; i < states.size(); i++) {
-				if (i >= s)
-					b.add(new HashSet<Integer>());
-				else
-					// Not part of the graph, should not be accessed
-					b.add(null);
-			}
-			Deque<String> sStack = new ArrayDeque<>();
-			Deque<String> lStack = new ArrayDeque<>();
-			doDfs(ts, adjacencies, states, s, s, sStack, lStack, blocked, b, cycles, smallest);
+			// As a side effect, this adds cycles through s to 'cycles'
+			new DoDfs(adjacencies, states, s, cycles, smallest);
 			s++;
-
-			assert sStack.isEmpty();
-			assert lStack.isEmpty();
 		}
 
 		return cycles;
@@ -165,42 +151,79 @@ class ComputeSmallestCyclesJohnson extends AbstractComputeSmallestCycles {
 
 	// Do a DFS for circles going through s. We are currently in state 'state'. This is called CIRCUIT() in the
 	// paper.
-	private boolean doDfs(TransitionSystem ts, List<Collection<Pair<String, Integer>>> adjacencies,
-			List<State> states, int s, int state, Deque<String> sStack, Deque<String> lStack,
-			boolean[] blocked, List<Set<Integer>> b, Set<Pair<List<String>, ParikhVector>> cycles,
-			boolean smallest) {
-		boolean foundCycle = false;
+	static private class DoDfs {
+		private final List<Collection<Pair<String, Integer>>> adjacencies;
+		private final List<State> states;
+		private final int s;
+		private final Deque<String> sStack;
+		private final Deque<String> lStack;
+		private final boolean[] blocked;
+		private final List<Set<Integer>> b;
+		private final Set<Pair<List<String>, ParikhVector>> cycles;
+		private final boolean smallest;
 
-		blocked[state] = true;
-		sStack.addLast(states.get(state).getId());
-		for (Pair<String, Integer> arc : adjacencies.get(state)) {
-			lStack.addLast(arc.getFirst());
-			if (arc.getSecond() == s) {
-				// cycle found
-				List<String> sCycle = new ArrayList<>(sStack);
-				List<String> lCycle = new ArrayList<>(lStack);
-				addCycle(cycles, smallest, new Pair<>(sCycle, new ParikhVector(lCycle)));
-				foundCycle = true;
-			} else if (!blocked[arc.getSecond()]) {
-				foundCycle |= doDfs(ts, adjacencies, states, s, arc.getSecond(), sStack, lStack, blocked, b,
-						cycles, smallest);
+		public DoDfs(List<Collection<Pair<String, Integer>>> adjacencies, List<State> states, int s,
+				Set<Pair<List<String>, ParikhVector>> cycles, boolean smallest) {
+			this.adjacencies = adjacencies;
+			this.states = states;
+			this.s = s;
+			this.cycles = cycles;
+			this.smallest = smallest;
+
+			this.blocked = new boolean[states.size()];
+			Arrays.fill(blocked, s, states.size(), false);
+
+			this.b = new ArrayList<>();
+			for (int i = 0; i < states.size(); i++) {
+				if (i >= s)
+					b.add(new HashSet<Integer>());
+				else
+					// Not part of the graph, should not be accessed
+					b.add(null);
 			}
-			lStack.removeLast();
-		}
-		sStack.removeLast();
 
-		if (foundCycle) {
-			unblock(state, blocked, b);
-		} else {
+			this.sStack = new ArrayDeque<>();
+			this.lStack = new ArrayDeque<>();
+
+			doDfs(s);
+
+			assert sStack.isEmpty();
+			assert lStack.isEmpty();
+		}
+
+		private boolean doDfs(int state) {
+			boolean foundCycle = false;
+
+			blocked[state] = true;
+			sStack.addLast(states.get(state).getId());
 			for (Pair<String, Integer> arc : adjacencies.get(state)) {
-				b.get(state).add(arc.getSecond());
+				lStack.addLast(arc.getFirst());
+				if (arc.getSecond() == s) {
+					// cycle found
+					List<String> sCycle = new ArrayList<>(sStack);
+					List<String> lCycle = new ArrayList<>(lStack);
+					addCycle(cycles, smallest, new Pair<>(sCycle, new ParikhVector(lCycle)));
+					foundCycle = true;
+				} else if (!blocked[arc.getSecond()]) {
+					foundCycle |= doDfs(arc.getSecond());
+				}
+				lStack.removeLast();
 			}
-		}
+			sStack.removeLast();
 
-		return foundCycle;
+			if (foundCycle) {
+				unblock(state, blocked, b);
+			} else {
+				for (Pair<String, Integer> arc : adjacencies.get(state)) {
+					b.get(state).add(arc.getSecond());
+				}
+			}
+
+			return foundCycle;
+		}
 	}
 
-	private void unblock(int state, boolean[] blocked, List<Set<Integer>> b) {
+	static private void unblock(int state, boolean[] blocked, List<Set<Integer>> b) {
 		blocked[state] = false;
 		for (Integer prev : b.get(state)) {
 			if (blocked[prev])

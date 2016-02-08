@@ -34,7 +34,7 @@ import uniol.apt.util.Pair;
 public abstract class AbstractComputeSmallestCycles implements ComputeSmallestCycles {
 	private CycleCounterExample counterExample; // Stored countercycles
 
-	protected void addCycle(Set<Pair<List<String>, ParikhVector>> cycles, boolean smallest,
+	static protected void addCycle(Set<Pair<List<String>, ParikhVector>> cycles, boolean smallest,
 			Pair<List<String>, ParikhVector> pair) {
 		if (smallest) {
 			Iterator<Pair<List<String>, ParikhVector>> iter = cycles.iterator();
