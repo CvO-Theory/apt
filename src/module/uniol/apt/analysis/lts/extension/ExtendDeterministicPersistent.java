@@ -185,8 +185,11 @@ public class ExtendDeterministicPersistent {
 	 * Phase 1: complete persistence diamonds, where only one arc is missing (and also add other arcs which must
 	 * lead to the same state
 	 *
+	 * @param ts the transition system
 	 * @param eqClasses Equivalence relation of all (possible) arcs calculated in phase 0.
 	 * @return A new equivalence relation only containing unhandled arcs.
+	 * @throws MustLeadToSameStateException Thrown if a persistence diamond can't get constructed because of already
+	 * existing arcs (i.e. the transition system or a partially extended version of it isn't fully deterministic)
 	 */
 	private Pair<Collection<Set<Pair<State, String>>>, Boolean> completeDiamonds(TransitionSystem ts,
 			Collection<Set<Pair<State, String>>> eqClasses) throws MustLeadToSameStateException {
@@ -218,7 +221,8 @@ public class ExtendDeterministicPersistent {
 	/**
 	 * Phase 2: construct new states for persistence diamonds with two missing arcs
 	 *
-	 * @param eqClasses Equivalence relation of all (possible) arcs calculated in phase 0.
+	 * @param ts the transition system
+	 * @param unsolvedClasses Equivalence relation of all (possible) arcs calculated in phase 0.
 	 */
 	private void constructDiamonds(TransitionSystem ts, Collection<Set<Pair<State, String>>> unsolvedClasses) {
 		for (Set<Pair<State, String>> eqClass : unsolvedClasses) {
