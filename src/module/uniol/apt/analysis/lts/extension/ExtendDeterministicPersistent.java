@@ -41,7 +41,7 @@ import uniol.apt.util.DifferentPairsIterable;
 import uniol.apt.util.EquivalenceRelation;
 import uniol.apt.util.Pair;
 import uniol.apt.util.SpanningTree;
-import static uniol.apt.util.DebugUtil.debug;
+import static uniol.apt.util.DebugUtil.debugFormat;
 
 /**
  * Extend a transition system to a deterministic persistent transition system.
@@ -103,7 +103,7 @@ public class ExtendDeterministicPersistent {
 		int phase2Ctr = 0;
 		Collection<Set<Pair<State, String>>> eqRel;
 		while (true) { // we need to exit the loop in the middle of its body :-(
-			debug(String.format("Starting round %d", rounds++));
+			debugFormat("Starting round %d", rounds++);
 			eqRel = findNeededArcs(ts.getNodes());
 			if (eqRel.isEmpty()) {
 				break;
@@ -228,7 +228,7 @@ public class ExtendDeterministicPersistent {
 		for (Set<Pair<State, String>> eqClass : unsolvedClasses) {
 			State succ = ts.createState();
 			mapEqClass(ts, eqClass, succ);
-			debug(String.format("Added new State %s as target of %s.", eqClass, succ));
+			debugFormat("Added new State %s as target of %s.", eqClass, succ);
 		}
 	}
 
