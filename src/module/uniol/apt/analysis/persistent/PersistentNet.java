@@ -32,14 +32,21 @@ import uniol.apt.analysis.exception.UnboundedException;
  */
 public class PersistentNet {
 
-	private PetriNet pn_;
+	private final PetriNet pn_;
+	private final boolean backwards_;
+
 	private boolean deterministic_ = false;
 	private Marking marking_ = null;
 	private String label1 = null;
 	private String label2 = null;
 
-	public PersistentNet(PetriNet pn) {
+	public PersistentNet(PetriNet pn, boolean backwards) {
 		pn_ = pn;
+		backwards_ = backwards;
+	}
+
+	public PersistentNet(PetriNet pn) {
+		this(pn, false);
 	}
 
 	/*
@@ -54,7 +61,7 @@ public class PersistentNet {
 		TransitionSystem ts;
 		ts = CoverabilityGraph.get(pn_).toReachabilityLTS();
 
-		PersistentTS ltsPersistent = new PersistentTS(ts);
+		PersistentTS ltsPersistent = new PersistentTS(ts, backwards_);
 		deterministic_ = ltsPersistent.isPersistent();
 		if (ltsPersistent.getNode() != null)
 			marking_ = (Marking) ltsPersistent.getNode().getExtension(Marking.class.getName());
