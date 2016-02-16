@@ -48,6 +48,14 @@ import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
  */
 @AptModule
 public class FindWordsModule extends AbstractModule implements Module {
+	public interface WordCallback {
+		public void call(List<String> wordAsList, String wordAsString, SynthesizePN synthesize);
+	}
+
+	public interface LengthDoneCallback {
+		public void call(int length);
+	}
+
 	static private enum Operation {
 		UNSOLVABLE(true, true, false),
 		SOLVABLE(true, false, true),
@@ -139,11 +147,8 @@ public class FindWordsModule extends AbstractModule implements Module {
 	}
 
 	static private void generateList(PNProperties properties, SortedSet<String> alphabet, Operation operation) {
-		List<String> currentLevel = Collections.singletonList("");
-		List<String> nextLevel = new ArrayList<>();
-
-		boolean printSolvable = operation.printSolvable();
-		boolean printUnsolvable = operation.printUnsolvable();
+		final boolean printSolvable = operation.printSolvable();
+		final boolean printUnsolvable = operation.printUnsolvable();
 		if (operation.printStatus()) {
 			String print;
 			if (printSolvable && printUnsolvable)
@@ -158,8 +163,43 @@ public class FindWordsModule extends AbstractModule implements Module {
 					+ " over the alphabet " + alphabet);
 		}
 
+		final int[] counters = new int[2];
+		// Indices into the above array
+		final int solvable = 0;
+		final int unsolvable = 1;
+		WordCallback wordCallback = new WordCallback() {
+			@Override
+			public void call(List<String> wordAsList, String wordAsString, SynthesizePN synthesize) {
+				if (synthesize.wasSuccessfullySeparated()) {
+					counters[solvable]++;
+					if (printSolvable)
+						System.out.println(wordAsString);
+				} else {
+					counters[unsolvable]++;
+					if (printUnsolvable)
+						System.out.println(formatESSPFailure(wordAsList,
+									synthesize.getFailedEventStateSeparationProblems(),
+									true));
+				}
+			}
+		};
+		LengthDoneCallback lengthDoneCallback = new LengthDoneCallback() {
+			@Override
+			public void call(int length) {
+				System.out.println("Done with length " + length + ". There were " + counters[unsolvable]
+						+ " unsolvable words and " + counters[solvable] + " solvable words.");
+				counters[solvable] = 0;
+				counters[unsolvable] = 0;
+			}
+		};
+		generateList(properties, alphabet, !printUnsolvable, wordCallback, lengthDoneCallback);
+	}
+
+	static public void generateList(PNProperties properties, SortedSet<String> alphabet, boolean quickFail, WordCallback wordCallback, LengthDoneCallback lengthDoneCallback) {
+		List<String> currentLevel = Collections.singletonList("");
+		List<String> nextLevel = new ArrayList<>();
+
 		while (!currentLevel.isEmpty()) {
-			int numUnsolvable = 0;
 			for (String currentWord : currentLevel) {
 				for (String c : alphabet) {
 					boolean newLetter = !currentWord.contains(c);
@@ -192,7 +232,7 @@ public class FindWordsModule extends AbstractModule implements Module {
 						synthesize = new SynthesizePN.Builder(ts)
 							.setProperties(properties)
 							// we don't need failed separation points, if we don't show them
-							.setQuickFail(!printUnsolvable)
+							.setQuickFail(quickFail)
 							.buildForLanguageEquivalence();
 					} catch (MissingLocationException e) {
 						throw new RuntimeException("Not generating locations and "
@@ -201,20 +241,12 @@ public class FindWordsModule extends AbstractModule implements Module {
 						throw new RuntimeException("Generated a deterministic TS and "
 								+ " yet it is non-deterministic?!", e);
 					}
+					wordCallback.call(wordList, word, synthesize);
 					if (synthesize.wasSuccessfullySeparated()) {
 						// Assert that the nextLevel list stays sorted
 						assert nextLevel.isEmpty()
 							|| nextLevel.get(nextLevel.size() - 1).compareTo(word) < 0;
 						nextLevel.add(word);
-						if (printSolvable)
-							System.out.println(word);
-					} else {
-						numUnsolvable++;
-						if (printUnsolvable) {
-							System.out.println(formatESSPFailure(wordList,
-								synthesize.getFailedEventStateSeparationProblems(),
-								true));
-						}
 					}
 
 					if (newLetter)
@@ -231,12 +263,8 @@ public class FindWordsModule extends AbstractModule implements Module {
 				}
 			}
 
-			// Done with this level, go to the next one
-			if (operation.printStatus()) {
-				int currentLength = currentLevel.iterator().next().length() + 1;
-				System.out.println("Done with length " + currentLength + ". There were " + numUnsolvable
-						+ " unsolvable words and " + nextLevel.size() + " solvable words.");
-			}
+			int currentLength = currentLevel.iterator().next().length() + 1;
+			lengthDoneCallback.call(currentLength);
 			currentLevel = nextLevel;
 			nextLevel = new ArrayList<>();
 		}
