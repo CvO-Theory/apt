@@ -98,6 +98,7 @@ public class ExaminePNModule extends AbstractModule implements Module {
 		outputSpec.addReturnValue("weakly_live", Boolean.class);
 		outputSpec.addReturnValue("simply_live", Boolean.class);
 		outputSpec.addReturnValue("persistent", Boolean.class);
+		outputSpec.addReturnValue("backwards_persistent", Boolean.class);
 		outputSpec.addReturnValue("reversible", Boolean.class);
 		outputSpec.addReturnValue("homogeneous", Boolean.class);
 		outputSpec.addReturnValue("asymmetric_choice", Boolean.class);
@@ -131,8 +132,10 @@ public class ExaminePNModule extends AbstractModule implements Module {
 		output.setReturnValue("weakly_connected", Boolean.class, Connectivity.isWeaklyConnected(pn));
 		if (result.isBounded()) {
 			PersistentNet persistent = new PersistentNet(pn);
+			PersistentNet backwardsPersistent = new PersistentNet(pn, true);
 			ReversibleNet reversible = new ReversibleNet(pn);
 			persistent.check();
+			backwardsPersistent.check();
 			reversible.check();
 			output.setReturnValue("bcf", Boolean.class, new BCF().check(pn) == null);
 			output.setReturnValue("bicf", Boolean.class, new BiCF().check(pn) == null);
@@ -141,6 +144,7 @@ public class ExaminePNModule extends AbstractModule implements Module {
 			output.setReturnValue("weakly_live", Boolean.class,
 				Live.findNonWeaklyLiveTransition(pn) == null);
 			output.setReturnValue("persistent", Boolean.class, persistent.isPersistent());
+			output.setReturnValue("backwards_persistent", Boolean.class, backwardsPersistent.isPersistent());
 			output.setReturnValue("reversible", Boolean.class, reversible.isReversible());
 		}
 		output.setReturnValue("simply_live", Boolean.class, Live.findDeadTransition(pn) == null);
