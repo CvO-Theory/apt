@@ -72,6 +72,7 @@ public class ExamineLTSModule extends AbstractModule implements Module {
 	public void provide(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("deterministic", Boolean.class);
 		outputSpec.addReturnValue("persistent", Boolean.class);
+		outputSpec.addReturnValue("backwards_persistent", Boolean.class);
 		outputSpec.addReturnValue("totally_reachable", Boolean.class);
 		outputSpec.addReturnValue("reversible", Boolean.class);
 		outputSpec.addReturnValue("isolated_elements", Boolean.class);
@@ -86,10 +87,12 @@ public class ExamineLTSModule extends AbstractModule implements Module {
 		TransitionSystem lts = input.getParameter("lts", TransitionSystem.class);
 		Deterministic det = new Deterministic(lts);
 		PersistentTS per = new PersistentTS(lts);
+		PersistentTS backwardsPer = new PersistentTS(lts, true);
 		TotallyReachable tot = new TotallyReachable(lts);
 		ReversibleTS rev = new ReversibleTS(lts);
 		output.setReturnValue("deterministic", Boolean.class, det.isDeterministic());
 		output.setReturnValue("persistent", Boolean.class, per.isPersistent());
+		output.setReturnValue("backwards_persistent", Boolean.class, backwardsPer.isPersistent());
 		output.setReturnValue("totally_reachable", Boolean.class, tot.isTotallyReachable());
 		output.setReturnValue("reversible", Boolean.class, rev.isReversible());
 		output.setReturnValue("isolated_elements", Boolean.class,
