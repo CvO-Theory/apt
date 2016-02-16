@@ -40,6 +40,15 @@ import uniol.apt.module.exception.ModuleException;
  */
 @AptModule
 public class PersistentModule extends AbstractModule implements Module {
+	private final boolean backwards;
+
+	public PersistentModule(boolean backwards) {
+		this.backwards = backwards;
+	}
+
+	public PersistentModule() {
+		this(false);
+	}
 
 	@Override
 	public String getName() {
@@ -72,7 +81,7 @@ public class PersistentModule extends AbstractModule implements Module {
 		output.setReturnValue("state", State.class, null);
 
 		if (pn != null) {
-			PersistentNet persistent = new PersistentNet(pn);
+			PersistentNet persistent = new PersistentNet(pn, backwards);
 			persistent.check();
 
 			output.setReturnValue("persistent", Boolean.class, persistent.isPersistent());
@@ -80,7 +89,7 @@ public class PersistentModule extends AbstractModule implements Module {
 			output.setReturnValue("first_label", String.class, persistent.getLabel1());
 			output.setReturnValue("second_label", String.class, persistent.getLabel2());
 		} else {
-			PersistentTS persistent = new PersistentTS(ts);
+			PersistentTS persistent = new PersistentTS(ts, backwards);
 			output.setReturnValue("persistent", Boolean.class, persistent.isPersistent());
 			output.setReturnValue("state", State.class, persistent.getNode());
 			output.setReturnValue("first_label", String.class, persistent.getLabel1());
