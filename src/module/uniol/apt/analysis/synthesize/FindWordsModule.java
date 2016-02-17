@@ -209,7 +209,8 @@ public class FindWordsModule extends AbstractModule implements Module {
 					// "currentWord" after firing "c" once.
 					// Put differently: By prepending letters to solvable words, we are sure to
 					// generate all solvable words.
-					String word = currentWord + c;
+					String word = c + currentWord;
+					word = normalizeWord(toList(word), alphabet);
 					List<String> wordList = toList(word);
 
 					if (!properties.isKBounded()) {
@@ -219,10 +220,16 @@ public class FindWordsModule extends AbstractModule implements Module {
 						// word.
 						// For our purpose this means: If the prefix isn't solvable, then we
 						// already know that the word itself isn't solvable either.
-						// This is also important for the definition of "minimally unsolvable".
+						// This is also important for the definition of "minimally unsolvable"
+						// (= unsolvable + all proper subwords are solvable).
 						if (Collections.binarySearch(currentLevel, normalizeWord(
-								wordList.subList(1, wordList.size()), alphabet)) < 0)
+								wordList.subList(0, wordList.size() - 1), alphabet)) < 0)
 							continue;
+					} else {
+						// In a k-bounded Petri net, every suffix of a solvable word is also
+						// solvable. However, a prefix might still be unsolvable. Thus, we use a
+						// different definition of "minimally unsolvable" here (= unsolvable +
+						// all proper suffixes are solvable).
 					}
 
 					// Is "word" PN-solvable with the given properties?
@@ -243,9 +250,6 @@ public class FindWordsModule extends AbstractModule implements Module {
 					}
 					wordCallback.call(wordList, word, synthesize);
 					if (synthesize.wasSuccessfullySeparated()) {
-						// Assert that the nextLevel list stays sorted
-						assert nextLevel.isEmpty()
-							|| nextLevel.get(nextLevel.size() - 1).compareTo(word) < 0;
 						nextLevel.add(word);
 					}
 
@@ -267,6 +271,7 @@ public class FindWordsModule extends AbstractModule implements Module {
 			lengthDoneCallback.call(currentLength);
 			currentLevel = nextLevel;
 			nextLevel = new ArrayList<>();
+			Collections.sort(currentLevel);
 		}
 	}
 
