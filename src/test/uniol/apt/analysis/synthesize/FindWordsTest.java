@@ -33,12 +33,12 @@ import static uniol.apt.analysis.synthesize.Matchers.*;
 import uniol.apt.analysis.synthesize.Matchers;
 
 /** @author Uli Schlachter */
-public class FindWordsModuleTest {
+public class FindWordsTest {
 	private static void testWords(PNProperties properties, SortedSet<String> alphabet,
 			final List<List<String>> solvableWords) {
 		final Collection<String> solvable = new ArrayList<>();
 		final int[] currentLength = { 1 };
-		FindWordsModule.WordCallback wordCallback = new FindWordsModule.WordCallback() {
+		FindWords.WordCallback wordCallback = new FindWords.WordCallback() {
 			@Override
 			public void call(List<String> wordAsList, String wordAsString, SynthesizePN synthesize) {
 				assertThat(wordAsList, hasSize(currentLength[0]));
@@ -46,7 +46,7 @@ public class FindWordsModuleTest {
 					solvable.add(wordAsString);
 			}
 		};
-		FindWordsModule.LengthDoneCallback lengthDoneCallback = new FindWordsModule.LengthDoneCallback() {
+		FindWords.LengthDoneCallback lengthDoneCallback = new FindWords.LengthDoneCallback() {
 			@Override
 			public void call(int length) {
 				assertThat(length, equalTo(currentLength[0]));
@@ -57,7 +57,7 @@ public class FindWordsModuleTest {
 			}
 		};
 
-		FindWordsModule.generateList(properties, alphabet, true, wordCallback, lengthDoneCallback);
+		FindWords.generateList(properties, alphabet, true, wordCallback, lengthDoneCallback);
 
 		assertThat(currentLength[0], equalTo(solvableWords.size() + 1));
 	}
@@ -102,8 +102,8 @@ public class FindWordsModuleTest {
 	public void testMinimalUnsolvableWords() {
 		final int[] nextWord = { 0 };
 		final List<String> words = Arrays.asList("abbaa", "abbbaa", "abbbbaa", "abbbaba", "abbabaa", "ababaaa");
-		FindWordsModule.LengthDoneCallback lengthDoneCallback = mock(FindWordsModule.LengthDoneCallback.class);
-		FindWordsModule.WordCallback wordCallback = new FindWordsModule.WordCallback() {
+		FindWords.LengthDoneCallback lengthDoneCallback = mock(FindWords.LengthDoneCallback.class);
+		FindWords.WordCallback wordCallback = new FindWords.WordCallback() {
 			@Override
 			public void call(List<String> wordAsList, String wordAsString, SynthesizePN synthesize) {
 				if (synthesize.wasSuccessfullySeparated())
@@ -117,7 +117,7 @@ public class FindWordsModuleTest {
 
 		PNProperties properties = new PNProperties();
 		SortedSet<String> alphabet = new TreeSet<>(Arrays.asList("a", "b"));
-		FindWordsModule.generateList(properties, alphabet, true, wordCallback, lengthDoneCallback);
+		FindWords.generateList(properties, alphabet, true, wordCallback, lengthDoneCallback);
 	}
 }
 
