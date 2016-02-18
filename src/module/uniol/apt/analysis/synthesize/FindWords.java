@@ -38,25 +38,20 @@ import uniol.apt.analysis.synthesize.SynthesizeUtils;
  */
 public class FindWords {
 	static public interface WordCallback {
-		public void call(List<String> wordAsList, String wordAsString, SynthesizePN synthesize);
+		public void call(List<Character> wordAsList, String wordAsString, SynthesizePN synthesize);
 	}
 
 	static public interface LengthDoneCallback {
 		public void call(int length);
 	}
 
-	static public void generateList(PNProperties properties, SortedSet<String> alphabet, boolean quickFail, WordCallback wordCallback, LengthDoneCallback lengthDoneCallback) {
-		for (String symbol : alphabet)
-			if (symbol.length() != 1)
-				throw new UnsupportedOperationException(String.format("All symbols in the alphabet"
-							+ " must have length 1, but '%s' does not", symbol));
-
+	static public void generateList(PNProperties properties, SortedSet<Character> alphabet, boolean quickFail, WordCallback wordCallback, LengthDoneCallback lengthDoneCallback) {
 		List<String> currentLevel = Collections.singletonList("");
 		List<String> nextLevel = new ArrayList<>();
 		while (!currentLevel.isEmpty()) {
 			for (String currentWord : currentLevel) {
-				for (String c : alphabet) {
-					boolean newLetter = !currentWord.contains(c);
+				for (Character c : alphabet) {
+					boolean newLetter = currentWord.indexOf(c) == -1;
 
 					// If "currentWord" is unsolvable, then "word" must also be unsolvable.
 					// Otherwise we get a contradiction: The net solving "word" will solve
@@ -65,7 +60,7 @@ public class FindWords {
 					// generate all solvable words.
 					String word = c + currentWord;
 					word = normalizeWord(toList(word), alphabet);
-					List<String> wordList = toList(word);
+					List<Character> wordList = toList(word);
 
 					if (!properties.isKBounded()) {
 						// If we have unbounded places, then every prefix of a solvable word is
@@ -87,7 +82,7 @@ public class FindWords {
 					}
 
 					// Is "word" PN-solvable with the given properties?
-					TransitionSystem ts = SynthesizeUtils.makeTS(wordList);
+					TransitionSystem ts = SynthesizeUtils.makeTS(toStringList(wordList));
 					SynthesizePN synthesize;
 					try {
 						synthesize = new SynthesizePN.Builder(ts)
@@ -130,27 +125,39 @@ public class FindWords {
 	}
 
 	/**
-	 * Transform a String into the list of its characters. Note that this does not handle surrogate pairs correctly!
+	 * Transform a string into the list of its characters. Note that this does not handle surrogate pairs correctly!
 	 * @param word A string to split into characters
 	 * @return The list of its characters.
 	 */
-	static List<String> toList(String word) {
-		List<String> result = new ArrayList<>(Arrays.asList(word.split("")));
-		// some Java versions include "" as first part of the splitted string => try to remove it
-		result.remove("");
+	static List<Character> toList(String word) {
+		List<Character> result = new ArrayList<>(word.length());
+		for (int i = 0; i < word.length(); i++)
+			result.add(word.charAt(i));
+		return result;
+	}
+
+	/**
+	 * Transform a list of characters into a list of strings, each having length one.
+	 * @param argument The list of characters to transform.
+	 * @return The equivalent list of strings.
+	 */
+	static List<String> toStringList(List<Character> argument) {
+		List<String> result = new ArrayList<>(argument.size());
+		for (char c : argument)
+			result.add(String.valueOf(c));
 		return result;
 	}
 
 	// Normalize a word into the form that the above loop would generate it in. This means e.g. that the word ends
 	// with the first letter of the alphabet.
-	static private String normalizeWord(List<String> word, SortedSet<String> alphabet)
+	static private String normalizeWord(List<Character> word, SortedSet<Character> alphabet)
 	{
 		StringBuilder result = new StringBuilder();
-		Map<String, String> morphism = new HashMap<>();
-		Iterator<String> alphabetIter = alphabet.iterator();
+		Map<Character, Character> morphism = new HashMap<>();
+		Iterator<Character> alphabetIter = alphabet.iterator();
 
-		for (String letter : word) {
-			String replacement = morphism.get(letter);
+		for (Character letter : word) {
+			Character replacement = morphism.get(letter);
 			if (replacement == null) {
 				assert alphabetIter.hasNext();
 				replacement = alphabetIter.next();

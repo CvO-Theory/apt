@@ -117,7 +117,7 @@ public class FindWordsModule extends AbstractModule implements Module {
 		String operation = input.getParameter("operation", String.class);
 
 		PNProperties properties = SynthesizeModule.Options.parseProperties(optionsStr).properties;
-		SortedSet<String> alphabet = new TreeSet<>(FindWords.toList(alphabetLetter));
+		SortedSet<Character> alphabet = new TreeSet<>(FindWords.toList(alphabetLetter));
 
 		switch (operation) {
 			case "minimal_unsolvable":
@@ -132,7 +132,7 @@ public class FindWordsModule extends AbstractModule implements Module {
 		}
 	}
 
-	static private void generateList(PNProperties properties, SortedSet<String> alphabet, Operation operation) {
+	static private void generateList(PNProperties properties, SortedSet<Character> alphabet, Operation operation) {
 		final boolean printSolvable = operation.printSolvable();
 		final boolean printUnsolvable = operation.printUnsolvable();
 		if (operation.printStatus()) {
@@ -155,7 +155,7 @@ public class FindWordsModule extends AbstractModule implements Module {
 		final int unsolvable = 1;
 		FindWords.WordCallback wordCallback = new FindWords.WordCallback() {
 			@Override
-			public void call(List<String> wordAsList, String wordAsString, SynthesizePN synthesize) {
+			public void call(List<Character> wordAsList, String wordAsString, SynthesizePN synthesize) {
 				if (synthesize.wasSuccessfullySeparated()) {
 					counters[solvable]++;
 					if (printSolvable)
@@ -163,7 +163,8 @@ public class FindWordsModule extends AbstractModule implements Module {
 				} else {
 					counters[unsolvable]++;
 					if (printUnsolvable)
-						System.out.println(SynthesizeUtils.formatESSPFailure(wordAsList,
+						System.out.println(SynthesizeUtils.formatESSPFailure(
+									FindWords.toStringList(wordAsList),
 									synthesize.getFailedEventStateSeparationProblems(),
 									true));
 				}

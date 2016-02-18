@@ -34,13 +34,13 @@ import uniol.apt.analysis.synthesize.Matchers;
 
 /** @author Uli Schlachter */
 public class FindWordsTest {
-	private static void testWords(PNProperties properties, SortedSet<String> alphabet,
+	private static void testWords(PNProperties properties, SortedSet<Character> alphabet,
 			final List<List<String>> solvableWords) {
 		final Collection<String> solvable = new ArrayList<>();
 		final int[] currentLength = { 1 };
 		FindWords.WordCallback wordCallback = new FindWords.WordCallback() {
 			@Override
-			public void call(List<String> wordAsList, String wordAsString, SynthesizePN synthesize) {
+			public void call(List<Character> wordAsList, String wordAsString, SynthesizePN synthesize) {
 				assertThat(wordAsList, hasSize(currentLength[0]));
 				if (synthesize.wasSuccessfullySeparated())
 					solvable.add(wordAsString);
@@ -65,7 +65,7 @@ public class FindWordsTest {
 	@Test
 	public void testSafeABCWords() {
 		PNProperties properties = new PNProperties().requireSafe();
-		SortedSet<String> alphabet = new TreeSet<>(Arrays.asList("a", "b", "c"));
+		SortedSet<Character> alphabet = new TreeSet<>(Arrays.asList('a', 'b', 'c'));
 		List<List<String>> solvableWords = Arrays.asList(
 				Arrays.asList("a"),
 				Arrays.asList("ab"),
@@ -81,7 +81,7 @@ public class FindWordsTest {
 	@Test
 	public void testPlainPureSafeABCWords() {
 		PNProperties properties = new PNProperties().setPlain(true).setPure(true).requireSafe();
-		SortedSet<String> alphabet = new TreeSet<>(Arrays.asList("a", "b", "c"));
+		SortedSet<Character> alphabet = new TreeSet<>(Arrays.asList('a', 'b', 'c'));
 		List<List<String>> solvableWords = Arrays.asList(
 				Arrays.asList("a"),
 				Arrays.asList("ab"),
@@ -105,7 +105,7 @@ public class FindWordsTest {
 		FindWords.LengthDoneCallback lengthDoneCallback = mock(FindWords.LengthDoneCallback.class);
 		FindWords.WordCallback wordCallback = new FindWords.WordCallback() {
 			@Override
-			public void call(List<String> wordAsList, String wordAsString, SynthesizePN synthesize) {
+			public void call(List<Character> wordAsList, String wordAsString, SynthesizePN synthesize) {
 				if (synthesize.wasSuccessfullySeparated())
 					return;
 				assertThat(wordAsString, equalTo(words.get(nextWord[0])));
@@ -116,7 +116,7 @@ public class FindWordsTest {
 		};
 
 		PNProperties properties = new PNProperties();
-		SortedSet<String> alphabet = new TreeSet<>(Arrays.asList("a", "b"));
+		SortedSet<Character> alphabet = new TreeSet<>(Arrays.asList('a', 'b'));
 		FindWords.generateList(properties, alphabet, true, wordCallback, lengthDoneCallback);
 	}
 }
