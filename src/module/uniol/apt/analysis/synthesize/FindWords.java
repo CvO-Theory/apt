@@ -129,8 +129,12 @@ public class FindWords {
 		}
 	}
 
-	// Transform a String into the list of its characters
-	static private List<String> toList(String word) {
+	/**
+	 * Transform a String into the list of its characters. Note that this does not handle surrogate pairs correctly!
+	 * @param word A string to split into characters
+	 * @return The list of its characters.
+	 */
+	static List<String> toList(String word) {
 		List<String> result = new ArrayList<>(Arrays.asList(word.split("")));
 		// some Java versions include "" as first part of the splitted string => try to remove it
 		result.remove("");

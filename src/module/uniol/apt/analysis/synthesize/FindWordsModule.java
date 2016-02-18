@@ -117,7 +117,7 @@ public class FindWordsModule extends AbstractModule implements Module {
 		String operation = input.getParameter("operation", String.class);
 
 		PNProperties properties = SynthesizeModule.Options.parseProperties(optionsStr).properties;
-		SortedSet<String> alphabet = new TreeSet<>(toList(alphabetLetter));
+		SortedSet<String> alphabet = new TreeSet<>(FindWords.toList(alphabetLetter));
 
 		switch (operation) {
 			case "minimal_unsolvable":
@@ -179,14 +179,6 @@ public class FindWordsModule extends AbstractModule implements Module {
 			}
 		};
 		FindWords.generateList(properties, alphabet, !printUnsolvable, wordCallback, lengthDoneCallback);
-	}
-
-	// Transform a String into the list of its characters
-	static private List<String> toList(String word) {
-		List<String> result = new ArrayList<>(Arrays.asList(word.split("")));
-		// some Java versions include "" as first part of the splitted string => try to remove it
-		result.remove("");
-		return result;
 	}
 
 	@Override
