@@ -54,8 +54,6 @@ public class MinimizePN {
 	private final RegionUtility utility;
 	private final Set<Region> regions;
 	private final boolean onlyEventSeparation;
-	private SMTInterpolHelper helper;
-	private Script script;
 
 	/**
 	 * Calculate a Petri net with a minimal number of places solving some PN-synthesis problem.
@@ -142,129 +140,125 @@ public class MinimizePN {
 		int numberEvents = utility.getNumberOfEvents();
 		PNProperties properties = synthesize.getProperties();
 		boolean pure = properties.isPure();
+		SMTInterpolHelper helper;
 
 		try {
-			this.helper = new SMTInterpolHelper(utility, properties,
+			helper = new SMTInterpolHelper(utility, properties,
 					SeparationUtility.getLocationMap(utility, properties));
 		} catch (MissingLocationException e) {
 			throw new RuntimeException("Previous synthesis was successful "
 					+ "and now we have a missing location!?", e);
 		}
-		this.script = helper.getScript();
+		Script script = helper.getScript();
 
-		try {
-			// Declare all regions
-			Term[][] effects = new Term[limit][];
-			for (int i = 0; i < limit; i++) {
-				effects[i] = new Term[numberEvents];
-				Term[] region;
-				if (pure) {
-					region = new Term[1 + numberEvents];
-					for (int event = 0; event < numberEvents; event++) {
-						String suffix = eventList.get(event) + "-" + i;
-						script.declareFun("e-" + suffix, new Sort[0], script.sort("Int"));
-						region[1 + event] = script.term("e-" + suffix);
-						effects[i][event] = region[1 + event];
-					}
-				} else {
-					region = new Term[1 + 2 * numberEvents];
-					for (int event = 0; event < numberEvents; event++) {
-						String suffix = eventList.get(event) + "-" + i;
-						script.declareFun("b-" + suffix, new Sort[0], script.sort("Int"));
-						script.declareFun("f-" + suffix, new Sort[0], script.sort("Int"));
-						region[1 + event] = script.term("b-" + suffix);
-						region[1 + event + numberEvents] = script.term("f-" + suffix);
-						effects[i][event] = script.term("-", region[1 + event + numberEvents],
-								region[1 + event]);
-					}
+		// Declare all regions
+		Term[][] effects = new Term[limit][];
+		for (int i = 0; i < limit; i++) {
+			effects[i] = new Term[numberEvents];
+			Term[] region;
+			if (pure) {
+				region = new Term[1 + numberEvents];
+				for (int event = 0; event < numberEvents; event++) {
+					String suffix = eventList.get(event) + "-" + i;
+					script.declareFun("e-" + suffix, new Sort[0], script.sort("Int"));
+					region[1 + event] = script.term("e-" + suffix);
+					effects[i][event] = region[1 + event];
 				}
-				script.declareFun("m0-" + i, new Sort[0], script.sort("Int"));
-				region[0] = script.term("m0-" + i);
-				script.assertTerm(script.term("isRegion", region));
+			} else {
+				region = new Term[1 + 2 * numberEvents];
+				for (int event = 0; event < numberEvents; event++) {
+					String suffix = eventList.get(event) + "-" + i;
+					script.declareFun("b-" + suffix, new Sort[0], script.sort("Int"));
+					script.declareFun("f-" + suffix, new Sort[0], script.sort("Int"));
+					region[1 + event] = script.term("b-" + suffix);
+					region[1 + event + numberEvents] = script.term("f-" + suffix);
+					effects[i][event] = script.term("-", region[1 + event + numberEvents],
+							region[1 + event]);
+				}
 			}
-
-			// Define separation problems and require all of them to be solved
-			boolean firstProblem = true;
-			for (Pair<State, String> problem : new SynthesizePN.EventStateSeparationProblems(ts)) {
-				if (limit == 0) {
-					// No regions do not solve anything
-					script.assertTerm(script.term("false"));
-					break;
-				}
-
-				// We require the first region to solve the first separation problem
-				int candidateRegions = firstProblem ? 1 : limit;
-				Term[] problemSolved = new Term[candidateRegions];
-				for (int i = 0; i < candidateRegions; i++) {
-					Term term = helper.evaluateReachingParikhVector(script.term("m0-" + i),
-							effects[i], problem.getFirst());
-					if (pure)
-						term = script.term("+", term,
-								script.term("e-" + problem.getSecond() + "-" + i));
-					else
-						term = script.term("-", term,
-								script.term("b-" + problem.getSecond() + "-" + i));
-					problemSolved[i] = script.term(">", script.numeral(BigInteger.ZERO), term);
-				}
-				script.assertTerm(collectTerms("or", problemSolved, script.term("false")));
-				firstProblem = false;
-			}
-			if (onlyEventSeparation)
-				assert statesToSeparate.isEmpty();
-			else
-				for (Pair<State, State> problem :
-						new DifferentPairsIterable<>(statesToSeparate)) {
-					Term[] problemSolved = new Term[limit];
-					State state1 = problem.getFirst();
-					State state2 = problem.getSecond();
-					for (int i = 0; i < limit; i++) {
-						Term pv0 = helper.evaluateReachingParikhVector(script.term("m0-" + i),
-								effects[i], state1);
-						Term pv1 = helper.evaluateReachingParikhVector(script.term("m0-" + i),
-								effects[i], state2);
-						problemSolved[i] = script.term("not", script.term("=", pv0, pv1));
-					}
-					script.assertTerm(collectTerms("or", problemSolved, script.term("false")));
-				}
-
-			// Is there a model?
-			LBool isSat = script.checkSat();
-			if (isSat != LBool.SAT) {
-				assert isSat == LBool.UNSAT : script.getInfo(":reason-unknown");
-				return null;
-			}
-
-			// Extract all regions
-			Model model = script.getModel();
-			Set<Region> result = new HashSet<>();
-			for (int numRegion = 0; numRegion < limit; numRegion++) {
-				Region.Builder r;
-				if (pure) {
-					List<BigInteger> weights = new ArrayList<>();
-					for (String event : eventList)
-						weights.add(getValue(model,
-									script.term("e-" + event + "-" + numRegion)));
-					r = Region.Builder.createPure(utility, weights);
-				} else {
-					List<BigInteger> backwardWeights = new ArrayList<>();
-					List<BigInteger> forwardWeights = new ArrayList<>();
-					for (String event : eventList) {
-						backwardWeights.add(getValue(model,
-									script.term("b-" + event + "-" + numRegion)));
-						forwardWeights.add(getValue(model,
-									script.term("f-" + event + "-" + numRegion)));
-					}
-					r = new Region.Builder(utility, backwardWeights, forwardWeights);
-				}
-				BigInteger initialMarking = getValue(model, script.term("m0-" + numRegion));
-				result.add(r.withInitialMarking(initialMarking));
-			}
-
-			return result;
-		} finally {
-			this.script = null;
-			this.helper = null;
+			script.declareFun("m0-" + i, new Sort[0], script.sort("Int"));
+			region[0] = script.term("m0-" + i);
+			script.assertTerm(script.term("isRegion", region));
 		}
+
+		// Define separation problems and require all of them to be solved
+		boolean firstProblem = true;
+		for (Pair<State, String> problem : new SynthesizePN.EventStateSeparationProblems(ts)) {
+			if (limit == 0) {
+				// No regions do not solve anything
+				script.assertTerm(script.term("false"));
+				break;
+			}
+
+			// We require the first region to solve the first separation problem
+			int candidateRegions = firstProblem ? 1 : limit;
+			Term[] problemSolved = new Term[candidateRegions];
+			for (int i = 0; i < candidateRegions; i++) {
+				Term term = helper.evaluateReachingParikhVector(script.term("m0-" + i),
+						effects[i], problem.getFirst());
+				if (pure)
+					term = script.term("+", term,
+							script.term("e-" + problem.getSecond() + "-" + i));
+				else
+					term = script.term("-", term,
+							script.term("b-" + problem.getSecond() + "-" + i));
+				problemSolved[i] = script.term(">", script.numeral(BigInteger.ZERO), term);
+			}
+			script.assertTerm(collectTerms(script, "or", problemSolved, "false"));
+			firstProblem = false;
+		}
+		if (onlyEventSeparation)
+			assert statesToSeparate.isEmpty();
+		else
+			for (Pair<State, State> problem :
+					new DifferentPairsIterable<>(statesToSeparate)) {
+				Term[] problemSolved = new Term[limit];
+				State state1 = problem.getFirst();
+				State state2 = problem.getSecond();
+				for (int i = 0; i < limit; i++) {
+					Term pv0 = helper.evaluateReachingParikhVector(script.term("m0-" + i),
+							effects[i], state1);
+					Term pv1 = helper.evaluateReachingParikhVector(script.term("m0-" + i),
+							effects[i], state2);
+					problemSolved[i] = script.term("not", script.term("=", pv0, pv1));
+				}
+				script.assertTerm(collectTerms(script, "or", problemSolved, "false"));
+			}
+
+		// Is there a model?
+		LBool isSat = script.checkSat();
+		if (isSat != LBool.SAT) {
+			assert isSat == LBool.UNSAT : script.getInfo(":reason-unknown");
+			return null;
+		}
+
+		// Extract all regions
+		Model model = script.getModel();
+		Set<Region> result = new HashSet<>();
+		for (int numRegion = 0; numRegion < limit; numRegion++) {
+			Region.Builder r;
+			if (pure) {
+				List<BigInteger> weights = new ArrayList<>();
+				for (String event : eventList)
+					weights.add(getValue(model,
+								script.term("e-" + event + "-" + numRegion)));
+				r = Region.Builder.createPure(utility, weights);
+			} else {
+				List<BigInteger> backwardWeights = new ArrayList<>();
+				List<BigInteger> forwardWeights = new ArrayList<>();
+				for (String event : eventList) {
+					backwardWeights.add(getValue(model,
+								script.term("b-" + event + "-" + numRegion)));
+					forwardWeights.add(getValue(model,
+								script.term("f-" + event + "-" + numRegion)));
+				}
+				r = new Region.Builder(utility, backwardWeights, forwardWeights);
+			}
+			BigInteger initialMarking = getValue(model, script.term("m0-" + numRegion));
+			result.add(r.withInitialMarking(initialMarking));
+		}
+
+		return result;
 	}
 
 	private BigInteger getValue(Model model, Term term) {
@@ -280,10 +274,10 @@ public class MinimizePN {
 		return rat.numerator();
 	}
 
-	private Term collectTerms(String operation, Term[] terms, Term def) {
+	private Term collectTerms(Script script, String operation, Term[] terms, String def) {
 		switch (terms.length) {
 			case 0:
-				return def;
+				return script.term(def);
 			case 1:
 				return terms[0];
 			default:
