@@ -71,8 +71,8 @@ public class FindWords {
 						// already know that the word itself isn't solvable either.
 						// This is also important for the definition of "minimally unsolvable"
 						// (= unsolvable + all proper subwords are solvable).
-						if (Collections.binarySearch(currentLevel, normalizeWord(
-								wordList.subList(0, wordList.size() - 1), alphabet)) < 0)
+						if (Collections.binarySearch(currentLevel,
+									word.substring(0, word.length() - 1)) < 0)
 							continue;
 					} else {
 						// In a k-bounded Petri net, every suffix of a solvable word is also
