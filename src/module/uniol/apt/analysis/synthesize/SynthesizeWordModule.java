@@ -26,7 +26,6 @@ import java.util.Set;
 
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.language.Word;
-import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.Module;
@@ -42,7 +41,7 @@ import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
  * @author Uli Schlachter
  */
 @AptModule
-public class SynthesizeWordModule extends AbstractModule implements Module {
+public class SynthesizeWordModule extends AbstractSynthesizeModule implements Module {
 
 	@Override
 	public String getShortDescription() {
@@ -52,7 +51,7 @@ public class SynthesizeWordModule extends AbstractModule implements Module {
 	@Override
 	public String getLongDescription() {
 		return getShortDescription() + ".\n\n"
-			+ SynthesizeModule.getOptionsDescription("cycle, ", " - cycle: Form a cyclic word representing"
+			+ getOptionsDescription("cycle, ", " - cycle: Form a cyclic word representing"
 					+ " w^* instead of solving the input word w directly\n")
 			+ "\n\nThis module tries to synthesize a Petri Net whose prefix language "
 			+ "contains only the specified word. Thus, no other words are firable. If this fails, a list "
@@ -83,14 +82,12 @@ public class SynthesizeWordModule extends AbstractModule implements Module {
 	}
 
 	@Override
-	public void require(ModuleInputSpec inputSpec) {
-		SynthesizeModule.requireCommon(inputSpec);
+	protected void requireExtra(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("word", Word.class, "The word that should be synthesized");
 	}
 
 	@Override
-	public void provide(ModuleOutputSpec outputSpec) {
-		SynthesizeModule.provideCommon(outputSpec);
+	protected void provideExtra(ModuleOutputSpec outputSpec) {
 		outputSpec.addReturnValue("separationFailurePoints", String.class);
 		outputSpec.addReturnValue("stateSeparationFailurePoints", String.class);
 	}
@@ -98,7 +95,7 @@ public class SynthesizeWordModule extends AbstractModule implements Module {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		Word word = input.getParameter("word", Word.class);
-		SynthesizePN synthesize = SynthesizeModule.runSynthesis(new TSForWord(word), input, output);
+		SynthesizePN synthesize = runSynthesis(new TSForWord(word), input, output);
 		output.setReturnValue("stateSeparationFailurePoints", String.class,
 				formatSSPFailure(word, synthesize.getFailedStateSeparationProblems()));
 		output.setReturnValue("separationFailurePoints", String.class,
@@ -110,7 +107,7 @@ public class SynthesizeWordModule extends AbstractModule implements Module {
 		return new Category[]{Category.LTS};
 	}
 
-	static private class TSForWord implements SynthesizeModule.TransitionSystemForOptions {
+	static private class TSForWord implements TransitionSystemForOptions {
 		final private List<String> word;
 
 		public TSForWord(List<String> word) {

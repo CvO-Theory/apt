@@ -116,7 +116,7 @@ public class FindWordsModule extends AbstractModule implements Module {
 		String alphabetLetter = input.getParameter("alphabet", String.class);
 		String operation = input.getParameter("operation", String.class);
 
-		PNProperties properties = SynthesizeModule.Options.parseProperties(optionsStr).properties;
+		PNProperties properties = AbstractSynthesizeModule.Options.parseProperties(optionsStr).properties;
 		SortedSet<Character> alphabet = new TreeSet<>(FindWords.toList(alphabetLetter));
 
 		switch (operation) {

@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import uniol.apt.module.exception.ModuleException;
-import uniol.apt.analysis.synthesize.SynthesizeModule.Options;
+import uniol.apt.analysis.synthesize.AbstractSynthesizeModule.Options;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -35,7 +35,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
-public class SynthesizeModuleTest {
+public class AbstractSynthesizeModuleTest {
 	// I'm too lazy to type
 	private PNProperties parse(String arg) throws ModuleException {
 		return parse(arg, Collections.<String>emptyList(), Collections.<String>emptyList());
