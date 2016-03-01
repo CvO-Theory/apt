@@ -19,7 +19,6 @@
 
 package uniol.apt.analysis.product;
 
-import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
@@ -53,7 +52,7 @@ public class ProductModule extends AbstractModule implements Module {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("product", TransitionSystem.class);
+		outputSpec.addReturnValue("product", TransitionSystem.class, ModuleOutputSpec.PROPERTY_RAW);
 	}
 
 	@Override
@@ -63,7 +62,7 @@ public class ProductModule extends AbstractModule implements Module {
 		TransitionSystem ts2 = input.getParameter("lts2", TransitionSystem.class);
 
 		Product product = new Product(ts1, ts2);
-		
+
 		if (option.equalsIgnoreCase("sync")) {
 			output.setReturnValue("product", TransitionSystem.class, product.getSyncProduct());
 		} else if (option.equalsIgnoreCase("async")) {
