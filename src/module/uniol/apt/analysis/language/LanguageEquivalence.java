@@ -22,7 +22,7 @@ package uniol.apt.analysis.language;
 import java.util.List;
 
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.adt.automaton.FiniteAutomaton;;
+import uniol.apt.adt.automaton.FiniteAutomaton;
 
 import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
 
