@@ -235,9 +235,14 @@ More information about APT can be found on our homepage:
 
 http://pg-apt.informatik.uni-oldenburg.de/
 
+The latest Javadoc documentation is always available at:
+
+http://CvO-theory.github.io/apt-javadoc/
+
 This project is supervised by the ParSys group at Oldenburg University:
 
 http://www.uni-oldenburg.de/informatik/parsys/
+
 http://www.uni-oldenburg.de/informatik/parsys/projekte/
 
 If you have any problems when using this software, if you think that you found a
