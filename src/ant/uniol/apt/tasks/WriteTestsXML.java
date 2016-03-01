@@ -102,17 +102,24 @@ public class WriteTestsXML extends Task {
 		private final Map<String, Set<String>> testsToClasses = new HashMap<>();
 
 		public void handleFile(String fileName) throws UnhandledException {
-			// Given foo/bar/baz.class, we want foo.bar.baz (className) and foo.bar (packageName)
+			// Given foo/bar/baz.class, we want foo.bar (packageName) and baz (className)
 
-			// For each component in the path, except for the last one
-			String fields[] = fileName.split(File.separator);
+			// Construct the class name
+			File file = new File(fileName);
+			String baseName = file.getName();
+			if (!baseName.endsWith(ENDING))
+				throw new UnhandledException("File name does not end with " + ENDING);
+			String className = baseName.substring(0, baseName.length() - ENDING.length());
+
+			// Build the package name
+			file = file.getParentFile();
+			String separator = "";
 			StringBuilder result = new StringBuilder();
-			boolean first = true;
-			for (int i = 0; i < fields.length - 1; i++) {
-				if (!first)
-					result.append(".");
-				result.append(fields[i]);
-				first = false;
+			while (file != null) {
+				result.insert(0, separator);
+				result.insert(0, file.getName());
+				file = file.getParentFile();
+				separator = ".";
 			}
 			String packageName = result.toString();
 
@@ -122,15 +129,6 @@ public class WriteTestsXML extends Task {
 				testsToClasses.put(packageName, set);
 			}
 
-			String className = "";
-			if (fields.length < 2)
-				throw new UnhandledException("Path does not have a directory component");
-
-			className = fields[fields.length - 1];
-			if (!className.endsWith(ENDING))
-				throw new UnhandledException("File name does not end with " + ENDING);
-
-			className = className.substring(0, className.length() - ENDING.length());
 			set.add(packageName + "." + className);
 		}
 
