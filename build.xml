@@ -286,7 +286,7 @@
 		<mkdir dir="./doc/javadoc"/>
 		<javadoc encoding="utf-8" destdir="./doc/javadoc" author="true"
 				version="true" use="true" charset="UTF-8"
-				docencoding="UTF-8" access="private"
+				docencoding="UTF-8"
 				classpathref="test.class.path"
 				failonerror="true">
 			<packageset dir="src/module"/>
