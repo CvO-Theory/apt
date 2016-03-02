@@ -1,8 +1,28 @@
+/*-
+ * APT - Analysis of Petri Nets and labeled Transition systems
+ * Copyright (C) 2016 Jonas Prellberg
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package uniol.apt.analysis.product;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.testng.Assert.assertEquals;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -48,14 +68,14 @@ public class ProductTest {
 
 		// Result should look like this:
 		// s0p0 --(b)--> s2p2 --(a)--> s3p3
-		assertEquals(result.getNodes().size(), 3);
-		assertEquals(result.getEdges().size(), 2);
-		assertEquals(result.getInitialState().getPostsetEdges().size(), 1);
+		assertThat(result.getNodes(), hasSize(3));
+		assertThat(result.getEdges(), hasSize(2));
+		assertThat(result.getInitialState().getPostsetEdges(), hasSize(1));
 		Arc arc1 = result.getInitialState().getPostsetEdges().iterator().next();
-		assertEquals(arc1.getTarget().getPostsetEdges().size(), 1);
+		assertThat(arc1.getTarget().getPostsetEdges(), hasSize(1));
 		Arc arc2 = arc1.getTarget().getPostsetEdges().iterator().next();
-		assertEquals(arc1.getLabel(), "b");
-		assertEquals(arc2.getLabel(), "a");
+		assertThat(arc1.getLabel(), equalTo("b"));
+		assertThat(arc2.getLabel(), equalTo("a"));
 	}
 
 	@Test
@@ -80,14 +100,14 @@ public class ProductTest {
 		// Result should look like this:
 		// s0p0 --(a)--> s1p1
 		// . \----(a)--> s2p1
-		assertEquals(result.getNodes().size(), 3);
-		assertEquals(result.getEdges().size(), 2);
-		assertEquals(result.getInitialState().getPostsetEdges().size(), 2);
+		assertThat(result.getNodes(), hasSize(3));
+		assertThat(result.getEdges(), hasSize(2));
+		assertThat(result.getInitialState().getPostsetEdges(), hasSize(2));
 		Iterator<Arc> iter = result.getInitialState().getPostsetEdges().iterator();
 		Arc arc1 = iter.next();
 		Arc arc2 = iter.next();
-		assertEquals(arc1.getLabel(), "a");
-		assertEquals(arc2.getLabel(), "a");
+		assertThat(arc1.getLabel(), equalTo("a"));
+		assertThat(arc2.getLabel(), equalTo("a"));
 	}
 
 	@Test
@@ -107,8 +127,8 @@ public class ProductTest {
 
 		// Result should look like this:
 		// s0p0
-		assertEquals(result.getNodes().size(), 1);
-		assertEquals(result.getEdges().size(), 0);
+		assertThat(result.getNodes(), hasSize(1));
+		assertThat(result.getEdges(), hasSize(0));
 	}
 
 	@Test
@@ -133,18 +153,18 @@ public class ProductTest {
 
 		// Result should look like this:
 		// s0p0 --(a)--> s1p1 --(b)--> s1p0 ⟲ (b)
-		assertEquals(result.getNodes().size(), 3);
-		assertEquals(result.getEdges().size(), 3);
-		assertEquals(result.getInitialState().getPostsetEdges().size(), 1);
+		assertThat(result.getNodes(), hasSize(3));
+		assertThat(result.getEdges(), hasSize(3));
+		assertThat(result.getInitialState().getPostsetEdges(), hasSize(1));
 		Arc arc1 = result.getInitialState().getPostsetEdges().iterator().next();
-		assertEquals(arc1.getTarget().getPostsetEdges().size(), 1);
+		assertThat(arc1.getTarget().getPostsetEdges(), hasSize(1));
 		Arc arc2 = arc1.getTarget().getPostsetEdges().iterator().next();
-		assertEquals(arc2.getTarget().getPostsetEdges().size(), 1);
+		assertThat(arc2.getTarget().getPostsetEdges(), hasSize(1));
 		Arc arc3 = arc2.getTarget().getPostsetEdges().iterator().next();
-		assertEquals(arc1.getLabel(), "a");
-		assertEquals(arc2.getLabel(), "b");
-		assertEquals(arc3.getLabel(), "b");
-		assertEquals(arc3.getSourceId(), arc3.getTargetId());
+		assertThat(arc1.getLabel(), equalTo("a"));
+		assertThat(arc2.getLabel(), equalTo("b"));
+		assertThat(arc3.getLabel(), equalTo("b"));
+		assertThat(arc3.getSourceId(), equalTo(arc3.getTargetId()));
 	}
 
 	@Test
@@ -171,9 +191,9 @@ public class ProductTest {
 		// \ \----(b)--> s2p0 --(c)--> s2p1 <--\ \
 		// .\-----(c)--> s0p1 --(b)------------/ /
 		// . \----(a)---------------------------/
-		assertEquals(result.getNodes().size(), 6);
-		assertEquals(result.getEdges().size(), 7);
-		assertEquals(result.getInitialState().getPostsetEdges().size(), 3);
+		assertThat(result.getNodes(), hasSize(6));
+		assertThat(result.getEdges(), hasSize(7));
+		assertThat(result.getInitialState().getPostsetEdges(), hasSize(3));
 
 		Set<String> labels = new HashSet<>();
 		for (Arc arc : result.getInitialState().getPostsetEdges()) {
@@ -183,3 +203,5 @@ public class ProductTest {
 	}
 
 }
+
+//vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

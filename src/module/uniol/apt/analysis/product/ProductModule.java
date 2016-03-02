@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2012-2013  Members of the project group APT
+ * Copyright (C) 2016 Jonas Prellberg
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
 /**
+ * A module to compute the synchronous or asynchronous product of two LTS.
+ *
  * @author Jonas Prellberg
  *
  */
@@ -52,7 +54,8 @@ public class ProductModule extends AbstractModule implements Module {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("product", TransitionSystem.class, ModuleOutputSpec.PROPERTY_RAW);
+		outputSpec.addReturnValue("product", TransitionSystem.class, ModuleOutputSpec.PROPERTY_RAW,
+				ModuleOutputSpec.PROPERTY_FILE);
 	}
 
 	@Override
@@ -82,3 +85,5 @@ public class ProductModule extends AbstractModule implements Module {
 		return new Category[] { Category.LTS };
 	}
 }
+
+// vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

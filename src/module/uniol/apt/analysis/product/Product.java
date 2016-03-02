@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2012-2013  Members of the project group APT
+ * Copyright (C) 2016 Jonas Prellberg
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,52 +32,90 @@ import uniol.apt.util.Pair;
 /**
  * Provides methods to compute the synchronous or asynchronous product of two
  * LTS.
- * 
+ *
  * @author Jonas Prellberg
  */
 public class Product {
 
+	/**
+	 * Key for the extension of the product states with the first source
+	 * state.
+	 */
+	private static final String EXTENSION_KEY_1 = "product_source_lts1_state";
+
+	/**
+	 * Key for the extension of the product states with the second source
+	 * state.
+	 */
+	private static final String EXTENSION_KEY_2 = "product_source_lts1_state";
+
+	/**
+	 * The first factor for the product.
+	 */
 	private final TransitionSystem ts1;
+
+	/**
+	 * The second factor for the product.
+	 */
 	private final TransitionSystem ts2;
 
+	/**
+	 * The resulting product.
+	 */
 	private TransitionSystem result;
+
+	/**
+	 * A mapping from a pair of factor states to a product state. Used to
+	 * prevent creation of duplicate product states.
+	 */
 	private Map<Pair<State, State>, State> resultStateCache;
+
+	/**
+	 * A queue to save new product states that have still to be examined,
+	 * i.e. starting from which new arcs and states will be created.
+	 */
 	private Queue<State> workQueue;
 
+	/**
+	 * Creates a new Product instance that allows to compute the synchronous
+	 * or asynchronous product of two given LTS.
+	 *
+	 * @param ts1
+	 *                first operand/factor
+	 * @param ts2
+	 *                second operand/factor
+	 */
 	public Product(TransitionSystem ts1, TransitionSystem ts2) {
 		this.ts1 = ts1;
 		this.ts2 = ts2;
 	}
 
 	/**
-	 * Computes the synchronous product of the two transition systems supplied
-	 * to the constructor.
-	 * 
+	 * Computes the synchronous product of the two transition systems
+	 * supplied to the constructor.
+	 *
 	 * @return The synchronous product transition system.
 	 */
 	public TransitionSystem getSyncProduct() {
-		init("sync_prod");
+		init();
 
 		while (!workQueue.isEmpty()) {
 			State curr = workQueue.poll();
 
 			// Retrieve states of the operand transition systems.
-			State s1 = (State) curr.getExtension("s1");
-			State s2 = (State) curr.getExtension("s2");
+			State s1 = (State) curr.getExtension(EXTENSION_KEY_1);
+			State s2 = (State) curr.getExtension(EXTENSION_KEY_2);
 
 			for (Arc arc1 : s1.getPostsetEdges()) {
 				for (Arc arc2 : s2.getPostsetEdges()) {
 					if (arc1.getLabel().equals(arc2.getLabel())) {
 						// Create new product state.
-						Pair<State, Boolean> prod = createOrGetProductState(arc1.getTarget(), arc2.getTarget());
+						State prod = createOrGetProductState(arc1.getTarget(),
+								arc2.getTarget());
 
-						// Connect curr state with the new state.
-						result.createArc(curr, prod.getFirst(), arc1.getLabel());
-
-						if (prod.getSecond()) {
-							// Add new product state to work queue.
-							workQueue.add(prod.getFirst());
-						}
+						// Connect curr state with the
+						// new state.
+						result.createArc(curr, prod, arc1.getLabel());
 					}
 				}
 			}
@@ -87,13 +125,13 @@ public class Product {
 	}
 
 	/**
-	 * Computes the asynchronous product of the two transition systems supplied
-	 * to the constructor.
-	 * 
+	 * Computes the asynchronous product of the two transition systems
+	 * supplied to the constructor.
+	 *
 	 * @return The asynchronous product transition system.
 	 */
 	public TransitionSystem getAsyncProduct() {
-		init("async_prod");
+		init();
 
 		while (!workQueue.isEmpty()) {
 			State curr = workQueue.poll();
@@ -104,27 +142,17 @@ public class Product {
 
 			for (Arc arc1 : s1.getPostsetEdges()) {
 				// Create new product state.
-				Pair<State, Boolean> prod = createOrGetProductState(arc1.getTarget(), s2);
+				State prod = createOrGetProductState(arc1.getTarget(), s2);
 
 				// Connect curr state with the new state.
-				result.createArc(curr, prod.getFirst(), arc1.getLabel());
-
-				if (prod.getSecond()) {
-					// Add new product state to work queue.
-					workQueue.add(prod.getFirst());
-				}
+				result.createArc(curr, prod, arc1.getLabel());
 			}
 			for (Arc arc2 : s2.getPostsetEdges()) {
 				// Create new product state.
-				Pair<State, Boolean> prod = createOrGetProductState(s1, arc2.getTarget());
+				State prod = createOrGetProductState(s1, arc2.getTarget());
 
 				// Connect curr state with the new state.
-				result.createArc(curr, prod.getFirst(), arc2.getLabel());
-
-				if (prod.getSecond()) {
-					// Add new product state to work queue.
-					workQueue.add(prod.getFirst());
-				}
+				result.createArc(curr, prod, arc2.getLabel());
 			}
 		}
 
@@ -133,47 +161,46 @@ public class Product {
 
 	/**
 	 * Initializes data structures.
-	 * 
-	 * @param resultName
-	 *            The name of the result transition system.
 	 */
-	private void init(String resultName) {
-		result = new TransitionSystem(resultName);
+	private void init() {
+		result = new TransitionSystem();
 		resultStateCache = new HashMap<>();
 		workQueue = new LinkedList<>();
 
 		// Create the initial state for the product.
-		Pair<State, Boolean> init = createOrGetProductState(ts1.getInitialState(), ts2.getInitialState());
-		result.setInitialState(init.getFirst());
-
-		// Add initial state to work queue.
-		workQueue.add(init.getFirst());
+		State init = createOrGetProductState(ts1.getInitialState(), ts2.getInitialState());
+		result.setInitialState(init);
 	}
 
 	/**
-	 * Returns the product state of s1 and s2. If it does not yet exist in the
-	 * result transition system, the state is created. If it exists, it is
-	 * returned.
-	 * 
+	 * Returns the product state of s1 and s2. If it does not yet exist in
+	 * the result transition system, the state is created. If it exists, it
+	 * is returned.
+	 *
+	 * Attention: This function modifies the workQueue. Newly created states
+	 * are automatically inserted.
+	 *
 	 * @param s1
-	 *            first state
+	 *                first state
 	 * @param s2
-	 *            second state
-	 * @return A pair of the product state and a boolean that signals if a new
-	 *         state was created (true) or an existing one was returned (false).
+	 *                second state
+	 * @return the product state
 	 */
-	private Pair<State, Boolean> createOrGetProductState(State s1, State s2) {
+	private State createOrGetProductState(State s1, State s2) {
 		Pair<State, State> statePair = new Pair<>(s1, s2);
 		if (resultStateCache.containsKey(statePair)) {
-			return new Pair<>(resultStateCache.get(statePair), false);
+			return resultStateCache.get(statePair);
 		} else {
 			String name = s1.getId() + "_" + s2.getId();
 			State state = result.createState(name);
-			state.putExtension("s1", s1);
-			state.putExtension("s2", s2);
+			state.putExtension(EXTENSION_KEY_1, s1);
+			state.putExtension(EXTENSION_KEY_2, s2);
 			resultStateCache.put(statePair, state);
-			return new Pair<>(state, true);
+			workQueue.add(state);
+			return state;
 		}
 	}
 
 }
+
+// vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
