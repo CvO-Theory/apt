@@ -3,8 +3,6 @@
 # NOTE: stdout/stderr might/should be discarded to not leak sensitive information.
 
 echo "Post-processing (API) documentation."
-echo "TRAVIS_PULL_REQUEST: $TRAVIS_PULL_REQUEST"
-echo "TRAVIS_BRANCH: $TRAVIS_BRANCH"
 
 # GH_TOKEN won't be available for PRs from forks.
 # (http://docs.travis-ci.com/user/pull-requests/#Security-Restrictions-when-testing-Pull-Requests).
