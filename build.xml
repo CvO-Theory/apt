@@ -286,9 +286,9 @@
 		<mkdir dir="./doc/javadoc"/>
 		<javadoc encoding="utf-8" destdir="./doc/javadoc" author="true"
 				version="true" use="true" charset="UTF-8"
-				docencoding="UTF-8"
+				docencoding="UTF-8" failonerror="true"
 				classpathref="test.class.path"
-				failonerror="true">
+				additionalparam="-notimestamp">
 			<packageset dir="src/module"/>
 			<packageset dir="src/lib"/>
 			<packageset dir="src/main"/>
