@@ -24,12 +24,17 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.util.Pair;
 
+/**
+ * Provides methods to compute the synchronous or asynchronous product of two
+ * LTS.
+ * 
+ * @author Jonas Prellberg
+ */
 public class Product {
 
 	private final TransitionSystem ts1;
@@ -37,6 +42,7 @@ public class Product {
 
 	private TransitionSystem result;
 	private Map<Pair<State, State>, State> resultStateCache;
+	private Queue<State> workQueue;
 
 	public Product(TransitionSystem ts1, TransitionSystem ts2) {
 		this.ts1 = ts1;
@@ -50,16 +56,7 @@ public class Product {
 	 * @return The synchronous product transition system.
 	 */
 	public TransitionSystem getSyncProduct() {
-		result = new TransitionSystem("sync_prod");
-		resultStateCache = new HashMap<>();
-
-		// Create the initial state for the product.
-		Pair<State, Boolean> init = createOrGetProductState(ts1.getInitialState(), ts2.getInitialState());
-		result.setInitialState(init.getFirst());
-
-		// Queue that will save states which still need to be processed.
-		Queue<State> workQueue = new LinkedList<>();
-		workQueue.add(init.getFirst());
+		init("sync_prod");
 
 		while (!workQueue.isEmpty()) {
 			State curr = workQueue.poll();
@@ -90,6 +87,70 @@ public class Product {
 	}
 
 	/**
+	 * Computes the asynchronous product of the two transition systems supplied
+	 * to the constructor.
+	 * 
+	 * @return The asynchronous product transition system.
+	 */
+	public TransitionSystem getAsyncProduct() {
+		init("async_prod");
+
+		while (!workQueue.isEmpty()) {
+			State curr = workQueue.poll();
+
+			// Retrieve states of the operand transition systems.
+			State s1 = (State) curr.getExtension("s1");
+			State s2 = (State) curr.getExtension("s2");
+
+			for (Arc arc1 : s1.getPostsetEdges()) {
+				// Create new product state.
+				Pair<State, Boolean> prod = createOrGetProductState(arc1.getTarget(), s2);
+
+				// Connect curr state with the new state.
+				result.createArc(curr, prod.getFirst(), arc1.getLabel());
+
+				if (prod.getSecond()) {
+					// Add new product state to work queue.
+					workQueue.add(prod.getFirst());
+				}
+			}
+			for (Arc arc2 : s2.getPostsetEdges()) {
+				// Create new product state.
+				Pair<State, Boolean> prod = createOrGetProductState(s1, arc2.getTarget());
+
+				// Connect curr state with the new state.
+				result.createArc(curr, prod.getFirst(), arc2.getLabel());
+
+				if (prod.getSecond()) {
+					// Add new product state to work queue.
+					workQueue.add(prod.getFirst());
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * Initializes data structures.
+	 * 
+	 * @param resultName
+	 *            The name of the result transition system.
+	 */
+	private void init(String resultName) {
+		result = new TransitionSystem(resultName);
+		resultStateCache = new HashMap<>();
+		workQueue = new LinkedList<>();
+
+		// Create the initial state for the product.
+		Pair<State, Boolean> init = createOrGetProductState(ts1.getInitialState(), ts2.getInitialState());
+		result.setInitialState(init.getFirst());
+
+		// Add initial state to work queue.
+		workQueue.add(init.getFirst());
+	}
+
+	/**
 	 * Returns the product state of s1 and s2. If it does not yet exist in the
 	 * result transition system, the state is created. If it exists, it is
 	 * returned.
@@ -113,10 +174,6 @@ public class Product {
 			resultStateCache.put(statePair, state);
 			return new Pair<>(state, true);
 		}
-	}
-
-	public TransitionSystem getAsyncProduct() {
-		throw new NotImplementedException();
 	}
 
 }
