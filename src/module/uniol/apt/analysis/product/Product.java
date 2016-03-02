@@ -19,10 +19,8 @@
 
 package uniol.apt.analysis.product;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Set;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import uniol.apt.adt.ts.Arc;
@@ -40,8 +38,8 @@ public class Product {
 	}
 
 	public TransitionSystem getSyncProduct() {
-		TransitionSystem prodTS = new TransitionSystem(getProductName());
-
+		TransitionSystem prodTS = new TransitionSystem("sync_prod");
+		
 		// Create the initial state for the product.
 		State init = createProductState(prodTS, ts1.getInitialState(), ts2.getInitialState());
 		prodTS.setInitialState(init);
@@ -57,38 +55,23 @@ public class Product {
 			State s1 = (State) curr.getExtension("s1");
 			State s2 = (State) curr.getExtension("s2");
 
-			// Intersect outgoing transition's labels of s1 and s2.
-			Set<String> labels = getPostsetLabels(s1);
-			labels.retainAll(getPostsetLabels(s2));
+			for (Arc arc1 : s1.getPostsetEdges()) {
+				for (Arc arc2 : s2.getPostsetEdges()) {
+					if (arc1.getLabel().equals(arc2.getLabel())) {
+						// Create new product state.
+						State sprod = createProductState(prodTS, arc1.getTarget(), arc2.getTarget());
 
-			for (String label : labels) {
-				Arc arc1 = getLabeledArcFromState(s1, label);
-				Arc arc2 = getLabeledArcFromState(s2, label);
+						// Connect curr state with the new state.
+						prodTS.createArc(curr, sprod, arc1.getLabel());
 
-				// Create new product state.
-				State sprod = createProductState(prodTS, arc1.getTarget(), arc2.getTarget());
-
-				// Connect curr state with the new state.
-				prodTS.createArc(curr, sprod, label);
-
-				// Add new product state to work queue.
-				workQueue.add(sprod);
+						// Add new product state to work queue.
+						workQueue.add(sprod);
+					}
+				}
 			}
 		}
 
 		return prodTS;
-	}
-
-	private String getProductName() {
-		String ts1Name = "unknown";
-		String ts2Name = "unknown";
-		if (!ts1.getName().isEmpty()) {
-			ts1Name = ts1.getName();
-		}
-		if (!ts2.getName().isEmpty()) {
-			ts2Name = ts2.getName();
-		}
-		return String.format("Product of '%s' and '%s'", ts1Name, ts2Name);
 	}
 
 	private State createProductState(TransitionSystem ts, State s1, State s2) {
@@ -97,24 +80,6 @@ public class Product {
 		state.putExtension("s1", s1);
 		state.putExtension("s2", s2);
 		return state;
-	}
-
-	private Set<String> getPostsetLabels(State state) {
-		Set<String> labels = new HashSet<>();
-		for (Arc arc : state.getPostsetEdges()) {
-			labels.add(arc.getLabel());
-		}
-		return labels;
-	}
-
-	private Arc getLabeledArcFromState(State state, String label) {
-		for (Arc arc : state.getPostsetEdges()) {
-			if (arc.getLabel().equals(label)) {
-				return arc;
-			}
-		}
-		throw new RuntimeException(
-				"This method must only be called if it is known that the state has an outgoing arc with the given label.");
 	}
 
 	public TransitionSystem getAsyncProduct() {
