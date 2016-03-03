@@ -31,23 +31,21 @@ import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
 /**
- * A module to compute the synchronous or asynchronous product of two LTS.
+ * A module to compute the synchronous product of two LTS.
  *
  * @author Jonas Prellberg
  *
  */
 @AptModule
-public class ProductModule extends AbstractModule implements Module {
+public class ProductSyncModule extends AbstractModule implements Module {
 
 	@Override
 	public String getName() {
-		return "product";
+		return "product_sync";
 	}
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addParameter("option", String.class,
-				"Use sync to get a synchronous product or async to get an asynchronous product");
 		inputSpec.addParameter("lts1", TransitionSystem.class, "The first LTS of the product");
 		inputSpec.addParameter("lts2", TransitionSystem.class, "The second LTS of the product");
 	}
@@ -60,24 +58,16 @@ public class ProductModule extends AbstractModule implements Module {
 
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
-		String option = input.getParameter("option", String.class);
 		TransitionSystem ts1 = input.getParameter("lts1", TransitionSystem.class);
 		TransitionSystem ts2 = input.getParameter("lts2", TransitionSystem.class);
 
 		Product product = new Product(ts1, ts2);
-
-		if (option.equalsIgnoreCase("sync")) {
-			output.setReturnValue("product", TransitionSystem.class, product.getSyncProduct());
-		} else if (option.equalsIgnoreCase("async")) {
-			output.setReturnValue("product", TransitionSystem.class, product.getAsyncProduct());
-		} else {
-			throw new ModuleException("Argument 'option' must be either 'sync' or 'async'");
-		}
+		output.setReturnValue("product", TransitionSystem.class, product.getSyncProduct());
 	}
 
 	@Override
 	public String getShortDescription() {
-		return "Compute the synchronous or asynchronous product of two LTS";
+		return "Compute the synchronous product of two LTS";
 	}
 
 	@Override
