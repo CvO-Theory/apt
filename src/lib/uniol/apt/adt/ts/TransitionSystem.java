@@ -50,7 +50,7 @@ import uniol.apt.adt.exception.StructureException;
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State>
-implements IGraph<TransitionSystem, Arc, State> {
+	implements IGraph<TransitionSystem, Arc, State> {
 
 	private String name;
 	private int nextStateId = 0;
@@ -427,7 +427,7 @@ implements IGraph<TransitionSystem, Arc, State> {
 		}
 		if (this != a.getGraph()) {
 			throw new StructureException("arc '" + a.toString() + "' does not belong to the net '"
-					+ this.getName() + "'.");
+				+ this.getName() + "'.");
 		}
 		removeArc(a.getSourceId(), a.getTargetId(), a.getLabel());
 	}
@@ -488,7 +488,7 @@ implements IGraph<TransitionSystem, Arc, State> {
 		}
 		if (this != state.getGraph()) {
 			throw new StructureException("node'" + state.getId() + "' does not belong to the net '"
-					+ this.getName() + "'.");
+				+ this.getName() + "'.");
 		}
 		removeState(state.getId());
 	}
@@ -545,11 +545,11 @@ implements IGraph<TransitionSystem, Arc, State> {
 		}
 		if (this != source.getGraph()) {
 			throw new StructureException("source state '" + source.getId()
-			+ "' does not belong to the net '" + this.getName() + "'.");
+				+ "' does not belong to the net '" + this.getName() + "'.");
 		}
 		if (this != target.getGraph()) {
 			throw new StructureException("target state '" + target.getId()
-			+ "' does not belong to the net '" + this.getName() + "'.");
+				+ "' does not belong to the net '" + this.getName() + "'.");
 		}
 		return getArc(source.getId(), target.getId(), label);
 	}
@@ -682,7 +682,7 @@ implements IGraph<TransitionSystem, Arc, State> {
 			public Iterator<Arc> iterator() {
 				return new Iterator<Arc>() {
 					private Iterator<Map<ArcKey, Arc>> postsetIter
-					= TransitionSystem.this.postsetEdges.values().iterator();
+						= TransitionSystem.this.postsetEdges.values().iterator();
 					private Iterator<Arc> arcIter = emptyIterator();
 
 					@Override
@@ -837,7 +837,7 @@ implements IGraph<TransitionSystem, Arc, State> {
 		}
 		if (this != node.getGraph()) {
 			throw new StructureException("node'" + node.getId() + "' does not belong to the ts '"
-					+ this.getName() + "'.");
+				+ this.getName() + "'.");
 		}
 		return getPostsetEdges(node.getId());
 	}
@@ -857,7 +857,7 @@ implements IGraph<TransitionSystem, Arc, State> {
 		}
 		if (this != node.getGraph()) {
 			throw new StructureException("node'" + node.getId() + "' does not belong to the ts '"
-					+ this.getName() + "'.");
+				+ this.getName() + "'.");
 		}
 		return getPostsetNodes(node.getId());
 	}
@@ -877,7 +877,7 @@ implements IGraph<TransitionSystem, Arc, State> {
 		}
 		if (this != node.getGraph()) {
 			throw new StructureException("node'" + node.getId() + "' does not belong to the ts '"
-					+ this.getName() + "'.");
+				+ this.getName() + "'.");
 		}
 		return getPresetEdges(node.getId());
 	}
@@ -910,8 +910,8 @@ implements IGraph<TransitionSystem, Arc, State> {
 	 *                the source node
 	 * @param label
 	 *                the label to look for
-	 * @return a set of nodes that can be reached by arcs with the given
-	 *         label
+	 * @return an unmodifiable set of nodes that can be reached by arcs with
+	 *         the given label
 	 */
 	public Set<State> getPostsetNodesByLabel(State node, String label) {
 		Set<Arc> arcs = getPostsetEdgesByLabelCache(node.getId()).get(label);
@@ -922,7 +922,7 @@ implements IGraph<TransitionSystem, Arc, State> {
 		for (Arc arc : arcs) {
 			states.add(arc.getTarget());
 		}
-		return states;
+		return Collections.unmodifiableSet(states);
 	}
 
 	/**
@@ -933,15 +933,15 @@ implements IGraph<TransitionSystem, Arc, State> {
 	 *                the source node of all arcs in the result
 	 * @param label
 	 *                the label of all arcs in the result
-	 * @return a set of arcs that begin at source node and have the
-	 *         given label
+	 * @return an unmodifiable set of arcs that begin at source node and
+	 *         have the given label
 	 */
 	public Set<Arc> getPostsetEdgesByLabel(State node, String label) {
 		Set<Arc> arcs = getPostsetEdgesByLabelCache(node.getId()).get(label);
 		if (arcs == null) {
 			return Collections.emptySet();
 		}
-		return arcs;
+		return Collections.unmodifiableSet(arcs);
 	}
 
 	/**
