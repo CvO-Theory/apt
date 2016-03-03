@@ -19,12 +19,18 @@
 
 package uniol.apt.adt.ts;
 
-import java.util.HashSet;
-import java.util.Set;
-import org.testng.annotations.Test;
-import uniol.apt.adt.exception.ArcExistsException;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.testng.annotations.Test;
+
+import uniol.apt.adt.exception.ArcExistsException;
 
 /**
  *
@@ -107,6 +113,77 @@ public class TransitionSystemTest {
 		ts.getArc(states[2].getPresetNodes().iterator().next(), states[2], "b").setLabel("a");
 		return ts;
 	}
+
+	@Test
+	public void testGetPostsetNodesByLabel() {
+		Set<State> postset;
+		TransitionSystem ts = new TransitionSystem();
+
+		State s0 = ts.createState();
+		// Test: set is initially empty
+		postset = ts.getPostsetNodesByLabel(s0, "a");
+		assertThat(postset, hasSize(0));
+
+		State s1 = ts.createState();
+		State s2 = ts.createState();
+		State s3 = ts.createState();
+		ts.setInitialState(s0);
+
+		ts.createArc(s0, s1, "a");
+		// Test: arc creation updates cache
+		postset = ts.getPostsetNodesByLabel(s0, "a");
+		assertThat(postset, contains(s1));
+
+		Arc arc2 = ts.createArc(s0, s2, "b");
+		// Test: arc creation doesn't influence cache for other labels
+		postset = ts.getPostsetNodesByLabel(s0, "a");
+		assertThat(postset, contains(s1));
+		postset = ts.getPostsetNodesByLabel(s0, "b");
+		assertThat(postset, contains(s2));
+
+		ts.createArc(s0, s3, "b");
+		// Test: arc creation updates cache for size > 1
+		postset = ts.getPostsetNodesByLabel(s0, "a");
+		assertThat(postset, contains(s1));
+		postset = ts.getPostsetNodesByLabel(s0, "b");
+		assertThat(postset, containsInAnyOrder(s2, s3));
+
+		ts.removeArc(arc2);
+		// Test: arc removal updates cache
+		postset = ts.getPostsetNodesByLabel(s0, "a");
+		assertThat(postset, contains(s1));
+		postset = ts.getPostsetNodesByLabel(s0, "b");
+		assertThat(postset, contains(s3));
+
+		// Test: state removal updates cache
+		ts.createArc(s2, s3, "c");
+		postset = ts.getPostsetNodesByLabel(s2, "c");
+		assertThat(postset, contains(s3));
+		ts.removeState(s2);
+		postset = ts.getPostsetNodesByLabel(s2, "c");
+		assertThat(postset, hasSize(0));
+	}
+
+	@Test
+	public void testGetPostsetNodesByLabelWithModification() {
+		Set<State> postset;
+		TransitionSystem ts = new TransitionSystem();
+		State s0 = ts.createState();
+		State s1 = ts.createState();
+		State s2 = ts.createState();
+		ts.setInitialState(s0);
+		Arc arc1 = ts.createArc(s0, s1, "a");
+		Arc arc2 = ts.createArc(s0, s2, "a");
+
+		postset = ts.getPostsetNodesByLabel(s0, "a");
+		assertThat(postset, containsInAnyOrder(s1, s2));
+
+		arc1.setLabel("b");
+		// Test: arc rename updates cache
+		postset = ts.getPostsetNodesByLabel(s0, "a");
+		assertThat(postset, contains(s2));
+	}
+
 }
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
 

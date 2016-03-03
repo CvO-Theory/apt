@@ -19,6 +19,8 @@
 
 package uniol.apt.adt.ts;
 
+import java.util.Set;
+
 import uniol.apt.adt.Node;
 
 /**
@@ -45,6 +47,33 @@ public class State extends Node<TransitionSystem, Arc, State> {
 	State(TransitionSystem ts, State s) {
 		super(ts, s);
 	}
+
+	/**
+	 * Returns the set of states that is reached by arcs from this node with
+	 * the given label.
+	 *
+	 * @param label
+	 *                the label to look for
+	 * @return a set of nodes that can be reached by arcs with the given
+	 *         label
+	 */
+	public Set<State> getPostsetNodesByLabel(String label) {
+		return graph.getPostsetNodesByLabel(this, label);
+	}
+
+	/**
+	 * Returns the set of arcs that start in the given node and have the
+	 * given label.
+	 *
+	 * @param label
+	 *                the label of all arcs in the result
+	 * @return a set of arcs that begin at this node and have the given
+	 *         label
+	 */
+	public Set<Arc> getPostsetEdgesByLabel(State node, String label) {
+		return graph.getPostsetEdgesByLabel(this, label);
+	}
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

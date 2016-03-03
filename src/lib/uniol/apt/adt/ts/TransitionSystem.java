@@ -19,6 +19,8 @@
 
 package uniol.apt.adt.ts;
 
+import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
+
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,14 +45,12 @@ import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.exception.StructureException;
 
-import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
-
 /**
  * Represents a Transitionsystem. With states, arcs and an alphabet.
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State>
-	implements IGraph<TransitionSystem, Arc, State> {
+implements IGraph<TransitionSystem, Arc, State> {
 
 	private String name;
 	private int nextStateId = 0;
@@ -62,6 +62,13 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	private final Map<String, Map<ArcKey, Arc>> postsetEdges = new HashMap<>();
 	private int numArcs = 0;
 	private State initialState = null;
+
+	/**
+	 * A cache for getting postset arcs by label. The mapping is:
+	 *
+	 * nodeId -> (label -> arcPostset)
+	 */
+	private final Map<String, Map<String, Set<Arc>>> postsetEdgesByLabel = new HashMap<>();
 
 	/**
 	 * Creates a new TransitionSystem with no name (e.g. "").
@@ -162,6 +169,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (postNodes != null) {
 			postNodes.add(this.getNode(targetId));
 		}
+		// Update postsetByLabel cache.
+		onArcAddedUpdatePostsetByLabelCache(arc);
 		invokeListeners();
 		return arc;
 	}
@@ -389,6 +398,9 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 			postNodes.remove(states.get(targetId));
 		}
 
+		// Update postsetByLabel cache.
+		onArcRemovedUpdatePostsetByLabelCache(a);
+
 		Arc old;
 		old = presetEdges.get(targetId).remove(key);
 		assert old == a;
@@ -415,7 +427,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		}
 		if (this != a.getGraph()) {
 			throw new StructureException("arc '" + a.toString() + "' does not belong to the net '"
-				+ this.getName() + "'.");
+					+ this.getName() + "'.");
 		}
 		removeArc(a.getSourceId(), a.getTargetId(), a.getLabel());
 	}
@@ -452,6 +464,9 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		presetEdges.remove(id);
 		postsetEdges.remove(id);
 
+		// Update postsetByLabel cache.
+		postsetEdgesByLabel.remove(id);
+
 		if (initialState != null && initialState.getId().equals(id)) {
 			initialState = null;
 		}
@@ -473,7 +488,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		}
 		if (this != state.getGraph()) {
 			throw new StructureException("node'" + state.getId() + "' does not belong to the net '"
-				+ this.getName() + "'.");
+					+ this.getName() + "'.");
 		}
 		removeState(state.getId());
 	}
@@ -530,11 +545,11 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		}
 		if (this != source.getGraph()) {
 			throw new StructureException("source state '" + source.getId()
-				+ "' does not belong to the net '" + this.getName() + "'.");
+			+ "' does not belong to the net '" + this.getName() + "'.");
 		}
 		if (this != target.getGraph()) {
 			throw new StructureException("target state '" + target.getId()
-				+ "' does not belong to the net '" + this.getName() + "'.");
+			+ "' does not belong to the net '" + this.getName() + "'.");
 		}
 		return getArc(source.getId(), target.getId(), label);
 	}
@@ -599,9 +614,11 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 			Arc a = postEdges.remove(oldKey);
 			Arc a2 = preEdges.remove(oldKey);
 			assert a == a2;
+			onArcRemovedUpdatePostsetByLabelCache(a);
 			a.label = newLabel;
 			removeLabel(oldLabel);
 			addLabel(newLabel);
+			onArcAddedUpdatePostsetByLabelCache(a);
 			preEdges.put(newKey, a);
 			postEdges.put(newKey, a);
 			invokeListeners();
@@ -665,7 +682,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 			public Iterator<Arc> iterator() {
 				return new Iterator<Arc>() {
 					private Iterator<Map<ArcKey, Arc>> postsetIter
-						= TransitionSystem.this.postsetEdges.values().iterator();
+					= TransitionSystem.this.postsetEdges.values().iterator();
 					private Iterator<Arc> arcIter = emptyIterator();
 
 					@Override
@@ -820,7 +837,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		}
 		if (this != node.getGraph()) {
 			throw new StructureException("node'" + node.getId() + "' does not belong to the ts '"
-				+ this.getName() + "'.");
+					+ this.getName() + "'.");
 		}
 		return getPostsetEdges(node.getId());
 	}
@@ -840,7 +857,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		}
 		if (this != node.getGraph()) {
 			throw new StructureException("node'" + node.getId() + "' does not belong to the ts '"
-				+ this.getName() + "'.");
+					+ this.getName() + "'.");
 		}
 		return getPostsetNodes(node.getId());
 	}
@@ -860,7 +877,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		}
 		if (this != node.getGraph()) {
 			throw new StructureException("node'" + node.getId() + "' does not belong to the ts '"
-				+ this.getName() + "'.");
+					+ this.getName() + "'.");
 		}
 		return getPresetEdges(node.getId());
 	}
@@ -880,10 +897,103 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		}
 		if (this != node.getGraph()) {
 			throw new StructureException("node'" + node.getId() + "' does not belong to the ts '"
-				+ this.getName() + "'.");
+					+ this.getName() + "'.");
 		}
 		return getPresetNodes(node.getId());
 	}
+
+	/**
+	 * Returns the set of states that is reached by arcs from the given node
+	 * with the given label.
+	 *
+	 * @param node
+	 *                the source node
+	 * @param label
+	 *                the label to look for
+	 * @return a set of nodes that can be reached by arcs with the given
+	 *         label
+	 */
+	public Set<State> getPostsetNodesByLabel(State node, String label) {
+		Set<Arc> arcs = getPostsetEdgesByLabelCache(node.getId()).get(label);
+		if (arcs == null) {
+			return Collections.emptySet();
+		}
+		Set<State> states = new HashSet<>();
+		for (Arc arc : arcs) {
+			states.add(arc.getTarget());
+		}
+		return states;
+	}
+
+	/**
+	 * Returns the set of arcs that start in the given node and have the
+	 * given label.
+	 *
+	 * @param node
+	 *                the source node of all arcs in the result
+	 * @param label
+	 *                the label of all arcs in the result
+	 * @return a set of arcs that begin at source node and have the
+	 *         given label
+	 */
+	public Set<Arc> getPostsetEdgesByLabel(State node, String label) {
+		Set<Arc> arcs = getPostsetEdgesByLabelCache(node.getId()).get(label);
+		if (arcs == null) {
+			return Collections.emptySet();
+		}
+		return arcs;
+	}
+
+	/**
+	 * Returns a map of labels to arc sets for the given node.
+	 *
+	 * @param sourceNodeId
+	 *                all arc's source node id
+	 * @return a map of labels to sets of arcs
+	 */
+	private Map<String, Set<Arc>> getPostsetEdgesByLabelCache(String sourceNodeId) {
+		Map<String, Set<Arc>> result = postsetEdgesByLabel.get(sourceNodeId);
+		if (result == null) {
+			result = new HashMap<>();
+			postsetEdgesByLabel.put(sourceNodeId, result);
+		}
+		return result;
+	}
+
+	/**
+	 * Needs to be called whenever an arc is added to keep the cache
+	 * consistent.
+	 *
+	 * @param arc the added arc
+	 */
+	private void onArcAddedUpdatePostsetByLabelCache(Arc arc) {
+		Map<String, Set<Arc>> result = getPostsetEdgesByLabelCache(arc.getSourceId());
+		Set<Arc> postset = result.get(arc.getLabel());
+		if (postset == null) {
+			postset = new HashSet<>();
+		}
+		postset.add(arc);
+		result.put(arc.getLabel(), postset);
+		postsetEdgesByLabel.put(arc.getSourceId(), result);
+	}
+
+	/**
+	 * Needs to be called whenever an arc is removed to keep the cache
+	 * consistent.
+	 *
+	 * @param arc the removed arc
+	 */
+	private void onArcRemovedUpdatePostsetByLabelCache(Arc arc) {
+		Map<String, Set<Arc>> result = getPostsetEdgesByLabelCache(arc.getSourceId());
+		Set<Arc> postset = result.get(arc.getLabel());
+		if (postset == null) {
+			postset = new HashSet<>();
+		}
+		postset.remove(arc);
+		result.put(arc.getLabel(), postset);
+		postsetEdgesByLabel.put(arc.getSourceId(), result);
+	}
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
