@@ -191,8 +191,7 @@ public class Product {
 		if (resultStateCache.containsKey(statePair)) {
 			return resultStateCache.get(statePair);
 		} else {
-			String name = s1.getId() + "_" + s2.getId();
-			State state = result.createState(name);
+			State state = result.createState();
 			state.putExtension(EXTENSION_KEY_1, s1);
 			state.putExtension(EXTENSION_KEY_2, s2);
 			resultStateCache.put(statePair, state);
