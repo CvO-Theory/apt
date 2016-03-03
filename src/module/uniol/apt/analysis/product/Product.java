@@ -47,7 +47,7 @@ public class Product {
 	 * Key for the extension of the product states with the second source
 	 * state.
 	 */
-	private static final String EXTENSION_KEY_2 = "product_source_lts1_state";
+	private static final String EXTENSION_KEY_2 = "product_source_lts2_state";
 
 	/**
 	 * The first factor for the product.
