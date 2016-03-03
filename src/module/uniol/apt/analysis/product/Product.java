@@ -107,16 +107,13 @@ public class Product {
 			State s2 = (State) curr.getExtension(EXTENSION_KEY_2);
 
 			for (Arc arc1 : s1.getPostsetEdges()) {
-				for (Arc arc2 : s2.getPostsetEdges()) {
-					if (arc1.getLabel().equals(arc2.getLabel())) {
-						// Create new product state.
-						State prod = createOrGetProductState(arc1.getTarget(),
-								arc2.getTarget());
+				State target1 = arc1.getTarget();
+				for (State target2 : s2.getPostsetNodesByLabel(arc1.getLabel())) {
+					// Create new product state.
+					State prod = createOrGetProductState(target1, target2);
 
-						// Connect curr state with the
-						// new state.
-						result.createArc(curr, prod, arc1.getLabel());
-					}
+					// Connect curr state with new state.
+					result.createArc(curr, prod, arc1.getLabel());
 				}
 			}
 		}
