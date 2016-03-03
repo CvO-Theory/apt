@@ -137,8 +137,8 @@ public class Product {
 			State curr = workQueue.poll();
 
 			// Retrieve states of the operand transition systems.
-			State s1 = (State) curr.getExtension("s1");
-			State s2 = (State) curr.getExtension("s2");
+			State s1 = (State) curr.getExtension(EXTENSION_KEY_1);
+			State s2 = (State) curr.getExtension(EXTENSION_KEY_2);
 
 			for (Arc arc1 : s1.getPostsetEdges()) {
 				// Create new product state.
