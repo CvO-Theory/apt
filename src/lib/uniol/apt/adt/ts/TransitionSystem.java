@@ -64,6 +64,13 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	private State initialState = null;
 
 	/**
+	 * A cache for getting postset arcs by label. The mapping is:
+	 *
+	 * nodeId -> (label -> arcPostset)
+	 */
+	private final Map<String, Map<String, Set<Arc>>> postsetEdgesByLabel = new HashMap<>();
+
+	/**
 	 * Creates a new TransitionSystem with no name (e.g. "").
 	 */
 	public TransitionSystem() {
@@ -162,6 +169,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (postNodes != null) {
 			postNodes.add(this.getNode(targetId));
 		}
+		// Update postsetByLabel cache.
+		onArcAddedUpdatePostsetByLabelCache(arc);
 		invokeListeners();
 		return arc;
 	}
@@ -389,6 +398,9 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 			postNodes.remove(states.get(targetId));
 		}
 
+		// Update postsetByLabel cache.
+		onArcRemovedUpdatePostsetByLabelCache(a);
+
 		Arc old;
 		old = presetEdges.get(targetId).remove(key);
 		assert old == a;
@@ -451,6 +463,9 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		postsetNodes.remove(id);
 		presetEdges.remove(id);
 		postsetEdges.remove(id);
+
+		// Update postsetByLabel cache.
+		postsetEdgesByLabel.remove(id);
 
 		if (initialState != null && initialState.getId().equals(id)) {
 			initialState = null;
@@ -599,9 +614,11 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 			Arc a = postEdges.remove(oldKey);
 			Arc a2 = preEdges.remove(oldKey);
 			assert a == a2;
+			onArcRemovedUpdatePostsetByLabelCache(a);
 			a.label = newLabel;
 			removeLabel(oldLabel);
 			addLabel(newLabel);
+			onArcAddedUpdatePostsetByLabelCache(a);
 			preEdges.put(newKey, a);
 			postEdges.put(newKey, a);
 			invokeListeners();
@@ -884,6 +901,99 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		}
 		return getPresetNodes(node.getId());
 	}
+
+	/**
+	 * Returns the set of states that is reached by arcs from the given node
+	 * with the given label.
+	 *
+	 * @param node
+	 *                the source node
+	 * @param label
+	 *                the label to look for
+	 * @return an unmodifiable set of nodes that can be reached by arcs with
+	 *         the given label
+	 */
+	public Set<State> getPostsetNodesByLabel(State node, String label) {
+		Set<Arc> arcs = getPostsetEdgesByLabelCache(node.getId()).get(label);
+		if (arcs == null) {
+			return Collections.emptySet();
+		}
+		Set<State> states = new HashSet<>();
+		for (Arc arc : arcs) {
+			states.add(arc.getTarget());
+		}
+		return Collections.unmodifiableSet(states);
+	}
+
+	/**
+	 * Returns the set of arcs that start in the given node and have the
+	 * given label.
+	 *
+	 * @param node
+	 *                the source node of all arcs in the result
+	 * @param label
+	 *                the label of all arcs in the result
+	 * @return an unmodifiable set of arcs that begin at source node and
+	 *         have the given label
+	 */
+	public Set<Arc> getPostsetEdgesByLabel(State node, String label) {
+		Set<Arc> arcs = getPostsetEdgesByLabelCache(node.getId()).get(label);
+		if (arcs == null) {
+			return Collections.emptySet();
+		}
+		return Collections.unmodifiableSet(arcs);
+	}
+
+	/**
+	 * Returns a map of labels to arc sets for the given node.
+	 *
+	 * @param sourceNodeId
+	 *                all arc's source node id
+	 * @return a map of labels to sets of arcs
+	 */
+	private Map<String, Set<Arc>> getPostsetEdgesByLabelCache(String sourceNodeId) {
+		Map<String, Set<Arc>> result = postsetEdgesByLabel.get(sourceNodeId);
+		if (result == null) {
+			result = new HashMap<>();
+			postsetEdgesByLabel.put(sourceNodeId, result);
+		}
+		return result;
+	}
+
+	/**
+	 * Needs to be called whenever an arc is added to keep the cache
+	 * consistent.
+	 *
+	 * @param arc the added arc
+	 */
+	private void onArcAddedUpdatePostsetByLabelCache(Arc arc) {
+		Map<String, Set<Arc>> result = getPostsetEdgesByLabelCache(arc.getSourceId());
+		Set<Arc> postset = result.get(arc.getLabel());
+		if (postset == null) {
+			postset = new HashSet<>();
+		}
+		postset.add(arc);
+		result.put(arc.getLabel(), postset);
+		postsetEdgesByLabel.put(arc.getSourceId(), result);
+	}
+
+	/**
+	 * Needs to be called whenever an arc is removed to keep the cache
+	 * consistent.
+	 *
+	 * @param arc the removed arc
+	 */
+	private void onArcRemovedUpdatePostsetByLabelCache(Arc arc) {
+		Map<String, Set<Arc>> result = getPostsetEdgesByLabelCache(arc.getSourceId());
+		Set<Arc> postset = result.get(arc.getLabel());
+		if (postset == null) {
+			postset = new HashSet<>();
+		}
+		postset.remove(arc);
+		result.put(arc.getLabel(), postset);
+		postsetEdgesByLabel.put(arc.getSourceId(), result);
+	}
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
