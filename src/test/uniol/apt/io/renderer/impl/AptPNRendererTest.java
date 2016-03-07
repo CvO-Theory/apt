@@ -19,12 +19,13 @@
 
 package uniol.apt.io.renderer.impl;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static uniol.apt.TestNetCollection.*;
+import static uniol.apt.io.matcher.StringEqualsIgnoringLineEndings.equalsIgnoringLineEndings;
+
 import org.testng.annotations.Test;
-import static org.testng.Assert.assertEquals;
 
 import uniol.apt.adt.pn.PetriNet;
-
-import static uniol.apt.TestNetCollection.*;
 
 /** @author vsp */
 public class AptPNRendererTest {
@@ -36,56 +37,62 @@ public class AptPNRendererTest {
 
 	@Test
 	public void testTokenGeneratorNet() throws Exception {
-		assertEquals(render(getTokenGeneratorNet()), ".name \"TokenGeneratorNet\"\n.type LPN\n\n" +
+		String expected = ".name \"TokenGeneratorNet\"\n.type LPN\n\n" +
 				".places\np1\n\n.transitions\nt1\n\n" +
-				".flows\nt1: {} -> {1*p1}\n\n.initial_marking {}");
+				".flows\nt1: {} -> {1*p1}\n\n.initial_marking {}";
+		assertThat(render(getTokenGeneratorNet()), equalsIgnoringLineEndings(expected));
 	}
 
 	@Test
 	public void testDeadlockNet() throws Exception {
-		assertEquals(render(getDeadlockNet()), ".name \"DeadlockNet\"\n.type LPN\n\n" +
+		String expected = ".name \"DeadlockNet\"\n.type LPN\n\n" +
 				".places\np1\n\n.transitions\nt1\nt2\n\n" +
 				".flows\nt1: {1*p1} -> {}\nt2: {1*p1} -> {}\n\n" +
-				".initial_marking {1*p1}");
+				".initial_marking {1*p1}";
+		assertThat(render(getDeadlockNet()), equalsIgnoringLineEndings(expected));
 	}
 
 	@Test
 	public void testNonPersistentNet() throws Exception {
-		assertEquals(render(getNonPersistentNet()), ".name \"NonPersistentNet\"\n.type LPN\n\n" +
+		String expected = ".name \"NonPersistentNet\"\n.type LPN\n\n" +
 				".places\np1\np2\n\n.transitions\na\nb\nc\n\n" +
 				".flows\na: {1*p1} -> {1*p2}\nb: {1*p1} -> {1*p2}\n" +
-				"c: {1*p2} -> {1*p1}\n\n.initial_marking {1*p1}");
+				"c: {1*p2} -> {1*p1}\n\n.initial_marking {1*p1}";
+		assertThat(render(getNonPersistentNet()), equalsIgnoringLineEndings(expected));
 	}
 
 	@Test
 	public void checkPersistentBiCFNet() throws Exception {
-		assertEquals(render(getPersistentBiCFNet()), ".name \"PersistentBiCFNet\"\n.type LPN\n\n" +
+		String expected = ".name \"PersistentBiCFNet\"\n.type LPN\n\n" +
 				".places\np1\np2\np3\np4\np5\n\n" +
 				".transitions\na\nb\nc\nd\n\n" +
 				".flows\na: {1*p1, 1*p3} -> {1*p2}\n" +
 				"b: {1*p3, 1*p5} -> {1*p4}\n" +
 				"c: {1*p2} -> {1*p1, 1*p3}\n" +
 				"d: {1*p4} -> {1*p3, 1*p5}\n\n" +
-				".initial_marking {1*p1, 2*p3, 1*p5}");
+				".initial_marking {1*p1, 2*p3, 1*p5}";
+		assertThat(render(getPersistentBiCFNet()), equalsIgnoringLineEndings(expected));
 	}
 
 	@Test
 	public void testConcurrentDiamondNet() throws Exception {
-		assertEquals(render(getConcurrentDiamondNet()), ".name \"ConcurrentDiamondNet\"\n.type LPN\n\n" +
+		String expected = ".name \"ConcurrentDiamondNet\"\n.type LPN\n\n" +
 				".places\np1\np2\n\n" +
 				".transitions\nt1\nt2\n\n" +
 				".flows\nt1: {1*p1} -> {}\nt2: {1*p2} -> {}\n\n" +
-				".initial_marking {1*p1, 1*p2}");
+				".initial_marking {1*p1, 1*p2}";
+		assertThat(render(getConcurrentDiamondNet()), equalsIgnoringLineEndings(expected));
 	}
 
 	@Test
 	public void testConflictingDiamondNet() throws Exception {
-		assertEquals(render(getConflictingDiamondNet()), ".name \"ConflictingDiamondNet\"\n.type LPN\n\n" +
+		String expected = ".name \"ConflictingDiamondNet\"\n.type LPN\n\n" +
 				".places\np1\np2\np3\n\n" +
 				".transitions\nt1\nt2\n\n" +
 				".flows\nt1: {1*p1, 1*p3} -> {1*p3}\n" +
 				"t2: {1*p2, 1*p3} -> {1*p3}\n\n" +
-				".initial_marking {1*p1, 1*p2, 1*p3}");
+				".initial_marking {1*p1, 1*p2, 1*p3}";
+		assertThat(render(getConflictingDiamondNet()), equalsIgnoringLineEndings(expected));
 	}
 }
 

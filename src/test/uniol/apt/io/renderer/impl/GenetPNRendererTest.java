@@ -20,14 +20,14 @@
 
 package uniol.apt.io.renderer.impl;
 
-import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uniol.apt.TestNetCollection.*;
+import static uniol.apt.io.matcher.StringEqualsIgnoringLineEndings.equalsIgnoringLineEndings;
+
+import org.testng.annotations.Test;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.io.renderer.Renderer;
-
-import static uniol.apt.TestNetCollection.*;
-import static uniol.apt.adt.matcher.Matchers.*;
 
 /** @author Uli Schlachter */
 public class GenetPNRendererTest {
@@ -40,7 +40,7 @@ public class GenetPNRendererTest {
 	}
 
 	protected void test(PetriNet pn, String expectedString) throws Exception {
-		assertThat(render(pn), is(expectedString));
+		assertThat(render(pn), equalsIgnoringLineEndings(expectedString));
 	}
 
 	@Test
