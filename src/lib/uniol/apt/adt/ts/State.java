@@ -49,6 +49,32 @@ public class State extends Node<TransitionSystem, Arc, State> {
 	}
 
 	/**
+	 * Returns the set of states from which this node can be reached
+	 * with the given label.
+	 *
+	 * @param label
+	 *                the label to look for
+	 * @return a set of nodes that allow to reach this node by the
+	 *         given label
+	 */
+	public Set<State> getPresetNodesByLabel(String label) {
+		return graph.getPresetNodesByLabel(this, label);
+	}
+
+	/**
+	 * Returns the set of arcs that end in this node and have the
+	 * given label.
+	 *
+	 * @param label
+	 *                the label of all arcs in the result
+	 * @return an unmodifiable set of arcs that end at this node and
+	 *         have the given label
+	 */
+	public Set<Arc> getPresetEdgesByLabel(String label) {
+		return graph.getPresetEdgesByLabel(this, label);
+	}
+
+	/**
 	 * Returns the set of states that is reached by arcs from this node with
 	 * the given label.
 	 *
@@ -70,7 +96,7 @@ public class State extends Node<TransitionSystem, Arc, State> {
 	 * @return a set of arcs that begin at this node and have the given
 	 *         label
 	 */
-	public Set<Arc> getPostsetEdgesByLabel(State node, String label) {
+	public Set<Arc> getPostsetEdgesByLabel(String label) {
 		return graph.getPostsetEdgesByLabel(this, label);
 	}
 

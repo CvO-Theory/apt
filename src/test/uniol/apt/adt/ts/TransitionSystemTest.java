@@ -173,7 +173,7 @@ public class TransitionSystemTest {
 		State s2 = ts.createState();
 		ts.setInitialState(s0);
 		Arc arc1 = ts.createArc(s0, s1, "a");
-		Arc arc2 = ts.createArc(s0, s2, "a");
+		ts.createArc(s0, s2, "a");
 
 		postset = ts.getPostsetNodesByLabel(s0, "a");
 		assertThat(postset, containsInAnyOrder(s1, s2));
@@ -182,6 +182,80 @@ public class TransitionSystemTest {
 		// Test: arc rename updates cache
 		postset = ts.getPostsetNodesByLabel(s0, "a");
 		assertThat(postset, contains(s2));
+	}
+
+	@Test
+	public void testGetPresetNodesByLabel() {
+		Set<State> preset;
+		TransitionSystem ts = new TransitionSystem();
+
+		State s0 = ts.createState();
+		// Test: set is initially empty
+		preset = ts.getPresetNodesByLabel(s0, "a");
+		assertThat(preset, hasSize(0));
+
+		State s1 = ts.createState();
+		State s2 = ts.createState();
+		State s3 = ts.createState();
+		ts.setInitialState(s0);
+
+		ts.createArc(s0, s1, "a");
+		// Test: arc creation updates cache
+		preset = ts.getPresetNodesByLabel(s1, "a");
+		assertThat(preset, contains(s0));
+
+		Arc arc2 = ts.createArc(s0, s2, "b");
+		// Test: arc creation doesn't influence cache for other labels
+		preset = ts.getPresetNodesByLabel(s1, "a");
+		assertThat(preset, contains(s0));
+		preset = ts.getPresetNodesByLabel(s2, "b");
+		assertThat(preset, contains(s0));
+
+		ts.createArc(s3, s1, "a");
+		// Test: arc creation updates cache for size > 1
+		preset = ts.getPresetNodesByLabel(s1, "a");
+		assertThat(preset, containsInAnyOrder(s0, s3));
+
+		ts.removeArc(arc2);
+		// Test: arc removal updates cache
+		preset = ts.getPresetNodesByLabel(s2, "b");
+		assertThat(preset, hasSize(0));
+
+		// Test: target state removal updates cache
+		ts.createArc(s2, s3, "c");
+		preset = ts.getPresetNodesByLabel(s3, "c");
+		assertThat(preset, contains(s2));
+		ts.removeState(s3);
+		preset = ts.getPresetNodesByLabel(s3, "c");
+		assertThat(preset, hasSize(0));
+
+		// Test: source state removal updates cache
+		ts.createArc(s2, s0, "c");
+		preset = ts.getPresetNodesByLabel(s0, "c");
+		assertThat(preset, contains(s2));
+		ts.removeState(s2);
+		preset = ts.getPresetNodesByLabel(s0, "c");
+		assertThat(preset, hasSize(0));
+	}
+
+	@Test
+	public void testGetPresetNodesByLabelWithModification() {
+		Set<State> preset;
+		TransitionSystem ts = new TransitionSystem();
+		State s0 = ts.createState();
+		State s1 = ts.createState();
+		State s2 = ts.createState();
+		ts.setInitialState(s0);
+		Arc arc1 = ts.createArc(s0, s2, "a");
+		ts.createArc(s1, s2, "a");
+
+		preset = ts.getPresetNodesByLabel(s2, "a");
+		assertThat(preset, containsInAnyOrder(s0, s1));
+
+		arc1.setLabel("b");
+		// Test: arc rename updates cache
+		preset = ts.getPresetNodesByLabel(s2, "a");
+		assertThat(preset, contains(s1));
 	}
 
 }
