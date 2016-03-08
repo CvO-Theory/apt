@@ -910,19 +910,16 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 *                the source node
 	 * @param label
 	 *                the label to look for
-	 * @return an unmodifiable set of nodes that can be reached by arcs with
+	 * @return a set of nodes that can be reached by arcs with
 	 *         the given label
 	 */
 	public Set<State> getPostsetNodesByLabel(State node, String label) {
-		Set<Arc> arcs = getPostsetEdgesByLabelCache(node.getId()).get(label);
-		if (arcs == null) {
-			return Collections.emptySet();
-		}
+		Set<Arc> arcs = getPostsetEdgesByLabel(node, label);
 		Set<State> states = new HashSet<>();
 		for (Arc arc : arcs) {
 			states.add(arc.getTarget());
 		}
-		return Collections.unmodifiableSet(states);
+		return states;
 	}
 
 	/**
