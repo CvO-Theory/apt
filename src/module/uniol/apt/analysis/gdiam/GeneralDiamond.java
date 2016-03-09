@@ -52,7 +52,7 @@ public class GeneralDiamond {
 	}
 
 	/**
-	 * Checks if the given <code>LTS = (S, ->, T, s0)</code> is a
+	 * Checks if the given <code>LTS = (S, →, T, s0)</code> is a
 	 * <code>T'</code>-gdiam, i.e. if for each pair of labels
 	 * <code>a ∈ labelSubset, b ∈ T\T'</code> the general diamond property
 	 * holds.
@@ -115,12 +115,16 @@ public class GeneralDiamond {
 			Set<Pair<State, Boolean>> s2Set = getGenerallyReachable(s, b);
 			for (Pair<State, Boolean> p1 : s1Set) {
 				for (Pair<State, Boolean> p2 : s2Set) {
-					Set<State> s1SetPrime = getReachableWithDirection(p1.getFirst(), b,
-							p2.getSecond());
-					Set<State> s2SetPrime = getReachableWithDirection(p2.getFirst(), a,
-							p1.getSecond());
+					Set<State> s1SetPrime = getReachableWithDirection(
+						p1.getFirst(), b, p2.getSecond()
+					);
+					Set<State> s2SetPrime = getReachableWithDirection(
+						p2.getFirst(), a, p1.getSecond()
+					);
 					if (Collections.disjoint(s1SetPrime, s2SetPrime)) {
-						return new GeneralDiamondResult(s, a, b, p1.getSecond(), p2.getSecond());
+						return new GeneralDiamondResult(
+							s, a, b, p1.getSecond(), p2.getSecond()
+						);
 					}
 				}
 			}

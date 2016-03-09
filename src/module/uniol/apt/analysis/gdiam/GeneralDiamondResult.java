@@ -52,6 +52,17 @@ public class GeneralDiamondResult {
 	/**
 	 * Creates a new negative GeneralDiamondResult with witness values that
 	 * specify why the LTS is not a T'-gdiam.
+	 *
+	 * @param witnessState
+	 *                the state caused the failing check
+	 * @param label1
+	 *                the first label that caused the failing check
+	 * @param label2
+	 *                the second label that caused the failing check
+	 * @param label1Forward
+	 *                direction of the first label
+	 * @param label2Forward
+	 *                direction of the second label
 	 */
 	public GeneralDiamondResult(State witnessState, String label1, String label2, boolean label1Forward,
 			boolean label2Forward) {
