@@ -1069,6 +1069,17 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		presetEdgesByLabel.put(arc.getTargetId(), presetsByLabel);
 	}
 
+	/**
+	 * Returns true if this TS contains a state with the given id.
+	 *
+	 * @param sourceId
+	 *                the state's id
+	 * @return true, if a state with the id exists
+	 */
+	public boolean containsState(String sourceId) {
+		return states.containsKey(sourceId);
+	}
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
