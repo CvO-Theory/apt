@@ -36,11 +36,18 @@ public class PowerSet<E> extends AbstractCollection<Collection<E>> {
 
 	/**
 	 * Constructor
+	 *
 	 * @param c The collection whose power set should be generated. This collection must have stable iteration
-	 * order so that iterating multiple times over it always produces elements in the same order!
+	 * order so that iterating multiple times over it always produces elements in the same order! For lists this is
+	 * already the case. Other types of collections will be copied into an ArrayList to guarantee stable iteration
+	 * order.
 	 */
-	public PowerSet(List<E> c) {
-		this.c = c;
+	public PowerSet(Collection<E> c) {
+		if (c instanceof List) {
+			this.c = (List<E>) c;
+		} else {
+			this.c = new ArrayList<>(c);
+		}
 	}
 
 	@Override
@@ -168,7 +175,7 @@ public class PowerSet<E> extends AbstractCollection<Collection<E>> {
 	 * @return An iterable containing the power set of the given list
 	 * @param <E> The type of the elements.
 	 */
-	static public <E> PowerSet<E> powerSet(List<E> c) {
+	static public <E> PowerSet<E> powerSet(Collection<E> c) {
 		return new PowerSet<E>(c);
 	}
 }
