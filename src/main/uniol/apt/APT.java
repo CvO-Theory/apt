@@ -207,8 +207,8 @@ public class APT {
 				boolean outputWithName[] = new boolean[values.size()];
 
 				// Figure out where the values which the module produced should be printed to
+				int usedFileArgsCount = 0;
 				for (int i = 0; i < values.size(); i++) {
-					int usedFileArgsCount = 0;
 
 					if (values.get(i) == null) {
 						outputWithName[i] = false;
