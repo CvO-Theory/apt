@@ -56,7 +56,7 @@ public class LabelSeparation {
 	/**
 	 * Checks if the LTS is T'-separated.
 	 *
-	 * The LTS = (S, ->, T, s0) is T'-separated if for all states s1 ≠ s2 it
+	 * The LTS = (S, →, T, s0) is T'-separated if for all states s1 ≠ s2 it
 	 * is not possible to go from s1 to s2 while using only labels and
 	 * reverse labels from T' as well as only using labels and reverse
 	 * labels outside of T'.
