@@ -51,7 +51,7 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 	}
 
 	protected final String getOptionsDescription(String extraOptions, String extraOptionsDescriptions) {
-		return "Supported options are: none, [k]-bounded, safe, pure, plain, tnet,"
+		return "Supported options are: none, [k]-bounded, safe, [k]-marking, pure, plain, tnet,"
 			+ " generalized-marked-graph (gmg), marked-graph (mg), generalized-output-nonbranching (gon)"
 			+ " output-nonbranching (on), conflict-free (cf), homogeneous,"
 			+ " upto-language-equivalence (language, le), " + extraOptions + "minimize (minimal), verbose "
@@ -59,6 +59,7 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 			+ " - none: No further requirements are made.\n"
 			+ " - [k]-bounded: In every reachable marking, every place contains at most [k] tokens.\n"
 			+ " - safe: Equivalent to 1-bounded.\n"
+			+ " - [k]-marking: The initial marking of each place is a multiple of k.\n"
 			+ " - pure: Every transition either consumes or produces tokens on a place, but noth both"
 			+ " (=no side-conditions).\n"
 			+ " - plain: Every flow has a weight of at most one.\n"
@@ -297,24 +298,31 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 						break;
 					default:
 						if (prop.endsWith("-bounded")) {
-							String value = prop.substring(0, prop.length() - "-bounded".length());
-							int k;
-							try {
-								k = Integer.parseInt(value);
-							} catch (NumberFormatException e) {
-								throw new ModuleException("Cannot parse '" + prop + "': "
-										+ "Invalid number for property 'k-bounded'");
-							}
-							if (k < 1)
-								throw new ModuleException("Cannot parse '" + prop + "': "
-										+ "Bound must be positive");
-							result = result.requireKBounded(k);
+							result = result.requireKBounded(parseInt(prop, "-bounded"));
+						} else if (prop.endsWith("-marking")) {
+							result = result.requireKMarking(parseInt(prop, "-marking"));
 						} else
 							throw new ModuleException("Cannot parse '" + prop
 									+ "': Unknown property");
 				}
 			}
 			return new Options(result, extraOptions);
+		}
+
+		static private int parseInt(String prop, String suffix) throws ModuleException {
+			assert prop.endsWith(suffix);
+			String value = prop.substring(0, prop.length() - suffix.length());
+			int k;
+			try {
+				k = Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+				throw new ModuleException("Cannot parse '" + prop + "': "
+						+ "Invalid number for property 'k" + suffix + "'");
+			}
+			if (k < 1)
+				throw new ModuleException("Cannot parse '" + prop + "': "
+						+ "Bound must be positive");
+			return k;
 		}
 	}
 }

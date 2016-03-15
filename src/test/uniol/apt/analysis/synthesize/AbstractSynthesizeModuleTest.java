@@ -110,6 +110,12 @@ public class AbstractSynthesizeModuleTest {
 	}
 
 	@Test
+	public void test3Marking() throws Exception {
+		PNProperties properties = new PNProperties().requireKMarking(3);
+		assertThat(parse("3-marking"), equalTo(properties));
+	}
+
+	@Test
 	public void testOutputNonbranching() throws Exception {
 		PNProperties properties = new PNProperties().setOutputNonbranching(true);
 		assertThat(parse("generalized-output-nonbranching"), equalTo(properties));
@@ -177,6 +183,8 @@ public class AbstractSynthesizeModuleTest {
 			{ "no ne" },
 			{ "0-bounded" },
 			{ "-3-bounded" },
+			{ "0-marking" },
+			{ "-3-marking" },
 			{ "solves the halting problem" },
 			{ "impure" },
 		};
