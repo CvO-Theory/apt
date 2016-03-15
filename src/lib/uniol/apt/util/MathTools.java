@@ -84,6 +84,33 @@ public class MathTools {
 	}
 
 	/**
+	 * Calculates the lcm of two numbers.
+	 * @param a - first number for calculating the lcm.
+	 * @param b - second number for calculating the lcm.
+	 * @return the lcm of the two given numbers.
+	 */
+	public static BigInteger lcm(BigInteger a, BigInteger b) {
+		return a.divide(a.gcd(b)).multiply(b).abs();
+	}
+
+	/**
+	 * Calculates the lcm of two integers.
+	 * @param a - first integer for calculating the lcm.
+	 * @param b - second integer for calculating the lcm.
+	 * @return the lcm of the two given integers.
+	 */
+	public static int lcm(int a, int b) {
+		return bigIntToInt(lcm(BigInteger.valueOf(a), BigInteger.valueOf(b)));
+	}
+
+	private static int bigIntToInt(BigInteger value) {
+		if (value.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ||
+				value.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
+			throw new ArithmeticException("Cannot represent value as int: " + value);
+		return value.intValue();
+	}
+
+	/**
 	 * Calculates the mathematical modulo, so that it's given the positive value.
 	 * @param a - divisor.
 	 * @param b - dividend.
