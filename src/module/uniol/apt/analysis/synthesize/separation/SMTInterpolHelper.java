@@ -157,7 +157,7 @@ public class SMTInterpolHelper {
 			isRegion.addAll(requireHomogeneous(backwardWeight));
 
 		if (properties.isKMarking())
-			throw new UnsupportedOperationException("k-Marking is not yet implemented");
+			isRegion.addAll(requireKMarking(initialMarking, properties.getKForKMarking()));
 
 		// Now we can define the "isRegion" function
 		Term isRegionTerm = collectTerms("and", isRegion.toArray(new Term[isRegion.size()]),
@@ -402,6 +402,19 @@ public class SMTInterpolHelper {
 
 		return result;
 	}
+
+	/**
+	 * Add the necessary constraints to produce a k-marking. A k-marking means that the initial marking of each
+	 * place is a multiple of the given k.
+	 * @param initialMarking Terms representing the initial marking of a place.
+	 * @return The needed terms.
+	 */
+	private List<Term> requireKMarking(Term initialMarking, int k) {
+		return Collections.singletonList(script.term("divisible",
+					new BigInteger[] { BigInteger.valueOf(k) },
+					null, initialMarking));
+	}
+
 	private Term collectTerms(String operation, Term[] terms, Term def) {
 		switch (terms.length) {
 			case 0:
