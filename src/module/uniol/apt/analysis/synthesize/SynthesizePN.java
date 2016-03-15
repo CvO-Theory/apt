@@ -52,6 +52,7 @@ import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.analysis.language.LanguageEquivalence;
 import uniol.apt.analysis.on.OutputNonBranching;
 import uniol.apt.analysis.plain.Plain;
+import uniol.apt.analysis.separation.LargestK;
 import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.synthesize.separation.Separation;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
@@ -645,6 +646,8 @@ public class SynthesizePN {
 		}
 
 		assert isDistributedImplementation(utility, properties, pn) : regions;
+		assert new LargestK(pn).computeLargestK() % properties.getKForKMarking() == 0
+			: properties.getKForKMarking() + "-marking: " + regions;
 
 		return pn;
 	}
