@@ -156,6 +156,9 @@ public class SMTInterpolHelper {
 		if (properties.isHomogeneous())
 			isRegion.addAll(requireHomogeneous(backwardWeight));
 
+		if (properties.isKMarking())
+			throw new UnsupportedOperationException("k-Marking is not yet implemented");
+
 		// Now we can define the "isRegion" function
 		Term isRegionTerm = collectTerms("and", isRegion.toArray(new Term[isRegion.size()]),
 				script.term("true"));

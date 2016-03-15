@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import uniol.apt.util.MathTools;
+
 /**
  * Properties that a (synthesized) Petri Net can/should satisfy. Instances of this class are immutable
  * @author Uli Schlachter
@@ -31,6 +33,7 @@ public class PNProperties {
 	// -1 means no k specified
 	final static private int KBOUNDED_DEFAULT = -1;
 	private int kBounded = KBOUNDED_DEFAULT;
+	private int kMarking = 1;
 	private boolean pure = false;
 	private boolean plain = false;
 	private boolean tnet = false;
@@ -52,6 +55,7 @@ public class PNProperties {
 	 */
 	private PNProperties(PNProperties other) {
 		kBounded = other.kBounded;
+		kMarking = other.kMarking;
 		pure = other.pure;
 		plain = other.plain;
 		tnet = other.tnet;
@@ -114,6 +118,37 @@ public class PNProperties {
 			return this;
 		PNProperties result = new PNProperties(this);
 		result.kBounded = k;
+		return result;
+	}
+
+	/**
+	 * Return true if this property description requires a k-marking for some k.
+	 * @return true if there is some k set for which we require a k-marking
+	 */
+	public boolean isKMarking() {
+		// Every marking is a 1-marking
+		return kMarking != 1;
+	}
+
+	/**
+	 * Return the k for k-marking. This may only be called if isKMarking() returns true.
+	 * @return the k for k-marking
+	 */
+	public int getKForKMarking() {
+		return kMarking;
+	}
+
+	/**
+	 * Make sure that at least a k-marking is required.
+	 * @param k the k for k-marking
+	 * @return A new PNProperties which expresses the same properties as this instance, plus k-marking.
+	 */
+	public PNProperties requireKMarking(int k) {
+		assert k >= 1;
+		if (kMarking == k)
+			return this;
+		PNProperties result = new PNProperties(this);
+		result.kMarking = MathTools.lcm(kMarking, k);
 		return result;
 	}
 
@@ -260,6 +295,10 @@ public class PNProperties {
 			if (!isKBounded() || getKForKBounded() > other.getKForKBounded())
 				return false;
 		}
+		if (other.isKMarking()) {
+			if (!isKMarking() || getKForKMarking() % other.getKForKMarking() != 0)
+				return false;
+		}
 		if (other.isPure() && !isPure())
 			return false;
 		if (other.isPlain() && !isPlain())
@@ -296,6 +335,8 @@ public class PNProperties {
 			hashCode |= 1 << 6;
 		if (isKBounded())
 			hashCode |= getKForKBounded() << 7;
+		if (isKMarking())
+			hashCode ^= getKForKMarking() << 7;
 		return hashCode;
 	}
 
@@ -305,6 +346,8 @@ public class PNProperties {
 			return false;
 		PNProperties other = (PNProperties) o;
 		if (kBounded != other.kBounded)
+			return false;
+		if (kMarking != other.kMarking)
 			return false;
 		if (pure != other.pure)
 			return false;
@@ -331,6 +374,8 @@ public class PNProperties {
 			tmpList.add("safe");
 		else if (isKBounded())
 			tmpList.add(getKForKBounded() + "-bounded");
+		if (isKMarking())
+			tmpList.add(getKForKMarking() + "-marking");
 		if (isPure())
 			tmpList.add("pure");
 		if (isPlain())

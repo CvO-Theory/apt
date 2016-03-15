@@ -100,6 +100,23 @@ public class PNPropertiesTest {
 	}
 
 	@Test
+	public void testContainsAllKMarking() {
+		PNProperties properties = new PNProperties();
+		PNProperties properties2 = new PNProperties();
+		assertThat(properties, containsAll(properties2));
+
+		properties = properties.requireKMarking(2);
+		assertThat(properties, containsAll(properties2));
+
+		properties2 = properties2.requireKMarking(8);
+		assertThat(properties, not(containsAll(properties2)));
+		assertThat(properties2, containsAll(properties));
+
+		properties = new PNProperties().requireKMarking(8);
+		assertThat(properties, containsAll(properties2));
+	}
+
+	@Test
 	public void testEquals() {
 		PNProperties properties = new PNProperties();
 		PNProperties properties2 = new PNProperties();
@@ -122,6 +139,25 @@ public class PNPropertiesTest {
 		assertThat(properties, not(equalTo(properties2)));
 
 		properties2 = properties2.setHomogeneous(true);
+		assertThat(properties.hashCode(), equalTo(properties2.hashCode()));
+	}
+
+	@Test
+	public void testEqualsKMarking() {
+		PNProperties properties = new PNProperties();
+		PNProperties properties2 = new PNProperties();
+		assertThat(properties, equalTo(properties2));
+		assertThat(properties.hashCode(), equalTo(properties2.hashCode()));
+
+		properties = properties.requireKMarking(2);
+		properties2 = properties2.requireKMarking(3);
+		assertThat(properties, not(equalTo(properties2)));
+
+		properties = properties.requireKMarking(3);
+		assertThat(properties, not(equalTo(properties2)));
+
+		properties2 = properties2.requireKMarking(2);
+		assertThat(properties, equalTo(properties2));
 		assertThat(properties.hashCode(), equalTo(properties2.hashCode()));
 	}
 
@@ -150,6 +186,12 @@ public class PNPropertiesTest {
 
 		properties = properties.setHomogeneous(true);
 		assertThat(properties, hasToString("[safe, marked-graph, output-nonbranching, homogeneous]"));
+
+		properties = properties.requireKMarking(5);
+		assertThat(properties, hasToString("[safe, 5-marking, marked-graph, output-nonbranching, homogeneous]"));
+
+		properties = properties.requireKMarking(7);
+		assertThat(properties, hasToString("[safe, 35-marking, marked-graph, output-nonbranching, homogeneous]"));
 	}
 }
 
