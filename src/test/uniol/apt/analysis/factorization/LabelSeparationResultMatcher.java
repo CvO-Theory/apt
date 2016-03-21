@@ -25,8 +25,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import uniol.apt.analysis.factorization.LabelSeparationResult;
-
 /**
  * Matcher for LabelSeparationResult that allows for witnessState1 and
  * witnessState2 to be interchangeable.

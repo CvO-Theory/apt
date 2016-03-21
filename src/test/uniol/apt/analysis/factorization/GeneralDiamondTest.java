@@ -31,8 +31,6 @@ import org.testng.annotations.Test;
 
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.factorization.GeneralDiamond;
-import uniol.apt.analysis.factorization.GeneralDiamondResult;
 import uniol.apt.io.parser.ParserTestUtils;
 
 public class GeneralDiamondTest {

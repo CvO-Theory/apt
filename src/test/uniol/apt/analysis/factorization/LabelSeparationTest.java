@@ -19,9 +19,9 @@
 
 package uniol.apt.analysis.factorization;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
-import static uniol.apt.analysis.factorization.LabelSeparationResultMatcher.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static uniol.apt.analysis.factorization.LabelSeparationResultMatcher.labelSeparationResultMatches;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,8 +31,6 @@ import org.testng.annotations.Test;
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.factorization.LabelSeparation;
-import uniol.apt.analysis.factorization.LabelSeparationResult;
 import uniol.apt.analysis.product.Product;
 import uniol.apt.io.parser.ParserTestUtils;
 
