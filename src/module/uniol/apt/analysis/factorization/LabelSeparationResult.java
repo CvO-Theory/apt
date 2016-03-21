@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.labelseparation;
+package uniol.apt.analysis.factorization;
 
 import uniol.apt.adt.ts.State;
 

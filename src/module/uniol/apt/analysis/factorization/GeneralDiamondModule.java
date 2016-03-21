@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.labelseparation;
+package uniol.apt.analysis.factorization;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,17 +36,17 @@ import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
 /**
- * A module to check if an LTS is T'-separated for some label set T'.
+ * A module to check if an LTS is a T'-gdiam with a label-set T'.
  *
  * @author Jonas Prellberg
  *
  */
 @AptModule
-public class LabelSeparationModule extends AbstractModule implements Module {
+public class GeneralDiamondModule extends AbstractModule implements Module {
 
 	@Override
 	public String getName() {
-		return "label_separation";
+		return "gdiam";
 	}
 
 	@Override
@@ -57,9 +57,10 @@ public class LabelSeparationModule extends AbstractModule implements Module {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("T'-separated", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
-		outputSpec.addReturnValue("witness_first_state", State.class);
-		outputSpec.addReturnValue("witness_second_state", State.class);
+		outputSpec.addReturnValue("T'-gdiam", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
+		outputSpec.addReturnValue("witness_state", State.class);
+		outputSpec.addReturnValue("witness_first_label", String.class);
+		outputSpec.addReturnValue("witness_second_label", String.class);
 	}
 
 	@Override
@@ -69,26 +70,26 @@ public class LabelSeparationModule extends AbstractModule implements Module {
 		Set<String> tPrime = new HashSet<>(tPrimeWord);
 		if (!ts.getAlphabet().containsAll(tPrime)) {
 			throw new ModuleException(String.format(
-					"At least one of the supplied labels is not part of the LTS label set."));
+					"At least one of the supplied labels is not part of the LTS label-set."));
 		}
-		LabelSeparationResult r = LabelSeparation.checkSeparated(ts, tPrime);
-		output.setReturnValue("T'-separated", Boolean.class, r.isSeparated());
-		if (!r.isSeparated()) {
-			output.setReturnValue("witness_first_state", State.class, r.getWitnessState1());
-			output.setReturnValue("witness_second_state", State.class, r.getWitnessState2());
+		GeneralDiamondResult r = GeneralDiamond.checkGdiam(ts, tPrime);
+		output.setReturnValue("T'-gdiam", Boolean.class, r.isGdiam());
+		if (!r.isGdiam()) {
+			output.setReturnValue("witness_state", State.class, r.getWitnessState());
+			output.setReturnValue("witness_first_label", String.class, r.getWitnessLabel1String());
+			output.setReturnValue("witness_second_label", String.class, r.getWitnessLabel2String());
 		}
 	}
 
 	@Override
 	public String getShortDescription() {
-		return "Check if a LTS is T'-separated for some label set T'";
+		return "Check if a LTS is a T'-gdiam";
 	}
 
 	@Override
 	public String getLongDescription() {
-		return "Check if for all states s != s' it is impossible to go from s to s' "
-				+ "using only labels from T' (disregarding arc direction) as well as "
-				+ "only labels outside T' (disregarding arc direction)";
+		return "Check if for the given LTS = (S, ->, T, s0) for each pair of labels "
+				+ "a in T', b in T\\T' the general diamond property holds.";
 	}
 
 	@Override

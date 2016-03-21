@@ -17,13 +17,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.labelseparation;
+package uniol.apt.analysis.factorization;
 
 import java.util.Objects;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+
+import uniol.apt.analysis.factorization.LabelSeparationResult;
 
 /**
  * Matcher for LabelSeparationResult that allows for witnessState1 and

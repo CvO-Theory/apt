@@ -17,13 +17,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.gdiam;
+package uniol.apt.analysis.factorization;
 
 import java.util.Objects;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+
+import uniol.apt.analysis.factorization.GeneralDiamondResult;
 
 /**
  * Matcher for GeneralDiamondResults that allows for label1 and label2 to be

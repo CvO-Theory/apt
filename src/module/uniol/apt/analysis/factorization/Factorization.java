@@ -27,9 +27,6 @@ import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.connectivity.Connectivity;
-import uniol.apt.analysis.gdiam.GeneralDiamond;
-import uniol.apt.analysis.labelseparation.LabelSeparation;
-import uniol.apt.analysis.labelseparation.TransitionSystemFilter;
 import uniol.apt.util.PowerSet;
 
 /**
