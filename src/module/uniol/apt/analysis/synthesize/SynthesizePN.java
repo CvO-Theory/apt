@@ -73,7 +73,7 @@ public class SynthesizePN {
 	private final TransitionSystem ts;
 	private final RegionUtility utility;
 	private final boolean onlyEventSeparation;
-	private final Set<Region> regions = new HashSet<>();
+	private final Set<Region> regions;
 	private final EquivalenceRelation<State> failedStateSeparationRelation = new EquivalenceRelation<>();
 	private final Map<String, Set<State>> failedEventStateSeparationProblems = new HashMap<>();
 	private final PNProperties properties;
@@ -90,6 +90,7 @@ public class SynthesizePN {
 		private RegionUtility utility;
 		private PNProperties properties = new PNProperties();
 		private boolean quickFail = false;
+		private final Set<Region> extraRegions = new HashSet<>();
 		private final boolean languageEquivalence;
 
 		/**
@@ -158,6 +159,14 @@ public class SynthesizePN {
 		}
 
 		/**
+		 * Get the region utility that will be used for Petri net synthesis.
+		 * @return The region utility.
+		 */
+		public RegionUtility getRegionUtility() {
+			return this.utility;
+		}
+
+		/**
 		 * Set the quick fail mode for the SynthesizePN instance. Use quick fail mode if only the result from
 		 * {@link SynthesizePN#wasSuccessfullySeparated()} is interesting for you. In this case, SynthesizePN
 		 * will stop after the first failure instead of going through all separation problems and trying to
@@ -172,6 +181,21 @@ public class SynthesizePN {
 		}
 
 		/**
+		 * Add an already-known region to this builder. If some regions are already known, adding them can speed
+		 * up the Petri net synthesis.
+		 * @throws IllegalArgumentException If the given region belongs to a different RegionUtility
+		 * @throws InvalidRegionException If the given region is not valid
+		 * @return this
+		 */
+		public Builder addRegion(Region r) throws InvalidRegionException {
+			if (!r.getRegionUtility().equals(utility))
+				throw new IllegalArgumentException("The given region belongs to a different region utility");
+			r.checkValidRegion();
+			extraRegions.add(r);
+			return this;
+		}
+
+		/**
 		 * Create a SynthesizePN instance for the current configuration of this builder.
 		 * @return A SynthesizePN instance that synthesize the input as configured in this builder.
 		 * @throws MissingLocationException if the transition system for the utility has locations for only some
@@ -179,9 +203,10 @@ public class SynthesizePN {
 		 */
 		public SynthesizePN build() throws MissingLocationException {
 			if (languageEquivalence)
-				return new SynthesizePN(utility, properties, true, ORIGINAL_STATE_KEY, quickFail);
+				return new SynthesizePN(utility, properties, true, ORIGINAL_STATE_KEY, quickFail,
+						extraRegions);
 			else
-				return new SynthesizePN(utility, properties, false, null, quickFail);
+				return new SynthesizePN(utility, properties, false, null, quickFail, extraRegions);
 		}
 	}
 
@@ -195,10 +220,12 @@ public class SynthesizePN {
 	 * transition system must have this extension and it must refer to a State object.
 	 * @param quickFail If true, stop the calculation as soon as it is known that it won't be successful. If false,
 	 * try to solve all separation problems. Only if true will the list of failed problems be fully filled.
+	 * @param extraRegions Some already known regions that should be re-used.
 	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
 	SynthesizePN(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation,
-			String stateMappingExtension, boolean quickFail) throws MissingLocationException {
+			String stateMappingExtension, boolean quickFail, Set<Region> extraRegions)
+			throws MissingLocationException {
 		this.ts = utility.getTransitionSystem();
 		this.utility = utility;
 		this.onlyEventSeparation = onlyEventSeparation;
@@ -206,8 +233,10 @@ public class SynthesizePN {
 		this.separation = SeparationUtility.createSeparationInstance(utility, properties);
 		this.stateMappingExtension = stateMappingExtension;
 		this.quickFail = quickFail;
+		this.regions = new HashSet<>(extraRegions);
 
 		debug("Region basis: ", utility.getRegionBasis());
+		debug("Input regions: ", regions);
 
 		// ESSP calculates new regions while SSP only choses regions from the basis. Solve ESSP first since the
 		// calculated regions may also solve SSP and thus we get less places in the resulting net.
