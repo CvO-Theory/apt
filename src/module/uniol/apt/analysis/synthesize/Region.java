@@ -26,8 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.Pair;
 
 /**
  * An abstract region of a LTS. This assigns to each event a backward and forward number.
@@ -176,6 +178,39 @@ public class Region {
 			stateMarkingCache.put(state, i);
 		}
 		return i;
+	}
+
+	/**
+	 * Check if this region is a valid region and provide a counter example, if one exists.
+	 * @return A pair of a state in which an enabled event is prevented by this region
+	 * @see checkValidRegion
+	 */
+	public Pair<State, String> findValidRegionCounterexample() {
+		for (State state : getTransitionSystem().getNodes()) {
+			BigInteger marking;
+			try {
+				marking = getMarkingForState(state);
+			} catch (UnreachableException e) {
+				continue;
+			}
+			for (Arc arc : state.getPostsetEdges()) {
+				BigInteger targetMarking = marking.subtract(getBackwardWeight(arc.getLabel()));
+				if (targetMarking.compareTo(BigInteger.ZERO) < 0)
+					return new Pair<State, String>(state, arc.getLabel());
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Check if this region is indeed a valid region and throw an exception if not.
+	 * @throws InvalidRegionException If this region is not valid.
+	 * @see findValidRegionCounterexample
+	 */
+	public void checkValidRegion() throws InvalidRegionException {
+		Pair<State, String> counterexample = findValidRegionCounterexample();
+		if (counterexample != null)
+			throw new InvalidRegionException(counterexample.getFirst(), counterexample.getSecond());
 	}
 
 	@Override

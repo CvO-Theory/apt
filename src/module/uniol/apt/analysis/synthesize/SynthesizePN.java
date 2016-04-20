@@ -614,6 +614,16 @@ public class SynthesizePN {
 		return true;
 	}
 
+	// Assert that all regions are valid; this is done in an extra function so that we do not even iterate over all
+	// regions when assertions are disabled.
+	static private boolean regionsAreValid(Collection<Region> regions) {
+		for (Region region : regions) {
+			assert region.findValidRegionCounterexample() == null :
+				region.findValidRegionCounterexample();
+		}
+		return true;
+	}
+
 	/**
 	 * Synthesize a Petri Net from the separating regions that were calculated.
 	 * @return The synthesized PetriNet
@@ -631,6 +641,9 @@ public class SynthesizePN {
 	 */
 	public PetriNet synthesizePetriNet(Set<Region> regions) {
 		PetriNet pn = synthesizePetriNet(utility, regions);
+
+		// Test if all regions are valid
+		assert regionsAreValid(regions);
 
 		// Test if the synthesized PN really satisfies all the properties that it should
 		assert !properties.isPure() || Pure.checkPure(pn) : regions;
