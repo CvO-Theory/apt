@@ -181,11 +181,11 @@ public class Region {
 	}
 
 	/**
-	 * Check if this region is a valid region and provide a counter example, if one exists.
+	 * Check if this region prevents any arcs that it should not prevent.
 	 * @return A pair of a state in which an enabled event is prevented by this region
 	 * @see checkValidRegion
 	 */
-	public Pair<State, String> findValidRegionCounterexample() {
+	public Pair<State, String> findPreventedArc() {
 		for (State state : getTransitionSystem().getNodes()) {
 			BigInteger marking;
 			try {
@@ -203,14 +203,39 @@ public class Region {
 	}
 
 	/**
+	 * Check if this region allows the cycles that it must allow. This function checks for all arcs if the marking
+	 * of the source state plus the effect of the transition is the marking of the target state.
+	 * @return An arc which does not lead to the expected state.
+	 * @see checkValidRegion
+	 */
+	public Arc findArcWithWrongEffect() {
+		for (Arc arc : getTransitionSystem().getEdges()) {
+			try {
+				BigInteger source = getMarkingForState(arc.getSource());
+				BigInteger target = getMarkingForState(arc.getTarget());
+				BigInteger effect = getWeight(arc.getLabel());
+				if (!source.add(effect).equals(target))
+					return arc;
+			} catch (UnreachableException e) {
+				continue;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Check if this region is indeed a valid region and throw an exception if not.
 	 * @throws InvalidRegionException If this region is not valid.
-	 * @see findValidRegionCounterexample
+	 * @see findPreventedArc
+	 * @see findArcWithWrongEffect
 	 */
 	public void checkValidRegion() throws InvalidRegionException {
-		Pair<State, String> counterexample = findValidRegionCounterexample();
+		Pair<State, String> counterexample = findPreventedArc();
 		if (counterexample != null)
 			throw new InvalidRegionException(counterexample.getFirst(), counterexample.getSecond());
+		Arc counterexample2 = findArcWithWrongEffect();
+		if (counterexample2 != null)
+			throw new InvalidRegionException(counterexample2);
 	}
 
 	@Override

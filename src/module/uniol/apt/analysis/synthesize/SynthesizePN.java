@@ -617,10 +617,12 @@ public class SynthesizePN {
 	// Assert that all regions are valid; this is done in an extra function so that we do not even iterate over all
 	// regions when assertions are disabled.
 	static private boolean regionsAreValid(Collection<Region> regions) {
-		for (Region region : regions) {
-			assert region.findValidRegionCounterexample() == null :
-				region.findValidRegionCounterexample();
-		}
+		for (Region region : regions)
+			try {
+				region.checkValidRegion();
+			} catch (InvalidRegionException e) {
+				throw new AssertionError(e);
+			}
 		return true;
 	}
 

@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.synthesize;
 
+import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.module.exception.ModuleException;
 
@@ -38,6 +39,10 @@ public class InvalidRegionException extends ModuleException {
 	public InvalidRegionException(State state, String event) {
 		super(String.format("The given region prevents the enabled event '%s' in state %s",
 					event, state.getId()));
+	}
+
+	public InvalidRegionException(Arc arc) {
+		super(String.format("With the given region, the arc %s does not lead to the expected state", arc));
 	}
 }
 
