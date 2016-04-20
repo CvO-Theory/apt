@@ -316,6 +316,35 @@ public class Region {
 		}
 
 		/**
+		 * Add some weight around the given event. If the argument is positive, the forward weight is increased
+		 * accordingly, otherwise the backward weight is increased.
+		 * @param event The event whose weight should be modified.
+		 * @param weight The weight that should be added.
+		 * @return This builder instance.
+		 */
+		public Builder addWeightOn(String event, BigInteger weight) {
+			return addWeightOn(utility.getEventIndex(event), weight);
+		}
+
+		/**
+		 * Add some weight around the given event. If the argument is positive, the forward weight is increased
+		 * accordingly, otherwise the backward weight is increased.
+		 * @param event The event index whose weight should be modified.
+		 * @param weight The weight that should be added.
+		 * @return This builder instance.
+		 */
+		public Builder addWeightOn(int index, BigInteger weight) {
+			int cmp = weight.compareTo(BigInteger.ZERO);
+			if (cmp == 0)
+				return this;
+			if (cmp > 0)
+				forwardList.set(index, forwardList.get(index).add(weight));
+			else
+				backwardList.set(index, backwardList.get(index).subtract(weight));
+			return this;
+		}
+
+		/**
 		 * Add a loop with the given weight around the given event. This means that the backward weight and the
 		 * forward weight are both increased by the given weight.
 		 * @param event The event on which a loop should be added.
