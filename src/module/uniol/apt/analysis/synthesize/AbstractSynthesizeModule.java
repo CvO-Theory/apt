@@ -127,13 +127,16 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 		boolean minimize = !Collections.disjoint(options.extraOptions, minimizeStr);
 
 		SynthesizePN synthesize;
-		SynthesizePN.Builder builder = new SynthesizePN.Builder(tsForOpts.getTS(options.extraOptions))
-			.setProperties(options.properties)
-			.setQuickFail(quickFail);
+		SynthesizePN.Builder builder;
+		TransitionSystem ts = tsForOpts.getTS(options.extraOptions);
 		if (languageEquivalence)
-			synthesize = builder.buildForLanguageEquivalence();
+			builder = SynthesizePN.Builder.createForLanguageEquivalence(ts);
 		else
-			synthesize = builder.buildForIsomorphicBehavior();
+			builder = SynthesizePN.Builder.createForIsomorphicBehaviour(ts);
+		synthesize = builder
+			.setProperties(options.properties)
+			.setQuickFail(quickFail)
+			.build();
 
 		PetriNet pn;
 		Collection<Region> regions;

@@ -85,11 +85,11 @@ public class FindWords {
 					TransitionSystem ts = SynthesizeUtils.makeTS(toStringList(wordList));
 					SynthesizePN synthesize;
 					try {
-						synthesize = new SynthesizePN.Builder(ts)
+						synthesize = SynthesizePN.Builder.createForLanguageEquivalence(ts)
 							.setProperties(properties)
 							// we don't need failed separation points, if we don't show them
 							.setQuickFail(quickFail)
-							.buildForLanguageEquivalence();
+							.build();
 					} catch (MissingLocationException e) {
 						throw new RuntimeException("Not generating locations and "
 								+ " yet they were generated wrongly?!", e);

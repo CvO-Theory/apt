@@ -88,26 +88,54 @@ public class SynthesizePN {
 	 */
 	static public class Builder {
 		private RegionUtility utility;
-		private TransitionSystem ts;
 		private PNProperties properties = new PNProperties();
 		private boolean quickFail = false;
+		private final boolean languageEquivalence;
 
 		/**
-		 * Create a builder that targets the given RegionUtility.
+		 * Create a builder that targets the given RegionUtility and will synthesize up to isomorphic behaviour.
 		 * @param utility The region utility whose transition system should be synthesized.
 		 */
-		public Builder(RegionUtility utility) {
-			this.utility = utility;
-			this.ts = utility.getTransitionSystem();
+		static public Builder createForIsomorphicBehaviour(RegionUtility utility) {
+			return new Builder(utility, false);
 		}
 
 		/**
-		 * Create a builder that targets the given TransitionSystem.
+		 * Create a builder that targets the given TransitionSystem and will synthesize up to isomorphic
+		 * behaviour.
 		 * @param ts The transition system that should be synthesized.
 		 */
-		public Builder(TransitionSystem ts) {
-			this.utility = null;
-			this.ts = ts;
+		static public Builder createForIsomorphicBehaviour(TransitionSystem ts) {
+			return new Builder(ts, false);
+		}
+
+		/**
+		 * Create a builder that targets the given RegionUtility and will synthesize up to language equivalence.
+		 * The transition system that the region utility targets must already be a limited unfolding!
+		 * @param utility The region utility whose transition system should be synthesized.
+		 */
+		static public Builder createForLanguageEquivalence(RegionUtility utility) {
+			return new Builder(utility, true);
+		}
+
+		/**
+		 * Create a builder that targets the given TransitionSystem and will synthesize up to language
+		 * equivalence.
+		 * @param ts The transition system that should be synthesized.
+		 * @throws NonDeterministicException if the transition system is non-deterministic
+		 * @see LimitedUnfolding#calculateLimitedUnfolding
+		 */
+		static public Builder createForLanguageEquivalence(TransitionSystem ts) throws NonDeterministicException {
+			return new Builder(calculateLimitedUnfolding(ts), true);
+		}
+
+		private Builder(TransitionSystem ts, boolean languageEquivalence) {
+			this(new RegionUtility(ts), languageEquivalence);
+		}
+
+		private Builder(RegionUtility utility, boolean languageEquivalence) {
+			this.utility = utility;
+			this.languageEquivalence = languageEquivalence;
 		}
 
 		/**
@@ -144,29 +172,16 @@ public class SynthesizePN {
 		}
 
 		/**
-		 * Create a SynthesizePN instance that synthesizes the given state up to language equivalence.
-		 * @return A synthesizePN instance that synthesizes the input up to language equivalence.
-		 * @throws MissingLocationException if the transition system for the utility has locations for only some
-		 * events
-		 * @throws NonDeterministicException if the transition system is non-deterministic
-		 * @see LimitedUnfolding#calculateLimitedUnfolding
-		 */
-		public SynthesizePN buildForLanguageEquivalence()
-			throws MissingLocationException, NonDeterministicException {
-			return new SynthesizePN(new RegionUtility(calculateLimitedUnfolding(ts)),
-					this.properties, true, ORIGINAL_STATE_KEY, quickFail);
-		}
-
-		/**
-		 * Create a SynthesizePN instance that synthesizes the given state up to isomorphism.
-		 * @return A SynthesizePN instance that synthesizes the input up to isomorphism.
+		 * Create a SynthesizePN instance for the current configuration of this builder.
+		 * @return A SynthesizePN instance that synthesize the input as configured in this builder.
 		 * @throws MissingLocationException if the transition system for the utility has locations for only some
 		 * events
 		 */
-		public SynthesizePN buildForIsomorphicBehavior() throws MissingLocationException {
-			if (this.utility == null)
-				this.utility = new RegionUtility(this.ts);
-			return new SynthesizePN(this.utility, this.properties, false, null, quickFail);
+		public SynthesizePN build() throws MissingLocationException {
+			if (languageEquivalence)
+				return new SynthesizePN(utility, properties, true, ORIGINAL_STATE_KEY, quickFail);
+			else
+				return new SynthesizePN(utility, properties, false, null, quickFail);
 		}
 	}
 

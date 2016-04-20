@@ -126,7 +126,7 @@ public class SynthesizePNTest {
 	@Test
 	public void testNonDeterministicTS() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getNonDeterministicTS();
-		SynthesizePN synth = new SynthesizePN.Builder(ts).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
 		assertThat(synth.getSeparatingRegions(), contains(
@@ -152,7 +152,7 @@ public class SynthesizePNTest {
 	public void testACBCCLoopTSOutputNonbranching() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
 		PNProperties properties = new PNProperties().setOutputNonbranching(true);
-		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// We know that there is a solution with three regions. Test that this really found an ON feasible set.
@@ -168,7 +168,7 @@ public class SynthesizePNTest {
 	public void testACBCCLoopTSTNet() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
 		PNProperties properties = new PNProperties().setTNet(true);
-		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// We know that there is a solution with four regions. Test that this really found a T-Net feasible set.
@@ -185,7 +185,7 @@ public class SynthesizePNTest {
 	public void testACBCCLoopTSMarkedGraph() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
 		PNProperties properties = new PNProperties().setMarkedGraph(true);
-		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// We know that there is a solution with four regions. Test that this really found a marked graph feasible set.
@@ -203,7 +203,7 @@ public class SynthesizePNTest {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
 		PNProperties properties = new PNProperties().setPure(true);
-		SynthesizePN synth = new SynthesizePN.Builder(utility).setProperties(properties).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
 		// Can't really be more specific, way too many possibilities
@@ -221,7 +221,7 @@ public class SynthesizePNTest {
 	public void testPathTSImpure() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
-		SynthesizePN synth = new SynthesizePN.Builder(utility).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
 		// Can't really be more specific, way too many possibilities
@@ -239,7 +239,7 @@ public class SynthesizePNTest {
 	public void testPureSynthesizablePathTS() throws MissingLocationException, UnboundedException {
 		TransitionSystem ts = TestTSCollection.getPureSynthesizablePathTS();
 		RegionUtility utility = new RegionUtility(ts);
-		SynthesizePN synth = new SynthesizePN.Builder(utility).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(utility).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// Can't really be more specific, way too many possibilities
@@ -263,7 +263,7 @@ public class SynthesizePNTest {
 		State v = ts.getNode("v");
 
 		PNProperties properties = new PNProperties().setPlain(true);
-		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
 
 		assertThat(synth.getSeparatingRegions(), everyItem(plainRegion()));
 		assertThat(synth.getFailedEventStateSeparationProblems().toString(),
@@ -278,7 +278,7 @@ public class SynthesizePNTest {
 	public void testWordB2AB5AB6AB6None() throws MissingLocationException, UnboundedException {
 		TransitionSystem ts = makeTS(Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b",
 					"a", "b", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b"));
-		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(new PNProperties()).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 
@@ -294,7 +294,7 @@ public class SynthesizePNTest {
 		TransitionSystem ts = makeTS(Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b",
 					"a", "b", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b"));
 		PNProperties properties = new PNProperties().setPure(true);
-		SynthesizePN synth = new SynthesizePN.Builder(ts).setProperties(properties).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 
@@ -308,7 +308,7 @@ public class SynthesizePNTest {
 	@Test
 	public void testABandB() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getABandB();
-		SynthesizePN synth = new SynthesizePN.Builder(ts).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
 		assertThat(synth.getSeparatingRegions(), contains(
@@ -339,7 +339,7 @@ public class SynthesizePNTest {
 	@Test
 	public void testABandBUnfolded() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getABandBUnfolded();
-		SynthesizePN synth = new SynthesizePN.Builder(ts).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
@@ -657,7 +657,7 @@ public class SynthesizePNTest {
 	public void testOverflows() throws Exception {
 		// Should be more than the number of bits in a long
 		int size = 70;
-		SynthesizePN synth = new SynthesizePN.Builder(TestTSCollection.getOverflowTS(size)).buildForIsomorphicBehavior();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(TestTSCollection.getOverflowTS(size)).build();
 		assertThat(synth.getFailedEventStateSeparationProblems().size(), equalTo(size - 1));
 		assertThat(synth.getFailedStateSeparationProblems(), emptyIterable());
 	}
