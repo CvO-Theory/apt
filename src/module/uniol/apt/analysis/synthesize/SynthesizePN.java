@@ -82,9 +82,9 @@ public class SynthesizePN {
 	private final boolean quickFail;
 
 	/**
-	 * Builder class for creating instances of SynthesizePN. You create an instance of this class, give it all the
-	 * state that you want and then use one of the {@link #buildForIsomorphicBehavior()} and {@link
-	 * #buildForLanguageEquivalence()} methods to create a SynthesizePN instance.
+	 * Builder class for creating instances of SynthesizePN. You create an instance of this class via {@link
+	 * createForIsomorphicBehaviour} or {@link createForLanguageEquivalence}, give it all the state that you want
+	 * and then use one of the {@link #build()} method to create a SynthesizePN instance.
 	 */
 	static public class Builder {
 		private RegionUtility utility;
@@ -96,6 +96,7 @@ public class SynthesizePN {
 		/**
 		 * Create a builder that targets the given RegionUtility and will synthesize up to isomorphic behaviour.
 		 * @param utility The region utility whose transition system should be synthesized.
+		 * @return A new builder instance
 		 */
 		static public Builder createForIsomorphicBehaviour(RegionUtility utility) {
 			return new Builder(utility, false);
@@ -105,6 +106,7 @@ public class SynthesizePN {
 		 * Create a builder that targets the given TransitionSystem and will synthesize up to isomorphic
 		 * behaviour.
 		 * @param ts The transition system that should be synthesized.
+		 * @return A new builder instance
 		 */
 		static public Builder createForIsomorphicBehaviour(TransitionSystem ts) {
 			return new Builder(ts, false);
@@ -114,6 +116,7 @@ public class SynthesizePN {
 		 * Create a builder that targets the given RegionUtility and will synthesize up to language equivalence.
 		 * The transition system that the region utility targets must already be a limited unfolding!
 		 * @param utility The region utility whose transition system should be synthesized.
+		 * @return A new builder instance
 		 */
 		static public Builder createForLanguageEquivalence(RegionUtility utility) {
 			return new Builder(utility, true);
@@ -123,6 +126,7 @@ public class SynthesizePN {
 		 * Create a builder that targets the given TransitionSystem and will synthesize up to language
 		 * equivalence.
 		 * @param ts The transition system that should be synthesized.
+		 * @return A new builder instance
 		 * @throws NonDeterministicException if the transition system is non-deterministic
 		 * @see LimitedUnfolding#calculateLimitedUnfolding
 		 */
@@ -183,6 +187,7 @@ public class SynthesizePN {
 		/**
 		 * Add an already-known region to this builder. If some regions are already known, adding them can speed
 		 * up the Petri net synthesis.
+		 * @param r The region that should be added.
 		 * @throws IllegalArgumentException If the given region belongs to a different RegionUtility
 		 * @throws InvalidRegionException If the given region is not valid
 		 * @return this

@@ -329,7 +329,7 @@ public class Region {
 		/**
 		 * Add some weight around the given event. If the argument is positive, the forward weight is increased
 		 * accordingly, otherwise the backward weight is increased.
-		 * @param event The event index whose weight should be modified.
+		 * @param index The event index whose weight should be modified.
 		 * @param weight The weight that should be added.
 		 * @return This builder instance.
 		 */
