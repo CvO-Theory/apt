@@ -57,7 +57,7 @@ public class SynthesizeExtendModule extends SynthesizeModule implements Module {
 	@Override
 	public String getLongDescription() {
 		return getShortDescription() + ". This module gets a PetriNet as input and tries to re-use the places"
-			+ " of the given PetriNet in the synthesized result."
+			+ " of the given PetriNet in the synthesized result.";
 	}
 
 	@Override
