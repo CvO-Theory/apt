@@ -50,6 +50,10 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 		public TransitionSystem getTS(Collection<String> enabledOptions);
 	}
 
+	static protected interface ConfigureSynthesizePNBuilder {
+		public void configureSynthesizePNBuilder(SynthesizePN.Builder builder);
+	}
+
 	protected final String getOptionsDescription(String extraOptions, String extraOptionsDescriptions) {
 		return "Supported options are: none, [k]-bounded, safe, [k]-marking, pure, plain, tnet,"
 			+ " generalized-marked-graph (gmg), marked-graph (mg), generalized-output-nonbranching (gon)"
@@ -108,8 +112,12 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 	}
 
 	public SynthesizePN runSynthesis(TransitionSystemForOptions tsForOpts, ModuleInput input,
-				ModuleOutput output)
-			throws ModuleException {
+				ModuleOutput output) throws ModuleException {
+		return runSynthesis(tsForOpts, null, input, output);
+	}
+
+	public SynthesizePN runSynthesis(TransitionSystemForOptions tsForOpts, ConfigureSynthesizePNBuilder configure,
+				ModuleInput input, ModuleOutput output) throws ModuleException {
 		String quickFailStr = "quick-fail", verboseStr = "verbose";
 		Collection<String> languageEquivalenceStr = Arrays.asList("upto-language-equivalence", "language",
 				"le");
@@ -133,10 +141,11 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 			builder = SynthesizePN.Builder.createForLanguageEquivalence(ts);
 		else
 			builder = SynthesizePN.Builder.createForIsomorphicBehaviour(ts);
-		synthesize = builder
-			.setProperties(options.properties)
-			.setQuickFail(quickFail)
-			.build();
+		builder .setProperties(options.properties)
+			.setQuickFail(quickFail);
+		if (configure != null)
+			configure.configureSynthesizePNBuilder(builder);
+		synthesize = builder.build();
 
 		PetriNet pn;
 		Collection<Region> regions;
