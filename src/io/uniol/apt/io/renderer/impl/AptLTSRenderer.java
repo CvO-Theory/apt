@@ -75,11 +75,7 @@ public class AptLTSRenderer extends AbstractRenderer<TransitionSystem> implement
 		writer.append("\n");
 
 		writer.append(".labels" + "\n");
-		Set<String> labels = new HashSet<>();
-		for (Arc e : ts.getEdges()) {
-			labels.add(e.getLabel());
-		}
-		for (String l : labels) {
+		for (String l : ts.getAlphabet()) {
 			writer.append(l).append("\n");
 		}
 		writer.append("\n");

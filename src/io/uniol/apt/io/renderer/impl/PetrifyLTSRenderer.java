@@ -56,12 +56,8 @@ public class PetrifyLTSRenderer extends AbstractRenderer<TransitionSystem> imple
 		*/
 
 		writer.append(".inputs ");
-		ArrayList<String> c = new ArrayList<>(0);
-		for (Arc s : ts.getEdges()) {
-			if (!c.contains(s.getLabel())) {
-				c.add(s.getLabel());
-				writer.append(s.getLabel()).append(" ");
-			}
+		for (String label : ts.getAlphabet()) {
+			writer.append(label).append(" ");
 		}
 		writer.append("\n");
 
