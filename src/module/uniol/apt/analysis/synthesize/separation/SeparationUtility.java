@@ -49,11 +49,7 @@ public final class SeparationUtility {
 	 * @return True if a suitable arc exists, else false.
 	 */
 	static public boolean isEventEnabled(State state, String event) {
-		// Note that we cannot assume a deterministic TS and thus the following state might be ambiguous.
-		for (Arc arc : state.getPostsetEdges())
-			if (arc.getLabel().equals(event))
-				return true;
-		return false;
+		return !state.getPostsetNodesByLabel(event).isEmpty();
 	}
 
 	/**
