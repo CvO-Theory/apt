@@ -49,6 +49,7 @@ public class AptLTSParserTest {
 				assertEquals(ed.getLabel(), "a");
 			}
 		}
+		assertEquals(ts.getArc("s2", "s3", "a").getExtension("foo"), 42);
 	}
 
 	private void loopAsserts(TransitionSystem ts) {

@@ -11,7 +11,7 @@ b
 s2 d s0
 s1 b s3
 s3 d s1
-s2 a s3
+s2 a s3[foo=42]
 s3 c s2
 
 

@@ -45,7 +45,7 @@ labels		: '.labels' label*;
 label		: idi (opts)? ;
 
 arcs		: '.arcs' arc*;
-arc		: src=idi labell=idi dest=idi ;
+arc		: src=idi labell=idi dest=idi (opts)?;
 
 idi		: ID | INT;
 

@@ -49,6 +49,19 @@ import uniol.apt.io.parser.ParseException;
 public class AptLTSParser extends AbstractParser<TransitionSystem> implements Parser<TransitionSystem> {
 	public final static String FORMAT = "apt";
 
+	private static void handleOption(Map<String, Object> curOpts, AptLTSFormatParser.OptionContext ctx) {
+		Object val = ctx.ID().getText();
+
+		if (ctx.STR() != null) {
+			String str = ctx.STR().getText();
+			val = str.substring(1, str.length() - 1);
+		} else if (ctx.INT() != null) {
+			val = Integer.parseInt(ctx.INT().getText());
+		}
+
+		curOpts.put(ctx.ID().getText(), val);
+	}
+
 	private static class NameDescStateLabelListener extends AptLTSFormatBaseListener
 			implements AptLTSFormatListener {
 		private final TransitionSystem ts;
@@ -89,17 +102,7 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 		@Override
 		public void exitOption(AptLTSFormatParser.OptionContext ctx) {
 			assert this.curOpts != null;
-
-			Object val = ctx.ID().getText();
-
-			if (ctx.STR() != null) {
-				String str = ctx.STR().getText();
-				val = str.substring(1, str.length() - 1);
-			} else if (ctx.INT() != null) {
-				val = Integer.parseInt(ctx.INT().getText());
-			}
-
-			this.curOpts.put(ctx.ID().getText(), val);
+			handleOption(this.curOpts, ctx);
 		}
 
 		@Override
@@ -135,10 +138,24 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 	private static class ArcListener extends AptLTSFormatBaseListener implements AptLTSFormatListener {
 		private final TransitionSystem ts;
 		private final Map<String, Map<String, Object>> labelOpts;
+		private Map<String, Object> curOpts;
 
 		private ArcListener(TransitionSystem ts, Map<String, Map<String, Object>> labelOpts) {
 			this.ts        = ts;
 			this.labelOpts = labelOpts;
+		}
+
+		@Override
+		public void enterArc(AptLTSFormatParser.ArcContext ctx) {
+			this.curOpts = new HashMap<>();
+		}
+
+		@Override
+		public void exitOption(AptLTSFormatParser.OptionContext ctx) {
+			if (this.curOpts == null)
+				return;
+
+			handleOption(this.curOpts, ctx);
 		}
 
 		@Override
@@ -153,6 +170,11 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 			for (Map.Entry<String, Object> entry : extensions.entrySet()) {
 				a.getEvent().putExtension(entry.getKey(), entry.getValue());
 			}
+			for (Map.Entry<String, Object> entry : this.curOpts.entrySet()) {
+				a.putExtension(entry.getKey(), entry.getValue());
+			}
+
+			this.curOpts = null;
 		}
 	}
 
