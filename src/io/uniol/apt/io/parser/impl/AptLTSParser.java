@@ -151,7 +151,7 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 
 			// Extensible really needs a putExtensions method ...
 			for (Map.Entry<String, Object> entry : extensions.entrySet()) {
-				a.putExtension(entry.getKey(), entry.getValue());
+				a.getEvent().putExtension(entry.getKey(), entry.getValue());
 			}
 		}
 	}

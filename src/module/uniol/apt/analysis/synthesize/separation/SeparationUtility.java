@@ -25,6 +25,7 @@ import java.util.Collections;
 
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.Event;
 import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.MissingLocationException;
 import uniol.apt.analysis.synthesize.PNProperties;
@@ -104,16 +105,16 @@ public final class SeparationUtility {
 		if (locationMap.length == 0)
 			return locationMap;
 
-		for (Arc arc : utility.getTransitionSystem().getEdges()) {
+		for (Event eventObj : utility.getTransitionSystem().getAlphabetEvents()) {
 			String location;
 			try {
-				location = arc.getExtension("location").toString();
+				location = eventObj.getExtension("location").toString();
 			} catch (StructureException e) {
 				// Because just returning "null" is too easy...
 				continue;
 			}
 
-			int event = utility.getEventIndex(arc.getLabel());
+			int event = utility.getEventIndex(eventObj.getLabel());
 			String oldLocation = locationMap[event];
 			locationMap[event] = location;
 			hadEventWithLocation = true;

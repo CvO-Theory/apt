@@ -43,10 +43,10 @@ public class AptLTSParserTest {
 		assertEquals(e.getExtension("blub").toString(), "kater");
 		assertEquals(ts.getInitialState().getId(), "s2");
 		State s0 = ts.getNode("s0");
+		assertEquals(ts.getEvent("a").getExtension("location").toString(), "A");
 		for (Arc ed : s0.getPostsetEdges()) {
 			if (ed.getTarget().equals(ts.getNode("s1"))) {
 				assertEquals(ed.getLabel(), "a");
-				assertEquals(ed.getExtension("location").toString(), "A");
 			}
 		}
 	}

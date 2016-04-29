@@ -513,10 +513,8 @@ public class SynthesizePNTest {
 		@BeforeClass
 		private void setup() {
 			ts = TestTSCollection.getPersistentTS();
-			ts.getArc("s0", "l", "a").putExtension("location", "a");
-			ts.getArc("s0", "r", "b").putExtension("location", "b");
-			ts.getArc("l", "s1", "b").putExtension("location", "b");
-			ts.getArc("r", "s1", "a").putExtension("location", "a");
+			ts.getEvent("a").putExtension("location", "a");
+			ts.getEvent("b").putExtension("location", "b");
 
 			utility = new RegionUtility(ts);
 		}

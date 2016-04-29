@@ -31,6 +31,7 @@ import org.apache.commons.io.output.FileWriterWithEncoding;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.Event;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.impl.SynetPNParser;
@@ -153,8 +154,7 @@ public class SynetSynthesizeDistributedLTS {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> labelMem = new ArrayList<String>(0);
 
-		Set<Arc> edges = ts_.getEdges();
-		for (Arc e : edges) {
+		for (Event e : ts_.getAlphabetEvents()) {
 			try {
 				if (e.getExtension("location") != null && !labelMem.contains(e.getLabel())) {
 					sb.append("(" + e.getLabel() + "," +

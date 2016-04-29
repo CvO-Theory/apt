@@ -158,10 +158,10 @@ public class SeparationUtilityTest {
 	@Test
 	public void testLocations() throws Exception {
 		TransitionSystem ts = TestTSCollection.getPersistentTS();
-		ts.getArc("s0", "l", "a").putExtension("location", "X");
-		ts.getArc("s0", "r", "b").putExtension("location", "Y");
-		ts.getArc("l", "s1", "b").putExtension("location", "Y");
-		ts.getArc("r", "s1", "a").putExtension("location", "X");
+		ts.getEvent("a").putExtension("location", "X");
+		ts.getEvent("b").putExtension("location", "Y");
+		assertThat(ts.getArc("l", "s1", "b").getEvent().getExtension("location"), hasToString("Y"));
+		assertThat(ts.getArc("r", "s1", "a").getEvent().getExtension("location"), hasToString("X"));
 
 		assertThat(SeparationUtility.getLocationMap(new RegionUtility(ts), new PNProperties()),
 				arrayContaining("X", "Y"));
@@ -170,8 +170,7 @@ public class SeparationUtilityTest {
 	@Test(expectedExceptions = MissingLocationException.class)
 	public void testMissingLocation() throws Exception {
 		TransitionSystem ts = TestTSCollection.getPersistentTS();
-		ts.getArc("s0", "l", "a").putExtension("location", "X");
-		ts.getArc("r", "s1", "a").putExtension("location", "X");
+		ts.getEvent("a").putExtension("location", "X");
 
 		SeparationUtility.getLocationMap(new RegionUtility(ts), new PNProperties());
 	}
@@ -181,8 +180,7 @@ public class SeparationUtilityTest {
 		TransitionSystem ts = TestTSCollection.getPersistentTS();
 		PNProperties properties = new PNProperties().setOutputNonbranching(true);
 
-		ts.getArc("s0", "l", "a").putExtension("location", "X");
-		ts.getArc("r", "s1", "a").putExtension("location", "X");
+		ts.getArc("s0", "l", "a").getEvent().putExtension("location", "X");
 
 		SeparationUtility.getLocationMap(new RegionUtility(ts), properties);
 	}
