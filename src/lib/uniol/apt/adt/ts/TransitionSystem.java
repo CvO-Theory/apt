@@ -594,6 +594,14 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 * Gets a view of the alphabet of the TransitionSystem as an unmodifiableSortedSet.
 	 * @return the alphabet of this TransitionSystem.
 	 */
+	public Set<Event> getAlphabetEvents() {
+		return Collections.unmodifiableSet(this.alphabet.uniqueSet());
+	}
+
+	/**
+	 * Gets a view of the alphabet of the TransitionSystem as an unmodifiableSortedSet.
+	 * @return the alphabet of this TransitionSystem.
+	 */
 	public Set<String> getAlphabet() {
 		final Set<Event> events = this.alphabet.uniqueSet();
 		return new AbstractSet<String>() {
