@@ -39,6 +39,7 @@ import uniol.apt.adt.IGraph;
 import uniol.apt.adt.SoftMap;
 import uniol.apt.adt.exception.ArcExistsException;
 import uniol.apt.adt.exception.NoSuchEdgeException;
+import uniol.apt.adt.exception.NoSuchEventException;
 import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.exception.StructureException;
@@ -55,7 +56,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	private String name;
 	private int nextStateId = 0;
 	private final SortedMap<String, State> states = new TreeMap<>();
-	private final SortedBag<String> alphabet = new TreeBag<>();
+	private final SortedBag<Event> alphabet = new TreeBag<>();
 	private final Map<String, Set<State>> presetNodes = new SoftMap<>();
 	private final Map<String, Set<State>> postsetNodes = new SoftMap<>();
 	private final Map<String, Map<ArcKey, Arc>> presetEdges = new HashMap<>();
@@ -162,7 +163,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		this.presetEdges.get(targetId).put(key, arc);
 		this.postsetEdges.get(sourceId).put(key, arc);
 		this.numArcs++;
-		this.addLabel(key.getLabel());
+		this.addEvent(arc.getEvent());
 		//update pre- and postsets
 		Set<State> preNodes = presetNodes.get(targetId);
 		if (preNodes != null) {
@@ -176,6 +177,38 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		onArcAddedUpdateByLabelCache(arc);
 		invokeListeners();
 		return arc;
+	}
+
+	/**
+	 * Get the {@link Event} instance that corresponds to the given label.
+	 * @param label The label whose event should be looked up
+	 * @return The event instance
+	 * @throws NoSuchEventException If no event with the given label exists.
+	 * @throws NullPointerException If the given label is null.
+	 */
+	public Event getEvent(String label) throws NoSuchEventException {
+		if (label == null)
+			throw new NullPointerException();
+		Event result = getEventInternal(label, null);
+		if (result == null)
+			throw new NoSuchEventException(label);
+		return result;
+	}
+
+	/**
+	 * Get the {@link Event} instance that corresponds to the given label.
+	 * @param label The label whose event should be looked up
+	 * @param def The default value if nothing is found
+	 * @return The event instance or the default value
+	 */
+	private Event getEventInternal(String label, Event def) {
+		// TODO: Remove this method, require events to be added before they can be used.
+		// TODO: Make this more efficient (if needed). For now, we will assume that there are only few events
+		// and thus a linear search is fast enough.
+		for (Event e : alphabet)
+			if (e.getLabel().equals(label))
+				return e;
+		return def;
 	}
 
 	/**
@@ -199,7 +232,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (label == null) {
 			throw new IllegalArgumentException("label == null");
 		}
-		Arc a = new Arc(this, sourceId, targetId, label);
+		Arc a = new Arc(this, sourceId, targetId, getEventInternal(label, new Event(label)));
 		ArcKey key = createArcKey(sourceId, targetId, label);
 		if (postsetEdges.get(sourceId).containsKey(key)) {
 			throw new ArcExistsException(this, key);
@@ -410,7 +443,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		old = postsetEdges.get(sourceId).remove(key);
 		assert old == a;
 		this.numArcs--;
-		removeLabel(label);
+		removeLabel(a.getEvent());
 		invokeListeners();
 	}
 
@@ -562,7 +595,35 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 * @return the alphabet of this TransitionSystem.
 	 */
 	public Set<String> getAlphabet() {
-		return Collections.unmodifiableSet(this.alphabet.uniqueSet());
+		final Set<Event> events = this.alphabet.uniqueSet();
+		return new AbstractSet<String>() {
+			@Override
+			public int size() {
+				return events.size();
+			}
+
+			@Override
+			public Iterator<String> iterator() {
+				return new Iterator<String>() {
+					private Iterator<Event> it = events.iterator();
+
+					@Override
+					public boolean hasNext() {
+						return it.hasNext();
+					}
+
+					@Override
+					public String next() {
+						return it.next().getLabel();
+					}
+
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
+				};
+			}
+		};
 	}
 
 	/**
@@ -588,14 +649,14 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 * alphabet.
 	 * @param sourceId the source node's id of the arc.
 	 * @param targetId the target node's id of the arc.
-	 * @param oldLabel the old label of the arc.
+	 * @param oldEvent the old event of the arc.
 	 * @param newLabel the new label of the arc.
 	 * @throws NoSuchNodeException      if one of the nodes does not exist in this TransitionSystem.
 	 * @throws IllegalArgumentException if one argument is null.
 	 * @throws ArcExistsException       thrown if there already exists an arc with sourceId, targetId and the new
 	 *                                  label.
 	 */
-	void setArcLabel(String sourceId, String targetId, String oldLabel, String newLabel) {
+	void setArcLabel(String sourceId, String targetId, Event oldEvent, String newLabel) {
 		if (sourceId == null) {
 			throw new IllegalArgumentException("sourceId == null");
 		}
@@ -605,9 +666,10 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (newLabel == null) {
 			throw new IllegalArgumentException("label == null");
 		}
-		if (!oldLabel.equals(newLabel)) {
+		Event newEvent = getEventInternal(newLabel, new Event(newLabel));
+		if (!oldEvent.equals(newEvent)) {
 			// createArcKey() makes sure the node exists
-			ArcKey oldKey = createArcKey(sourceId, targetId, oldLabel);
+			ArcKey oldKey = createArcKey(sourceId, targetId, oldEvent.getLabel());
 			ArcKey newKey = createArcKey(sourceId, targetId, newLabel);
 			Map<ArcKey, Arc> postEdges = postsetEdges.get(sourceId);
 			Map<ArcKey, Arc> preEdges = presetEdges.get(targetId);
@@ -618,9 +680,9 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 			Arc a2 = preEdges.remove(oldKey);
 			assert a == a2;
 			onArcRemovedUpdateByLabelCache(a);
-			a.label = newLabel;
-			removeLabel(oldLabel);
-			addLabel(newLabel);
+			a.label = newEvent;
+			removeLabel(oldEvent);
+			addEvent(newEvent);
 			onArcAddedUpdateByLabelCache(a);
 			preEdges.put(newKey, a);
 			postEdges.put(newKey, a);
@@ -629,20 +691,20 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	}
 
 	/**
-	 * Updates the alphabet by incrementing the occurrences of this label or if it's new adding it to the alphabet.
-	 * @param label the label to add.
+	 * Updates the alphabet by incrementing the occurrences of this event or if it's new adding it to the alphabet.
+	 * @param event the event to add.
 	 */
-	private void addLabel(String label) {
-		alphabet.add(label);
+	private void addEvent(Event event) {
+		alphabet.add(event);
 	}
 
 	/**
-	 * Removes a label from the alphabet. That mean decrementing the occurrences of this label or if it's the last
+	 * Removes an event from the alphabet. That mean decrementing the occurrences of this label or if it's the last
 	 * occurrences deleting it from the alphabet.
-	 * @param label the label to remove.
+	 * @param event the event to remove.
 	 */
-	private void removeLabel(String label) {
-		alphabet.remove(label, 1);
+	private void removeLabel(Event event) {
+		alphabet.remove(event, 1);
 	}
 
 	public void setName(String name) {

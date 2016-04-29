@@ -27,7 +27,7 @@ import uniol.apt.adt.Edge;
  */
 public class Arc extends Edge<TransitionSystem, Arc, State> {
 
-	String label = "";
+	Event label;
 
 	/**
 	 * Constructor.
@@ -36,7 +36,7 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 	 * @param targetId the id of the target node.
 	 * @param label    the label this arc has.
 	 */
-	Arc(TransitionSystem ts, String sourceId, String targetId, String label) {
+	Arc(TransitionSystem ts, String sourceId, String targetId, Event label) {
 		super(ts, sourceId, targetId);
 		this.label = label;
 	}
@@ -54,10 +54,18 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 
 	/**
 	 * Gets the label of the arc.
+	 * @return the label event.
+	 */
+	public Event getEvent() {
+		return this.label;
+	}
+
+	/**
+	 * Gets the label of the arc.
 	 * @return the label.
 	 */
 	public String getLabel() {
-		return this.label;
+		return this.label.getLabel();
 	}
 
 	/**
