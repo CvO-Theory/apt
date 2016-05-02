@@ -20,6 +20,7 @@
 package uniol.apt.adt;
 
 import java.util.Set;
+import org.apache.commons.collections4.IteratorUtils;
 import uniol.apt.adt.extension.Extensible;
 
 /**
@@ -85,6 +86,15 @@ public abstract class Node<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, 
 	@Override
 	public Set<E> getPostsetEdges() {
 		return this.graph.getPostsetEdges(this.id);
+	}
+
+	/**
+	 * Retrieves a view of all edges connected to this node.
+	 * @return An unmodifable iterable of edges of given type E.
+	 */
+	public Iterable<E> getNeighboringEdges() {
+		return IteratorUtils.asIterable(IteratorUtils.chainedIterator(
+					getPresetEdges().iterator(), getPostsetEdges().iterator()));
 	}
 
 	@Override
