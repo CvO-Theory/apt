@@ -19,6 +19,9 @@ Table of contents
 Building APT
 ------------
 
+A pre-build "apt.jar" files is available
+[here](http://cvo-theory.github.io/apt-javadoc/apt.jar).
+
 This software is written in the [Java programming language](http://java.com).
 Thus it should work on various architectures and operating systems. For building
 APT, a Java Development Kit (JDK) compatible with Java 7 and [Apache

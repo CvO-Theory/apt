@@ -17,6 +17,7 @@ script:
   - ant test
   - ant clean
   - ant javadoc
+  - ant jar
 after_success:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ]; then ./publish-api-doc.sh; fi
 env:

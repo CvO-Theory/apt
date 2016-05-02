@@ -28,6 +28,7 @@ git clone --depth 1 --quiet --branch gh-pages $REPO_APIDOC /tmp/gh-pages-apidoc
 cd /tmp/gh-pages-apidoc
 
 rsync -a --delete --exclude=.git "${REPO_DIR}/doc/javadoc/" .
+cp "${REPO_DIR}/apt.jar" .
 git add --all .
 
 # Commit the relevant changes.
