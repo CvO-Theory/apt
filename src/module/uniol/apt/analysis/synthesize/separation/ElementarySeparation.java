@@ -45,6 +45,7 @@ import static uniol.apt.util.DebugUtil.debugFormat;
 class ElementarySeparation implements Separation {
 	private final RegionUtility utility;
 	private final Map<String, Set<Arc>> arcsWithlabel = new HashMap<>();
+	private final boolean pure;
 
 	/**
 	 * Construct a new instance for solving separation problems.
@@ -56,13 +57,14 @@ class ElementarySeparation implements Separation {
 	public ElementarySeparation(RegionUtility utility, PNProperties properties,
 			String[] locationMap) throws UnsupportedPNPropertiesException {
 		this.utility = utility;
+		this.pure = properties.isPure();
 
-		PNProperties required = new PNProperties()
-			.requireSafe()
-			.setPure(true);
+		PNProperties required = new PNProperties().requireSafe();
 		// When "safe" is already required, plain is no longer limiting
 		// (arc weights > 1 belong to transitions which can never fire)
-		PNProperties supported = required.setPlain(true);
+		PNProperties supported = required
+			.setPlain(true)
+			.setPure(true);
 
 		if (!properties.containsAll(required))
 			throw new UnsupportedPNPropertiesException();
@@ -114,7 +116,16 @@ class ElementarySeparation implements Separation {
 		region.setState(state, false);
 		region.setLabelOperation(event, Operation.EXIT);
 
-		return extractRegion(region);
+		Region result = extractRegion(region);
+		if (result == null && !pure) {
+			// Now try a region not containing the state and having a side condition to the event
+			region = new RoughRegion();
+			region.setState(state, false);
+			region.setLabelOperation(event, Operation.INSIDE);
+			result = extractRegion(region);
+		}
+
+		return result;
 	}
 
 	/**
@@ -154,11 +165,18 @@ class ElementarySeparation implements Separation {
 				debugFormat("Splitting the rough region on label %s", label);
 				RoughRegion enter = new RoughRegion(region);
 				RoughRegion exit = new RoughRegion(region);
+				RoughRegion inside = null;
+				if (!pure)
+					inside = new RoughRegion(region);
 
+				if (!pure)
+					inside.setLabelOperation(label, Operation.INSIDE);
 				region.setLabelOperation(label, Operation.DONT_CROSS);
 				enter.setLabelOperation(label, Operation.ENTER);
 				exit.setLabelOperation(label, Operation.EXIT);
 
+				if (!pure)
+					unhandled.addFirst(inside);
 				unhandled.addFirst(enter);
 				unhandled.addFirst(exit);
 				unhandled.addFirst(region);
@@ -174,7 +192,9 @@ class ElementarySeparation implements Separation {
 		// Arcs for our label leave the region
 		EXIT,
 		// Arcs for our label do not cross the border of the region
-		DONT_CROSS;
+		DONT_CROSS,
+		// Arcs for our label are inside of the region
+		INSIDE;
 	}
 
 	/**
@@ -302,6 +322,10 @@ class ElementarySeparation implements Separation {
 								setState(arc.getSource(), bool);
 						}
 						break;
+					case INSIDE:
+						setState(arc.getSource(), true);
+						setState(arc.getTarget(), true);
+						break;
 				}
 			}
 			return true;
@@ -330,7 +354,10 @@ class ElementarySeparation implements Separation {
 					setLabelOperation(arc.getLabel(), Operation.ENTER);
 				if (sourceInRegion && !targetInRegion)
 					setLabelOperation(arc.getLabel(), Operation.EXIT);
-				if (sourceInRegion.equals(targetInRegion))
+				if (pure && sourceInRegion.equals(targetInRegion))
+					// With !pure, INSIDE would also be a viable possibility
+					setLabelOperation(arc.getLabel(), Operation.DONT_CROSS);
+				if (!pure && !sourceInRegion && !targetInRegion)
 					setLabelOperation(arc.getLabel(), Operation.DONT_CROSS);
 			}
 			return true;
@@ -368,6 +395,10 @@ class ElementarySeparation implements Separation {
 					case EXIT:
 						builder.addWeightOn(i, minusOne);
 						break;
+					case INSIDE:
+						builder.addWeightOn(i, one);
+						builder.addWeightOn(i, minusOne);
+						break;
 					default:
 						// Nothing to do for DONT_CROSS
 						break;
@@ -391,6 +422,7 @@ class ElementarySeparation implements Separation {
 			Set<String> enter = new HashSet<>();
 			Set<String> exit = new HashSet<>();
 			Set<String> dontCross = new HashSet<>();
+			Set<String> inside = new HashSet<>();
 			for (Map.Entry<String, Operation> entry : labelOperations.entrySet()) {
 				switch (entry.getValue()) {
 					case ENTER:
@@ -402,11 +434,14 @@ class ElementarySeparation implements Separation {
 					case DONT_CROSS:
 						dontCross.add(entry.getKey());
 						break;
+					case INSIDE:
+						inside.add(entry.getKey());
+						break;
 				}
 			}
 
-			return String.format("RoughRegion[%sin=%s, out=%s, enter=%s, exit=%s, dontCross=%s]",
-					inconsistent ? "INCONSISTENT! " : "", in, out, enter, exit, dontCross);
+			return String.format("RoughRegion[%sin=%s, out=%s, enter=%s, exit=%s, dontCross=%s, inside=%s]",
+					inconsistent ? "INCONSISTENT! " : "", in, out, enter, exit, dontCross, inside);
 		}
 	}
 
