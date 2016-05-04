@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -236,6 +239,11 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 	@Override
 	public String getFormat() {
 		return FORMAT;
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList("pnml", "xml"));
 	}
 
 	@Override

@@ -19,6 +19,11 @@
 
 package uniol.apt.io.parser.impl;
 
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.io.parser.AptParser;
 import uniol.apt.io.parser.Parser;
@@ -32,6 +37,11 @@ public class GenetPNParser extends PetrifyPNParser implements Parser<PetriNet> {
 	@Override
 	public String getFormat() {
 		return "genet";
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList("g"));
 	}
 }
 

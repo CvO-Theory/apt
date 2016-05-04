@@ -23,6 +23,7 @@ package uniol.apt.io.parser;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Interface for generic parsers.
@@ -35,6 +36,12 @@ public interface Parser<G> {
 	 * @return name of the supported format
 	 */
 	public String getFormat();
+
+	/**
+	 * Get a list of recommended file extensions.
+	 * @return the list of recommended file extensions
+	 */
+	public List<String> getFileExtensions();
 
 	/**
 	 * Parse a string into an object.

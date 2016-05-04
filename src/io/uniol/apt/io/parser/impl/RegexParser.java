@@ -21,7 +21,9 @@ package uniol.apt.io.parser.impl;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -207,6 +209,11 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 	@Override
 	public String getFormat() {
 		return FORMAT;
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return Collections.emptyList();
 	}
 
 	@Override

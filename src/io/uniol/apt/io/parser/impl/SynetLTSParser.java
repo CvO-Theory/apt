@@ -22,7 +22,11 @@ package uniol.apt.io.parser.impl;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -85,6 +89,11 @@ public class SynetLTSParser extends AbstractParser<TransitionSystem> implements 
 	@Override
 	public String getFormat() {
 		return FORMAT;
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList("aut"));
 	}
 
 	@Override

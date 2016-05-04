@@ -21,7 +21,11 @@ package uniol.apt.io.parser.impl;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -124,6 +128,11 @@ public class LoLAPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 	@Override
 	public String getFormat() {
 		return FORMAT;
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList("llnet", "lola"));
 	}
 
 	@Override
