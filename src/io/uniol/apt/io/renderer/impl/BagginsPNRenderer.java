@@ -22,6 +22,9 @@ package uniol.apt.io.renderer.impl;
 import java.io.IOException;
 import java.io.Writer;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+
 import org.stringtemplate.v4.AutoIndentWriter;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -59,6 +62,11 @@ public class BagginsPNRenderer extends AbstractRenderer<PetriNet> implements Ren
 	@Override
 	public String getFormat() {
 		return FORMAT;
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList("baggins"));
 	}
 
 	// Verify that the net can be expressed in BAGGINS file format.

@@ -22,7 +22,11 @@ package uniol.apt.io.renderer.impl;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Arc;
@@ -43,6 +47,11 @@ public class AptLTSRenderer extends AbstractRenderer<TransitionSystem> implement
 	@Override
 	public String getFormat() {
 		return FORMAT;
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList("ats", "apt"));
 	}
 
 	@Override

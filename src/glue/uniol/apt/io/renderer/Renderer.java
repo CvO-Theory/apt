@@ -22,6 +22,7 @@ package uniol.apt.io.renderer;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 /**
  * Interface for generic renderers.
@@ -34,6 +35,12 @@ public interface Renderer<G> {
 	 * @return name of the supported format
 	 */
 	public String getFormat();
+
+	/**
+	 * Get a list of recommended file extensions. The first entry is the preferred extension.
+	 * @return the list of recommended file extensions
+	 */
+	public List<String> getFileExtensions();
 
 	/**
 	 * Render an object into a file

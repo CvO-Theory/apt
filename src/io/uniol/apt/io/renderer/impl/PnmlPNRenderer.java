@@ -21,6 +21,10 @@ package uniol.apt.io.renderer.impl;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
@@ -40,6 +44,11 @@ public class PnmlPNRenderer extends AbstractRenderer<PetriNet> implements Render
 	@Override
 	public String getFormat() {
 		return FORMAT;
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList("pnml", "xml"));
 	}
 
 	@Override

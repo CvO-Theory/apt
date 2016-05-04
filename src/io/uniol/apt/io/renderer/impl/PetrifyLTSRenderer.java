@@ -22,6 +22,10 @@ package uniol.apt.io.renderer.impl;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -41,6 +45,11 @@ public class PetrifyLTSRenderer extends AbstractRenderer<TransitionSystem> imple
 	@Override
 	public String getFormat() {
 		return FORMAT;
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList("g"));
 	}
 
 	@Override

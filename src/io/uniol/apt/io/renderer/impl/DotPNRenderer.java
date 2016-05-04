@@ -30,7 +30,7 @@ import uniol.apt.io.renderer.Renderer;
 @AptRenderer
 public class DotPNRenderer extends AbstractSTRenderer<PetriNet> implements Renderer<PetriNet> {
 	public DotPNRenderer() {
-		super("uniol/apt/io/renderer/impl/DotPN.stg", "pn", "dot");
+		super("uniol/apt/io/renderer/impl/DotPN.stg", "pn", "dot", "dot");
 	}
 }
 

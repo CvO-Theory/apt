@@ -21,6 +21,10 @@ package uniol.apt.io.renderer.impl;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import org.stringtemplate.v4.AutoIndentWriter;
 import org.stringtemplate.v4.ST;
@@ -38,6 +42,7 @@ public abstract class AbstractSTRenderer<G> extends AbstractRenderer<G> {
 	private final STGroup group;
 	private final String templateName;
 	private final String format;
+	private final String[] extensions;
 
 	/**
 	 * Constructor
@@ -45,11 +50,13 @@ public abstract class AbstractSTRenderer<G> extends AbstractRenderer<G> {
 	 * @param templateFile file name of the template file
 	 * @param templateName name of the main rule in the template file
 	 * @param format The name of the supported file format
+	 * @param extensions The list of recommended file extensions
 	 */
-	protected AbstractSTRenderer(String templateFile, String templateName, String format) {
+	protected AbstractSTRenderer(String templateFile, String templateName, String format, String... extensions) {
 		this.group        = new STGroupFile(templateFile);
 		this.templateName = templateName;
 		this.format       = format;
+		this.extensions   = extensions;
 	}
 
 	@Override
@@ -62,6 +69,11 @@ public abstract class AbstractSTRenderer<G> extends AbstractRenderer<G> {
 	@Override
 	public String getFormat() {
 		return this.format;
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList(this.extensions));
 	}
 }
 

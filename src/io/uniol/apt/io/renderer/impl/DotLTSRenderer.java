@@ -31,7 +31,7 @@ import uniol.apt.io.renderer.Renderer;
 @AptRenderer
 public class DotLTSRenderer extends AbstractSTRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
 	public DotLTSRenderer() {
-		super("uniol/apt/io/renderer/impl/DotLTS.stg", "ts", "dot");
+		super("uniol/apt/io/renderer/impl/DotLTS.stg", "ts", "dot", "dot");
 	}
 }
 

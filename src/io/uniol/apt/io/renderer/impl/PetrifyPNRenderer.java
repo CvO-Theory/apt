@@ -19,6 +19,11 @@
 
 package uniol.apt.io.renderer.impl;
 
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
@@ -36,6 +41,11 @@ public class PetrifyPNRenderer extends GenetPNRenderer implements Renderer<Petri
 	@Override
 	public String getFormat() {
 		return "petrify";
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList("g"));
 	}
 
 	// Verify that the net can be expressed in petrify file format.

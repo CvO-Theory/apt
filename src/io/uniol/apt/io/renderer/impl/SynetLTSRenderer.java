@@ -22,7 +22,11 @@ package uniol.apt.io.renderer.impl;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
@@ -43,6 +47,11 @@ public class SynetLTSRenderer extends AbstractRenderer<TransitionSystem> impleme
 	@Override
 	public String getFormat() {
 		return FORMAT;
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList("aut"));
 	}
 
 	@Override

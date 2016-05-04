@@ -30,7 +30,7 @@ import uniol.apt.io.renderer.Renderer;
 @AptRenderer
 public class TikzPNRenderer extends AbstractSTRenderer<PetriNet> implements Renderer<PetriNet> {
 	public TikzPNRenderer() {
-		super("uniol/apt/io/renderer/impl/TikzPN.stg", "pn", "tikz");
+		super("uniol/apt/io/renderer/impl/TikzPN.stg", "pn", "tikz", "tex");
 	}
 }
 

@@ -31,7 +31,7 @@ import uniol.apt.io.renderer.Renderer;
 @AptRenderer
 public class SynetPNRenderer extends AbstractSTRenderer<PetriNet> implements Renderer<PetriNet> {
 	public SynetPNRenderer() {
-		super("uniol/apt/io/renderer/impl/SynetPN.stg", "pn", "synet");
+		super("uniol/apt/io/renderer/impl/SynetPN.stg", "pn", "synet", "net");
 	}
 }
 

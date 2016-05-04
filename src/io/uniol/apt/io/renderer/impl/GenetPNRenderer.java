@@ -21,6 +21,10 @@ package uniol.apt.io.renderer.impl;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import org.stringtemplate.v4.AutoIndentWriter;
 import org.stringtemplate.v4.ST;
@@ -45,6 +49,11 @@ public class GenetPNRenderer extends AbstractRenderer<PetriNet> implements Rende
 	@Override
 	public String getFormat() {
 		return "genet";
+	}
+
+	@Override
+	public List<String> getFileExtensions() {
+		return unmodifiableList(asList("g"));
 	}
 
 	// Verify that the net can be expressed in the file format.

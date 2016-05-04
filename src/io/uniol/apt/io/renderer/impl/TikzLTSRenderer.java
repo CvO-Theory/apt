@@ -30,7 +30,7 @@ import uniol.apt.io.renderer.Renderer;
 @AptRenderer
 public class TikzLTSRenderer extends AbstractSTRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
 	public TikzLTSRenderer() {
-		super("uniol/apt/io/renderer/impl/TikzLTS.stg", "ts", "tikz");
+		super("uniol/apt/io/renderer/impl/TikzLTS.stg", "ts", "tikz", "tex");
 	}
 }
 
