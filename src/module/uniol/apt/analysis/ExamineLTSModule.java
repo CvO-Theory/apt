@@ -70,6 +70,9 @@ public class ExamineLTSModule extends AbstractModule implements Module {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
+		outputSpec.addReturnValue("num_states", Integer.class);
+		outputSpec.addReturnValue("num_arcs", Integer.class);
+		outputSpec.addReturnValue("num_labels", Integer.class);
 		outputSpec.addReturnValue("deterministic", Boolean.class);
 		outputSpec.addReturnValue("persistent", Boolean.class);
 		outputSpec.addReturnValue("backwards_persistent", Boolean.class);
@@ -90,6 +93,9 @@ public class ExamineLTSModule extends AbstractModule implements Module {
 		PersistentTS backwardsPer = new PersistentTS(lts, true);
 		TotallyReachable tot = new TotallyReachable(lts);
 		ReversibleTS rev = new ReversibleTS(lts);
+		output.setReturnValue("num_states", Integer.class, lts.getNodes().size());
+		output.setReturnValue("num_arcs", Integer.class, lts.getEdges().size());
+		output.setReturnValue("num_labels", Integer.class, lts.getAlphabet().size());
 		output.setReturnValue("deterministic", Boolean.class, det.isDeterministic());
 		output.setReturnValue("persistent", Boolean.class, per.isPersistent());
 		output.setReturnValue("backwards_persistent", Boolean.class, backwardsPer.isPersistent());
