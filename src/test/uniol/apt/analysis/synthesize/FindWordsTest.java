@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -100,17 +101,29 @@ public class FindWordsTest {
 
 	@Test(expectedExceptions = TestDoneException.class)
 	public void testMinimalUnsolvableWords() {
-		final int[] nextWord = { 0 };
-		final List<String> words = Arrays.asList("abbaa", "abbbaa", "abbbbaa", "abbbaba", "abbabaa", "ababaaa");
-		FindWords.LengthDoneCallback lengthDoneCallback = mock(FindWords.LengthDoneCallback.class);
+		final int[] nextLength = { 1 };
+		final List<String[]> words = Arrays.asList(
+				new String[] {}, new String[] {}, new String[] {}, new String[] {}, new String[] {},
+				new String[] { "abbaa" }, new String[] { "abbbaa" },
+				new String[] { "abbbbaa", "abbbaba", "abbabaa", "ababaaa"}
+				);
+		final Set<String> unsolvableWords = new TreeSet<>();
 		FindWords.WordCallback wordCallback = new FindWords.WordCallback() {
 			@Override
 			public void call(List<Character> wordAsList, String wordAsString, SynthesizePN synthesize) {
-				if (synthesize.wasSuccessfullySeparated())
-					return;
-				assertThat(wordAsString, equalTo(words.get(nextWord[0])));
-				nextWord[0]++;
-				if (nextWord[0] == words.size())
+				if (!synthesize.wasSuccessfullySeparated())
+					assertThat(unsolvableWords.add(wordAsString), is(true));
+			}
+		};
+		FindWords.LengthDoneCallback lengthDoneCallback = new FindWords.LengthDoneCallback() {
+			@Override
+			public void call(int length) {
+				assertThat(length, equalTo(nextLength[0]));
+				assertThat(unsolvableWords, containsInAnyOrder(words.get(length)));
+				unsolvableWords.clear();
+				nextLength[0]++;
+
+				if (nextLength[0] == words.size())
 					throw new TestDoneException();
 			}
 		};
