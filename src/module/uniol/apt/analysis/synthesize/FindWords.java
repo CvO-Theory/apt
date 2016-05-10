@@ -45,6 +45,23 @@ public class FindWords {
 		public void call(int length);
 	}
 
+	static private SynthesizePN solveWord(List<Character> wordList, PNProperties properties, boolean quickFail) {
+		TransitionSystem ts = SynthesizeUtils.makeTS(toStringList(wordList));
+		try {
+			return SynthesizePN.Builder.createForLanguageEquivalence(ts)
+				.setProperties(properties)
+				// we don't need failed separation points, if we don't show them
+				.setQuickFail(quickFail)
+				.build();
+		} catch (MissingLocationException e) {
+			throw new RuntimeException("Not generating locations and "
+					+ " yet they were generated wrongly?!", e);
+		} catch (NonDeterministicException e) {
+			throw new RuntimeException("Generated a deterministic TS and "
+					+ " yet it is non-deterministic?!", e);
+		}
+	}
+
 	static public void generateList(PNProperties properties, SortedSet<Character> alphabet, boolean quickFail, WordCallback wordCallback, LengthDoneCallback lengthDoneCallback) {
 		List<String> currentLevel = Collections.singletonList("");
 		List<String> nextLevel = new ArrayList<>();
@@ -82,21 +99,7 @@ public class FindWords {
 					}
 
 					// Is "word" PN-solvable with the given properties?
-					TransitionSystem ts = SynthesizeUtils.makeTS(toStringList(wordList));
-					SynthesizePN synthesize;
-					try {
-						synthesize = SynthesizePN.Builder.createForLanguageEquivalence(ts)
-							.setProperties(properties)
-							// we don't need failed separation points, if we don't show them
-							.setQuickFail(quickFail)
-							.build();
-					} catch (MissingLocationException e) {
-						throw new RuntimeException("Not generating locations and "
-								+ " yet they were generated wrongly?!", e);
-					} catch (NonDeterministicException e) {
-						throw new RuntimeException("Generated a deterministic TS and "
-								+ " yet it is non-deterministic?!", e);
-					}
+					SynthesizePN synthesize = solveWord(wordList, properties, quickFail);
 					wordCallback.call(wordList, word, synthesize);
 					if (synthesize.wasSuccessfullySeparated()) {
 						nextLevel.add(word);
