@@ -92,6 +92,7 @@ public class APT {
 		removedModules.put("petrify2apt", "Use pn_convert / lts_convert petrify apt instead.");
 		removedModules.put("pnml2apt",    "Use pn_convert / lts_convert pnml apt instead.");
 		removedModules.put("synet2apt",   "Use pn_convert / lts_convert synet apt instead.");
+		removedModules.put("info",        "Use examine_pn instead.");
 	}
 
 	public static void main(String[] args) {

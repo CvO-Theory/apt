@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis;
 
+import java.util.HashSet;
+
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
@@ -51,6 +53,8 @@ import uniol.apt.analysis.snet.SNet;
 import uniol.apt.analysis.tnet.TNet;
 
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.pn.Place;
+import uniol.apt.adt.pn.Transition;
 
 /**
  * Provide various checks in a single module.
@@ -76,6 +80,11 @@ public class ExaminePNModule extends AbstractModule implements Module {
 
 	@Override
 	public void provide(ModuleOutputSpec outputSpec) {
+		outputSpec.addReturnValue("num_places", Integer.class);
+		outputSpec.addReturnValue("num_transitions", Integer.class);
+		outputSpec.addReturnValue("num_labels", Integer.class);
+		outputSpec.addReturnValue("num_arcs", Integer.class);
+		outputSpec.addReturnValue("num_tokens", Integer.class);
 		outputSpec.addReturnValue("plain", Boolean.class);
 		outputSpec.addReturnValue("pure", Boolean.class);
 		outputSpec.addReturnValue("nonpure_only_simple_side_conditions", Boolean.class);
@@ -107,6 +116,21 @@ public class ExaminePNModule extends AbstractModule implements Module {
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNet pn = input.getParameter("pn", PetriNet.class);
+		output.setReturnValue("num_places", Integer.class, pn.getPlaces().size());
+		output.setReturnValue("num_transitions", Integer.class, pn.getTransitions().size());
+		output.setReturnValue("num_arcs", Integer.class, pn.getEdges().size());
+
+		int tokens = 0;
+		for (Place p : pn.getPlaces()) {
+			tokens += p.getInitialToken().getValue();
+		}
+		output.setReturnValue("num_tokens", Integer.class, tokens);
+
+		HashSet<String> labels = new HashSet<>();
+		for (Transition t : pn.getTransitions()) {
+			labels.add(t.getLabel());
+		}
+		output.setReturnValue("num_labels", Integer.class, labels.size());
 		BoundedResult result = Bounded.checkBounded(pn);
 		boolean plain = new Plain().checkPlain(pn);
 		output.setReturnValue("plain", Boolean.class, plain);
