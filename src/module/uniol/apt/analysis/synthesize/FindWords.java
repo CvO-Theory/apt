@@ -32,9 +32,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.collections4.Transformer;
 import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
 
 import uniol.apt.adt.ts.TransitionSystem;
@@ -47,6 +48,9 @@ import uniol.apt.util.Pair;
  * @author Uli Schlachter
  */
 public class FindWords {
+	// Number of Runnables that should always be pending for the thread pool. Must be positive.
+	static private final int TARGET_JOB_QUEUE_SIZE = 5;
+
 	static public interface WordCallback {
 		public void call(List<Character> wordAsList, String wordAsString, SynthesizePN synthesize);
 	}
@@ -75,31 +79,11 @@ public class FindWords {
 	static public void generateList(PNProperties properties, SortedSet<Character> alphabet, boolean quickFail,
 			WordCallback wordCallback, LengthDoneCallback lengthDoneCallback) {
 		// Java 8 provides ForkJoinPool.commonPool(). Java 7 does not, so we need to create our own pool.
-		ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		ForkJoinPool executor = new ForkJoinPool();
 		try {
 			generateList(properties, alphabet, quickFail, wordCallback, lengthDoneCallback, executor);
 		} finally {
 			executor.shutdownNow();
-		}
-	}
-
-	static private class NextWordsIterable implements Iterable<String> {
-		private final PNProperties properties;
-		private final SortedSet<Character> alphabet;
-		private final List<String> solvableShorterWords;
-
-		public NextWordsIterable(PNProperties properties, SortedSet<Character> alphabet, List<String> solvableShorterWords) {
-			this.properties = properties;
-			this.alphabet = alphabet;
-			this.solvableShorterWords = solvableShorterWords;
-
-			if (alphabet.isEmpty())
-				throw new IllegalArgumentException("Alphabet must not be empty");
-		}
-
-		@Override
-		public Iterator<String> iterator() {
-			return new NextWordsIterator(properties, alphabet, solvableShorterWords);
 		}
 	}
 
@@ -196,26 +180,32 @@ public class FindWords {
 
 	static private void generateList(final PNProperties properties, SortedSet<Character> alphabet,
 			final boolean quickFail, WordCallback wordCallback, LengthDoneCallback lengthDoneCallback,
-			ExecutorService executor) {
+			ForkJoinPool executor) {
 		CompletionService<Pair<String, SynthesizePN>> completion = new ExecutorCompletionService<>(executor);
 		List<String> currentLevel = Collections.singletonList("");
 		while (!currentLevel.isEmpty()) {
-			int tasksSubmitted = 0;
 
-			for (final String word : new NextWordsIterable(properties, alphabet, currentLevel)) {
-				completion.submit(new Callable<Pair<String, SynthesizePN>>() {
-					@Override
-					public Pair<String, SynthesizePN> call() {
-						List<Character> wordList = toList(word);
-						SynthesizePN synthesize = solveWord(wordList, properties, quickFail);
-						return new Pair<>(word, synthesize);
-					}
-				});
-				tasksSubmitted++;
-			}
+			// Lazily create new Callables to avoid OOM errors
+			Iterator<Callable<Pair<String, SynthesizePN>>> jobGenerator = IteratorUtils.transformedIterator(
+					new NextWordsIterator(properties, alphabet, currentLevel),
+					new Transformer<String, Callable<Pair<String, SynthesizePN>>>() {
+						@Override
+						public Callable<Pair<String, SynthesizePN>> transform(final String word) {
+							return new Callable<Pair<String, SynthesizePN>>() {
+								@Override
+								public Pair<String, SynthesizePN> call() {
+									List<Character> wordList = toList(word);
+									SynthesizePN synthesize =
+										solveWord(wordList, properties, quickFail);
+									return new Pair<>(word, synthesize);
+								}
+							};
+						}
+					});
 
 			// Wait for and handle results
 			List<String> nextLevel = new ArrayList<>();
+			int tasksSubmitted = submitTasks(executor, completion, jobGenerator);
 			int tasksFinished = 0;
 			while (tasksSubmitted != tasksFinished) {
 				String word;
@@ -237,6 +227,8 @@ public class FindWords {
 					nextLevel.add(word);
 				}
 				tasksFinished++;
+
+				tasksSubmitted += submitTasks(executor, completion, jobGenerator);
 			}
 
 			int currentLength = currentLevel.iterator().next().length() + 1;
@@ -244,6 +236,16 @@ public class FindWords {
 			currentLevel = nextLevel;
 			Collections.sort(currentLevel);
 		}
+	}
+
+	static private <T> int submitTasks(ForkJoinPool executor, CompletionService<T> completion,
+			Iterator<Callable<T>> jobGenerator) {
+		int submitted = 0;
+		while (jobGenerator.hasNext() && executor.getQueuedSubmissionCount() < TARGET_JOB_QUEUE_SIZE) {
+			completion.submit(jobGenerator.next());
+			submitted++;
+		}
+		return submitted;
 	}
 
 	/**
