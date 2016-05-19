@@ -176,6 +176,11 @@ public class FindWords {
 			nextWord = null;
 			return result;
 		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	static private void generateList(final PNProperties properties, SortedSet<Character> alphabet,
