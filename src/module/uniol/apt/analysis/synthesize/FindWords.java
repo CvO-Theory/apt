@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -33,6 +34,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
 
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.exception.NonDeterministicException;
@@ -80,6 +83,117 @@ public class FindWords {
 		}
 	}
 
+	static private class NextWordsIterable implements Iterable<String> {
+		private final PNProperties properties;
+		private final SortedSet<Character> alphabet;
+		private final List<String> solvableShorterWords;
+
+		public NextWordsIterable(PNProperties properties, SortedSet<Character> alphabet, List<String> solvableShorterWords) {
+			this.properties = properties;
+			this.alphabet = alphabet;
+			this.solvableShorterWords = solvableShorterWords;
+
+			if (alphabet.isEmpty())
+				throw new IllegalArgumentException("Alphabet must not be empty");
+		}
+
+		@Override
+		public Iterator<String> iterator() {
+			return new NextWordsIterator(properties, alphabet, solvableShorterWords);
+		}
+	}
+
+	static private class NextWordsIterator implements Iterator<String> {
+		private final PNProperties properties;
+		private final SortedSet<Character> alphabet;
+		private final List<String> solvableShorterWords;
+		private final Iterator<String> solvableWordsIterator;
+		private Iterator<Character> alphabetIterator = emptyIterator();
+		private String currentWordToExtend = null;
+		private String nextWord = null;
+
+		public NextWordsIterator(PNProperties properties, SortedSet<Character> alphabet,
+				List<String> solvableShorterWords) {
+			this.properties = properties;
+			this.alphabet = alphabet;
+			this.solvableShorterWords = solvableShorterWords;
+			this.solvableWordsIterator = solvableShorterWords.iterator();
+
+			if (alphabet.isEmpty())
+				throw new IllegalArgumentException("Alphabet must not be empty");
+		}
+
+		@Override
+		public boolean hasNext() {
+			if (nextWord != null)
+				return true;
+
+			while (alphabetIterator.hasNext() || solvableWordsIterator.hasNext()) {
+				if (!alphabetIterator.hasNext()) {
+					currentWordToExtend = solvableWordsIterator.next();
+					alphabetIterator = alphabet.iterator();
+
+					// They better don't modify the alphabet beneath us!
+					assert alphabetIterator.hasNext();
+				}
+
+				// If "currentWordToExtend" is unsolvable, then "word" must also be unsolvable.
+				// Otherwise we get a contradiction: The net solving "word" will solve "currentWord"
+				// after firing "c" once.
+				// Put differently: By prepending letters to solvable words, we are sure to
+				// generate all solvable words.
+				Character c = alphabetIterator.next();
+				boolean newLetter = currentWordToExtend.indexOf(c) == -1;
+				String word = c + currentWordToExtend;
+				word = normalizeWord(toList(word), alphabet);
+
+				if (!properties.isKBounded()) {
+					// If we have unbounded places, then every prefix of a solvable word is
+					// also solvable: Just add a place from which every transition consumes
+					// one token. This place's initial marking limits the length of the
+					// word.
+					// For our purpose this means: If the prefix isn't solvable, then we
+					// already know that the word itself isn't solvable either.
+					// This is also important for the definition of "minimally unsolvable"
+					// (= unsolvable + all proper subwords are solvable).
+					if (Collections.binarySearch(solvableShorterWords,
+								word.substring(0, word.length() - 1)) < 0)
+						continue;
+				} else {
+					// In a k-bounded Petri net, every suffix of a solvable word is also
+					// solvable. However, a prefix might still be unsolvable. Thus, we use a
+					// different definition of "minimally unsolvable" here (= unsolvable +
+					// all proper suffixes are solvable).
+				}
+
+				nextWord = word;
+				if (newLetter)
+					// The alphabet is a sorted set. We only extend words in the order that they
+					// appear in the alphabet. So if the current letter was new, then all the
+					// following ones will be new, too. When extending "ba", "cab" is solvable if
+					// and only if "dab" is solvable. So trying other new letters won't produce
+					// really "new" words, but only words that are symmetric in the sense that they
+					// can be transformed into each other by replacing one letter with another.
+					// Avoiding these symmetries in the words we generate helps speeding up this
+					// algorithm.
+					alphabetIterator = emptyIterator();
+
+				return true;
+			}
+
+			return false;
+		}
+
+		@Override
+		public String next() {
+			if (!hasNext())
+				throw new NoSuchElementException();
+			String result = nextWord;
+			nextWord = null;
+			return result;
+		}
+	}
+
 	static private void generateList(final PNProperties properties, SortedSet<Character> alphabet,
 			final boolean quickFail, WordCallback wordCallback, LengthDoneCallback lengthDoneCallback,
 			ExecutorService executor) {
@@ -88,60 +202,16 @@ public class FindWords {
 		while (!currentLevel.isEmpty()) {
 			int tasksSubmitted = 0;
 
-			for (String currentWord : currentLevel) {
-				for (Character c : alphabet) {
-					boolean newLetter = currentWord.indexOf(c) == -1;
-
-					// If "currentWord" is unsolvable, then "word" must also be unsolvable.
-					// Otherwise we get a contradiction: The net solving "word" will solve
-					// "currentWord" after firing "c" once.
-					// Put differently: By prepending letters to solvable words, we are sure to
-					// generate all solvable words.
-					String word = c + currentWord;
-					word = normalizeWord(toList(word), alphabet);
-
-					if (!properties.isKBounded()) {
-						// If we have unbounded places, then every prefix of a solvable word is
-						// also solvable: Just add a place from which every transition consumes
-						// one token. This place's initial marking limits the length of the
-						// word.
-						// For our purpose this means: If the prefix isn't solvable, then we
-						// already know that the word itself isn't solvable either.
-						// This is also important for the definition of "minimally unsolvable"
-						// (= unsolvable + all proper subwords are solvable).
-						if (Collections.binarySearch(currentLevel,
-									word.substring(0, word.length() - 1)) < 0)
-							continue;
-					} else {
-						// In a k-bounded Petri net, every suffix of a solvable word is also
-						// solvable. However, a prefix might still be unsolvable. Thus, we use a
-						// different definition of "minimally unsolvable" here (= unsolvable +
-						// all proper suffixes are solvable).
+			for (final String word : new NextWordsIterable(properties, alphabet, currentLevel)) {
+				completion.submit(new Callable<Pair<String, SynthesizePN>>() {
+					@Override
+					public Pair<String, SynthesizePN> call() {
+						List<Character> wordList = toList(word);
+						SynthesizePN synthesize = solveWord(wordList, properties, quickFail);
+						return new Pair<>(word, synthesize);
 					}
-
-					final String theWord = word;
-					completion.submit(new Callable<Pair<String, SynthesizePN>>() {
-						@Override
-						public Pair<String, SynthesizePN> call() {
-							List<Character> wordList = toList(theWord);
-							SynthesizePN synthesize = solveWord(wordList, properties, quickFail);
-							return new Pair<>(theWord, synthesize);
-						}
-					});
-					tasksSubmitted++;
-
-					if (newLetter)
-						// The alphabet is a sorted set. We only extend words in the order that
-						// they appear in the alphabet. So if the current letter was new, then
-						// all the following ones will be new, too.
-						// When extending "ba", "cab" is solvable if and only if "dab" is
-						// solvable. So trying other new letters won't produce really "new"
-						// words, but only words that are symmetric in the sense that they can
-						// be transformed into each other by replacing one letter with another.
-						// Avoiding these symmetries in the words we generate helps speeding up
-						// this algorithm.
-						break;
-				}
+				});
+				tasksSubmitted++;
 			}
 
 			// Wait for and handle results
