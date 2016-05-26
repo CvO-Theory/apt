@@ -21,24 +21,27 @@ package uniol.apt.io.renderer.impl;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
-import uniol.apt.adt.exception.StructureException;
-import uniol.apt.adt.ts.Arc;
+import org.stringtemplate.v4.AutoIndentWriter;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
+
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.renderer.AptRenderer;
-import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
+import uniol.apt.io.renderer.Renderer;
+import uniol.apt.util.Pair;
 
 /**
- * @author Vincent Göbel
- *
+ * @author Vincent Göbel, Uli Schlachter
  */
 @AptRenderer
 public class AptLTSRenderer extends AbstractRenderer<TransitionSystem> implements Renderer<TransitionSystem> {
@@ -54,48 +57,45 @@ public class AptLTSRenderer extends AbstractRenderer<TransitionSystem> implement
 		return unmodifiableList(asList("ats", "apt"));
 	}
 
+	// Wrapper around states to fake an "initial" extension on the initial state
+	static private class InitialStateDecorator {
+		private final State decoratedState;
+
+		public InitialStateDecorator(State state) {
+			decoratedState = state;
+		}
+
+		public String getId() {
+			return decoratedState.getId();
+		}
+
+		public List<Pair<String, Object>> getExtensions() {
+			List<Pair<String, Object>> result = new ArrayList<>(decoratedState.getExtensions());
+			result.add(0, new Pair<String, Object>("initial", "true"));
+			return result;
+		}
+	}
+
+	static private Collection<Object> decorateStates(TransitionSystem ts) {
+		Collection<Object> result = new ArrayList<>();
+		result.add(new InitialStateDecorator(ts.getInitialState()));
+		for (State state : ts.getNodes())
+			if (!state.equals(ts.getInitialState()))
+				result.add(state);
+		return result;
+	}
+
 	@Override
 	public void render(TransitionSystem ts, Writer writer) throws RenderException, IOException {
-		writer.append(".name \"").append(ts.getName()).append("\"\n");
-		writer.append(".type LTS" + "\n");
-		writer.append("\n");
+		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/AptLTS.stg");
+		ST ltsTemplate = group.getInstanceOf("lts");
 
-		writer.append(".states" + "\n");
-		for (State s : ts.getNodes()) {
-			writer.append(s.getId());
-			if (s.equals(ts.getInitialState())) {
-				writer.append("[initial]");
-			}
+		ltsTemplate.add("name", ts.getName());
+		ltsTemplate.add("states", decorateStates(ts));
+		ltsTemplate.add("arcs", ts.getEdges());
+		ltsTemplate.add("events", ts.getAlphabetEvents());
 
-			/* If the "comment" extension is present, escape it properly and append it as a comment */
-			try {
-				Object comment = s.getExtension("comment");
-				if (comment instanceof String) {
-					String c = (String) comment;
-					writer.append(" /* ");
-					writer.append(c.replace("*/", "* /"));
-					writer.append(" */");
-				}
-			} catch (StructureException ex) {
-				/* ignore Exception if comment doesn't exist */
-			}
-			writer.append("\n");
-		}
-		writer.append("\n");
-
-		writer.append(".labels" + "\n");
-		for (String l : ts.getAlphabet()) {
-			writer.append(l).append("\n");
-		}
-		writer.append("\n");
-
-		writer.append(".arcs");
-		for (Arc e : ts.getEdges()) {
-			writer.append("\n");
-			writer.append(e.getSource().getId()).append(" ");
-			writer.append(e.getLabel()).append(" ");
-			writer.append(e.getTarget().getId());
-		}
+		ltsTemplate.write(new AutoIndentWriter(writer), new ThrowingErrorListener());
 	}
 }
 

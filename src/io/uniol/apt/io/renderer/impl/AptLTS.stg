@@ -1,0 +1,55 @@
+/*-
+ * APT - Analysis of Petri Nets and labeled Transition systems
+ * Copyright (C) 2012-2013  Members of the project group APT
+ * Copyright (C) 2016       Uli Schlachter
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+/**
+ * Stringtemplate template group file for the APT LTS file format.
+ * @author Uli Schlachter
+ */
+
+/**
+ * Main template, the APTLTSRenderer uses this.
+ * @param name The name of the lts
+ * @param states A list of all states in the lts (Entries must have an id property)
+ * @param arcs A list of all arcs in the lts (Entries must have a source, target and label property)
+ * @param events A list of all events in the lts (Entries must have a label property)
+ */
+lts(name,states,arcs,events) ::= <<
+.name "<name>"
+.type LTS
+
+.states
+<states:{s|<s.id><if(first(s.extensions))>[<s.extensions:extension();separator=", ">]<endif>};separator="\n">
+
+.labels
+<events:{l|<l.label><if(first(l.extensions))>[<l.extensions:extension();separator=", ">]<endif>};separator="\n">
+
+.arcs
+<arcs:{a|<a.source.id> <a.label> <a.target.id><if(first(a.extensions))>[<a.extensions:extension();separator=", ">]<endif>};separator="\n">
+>>
+
+/**
+ * Template for an extension.
+ * @param ext the extension as a pair of string and object.
+ */
+extension(ext) ::= <<
+<ext.first>="<ext.second>"
+>>
+
+// vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
