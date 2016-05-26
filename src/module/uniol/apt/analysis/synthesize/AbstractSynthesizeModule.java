@@ -157,9 +157,6 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 			regions = synthesize.getSeparatingRegions();
 			pn = synthesize.synthesizePetriNet();
 		}
-		if (pn != null)
-			for (Place p : pn.getPlaces())
-				p.removeExtension(Region.class.getName());
 
 		output.setReturnValue("success", Boolean.class, synthesize.wasSuccessfullySeparated());
 		output.setReturnValue("pn", PetriNet.class, pn);

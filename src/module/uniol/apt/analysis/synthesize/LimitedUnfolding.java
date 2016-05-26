@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import uniol.apt.adt.exception.StructureException;
+import uniol.apt.adt.extension.ExtensionProperty;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -110,6 +111,7 @@ public class LimitedUnfolding  {
 		newState.copyExtensions(next);
 		next.putExtension(NEW_STATE_KEY, newState);
 		newState.putExtension(ORIGINAL_STATE_KEY, next);
+		newState.putExtension("original_state", next.getId(), ExtensionProperty.WRITE_TO_FILE);
 		stack.addFirst(new DFSState(next));
 		return newState;
 	}
