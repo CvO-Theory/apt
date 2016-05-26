@@ -35,10 +35,10 @@ pn(name,description,places,marking,transitions) ::= <<
 .type LPN
 
 .places
-<places:{p|<p.id><if(first(p.extensions))>[<p.extensions:extension();separator=", ">]<endif>};separator="\n">
+<places:{p|<p.id><if(first(p.writeToFileExtensions))>[<p.writeToFileExtensions:extension();separator=", ">]<endif>};separator="\n">
 
 .transitions
-<transitions:{t|<t.id><if(t.label)>[label="<t.label>"<if(first(t.extensions))>, <t.extensions:extension();separator=", "><endif>]<else><if(first(t.extensions))>[<t.extensions:extension();separator=", ">]<endif><endif>};separator="\n">
+<transitions:{t|<t.id><if(t.label)>[label="<t.label>"<if(first(t.writeToFileExtensions))>, <t.writeToFileExtensions:extension();separator=", "><endif>]<else><if(first(t.writeToFileExtensions))>[<t.writeToFileExtensions:extension();separator=", ">]<endif><endif>};separator="\n">
 
 .flows
 <transitions:transition()>

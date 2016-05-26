@@ -69,8 +69,8 @@ public class AptLTSRenderer extends AbstractRenderer<TransitionSystem> implement
 			return decoratedState.getId();
 		}
 
-		public List<Pair<String, Object>> getExtensions() {
-			List<Pair<String, Object>> result = new ArrayList<>(decoratedState.getExtensions());
+		public List<Pair<String, Object>> getWriteToFileExtensions() {
+			List<Pair<String, Object>> result = new ArrayList<>(decoratedState.getWriteToFileExtensions());
 			result.add(0, new Pair<String, Object>("initial", "true"));
 			return result;
 		}

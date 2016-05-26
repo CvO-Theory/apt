@@ -35,13 +35,13 @@ lts(name,states,arcs,events) ::= <<
 .type LTS
 
 .states
-<states:{s|<s.id><if(first(s.extensions))>[<s.extensions:extension();separator=", ">]<endif>};separator="\n">
+<states:{s|<s.id><if(first(s.writeToFileExtensions))>[<s.writeToFileExtensions:extension();separator=", ">]<endif>};separator="\n">
 
 .labels
-<events:{l|<l.label><if(first(l.extensions))>[<l.extensions:extension();separator=", ">]<endif>};separator="\n">
+<events:{l|<l.label><if(first(l.writeToFileExtensions))>[<l.writeToFileExtensions:extension();separator=", ">]<endif>};separator="\n">
 
 .arcs
-<arcs:{a|<a.source.id> <a.label> <a.target.id><if(first(a.extensions))>[<a.extensions:extension();separator=", ">]<endif>};separator="\n">
+<arcs:{a|<a.source.id> <a.label> <a.target.id><if(first(a.writeToFileExtensions))>[<a.writeToFileExtensions:extension();separator=", ">]<endif>};separator="\n">
 >>
 
 /**
