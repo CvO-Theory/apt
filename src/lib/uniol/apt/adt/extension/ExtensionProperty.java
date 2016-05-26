@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2012-2013  Members of the project group APT
+ * Copyright (C) 2016       Uli Schlachter
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,32 +20,20 @@
 package uniol.apt.adt.extension;
 
 /**
- * The IExtensible interface describes an advanced object consisting of an id and a key \rightarrow value property
- * mapping.
- * @author Dennis-Michael Borde
+ * Properties that an extension can have for {@link IExtensible}.
+ * @author Uli Schlachter
  */
-public interface IExtensible {
+public enum ExtensionProperty {
+	/**
+	 * Extensions with the NOCOPY property are not copied when a copy of the underlying object is made.
+	 */
+	NOCOPY,
 
 	/**
-	 * Saves the given value using the key as identifier.
-	 * @param key   An identifying key as string.
-	 * @param value Any value.
-	 * @param properties Properties that this extension should have.
+	 * Extensions with the WRITE_TO_FILE property are written to output files by renderers which support arbitrary
+	 * properties.
 	 */
-	public void putExtension(String key, Object value, ExtensionProperty... properties);
-
-	/**
-	 * Removes the value associated with the given key.
-	 * @param key An identifying key as string.
-	 */
-	public void removeExtension(String key);
-
-	/**
-	 * Retrieves the saved value using the given key as identifier.
-	 * @param key An identifying key as string.
-	 * @return The saved value.
-	 */
-	public Object getExtension(String key);
+	WRITE_TO_FILE;
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

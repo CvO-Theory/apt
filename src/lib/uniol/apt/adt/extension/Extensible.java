@@ -20,9 +20,13 @@
 package uniol.apt.adt.extension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.util.Pair;
@@ -35,7 +39,26 @@ import uniol.apt.util.Pair;
  */
 public class Extensible implements IExtensible {
 
-	private final Map<String, Pair<Object, Boolean>> extensions = new HashMap<>();
+	private final Map<String, Extension> extensions = new HashMap<>();
+
+	private static class Extension {
+		final Object value;
+		final Set<ExtensionProperty> properties;
+
+		public Extension(Object value, ExtensionProperty... properties) {
+			Set<ExtensionProperty> props = new HashSet<>(Arrays.asList(properties));
+
+			this.value = value;
+
+			// Premature optimisation: Save some memory
+			if (props.isEmpty())
+				this.properties = Collections.emptySet();
+			else if (props.size() == 1)
+				this.properties = Collections.singleton(props.iterator().next());
+			else
+				this.properties = Collections.unmodifiableSet(props);
+		}
+	}
 
 	/**
 	 * Returns if this extension contains the given key.
@@ -54,18 +77,8 @@ public class Extensible implements IExtensible {
 	 * @param value Any value.
 	 */
 	@Override
-	public void putExtension(String key, Object value) {
-		this.extensions.put(key, new Pair<>(value, true));
-	}
-
-	/**
-	 * Saves the given value using the key as identifier with the copy flag.
-	 * @param key An identifying key as string.
-	 * @param value Any value.
-	 * @param copy The flag if this object should be copied.
-	 */
-	public void putExtension(String key, Object value, boolean copy) {
-		this.extensions.put(key, new Pair<>(value, copy));
+	public void putExtension(String key, Object value, ExtensionProperty... properties) {
+		this.extensions.put(key, new Extension(value, properties));
 	}
 
 	/**
@@ -85,45 +98,75 @@ public class Extensible implements IExtensible {
 	 */
 	@Override
 	public Object getExtension(String key) {
-		Pair<Object, Boolean> pair = this.extensions.get(key);
-		if (pair == null) {
-			throw new StructureException("Extention '" + key + "' not found.");
+		Extension ext = this.extensions.get(key);
+		if (ext == null) {
+			throw new StructureException("Extension '" + key + "' not found.");
 		}
-		return pair.getFirst();
+		return ext.value;
 	}
 
 	/**
-	 * Calculates a list of pairs key-value of all extentions. Attention it's a
-	 * referenzcopy!
-	 * @return A list of key-value-pairs of all extentions.
+	 * Calculates a list of pairs key-value of all extensions. Attention it's a reference copy!
+	 * @return A list of key-value-pairs of all extensions.
 	 */
 	public List<Pair<String, Object>> getExtensions() {
-		ArrayList<Pair<String, Object>> ret = new ArrayList<>();
-		for (Map.Entry<String, Pair<Object, Boolean>> entry : extensions.entrySet()) {
-			Pair<Object, Boolean> pair = entry.getValue();
-			ret.add(new Pair<>(entry.getKey(), pair.getFirst()));
+		List<Pair<String, Object>> ret = new ArrayList<>();
+		for (Map.Entry<String, Extension> entry : extensions.entrySet()) {
+			ret.add(new Pair<>(entry.getKey(), entry.getValue().value));
 		}
 		return ret;
 	}
 
 	/**
-	 * Calculates a list of pairs key-value which should be copied. Attention
-	 * it's a referenzcopy!
+	 * Calculates a list of pairs key-value of all extensions with the given property. Attention it's a reference
+	 * copy!
+	 * @param property The property to look for
+	 * @return A list of key-value-pairs of all extensions.
+	 */
+	public List<Pair<String, Object>> getExtensionsWithProperty(ExtensionProperty property) {
+		List<Pair<String, Object>> ret = new ArrayList<>();
+		for (Map.Entry<String, Extension> entry : extensions.entrySet()) {
+			Extension ext = entry.getValue();
+			if (ext.properties.contains(property))
+				ret.add(new Pair<>(entry.getKey(), ext.value));
+		}
+		return ret;
+	}
+
+	/**
+	 * Calculates a list of pairs key-value of all extensions without the given property. Attention it's a reference
+	 * copy!
+	 * @param property The property to look for
+	 * @return A list of key-value-pairs of all extensions.
+	 */
+	public List<Pair<String, Object>> getExtensionsWithoutProperty(ExtensionProperty property) {
+		List<Pair<String, Object>> ret = new ArrayList<>();
+		for (Map.Entry<String, Extension> entry : extensions.entrySet()) {
+			Extension ext = entry.getValue();
+			if (!ext.properties.contains(property))
+				ret.add(new Pair<>(entry.getKey(), ext.value));
+		}
+		return ret;
+	}
+
+	/**
+	 * Calculates a list of pairs key-value which should be written to a file. Attention it's a reference copy!
+	 * @return A list of pair key-value-pairs which should be copied.
+	 */
+	public List<Pair<String, Object>> getWriteToFileExtensions() {
+		return getExtensionsWithProperty(ExtensionProperty.WRITE_TO_FILE);
+	}
+
+	/**
+	 * Calculates a list of pairs key-value which should be copied. Attention it's a reference copy!
 	 * @return A list of pair key-value-pairs which should be copied.
 	 */
 	public List<Pair<String, Object>> getCopyExtensions() {
-		ArrayList<Pair<String, Object>> ret = new ArrayList<>();
-		for (Map.Entry<String, Pair<Object, Boolean>> entry : extensions.entrySet()) {
-			Pair<Object, Boolean> pair = entry.getValue();
-			if (pair.getSecond()) {
-				ret.add(new Pair<>(entry.getKey(), pair.getFirst()));
-			}
-		}
-		return ret;
+		return getExtensionsWithoutProperty(ExtensionProperty.NOCOPY);
 	}
 
 	/**
-	 * Copies the extentions from the given Extensible, marked as to copy, to
+	 * Copies the extensions from the given Extensible, marked as to copy, to
 	 * this extension list. Attention it's just a reference copy!
 	 * @param e The Extensible to copy from.
 	 */
