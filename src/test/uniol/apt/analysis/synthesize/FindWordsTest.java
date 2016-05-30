@@ -31,12 +31,13 @@ import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static uniol.apt.analysis.synthesize.Matchers.*;
+import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.synthesize.Matchers;
 
 /** @author Uli Schlachter */
 public class FindWordsTest {
 	private static void testWords(PNProperties properties, SortedSet<Character> alphabet,
-			final List<List<String>> solvableWords) {
+			final List<List<String>> solvableWords) throws PreconditionFailedException {
 		final Collection<String> solvable = new ArrayList<>();
 		final int[] currentLength = { 1 };
 		FindWords.WordCallback wordCallback = new FindWords.WordCallback() {
@@ -64,7 +65,7 @@ public class FindWordsTest {
 	}
 
 	@Test
-	public void testSafeABCWords() {
+	public void testSafeABCWords() throws Exception {
 		PNProperties properties = new PNProperties().requireSafe();
 		SortedSet<Character> alphabet = new TreeSet<>(Arrays.asList('a', 'b', 'c'));
 		List<List<String>> solvableWords = Arrays.asList(
@@ -80,7 +81,7 @@ public class FindWordsTest {
 	}
 
 	@Test
-	public void testPlainPureSafeABCWords() {
+	public void testPlainPureSafeABCWords() throws Exception {
 		PNProperties properties = new PNProperties().setPlain(true).setPure(true).requireSafe();
 		SortedSet<Character> alphabet = new TreeSet<>(Arrays.asList('a', 'b', 'c'));
 		List<List<String>> solvableWords = Arrays.asList(
@@ -100,7 +101,7 @@ public class FindWordsTest {
 	}
 
 	@Test(expectedExceptions = TestDoneException.class)
-	public void testMinimalUnsolvableWords() {
+	public void testMinimalUnsolvableWords() throws Exception {
 		final int[] nextLength = { 1 };
 		final List<String[]> words = Arrays.asList(
 				new String[] {}, new String[] {}, new String[] {}, new String[] {}, new String[] {},
@@ -131,6 +132,13 @@ public class FindWordsTest {
 		PNProperties properties = new PNProperties();
 		SortedSet<Character> alphabet = new TreeSet<>(Arrays.asList('a', 'b'));
 		FindWords.generateList(properties, alphabet, true, wordCallback, lengthDoneCallback);
+	}
+
+	@Test(expectedExceptions = PreconditionFailedException.class)
+	public void testUnsupportedProperties() throws Exception {
+		PNProperties properties = new PNProperties().setPlain(true).requireKMarking(2);
+		SortedSet<Character> alphabet = new TreeSet<>(Arrays.asList('a', 'b', 'c'));
+		FindWords.generateList(properties, alphabet, true, null, null);
 	}
 }
 

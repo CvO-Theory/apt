@@ -40,6 +40,7 @@ import static org.apache.commons.collections4.iterators.EmptyIterator.emptyItera
 
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.exception.NonDeterministicException;
+import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.synthesize.SynthesizeUtils;
 import uniol.apt.util.Pair;
 
@@ -77,7 +78,8 @@ public class FindWords {
 	}
 
 	static public void generateList(PNProperties properties, SortedSet<Character> alphabet, boolean quickFail,
-			WordCallback wordCallback, LengthDoneCallback lengthDoneCallback) {
+			WordCallback wordCallback, LengthDoneCallback lengthDoneCallback)
+			throws PreconditionFailedException {
 		// Java 8 provides ForkJoinPool.commonPool(). Java 7 does not, so we need to create our own pool.
 		ForkJoinPool executor = new ForkJoinPool();
 		try {
@@ -185,7 +187,11 @@ public class FindWords {
 
 	static private void generateList(final PNProperties properties, SortedSet<Character> alphabet,
 			final boolean quickFail, WordCallback wordCallback, LengthDoneCallback lengthDoneCallback,
-			ForkJoinPool executor) {
+			ForkJoinPool executor) throws PreconditionFailedException {
+		if (properties.isPlain() && properties.isKMarking())
+			throw new PreconditionFailedException("The combination of plain and k-marking is not supported, "
+					+ " because 'minimal unsolvable' cannot be defined");
+
 		CompletionService<Pair<String, SynthesizePN>> completion = new ExecutorCompletionService<>(executor);
 		List<String> currentLevel = Collections.singletonList("");
 		while (!currentLevel.isEmpty()) {

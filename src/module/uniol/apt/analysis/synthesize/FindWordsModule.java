@@ -132,7 +132,8 @@ public class FindWordsModule extends AbstractModule implements Module {
 		}
 	}
 
-	static private void generateList(PNProperties properties, SortedSet<Character> alphabet, Operation operation) {
+	static private void generateList(PNProperties properties, SortedSet<Character> alphabet, Operation operation)
+			throws ModuleException {
 		final boolean printSolvable = operation.printSolvable();
 		final boolean printUnsolvable = operation.printUnsolvable();
 		if (operation.printStatus()) {
