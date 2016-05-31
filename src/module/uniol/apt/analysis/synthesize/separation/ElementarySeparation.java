@@ -21,8 +21,6 @@ package uniol.apt.analysis.synthesize.separation;
 
 import java.math.BigInteger;
 import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +44,7 @@ class ElementarySeparation implements Separation {
 	private final RegionUtility utility;
 	private final Map<String, Set<Arc>> arcsWithlabel = new HashMap<>();
 	private final boolean pure;
+	private final String[] locationMap;
 
 	/**
 	 * Construct a new instance for solving separation problems.
@@ -58,6 +57,7 @@ class ElementarySeparation implements Separation {
 			String[] locationMap) throws UnsupportedPNPropertiesException {
 		this.utility = utility;
 		this.pure = properties.isPure();
+		this.locationMap = locationMap;
 
 		PNProperties required = new PNProperties().requireSafe();
 		// When "safe" is already required, plain is no longer limiting
@@ -69,10 +69,6 @@ class ElementarySeparation implements Separation {
 		if (!properties.containsAll(required))
 			throw new UnsupportedPNPropertiesException();
 		if (!supported.containsAll(properties))
-			throw new UnsupportedPNPropertiesException();
-
-		// We do not support locations, so no locations may be specified
-		if (Collections.frequency(Arrays.asList(locationMap), null) != locationMap.length)
 			throw new UnsupportedPNPropertiesException();
 
 		if (!utility.getSpanningTree().isTotallyReachable()) {
@@ -213,6 +209,10 @@ class ElementarySeparation implements Separation {
 		// Labels which were assigned in labelOperations and which might cause further changes
 		private final Deque<String> labelsToHandle = new ArrayDeque<>();
 
+		// If this is not null, at least one event exits from this region, this is the location of this event
+		// If another event with another location wants to leave this region, the region becomes inconsistent
+		private String location = null;
+
 		// If this value is true, then there is no concrete region "inside" of this rough region
 		private boolean inconsistent = false;
 
@@ -233,6 +233,7 @@ class ElementarySeparation implements Separation {
 			labelOperations = new HashMap<>(other.labelOperations);
 			statesToHandle.addAll(other.statesToHandle);
 			labelsToHandle.addAll(other.labelsToHandle);
+			location = other.location;
 			inconsistent = other.inconsistent;
 		}
 
@@ -272,7 +273,8 @@ class ElementarySeparation implements Separation {
 
 		/**
 		 * Set the operation of some label. The region can become inconsistent if this new operation contradicts
-		 * the previous one.
+		 * the previous one or if the operation is EXIT or INSIDE and other label, which also have this
+		 * operation, have another location.
 		 * @param label The label to set
 		 * @param op The operation to assign to the label
 		 */
@@ -282,6 +284,13 @@ class ElementarySeparation implements Separation {
 				labelsToHandle.add(label);
 			else if (!oldOp.equals(op))
 				inconsistent = true;
+			if (op.equals(Operation.EXIT) || op.equals(Operation.INSIDE)) {
+				String newLocation = locationMap[utility.getEventIndex(label)];
+				if (location == null)
+					location = newLocation;
+				else if (!location.equals(newLocation))
+					inconsistent = true;
+			}
 		}
 
 		/**
