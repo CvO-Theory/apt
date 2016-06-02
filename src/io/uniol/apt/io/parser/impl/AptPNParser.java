@@ -36,6 +36,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import uniol.apt.adt.exception.DatastructureException;
+import uniol.apt.adt.extension.IExtensible;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
@@ -52,6 +53,29 @@ import uniol.apt.io.parser.ParseException;
 @AptParser
 public class AptPNParser extends AbstractParser<PetriNet> implements Parser<PetriNet> {
 	public final static String FORMAT = "apt";
+
+	private static void handleOption(Map<String, Object> curOpts, AptPNFormatParser.OptionContext ctx) {
+		Object val = ctx.ID().getText();
+
+		if (ctx.STR() != null) {
+			String str = ctx.STR().getText();
+			val = str.substring(1, str.length() - 1);
+		} else if (ctx.INT() != null) {
+			val = Integer.parseInt(ctx.INT().getText());
+		}
+
+		curOpts.put(ctx.ID().getText(), val);
+	}
+
+	private static void putExtensions(IExtensible extensible, Map<String, Object> options) {
+		if (options == null)
+			return;
+
+		// Extensible really needs a putExtensions method ...
+		for (Map.Entry<String, Object> entry : options.entrySet()) {
+			extensible.putExtension(entry.getKey(), entry.getValue());
+		}
+	}
 
 	private static class NameDescPlaceTransitionListener extends AptPNFormatBaseListener
 			implements AptPNFormatListener {
@@ -75,38 +99,24 @@ public class AptPNParser extends AbstractParser<PetriNet> implements Parser<Petr
 		}
 
 		@Override
-		public void enterOpts(AptPNFormatParser.OptsContext ctx) {
+		public void enterPlace(AptPNFormatParser.PlaceContext ctx) {
+			this.curOpts = new HashMap<>();
+		}
+
+		@Override
+		public void enterTransition(AptPNFormatParser.TransitionContext ctx) {
 			this.curOpts = new HashMap<>();
 		}
 
 		@Override
 		public void exitOption(AptPNFormatParser.OptionContext ctx) {
-			assert this.curOpts != null;
-
-			Object val = ctx.ID().getText();
-
-			if (ctx.STR() != null) {
-				String str = ctx.STR().getText();
-				val = str.substring(1, str.length() - 1);
-			} else if (ctx.INT() != null) {
-				val = Integer.parseInt(ctx.INT().getText());
-			}
-
-			this.curOpts.put(ctx.ID().getText(), val);
+			if (this.curOpts != null)
+				handleOption(this.curOpts, ctx);
 		}
 
 		@Override
 		public void exitPlace(AptPNFormatParser.PlaceContext ctx) {
-			Place p = this.pn.createPlace(ctx.id.getText());
-
-			if (this.curOpts == null)
-				return;
-
-			// Extensible really needs a putExtensions method ...
-			for (Map.Entry<String, Object> entry : this.curOpts.entrySet()) {
-				p.putExtension(entry.getKey(), entry.getValue());
-			}
-
+			putExtensions(this.pn.createPlace(ctx.id.getText()), curOpts);
 			this.curOpts = null;
 		}
 
@@ -135,6 +145,7 @@ public class AptPNParser extends AbstractParser<PetriNet> implements Parser<Petr
 		private final PetriNet pn;
 		private ParseTreeProperty<Map<String, Integer>> sets = new ParseTreeProperty<>();
 		private MarkingHashMap curSet;
+		private Map<String, Object> curOpts;
 
 		private FlowMarkingsListener(PetriNet pn) {
 			this.pn = pn;
@@ -163,17 +174,30 @@ public class AptPNParser extends AbstractParser<PetriNet> implements Parser<Petr
 		}
 
 		@Override
+		public void enterFlow(AptPNFormatParser.FlowContext ctx) {
+			this.curOpts = new HashMap<>();
+		}
+
+		@Override
+		public void exitOption(AptPNFormatParser.OptionContext ctx) {
+			if (this.curOpts != null)
+				handleOption(this.curOpts, ctx);
+		}
+
+		@Override
 		public void exitFlow(AptPNFormatParser.FlowContext ctx) {
 			Map<String, Integer> preset  = this.sets.get(ctx.preset);
 			Map<String, Integer> postset = this.sets.get(ctx.postset);
 
 			for (Map.Entry<String, Integer> entry : preset.entrySet()) {
-				this.pn.createFlow(entry.getKey(), ctx.id.getText(), entry.getValue());
+				putExtensions(this.pn.createFlow(entry.getKey(), ctx.id.getText(), entry.getValue()), curOpts);
 			}
 
 			for (Map.Entry<String, Integer> entry : postset.entrySet()) {
-				this.pn.createFlow(ctx.id.getText(), entry.getKey(), entry.getValue());
+				putExtensions(this.pn.createFlow(ctx.id.getText(), entry.getKey(), entry.getValue()), curOpts);
 			}
+
+			this.curOpts = null;
 		}
 
 		@Override

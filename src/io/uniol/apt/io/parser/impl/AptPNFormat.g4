@@ -53,7 +53,7 @@ option :	ID '=' STR
 		;
 
 flows : '.flows' flow*;
-flow  : (id=ID | id=INT) ':'  preset=set '->' postset=set;
+flow  : (id=ID | id=INT) ':'  preset=set '->' postset=set (opts)?;
 
 /* sets for flow description and markings */
 set   : '{' ( | obj (',' obj)*) '}';
