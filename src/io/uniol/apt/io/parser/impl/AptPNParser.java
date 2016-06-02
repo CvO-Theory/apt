@@ -36,6 +36,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import uniol.apt.adt.exception.DatastructureException;
+import uniol.apt.adt.extension.ExtensionProperty;
 import uniol.apt.adt.extension.IExtensible;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
@@ -73,7 +74,7 @@ public class AptPNParser extends AbstractParser<PetriNet> implements Parser<Petr
 
 		// Extensible really needs a putExtensions method ...
 		for (Map.Entry<String, Object> entry : options.entrySet()) {
-			extensible.putExtension(entry.getKey(), entry.getValue());
+			extensible.putExtension(entry.getKey(), entry.getValue(), ExtensionProperty.WRITE_TO_FILE);
 		}
 	}
 
@@ -95,7 +96,8 @@ public class AptPNParser extends AbstractParser<PetriNet> implements Parser<Petr
 		@Override
 		public void exitDescription(AptPNFormatParser.DescriptionContext ctx) {
 			String str = ctx.txt.getText();
-			this.pn.putExtension("description", str.substring(1, str.length() - 1));
+			this.pn.putExtension("description", str.substring(1, str.length() - 1),
+					ExtensionProperty.WRITE_TO_FILE);
 		}
 
 		@Override
@@ -133,7 +135,8 @@ public class AptPNParser extends AbstractParser<PetriNet> implements Parser<Petr
 					// Why do we need this case? :-(
 					t.setLabel(entry.getValue().toString());
 				} else {
-					t.putExtension(entry.getKey(), entry.getValue());
+					t.putExtension(entry.getKey(), entry.getValue(),
+							ExtensionProperty.WRITE_TO_FILE);
 				}
 			}
 

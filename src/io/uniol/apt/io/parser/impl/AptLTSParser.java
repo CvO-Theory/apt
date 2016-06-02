@@ -37,6 +37,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.collections4.MapUtils;
 
 import uniol.apt.adt.exception.DatastructureException;
+import uniol.apt.adt.extension.ExtensionProperty;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
@@ -95,7 +96,8 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 		@Override
 		public void exitDescription(AptLTSFormatParser.DescriptionContext ctx) {
 			String str = ctx.txt.getText();
-			this.ts.putExtension("description", str.substring(1, str.length() - 1));
+			this.ts.putExtension("description", str.substring(1, str.length() - 1),
+					ExtensionProperty.WRITE_TO_FILE);
 		}
 
 		@Override
@@ -125,7 +127,8 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 					}
 					this.ts.setInitialState(s);
 				} else {
-					s.putExtension(entry.getKey(), entry.getValue());
+					s.putExtension(entry.getKey(), entry.getValue(),
+							ExtensionProperty.WRITE_TO_FILE);
 				}
 			}
 
@@ -172,10 +175,11 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 
 			// Extensible really needs a putExtensions method ...
 			for (Map.Entry<String, Object> entry : extensions.entrySet()) {
-				a.getEvent().putExtension(entry.getKey(), entry.getValue());
+				a.getEvent().putExtension(entry.getKey(), entry.getValue(),
+						ExtensionProperty.WRITE_TO_FILE);
 			}
 			for (Map.Entry<String, Object> entry : this.curOpts.entrySet()) {
-				a.putExtension(entry.getKey(), entry.getValue());
+				a.putExtension(entry.getKey(), entry.getValue(), ExtensionProperty.WRITE_TO_FILE);
 			}
 
 			this.curOpts = null;

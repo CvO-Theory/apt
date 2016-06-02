@@ -38,6 +38,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import uniol.apt.adt.exception.DatastructureException;
 import uniol.apt.adt.extension.Extensible;
+import uniol.apt.adt.extension.ExtensionProperty;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
@@ -100,7 +101,7 @@ public class SynetPNParser extends AbstractParser<PetriNet> implements Parser<Pe
 			if (!this.locations.contains(locText))
 				throw new ParseRuntimeException(extractPosition(locCtx)
 							+ " Unknown Location '" + locText + "'");
-			ext.putExtension("location", locText);
+			ext.putExtension("location", locText, ExtensionProperty.WRITE_TO_FILE);
 		}
 
 		@Override
