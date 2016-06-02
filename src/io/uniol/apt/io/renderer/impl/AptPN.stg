@@ -29,21 +29,34 @@
  * @param places A list of all places in the net (Entries must have an id property)
  * @param marking A list representing the initial marking (Entries are given to place_weight(pw))
  * @param transitions A list of transitions of the net (Entries are given to transition(t))
+ * @param have_flow_with_extension True if at least one flow has an extension
  */
-pn(name,description,places,marking,transitions) ::= <<
+pn(name,description,places,marking,transitions,have_flow_with_extension) ::= <<
 .name "<name>"
 .type LPN
 
 .places
-<places:{p|<p.id><if(first(p.writeToFileExtensions))>[<p.writeToFileExtensions:extension();separator=", ">]<endif>};separator="\n">
+<places:{p|<p.id><extensions(p)>};separator="\n">
 
 .transitions
 <transitions:{t|<t.id><if(t.label)>[label="<t.label>"<if(first(t.writeToFileExtensions))>, <t.writeToFileExtensions:extension();separator=", "><endif>]<else><if(first(t.writeToFileExtensions))>[<t.writeToFileExtensions:extension();separator=", ">]<endif><endif>};separator="\n">
 
 .flows
+<if(have_flow_with_extension)>
+<transitions:transition_flows()>
+<else>
 <transitions:transition()>
+<endif>
 
 .initial_marking {<marking:place_weight();separator=", ">}
+>>
+
+/**
+ * Template for all extensions.
+ * @param extensible an extensible object
+ */
+extensions(ext) ::= <<
+<if(first(ext.writeToFileExtensions))>[<ext.writeToFileExtensions:extension();separator=", ">]<endif>
 >>
 
 /**
@@ -61,6 +74,32 @@ extension(ext) ::= <<
 transition(t) ::= <<
 
 <t.id>: {<t.presetEdges:place_weight();separator=", ">} -> {<t.postsetEdges:place_weight();separator=", ">}
+>>
+
+/**
+ * Template for a single transition when extensions are present
+ * @param f Object describing the transition (Needed properties: transition_id, presetEdges, postsetEdges, extensions)
+ */
+transition_flows(t) ::= <<
+<t.presetEdges:preset_flow();separator="\n">
+<t.postsetEdges:postset_flow();separator="\n">
+
+>>
+
+/**
+ * Template for a single flow from place to transition
+ * @param f Object describing the flow
+ */
+preset_flow(f) ::= <<
+<f.transition.id>: {<f.weight>*<f.place.id>} -> {}<extensions(f)>
+>>
+
+/**
+ * Template for a single flow from place to transition
+ * @param f Object describing the flow
+ */
+postset_flow(f) ::= <<
+<f.transition.id>: {} -> {<f.weight>*<f.place.id>}<extensions(f)>
 >>
 
 /**

@@ -31,6 +31,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
+import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Token;
@@ -85,6 +86,16 @@ public class AptPNRenderer extends AbstractRenderer<PetriNet> implements Rendere
 
 		// Handle transitions (and arcs)
 		pnTemplate.add("transitions", pn.getTransitions());
+
+		// Check if any flow has an extension that should be written out
+		boolean haveFlowWithExtension = false;
+		for (Flow flow : pn.getEdges()) {
+			if (!flow.getWriteToFileExtensions().isEmpty()) {
+				haveFlowWithExtension = true;
+				break;
+			}
+		}
+		pnTemplate.add("have_flow_with_extension", haveFlowWithExtension);
 
 		pnTemplate.write(new AutoIndentWriter(writer), new ThrowingErrorListener());
 	}
