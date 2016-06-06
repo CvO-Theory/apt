@@ -45,6 +45,11 @@ public class Extensible implements IExtensible {
 		final Object value;
 		final Set<ExtensionProperty> properties;
 
+		public Extension(Object value) {
+			this.value = value;
+			this.properties = Collections.emptySet();
+		}
+
 		public Extension(Object value, ExtensionProperty... properties) {
 			Set<ExtensionProperty> props = new HashSet<>(Arrays.asList(properties));
 
@@ -70,15 +75,19 @@ public class Extensible implements IExtensible {
 		return this.extensions.containsKey(key);
 	}
 
+	@Override
+	public void putExtension(String key, Object value, ExtensionProperty... properties) {
+		this.extensions.put(key, new Extension(value, properties));
+	}
+
 	/**
 	 * Saves the given value using the key as identifier with the flag to copy
 	 * this object by coping the owner object.
 	 * @param key An identifying key as string.
 	 * @param value Any value.
 	 */
-	@Override
-	public void putExtension(String key, Object value, ExtensionProperty... properties) {
-		this.extensions.put(key, new Extension(value, properties));
+	public void putExtension(String key, Object value) {
+		this.extensions.put(key, new Extension(value));
 	}
 
 	/**
