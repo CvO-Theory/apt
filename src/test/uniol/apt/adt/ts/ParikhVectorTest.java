@@ -139,6 +139,40 @@ public class ParikhVectorTest {
 		assertThat(pv, hasToString("{a=4}"));
 		assertThat(pv.getLabels(), contains("a"));
 	}
+
+	@Test
+	public void testTryRemoveMoreEntries() {
+		ParikhVector pv = new ParikhVector("a", "b", "a", "a");
+		pv = pv.tryRemove("a", 2);
+
+		assertThat(pv, hasToString("{a=1, b=1}"));
+		assertThat(pv.getLabels(), contains("a", "b"));
+	}
+
+	@Test
+	public void testTryRemoveExactEntries() {
+		ParikhVector pv = new ParikhVector("a", "b", "a");
+		pv = pv.tryRemove("a", 2);
+
+		assertThat(pv, hasToString("{b=1}"));
+		assertThat(pv.getLabels(), contains("b"));
+	}
+
+	@Test
+	public void testTryRemoveTooFewEntries() {
+		ParikhVector pv = new ParikhVector("a", "b");
+		pv = pv.tryRemove("a", 2);
+
+		assertThat(pv, nullValue());
+	}
+
+	@Test
+	public void testTryRemoveMissingEntry() {
+		ParikhVector pv = new ParikhVector("b");
+		pv = pv.tryRemove("a", 2);
+
+		assertThat(pv, nullValue());
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
