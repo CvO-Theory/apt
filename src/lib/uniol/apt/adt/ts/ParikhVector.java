@@ -86,12 +86,12 @@ public class ParikhVector {
 	 * ParikhVector
 	 */
 	public ParikhVector tryRemove(String event, int n) {
-		ParikhVector result = new ParikhVector(this);
-		if (result.occurrenceBag.remove(event, n)) {
-			return result;
-		} else {
+		if (get(event) < n)
 			return null;
-		}
+
+		ParikhVector result = new ParikhVector(this);
+		result.occurrenceBag.remove(event, n);
+		return result;
 	}
 
 	/**
