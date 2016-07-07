@@ -17,16 +17,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.generator.bitnet;
+package uniol.apt.generator;
 
-import uniol.apt.generator.NetGenerator;
+import uniol.apt.adt.pn.PetriNet;
 
 /**
- * Interface for generators of bit nets
+ * Interface for generators of Petri nets of a given size.
  *
- * @author vsp
+ * @author vsp, Uli Schlachter
  */
-public interface BitNetGenerator extends NetGenerator {
+public interface NetGenerator {
+	/**
+	 * Method to generate a net of a given size.
+	 *
+	 * @param n Parameter for the size of the net.
+	 * @return The generated Petri net
+	 */
+	public PetriNet generateNet(int n);
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

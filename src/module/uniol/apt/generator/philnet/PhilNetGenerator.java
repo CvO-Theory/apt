@@ -19,21 +19,14 @@
 
 package uniol.apt.generator.philnet;
 
-import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.generator.NetGenerator;
 
 /**
  * Interface for generators of philosophers nets
  *
  * @author vsp
  */
-public interface PhilNetGenerator {
-	/**
-	 * Method to generate a philosophers net
-	 *
-	 * @param n number of philosophers
-	 * @return The generated Petri net
-	 */
-	public PetriNet generateNet(int n);
+public interface PhilNetGenerator extends NetGenerator {
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
