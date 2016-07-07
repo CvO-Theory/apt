@@ -19,24 +19,16 @@
 
 package uniol.apt.generator.module;
 
-import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.generator.philnet.TristatePhilNetGenerator;
-import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
-import uniol.apt.module.Category;
 import uniol.apt.module.Module;
-import uniol.apt.module.ModuleInput;
-import uniol.apt.module.ModuleInputSpec;
-import uniol.apt.module.ModuleOutput;
-import uniol.apt.module.ModuleOutputSpec;
-import uniol.apt.module.exception.ModuleException;
 
 /**
  * Module for generating tristate philosopher nets.
  * @author Uli Schlachter, vsp
  */
 @AptModule
-public class TristatePhilNetGeneratorModule extends AbstractModule implements Module {
+public class TristatePhilNetGeneratorModule extends AbstractGeneratorModule implements Module {
 
 	@Override
 	public String getShortDescription() {
@@ -49,26 +41,8 @@ public class TristatePhilNetGeneratorModule extends AbstractModule implements Mo
 	}
 
 	@Override
-	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addParameter("n", Integer.class, "The argument for the Petri net generator");
-	}
-
-	@Override
-	public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("pn", PetriNet.class,
-			ModuleOutputSpec.PROPERTY_FILE, ModuleOutputSpec.PROPERTY_RAW);
-	}
-
-	@Override
-	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
-		Integer n = input.getParameter("n", Integer.class);
-		PetriNet pn = new TristatePhilNetGenerator().generateNet(n);
-		output.setReturnValue("pn", PetriNet.class, pn);
-	}
-
-	@Override
-	public Category[] getCategories() {
-		return new Category[]{Category.GENERATOR};
+	protected TristatePhilNetGenerator createGenerator() {
+		return new TristatePhilNetGenerator();
 	}
 }
 
