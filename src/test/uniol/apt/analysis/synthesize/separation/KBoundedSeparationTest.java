@@ -98,16 +98,12 @@ public class KBoundedSeparationTest {
 					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(1, 0, 0, 0, 0, 1)),
 					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 0, 0, 0, 1, 0)),
 					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 1, 1, 1, 1, 0)),
-					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 2, 2, 2, 2, 0)),
-					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 1, 1, 1, 1, 1)),
 					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 0, 0, 0, 0, 1))));
 		assertThat(calculateRegions(ts, 2, true),
 				containsInAnyOrder(
 					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(1, 0, 0, 0, 0, 1)),
 					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 0, 0, 0, 1, 0)),
 					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 1, 0, 0, 1, 0)),
-					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 2, 0, 0, 2, 0)),
-					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 1, 0, 0, 0, 0)),
 					impureRegionWithWeights(Arrays.asList("a", "b", "c"), asBigIntegerList(0, 0, 0, 0, 0, 1))));
 	}
 

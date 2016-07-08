@@ -20,6 +20,7 @@
 package uniol.apt.analysis.synthesize.separation;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -115,6 +116,7 @@ class KBoundedSeparation implements Separation {
 
 		Set<Bag<State>> known = new HashSet<>();
 		Deque<Bag<State>> todo = new LinkedList<>();
+		Collection<Bag<State>> regionCandidates = new ArrayList<>();
 		addExcitationAndSwitchingRegions(known);
 		todo.addAll(known);
 
@@ -127,7 +129,7 @@ class KBoundedSeparation implements Separation {
 			Pair<Event, Integer> event = findEventWithNonConstantGradient(r);
 			if (event == null) {
 				debug("It is a region!");
-				regions.add(convertToRegion(r));
+				regionCandidates.add(r);
 				continue;
 			}
 
@@ -150,9 +152,22 @@ class KBoundedSeparation implements Separation {
 				debug("...which should not be explored");
 		}
 
-		// TODO: The paper adds a minimisation step to only consider minimal regions, should we do the same?
-
 		debugFormat("Known multisets: %s", known);
+
+		// Extract minimal regions
+		candidateLoop:
+		for (Bag<State> candidate : regionCandidates) {
+			for (Bag<State> other : regionCandidates) {
+				if (candidate == other)
+					continue;
+				if (!candidate.containsAll(other))
+					continue;
+				// Skip 'candidate', 'other' is smaller
+				continue candidateLoop;
+			}
+			regions.add(convertToRegion(candidate));
+		}
+
 		debugFormat("Found the following regions: %s", regions);
 	}
 
