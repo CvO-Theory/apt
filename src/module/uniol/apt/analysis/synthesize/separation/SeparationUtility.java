@@ -164,6 +164,12 @@ public final class SeparationUtility {
 
 		try {
 			if (result == null)
+				result = new KBoundedSeparation(utility, properties, locationMap);
+		} catch (UnsupportedPNPropertiesException e) {
+			// Ignore, try the other implementations
+		}
+		try {
+			if (result == null)
 				result = new MarkedGraphSeparation(utility, properties, locationMap);
 		} catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
