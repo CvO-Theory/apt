@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.collections4.SortedBag;
 import org.apache.commons.collections4.bag.TreeBag;
@@ -57,7 +58,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	private int nextStateId = 0;
 	private final SortedMap<String, State> states = new TreeMap<>();
 	private final Map<String, InternalEvent> alphabet = new HashMap<>();
-	private final Set<Event> alphabetSet = new HashSet<>();
+	private final Set<Event> alphabetSet = new TreeSet<>();
 	private final Map<String, Set<State>> presetNodes = new SoftMap<>();
 	private final Map<String, Set<State>> postsetNodes = new SoftMap<>();
 	private final Map<String, Map<ArcKey, Arc>> presetEdges = new HashMap<>();
