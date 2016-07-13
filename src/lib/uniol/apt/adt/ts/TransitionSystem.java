@@ -56,7 +56,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	private String name;
 	private int nextStateId = 0;
 	private final SortedMap<String, State> states = new TreeMap<>();
-	private final SortedBag<Event> alphabet = new TreeBag<>();
+	private final Map<String, InternalEvent> alphabet = new HashMap<>();
+	private final Set<Event> alphabetSet = new HashSet<>();
 	private final Map<String, Set<State>> presetNodes = new SoftMap<>();
 	private final Map<String, Set<State>> postsetNodes = new SoftMap<>();
 	private final Map<String, Map<ArcKey, Arc>> presetEdges = new HashMap<>();
@@ -102,6 +103,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		// Iterate over all ArcKey instances
 		for (Map<ArcKey, Arc> postsets : ts.postsetEdges.values()) {
 			for (Map.Entry<ArcKey, Arc> entry : postsets.entrySet()) {
+				addEvent(entry.getValue().getEvent().getLabel());
 				addArc(entry.getKey(), new Arc(this, entry.getValue()));
 			}
 		}
@@ -163,7 +165,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		this.presetEdges.get(targetId).put(key, arc);
 		this.postsetEdges.get(sourceId).put(key, arc);
 		this.numArcs++;
-		this.addEvent(arc.getEvent());
 		//update pre- and postsets
 		Set<State> preNodes = presetNodes.get(targetId);
 		if (preNodes != null) {
@@ -189,26 +190,10 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	public Event getEvent(String label) throws NoSuchEventException {
 		if (label == null)
 			throw new NullPointerException();
-		Event result = getEventInternal(label, null);
+		InternalEvent result = alphabet.get(label);
 		if (result == null)
 			throw new NoSuchEventException(label);
-		return result;
-	}
-
-	/**
-	 * Get the {@link Event} instance that corresponds to the given label.
-	 * @param label The label whose event should be looked up
-	 * @param def The default value if nothing is found
-	 * @return The event instance or the default value
-	 */
-	private Event getEventInternal(String label, Event def) {
-		// TODO: Remove this method, require events to be added before they can be used.
-		// TODO: Make this more efficient (if needed). For now, we will assume that there are only few events
-		// and thus a linear search is fast enough.
-		for (Event e : alphabet)
-			if (e.getLabel().equals(label))
-				return e;
-		return def;
+		return result.getEvent();
 	}
 
 	/**
@@ -232,7 +217,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (label == null) {
 			throw new IllegalArgumentException("label == null");
 		}
-		Arc a = new Arc(this, sourceId, targetId, getEventInternal(label, new Event(label)));
+		Arc a = new Arc(this, sourceId, targetId, addEvent(label));
 		ArcKey key = createArcKey(sourceId, targetId, label);
 		if (postsetEdges.get(sourceId).containsKey(key)) {
 			throw new ArcExistsException(this, key);
@@ -443,7 +428,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		old = postsetEdges.get(sourceId).remove(key);
 		assert old == a;
 		this.numArcs--;
-		removeLabel(a.getEvent());
+		removeEvent(a.getEvent());
 		invokeListeners();
 	}
 
@@ -595,7 +580,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 * @return the alphabet of this TransitionSystem.
 	 */
 	public Set<Event> getAlphabetEvents() {
-		return Collections.unmodifiableSet(this.alphabet.uniqueSet());
+		return Collections.unmodifiableSet(this.alphabetSet);
 	}
 
 	/**
@@ -603,7 +588,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 * @return the alphabet of this TransitionSystem.
 	 */
 	public Set<String> getAlphabet() {
-		final Set<Event> events = this.alphabet.uniqueSet();
+		final Set<Event> events = this.alphabetSet;
 		return new AbstractSet<String>() {
 			@Override
 			public int size() {
@@ -674,7 +659,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (newLabel == null) {
 			throw new IllegalArgumentException("label == null");
 		}
-		Event newEvent = getEventInternal(newLabel, new Event(newLabel));
+		Event newEvent = addEvent(newLabel);
 		if (!oldEvent.equals(newEvent)) {
 			// createArcKey() makes sure the node exists
 			ArcKey oldKey = createArcKey(sourceId, targetId, oldEvent.getLabel());
@@ -689,30 +674,32 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 			assert a == a2;
 			onArcRemovedUpdateByLabelCache(a);
 			a.label = newEvent;
-			removeLabel(oldEvent);
-			addEvent(newEvent);
+			removeEvent(oldEvent);
 			onArcAddedUpdateByLabelCache(a);
 			preEdges.put(newKey, a);
 			postEdges.put(newKey, a);
 			invokeListeners();
+		} else
+			removeEvent(newEvent);
+	}
+
+	private Event addEvent(String label) {
+		InternalEvent event = alphabet.get(label);
+		if (event == null) {
+			event = new InternalEvent(label);
+			alphabet.put(label, event);
+			alphabetSet.add(event.getEvent());
 		}
+		event.increaseReferences();
+		return event.getEvent();
 	}
 
-	/**
-	 * Updates the alphabet by incrementing the occurrences of this event or if it's new adding it to the alphabet.
-	 * @param event the event to add.
-	 */
-	private void addEvent(Event event) {
-		alphabet.add(event);
-	}
-
-	/**
-	 * Removes an event from the alphabet. That mean decrementing the occurrences of this label or if it's the last
-	 * occurrences deleting it from the alphabet.
-	 * @param event the event to remove.
-	 */
-	private void removeLabel(Event event) {
-		alphabet.remove(event, 1);
+	private void removeEvent(Event event) {
+		InternalEvent intEvent = alphabet.get(event.getLabel());
+		if (intEvent.decreaseReferences()) {
+			alphabet.remove(intEvent.getEvent().getLabel());
+			alphabetSet.remove(intEvent.getEvent());
+		}
 	}
 
 	public void setName(String name) {
@@ -1148,6 +1135,28 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 */
 	public boolean containsState(String sourceId) {
 		return states.containsKey(sourceId);
+	}
+
+	static private class InternalEvent {
+		private int references = 0;
+		private final Event event;
+
+		public InternalEvent(String label) {
+			event = new Event(label);
+		}
+
+		public void increaseReferences() {
+			references++;
+		}
+
+		public boolean decreaseReferences() {
+			references--;
+			return references == 0;
+		}
+
+		public Event getEvent() {
+			return event;
+		}
 	}
 
 }
