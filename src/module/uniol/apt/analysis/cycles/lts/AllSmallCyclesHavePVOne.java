@@ -107,7 +107,7 @@ public class AllSmallCyclesHavePVOne {
 			// Phase one succeeded. In Phase two we check if there are any small cycles with Parikh vectors
 			// incomparable to the all-ones PV. An example for such a cycle would be a TS with a cycle (1,1)
 			// and another cycle (0,2).
-			this.counterExample = checkPhase2(ts, ts.getInitialState(), new HashBag<String>(),
+			this.counterExample = checkPhase2(ts, ts.getInitialState(), new HashSet<String>(ts.getAlphabet()),
 					new LinkedList<Arc>(), new HashSet<State>());
 		}
 	}
@@ -163,21 +163,21 @@ public class AllSmallCyclesHavePVOne {
 	 * (1, ..., 1).
 	 * @param ts The transition system to examine
 	 * @param state The next state that should be followed.
-	 * @param firedEvents Bag of events which were already fired on the path from the initial state.
+	 * @param unfiredEvents Set of events which were not yet fired on the path from the initial state.
 	 * @param arcsFollowed List of arcs that were followed from the initial state to this state.
 	 * @param statesVisited Set of states already visited on the current path.
 	 * @return Null if no incomparable cycle was found, else such a cycle.
 	 */
-	static private List<Arc> checkPhase2(TransitionSystem ts, State state, Bag<String> firedEvents,
+	static private List<Arc> checkPhase2(TransitionSystem ts, State state, Set<String> unfiredEvents,
 			LinkedList<Arc> arcsFollowed, Set<State> statesVisited) {
 		boolean newEntry = statesVisited.add(state);
 		assert newEntry == true : "State " + state + " was not yet visited";
 
 		for (Arc arc : state.getPostsetEdges()) {
-			firedEvents.add(arc.getLabel());
-			if (firedEvents.containsAll(ts.getAlphabet())) {
+			boolean notYetFired = unfiredEvents.remove(arc.getLabel());
+			if (unfiredEvents.isEmpty()) {
 				// We fired each event at least once and so the PV would be larger than (1, ..., 1).
-				firedEvents.remove(arc.getLabel(), 1);
+				unfiredEvents.add(arc.getLabel());
 				continue;
 			}
 			arcsFollowed.addLast(arc);
@@ -188,15 +188,17 @@ public class AllSmallCyclesHavePVOne {
 				return arcsFollowed;
 			} else {
 				// Recurse to this new state
-				List<Arc> result = checkPhase2(ts, target, firedEvents,
+				List<Arc> result = checkPhase2(ts, target, unfiredEvents,
 						arcsFollowed, statesVisited);
 				if (result != null)
 					return result;
 			}
 
 			// Undo the modifications done above
-			boolean r = firedEvents.remove(arc.getLabel(), 1);
-			assert r == true;
+			if (notYetFired) {
+				boolean r = unfiredEvents.add(arc.getLabel());
+				assert r == true;
+			}
 			Arc last = arcsFollowed.removeLast();
 			assert last == arc;
 		}
