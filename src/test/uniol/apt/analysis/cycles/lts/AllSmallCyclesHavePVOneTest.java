@@ -40,6 +40,7 @@ public class AllSmallCyclesHavePVOneTest {
 		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
 		assertThat(check.smallCyclesHavePVOne(), is(true));
 		assertThat(check.noPV1CycleFound(), is(false));
+		assertThat(check.incomparableCycleFound(), is(false));
 		assertThat(check.getCounterExample(), empty());
 	}
 
@@ -47,6 +48,7 @@ public class AllSmallCyclesHavePVOneTest {
 		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
 		assertThat(check.smallCyclesHavePVOne(), is(false));
 		assertThat(check.noPV1CycleFound(), is(true));
+		assertThat(check.incomparableCycleFound(), is(false));
 		assertThat(check.getCounterExample(), empty());
 	}
 
@@ -54,6 +56,7 @@ public class AllSmallCyclesHavePVOneTest {
 		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
 		assertThat(check.smallCyclesHavePVOne(), is(false));
 		assertThat(check.noPV1CycleFound(), is(true));
+		assertThat(check.incomparableCycleFound(), is(false));
 		return check.getCounterExample();
 	}
 
@@ -144,9 +147,7 @@ public class AllSmallCyclesHavePVOneTest {
 		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
 		assertThat(check.smallCyclesHavePVOne(), is(false));
 		assertThat(check.noPV1CycleFound(), is(false));
-		assertThat(check.getCounterExample(), anyOf(
-					contains(arcThatConnectsVia("s0", "s1", "a"), arcThatConnectsVia("s1", "s0", "a")),
-					contains(arcThatConnectsVia("s0", "s1", "b"), arcThatConnectsVia("s1", "s0", "b"))));
+		assertThat(check.incomparableCycleFound(), is(true));
 	}
 
 	@Test

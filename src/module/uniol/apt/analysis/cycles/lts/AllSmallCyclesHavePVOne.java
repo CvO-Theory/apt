@@ -31,6 +31,7 @@ import org.apache.commons.collections4.Bag;
 import org.apache.commons.collections4.bag.HashBag;
 
 import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.deterministic.Deterministic;
@@ -39,6 +40,9 @@ import uniol.apt.analysis.persistent.PersistentTS;
 import uniol.apt.analysis.reversible.ReversibleTS;
 import uniol.apt.analysis.totallyreachable.TotallyReachable;
 import uniol.apt.util.Pair;
+import uniol.apt.util.SpanningTree;
+
+import static uniol.apt.util.DebugUtil.debugFormat;
 
 /**
  * A special-case implementation for checking if all small cycles of a transition system have Parikh vector all one.
@@ -49,6 +53,7 @@ import uniol.apt.util.Pair;
 public class AllSmallCyclesHavePVOne {
 	private final List<Arc> counterExample;
 	private final boolean cycleWithPV1Found;
+	private final boolean foundIncomparableCycle;
 
 	/**
 	 * Check if each event occurs exactly once in each small cycle.
@@ -71,6 +76,7 @@ public class AllSmallCyclesHavePVOne {
 			// this correctly (it expects to follow at least one edge), so this is needed.
 			this.cycleWithPV1Found = true;
 			this.counterExample = null;
+			this.foundIncomparableCycle = false;
 			return;
 		}
 
@@ -97,18 +103,15 @@ public class AllSmallCyclesHavePVOne {
 		// exactly once, and (b) no smaller cycle exists around the initial state.
 		Pair<Boolean, List<Arc>> result = checkPhase1(ts, ts.getInitialState(), new HashSet<String>(),
 				new LinkedList<Arc>());
-		if (result.getFirst() == false || result.getSecond() != null) {
-			// Phase 1 failed
-			this.cycleWithPV1Found = result.getFirst();
-			this.counterExample = result.getSecond();
-		} else {
-			this.cycleWithPV1Found = result.getFirst();
-
+		this.cycleWithPV1Found = result.getFirst();
+		this.counterExample = result.getSecond();
+		if (cycleWithPV1Found && counterExample == null) {
 			// Phase one succeeded. In Phase two we check if there are any small cycles with Parikh vectors
 			// incomparable to the all-ones PV. An example for such a cycle would be a TS with a cycle (1,1)
 			// and another cycle (0,2).
-			this.counterExample = checkPhase2(ts, ts.getInitialState(), new HashSet<String>(ts.getAlphabet()),
-					new LinkedList<Arc>(), new HashSet<State>());
+			this.foundIncomparableCycle = checkPhase2(ts);
+		} else {
+			this.foundIncomparableCycle = false;
 		}
 	}
 
@@ -159,53 +162,136 @@ public class AllSmallCyclesHavePVOne {
 	}
 
 	/**
-	 * Recursive implementation of the depth-first search that looks for cycles with a Parikh vector incomparable to
-	 * (1, ..., 1).
+	 * Check if a cycle exists whose Parikh vector is incomparable to (1, ..., 1).
 	 * @param ts The transition system to examine
-	 * @param state The next state that should be followed.
-	 * @param unfiredEvents Set of events which were not yet fired on the path from the initial state.
-	 * @param arcsFollowed List of arcs that were followed from the initial state to this state.
-	 * @param statesVisited Set of states already visited on the current path.
-	 * @return Null if no incomparable cycle was found, else such a cycle.
+	 * @return true if an incomparable cycle was found, else false.
 	 */
-	static private List<Arc> checkPhase2(TransitionSystem ts, State state, Set<String> unfiredEvents,
-			LinkedList<Arc> arcsFollowed, Set<State> statesVisited) {
-		boolean newEntry = statesVisited.add(state);
-		assert newEntry == true : "State " + state + " was not yet visited";
+	static private boolean checkPhase2(TransitionSystem ts) {
+		/*
+		 * Proof that the Parikh vector of generalised cycles is a linear combination of the Parikh vectors of
+		 * chords:
+		 * (Preconditions: total reachability, but nothing else)
+		 *
+		 * Assume a fixed spanning tree that assigns to each state s a (directed) path from the initial state to
+		 * s and also the Parikh vector P(s) of this path. Define the Parikh vector of a chord to be
+		 * P(s[t>s')=P(s)+1_t-P_{s'}.
+		 *
+		 * We will proof that the Parikh vector of a directed cycles is a linear combination of the Parikh
+		 * vectors of the chords. This is shown by proving the more general claim that this also holds for
+		 * generalised (undirected; allowing arcs to be followed backwards) cycles. Since every directed cycle
+		 * is also a generalised cycle, the claim follows.
+		 *
+		 * We proof this by induction on the number of chords contained in a cycle.
+		 *
+		 * If a cycle contains no chords, it can only follow arcs inside the spanning tree and so its Parikh
+		 * vector must be zero.
+		 *
+		 * Assume a cycle pi containing a chord so that we can write pi as pi = s [t> s' [sigma> s where sigma
+		 * is the remaining cycle. By total reachability, we can use the paths from the initial state to s and
+		 * s' to construct a new cycle that does not use this chord, but instead goes from s' backwards to the
+		 * initial state and from there goes forwards to s, both by following the arcs of the spanning tree.
+		 * This cycle is pi' = s' [sigma> s [-P_s> i [P_{s'}> s'. Note that this is a generalised cycle,
+		 * because the path leading to state s is followed backwards. Since this cycle contains one chord less,
+		 * by the induction hypothesis it can be written as a linear combination of chords.
+		 *
+		 * The Parikh vector of pi' satisfies: P(pi')=P(sigma)-P(s)+P(s'). By using P(s[t>s')=P(s)+1_t-P_{s'},
+		 * this can be rewritten to P(pi')=P(sigma)-P(s[t>s')+1_t.
+		 *
+		 * We can now write the Parikh vector of pi as P(pi)=1_t+P(sigma)=P(pi')+P(s[t>s') which shows that
+		 * P(pi) is also a linear combination of the Parikh vectors of chords.
+		 */
 
-		for (Arc arc : state.getPostsetEdges()) {
-			boolean notYetFired = unfiredEvents.remove(arc.getLabel());
-			if (unfiredEvents.isEmpty()) {
-				// We fired each event at least once and so the PV would be larger than (1, ..., 1).
-				unfiredEvents.add(arc.getLabel());
-				continue;
-			}
-			arcsFollowed.addLast(arc);
+		/*
+		 * Proof that for any chord s[t>s' we have P(s)+1_t >= P(s'):
+		 * (Preconditions: determinism, persistence, reversibility, total reachability)
+		 *
+		 * Assume P1 holds.
+		 *
+		 * In the paper "Characterisation of the State Spaces of Marked Graph Petri Nets" (which was already
+		 * mentioned above), short paths are defined. Because it does a breath-first-search, our spanning tree
+		 * computes short paths from the initial state to all other states. Thus, the path sigma(s') to s' with
+		 * Parikh vector P(s') is a short path. The path sigma(st) that first goes to s via P(s) and then to s'
+		 * via our chord is either also a short path, or is longer than the length of a short path.
+		 *
+		 * Lemma 25 in this paper says that a path is short iff there is some event x which does not appear in
+		 * it.
+		 *
+		 * Lemma 27 in this paper says that for any path from s to s', its Parikh vector is the Parikh vector of
+		 * a short path from s to s' plus a number m added to each component of the Parikh vector uniformly.
+		 *
+		 * Thus, since sigma(s) is a short path, sigma(st) can either be a short path (if one of its entries is
+		 * null) or contains a cycle (if none of its entries is null). In the first case we have P(s)+1_t=P(s')
+		 * and in the second case we have P(s)+1_t >= P(s').
+		 *
+		 * Thus, if we find a chord for which P(s)+1_t >= P(s') does not hold, then the transition system does
+		 * not satisfy P1, because we already checked for determinism and persistence.
+		 */
 
-			State target = arc.getTarget();
-			if (target.equals(ts.getInitialState())) {
-				// Found a counter-example
-				return arcsFollowed;
-			} else {
-				// Recurse to this new state
-				List<Arc> result = checkPhase2(ts, target, unfiredEvents,
-						arcsFollowed, statesVisited);
-				if (result != null)
-					return result;
-			}
+		/*
+		 * Proof that for any chord, all entries must be the same:
+		 * (Preconditions: determinism, persistence, reversibility, total reachability)
+		 *
+		 * Assume P1 holds.
+		 *
+		 * Lemma 27 in the paper says that for any path from s to s', its Parikh vector is the Parikh vector of
+		 * a short path from s to s' plus a number m added to each component of the Parikh vector uniformly.
+		 *
+		 * We already know that the path to s' via the spanning tree is a short path. Lemma 27 says that the
+		 * path going to s and then following s[t>s' must have this Parikh vector plus a constant number.
+		 * Thus, their difference must be the same number in each component.
+		 *
+		 * Again, because determinism and persistence were already checked, if this does not hold, then P1 must
+		 * be violated.
+		 */
 
-			// Undo the modifications done above
-			if (notYetFired) {
-				boolean r = unfiredEvents.add(arc.getLabel());
-				assert r == true;
+		SpanningTree<TransitionSystem, Arc, State> tree = SpanningTree.get(ts, ts.getInitialState());
+		for (Arc chord : tree.getChords()) {
+			State source = chord.getSource();
+			State target = chord.getTarget();
+			Bag<String> pSource = getParikhVectorReaching(tree, source);
+			Bag<String> pTarget = getParikhVectorReaching(tree, target);
+			pSource.add(chord.getLabel());
+
+			int expected = -1;
+			for (String event : ts.getAlphabet()) {
+				int val = pSource.getCount(event) - pTarget.getCount(event);
+
+				if (expected == -1)
+					// First arc: We will expect this value for other arcs
+					expected = val;
+
+				if (val < 0 || val != expected) {
+					debugFormat("Chord %s shows that P1 is not satisfied, because %s+%s-%s has "
+							+ "either a negative entry or not all entries have the same "
+							+ " number of occurrences",
+							chord, tree.getEdgePathFromStart(source),
+							chord.getLabel(), tree.getEdgePathFromStart(target));
+					return true;
+				}
 			}
-			Arc last = arcsFollowed.removeLast();
-			assert last == arc;
 		}
 
-		boolean r = statesVisited.remove(state);
-		assert r == true;
-		return null;
+		/*
+		 * If we get here, then we know:
+		 *
+		 * - The Parikh vector of any cycle is a linear combination of the Parikh vectors of chords
+		 * - All chords have constant (all entries the same) Parikh vectors
+		 * - All chords have Parikh vectors >= 0
+		 * => All cycles must have Parikh vectors of the form (m, ..., m)
+		 * => There can be no cycle with a Parikh vector incomparable to (1, ..., 1)
+		 */
+
+		return false;
+	}
+
+	static private Bag<String> getParikhVectorReaching(SpanningTree<TransitionSystem, Arc, State> tree, State state) {
+		Bag<String> result = new HashBag<>();
+		while (!state.equals(tree.getStartNode())) {
+			Arc arc = tree.getPredecessorEdge(state);
+			result.add(arc.getLabel());
+			state = arc.getSource();
+		}
+		return result;
 	}
 
 	/**
@@ -227,12 +313,20 @@ public class AllSmallCyclesHavePVOne {
 	}
 
 	/**
+	 * Check if a cycle was found whose Parikh vector is incomparable to the all-ones-vector.
+	 * @return true if such a cycle was found.
+	 */
+	public boolean incomparableCycleFound() {
+		return foundIncomparableCycle;
+	}
+
+	/**
 	 * Check if all small cycles have Parikh vector 1. This is equivalent to !noPV1CycleFound() &amp;&amp;
 	 * getCounterExample().isEmpty().
 	 * @return True if all small cycles have Parikh vector 1.
 	 */
 	public boolean smallCyclesHavePVOne() {
-		return cycleWithPV1Found && counterExample == null;
+		return cycleWithPV1Found && counterExample == null && !foundIncomparableCycle;
 	}
 }
 
