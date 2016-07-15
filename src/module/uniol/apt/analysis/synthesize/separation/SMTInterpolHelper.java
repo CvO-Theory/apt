@@ -159,6 +159,9 @@ public class SMTInterpolHelper {
 		if (properties.isKMarking())
 			isRegion.addAll(requireKMarking(initialMarking, properties.getKForKMarking()));
 
+		if (properties.isBehaviourallyConflictFree())
+			isRegion.addAll(requireBehaviourallyConflictFree(backwardWeight));
+
 		// Now we can define the "isRegion" function
 		Term isRegionTerm = collectTerms("and", isRegion.toArray(new Term[isRegion.size()]),
 				script.term("true"));
@@ -413,6 +416,48 @@ public class SMTInterpolHelper {
 		return Collections.singletonList(script.term("divisible",
 					new BigInteger[] { BigInteger.valueOf(k) },
 					null, initialMarking));
+	}
+
+	/**
+	 * Add the necessary constraints to produce a behaviourally conflict free (BCF) Petri net. A Petri net is BCF if
+	 * for every place and every reachable marking, there is at most one activated transition consuming tokens from
+	 * p.
+	 * @param backwardWeight Terms representing the backwards weights of transitions.
+	 * @return The needed terms.
+	 */
+	private List<Term> requireBehaviourallyConflictFree(Term[] backwardWeight) {
+		// Calculate simultaneously activated transitions
+		Set<Set<Integer>> simultaneouslyActivated = new HashSet<>();
+		for (State state : utility.getTransitionSystem().getNodes()) {
+			Set<Integer> activated = new HashSet<>();
+			for (Arc arc : state.getPostsetEdges())
+				activated.add(utility.getEventIndex(arc.getLabel()));
+			if (!activated.isEmpty())
+				simultaneouslyActivated.add(activated);
+		}
+
+		List<Term> result = new ArrayList<>();
+		Term zeroTerm = script.numeral(BigInteger.ZERO);
+		// For each set of simultaneously activated transitions...
+		for (Set<Integer> activated : simultaneouslyActivated) {
+			// ...at most one of them may consume tokens from our region. Which means that all but one do
+			// not consume tokens, so the sum of their backwards weights must be zero.
+			Term[] terms = new Term[activated.size()];
+			int nextTermsIndex = 0;
+			for (int allowed : activated) {
+				Term[] summands = new Term[activated.size() - 1];
+				int nextSummandsIndex = 0;
+				for (int notAllowed : activated) {
+					if (allowed != notAllowed)
+						summands[nextSummandsIndex++] = backwardWeight[notAllowed];
+				}
+				terms[nextTermsIndex++] = script.term("=", zeroTerm,
+						collectTerms("+", summands, zeroTerm));
+			}
+			result.add(collectTerms("or", terms, script.term("true")));
+		}
+
+		return result;
 	}
 
 	private Term collectTerms(String operation, Term[] terms, Term def) {

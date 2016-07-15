@@ -58,6 +58,7 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 		return "Supported options are: none, [k]-bounded, safe, [k]-marking, pure, plain, tnet,"
 			+ " generalized-marked-graph (gmg), marked-graph (mg), generalized-output-nonbranching (gon)"
 			+ " output-nonbranching (on), conflict-free (cf), homogeneous,"
+			+ " behaviourally-conflict-free (bcf),"
 			+ " upto-language-equivalence (language, le), " + extraOptions + "minimize (minimal), verbose "
 			+ "and quick-fail.\n\nThe meaning of these options is as follows:\n"
 			+ " - none: No further requirements are made.\n"
@@ -75,6 +76,8 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 			+ " - conflict-free: The Petri net is plain and every place either has at most one entry in"
 			+ " its postset or its preset is contained in its postset.\n"
 			+ " - homogeneous: All outgoing flows from a place have the same weight.\n"
+			+ " - behaviourally-conflict-free: In every reachable marking, the preset of activated"
+			+ " transitions is disjoint.\n"
 			+ " - minimize: The Petri net has as few places as possible.\n"
 			+ extraOptionsDescriptions
 			+ "The following options only affect the output, but not the produced Petri net:\n"
@@ -304,6 +307,10 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 						break;
 					case "homogeneous":
 						result = result.setHomogeneous(true);
+						break;
+					case "behaviourally-conflict-free":
+					case "bcf":
+						result = result.setBehaviourallyConflictFree(true);
 						break;
 					default:
 						if (prop.endsWith("-bounded")) {

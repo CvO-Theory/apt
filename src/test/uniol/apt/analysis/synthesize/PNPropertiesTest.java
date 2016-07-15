@@ -97,6 +97,12 @@ public class PNPropertiesTest {
 
 		properties = properties.setHomogeneous(true);
 		assertThat(properties, containsAll(properties2));
+
+		properties2 = properties2.setBehaviourallyConflictFree(true);
+		assertThat(properties, not(containsAll(properties2)));
+
+		properties = properties.setBehaviourallyConflictFree(true);
+		assertThat(properties, containsAll(properties2));
 	}
 
 	@Test
@@ -192,6 +198,9 @@ public class PNPropertiesTest {
 
 		properties = properties.requireKMarking(7);
 		assertThat(properties, hasToString("[safe, 35-marking, marked-graph, output-nonbranching, homogeneous]"));
+
+		properties = properties.setBehaviourallyConflictFree(true);
+		assertThat(properties, hasToString("[safe, 35-marking, marked-graph, output-nonbranching, homogeneous, behaviourally-conflict-free]"));
 	}
 }
 

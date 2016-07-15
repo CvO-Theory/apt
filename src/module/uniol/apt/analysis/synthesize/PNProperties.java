@@ -41,6 +41,7 @@ public class PNProperties {
 	private boolean outputNonbranching = false;
 	private boolean conflictFree = false;
 	private boolean homogeneous = false;
+	private boolean behaviourallyConflictFree = false;
 
 	/**
 	 * Create a new, empty Petri net properties instance.
@@ -63,6 +64,7 @@ public class PNProperties {
 		outputNonbranching = other.outputNonbranching;
 		conflictFree = other.conflictFree;
 		homogeneous = other.homogeneous;
+		behaviourallyConflictFree = other.behaviourallyConflictFree;
 	}
 
 	/**
@@ -286,6 +288,26 @@ public class PNProperties {
 	}
 
 	/**
+	 * Return true if this property description requires a behaviourally conflict-free PN.
+	 * @return true if BCF.
+	 */
+	public boolean isBehaviourallyConflictFree() {
+		return behaviourallyConflictFree;
+	}
+
+	/**
+	 * Create a new instance which differs from this one in the specified behaviourally conflict-freeness
+	 * requirement.
+	 * @param value whether BCF should be required.
+	 * @return A new PNProperties which expresses the same properties as this instance, plus BCF.
+	 */
+	public PNProperties setBehaviourallyConflictFree(boolean value) {
+		PNProperties result = new PNProperties(this);
+		result.behaviourallyConflictFree = value;
+		return result;
+	}
+
+	/**
 	 * Test if this properties instance a superset of another instance.
 	 * @param other The PNProperties instance to compare with.
 	 * @return True if all requirements done by the other instance are also enforced by this.
@@ -313,6 +335,8 @@ public class PNProperties {
 			return false;
 		if (other.isHomogeneous() && !isHomogeneous())
 			return false;
+		if (other.isBehaviourallyConflictFree() && !isBehaviourallyConflictFree())
+			return false;
 		return true;
 	}
 
@@ -333,10 +357,12 @@ public class PNProperties {
 			hashCode |= 1 << 5;
 		if (homogeneous)
 			hashCode |= 1 << 6;
+		if (behaviourallyConflictFree)
+			hashCode |= 1 << 7;
 		if (isKBounded())
-			hashCode |= getKForKBounded() << 7;
+			hashCode |= getKForKBounded() << 8;
 		if (isKMarking())
-			hashCode ^= getKForKMarking() << 7;
+			hashCode ^= getKForKMarking() << 9;
 		return hashCode;
 	}
 
@@ -362,6 +388,8 @@ public class PNProperties {
 		if (conflictFree != other.conflictFree)
 			return false;
 		if (homogeneous != other.homogeneous)
+			return false;
+		if (behaviourallyConflictFree != other.behaviourallyConflictFree)
 			return false;
 		return true;
 	}
@@ -390,6 +418,8 @@ public class PNProperties {
 			tmpList.add("conflict-free");
 		if (isHomogeneous())
 			tmpList.add("homogeneous");
+		if (isBehaviourallyConflictFree())
+			tmpList.add("behaviourally-conflict-free");
 
 		if (tmpList.isEmpty())
 			return "[]";

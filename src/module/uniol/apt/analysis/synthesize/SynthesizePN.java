@@ -41,6 +41,7 @@ import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.bcf.BCF;
 import uniol.apt.analysis.bounded.Bounded;
 import uniol.apt.analysis.cf.ConflictFree;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
@@ -695,6 +696,8 @@ public class SynthesizePN {
 		assert !properties.isHomogeneous() || new Homogeneous().check(pn) == null : regions;
 
 		try {
+			assert !properties.isBehaviourallyConflictFree() || new BCF().check(pn) == null : regions;
+
 			if (!onlyEventSeparation)
 				// The resulting PN should always have a reachability graph isomorphic to the ts
 				assert new IsomorphismLogic(CoverabilityGraph.get(pn).toReachabilityLTS(), ts, true)
