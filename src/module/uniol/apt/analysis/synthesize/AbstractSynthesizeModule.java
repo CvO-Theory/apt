@@ -58,7 +58,7 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 		return "Supported options are: none, [k]-bounded, safe, [k]-marking, pure, plain, tnet,"
 			+ " generalized-marked-graph (gmg), marked-graph (mg), generalized-output-nonbranching (gon)"
 			+ " output-nonbranching (on), conflict-free (cf), homogeneous,"
-			+ " behaviourally-conflict-free (bcf),"
+			+ " behaviourally-conflict-free (bcf), binary-conflict-free (bicf),"
 			+ " upto-language-equivalence (language, le), " + extraOptions + "minimize (minimal), verbose "
 			+ "and quick-fail.\n\nThe meaning of these options is as follows:\n"
 			+ " - none: No further requirements are made.\n"
@@ -78,6 +78,8 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 			+ " - homogeneous: All outgoing flows from a place have the same weight.\n"
 			+ " - behaviourally-conflict-free: In every reachable marking, the preset of activated"
 			+ " transitions is disjoint.\n"
+			+ " - binary-conflict-free: For every reachable marking and pair of activated transitions,"
+			+ " enough tokens for both transitions are present.\n"
 			+ " - minimize: The Petri net has as few places as possible.\n"
 			+ extraOptionsDescriptions
 			+ "The following options only affect the output, but not the produced Petri net:\n"
@@ -311,6 +313,10 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 					case "behaviourally-conflict-free":
 					case "bcf":
 						result = result.setBehaviourallyConflictFree(true);
+						break;
+					case "binary-conflict-free":
+					case "bicf":
+						result = result.setBinaryConflictFree(true);
 						break;
 					default:
 						if (prop.endsWith("-bounded")) {

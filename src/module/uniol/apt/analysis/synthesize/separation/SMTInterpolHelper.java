@@ -161,6 +161,8 @@ public class SMTInterpolHelper {
 
 		if (properties.isBehaviourallyConflictFree())
 			isRegion.addAll(requireBehaviourallyConflictFree(backwardWeight));
+		if (properties.isBinaryConflictFree())
+			isRegion.addAll(requireBinaryConflictFree(initialMarking, weight, backwardWeight));
 
 		// Now we can define the "isRegion" function
 		Term isRegionTerm = collectTerms("and", isRegion.toArray(new Term[isRegion.size()]),
@@ -457,6 +459,41 @@ public class SMTInterpolHelper {
 			result.add(collectTerms("or", terms, script.term("true")));
 		}
 
+		return result;
+	}
+
+	/**
+	 * Add the necessary constraints to produce a binary conflict free (BiCF) Petri net. A Petri net is BiCF if
+	 * for every place, every reachable marking and every pair of activated transitions, there are at least as many
+	 * tokens on the place as both the transitions consume.
+	 * @param initialMarking A term representing the initial marking of the region.
+	 * @param weight Terms representing the effective weights of transitions.
+	 * @param backwardWeight Terms representing the backwards weights of transitions.
+	 * @return The needed terms.
+	 */
+	private List<Term> requireBinaryConflictFree(Term initialMarking, Term[] weight, Term[] backwardWeight) {
+		List<Term> result = new ArrayList<>();
+		// For each state...
+		for (State state : utility.getTransitionSystem().getNodes()) {
+			Term stateMarking;
+			try {
+				stateMarking = evaluateReachingParikhVector(initialMarking, weight, state);
+			} catch (UnreachableException e) {
+				continue;
+			}
+
+			// ..calculate its simultaneously activated transitions.
+			Set<Integer> activated = new HashSet<>();
+			for (Arc arc : state.getPostsetEdges())
+				activated.add(utility.getEventIndex(arc.getLabel()));
+
+			// For any pair of activated events, make sure enough tokens exist for both of them.
+			for (Pair<Integer, Integer> pair : new DifferentPairsIterable<>(activated)) {
+				result.add(script.term(">=", stateMarking,
+							script.term("+", backwardWeight[pair.getFirst()],
+								backwardWeight[pair.getSecond()])));
+			}
+		}
 		return result;
 	}
 
