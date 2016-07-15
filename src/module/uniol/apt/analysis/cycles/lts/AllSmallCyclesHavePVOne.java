@@ -62,13 +62,17 @@ public class AllSmallCyclesHavePVOne {
 	 * reachable, persistent or backward persistent.
 	 */
 	public AllSmallCyclesHavePVOne(TransitionSystem ts) throws PreconditionFailedException {
+		debugFormat("Starting AllSmallCyclesHavePVOne");
+
 		// We require a deterministic TS
 		if (!new Deterministic(ts).isDeterministic())
 			throw new PreconditionFailedException("TS " + ts.getName() + " is not deterministic");
+		debugFormat("input is deterministic");
 
 		// We require a totally reachable TS
 		if (!new TotallyReachable(ts).isTotallyReachable())
 			throw new PreconditionFailedException("TS " + ts.getName() + " is not totally reachable");
+		debugFormat("input is totally reachable");
 
 		if (ts.getAlphabet().isEmpty()) {
 			// Special case: We have a totally reachable TS with an empty alphabet. This means that it only
@@ -83,14 +87,17 @@ public class AllSmallCyclesHavePVOne {
 		// We also require a reversible TS
 		if (!new ReversibleTS(ts).isReversible())
 			throw new PreconditionFailedException("TS " + ts.getName() + " is not reversible");
+		debugFormat("input is reversible");
 
 		// We require a persistent TS
 		if (!new PersistentTS(ts).isPersistent())
 			throw new PreconditionFailedException("TS " + ts.getName() + " is not persistent");
+		debugFormat("input is persistent");
 
 		// We require a backward persistent TS
 		if (!new PersistentTS(ts, true).isPersistent())
 			throw new PreconditionFailedException("TS " + ts.getName() + " is not backwards persistent");
+		debugFormat("input is backward persistent");
 
 		// By totally reachability and reversibility, every state is a home state, so s0 is a home state. By
 		// corollary 4 of [1], deterministicity and persistency imply that for every cycle, there is a
@@ -105,11 +112,14 @@ public class AllSmallCyclesHavePVOne {
 				new LinkedList<Arc>());
 		this.cycleWithPV1Found = result.getFirst();
 		this.counterExample = result.getSecond();
+		debugFormat("Phase 1 found cycle with PV1: %b, found counter example: %s",
+				cycleWithPV1Found, counterExample);
 		if (cycleWithPV1Found && counterExample == null) {
 			// Phase one succeeded. In Phase two we check if there are any small cycles with Parikh vectors
 			// incomparable to the all-ones PV. An example for such a cycle would be a TS with a cycle (1,1)
 			// and another cycle (0,2).
 			this.foundIncomparableCycle = checkPhase2(ts);
+			debugFormat("Phase 2 found incomparable cycle: %b", foundIncomparableCycle);
 		} else {
 			this.foundIncomparableCycle = false;
 		}
