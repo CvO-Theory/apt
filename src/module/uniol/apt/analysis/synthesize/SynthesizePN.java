@@ -240,7 +240,6 @@ public class SynthesizePN {
 		this.quickFail = quickFail;
 		this.regions = new HashSet<>(extraRegions);
 
-		debug("Region basis: ", utility.getRegionBasis());
 		debug("Input regions: ", regions);
 
 		// ESSP calculates new regions while SSP only choses regions from the basis. Solve ESSP first since the
