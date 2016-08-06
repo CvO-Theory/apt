@@ -65,7 +65,7 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 			+ " - [k]-bounded: In every reachable marking, every place contains at most [k] tokens.\n"
 			+ " - safe: Equivalent to 1-bounded.\n"
 			+ " - [k]-marking: The initial marking of each place is a multiple of k.\n"
-			+ " - pure: Every transition either consumes or produces tokens on a place, but noth both"
+			+ " - pure: Every transition either consumes or produces tokens on a place, but not both"
 			+ " (=no side-conditions).\n"
 			+ " - plain: Every flow has a weight of at most one.\n"
 			+ " - tnet: Every place's preset and postset contains at most one entry.\n"
