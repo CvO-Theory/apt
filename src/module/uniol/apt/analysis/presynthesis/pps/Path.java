@@ -25,18 +25,33 @@ import java.util.List;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 
+/**
+ * Holds a list of arcs that represent a path through an LTS.
+ *
+ * @author Jonas Prellberg
+ */
 public class Path {
 
 	private final List<Arc> arcs;
 
+	/**
+	 * Initializes a new path with the given list of arcs. It is not checked
+	 * if they are consecutive.
+	 */
 	public Path(List<Arc> arcs) {
 		this.arcs = arcs;
 	}
 
+	/**
+	 * Returns the arcs that make up this path.
+	 */
 	public List<Arc> getArcs() {
 		return arcs;
 	}
 
+	/**
+	 * Returns a list of labels corresponding to this path's arcs.
+	 */
 	public List<String> getLabels() {
 		List<String> labels = new ArrayList<>();
 		for (Arc arc : arcs) {
@@ -45,6 +60,9 @@ public class Path {
 		return labels;
 	}
 
+	/**
+	 * Returns the last state of this path.
+	 */
 	public State getTarget() {
 		return arcs.get(arcs.size() - 1).getTarget();
 	}

@@ -45,6 +45,18 @@ import uniol.apt.util.Pair;
  */
 public class PpsPropertyChecker {
 
+	private PpsPropertyResult result;
+
+	/**
+	 * Returns information about the violated property if any hasPrpoperty
+	 * call returned false.
+	 *
+	 * @return information about the violated property or null
+	 */
+	public PpsPropertyResult getResult() {
+		return result;
+	}
+
 	/**
 	 * Returns true if the given transition system satisfies all properties
 	 * (B), (D) and (F).
@@ -61,7 +73,7 @@ public class PpsPropertyChecker {
 	 * property:
 	 *
 	 * <pre>
-	 * If M'[a⟩M and M''[b⟩M, then [b⟩M' ⇔ [a⟩M''
+	 * If M'[a⟩M and M''[b⟩M then [b⟩M' ⇔ [a⟩M''
 	 * with transitions a, b
 	 * </pre>
 	 *
@@ -86,6 +98,10 @@ public class PpsPropertyChecker {
 				boolean bToMQuote = !a.getSource().getPresetEdgesByLabel(b.getLabel()).isEmpty();
 				boolean aToMQuoteQuote = !b.getSource().getPresetEdgesByLabel(a.getLabel()).isEmpty();
 				if (bToMQuote != aToMQuoteQuote) {
+					result = new PpsPropertyResult("B");
+					result.getOffendingStates().put("M", s);
+					result.getTransitions().put("a", a.getLabel());
+					result.getTransitions().put("b", b.getLabel());
 					return false;
 				}
 			}
@@ -111,12 +127,16 @@ public class PpsPropertyChecker {
 			labelsToCheck.addAll(getPostsetLabelPairs(s));
 		}
 		for (Pair<String, String> labels : labelsToCheck) {
+			List<String> ab = Arrays.asList(labels.getFirst(), labels.getSecond());
+			List<String> ba = Arrays.asList(labels.getSecond(), labels.getFirst());
 			for (State sk : ts.getNodes()) {
-				List<String> ab = Arrays.asList(labels.getFirst(), labels.getSecond());
-				List<String> ba = Arrays.asList(labels.getSecond(), labels.getFirst());
 				Set<State> kab = getSequenceDestinations(sk, ab);
 				Set<State> kba = getSequenceDestinations(sk, ba);
 				if (kab.isEmpty() != kba.isEmpty()) {
+					result = new PpsPropertyResult("D");
+					result.getOffendingStates().put("K", sk);
+					result.getTransitions().put("a", labels.getFirst());
+					result.getTransitions().put("b", labels.getSecond());
 					return false;
 				}
 			}
@@ -129,14 +149,15 @@ public class PpsPropertyChecker {
 	 * property:
 	 *
 	 * <pre>
-	 * If M[wv⟩ and M[vw⟩ and M[wc⟩ and M[vc⟩, then M[wvc⟩M' and M[vwc⟩M' and M[c⟩
+	 * If M[wv⟩ and M[vw⟩ and M[wc⟩ and M[vc⟩ then M[wvc⟩M' and M[vwc⟩M' and M[c⟩
 	 * with sequences of transitions v, w and a transition c
 	 * </pre>
 	 *
 	 * @param ts
 	 *                transition system to examine
 	 * @param maxPathLength
-	 *                TODO
+	 *                termination condition for the depth first search if
+	 *                there are loops in the LTS
 	 */
 	public boolean hasPropertyF(TransitionSystem ts, int maxPathLength) {
 		for (State s : ts.getNodes()) {
@@ -170,6 +191,7 @@ public class PpsPropertyChecker {
 				}
 				// Now the left side of the implication is satisfied
 				// Check ∃c ∈ candidatesC: ...
+				String lastC = null;
 				for (String c : candidatesC) {
 					// Check s[c⟩
 					if (s.getPostsetEdgesByLabel(c).isEmpty()) {
@@ -186,13 +208,26 @@ public class PpsPropertyChecker {
 							}
 						}
 					}
+					lastC = c;
 				}
+				result = new PpsPropertyResult("F");
+				result.getOffendingStates().put("M", s);
+				result.getTransitions().put("v", labelsV.toString());
+				result.getTransitions().put("w", labelsW.toString());
+				result.getTransitions().put("c", lastC);
 				return false;
 			}
 		}
 		return true;
 	}
 
+	/**
+	 * Returns a set of labels belonging to the given set of arcs.
+	 *
+	 * @param arcs
+	 *                set of arcs
+	 * @return set of labels
+	 */
 	private Set<String> arcToLabels(Set<Arc> arcs) {
 		Set<String> labels = new HashSet<>();
 		for (Arc arc : arcs) {
@@ -201,6 +236,13 @@ public class PpsPropertyChecker {
 		return labels;
 	}
 
+	/**
+	 * Returns all pairs of labels of outgoing arcs from s.
+	 *
+	 * @param s
+	 *                state
+	 * @return set of label pairs
+	 */
 	private Set<Pair<String, String>> getPostsetLabelPairs(State s) {
 		Set<Pair<String, String>> pairs = new HashSet<>();
 		List<Arc> postset = new ArrayList<>(s.getPostsetEdges());

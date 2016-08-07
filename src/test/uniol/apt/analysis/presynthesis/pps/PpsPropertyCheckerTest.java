@@ -45,7 +45,7 @@ public class PpsPropertyCheckerTest {
 	private TransitionSystem ts2;
 
 	/**
-	 * Satisfies properties B, D, ¬F.
+	 * Satisfies properties B, D, ¬F. TODO does this really satisfy D?
 	 */
 	private TransitionSystem ts3;
 
@@ -140,8 +140,8 @@ public class PpsPropertyCheckerTest {
 
 	@Test
 	public void testPropertyF() {
-//		assertThat(ppsPropChecker.hasPropertyF(ts1, 10), is(true));
-//		assertThat(ppsPropChecker.hasPropertyF(ts2, 10), is(true));
+		assertThat(ppsPropChecker.hasPropertyF(ts1, 10), is(true));
+		assertThat(ppsPropChecker.hasPropertyF(ts2, 10), is(true));
 		assertThat(ppsPropChecker.hasPropertyF(ts3, 10), is(false));
 		assertThat(ppsPropChecker.hasPropertyF(ts4, 10), is(true));
 	}

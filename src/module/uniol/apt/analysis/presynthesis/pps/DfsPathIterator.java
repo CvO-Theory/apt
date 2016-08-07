@@ -29,6 +29,11 @@ import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.util.Pair;
 
+/**
+ * Iterator that returns all paths of an LTS in depth first order.
+ *
+ * @author Jonas Prellberg
+ */
 public class DfsPathIterator implements Iterator<Path>, Iterable<Path> {
 
 	/**
@@ -63,7 +68,7 @@ public class DfsPathIterator implements Iterator<Path>, Iterable<Path> {
 	public boolean hasNext() {
 		// If every element on the stack has only 1 arc left and the
 		// last has 0 there are no more paths to explore
-		for (Pair<State, List<Arc>> elem : dfsStack){
+		for (Pair<State, List<Arc>> elem : dfsStack) {
 			List<Arc> arcs = elem.getSecond();
 			if (arcs.size() > 1 || (elem == dfsStack.getLast() && arcs.size() > 0)) {
 				return true;
