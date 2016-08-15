@@ -225,6 +225,39 @@ public class PetrifyPNParserTest {
 		PetrifyPNParser p = new PetrifyPNParser();
 		p.parseString(".inputs a b\n.graph\na/0 b c/1\n.marking { <a, b> }\n.end\n");
 	}
+
+	@Test
+	public void testGenetOutput() throws Exception {
+		// This is GENET's output when synthesising the reachability graph of a connected-2-bit-net with -k 100.
+		// The special thing here is the .capacity-line.
+		PetriNet pn = new PetrifyPNParser().parseString("# Usage:\n#  -k 100\n"
+				+ "# Event-based state space encoding\n# number of necessary regions: 4\n"
+				+ " .outputs unset1 set0 unset0_set1\n.graph\n"
+				+ "p2 unset1\np0 set0\np1 unset0_set1\np3 unset0_set1\n"
+				+ "unset1 p3\nset0 p1\nunset0_set1 p0\nunset0_set1 p2\n"
+				+ ".capacity  p0=1 p1=1 p2=1 p3=1\n.marking { p0 p3 }\n.end\n");
+		assertThat(pn.getTransitions(), containsInAnyOrder(
+					nodeWithID("unset1"), nodeWithID("set0"), nodeWithID("unset0_set1")));
+		assertThat(pn.getPlaces(), containsInAnyOrder(nodeWithID("p0"), nodeWithID("p1"),
+					nodeWithID("p2"), nodeWithID("p3")));
+		assertThat(pn.getEdges(), containsInAnyOrder(flowThatConnects("p2", "unset1"),
+					flowThatConnects("p0", "set0"), flowThatConnects("p1", "unset0_set1"),
+					flowThatConnects("p3", "unset0_set1"), flowThatConnects("unset1", "p3"),
+					flowThatConnects("set0", "p1"), flowThatConnects("unset0_set1", "p0"),
+					flowThatConnects("unset0_set1", "p2")));
+
+		for (Place place : pn.getPlaces()) {
+			switch (place.getId()) {
+				case "p0":
+				case "p3":
+					assertThat(place.getInitialToken(), is(Token.valueOf(1)));
+					break;
+				default:
+					assertThat(place.getInitialToken(), is(Token.ZERO));
+					break;
+			}
+		}
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

@@ -23,13 +23,14 @@ parser grammar PetrifyPNFormatParser;
 
 options { tokenVocab = PetrifyPNFormatLexer; }
 
-pn		: nl? model? transitions? type flows marking end;
+pn		: nl? model? transitions? type flows capacity? marking end;
 model		: MODEL NAME nl;
 transitions	: TRANSITIONS ID* nl;
 type		: GRAPH nl;
 flows		: flow*;
 flow		: source=event flow_target* nl;
 flow_target	: event (PAREN_OPEN INT PAREN_CLOSE)?;
+capacity	: CAPACITY (ID EQUAL INT)* nl;
 marking		: MARKING CURLY_OPEN token* CURLY_CLOSE nl;
 token		: ID (EQUAL INT)?                                                     # tokenExplicitPlace
 		| ANGLE_OPEN source=event COMMA target=event ANGLE_CLOSE (EQUAL INT)? # tokenImplicitPlace
