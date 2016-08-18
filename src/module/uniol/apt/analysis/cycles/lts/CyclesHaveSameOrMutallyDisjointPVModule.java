@@ -53,11 +53,6 @@ public class CyclesHaveSameOrMutallyDisjointPVModule extends AbstractInterruptib
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("graph", PetriNetOrTransitionSystem.class,
 			"The Petri net or LTS that should be examined");
-		inputSpec.addOptionalParameterWithDefault("algo", ComputeSmallestCyclesAlgorithms.class,
-				ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm(),
-				String.valueOf(ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().toString()
-						.toLowerCase()),
-				ComputeSmallestCyclesAlgorithms.getAlgorithmCharDescription());
 	}
 
 	@Override
@@ -69,8 +64,7 @@ public class CyclesHaveSameOrMutallyDisjointPVModule extends AbstractInterruptib
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
-		ComputeSmallestCycles prog = input.getParameter("algo", ComputeSmallestCyclesAlgorithms.class)
-				.getInstance();
+		ComputeSmallestCycles prog = new ComputeSmallestCycles();
 		TransitionSystem ts = g.getTs();
 		PetriNet pn = g.getNet();
 		boolean ret = false;

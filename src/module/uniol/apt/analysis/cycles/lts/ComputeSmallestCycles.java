@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis.cycles.lts;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -26,18 +28,26 @@ import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.util.Pair;
 
+import uniol.apt.analysis.cycles.CycleCallback;
+import uniol.apt.analysis.cycles.CycleSearch;
+
 /**
- * This is an interface for  algorithms for computing smallest cycles and parikh vectors, checking if all smallest
- * cycles having the same parikh vector, or having the same or mutually disjoint parikh vectors.
+ * This class computes smallest cycles and parikh vectors, checking if all smallest cycles having the same parikh
+ * vector, or having the same or mutually disjoint parikh vectors.
+ *
  * @author Chris, Manuel
  */
-public interface ComputeSmallestCycles {
+public class ComputeSmallestCycles {
+	private CycleCounterExample counterExample; // Stored countercycles
+
 	/**
 	 * Computes the parikh vectors of all smallest cycles of an labeled transition system. (Requirement A10)
 	 * @param ts   - the transitionsystem to compute the cycles from.
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 */
-	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts);
+	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts) {
+		return computePVsOfSmallestCycles(ts, true);
+	}
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same or mutally disjoint parikh vectors.
@@ -46,14 +56,18 @@ public interface ComputeSmallestCycles {
 	 * @return true if the smallest cycles of the given transitionsystem have the same or mutally disjoint parikh
 	 *         vectors.
 	 */
-	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts);
+	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts) {
+		return checkSameOrMutallyDisjointPVs(ts, true);
+	}
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same parikh vector. (Requirement A8a)
 	 * @param ts   - the transition system to examine.
 	 * @return true if the smallest cycles of the given transitionsystem have the same parikh vectors.
 	 */
-	public boolean checkSamePVs(TransitionSystem ts);
+	public boolean checkSamePVs(TransitionSystem ts) {
+		return checkSamePVs(ts, true);
+	}
 
 	/**
 	 * Computes the parikh vectors of all smallest cycles of an labeled transition system. (Requirement A10)
@@ -62,7 +76,33 @@ public interface ComputeSmallestCycles {
 	 *                 (Storage vs. Time)
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 */
-	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts, boolean smallest);
+	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts,
+			final boolean smallest) {
+		final Set<Pair<List<String>, ParikhVector>> cycles = new HashSet<>();
+		new CycleSearch().searchCycles(ts, new CycleCallback() {
+			public void cycleFound(List<String> nodes, List<String> edges) {
+				ParikhVector pv = new ParikhVector(edges);
+				if (smallest) {
+					Iterator<Pair<List<String>, ParikhVector>> iter = cycles.iterator();
+					while (iter.hasNext()) {
+						Pair<List<String>, ParikhVector> pair2 = iter.next();
+						int comp = pair2.getSecond().tryCompareTo(pv);
+						if (comp < 0) {
+							// pairs2 has a smaller Parikh vector
+							return;
+						}
+						if (comp > 0) {
+							// This vector is smaller than pair2.
+							iter.remove();
+						}
+					}
+				}
+				cycles.add(new Pair<>(nodes, pv));
+			}
+		});
+		return cycles;
+	}
+
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same or mutally disjoint parikh vectors.
@@ -73,7 +113,9 @@ public interface ComputeSmallestCycles {
 	 * @return true if the smallest cycles of the given transitionsystem have the same or mutally disjoint parikh
 	 *         vectors.
 	 */
-	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts, boolean smallest);
+	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts, boolean smallest) {
+		return checkSameOrMutallyDisjointPVs(computePVsOfSmallestCycles(ts, smallest));
+	}
 
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same parikh vector. (Requirement A8a)
@@ -82,7 +124,9 @@ public interface ComputeSmallestCycles {
 	 *                 (Storage vs. Time)
 	 * @return true if the smallest cycles of the given transitionsystem have the same parikh vectors.
 	 */
-	public boolean checkSamePVs(TransitionSystem ts, boolean smallest);
+	public boolean checkSamePVs(TransitionSystem ts, boolean smallest) {
+		return checkSamePVs(computePVsOfSmallestCycles(ts, smallest));
+	}
 
 	/**
 	 * Checks whether in the given set of cycles and parikh vectors all cycles have the same or mutally disjoint
@@ -90,21 +134,49 @@ public interface ComputeSmallestCycles {
 	 * @param cycles - a list of cycles and parikh vectors which should be examined.
 	 * @return true if the cycles have the same or mutally disjoint parikh vectors.
 	 */
-	public boolean checkSameOrMutallyDisjointPVs(Set<Pair<List<String>, ParikhVector>> cycles);
+	public boolean checkSameOrMutallyDisjointPVs(Set<Pair<List<String>, ParikhVector>> cycles) {
+		counterExample = null;
+		for (Pair<List<String>, ParikhVector> pair : cycles) {
+			for (Pair<List<String>, ParikhVector> pair1 : cycles) {
+				if (pair1 != pair) {
+					if (!pair.getSecond().sameOrMutuallyDisjoint(pair1.getSecond())) {
+						counterExample = new CycleCounterExample(pair, pair1);
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * Checks whether in the given set of cycles and parikh vectors all cycles have the same parikh vector.
 	 * @param cycles - a list of cycles and parikh vectors which should be examined.
 	 * @return true if the cycles have the same parikh vectors.
 	 */
-	public boolean checkSamePVs(Set<Pair<List<String>, ParikhVector>> cycles);
+	public boolean checkSamePVs(Set<Pair<List<String>, ParikhVector>> cycles) {
+		counterExample = null;
+		for (Pair<List<String>, ParikhVector> pair : cycles) {
+			for (Pair<List<String>, ParikhVector> pair1 : cycles) {
+				if (pair1 != pair) {
+					if (!pair.getSecond().equals(pair1.getSecond())) {
+						counterExample = new CycleCounterExample(pair, pair1);
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * Function for returning a counter example (as requirements A8a, A8b, A10 state that two counter-examples
 	 * should be found in case the condition of the parikh vectors is not met).
 	 * @return counterexample.
 	 */
-	public CycleCounterExample getCounterExample();
+	public CycleCounterExample getCounterExample() {
+		return counterExample;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
