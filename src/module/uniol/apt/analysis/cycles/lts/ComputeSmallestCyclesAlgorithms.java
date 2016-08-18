@@ -24,18 +24,6 @@ package uniol.apt.analysis.cycles.lts;
  * @author vsp, Uli Schlachter
  */
 public enum ComputeSmallestCyclesAlgorithms {
-	FLOYD_WARSHALL {
-		@Override
-		public ComputeSmallestCycles getInstance() {
-			return new ComputeSmallestCyclesFloydWarshall();
-		}
-	},
-	DFS {
-		@Override
-		public ComputeSmallestCycles getInstance() {
-			return new ComputeSmallestCyclesDFS();
-		}
-	},
 	JOHNSON {
 		@Override
 		public ComputeSmallestCycles getInstance() {
@@ -59,8 +47,6 @@ public enum ComputeSmallestCyclesAlgorithms {
 	 */
 	public static String getAlgorithmCharDescription() {
 		return "Select the algorithm to use. Possible options are"
-			+ " a depth-first search algorithm ('dfs');"
-			+ " an adapted Floyd-Warshall algorithm ('floyd_warshall');"
 			+ " Johnson's algorithm ('johnson')";
 	}
 }
