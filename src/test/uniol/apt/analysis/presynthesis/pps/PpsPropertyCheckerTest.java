@@ -35,7 +35,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 public class PpsPropertyCheckerTest {
 
 	/**
-	 * Satisfies properties ¬B, D, F. TODO does this really satisfy D?
+	 * Satisfies properties ¬B, ¬D, F.
 	 */
 	private TransitionSystem ts1;
 
@@ -45,7 +45,7 @@ public class PpsPropertyCheckerTest {
 	private TransitionSystem ts2;
 
 	/**
-	 * Satisfies properties B, D, ¬F. TODO does this really satisfy D?
+	 * Satisfies properties B, ¬D, ¬F.
 	 */
 	private TransitionSystem ts3;
 
@@ -54,6 +54,11 @@ public class PpsPropertyCheckerTest {
 	 * instead of single transitions. Satisfies F.
 	 */
 	private TransitionSystem ts4;
+
+	/**
+	 * Additional test for property D. Satisfies D.
+	 */
+	private TransitionSystem ts5;
 
 	/**
 	 * Class under test.
@@ -121,6 +126,18 @@ public class PpsPropertyCheckerTest {
 		ts4.createArc("s5", "s3", "b");
 		ts4.setInitialState("s0");
 
+		ts5 = new TransitionSystem();
+		ts5.createState("s0");
+		ts5.createState("s1");
+		ts5.createState("s2");
+		ts5.createState("s3");
+		ts5.createState("s4");
+		ts5.createArc("s0", "s1", "a");
+		ts5.createArc("s0", "s3", "c");
+		ts5.createArc("s1", "s2", "b");
+		ts5.createArc("s3", "s1", "d");
+		ts5.createArc("s4", "s2", "a");
+
 		ppsPropChecker = new PpsPropertyChecker();
 	}
 
@@ -133,9 +150,10 @@ public class PpsPropertyCheckerTest {
 
 	@Test
 	public void testPropertyD() {
-		assertThat(ppsPropChecker.hasPropertyD(ts1), is(true));
+		assertThat(ppsPropChecker.hasPropertyD(ts1), is(false));
 		assertThat(ppsPropChecker.hasPropertyD(ts2), is(false));
-		assertThat(ppsPropChecker.hasPropertyD(ts3), is(true));
+		assertThat(ppsPropChecker.hasPropertyD(ts3), is(false));
+		assertThat(ppsPropChecker.hasPropertyD(ts5), is(true));
 	}
 
 	@Test
