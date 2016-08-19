@@ -19,7 +19,6 @@
 
 package uniol.apt.compiler;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -28,6 +27,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
@@ -171,7 +171,7 @@ public abstract class AbstractServiceProcessor extends AbstractProcessor {
 					entries.add(entry);
 				}
 			}
-		} catch (FileNotFoundException ex) {
+		} catch (IOException ex) {
 			/* It's ok if the resource can't get found; we only skip reading it */
 		}
 
