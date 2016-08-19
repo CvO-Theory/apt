@@ -85,6 +85,14 @@ public class Matchers {
 		return nodeWithID(is(equalTo(id)));
 	}
 
+	public static Matcher<Arc> arcWithLabel(Matcher<? super String> matcher) {
+		return ArcWithLabelMatcher.arcWithLabel(matcher);
+	}
+
+	public static Matcher<Arc> arcWithLabel(String id) {
+		return arcWithLabel(is(equalTo(id)));
+	}
+
 	public static <T> Matcher<PetriNet> netWithInitialMarkingThat(Matcher<? super Marking> matcher) {
 		return NetWithInitialMarkingThatMatcher.netWithInitialMarkingThat(matcher);
 	}
