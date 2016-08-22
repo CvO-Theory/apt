@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,26 +48,22 @@ import uniol.apt.util.interrupt.InterrupterRegistry;
 public class CycleSearch {
 	public <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>> void
 			searchCycles(G graph, CycleCallback<G, E, N> cycleCb) {
-		Deque<N> nodes = new ArrayDeque<>(graph.getNodes());
-
-		while (!nodes.isEmpty()) {
-			SubGraph<G, E, N> subgraph = SubGraph.getSubGraphByNodes(graph, nodes);
-			SubNode<G, E, N> start = subgraph.getNode(nodes.getLast());
-			subgraph = getStronglyConnectedComponentOf(start);
-			start = subgraph.getNode(nodes.getLast());
+		Deque<SubGraph<G, E, N>> componentSubgraphs = new ArrayDeque<>();
+		for (Set<N> component : Connectivity.getStronglyConnectedComponents(graph)) {
+			componentSubgraphs.add(SubGraph.getSubGraphByNodes(graph, component));
+		}
+		while (!componentSubgraphs.isEmpty()) {
+			SubGraph<G, E, N> subgraph = componentSubgraphs.removeLast();
+			Set<SubNode<G, E, N>> nodes = subgraph.getNodes();
+			Iterator<SubNode<G, E, N>> it = nodes.iterator(); // misuse an iterator to get a random node and to remove it
+			SubNode<G, E, N> start = it.next();
 			new DoDfs<G, E, N>(start, subgraph, cycleCb);
-			nodes.removeLast();
+			it.remove();
+			subgraph = subgraph.getFlatSubGraphByNodes(nodes);
+			for (Set<SubNode<G, E, N>> component : Connectivity.getStronglyConnectedComponents(subgraph)) {
+				componentSubgraphs.add(subgraph.getFlatSubGraphByNodes(component));
+			}
 		}
-	}
-
-	public static <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
-			SubGraph<G, E, N> getStronglyConnectedComponentOf(SubNode<G, E, N> node) {
-		for (Set<SubNode<G, E, N>> component : Connectivity.getStronglyConnectedComponents(node.getGraph())) {
-			if (component.contains(node))
-				return node.getGraph().getFlatSubGraphByNodes(component);
-		}
-
-		throw new AssertionError("How can a node have no strongly connected component?");
 	}
 
 	// Do a DFS for circles going through 'start'. We are currently in 'cur'. This is called CIRCUIT() in the
