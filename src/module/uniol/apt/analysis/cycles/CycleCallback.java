@@ -21,20 +21,24 @@ package uniol.apt.analysis.cycles;
 
 import java.util.List;
 
+import uniol.apt.adt.IEdge;
+import uniol.apt.adt.IGraph;
+import uniol.apt.adt.INode;
+
 /**
  * Callback which gets used by the {@link CycleSearch} class to notify the
  * caller about cycles.
  *
  * @author vsp
  */
-public interface CycleCallback {
+public interface CycleCallback<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>> {
 	/**
 	 * This methods gets executed once for each cycle found
 	 * @param nodes List of nodes which form the cycle.
 	 * @param edges List of edges which form the cycle, the first edge in this list will be between the first and
 	 * the second node from the node list.
 	 */
-	public void cycleFound(List<String> nodes, List<String> edges);
+	public void cycleFound(List<N> nodes, List<E> edges);
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

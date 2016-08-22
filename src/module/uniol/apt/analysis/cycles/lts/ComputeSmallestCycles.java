@@ -19,12 +19,15 @@
 
 package uniol.apt.analysis.cycles.lts;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.ParikhVector;
+import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.util.Pair;
 
@@ -79,9 +82,14 @@ public class ComputeSmallestCycles {
 	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts,
 			final boolean smallest) {
 		final Set<Pair<List<String>, ParikhVector>> cycles = new HashSet<>();
-		new CycleSearch().searchCycles(ts, new CycleCallback() {
-			public void cycleFound(List<String> nodes, List<String> edges) {
-				ParikhVector pv = new ParikhVector(edges);
+		new CycleSearch().searchCycles(ts, new CycleCallback<TransitionSystem, Arc, State>() {
+			@Override
+			public void cycleFound(List<State> nodes, List<Arc> edges) {
+				List<String> edgeLabels = new ArrayList<>();
+				for (Arc edge : edges) {
+					edgeLabels.add(edge.getLabel());
+				}
+				ParikhVector pv = new ParikhVector(edgeLabels);
 				if (smallest) {
 					Iterator<Pair<List<String>, ParikhVector>> iter = cycles.iterator();
 					while (iter.hasNext()) {
@@ -97,7 +105,11 @@ public class ComputeSmallestCycles {
 						}
 					}
 				}
-				cycles.add(new Pair<>(nodes, pv));
+				List<String> nodeIds = new ArrayList<>();
+				for (State node : nodes) {
+					nodeIds.add(node.getId());
+				}
+				cycles.add(new Pair<>(nodeIds, pv));
 			}
 		});
 		return cycles;

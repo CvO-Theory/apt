@@ -32,6 +32,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import uniol.apt.TestTSCollection;
+import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.util.Pair;
 import static uniol.apt.adt.matcher.Matchers.*;
@@ -44,28 +46,28 @@ import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
  */
 @SuppressWarnings("unchecked")
 public class CycleSearchTest {
-	private List<List<Pair<String, String>>> getCycles(TransitionSystem ts) {
-		final List<List<Pair<String, String>>> cycles = new ArrayList<>();
-		new CycleSearch().searchCycles(ts, new CycleCallback() {
+	private List<List<Pair<State, Arc>>> getCycles(TransitionSystem ts) {
+		final List<List<Pair<State, Arc>>> cycles = new ArrayList<>();
+		new CycleSearch().searchCycles(ts, new CycleCallback<TransitionSystem, Arc, State>() {
 			@Override
-			public void cycleFound(List<String> nodes, List<String> edges) {
+			public void cycleFound(List<State> nodes, List<Arc> edges) {
 				cycles.add(Pair.zip(nodes, edges));
 			}
 		});
 		return cycles;
 	}
 
-	private static Matcher<Iterable<? extends Pair<String, String>>> cycle(List<String> nodes, List<String> edges) {
+	private static Matcher<Iterable<? extends Pair<State, Arc>>> cycle(List<String> nodes, List<String> edges) {
 		if (nodes.size() != edges.size())
 			throw new IllegalArgumentException("Lists need equal sizes");
 
-		List<Matcher<? super Pair<String, String>>> ret = new ArrayList<>();
+		List<Matcher<? super Pair<State, Arc>>> ret = new ArrayList<>();
 		Iterator<String> it = edges.iterator();
 		for (String node : nodes) {
 			assert it.hasNext();
 			String edge = it.next();
 
-			ret.add(pairWith(equalTo(node), equalTo(edge)));
+			ret.add(pairWith(nodeWithID(node), arcWithLabel(edge)));
 		}
 		return containsRotated(ret);
 	}
@@ -73,7 +75,7 @@ public class CycleSearchTest {
 	@Test
 	public void testEmptyTS() {
 		TransitionSystem ts = new TransitionSystem();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, empty());
 	}
 
@@ -81,49 +83,49 @@ public class CycleSearchTest {
 	@Test
 	public void testNonDeterministicTS() {
 		TransitionSystem ts = TestTSCollection.getNonDeterministicTS();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, empty());
 	}
 
 	@Test
 	public void testNonPersistentTS() {
 		TransitionSystem ts = TestTSCollection.getNonPersistentTS();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, empty());
 	}
 
 	@Test
 	public void testNotTotallyReachableTS() {
 		TransitionSystem ts = TestTSCollection.getNotTotallyReachableTS();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, empty());
 	}
 
 	@Test
 	public void testPersistentTS() {
 		TransitionSystem ts = TestTSCollection.getPersistentTS();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, empty());
 	}
 
 	@Test
 	public void testSingleStateTS() {
 		TransitionSystem ts = TestTSCollection.getSingleStateTS();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, empty());
 	}
 
 	@Test
 	public void testThreeStatesTwoEdgesTS() {
 		TransitionSystem ts = TestTSCollection.getThreeStatesTwoEdgesTS();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, empty());
 	}
 
 	@Test
 	public void testReversibleTS() {
 		TransitionSystem ts = TestTSCollection.getReversibleTS();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, contains(
 			cycle(Arrays.asList("s0", "s1", "s2"), Arrays.asList("a", "b", "c"))
 		));
@@ -132,7 +134,7 @@ public class CycleSearchTest {
 	@Test
 	public void testSingleStateLoop() {
 		TransitionSystem ts = TestTSCollection.getSingleStateLoop();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, contains(
 			cycle(Arrays.asList("s"), Arrays.asList("a"))
 		));
@@ -141,7 +143,7 @@ public class CycleSearchTest {
 	@Test
 	public void testSingleStateSingleTransitionTS() {
 		TransitionSystem ts = TestTSCollection.getSingleStateSingleTransitionTS();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, contains(
 			cycle(Arrays.asList("s0"), Arrays.asList("NotA"))
 		));
@@ -150,7 +152,7 @@ public class CycleSearchTest {
 	@Test
 	public void testSingleStateWithUnreachableTS() {
 		TransitionSystem ts = TestTSCollection.getSingleStateWithUnreachableTS();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, contains(
 			cycle(Arrays.asList("s1"), Arrays.asList("NotA"))
 		));
@@ -159,7 +161,7 @@ public class CycleSearchTest {
 	@Test
 	public void testTwoStateCycleSameLabelTS() {
 		TransitionSystem ts = TestTSCollection.getTwoStateCycleSameLabelTS();
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, contains(
 			cycle(Arrays.asList("s", "t"), Arrays.asList("a", "a"))
 		));
@@ -168,14 +170,14 @@ public class CycleSearchTest {
 	@Test
 	public void testNoCycle() {
 		TransitionSystem ts = getAptLTS("./nets/cycles/NoCycle-aut.apt");
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, empty());
 	}
 
 	@Test
 	public void testOneCycle() {
 		TransitionSystem ts = getAptLTS("./nets/cycles/OneCycle-aut.apt");
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, contains(
 			cycle(Arrays.asList("s0", "s1", "s2", "s3"), Arrays.asList("a", "b", "c", "d"))
 		));
@@ -184,7 +186,7 @@ public class CycleSearchTest {
 	@Test
 	public void testOneCycle1() {
 		TransitionSystem ts = getAptLTS("./nets/cycles/OneCycle1-aut.apt");
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, contains(
 			cycle(Arrays.asList("s1", "s2", "s3"), Arrays.asList("a", "a", "d"))
 		));
@@ -193,7 +195,7 @@ public class CycleSearchTest {
 	@Test
 	public void testTwoCycles() {
 		TransitionSystem ts = getAptLTS("./nets/cycles/TwoCycles-aut.apt");
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, containsInAnyOrder(
 			cycle(Arrays.asList("s1", "s2", "s3"), Arrays.asList("b", "c", "d")),
 			cycle(Arrays.asList("s1", "s4", "s5"), Arrays.asList("b", "b", "b"))
@@ -203,7 +205,7 @@ public class CycleSearchTest {
 	@Test
 	public void testTwoIntersectingCycles() {
 		TransitionSystem ts = getAptLTS("./nets/cycles/TwoIntersectingCycles-aut.apt");
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, containsInAnyOrder(
 			cycle(Arrays.asList("s1", "s3", "s4", "s5"), Arrays.asList("b", "d", "b", "b")),
 			cycle(Arrays.asList("s1", "s2", "s3", "s4", "s5"), Arrays.asList("b", "c", "d", "b", "b"))
@@ -213,7 +215,7 @@ public class CycleSearchTest {
 	@Test
 	public void testCyclesWithSameParikhVector() {
 		TransitionSystem ts = getAptLTS("./nets/cycles/CyclesWithSameParikhVector-aut.apt");
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, containsInAnyOrder(
 			cycle(Arrays.asList("s1", "s2", "s3", "s4", "s5"), Arrays.asList("b", "c", "d", "b", "b")),
 			cycle(Arrays.asList("s1", "s6", "s3", "s4", "s5"), Arrays.asList("b", "c", "d", "b", "b"))
@@ -223,7 +225,7 @@ public class CycleSearchTest {
 	@Test
 	public void testCyclesWithDisjunktParikhVector() {
 		TransitionSystem ts = getAptLTS("./nets/cycles/CyclesWithDisjunktParikhVector-aut.apt");
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, containsInAnyOrder(
 			cycle(Arrays.asList("s0"), Arrays.asList("a")),
 			cycle(Arrays.asList("s1"), Arrays.asList("b")),
@@ -237,7 +239,7 @@ public class CycleSearchTest {
 	@Test
 	public void testCyclesWithSameParikhVector1() {
 		TransitionSystem ts = getAptLTS("./nets/cycles/CyclesWithSameParikhVector1-aut.apt");
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, containsInAnyOrder(
 			cycle(Arrays.asList("s0", "s1"), Arrays.asList("a", "b")),
 			cycle(Arrays.asList("s1", "s2"), Arrays.asList("b", "a")),
@@ -249,7 +251,7 @@ public class CycleSearchTest {
 	@Test
 	public void testFullyConnected() {
 		TransitionSystem ts = getAptLTS("./nets/cycles/FullyConnected-aut.apt");
-		List<List<Pair<String, String>>> c = getCycles(ts);
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, containsInAnyOrder(
 			cycle(Arrays.asList("s0", "s1"), Arrays.asList("a", "b")),
 			cycle(Arrays.asList("s0", "s2"), Arrays.asList("a", "c")),

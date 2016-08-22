@@ -21,17 +21,20 @@ package uniol.apt.analysis.cycles;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import uniol.apt.adt.ts.Arc;
-import uniol.apt.adt.ts.State;
-import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.util.Pair;
+import uniol.apt.adt.IEdge;
+import uniol.apt.adt.IGraph;
+import uniol.apt.adt.INode;
+import uniol.apt.adt.subgraph.SubEdge;
+import uniol.apt.adt.subgraph.SubGraph;
+import uniol.apt.adt.subgraph.SubNode;
+import uniol.apt.analysis.connectivity.Connectivity;
 import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
@@ -42,191 +45,108 @@ import uniol.apt.util.interrupt.InterrupterRegistry;
  * @author vsp
  */
 public class CycleSearch {
-	// Get the adjacencies list of the strongly connected component of the state minState in the states list. All
-	// states below minState are ignored. The returned adjacencies list contains for each state its postset as pairs
-	// of arc label and arc target.
-	private List<Collection<Pair<String, Integer>>> constructAdjacencies(TransitionSystem ts, List<State> states,
-			int minState) {
-		int[] dfsNums = new int[states.size()];
-		int[] minNums = new int[states.size()];
-		Arrays.fill(dfsNums, -1);
-		Arrays.fill(minNums, -1);
-		Deque<Integer> callers  = new ArrayDeque<>();
-		Deque<Integer> stack    = new ArrayDeque<>();
-		List<Collection<Pair<String, Integer>>> adjacencies = new ArrayList<>();
-		for (int i = 0; i < states.size(); i++)
-			adjacencies.add(new ArrayList<Pair<String, Integer>>());
+	public <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>> void
+			searchCycles(G graph, CycleCallback<G, E, N> cycleCb) {
+		Deque<N> nodes = new ArrayDeque<>(graph.getNodes());
 
-		// Calculate the SCC via Tarjan's algorithm
-		int node = minState;
-		int counter = 0;
-		visitNode(node, dfsNums, minNums, counter++, stack);
-		do {
-			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
-			boolean done = true;
-			for (State curState : states.get(node).getPostsetNodes()) {
-				Integer cur = states.indexOf(curState);
-				assert cur != -1;
-				if (cur < minState)
-					// Ignore nodes below minState
-					continue;
-				if (dfsNums[cur] == -1) {
-					callers.addLast(node);
-					node = cur;
-					visitNode(node, dfsNums, minNums, counter++, stack);
-					done = false;
-					break;
-				} else if (stack.contains(cur) && dfsNums[node] > dfsNums[cur]) {
-					minNums[node] = Math.min(minNums[node], dfsNums[cur]);
-				}
-			}
-			if (done) {
-				if (dfsNums[node] == minNums[node]) {
-					// We found a strongly connected component, ensure that all nodes in it have the
-					// same minNums[i] value so that we can later identify components based on this.
-					Integer cur = -1;
-					while (cur != node) {
-						cur = stack.removeLast();
-						assert minNums[cur] >= minNums[node];
-						minNums[cur] = minNums[node];
-					}
-				}
-
-				Integer next = callers.pollLast();
-				if (next == null)
-					next = -1;
-				else
-					minNums[next] = Math.min(minNums[next], minNums[node]);
-				node = next;
-			}
-		} while (node != -1);
-
-		assert callers.isEmpty();
-		assert stack.isEmpty();
-
-		// Now construct the adjacencies list of the SCC of minState
-		for (int i = minState; i < states.size(); i++) {
-			if (minNums[i] != minNums[minState])
-				continue;
-			for (Arc arc : ts.getNode(states.get(i).getId()).getPostsetEdges()) {
-				Integer target = states.indexOf(arc.getTarget());
-				assert target != -1;
-				if (minNums[target] == minNums[minState])
-					adjacencies.get(i).add(new Pair<>(arc.getLabel(), target));
-			}
-		}
-
-		return adjacencies;
-	}
-
-	private void visitNode(int node, int[] dfsNums, int[] minNums, int counter, Deque<Integer> stack) {
-		assert dfsNums[node] == -1;
-		assert minNums[node] == -1;
-
-		dfsNums[node] = counter;
-		minNums[node] = counter;
-		stack.addLast(node);
-	}
-
-	/**
-	 * Computes the parikh vectors of all elementary cycles of a labeled transition system with a algorithm using
-	 * Johnson's algorithm.
-	 * @param ts the transitionsystem to examine.
-	 * @param cycleCb callback to notify the caller about found cycles
-	 */
-	public void searchCycles(TransitionSystem ts, CycleCallback cycleCb) {
-		List<State> states = new ArrayList<>(ts.getNodes());
-
-		int s = 0;
-		while (s < states.size()) {
-			List<Collection<Pair<String, Integer>>> adjacencies = constructAdjacencies(ts, states, s);
-
-			new DoDfs(adjacencies, states, s, cycleCb);
-			s++;
+		while (!nodes.isEmpty()) {
+			SubGraph<G, E, N> subgraph = SubGraph.getSubGraphByNodes(graph, nodes);
+			SubNode<G, E, N> start = subgraph.getNode(nodes.getLast());
+			subgraph = getStronglyConnectedComponentOf(start);
+			start = subgraph.getNode(nodes.getLast());
+			new DoDfs<G, E, N>(start, subgraph, cycleCb);
+			nodes.removeLast();
 		}
 	}
 
-	// Do a DFS for circles going through s. We are currently in state 'state'. This is called CIRCUIT() in the
+	public static <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
+			SubGraph<G, E, N> getStronglyConnectedComponentOf(SubNode<G, E, N> node) {
+		for (Set<SubNode<G, E, N>> component : Connectivity.getStronglyConnectedComponents(node.getGraph())) {
+			if (component.contains(node))
+				return node.getGraph().getFlatSubGraphByNodes(component);
+		}
+
+		throw new AssertionError("How can a node have no strongly connected component?");
+	}
+
+	// Do a DFS for circles going through 'start'. We are currently in 'cur'. This is called CIRCUIT() in the
 	// paper.
-	static private class DoDfs {
-		private final List<Collection<Pair<String, Integer>>> adjacencies;
-		private final List<State> states;
-		private final int s;
-		private final Deque<String> sStack;
-		private final Deque<String> lStack;
-		private final boolean[] blocked;
-		private final List<Set<Integer>> b;
-		private final CycleCallback cycleCb;
+	static private class DoDfs<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>> {
+		private final SubNode<G, E, N> start;
+		private final CycleCallback<G, E, N> cycleCb;
 
-		public DoDfs(List<Collection<Pair<String, Integer>>> adjacencies, List<State> states, int s,
-				CycleCallback cycleCb) {
-			this.adjacencies = adjacencies;
-			this.states = states;
-			this.s = s;
+		private final Deque<SubNode<G, E, N>> sStack;
+		private final Deque<SubEdge<G, E, N>> lStack;
+		private final Set<SubNode<G, E, N>> blocked;
+		private final Map<SubNode<G, E, N>, Set<SubNode<G, E, N>>> b;
+
+		public DoDfs(SubNode<G, E, N> start, SubGraph<G, E, N> graph, CycleCallback<G, E, N> cycleCb) {
+			this.start   = start;
 			this.cycleCb = cycleCb;
 
-			this.blocked = new boolean[states.size()];
-			Arrays.fill(blocked, s, states.size(), false);
+			this.sStack  = new ArrayDeque<>();
+			this.lStack  = new ArrayDeque<>();
+			this.blocked = new HashSet<>();
+			this.b       = new HashMap<SubNode<G, E, N>, Set<SubNode<G, E, N>>>();
 
-			this.b = new ArrayList<>();
-			for (int i = 0; i < states.size(); i++) {
-				if (i >= s)
-					b.add(new HashSet<Integer>());
-				else
-					// Not part of the graph, should not be accessed
-					b.add(null);
+			for (SubNode<G, E, N> node : graph.getNodes()) {
+				this.b.put(node, new HashSet<SubNode<G, E, N>>());
 			}
 
-			this.sStack = new ArrayDeque<>();
-			this.lStack = new ArrayDeque<>();
-
-			doDfs(s);
+			doDfs(start);
 
 			assert sStack.isEmpty();
 			assert lStack.isEmpty();
 		}
 
-		private boolean doDfs(int state) {
+		private boolean doDfs(SubNode<G, E, N> cur) {
 			boolean foundCycle = false;
 
 
-			blocked[state] = true;
-			sStack.addLast(states.get(state).getId());
-			for (Pair<String, Integer> arc : adjacencies.get(state)) {
+			blocked.add(cur);
+			sStack.addLast(cur);
+			for (SubEdge<G, E, N> arc : cur.getPostsetEdges()) {
 				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
-				lStack.addLast(arc.getFirst());
-				if (arc.getSecond() == s) {
+				lStack.addLast(arc);
+				SubNode<G, E, N> next = arc.getTarget();
+				if (next.equals(start)) {
 					// cycle found
-					List<String> sCycle = new ArrayList<>(sStack);
-					List<String> lCycle = new ArrayList<>(lStack);
+					List<N> sCycle = new ArrayList<>();
+					for (SubNode<G, E, N> node : sStack) {
+						sCycle.add(node.getOriginalNode());
+					}
+					List<E> lCycle = new ArrayList<>();
+					for (SubEdge<G, E, N> edge : lStack) {
+						lCycle.add(edge.getOriginalEdge());
+					}
 					cycleCb.cycleFound(sCycle, lCycle);
 					foundCycle = true;
-				} else if (!blocked[arc.getSecond()]) {
-					foundCycle |= doDfs(arc.getSecond());
+				} else if (!blocked.contains(next)) {
+					foundCycle |= doDfs(next);
 				}
 				lStack.removeLast();
 			}
 			sStack.removeLast();
 
 			if (foundCycle) {
-				unblock(state, blocked, b);
+				unblock(cur);
 			} else {
-				for (Pair<String, Integer> arc : adjacencies.get(state)) {
-					b.get(state).add(arc.getSecond());
+				for (SubNode<G, E, N> next : cur.getPostsetNodes()) {
+					b.get(cur).add(next);
 				}
 			}
 
 			return foundCycle;
 		}
-	}
 
-	static private void unblock(int state, boolean[] blocked, List<Set<Integer>> b) {
-		blocked[state] = false;
-		for (Integer prev : b.get(state)) {
-			if (blocked[prev])
-				unblock(prev, blocked, b);
+		private void unblock(SubNode<G, E, N> node) {
+			blocked.remove(node);
+			for (SubNode<G, E, N> prev : b.get(node)) {
+				if (blocked.contains(prev))
+					unblock(prev);
+			}
+			b.put(node, new HashSet<SubNode<G, E, N>>());
 		}
-		b.set(state, new HashSet<Integer>());
 	}
 }
 
