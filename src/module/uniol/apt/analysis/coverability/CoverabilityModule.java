@@ -83,7 +83,8 @@ public class CoverabilityModule extends AbstractModule implements Module {
 				isReachability = false;
 			}
 			/* Put the node's marking as a comment into the file */
-			node.putExtension("marking", coverNode.getMarking().toString(), ExtensionProperty.WRITE_TO_FILE);
+			node.putExtension("marking", coverNode.getMarking().toString(),
+					ExtensionProperty.WRITE_TO_FILE);
 		}
 		output.setReturnValue("lts", TransitionSystem.class, result);
 		output.setReturnValue("reachability_graph", Boolean.class, isReachability);

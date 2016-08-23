@@ -19,15 +19,27 @@
 
 package uniol.apt.adt.subgraph;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static uniol.apt.adt.matcher.Matchers.nodeWithID;
+import static uniol.apt.adt.matcher.Matchers.subEdgeThatConnects;
+import static uniol.apt.adt.subgraph.SubGraph.getSubGraphByNodeIDs;
+import static uniol.apt.adt.subgraph.SubGraph.getSubGraphByNodes;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
 import org.testng.annotations.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.exception.NoSuchNodeException;
@@ -37,11 +49,6 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-
-import static uniol.apt.adt.matcher.Matchers.*;
-import static uniol.apt.adt.subgraph.SubGraph.getSubGraphByNodeIDs;
-import static uniol.apt.adt.subgraph.SubGraph.getSubGraphByNodes;
-import org.hamcrest.Matcher;
 
 /**
  * @author Uli Schlachter

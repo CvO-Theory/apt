@@ -19,14 +19,14 @@
 
 package uniol.apt.io.parser.impl;
 
-import java.io.InputStream;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -40,11 +40,10 @@ import uniol.apt.adt.extension.ExtensionProperty;
 import uniol.apt.adt.extension.IExtensible;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.io.parser.AptParser;
-import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParseException;
+import uniol.apt.io.parser.Parser;
 
 /**
  * apt format parser

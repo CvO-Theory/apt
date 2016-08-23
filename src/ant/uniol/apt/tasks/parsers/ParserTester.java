@@ -20,9 +20,9 @@
 package uniol.apt.tasks.parsers;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
+
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.Parser;
 

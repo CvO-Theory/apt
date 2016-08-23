@@ -19,19 +19,6 @@
 
 package uniol.apt.analysis.live;
 
-import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Transition;
-import uniol.apt.adt.ts.Arc;
-import uniol.apt.adt.ts.State;
-import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.exception.UnboundedException;
-import uniol.apt.analysis.connectivity.Component;
-import uniol.apt.analysis.connectivity.Components;
-import uniol.apt.analysis.connectivity.Connectivity;
-import uniol.apt.analysis.coverability.CoverabilityGraph;
-import uniol.apt.analysis.coverability.CoverabilityGraphEdge;
-import uniol.apt.analysis.coverability.CoverabilityGraphNode;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +26,17 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.pn.Transition;
+import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.State;
+import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.connectivity.Connectivity;
+import uniol.apt.analysis.coverability.CoverabilityGraph;
+import uniol.apt.analysis.coverability.CoverabilityGraphEdge;
+import uniol.apt.analysis.coverability.CoverabilityGraphNode;
+import uniol.apt.analysis.exception.UnboundedException;
 
 /**
  * This class implements various liveness tests for Petri nets.

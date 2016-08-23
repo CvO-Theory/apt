@@ -60,7 +60,8 @@ public class PVsOfSmallestCyclesModule extends AbstractModule implements Module 
 			"The Petri net or LTS that should be examined");
 		inputSpec.addOptionalParameterWithDefault("algo", ComputeSmallestCyclesAlgorithms.class,
 				ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm(),
-				String.valueOf(ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().toString().toLowerCase()),
+				String.valueOf(ComputeSmallestCyclesAlgorithms.getDefaultAlgorithm().toString()
+						.toLowerCase()),
 				ComputeSmallestCyclesAlgorithms.getAlgorithmCharDescription());
 	}
 
@@ -73,7 +74,8 @@ public class PVsOfSmallestCyclesModule extends AbstractModule implements Module 
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
-		ComputeSmallestCycles prog = input.getParameter("algo", ComputeSmallestCyclesAlgorithms.class).getInstance();
+		ComputeSmallestCycles prog = input.getParameter("algo", ComputeSmallestCyclesAlgorithms.class)
+				.getInstance();
 		TransitionSystem ts = g.getTs();
 		PetriNet pn = g.getNet();
 		Set<Pair<List<String>, ParikhVector>> parikhs = null;

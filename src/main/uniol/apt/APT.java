@@ -68,14 +68,14 @@ public class APT {
 	 */
 	public static final String STANDARD_INPUT_SYMBOL = "-";
 
-	private static final ParametersParser parametersParser = new SimpleParametersParser();
-	private static final ParametersTransformer parametersTransformer = AptParametersTransformer.INSTANCE;
-	private static final ReturnValuesTransformer returnValuesTransformer = AptReturnValuesTransformer.INSTANCE;
-	private static final ModuleRegistry registry = AptModuleRegistry.INSTANCE;
-	private static final Trie<String, String> removedModules = new PatriciaTrie<>();
+	private static final ParametersParser PARAMETERS_PARSER = new SimpleParametersParser();
+	private static final ParametersTransformer PARAMETERS_TRANSFORMER = AptParametersTransformer.INSTANCE;
+	private static final ReturnValuesTransformer RETURN_VALUES_TRANSFORMER = AptReturnValuesTransformer.INSTANCE;
+	private static final ModuleRegistry REGISTRY = AptModuleRegistry.INSTANCE;
+	private static final Trie<String, String> REMOVED_MODULES = new PatriciaTrie<>();
 
-	private static final PrintStream outPrinter = System.out;
-	private static final PrintStream errPrinter = System.err;
+	private static final PrintStream OUT_PRINTER = System.out;
+	private static final PrintStream ERR_PRINTER = System.err;
 
 	/**
 	 * Hidden Constructor.
@@ -84,30 +84,30 @@ public class APT {
 	}
 
 	private static void addRemovedModules() {
-		removedModules.put("apt2baggins", "Use pn_convert / lts_convert apt baggins instead.");
-		removedModules.put("apt2lola",    "Use pn_convert / lts_convert apt lola instead.");
-		removedModules.put("apt2petrify", "Use pn_convert / lts_convert apt petrify instead.");
-		removedModules.put("apt2pnml",    "Use pn_convert / lts_convert apt pnml instead.");
-		removedModules.put("apt2synet",   "Use pn_convert / lts_convert apt synet instead.");
-		removedModules.put("petrify2apt", "Use pn_convert / lts_convert petrify apt instead.");
-		removedModules.put("pnml2apt",    "Use pn_convert / lts_convert pnml apt instead.");
-		removedModules.put("synet2apt",   "Use pn_convert / lts_convert synet apt instead.");
-		removedModules.put("info",        "Use examine_pn instead.");
+		REMOVED_MODULES.put("apt2baggins", "Use pn_convert / lts_convert apt baggins instead.");
+		REMOVED_MODULES.put("apt2lola",    "Use pn_convert / lts_convert apt lola instead.");
+		REMOVED_MODULES.put("apt2petrify", "Use pn_convert / lts_convert apt petrify instead.");
+		REMOVED_MODULES.put("apt2pnml",    "Use pn_convert / lts_convert apt pnml instead.");
+		REMOVED_MODULES.put("apt2synet",   "Use pn_convert / lts_convert apt synet instead.");
+		REMOVED_MODULES.put("petrify2apt", "Use pn_convert / lts_convert petrify apt instead.");
+		REMOVED_MODULES.put("pnml2apt",    "Use pn_convert / lts_convert pnml apt instead.");
+		REMOVED_MODULES.put("synet2apt",   "Use pn_convert / lts_convert synet apt instead.");
+		REMOVED_MODULES.put("info",        "Use examine_pn instead.");
 	}
 
 	public static void main(String[] args) {
 		addRemovedModules();
 
-		parametersParser.parse(args);
+		PARAMETERS_PARSER.parse(args);
 
-		String[] moduleNames = parametersParser.getModuleNames();
+		String[] moduleNames = PARAMETERS_PARSER.getModuleNames();
 
 		if (moduleNames.length == 0) {
 			printUsageAndExit();
 		}
 
 		String moduleName = moduleNames[0]; // Only use a single module for now
-		Collection<Module> foundModules = registry.findModulesByPrefix(moduleName);
+		Collection<Module> foundModules = REGISTRY.findModulesByPrefix(moduleName);
 
 		Module module = null;
 
@@ -118,7 +118,7 @@ public class APT {
 			module = foundModules.iterator().next();
 		} else {
 			// Ambiguous, but maybe the name isn't a partial name after all
-			module = registry.findModule(moduleName);
+			module = REGISTRY.findModule(moduleName);
 
 			if (module == null) {
 				printAmbiguousModuleNameAndExit(moduleName, foundModules);
@@ -131,7 +131,7 @@ public class APT {
 		List<ReturnValue> returnValues = ModuleUtils.getReturnValues(module);
 		List<ReturnValue> fileReturnValues = ModuleUtils.getFileReturnValues(module);
 
-		String[] moduleArgs = parametersParser.getModuleArguments(moduleName);
+		String[] moduleArgs = PARAMETERS_PARSER.getModuleArguments(moduleName);
 
 		try {
 			if (moduleArgs.length < parameters.size()) {
@@ -174,13 +174,13 @@ public class APT {
 			}
 
 			for (int i = 0; i < numberOfUsedParameters; i++) {
-				transformedArgs[i] = parametersTransformer.transform(moduleArgs[i],
+				transformedArgs[i] = PARAMETERS_TRANSFORMER.transform(moduleArgs[i],
 						allParameters.get(i).getKlass());
 			}
 
 			ModulePreconditionsChecker checker = new SimpleModulePreconditionsChecker();
 
-			List<Parameter> unmetParameters = checker.check(registry, module, transformedArgs);
+			List<Parameter> unmetParameters = checker.check(REGISTRY, module, transformedArgs);
 
 			if (!unmetParameters.isEmpty()) {
 				printPreconditionsUnmetAndExit(unmetParameters);
@@ -232,7 +232,7 @@ public class APT {
 							String filename = fileArgs[usedFileArgsCount];
 
 							if (filename.equals(STANDARD_INPUT_SYMBOL)) {
-								outputs.add(outPrinter, false);
+								outputs.add(OUT_PRINTER, false);
 							} else {
 								outputs.add(openOutput(filename), true);
 							}
@@ -251,7 +251,7 @@ public class APT {
 					}
 
 					// Print this ordinary return value, possibly with its name
-					outputs.add(outPrinter, false);
+					outputs.add(OUT_PRINTER, false);
 					outputWithName[i] = !isRawReturnValue;
 				}
 
@@ -265,45 +265,45 @@ public class APT {
 						out.print(returnValues.get(i).getName() + ": ");
 
 					OutputStreamWriter writer = new OutputStreamWriter(out, "UTF-8");
-					returnValuesTransformer.transform(writer,
+					RETURN_VALUES_TRANSFORMER.transform(writer,
 							values.get(i), returnValues.get(i).getKlass());
 					writer.flush();
 					out.println();
 				}
 			}
 			catch (IOException e) {
-				errPrinter.println("Error writing to file: " + e.getMessage());
-				errPrinter.flush();
+				ERR_PRINTER.println("Error writing to file: " + e.getMessage());
+				ERR_PRINTER.flush();
 				System.exit(ExitStatus.ERROR.getValue());
 			}
 
 			ModuleExitStatusChecker statusChecker = new PropertyModuleExitStatusChecker();
 			ExitStatus status = statusChecker.check(module, values);
 
-			outPrinter.flush();
+			OUT_PRINTER.flush();
 			System.exit(status.getValue());
 		} catch (ModuleException e) {
-			errPrinter.println(String.format("Error while invoking module '%s':%n  %s",
+			ERR_PRINTER.println(String.format("Error while invoking module '%s':%n  %s",
 						module.getName(), e.getMessage()));
-			errPrinter.flush();
+			ERR_PRINTER.flush();
 			System.exit(ExitStatus.ERROR.getValue());
 		}
 	}
 
 	private static void printPreconditionsUnmetAndExit(List<Parameter> unmetParameters) {
-		errPrinter.println("Some preconditions are unmet:");
+		ERR_PRINTER.println("Some preconditions are unmet:");
 
 		for (Parameter parameter : unmetParameters) {
-			errPrinter.print("Parameter \"" + parameter.getName() + "\" is not");
+			ERR_PRINTER.print("Parameter \"" + parameter.getName() + "\" is not");
 
 			for (String property : parameter.getProperties()) {
-				errPrinter.print(" " + property);
+				ERR_PRINTER.print(" " + property);
 			}
 
-			errPrinter.println();
+			ERR_PRINTER.println();
 		}
 
-		errPrinter.flush();
+		ERR_PRINTER.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
@@ -316,62 +316,62 @@ public class APT {
 	}
 
 	private static void printTooManyArgumentsAndExit(Module module) throws ModuleException {
-		errPrinter.println("Too many arguments");
-		errPrinter.println();
-		errPrinter.println(UIUtils.getModuleUsage(module, parametersTransformer));
-		errPrinter.flush();
+		ERR_PRINTER.println("Too many arguments");
+		ERR_PRINTER.println();
+		ERR_PRINTER.println(UIUtils.getModuleUsage(module, PARAMETERS_TRANSFORMER));
+		ERR_PRINTER.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
 	private static void printTooFewArgumentsAndExit(Module module) throws ModuleException {
-		errPrinter.println("Too few arguments");
-		errPrinter.println();
-		errPrinter.println(UIUtils.getModuleUsage(module, parametersTransformer));
-		errPrinter.flush();
+		ERR_PRINTER.println("Too few arguments");
+		ERR_PRINTER.println();
+		ERR_PRINTER.println(UIUtils.getModuleUsage(module, PARAMETERS_TRANSFORMER));
+		ERR_PRINTER.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
 	private static void printAmbiguousModuleNameAndExit(String moduleName,
 			Collection<Module> foundModules) {
-		errPrinter.println("Ambiguous module name: " + moduleName);
+		ERR_PRINTER.println("Ambiguous module name: " + moduleName);
 
-		errPrinter.println();
+		ERR_PRINTER.println();
 
-		errPrinter.println("Available modules (starting with " + moduleName + "):");
-		printModuleList(foundModules, errPrinter);
+		ERR_PRINTER.println("Available modules (starting with " + moduleName + "):");
+		printModuleList(foundModules, ERR_PRINTER);
 
-		errPrinter.flush();
+		ERR_PRINTER.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
 	private static void printNoSuchModuleAndExit(String moduleName) {
-		errPrinter.println("No such module: " + moduleName);
+		ERR_PRINTER.println("No such module: " + moduleName);
 
-		Map<String, String> messages = removedModules.prefixMap(moduleName);
+		Map<String, String> messages = REMOVED_MODULES.prefixMap(moduleName);
 		if (messages.size() == 1) {
 			Map.Entry<String, String> entry = messages.entrySet().iterator().next();
-			errPrinter.println(String.format("The module '%s' was removed. %s",
+			ERR_PRINTER.println(String.format("The module '%s' was removed. %s",
 						entry.getKey(), entry.getValue()));
 		}
 
-		errPrinter.flush();
+		ERR_PRINTER.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
 	private static void printUsageAndExit() {
-		outPrinter.println("Usage: apt <module> <arguments>");
-		outPrinter.println();
+		OUT_PRINTER.println("Usage: apt <module> <arguments>");
+		OUT_PRINTER.println();
 
-		outPrinter.println("Available modules:");
-		printModuleList(registry.getModules(), outPrinter);
+		OUT_PRINTER.println("Available modules:");
+		printModuleList(REGISTRY.getModules(), OUT_PRINTER);
 
-		outPrinter.flush();
+		OUT_PRINTER.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
 	private static void printCanOnlyReadOneParameterFromStdInAndExit() {
-		errPrinter.println("Only one parameter can be read from standard input at the same time");
-		errPrinter.flush();
+		ERR_PRINTER.println("Only one parameter can be read from standard input at the same time");
+		ERR_PRINTER.flush();
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 

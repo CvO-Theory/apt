@@ -19,8 +19,11 @@
 
 package uniol.apt.tasks;
 
+import static org.apache.tools.ant.Project.MSG_ERR;
+import static org.apache.tools.ant.Project.MSG_WARN;
+import static uniol.apt.tasks.modules.ModuleParameterVerifyMethodVisitor.DIFFERENT_TYPES_DETECTED_TYPE;
+
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,13 +38,9 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
-import static org.apache.tools.ant.Project.MSG_ERR;
-import static org.apache.tools.ant.Project.MSG_WARN;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 
-import static uniol.apt.tasks.modules.ModuleParameterVerifyMethodVisitor.DIFFERENT_TYPES_DETECTED_TYPE;
 import uniol.apt.tasks.modules.ModuleParameterVerifyClassVisitor;
 
 /**

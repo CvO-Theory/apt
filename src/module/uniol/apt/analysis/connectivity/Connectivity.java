@@ -203,7 +203,8 @@ public class Connectivity {
 					counter = visitNode(node, dfsNumbers, minNumbers, counter, stack, stackAsSet);
 					done = false;
 					break;
-				} else if (stackAsSet.contains(current) && minNumbers.get(node) > minNumbers.get(current)) {
+				} else if (stackAsSet.contains(current)
+						&& minNumbers.get(node) > minNumbers.get(current)) {
 					// Set our own minNumbers to current's depth search number if it is smaller
 					minNumbers.put(node, Math.min(minNumbers.get(node), dfsNumbers.get(current)));
 				}

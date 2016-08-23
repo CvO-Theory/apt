@@ -19,9 +19,9 @@
 
 package uniol.apt.analysis.ac;
 
-import java.util.Collection;
-import java.util.Objects;
 import static java.util.Collections.disjoint;
+
+import java.util.Collection;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;

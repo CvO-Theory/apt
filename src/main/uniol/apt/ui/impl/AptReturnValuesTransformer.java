@@ -23,7 +23,6 @@ import java.util.ServiceLoader;
 
 import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
-import uniol.apt.ui.ReturnValuesTransformer;
 
 /**
  * A ReturnValuesTransformer which uses SPI / a ServiceLoader to automatically discover return value transformations.

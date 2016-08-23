@@ -39,6 +39,13 @@ public class Deterministic {
 	private String label = null;
 	private State node = null;
 
+	/**
+	 * Creates a new {@link Deterministic} instance that operates on the
+	 * given transition system.
+	 *
+	 * @param ts
+	 *                transition system to check
+	 */
 	public Deterministic(TransitionSystem ts) {
 		this.ts = ts;
 		check();

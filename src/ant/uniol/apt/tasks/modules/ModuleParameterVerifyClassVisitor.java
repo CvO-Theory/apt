@@ -19,14 +19,14 @@
 
 package uniol.apt.tasks.modules;
 
+import static org.objectweb.asm.Opcodes.ASM4;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-import static org.objectweb.asm.Opcodes.ASM4;
 
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;

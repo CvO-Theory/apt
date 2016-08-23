@@ -56,7 +56,7 @@ public class ConnectedBitNetGenerator implements BitNetGenerator {
 		pn.createFlow(t, set);
 
 		for (int i = 1; i < n; i++) {
-			t = pn.createTransition("unset" + Integer.toString(i-1) + "_set" + Integer.toString(i));
+			t = pn.createTransition("unset" + Integer.toString(i - 1) + "_set" + Integer.toString(i));
 			pn.createFlow(set, t);
 			pn.createFlow(t, unset);
 
@@ -68,7 +68,7 @@ public class ConnectedBitNetGenerator implements BitNetGenerator {
 			pn.createFlow(t, set);
 		}
 
-		t = pn.createTransition("unset" + Integer.toString(n-1));
+		t = pn.createTransition("unset" + Integer.toString(n - 1));
 		pn.createFlow(set, t);
 		pn.createFlow(t, unset);
 

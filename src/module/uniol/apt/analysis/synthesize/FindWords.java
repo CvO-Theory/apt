@@ -19,8 +19,9 @@
 
 package uniol.apt.analysis.synthesize;
 
+import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,12 +37,10 @@ import java.util.concurrent.ForkJoinPool;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.Transformer;
-import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
 
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.exception.NonDeterministicException;
 import uniol.apt.analysis.exception.PreconditionFailedException;
-import uniol.apt.analysis.synthesize.SynthesizeUtils;
 import uniol.apt.util.Pair;
 
 /**
@@ -189,8 +188,8 @@ public class FindWords {
 			final boolean quickFail, WordCallback wordCallback, LengthDoneCallback lengthDoneCallback,
 			ForkJoinPool executor) throws PreconditionFailedException {
 		if (properties.isPlain() && properties.isKMarking())
-			throw new PreconditionFailedException("The combination of plain and k-marking is not supported, "
-					+ " because 'minimal unsolvable' cannot be defined");
+			throw new PreconditionFailedException("The combination of plain and k-marking is not supported"
+					+ ", because 'minimal unsolvable' cannot be defined");
 
 		CompletionService<Pair<String, SynthesizePN>> completion = new ExecutorCompletionService<>(executor);
 		List<String> currentLevel = Collections.singletonList("");
@@ -201,13 +200,14 @@ public class FindWords {
 					new NextWordsIterator(properties, alphabet, currentLevel),
 					new Transformer<String, Callable<Pair<String, SynthesizePN>>>() {
 						@Override
-						public Callable<Pair<String, SynthesizePN>> transform(final String word) {
+						public Callable<Pair<String, SynthesizePN>> transform(
+								final String word) {
 							return new Callable<Pair<String, SynthesizePN>>() {
 								@Override
 								public Pair<String, SynthesizePN> call() {
 									List<Character> wordList = toList(word);
-									SynthesizePN synthesize =
-										solveWord(wordList, properties, quickFail);
+									SynthesizePN synthesize = solveWord(wordList,
+											properties, quickFail);
 									return new Pair<>(word, synthesize);
 								}
 							};

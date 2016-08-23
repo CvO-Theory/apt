@@ -19,6 +19,8 @@
 
 package uniol.apt.tasks;
 
+import static org.apache.tools.ant.Project.MSG_ERR;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
@@ -33,15 +35,15 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
-import static org.apache.tools.ant.Project.MSG_ERR;
 
-import uniol.apt.tasks.parsers.*;
 import uniol.apt.io.parser.LTSParsers;
 import uniol.apt.io.parser.PNParsers;
-import uniol.apt.io.parser.Parser;
 import uniol.apt.io.parser.ParserNotFoundException;
 import uniol.apt.io.parser.Parsers;
 import uniol.apt.io.parser.impl.RegexParser;
+import uniol.apt.tasks.parsers.AbstractParserTester;
+import uniol.apt.tasks.parsers.ParserTester;
+import uniol.apt.tasks.parsers.UnparsableException;
 
 /**
  * Ant task to verify that a list of files is parsable.

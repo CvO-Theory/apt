@@ -28,7 +28,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */
-@SuppressWarnings("unchecked")
 public class PNPropertiesTest {
 	static private Matcher<? super PNProperties> containsAll(PNProperties expected) {
 		final PNProperties f = expected;

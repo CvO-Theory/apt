@@ -19,20 +19,24 @@
 
 package uniol.apt.io.parser.impl;
 
-import java.util.Arrays;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static uniol.apt.adt.matcher.Matchers.flowThatConnects;
+import static uniol.apt.adt.matcher.Matchers.nodeWithID;
 
 import org.testng.annotations.Test;
-import static org.hamcrest.MatcherAssert.assertThat;
 
-import uniol.apt.io.parser.ParseException;
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Token;
 import uniol.apt.adt.pn.Transition;
-
-import static uniol.apt.adt.matcher.Matchers.*;
+import uniol.apt.io.parser.ParseException;
 
 /**
  * Test wether the Petrify parser works.

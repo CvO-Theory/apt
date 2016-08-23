@@ -80,6 +80,8 @@ public class MatrixModule extends AbstractModule implements Module {
 			case R:
 				output.setReturnValue("output", String.class, matrix.getRMatrices() + "\n");
 				return;
+			default:
+				throw new ModuleException("Unknown format: " + format);
 		}
 	}
 

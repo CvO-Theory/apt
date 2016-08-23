@@ -19,13 +19,29 @@
 
 package uniol.apt.analysis.homogeneous;
 
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+import static uniol.apt.BestNetCollection.getNetDistrFig12;
+import static uniol.apt.BestNetCollection.getNetSepBasic1;
+import static uniol.apt.CrashCourseNets.getCCNet3;
+import static uniol.apt.CrashCourseNets.getCCNet4;
+import static uniol.apt.TestNetCollection.getABCLanguageNet;
+import static uniol.apt.TestNetCollection.getACBCCLoopNet;
+import static uniol.apt.TestNetCollection.getConcurrentDiamondNet;
+import static uniol.apt.TestNetCollection.getConflictingDiamondNet;
+import static uniol.apt.TestNetCollection.getDeadTransitionNet;
+import static uniol.apt.TestNetCollection.getDeadlockNet;
+import static uniol.apt.TestNetCollection.getEmptyNet;
+import static uniol.apt.TestNetCollection.getNoTransitionOnePlaceNet;
+import static uniol.apt.TestNetCollection.getNonPersistentNet;
+import static uniol.apt.TestNetCollection.getOneTransitionNoPlaceNet;
+import static uniol.apt.TestNetCollection.getPersistentBiCFNet;
+import static uniol.apt.TestNetCollection.getTokenGeneratorNet;
+
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.generator.cycle.CycleGenerator;
@@ -33,11 +49,6 @@ import uniol.apt.generator.philnet.BistatePhilNetGenerator;
 import uniol.apt.generator.philnet.QuadstatePhilNetGenerator;
 import uniol.apt.generator.philnet.TristatePhilNetGenerator;
 import uniol.apt.module.impl.ModuleInvoker;
-
-import static uniol.apt.BestNetCollection.*;
-import static uniol.apt.CrashCourseNets.*;
-import static uniol.apt.TestNetCollection.*;
-
 import uniol.tests.dataprovider.IntRangeDataProvider;
 import uniol.tests.dataprovider.annotations.IntRangeParameter;
 

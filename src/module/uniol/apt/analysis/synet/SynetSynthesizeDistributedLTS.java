@@ -25,12 +25,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.apache.commons.io.output.FileWriterWithEncoding;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.Event;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;

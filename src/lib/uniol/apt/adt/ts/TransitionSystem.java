@@ -19,6 +19,8 @@
 
 package uniol.apt.adt.ts;
 
+import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
+
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,9 +33,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.commons.collections4.SortedBag;
-import org.apache.commons.collections4.bag.TreeBag;
-
 import uniol.apt.adt.AbstractGraph;
 import uniol.apt.adt.CollectionToUnmodifiableSetAdapter;
 import uniol.apt.adt.IGraph;
@@ -44,8 +43,6 @@ import uniol.apt.adt.exception.NoSuchEventException;
 import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.exception.StructureException;
-
-import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
 
 /**
  * Represents a Transitionsystem. With states, arcs and an alphabet.
@@ -188,7 +185,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 * @throws NoSuchEventException If no event with the given label exists.
 	 * @throws NullPointerException If the given label is null.
 	 */
-	public Event getEvent(String label) throws NoSuchEventException {
+	public Event getEvent(String label) {
 		if (label == null)
 			throw new NullPointerException();
 		InternalEvent result = alphabet.get(label);

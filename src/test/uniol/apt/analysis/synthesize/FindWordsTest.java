@@ -19,6 +19,13 @@
 
 package uniol.apt.analysis.synthesize;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,11 +35,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.testng.annotations.Test;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static uniol.apt.analysis.synthesize.Matchers.*;
+
 import uniol.apt.analysis.exception.PreconditionFailedException;
-import uniol.apt.analysis.synthesize.Matchers;
 
 /** @author Uli Schlachter */
 public class FindWordsTest {

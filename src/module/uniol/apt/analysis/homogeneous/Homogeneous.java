@@ -19,10 +19,6 @@
 
 package uniol.apt.analysis.homogeneous;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
