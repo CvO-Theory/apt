@@ -20,9 +20,8 @@
 package uniol.apt.adt.subgraph;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.testng.annotations.Test;
 
@@ -63,7 +62,7 @@ public class SubGraphTest {
 
 	@Test
 	public void testToString() {
-		Set<State> emptySet = Collections.emptySet();
+		Collection<State> emptySet = Collections.emptySet();
 		TransitionSystem graph = mock(TransitionSystem.class);
 		when(graph.toString()).thenReturn("mock");
 
@@ -72,7 +71,7 @@ public class SubGraphTest {
 
 	@Test
 	public void testEqualsGraph() {
-		Set<State> emptySet = Collections.emptySet();
+		Collection<State> emptySet = Collections.emptySet();
 		TransitionSystem graph = TestTSCollection.getSingleStateTS();
 		SubGraph<TransitionSystem, Arc, State> subGraph = getSubGraphByNodes(graph, emptySet);
 
@@ -86,11 +85,11 @@ public class SubGraphTest {
 	@Test
 	public void testEqualsNode() {
 		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
-		Set<String> states = new HashSet<>(Arrays.asList("s0", "s1", "s2", "s3"));
+		Collection<String> states = Arrays.asList("s0", "s1", "s2", "s3");
 		SubGraph<TransitionSystem, Arc, State> subGraph = getSubGraphByNodeIDs(graph, states);
 
 		SubGraph<TransitionSystem, Arc, State> subGraph2 =
-			getSubGraphByNodeIDs(graph, new HashSet<>(Arrays.asList("s1")));
+			getSubGraphByNodeIDs(graph, Arrays.asList("s1"));
 
 		SubNode<TransitionSystem, Arc, State> s1 = subGraph.getNode("s1");
 		SubNode<TransitionSystem, Arc, State> s2 = subGraph.getNode("s2");
@@ -104,11 +103,11 @@ public class SubGraphTest {
 	@Test
 	public void testEqualsEdge() {
 		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
-		Set<String> states = new HashSet<>(Arrays.asList("s0", "s1", "s2", "s3"));
+		Collection<String> states = Arrays.asList("s0", "s1", "s2", "s3");
 		SubGraph<TransitionSystem, Arc, State> subGraph = getSubGraphByNodeIDs(graph, states);
 
 		SubGraph<TransitionSystem, Arc, State> subGraph2 =
-			getSubGraphByNodeIDs(graph, new HashSet<>(Arrays.asList("s1", "s2")));
+			getSubGraphByNodeIDs(graph, Arrays.asList("s1", "s2"));
 
 		SubNode<TransitionSystem, Arc, State> s0 = subGraph.getNode("s0");
 		SubNode<TransitionSystem, Arc, State> s1 = subGraph.getNode("s1");
@@ -125,7 +124,7 @@ public class SubGraphTest {
 
 	@Test
 	public void testHashCode() {
-		Set<State> emptySet = Collections.emptySet();
+		Collection<State> emptySet = Collections.emptySet();
 		TransitionSystem graph = TestTSCollection.getSingleStateTS();
 		SubGraph<TransitionSystem, Arc, State> subGraph = getSubGraphByNodes(graph, emptySet);
 
@@ -139,7 +138,7 @@ public class SubGraphTest {
 	@Test
 	public void testPlainTNetReachabilityTS() {
 		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
-		Set<String> states = new HashSet<>(Arrays.asList("s0", "s1", "s2", "s3"));
+		Collection<String> states = Arrays.asList("s0", "s1", "s2", "s3");
 		SubGraph<TransitionSystem, Arc, State> subGraph = getSubGraphByNodeIDs(graph, states);
 
 		assertThat(subGraph.getOriginalGraph(), sameInstance(graph));
@@ -181,30 +180,56 @@ public class SubGraphTest {
 	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp = "^Node 'foobar' does not exist in graph ''$")
 	public void testInvalidNodeConstructor() {
 		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
-		Set<String> states = new HashSet<>(Arrays.asList("s0", "foobar", "s3"));
+		Collection<String> states = Arrays.asList("s0", "foobar", "s3");
 		getSubGraphByNodeIDs(graph, states);
 	}
 
 	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp = "^Node 'foobar' does not exist in graph ''$")
 	public void testInvalidNodeGetNode1() {
 		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
-		Set<String> states = new HashSet<>(Arrays.asList("s0", "s1", "s2", "s3"));
+		Collection<String> states = Arrays.asList("s0", "s1", "s2", "s3");
 		getSubGraphByNodeIDs(graph, states).getNode("foobar");
 	}
 
 	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp = "^Node 's0' does not exist in graph ''$")
 	public void testInvalidNodeGetNode2() {
 		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
-		Set<String> states = new HashSet<>(Arrays.asList("s1", "s2", "s3"));
+		Collection<String> states = Arrays.asList("s1", "s2", "s3");
 		getSubGraphByNodeIDs(graph, states).getNode(graph.getInitialState());
 	}
 
 	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp = "^Node 's0' does not exist in graph ''$")
 	public void testInvalidNodeGetNode3() {
 		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
-		Set<String> states = new HashSet<>(Arrays.asList("s0", "s1", "s2", "s3"));
-		SubGraph<TransitionSystem, Arc, State> subGraph2 = getSubGraphByNodeIDs(graph, new HashSet<>(Arrays.asList("s0")));
+		Collection<String> states = Arrays.asList("s0", "s1", "s2", "s3");
+		SubGraph<TransitionSystem, Arc, State> subGraph2 = getSubGraphByNodeIDs(graph, Arrays.asList("s0"));
 		getSubGraphByNodeIDs(graph, states).getPresetEdges(subGraph2.getNode("s0"));
+	}
+
+	@Test
+	public void testPlainTNetReachabilityTSSubGraphIDs() {
+		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
+		Collection<String> states = Arrays.asList("s0", "s1", "s2", "s3");
+		SubGraph<TransitionSystem, Arc, State> subGraph = getSubGraphByNodeIDs(graph, states);
+
+		states = Arrays.asList("s1", "s2");
+		SubGraph<TransitionSystem, Arc, State> subGraph2 = getSubGraphByNodeIDs(graph, states);
+
+		assertThat(subGraph.getFlatSubGraphByNodeIDs(states), equalTo(subGraph2));
+	}
+
+	@Test
+	public void testPlainTNetReachabilityTSSubGraphNodes() {
+		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
+		Collection<String> states = Arrays.asList("s0", "s1", "s2", "s3");
+		SubGraph<TransitionSystem, Arc, State> subGraph = getSubGraphByNodeIDs(graph, states);
+
+		states = Arrays.asList("s1", "s2");
+		SubGraph<TransitionSystem, Arc, State> subGraph2 = getSubGraphByNodeIDs(graph, states);
+
+		assertThat(subGraph.getFlatSubGraphByNodes(
+					Arrays.asList(subGraph.getNode("s1"), subGraph.getNode("s2"))),
+				equalTo(subGraph2));
 	}
 }
 

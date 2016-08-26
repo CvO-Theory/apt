@@ -19,6 +19,7 @@
 
 package uniol.apt.adt.subgraph;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -61,7 +62,7 @@ public class SubGraph<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N ext
 	 * @param <N> The type of nodes of the graph of which we are a subgraph.
 	 */
 	public static <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
-			SubGraph<G, E, N> getSubGraphByNodes(G graph, Set<N> nodes) {
+			SubGraph<G, E, N> getSubGraphByNodes(G graph, Collection<N> nodes) {
 		Set<String> ids = new HashSet<>();
 		for (N node : nodes) {
 			if (!node.getGraph().equals(graph))
@@ -82,7 +83,7 @@ public class SubGraph<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N ext
 	 * @param <N> The type of nodes of the graph of which we are a subgraph.
 	 */
 	public static <G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>
-			SubGraph<G, E, N> getSubGraphByNodeIDs(G graph, Set<String> ids) {
+			SubGraph<G, E, N> getSubGraphByNodeIDs(G graph, Collection<String> ids) {
 		for (String id : ids)
 			if (graph.getNode(id) == null)
 				throw new IllegalArgumentException("No node with id " + id + " in graph " + graph);
@@ -92,6 +93,40 @@ public class SubGraph<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N ext
 	private SubGraph(G originalGraph, Set<String> nodeIDs) {
 		this.originalGraph = originalGraph;
 		this.nodeIDs = nodeIDs;
+	}
+
+	/**
+	 * Create a new sub graph for the given set of nodes.
+	 * Instead of creating a subgraph of this subgraph instance, this method will create a subgraph of the original
+	 * graph. So, this is equivalent to <code>getSubGraphByNodes(getOriginalGraph(), nodes)</code>. However, the
+	 * nodes must belong to this subgraph and not to the original graph.
+	 * @param nodes The set of nodes that should be used.
+	 * @return The subgraph.
+	 */
+	public SubGraph<G, E, N> getFlatSubGraphByNodes(Collection<SubNode<G, E, N>> nodes) {
+		Set<String> ids = new HashSet<>();
+		for (SubNode<G, E, N> node : nodes) {
+			if (!node.getGraph().equals(this))
+				throw new IllegalArgumentException(
+						"Node " + node + " does not belong to the graph " + this);
+			ids.add(node.getId());
+		}
+		return new SubGraph<G, E, N>(originalGraph, ids);
+	}
+
+	/**
+	 * Create a new sub graph for the given set of nodes.
+	 * Instead of creating a subgraph of this subgraph instance, this method will create a subgraph of the original
+	 * graph. So, this is equivalent to <code>getSubGraphByNodeIDs(getOriginalGraph(), ids)</code>.
+	 * @param ids The set of node IDs that should be used.
+	 * @return The subgraph.
+	 */
+	public SubGraph<G, E, N> getFlatSubGraphByNodeIDs(Collection<String> ids) {
+		Set<String> notExistentIDs = new HashSet<>(ids);
+		notExistentIDs.removeAll(this.nodeIDs);
+		for (String id : notExistentIDs)
+			throw new IllegalArgumentException("No node with id " + id + " in graph " + this);
+		return new SubGraph<G, E, N>(originalGraph, new HashSet<>(ids));
 	}
 
 	/**
