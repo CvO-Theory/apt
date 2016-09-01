@@ -19,19 +19,19 @@
 
 package uniol.apt.analysis.cycles.lts;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+import static uniol.apt.util.DebugUtil.debugFormat;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-
 import org.apache.commons.collections4.Bag;
 import org.apache.commons.collections4.bag.HashBag;
 
 import uniol.apt.adt.ts.Arc;
-import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.deterministic.Deterministic;
@@ -41,8 +41,6 @@ import uniol.apt.analysis.reversible.ReversibleTS;
 import uniol.apt.analysis.totallyreachable.TotallyReachable;
 import uniol.apt.util.Pair;
 import uniol.apt.util.SpanningTree;
-
-import static uniol.apt.util.DebugUtil.debugFormat;
 
 /**
  * A special-case implementation for checking if all small cycles of a transition system have Parikh vector all one.
@@ -294,7 +292,8 @@ public class AllSmallCyclesHavePVOne {
 		return false;
 	}
 
-	static private Bag<String> getParikhVectorReaching(SpanningTree<TransitionSystem, Arc, State> tree, State state) {
+	static private Bag<String> getParikhVectorReaching(SpanningTree<TransitionSystem, Arc, State> tree,
+			State state) {
 		Bag<String> result = new HashBag<>();
 		while (!state.equals(tree.getStartNode())) {
 			Arc arc = tree.getPredecessorEdge(state);

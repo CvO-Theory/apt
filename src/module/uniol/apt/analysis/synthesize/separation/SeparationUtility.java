@@ -19,6 +19,8 @@
 
 package uniol.apt.analysis.synthesize.separation;
 
+import static uniol.apt.util.DebugUtil.debug;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
@@ -26,7 +28,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import uniol.apt.adt.exception.StructureException;
-import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.Event;
 import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.MissingLocationException;
@@ -34,8 +35,6 @@ import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
-
-import static uniol.apt.util.DebugUtil.debug;
 
 /**
  * Helper functions for solving separation problems.

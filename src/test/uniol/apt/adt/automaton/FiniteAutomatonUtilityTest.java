@@ -34,12 +34,7 @@ import static uniol.apt.adt.matcher.Matchers.*;
 /**
  * @author Uli Schlachter
  */
-@SuppressWarnings("unchecked")
 public class FiniteAutomatonUtilityTest {
-	private void noWordInLanguage(FiniteAutomaton aut) {
-		assertThat(isWordInLanguage(aut, Arrays.asList("c")), is(false));
-		assertThat(isWordInLanguage(aut, Arrays.asList("a", "b", "c")), is(false));
-	}
 
 	private void wordInLanguage(FiniteAutomaton aut, boolean result, String... word) {
 		assertThat(isWordInLanguage(aut, Arrays.asList(word)), is(result));
@@ -102,7 +97,8 @@ public class FiniteAutomatonUtilityTest {
 
 	@Test
 	public void testUnion1() {
-		FiniteAutomaton automaton = union(getAtomicLanguage(new Symbol("a")), getAtomicLanguage(Symbol.EPSILON));
+		FiniteAutomaton automaton = union(getAtomicLanguage(new Symbol("a")),
+				getAtomicLanguage(Symbol.EPSILON));
 
 		wordInLanguage(automaton, true);
 		wordInLanguage(automaton, true, "a");
@@ -114,7 +110,8 @@ public class FiniteAutomatonUtilityTest {
 
 	@Test
 	public void testUnion2() {
-		FiniteAutomaton automaton = union(getAtomicLanguage(new Symbol("a")), getAtomicLanguage(new Symbol("b")));
+		FiniteAutomaton automaton = union(getAtomicLanguage(new Symbol("a")),
+				getAtomicLanguage(new Symbol("b")));
 
 		wordInLanguage(automaton, false);
 		wordInLanguage(automaton, true, "a");
@@ -128,7 +125,8 @@ public class FiniteAutomatonUtilityTest {
 
 	@Test
 	public void testConcatenate1() {
-		FiniteAutomaton automaton = concatenate(getAtomicLanguage(new Symbol("a")), getAtomicLanguage(new Symbol("b")));
+		FiniteAutomaton automaton = concatenate(getAtomicLanguage(new Symbol("a")),
+				getAtomicLanguage(new Symbol("b")));
 
 		wordInLanguage(automaton, false);
 		wordInLanguage(automaton, false, "a");
@@ -141,7 +139,8 @@ public class FiniteAutomatonUtilityTest {
 
 	@Test
 	public void testConcatenate2() {
-		FiniteAutomaton automaton = concatenate(getAtomicLanguage(new Symbol("a")), getAtomicLanguage(Symbol.EPSILON));
+		FiniteAutomaton automaton = concatenate(getAtomicLanguage(new Symbol("a")),
+				getAtomicLanguage(Symbol.EPSILON));
 
 		wordInLanguage(automaton, false);
 		wordInLanguage(automaton, true, "a");
@@ -492,7 +491,8 @@ public class FiniteAutomatonUtilityTest {
 		assertThat(findWordDifference(automaton, automaton), is(nullValue()));
 		assertThat(languageEquivalent(automaton, automaton), is(true));
 
-		assertThat(languageEquivalent(automaton, fromPrefixLanguageLTS(prefixLanguageLTS(automaton))), is(true));
+		assertThat(languageEquivalent(automaton, fromPrefixLanguageLTS(prefixLanguageLTS(automaton))),
+				is(true));
 
 		if (ts.getNodes().size() == 1)
 			return;

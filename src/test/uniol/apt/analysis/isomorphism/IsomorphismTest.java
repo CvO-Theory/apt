@@ -20,21 +20,35 @@
 package uniol.apt.analysis.isomorphism;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
-import static uniol.apt.BestNetCollection.*;
-import static uniol.apt.TestNetsForIsomorphism.*;
+import static uniol.apt.BestNetCollection.getTs1A;
+import static uniol.apt.BestNetCollection.getTs1B;
+import static uniol.apt.BestNetCollection.getTs2A;
+import static uniol.apt.BestNetCollection.getTs2B;
+import static uniol.apt.BestNetCollection.getTs3A;
+import static uniol.apt.BestNetCollection.getTs3B;
+import static uniol.apt.BestNetCollection.getTs4A;
+import static uniol.apt.BestNetCollection.getTs4B;
+import static uniol.apt.TestNetsForIsomorphism.getIsoTs1A;
+import static uniol.apt.TestNetsForIsomorphism.getIsoTs1B;
+import static uniol.apt.TestNetsForIsomorphism.getIsoTs2A;
+import static uniol.apt.TestNetsForIsomorphism.getIsoTs2B;
+import static uniol.apt.TestNetsForIsomorphism.getIsoTs3A;
+import static uniol.apt.TestNetsForIsomorphism.getIsoTs3B;
+import static uniol.apt.TestNetsForIsomorphism.getIsoTs4A;
+import static uniol.apt.TestNetsForIsomorphism.getIsoTs4B;
 import static uniol.apt.TestTSCollection.getSingleStateTS;
 import static uniol.apt.TestTSCollection.getSingleStateTSWithLoop;
-import static uniol.apt.adt.matcher.Matchers.*;
+import static uniol.apt.adt.matcher.Matchers.nodeWithID;
 
-import java.io.IOException;
 import org.apache.commons.collections4.BidiMap;
-
 import org.testng.annotations.Test;
 
-import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.adt.ts.State;
+import uniol.apt.adt.ts.TransitionSystem;
 
 /**
  * Collection of nets to test the isomorphism-module

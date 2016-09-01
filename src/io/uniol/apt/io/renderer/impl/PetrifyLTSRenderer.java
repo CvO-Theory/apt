@@ -19,19 +19,18 @@
 
 package uniol.apt.io.renderer.impl;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
 
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.renderer.AptRenderer;
-import uniol.apt.io.renderer.Renderer;
 import uniol.apt.io.renderer.RenderException;
+import uniol.apt.io.renderer.Renderer;
 
 /**
  * Creates a string which returns a petri net or transitionsystem in the Petrify-format.

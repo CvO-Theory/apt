@@ -19,9 +19,6 @@
 
 package uniol.apt.module.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Module;

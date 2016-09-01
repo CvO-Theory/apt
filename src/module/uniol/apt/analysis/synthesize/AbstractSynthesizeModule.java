@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;

@@ -19,6 +19,12 @@
 
 package uniol.apt.analysis.synthesize;
 
+import static org.apache.commons.collections4.iterators.PeekingIterator.peekingIterator;
+import static uniol.apt.analysis.synthesize.LimitedUnfolding.ORIGINAL_STATE_KEY;
+import static uniol.apt.analysis.synthesize.LimitedUnfolding.calculateLimitedUnfolding;
+import static uniol.apt.util.DebugUtil.debug;
+import static uniol.apt.util.DebugUtil.debugFormat;
+
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,9 +38,6 @@ import java.util.Set;
 import org.apache.commons.collections4.FactoryUtils;
 import org.apache.commons.collections4.iterators.PeekingIterator;
 import org.apache.commons.collections4.map.LazyMap;
-
-import static org.apache.commons.collections4.iterators.EmptyIterator.emptyIterator;
-import static org.apache.commons.collections4.iterators.PeekingIterator.peekingIterator;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
@@ -60,11 +63,6 @@ import uniol.apt.analysis.synthesize.separation.SeparationUtility;
 import uniol.apt.util.DifferentPairsIterable;
 import uniol.apt.util.EquivalenceRelation;
 import uniol.apt.util.Pair;
-
-import static uniol.apt.analysis.synthesize.LimitedUnfolding.ORIGINAL_STATE_KEY;
-import static uniol.apt.analysis.synthesize.LimitedUnfolding.calculateLimitedUnfolding;
-import static uniol.apt.util.DebugUtil.debug;
-import static uniol.apt.util.DebugUtil.debugFormat;
 
 /**
  * Synthesize a Petri Net from a transition system.
@@ -131,7 +129,8 @@ public class SynthesizePN {
 		 * @throws NonDeterministicException if the transition system is non-deterministic
 		 * @see LimitedUnfolding#calculateLimitedUnfolding
 		 */
-		static public Builder createForLanguageEquivalence(TransitionSystem ts) throws NonDeterministicException {
+		static public Builder createForLanguageEquivalence(TransitionSystem ts)
+				throws NonDeterministicException {
 			return new Builder(calculateLimitedUnfolding(ts), true);
 		}
 
@@ -195,7 +194,8 @@ public class SynthesizePN {
 		 */
 		public Builder addRegion(Region r) throws InvalidRegionException {
 			if (!r.getRegionUtility().equals(utility))
-				throw new IllegalArgumentException("The given region belongs to a different region utility");
+				throw new IllegalArgumentException(
+						"The given region belongs to a different region utility");
 			r.checkValidRegion();
 			extraRegions.add(r);
 			return this;

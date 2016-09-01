@@ -23,8 +23,6 @@ import java.util.ServiceLoader;
 
 import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
-import uniol.apt.ui.ParametersTransformer;
-import uniol.apt.ui.impl.ParametersTransformerImpl;
 
 /**
  * A ParametersTransformer which uses SPI / a ServiceLoader to automatically discover parameter transformations.

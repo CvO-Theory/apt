@@ -33,13 +33,11 @@ import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
-
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
-import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
 /**

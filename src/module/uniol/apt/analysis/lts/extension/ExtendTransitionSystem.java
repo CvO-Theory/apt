@@ -28,14 +28,12 @@ import java.util.List;
 import java.util.Set;
 
 import uniol.apt.adt.ts.Arc;
-import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.cycles.lts.ComputeSmallestCycles;
 import uniol.apt.analysis.cycles.lts.ComputeSmallestCyclesAlgorithms;
 import uniol.apt.analysis.persistent.PersistentTS;
 import uniol.apt.analysis.reversible.ReversibleTS;
-import uniol.apt.util.Pair;
 
 /**
  * @author Renke Grunwald, Sören, Vincent

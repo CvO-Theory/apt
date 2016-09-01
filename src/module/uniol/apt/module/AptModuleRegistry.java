@@ -21,9 +21,6 @@ package uniol.apt.module;
 
 import java.util.ServiceLoader;
 
-import org.apache.commons.collections4.Trie;
-import org.apache.commons.collections4.trie.PatriciaTrie;
-
 /**
  * Used to register modules that are used in APT.
  *

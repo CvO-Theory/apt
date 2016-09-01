@@ -31,7 +31,6 @@ import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.ModuleRegistry;
 import uniol.apt.module.exception.ModuleException;
-import uniol.apt.ui.impl.UIUtils;
 
 /**
  * @author Renke Grunwald

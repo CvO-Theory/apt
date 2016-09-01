@@ -202,7 +202,6 @@ public class SynthesizePNTest {
 	@Test
 	public void testPathTSPure() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getPathTS();
-		RegionUtility utility = new RegionUtility(ts);
 		PNProperties properties = new PNProperties().setPure(true);
 		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
 
@@ -221,7 +220,6 @@ public class SynthesizePNTest {
 	@Test
 	public void testPathTSImpure() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getPathTS();
-		RegionUtility utility = new RegionUtility(ts);
 		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));

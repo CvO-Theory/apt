@@ -19,19 +19,19 @@
 
 package uniol.apt.analysis.cycles.lts;
 
-import uniol.apt.adt.ts.ParikhVector;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
+
 import java.util.List;
 import java.util.Set;
 
 import org.testng.annotations.Test;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertFalse;
-import uniol.apt.TestTSCollection;
 
+import uniol.apt.TestTSCollection;
+import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.util.Pair;
-import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
 
 /**
  *

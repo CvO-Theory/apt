@@ -20,7 +20,6 @@
 package uniol.apt.ui.impl.parameter;
 
 import uniol.apt.analysis.algebra.MatrixFileFormat;
-import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 

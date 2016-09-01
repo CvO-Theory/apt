@@ -19,11 +19,6 @@
 
 package uniol.apt.ui.impl.parameter;
 
-import java.util.Map;
-import java.util.HashMap;
-
-import static java.util.Collections.unmodifiableMap;
-
 import uniol.apt.analysis.invariants.InvariantCalculator.InvariantAlgorithm;
 import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;

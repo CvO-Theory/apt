@@ -30,8 +30,6 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 
-import uniol.apt.io.parser.impl.*;
-
 /**
  * Class which provides the correct parser for a given format.
  *

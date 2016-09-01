@@ -19,7 +19,6 @@
 
 package uniol.apt.ui.impl.parameter;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.collections4.Trie;

@@ -175,21 +175,21 @@ public class Matrix {
 		for (int i = 0; i < 3; i++) {
 			// forward
 			if (i == 0) {
-				matr += R(getStringForward(), "forward");
+				matr += getRMatricesHelper(getStringForward(), "forward");
 			}
 			// backward
 			if (i == 1) {
-				matr += R(getStringBackward(), "backward");
+				matr += getRMatricesHelper(getStringBackward(), "backward");
 			}
 			// incidence
 			if (i == 2) {
-				matr += R(getStringIncidence(), "incidence");
+				matr += getRMatricesHelper(getStringIncidence(), "incidence");
 			}
 		}
 		return matr;
 	}
 
-	public String R(String[][] matrix, String typ) {
+	private String getRMatricesHelper(String[][] matrix, String typ) {
 		String returner = "";
 		// fill each row with values
 		for (int i = 1; i < matrix.length; i++) {

@@ -168,7 +168,8 @@ public class ExaminePNModule extends AbstractModule implements Module {
 			output.setReturnValue("weakly_live", Boolean.class,
 				Live.findNonWeaklyLiveTransition(pn) == null);
 			output.setReturnValue("persistent", Boolean.class, persistent.isPersistent());
-			output.setReturnValue("backwards_persistent", Boolean.class, backwardsPersistent.isPersistent());
+			output.setReturnValue("backwards_persistent", Boolean.class,
+					backwardsPersistent.isPersistent());
 			output.setReturnValue("reversible", Boolean.class, reversible.isReversible());
 		}
 		output.setReturnValue("simply_live", Boolean.class, Live.findDeadTransition(pn) == null);
