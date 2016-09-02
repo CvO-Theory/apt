@@ -76,7 +76,8 @@ public class InequalitySystemTest {
 		system.addInequality(0, "<=", Arrays.asList(BigInteger.ONE), "and something useful");
 		system.addInequality(0, ">=", 1);
 
-		assertThat(system, hasToString("[\n0 <= 0\t(Just ensuring the trivial)\n0 <= 1*x[0]\t(and something useful)\n0 >= 1*x[0]\n]"));
+		assertThat(system, hasToString("[\n0 <= 0\t(Just ensuring the trivial)\n"
+				+ "0 <= 1*x[0]\t(and something useful)\n0 >= 1*x[0]\n]"));
 	}
 
 	@Test

@@ -28,7 +28,8 @@ import uniol.apt.ui.ParameterTransformation;
 
 /**
  * @author Renke Grunwald
- *
+ * @param <G>
+ *                transformation target type
  */
 public class ParserParameterTransformation<G> implements ParameterTransformation<G> {
 	/**

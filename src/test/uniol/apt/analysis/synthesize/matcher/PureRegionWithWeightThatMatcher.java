@@ -54,7 +54,8 @@ public class PureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher<R
 	public boolean matchesSafely(Region region, Description description) {
 		boolean matches = true;
 
-		if (!region.getBackwardWeight(event).equals(BigInteger.ZERO) && !region.getForwardWeight(event).equals(BigInteger.ZERO)) {
+		if (!region.getBackwardWeight(event).equals(BigInteger.ZERO)
+				&& !region.getForwardWeight(event).equals(BigInteger.ZERO)) {
 			description.appendText("region weight('");
 			description.appendText(event);
 			description.appendText("')=(");

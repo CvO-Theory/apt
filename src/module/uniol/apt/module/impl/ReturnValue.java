@@ -32,6 +32,16 @@ public class ReturnValue {
 	private final Class<?> klass;
 	private final String[] properties;
 
+	/**
+	 * Creates a new return value specification.
+	 *
+	 * @param name
+	 *                name of the return value
+	 * @param klass
+	 *                type of the return value
+	 * @param properties
+	 *                ???
+	 */
 	public ReturnValue(String name, Class<?> klass, String[] properties) {
 		this.name = name;
 		this.klass = klass;

@@ -56,7 +56,7 @@ public interface ParametersTransformer {
 	 *            the type of the object the parameter string should be
 	 *            transformed to
 	 * @return the transformed object
-	 * @throws NoSuchTransformationException When no suitable transformation is available
+	 * @throws ModuleException When no suitable transformation is available
 	 */
 	public Object transform(String arg, Class<?> klass) throws ModuleException;
 }

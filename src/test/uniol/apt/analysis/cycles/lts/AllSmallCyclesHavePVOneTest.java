@@ -61,25 +61,29 @@ public class AllSmallCyclesHavePVOneTest {
 		return check.getCounterExample();
 	}
 
-	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp = "TS  is not deterministic")
+	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp =
+			"TS  is not deterministic")
 	public void testNonDeterministicTS() throws Exception {
 		TransitionSystem ts = TestTSCollection.getNonDeterministicTS();
 		new AllSmallCyclesHavePVOne(ts);
 	}
 
-	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp = "TS  is not totally reachable")
+	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp =
+			"TS  is not totally reachable")
 	public void testSingleStateWithUnreachableTS() throws Exception {
 		TransitionSystem ts = TestTSCollection.getSingleStateWithUnreachableTS();
 		new AllSmallCyclesHavePVOne(ts);
 	}
 
-	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp = "TS  is not reversible")
+	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp =
+			"TS  is not reversible")
 	public void testThreeStatesTwoEdgesTS() throws Exception {
 		TransitionSystem ts = TestTSCollection.getThreeStatesTwoEdgesTS();
 		new AllSmallCyclesHavePVOne(ts);
 	}
 
-	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp = "TS  is not persistent")
+	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp =
+			"TS  is not persistent")
 	public void testDeterministicReachableReversibleNonPersistentTS() throws Exception {
 		TransitionSystem ts = TestTSCollection.getDeterministicReachableReversibleNonPersistentTS();
 		new AllSmallCyclesHavePVOne(ts);

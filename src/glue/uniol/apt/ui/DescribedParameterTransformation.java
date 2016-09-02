@@ -20,10 +20,25 @@
 package uniol.apt.ui;
 
 /**
+ * Transforms a parameter that is given as a string into some target type T. In
+ * addition there is a method that returns a string that describes the expected
+ * string format necessary for the transformation to work.
+ *
  * @author Uli Schlachter
+ * @param <T>
+ *                transformation target type
  */
 public interface DescribedParameterTransformation<T> extends ParameterTransformation<T> {
+
+	/**
+	 * Returns a description of the string format that the parameter is
+	 * expected to follow.
+	 *
+	 * @return expected parameter string format for successful
+	 *         transformation
+	 */
 	public String getFormatDescription();
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

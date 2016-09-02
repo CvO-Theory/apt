@@ -38,15 +38,15 @@ import java.util.regex.Pattern;
 public class StringComparator implements Comparator<String>, Serializable {
 	private static final long serialVersionUID = 0x1l;
 
-	private static final Pattern pattern =
-		Pattern.compile("(.*?)([0-9]+)");
+	private static final Pattern PATTERN = Pattern.compile("(.*?)([0-9]+)");
 
+	@Override
 	public int compare(String s1, String s2) {
 		if (s1.equals(s2))
 			return 0;
 
-		Matcher m1 = pattern.matcher(s1);
-		Matcher m2 = pattern.matcher(s2);
+		Matcher m1 = PATTERN.matcher(s1);
+		Matcher m2 = PATTERN.matcher(s2);
 		if (m1.matches() && m2.matches()) {
 			String prefix1 = m1.group(1);
 			String prefix2 = m2.group(1);

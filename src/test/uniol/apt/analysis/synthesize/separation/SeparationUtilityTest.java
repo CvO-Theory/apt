@@ -67,15 +67,18 @@ public class SeparationUtilityTest {
 
 			utility = new RegionUtility(ts);
 
-			// I'm lazy, let's hope that we always end up with this order (which is currently guaranteed because
-			// TransitionSystem.getAlphabet() uses a SortedSet).
+			// I'm lazy, let's hope that we always end up with this order (which is currently guaranteed
+			// because TransitionSystem.getAlphabet() uses a SortedSet).
 			assertThat(utility.getEventIndex("a"), is(0));
 			assertThat(utility.getEventIndex("b"), is(1));
 			assertThat(utility.getEventIndex("c"), is(2));
 
-			region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0, 0)).withNormalRegionInitialMarking();
-			region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1, 0)).withNormalRegionInitialMarking();
-			region3 = Region.Builder.createPure(utility, asBigIntegerList(0, 0, -1)).withNormalRegionInitialMarking();
+			region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0, 0))
+					.withNormalRegionInitialMarking();
+			region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1, 0))
+					.withNormalRegionInitialMarking();
+			region3 = Region.Builder.createPure(utility, asBigIntegerList(0, 0, -1))
+					.withNormalRegionInitialMarking();
 
 			regionBasis = new ArrayList<>();
 			regionBasis.add(region1);

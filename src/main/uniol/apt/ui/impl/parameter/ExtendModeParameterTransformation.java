@@ -34,17 +34,17 @@ import uniol.apt.ui.ParameterTransformation;
 @AptParameterTransformation(ExtendMode.class)
 public class ExtendModeParameterTransformation extends AbstractMapParameterTransformation<ExtendMode>
 		implements ParameterTransformation<ExtendMode> {
-	private static final Map<String, ExtendMode> values;
+	private static final Map<String, ExtendMode> VALUES;
 	static {
 		Map<String, ExtendMode> map = new HashMap<>();
 		map.put("next", ExtendMode.Next);
 		map.put("next_valid", ExtendMode.NextValid);
 		map.put("next_minimal_valid", ExtendMode.NextMinimalValid);
-		values = unmodifiableMap(map);
+		VALUES = unmodifiableMap(map);
 	}
 
 	public ExtendModeParameterTransformation() {
-		super(values);
+		super(VALUES);
 	}
 }
 

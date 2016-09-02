@@ -160,11 +160,13 @@ public class FindWordsModule extends AbstractModule implements Module {
 						System.out.println(wordAsString);
 				} else {
 					counters[unsolvable]++;
-					if (printUnsolvable)
-						System.out.println(SynthesizeUtils.formatESSPFailure(
-									FindWords.toStringList(wordAsList),
-									synthesize.getFailedEventStateSeparationProblems(),
-									true));
+					if (printUnsolvable) {
+						String msg = SynthesizeUtils.formatESSPFailure(
+								FindWords.toStringList(wordAsList),
+								synthesize.getFailedEventStateSeparationProblems(),
+								true);
+						System.out.println(msg);
+					}
 				}
 			}
 		};

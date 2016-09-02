@@ -142,7 +142,8 @@ public class PetrifyPNParserTest {
 
 	@Test
 	public void testLabel() throws Exception {
-		PetriNet pn = new PetrifyPNParser().parseString(".inputs a\n.graph\np0 a\na/0 a/1\n.marking{p0}\n.end\n");
+		PetriNet pn = new PetrifyPNParser().parseString(
+				".inputs a\n.graph\np0 a\na/0 a/1\n.marking{p0}\n.end\n");
 		assertThat(pn.getTransitions(), containsInAnyOrder(nodeWithID("a"), nodeWithID("a/1")));
 		assertThat(pn.getPlaces(), containsInAnyOrder(nodeWithID("p0"), nodeWithID("<a,a/1>")));
 
@@ -232,8 +233,8 @@ public class PetrifyPNParserTest {
 
 	@Test
 	public void testGenetOutput() throws Exception {
-		// This is GENET's output when synthesising the reachability graph of a connected-2-bit-net with -k 100.
-		// The special thing here is the .capacity-line.
+		// This is GENET's output when synthesising the reachability graph
+		// of a connected-2-bit-net with -k 100. The special thing here is the .capacity-line.
 		PetriNet pn = new PetrifyPNParser().parseString("# Usage:\n#  -k 100\n"
 				+ "# Event-based state space encoding\n# number of necessary regions: 4\n"
 				+ " .outputs unset1 set0 unset0_set1\n.graph\n"

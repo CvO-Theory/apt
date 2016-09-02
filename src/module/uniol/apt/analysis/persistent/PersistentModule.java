@@ -42,10 +42,21 @@ import uniol.apt.module.exception.ModuleException;
 public class PersistentModule extends AbstractModule implements Module {
 	private final boolean backwards;
 
+	/**
+	 * Initializes the {@link PersistentModule} with the backwards-flag set
+	 * to the given value.
+	 *
+	 * @param backwards
+	 *                true if backwards persistent property is checked
+	 */
 	public PersistentModule(boolean backwards) {
 		this.backwards = backwards;
 	}
 
+	/**
+	 * Initializes the {@link PersistentModule} with the backwards-flag set
+	 * to {@code false}.
+	 */
 	public PersistentModule() {
 		this(false);
 	}

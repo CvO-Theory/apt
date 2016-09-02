@@ -25,7 +25,7 @@ import uniol.apt.ui.ParameterTransformation;
 import uniol.apt.module.exception.ModuleException;
 
 /**
- * Transform a string into itself (aka identity function).
+ * Transform a string into an integer value.
  *
  * @author Renke Grunwald
  *

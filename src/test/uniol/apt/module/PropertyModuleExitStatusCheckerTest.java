@@ -191,8 +191,10 @@ public class PropertyModuleExitStatusCheckerTest {
 		@Override
 		public void provide(ModuleOutputSpec outputSpec) {
 			outputSpec.addReturnValue("not_so_important", Object.class);
-			outputSpec.addReturnValue("first_successful", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
-			outputSpec.addReturnValue("second_successful", Boolean.class, ModuleOutputSpec.PROPERTY_SUCCESS);
+			outputSpec.addReturnValue("first_successful", Boolean.class,
+					ModuleOutputSpec.PROPERTY_SUCCESS);
+			outputSpec.addReturnValue("second_successful", Boolean.class,
+					ModuleOutputSpec.PROPERTY_SUCCESS);
 		}
 
 		@Override

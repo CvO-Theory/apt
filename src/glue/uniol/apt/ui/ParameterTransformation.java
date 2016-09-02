@@ -22,10 +22,25 @@ package uniol.apt.ui;
 import uniol.apt.module.exception.ModuleException;
 
 /**
+ * Transforms a parameter that is given as a string into some target type T.
+ *
  * @author Renke Grunwald
+ * @param <T>
+ *                transformation target type
  */
 public interface ParameterTransformation<T> {
+
+	/**
+	 * Transforms the given string-typed parameter into some target type T.
+	 *
+	 * @param arg
+	 *                parameter
+	 * @return parameter transformed into type T
+	 * @throws ModuleException
+	 *                 thrown when the transformation fails
+	 */
 	public T transform(String arg) throws ModuleException;
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

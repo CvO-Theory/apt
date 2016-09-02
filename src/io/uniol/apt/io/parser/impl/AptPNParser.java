@@ -192,11 +192,13 @@ public class AptPNParser extends AbstractParser<PetriNet> implements Parser<Petr
 			Map<String, Integer> postset = this.sets.get(ctx.postset);
 
 			for (Map.Entry<String, Integer> entry : preset.entrySet()) {
-				putExtensions(this.pn.createFlow(entry.getKey(), ctx.id.getText(), entry.getValue()), curOpts);
+				putExtensions(this.pn.createFlow(entry.getKey(), ctx.id.getText(), entry.getValue()),
+						curOpts);
 			}
 
 			for (Map.Entry<String, Integer> entry : postset.entrySet()) {
-				putExtensions(this.pn.createFlow(ctx.id.getText(), entry.getKey(), entry.getValue()), curOpts);
+				putExtensions(this.pn.createFlow(ctx.id.getText(), entry.getKey(), entry.getValue()),
+						curOpts);
 			}
 
 			this.curOpts = null;

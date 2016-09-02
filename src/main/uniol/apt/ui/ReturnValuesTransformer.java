@@ -32,8 +32,34 @@ import uniol.apt.module.exception.ModuleException;
  */
 public interface ReturnValuesTransformer {
 
+	/**
+	 * Returns an object that transforms objects of type T to strings.
+	 *
+	 * @param <T>
+	 *                source type that will be transformed to a string
+	 * @param klass
+	 *                class for source type T
+	 * @return the transformer
+	 */
 	public <T> ReturnValueTransformation<T> getTransformation(Class<T> klass);
 
+	/**
+	 * Transforms the given argument to a string and appends it to the given
+	 * writer.
+	 *
+	 * @param <T>
+	 *                source type that will be transformed to a string
+	 * @param output
+	 *                writer
+	 * @param arg
+	 *                argument of class {@code klass}
+	 * @param klass
+	 *                type of given argument
+	 * @throws ModuleException
+	 *                 thrown when the transformation fails
+	 * @throws IOException
+	 *                 thrown when the append to the writer fails
+	 */
 	public <T> void transform(Writer output, Object arg, Class<T> klass) throws ModuleException, IOException;
 }
 

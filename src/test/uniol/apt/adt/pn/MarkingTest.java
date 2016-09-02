@@ -297,7 +297,8 @@ public class MarkingTest {
 		places[5].setInitialToken(4);
 		places[6].setInitialToken(2);
 		places[7].setInitialToken(3);
-		assertThat(pn.getInitialMarkingCopy(), hasToString("[ [a:0] [b:1] [j:2] [k:3] [p1:OMEGA] [p42:42] [y:4] [z:5] ]"));
+		assertThat(pn.getInitialMarkingCopy(),
+				hasToString("[ [a:0] [b:1] [j:2] [k:3] [p1:OMEGA] [p42:42] [y:4] [z:5] ]"));
 	}
 }
 

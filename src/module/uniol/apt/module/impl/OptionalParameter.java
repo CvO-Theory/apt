@@ -33,6 +33,23 @@ public class OptionalParameter<T> extends Parameter {
 	private final T defaultValue;
 	private final String defaultValueString;
 
+	/**
+	 * Creates a new optional parameter specification.
+	 *
+	 * @param name
+	 *                name of the parameter
+	 * @param klass
+	 *                type of the parameter
+	 * @param defaultValue
+	 *                default value for the parameter that is used when the
+	 *                parameter is not set
+	 * @param defaultValueString
+	 *                ???
+	 * @param description
+	 *                explanation of the parameter
+	 * @param properties
+	 *                ???
+	 */
 	public OptionalParameter(String name, Class<T> klass, T defaultValue, String defaultValueString,
 			String description, String... properties) {
 		super(name, klass, description, properties);

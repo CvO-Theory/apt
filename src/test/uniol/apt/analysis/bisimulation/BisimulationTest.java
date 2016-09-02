@@ -63,7 +63,8 @@ public class BisimulationTest {
 			new PetriNetOrTransitionSystem(pn2)), "Testing Bisimulation");
 	}
 
-	private void testNoBisimulation(PetriNet pn1, PetriNet pn2, String errorPath) throws ModuleException, IOException {
+	private void testNoBisimulation(PetriNet pn1, PetriNet pn2, String errorPath)
+			throws ModuleException, IOException {
 		// The Petri nets shouldn't be bisimilar
 		Bisimulation bisimulation = new Bisimulation();
 		assertFalse(bisimulation.checkBisimulation(new PetriNetOrTransitionSystem(pn1),

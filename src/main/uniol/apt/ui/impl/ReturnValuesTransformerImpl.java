@@ -37,8 +37,18 @@ import uniol.apt.ui.ReturnValuesTransformer;
 public class ReturnValuesTransformerImpl implements ReturnValuesTransformer {
 	private Map<Class<?>, ReturnValueTransformation<?>> transformations = new HashMap<>();
 
+	/**
+	 * Adds a transformation that handles objects of the given class.
+	 *
+	 * @param klass
+	 *                class that is handles by the transformation
+	 * @param transformation
+	 *                transformation object
+	 * @return previous handler for that class or null if none existed
+	 */
 	@SuppressWarnings("unchecked")
-	protected <T> ReturnValueTransformation<T> addTransformation(Class<T> klass, ReturnValueTransformation<T> transformation) {
+	protected <T> ReturnValueTransformation<T> addTransformation(Class<T> klass,
+			ReturnValueTransformation<T> transformation) {
 		return (ReturnValueTransformation<T>) transformations.put(klass, transformation);
 	}
 

@@ -60,31 +60,36 @@ public class AptPNParserTest {
 
 	@Test
 	public void testMarkedSideCondition() throws Exception {
-		PetriNet net = new AptPNParser().parseString(".type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parseString(
+				".type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionPlacesFirst() throws Exception {
-		PetriNet net = new AptPNParser().parseString(".places p1\n.type PN\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parseString(
+				".places p1\n.type PN\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionTransitionsFirst() throws Exception {
-		PetriNet net = new AptPNParser().parseString(".transitions t1\n.type PN\n.places p1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parseString(
+				".transitions t1\n.type PN\n.places p1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionFlowsFirst() throws Exception {
-		PetriNet net = new AptPNParser().parseString(".flows t1:{p1}->{p1}\n.type PN\n.places p1\n.transitions t1\n.initial_marking {p1}");
+		PetriNet net = new AptPNParser().parseString(
+				".flows t1:{p1}->{p1}\n.type PN\n.places p1\n.transitions t1\n.initial_marking {p1}");
 		sideConditionAsserts(net);
 	}
 
 	@Test
 	public void testMarkedSideConditionMarkingFirst() throws Exception {
-		PetriNet net = new AptPNParser().parseString(".initial_marking {p1}\n.type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}");
+		PetriNet net = new AptPNParser().parseString(
+				".initial_marking {p1}\n.type PN\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}");
 		sideConditionAsserts(net);
 	}
 
@@ -130,12 +135,14 @@ public class AptPNParserTest {
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 5 col 0: no viable alternative at input '\\.description'$")
 	public void testDesciptionTwice() throws Exception {
-		new AptPNParser().parseString(".type PN\n.description \"foo\"\n.places foo\n.transitions bar\n.description \"bar\"");
+		new AptPNParser().parseString(
+				".type PN\n.description \"foo\"\n.places foo\n.transitions bar\n.description \"bar\"");
 	}
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 2 col 0: token recognition error at: '\\.initialM'$")
 	public void testInitialMarkingTwice() throws Exception {
-		new AptPNParser().parseString(".type PN\n.initialMarking {foo}\n.places foo\n.transitions bar\n.initialMarking");
+		new AptPNParser().parseString(
+				".type PN\n.initialMarking {foo}\n.places foo\n.transitions bar\n.initialMarking");
 	}
 }
 

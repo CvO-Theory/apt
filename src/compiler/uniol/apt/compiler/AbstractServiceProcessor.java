@@ -73,7 +73,8 @@ public abstract class AbstractServiceProcessor extends AbstractProcessor {
 	 * @param interfaceClass Class object which describes the interface which the annotated classes must implement
 	 * @param allowGenerics Are generic implementations of the interface allowed? Else, they are an error
 	 */
-	protected AbstractServiceProcessor(Class<? extends Annotation> annotationClass, Class<?> interfaceClass, boolean allowGenerics) {
+	protected AbstractServiceProcessor(Class<? extends Annotation> annotationClass, Class<?> interfaceClass,
+			boolean allowGenerics) {
 		this(annotationClass, interfaceClass.getCanonicalName(), allowGenerics);
 	}
 
@@ -85,10 +86,11 @@ public abstract class AbstractServiceProcessor extends AbstractProcessor {
 	 * must implement
 	 * @param allowGenerics Are generic implementations of the interface allowed? Else, they are an error
 	 */
-	protected AbstractServiceProcessor(Class<? extends Annotation> annotationClass, String interfaceName, boolean allowGenerics) {
+	protected AbstractServiceProcessor(Class<? extends Annotation> annotationClass, String interfaceName,
+			boolean allowGenerics) {
 		this.annotationClass = annotationClass;
-		this.interfaceName   = interfaceName;
-		this.allowGenerics   = allowGenerics;
+		this.interfaceName = interfaceName;
+		this.allowGenerics = allowGenerics;
 	}
 
 	/**
@@ -238,11 +240,32 @@ public abstract class AbstractServiceProcessor extends AbstractProcessor {
 		return false;
 	}
 
+	/**
+	 * Prints an error message using the {@link Messager} object.
+	 *
+	 * @param fmt
+	 *                format string for
+	 *                {@link String#format(String, Object...)}
+	 * @param args
+	 *                arguments used in the format string
+	 */
 	protected void error(String fmt, Object... args) {
 		this.messager.printMessage(Diagnostic.Kind.ERROR, String.format(fmt, args));
 		this.finished = true; // we had an error, don't try to run in subsequent rounds
 	}
 
+	/**
+	 * Prints an error message using the {@link Messager} object that is
+	 * associated with the given element's location.
+	 *
+	 * @param ele
+	 *                element that the error message is associated with
+	 * @param fmt
+	 *                format string for
+	 *                {@link String#format(String, Object...)}
+	 * @param args
+	 *                arguments used in the format string
+	 */
 	protected void error(Element ele, String fmt, Object... args) {
 		this.messager.printMessage(Diagnostic.Kind.ERROR, String.format(fmt, args), ele);
 		this.finished = true; // we had an error, don't try to run in subsequent rounds

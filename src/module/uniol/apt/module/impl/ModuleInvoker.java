@@ -36,6 +36,20 @@ import uniol.apt.module.exception.ModuleInvocationException;
  *
  */
 public class ModuleInvoker {
+
+	/**
+	 * Maps the given array of arguments to the modules required and
+	 * optional input parameters and then executes the module on those. The
+	 * module's return values are returned.
+	 *
+	 * @param module
+	 *                module to execute
+	 * @param arguments
+	 *                module arguments
+	 * @return module return values
+	 * @throws ModuleException
+	 *                 thrown when the module was not executed successfully
+	 */
 	public List<Object> invoke(Module module, Object... arguments) throws ModuleException {
 		List<Parameter> parameters = ModuleUtils.getParameters(module);
 		List<OptionalParameter<?>> optionalParameters = ModuleUtils.getOptionalParameters(module);

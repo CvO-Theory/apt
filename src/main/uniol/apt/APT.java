@@ -95,6 +95,12 @@ public class APT {
 		REMOVED_MODULES.put("info",        "Use examine_pn instead.");
 	}
 
+	/**
+	 * Program entry point.
+	 *
+	 * @param args
+	 *                command line arguments
+	 */
 	public static void main(String[] args) {
 		addRemovedModules();
 
@@ -307,7 +313,7 @@ public class APT {
 		System.exit(ExitStatus.ERROR.getValue());
 	}
 
-	public static PrintStream openOutput(String fileName) throws IOException {
+	private static PrintStream openOutput(String fileName) throws IOException {
 		File file = new File(fileName);
 
 		if (file.exists())

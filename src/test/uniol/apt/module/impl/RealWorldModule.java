@@ -67,7 +67,8 @@ public class RealWorldModule extends AbstractModule {
 
 	@Override
 	public String getShortDescription() {
-		return "A module that uses parameters and return values just like in the real world. It doesn't do anything useful though.";
+		return "A module that uses parameters and return values just like in the real world."
+				+ " It doesn't do anything useful though.";
 	}
 }
 

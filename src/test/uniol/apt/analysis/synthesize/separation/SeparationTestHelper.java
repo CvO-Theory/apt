@@ -71,7 +71,8 @@ public class SeparationTestHelper {
 		return factory(factory, includeWord, includeNonReversible, true);
 	}
 
-	static public Object[] factory(SeparationFactory factory, boolean includeWord, boolean includeNonReversible, boolean includePurePathTS) {
+	static public Object[] factory(SeparationFactory factory, boolean includeWord, boolean includeNonReversible,
+			boolean includePurePathTS) {
 		List<Object> pairs = new ArrayList<>();
 		pairs.add(new SeparationTestHelper(factory));
 		if (includeNonReversible) {
@@ -133,8 +134,8 @@ public class SeparationTestHelper {
 
 			utility = new RegionUtility(ts);
 
-			// I'm lazy, let's hope that we always end up with this order (which is currently guaranteed because
-			// TransitionSystem.getAlphabet() uses a SortedSet).
+			// I'm lazy, let's hope that we always end up with this order (which is currently guaranteed
+			// because TransitionSystem.getAlphabet() uses a SortedSet).
 			assertThat(utility.getEventIndex("a"), is(0));
 			assertThat(utility.getEventIndex("b"), is(1));
 			assertThat(utility.getEventIndex("c"), is(2));
@@ -244,9 +245,12 @@ public class SeparationTestHelper {
 			Region region = factory.createSeparation(utility, locationMap)
 				.calculateSeparatingRegion(ts.getNode("s3"), "t2");
 
-			assertThat(region.getMarkingForState(ts.getNode("s0")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
-			assertThat(region.getMarkingForState(ts.getNode("s1")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
-			assertThat(region.getMarkingForState(ts.getNode("s2")), greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getMarkingForState(ts.getNode("s0")),
+					greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getMarkingForState(ts.getNode("s1")),
+					greaterThanOrEqualTo(region.getBackwardWeight(1)));
+			assertThat(region.getMarkingForState(ts.getNode("s2")),
+					greaterThanOrEqualTo(region.getBackwardWeight(1)));
 		}
 	}
 
@@ -263,8 +267,8 @@ public class SeparationTestHelper {
 
 		@BeforeClass
 		public void setup() throws Exception {
-			word = Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b", "a", "b", "b",
-					"b", "b", "b", "b");
+			word = Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b",
+					"a", "b", "b", "b", "b", "b", "b");
 			ts = makeTS(word);
 			utility = new RegionUtility(ts);
 		}

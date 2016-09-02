@@ -154,14 +154,18 @@ public class SynthesizePNTest {
 	public void testACBCCLoopTSOutputNonbranching() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
 		PNProperties properties = new PNProperties().setOutputNonbranching(true);
-		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties)
+				.build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// We know that there is a solution with three regions. Test that this really found an ON feasible set.
 		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
-					allOf(pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO)), pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
-					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)), pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
-					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)), pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO)))));
+				allOf(pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO)),
+						pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
+				allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)),
+						pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
+				allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)),
+						pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO)))));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}
@@ -170,15 +174,25 @@ public class SynthesizePNTest {
 	public void testACBCCLoopTSTNet() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
 		PNProperties properties = new PNProperties().setTNet(true);
-		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties)
+				.build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
-		// We know that there is a solution with four regions. Test that this really found a T-Net feasible set.
+		// We know that there is a solution with four regions.
+		// Test that this really found a T-Net feasible set.
 		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
-					allOf(pureRegionWithWeightThat("a", equalTo(ZERO)), pureRegionWithWeightThat("b", greaterThan(ZERO)), pureRegionWithWeightThat("c", lessThan(ZERO))),
-					allOf(pureRegionWithWeightThat("a", equalTo(ZERO)), pureRegionWithWeightThat("b", lessThan(ZERO)), pureRegionWithWeightThat("c", greaterThan(ZERO))),
-					allOf(pureRegionWithWeightThat("b", equalTo(ZERO)), pureRegionWithWeightThat("a", greaterThan(ZERO)), pureRegionWithWeightThat("c", lessThan(ZERO))),
-					allOf(pureRegionWithWeightThat("b", equalTo(ZERO)), pureRegionWithWeightThat("a", lessThan(ZERO)), pureRegionWithWeightThat("c", greaterThan(ZERO)))));
+				allOf(pureRegionWithWeightThat("a", equalTo(ZERO)),
+						pureRegionWithWeightThat("b", greaterThan(ZERO)),
+						pureRegionWithWeightThat("c", lessThan(ZERO))),
+				allOf(pureRegionWithWeightThat("a", equalTo(ZERO)),
+						pureRegionWithWeightThat("b", lessThan(ZERO)),
+						pureRegionWithWeightThat("c", greaterThan(ZERO))),
+				allOf(pureRegionWithWeightThat("b", equalTo(ZERO)),
+						pureRegionWithWeightThat("a", greaterThan(ZERO)),
+						pureRegionWithWeightThat("c", lessThan(ZERO))),
+				allOf(pureRegionWithWeightThat("b", equalTo(ZERO)),
+						pureRegionWithWeightThat("a", lessThan(ZERO)),
+						pureRegionWithWeightThat("c", greaterThan(ZERO)))));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}
@@ -187,15 +201,25 @@ public class SynthesizePNTest {
 	public void testACBCCLoopTSMarkedGraph() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getACBCCLoopTS();
 		PNProperties properties = new PNProperties().setMarkedGraph(true);
-		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties)
+				.build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
-		// We know that there is a solution with four regions. Test that this really found a marked graph feasible set.
+		// We know that there is a solution with four regions.
+		// Test that this really found a marked graph feasible set.
 		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
-					allOf(pureRegionWithWeightThat("a", equalTo(ZERO)), pureRegionWithWeightThat("b", greaterThan(ZERO)), pureRegionWithWeightThat("c", lessThan(ZERO))),
-					allOf(pureRegionWithWeightThat("a", equalTo(ZERO)), pureRegionWithWeightThat("b", lessThan(ZERO)), pureRegionWithWeightThat("c", greaterThan(ZERO))),
-					allOf(pureRegionWithWeightThat("b", equalTo(ZERO)), pureRegionWithWeightThat("a", greaterThan(ZERO)), pureRegionWithWeightThat("c", lessThan(ZERO))),
-					allOf(pureRegionWithWeightThat("b", equalTo(ZERO)), pureRegionWithWeightThat("a", lessThan(ZERO)), pureRegionWithWeightThat("c", greaterThan(ZERO)))));
+				allOf(pureRegionWithWeightThat("a", equalTo(ZERO)),
+						pureRegionWithWeightThat("b", greaterThan(ZERO)),
+						pureRegionWithWeightThat("c", lessThan(ZERO))),
+				allOf(pureRegionWithWeightThat("a", equalTo(ZERO)),
+						pureRegionWithWeightThat("b", lessThan(ZERO)),
+						pureRegionWithWeightThat("c", greaterThan(ZERO))),
+				allOf(pureRegionWithWeightThat("b", equalTo(ZERO)),
+						pureRegionWithWeightThat("a", greaterThan(ZERO)),
+						pureRegionWithWeightThat("c", lessThan(ZERO))),
+				allOf(pureRegionWithWeightThat("b", equalTo(ZERO)),
+						pureRegionWithWeightThat("a", lessThan(ZERO)),
+						pureRegionWithWeightThat("c", greaterThan(ZERO)))));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}
@@ -204,7 +228,8 @@ public class SynthesizePNTest {
 	public void testPathTSPure() throws MissingLocationException {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		PNProperties properties = new PNProperties().setPure(true);
-		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties)
+				.build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
 		// Can't really be more specific, way too many possibilities
@@ -214,8 +239,9 @@ public class SynthesizePNTest {
 		assertThat(synth.getFailedEventStateSeparationProblems().toString(),
 				synth.getFailedEventStateSeparationProblems().size(), is(2));
 		assertThat(synth.getFailedEventStateSeparationProblems(), allOf(
-					hasEntry(is("b"), containsInAnyOrder(ts.getNode("v"), ts.getNode("u"), ts.getNode("s"))),
-					hasEntry(is("c"), contains(ts.getNode("t")))));
+				hasEntry(is("b"), containsInAnyOrder(
+						ts.getNode("v"), ts.getNode("u"), ts.getNode("s"))),
+				hasEntry(is("c"), contains(ts.getNode("t")))));
 	}
 
 	@Test
@@ -263,7 +289,8 @@ public class SynthesizePNTest {
 		State v = ts.getNode("v");
 
 		PNProperties properties = new PNProperties().setPlain(true);
-		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties)
+				.build();
 
 		assertThat(synth.getSeparatingRegions(), everyItem(plainRegion()));
 		assertThat(synth.getFailedEventStateSeparationProblems().toString(),
@@ -294,7 +321,8 @@ public class SynthesizePNTest {
 		TransitionSystem ts = makeTS(Arrays.asList("b", "b", "a", "b", "b", "b", "b", "b",
 					"a", "b", "b", "b", "b", "b", "b", "a", "b", "b", "b", "b", "b", "b"));
 		PNProperties properties = new PNProperties().setPure(true);
-		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties).build();
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).setProperties(properties)
+				.build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 
@@ -311,8 +339,8 @@ public class SynthesizePNTest {
 		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(ts).build();
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
-		assertThat(synth.getSeparatingRegions(), contains(
-					allOf(regionWithInitialMarking(1), pureRegionWithWeight("b", -1), impureRegionWithWeight("a", 1, 1))));
+		assertThat(synth.getSeparatingRegions(), contains(allOf(regionWithInitialMarking(1),
+				pureRegionWithWeight("b", -1), impureRegionWithWeight("a", 1, 1))));
 		assertThat(synth.getFailedStateSeparationProblems(),
 				contains(containsInAnyOrder(nodeWithID("s"), nodeWithID("t"))));
 		assertThat(synth.getFailedEventStateSeparationProblems().toString(),
@@ -328,8 +356,8 @@ public class SynthesizePNTest {
 				new HashSet<Region>());
 
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
-		assertThat(synth.getSeparatingRegions(), contains(
-					allOf(regionWithInitialMarking(1), pureRegionWithWeight("b", -1), impureRegionWithWeight("a", 1, 1))));
+		assertThat(synth.getSeparatingRegions(), contains(allOf(regionWithInitialMarking(1),
+				pureRegionWithWeight("b", -1), impureRegionWithWeight("a", 1, 1))));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().toString(),
 				synth.getFailedEventStateSeparationProblems().size(), is(1));
@@ -344,8 +372,12 @@ public class SynthesizePNTest {
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
-					allOf(regionWithInitialMarking(1), pureRegionWithWeight("b", -1), impureRegionWithWeight("a", 1, 1)),
-					allOf(regionWithInitialMarking(1), pureRegionWithWeight("b", 0), pureRegionWithWeight("a", -1))));
+					allOf(regionWithInitialMarking(1),
+							pureRegionWithWeight("b", -1),
+							impureRegionWithWeight("a", 1, 1)),
+					allOf(regionWithInitialMarking(1),
+							pureRegionWithWeight("b", 0),
+							pureRegionWithWeight("a", -1))));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}
@@ -380,7 +412,8 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testSingleRegion() {
-			Region region = Region.Builder.createPure(utility, asBigIntegerList(-1, 0)).withNormalRegionInitialMarking();
+			Region region = Region.Builder.createPure(utility, asBigIntegerList(-1, 0))
+					.withNormalRegionInitialMarking();
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -389,7 +422,8 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testSingleRegionESSP() {
-			Region region = Region.Builder.createPure(utility, asBigIntegerList(-1, 0)).withNormalRegionInitialMarking();
+			Region region = Region.Builder.createPure(utility, asBigIntegerList(-1, 0))
+					.withNormalRegionInitialMarking();
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);
@@ -398,7 +432,8 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testUselessRegion() {
-			Region region = new Region.Builder(utility, asBigIntegerList(1, 1), asBigIntegerList(1, 1)).withInitialMarking(BigInteger.ONE);
+			Region region = new Region.Builder(utility, asBigIntegerList(1, 1), asBigIntegerList(1, 1))
+					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -407,7 +442,8 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testUselessRegionESSP() {
-			Region region = new Region.Builder(utility, asBigIntegerList(1, 1), asBigIntegerList(1, 1)).withInitialMarking(BigInteger.ONE);
+			Region region = new Region.Builder(utility, asBigIntegerList(1, 1), asBigIntegerList(1, 1))
+					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);
@@ -416,8 +452,10 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testNoUselessRegion() {
-			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
-			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
+			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0))
+					.withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1))
+					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -426,8 +464,10 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testNoUselessRegionESSP() {
-			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
-			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
+			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0))
+					.withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1))
+					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);
@@ -436,9 +476,12 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testUselessRegionForSSP() {
-			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
-			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
-			Region region3 = Region.Builder.createPure(utility, asBigIntegerList(1, 1)).withNormalRegionInitialMarking();
+			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0))
+					.withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1))
+					.withInitialMarking(BigInteger.ONE);
+			Region region3 = Region.Builder.createPure(utility, asBigIntegerList(1, 1))
+					.withNormalRegionInitialMarking();
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2, region3));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -447,9 +490,12 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testUselessRegionForSSPESSP() {
-			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
-			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
-			Region region3 = Region.Builder.createPure(utility, asBigIntegerList(1, 1)).withNormalRegionInitialMarking();
+			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0))
+					.withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1))
+					.withInitialMarking(BigInteger.ONE);
+			Region region3 = Region.Builder.createPure(utility, asBigIntegerList(1, 1))
+					.withNormalRegionInitialMarking();
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2, region3));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);
@@ -458,8 +504,10 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testDuplicateRegion() {
-			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
-			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(-2, 0)).withInitialMarking(BigInteger.valueOf(2));
+			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0))
+					.withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(-2, 0))
+					.withInitialMarking(BigInteger.valueOf(2));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -468,8 +516,10 @@ public class SynthesizePNTest {
 
 		@Test
 		public void testDuplicateRegionESSP() {
-			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0)).withInitialMarking(BigInteger.ONE);
-			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(-2, 0)).withInitialMarking(BigInteger.valueOf(2));
+			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, 0))
+					.withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(-2, 0))
+					.withInitialMarking(BigInteger.valueOf(2));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);
@@ -480,10 +530,12 @@ public class SynthesizePNTest {
 		public void testLessUsefulRegion() {
 			// There are three SSP instances and two ESSP instances. This region solves all of them except
 			// for one ESSP instance (disabling a after the first a).
-			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, -1)).withInitialMarking(BigInteger.valueOf(2));
+			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, -1))
+					.withInitialMarking(BigInteger.valueOf(2));
 			// This region solves only two SSP and one ESSP instance (less than the above and the above
 			// solves all these problems, too)
-			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1))
+					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, false);
@@ -494,10 +546,12 @@ public class SynthesizePNTest {
 		public void testLessUsefulRegionESSP() {
 			// There are three SSP instances and two ESSP instances. This region solves all of them except
 			// for one ESSP instance (disabling a after the first a).
-			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, -1)).withInitialMarking(BigInteger.valueOf(2));
+			Region region1 = Region.Builder.createPure(utility, asBigIntegerList(-1, -1))
+					.withInitialMarking(BigInteger.valueOf(2));
 			// This region solves only two SSP and one ESSP instance (less than the above and the above
 			// solves all these problems, too)
-			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1)).withInitialMarking(BigInteger.ONE);
+			Region region2 = Region.Builder.createPure(utility, asBigIntegerList(0, -1))
+					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
 			SynthesizePN.minimizeRegions(utility, regions, true);
@@ -656,7 +710,8 @@ public class SynthesizePNTest {
 	public void testOverflows() throws Exception {
 		// Should be more than the number of bits in a long
 		int size = 70;
-		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(TestTSCollection.getOverflowTS(size)).build();
+		SynthesizePN synth = SynthesizePN.Builder
+				.createForIsomorphicBehaviour(TestTSCollection.getOverflowTS(size)).build();
 		assertThat(synth.getFailedEventStateSeparationProblems().size(), equalTo(size - 1));
 		assertThat(synth.getFailedStateSeparationProblems(), emptyIterable());
 	}

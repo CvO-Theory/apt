@@ -237,7 +237,8 @@ public class ComputeSmallestCyclesFloydWarshallTest extends AbstractComputeSmall
 	@Test
 	public void testRemovalOfNonSmallCycles() {
 		ComputeSmallestCycles calc = createComputeSmallestCycles();
-		Set<Pair<List<String>, ParikhVector>> c = calc.computePVsOfSmallestCycles(getRemovalOfNonSmallCyclesTS());
+		Set<Pair<List<String>, ParikhVector>> c = calc
+				.computePVsOfSmallestCycles(getRemovalOfNonSmallCyclesTS());
 		assertEquals(c.size(), 3);
 		assertTrue(testCycleAndParikh(c, "[7, 8, 9, 7]", "a", "b", "c"));
 		assertTrue(testCycleAndParikh(c, "[8, 9, 7, 8]", "a", "b", "c"));

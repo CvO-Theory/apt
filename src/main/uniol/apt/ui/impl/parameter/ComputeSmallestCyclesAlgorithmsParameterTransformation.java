@@ -25,7 +25,8 @@ import uniol.apt.ui.ParameterTransformation;
 
 /** @author Uli Schlachter */
 @AptParameterTransformation(ComputeSmallestCyclesAlgorithms.class)
-public class ComputeSmallestCyclesAlgorithmsParameterTransformation extends AbstractMapParameterTransformation<ComputeSmallestCyclesAlgorithms>
+public class ComputeSmallestCyclesAlgorithmsParameterTransformation
+		extends AbstractMapParameterTransformation<ComputeSmallestCyclesAlgorithms>
 		implements ParameterTransformation<ComputeSmallestCyclesAlgorithms> {
 	public ComputeSmallestCyclesAlgorithmsParameterTransformation() {
 		super(ComputeSmallestCyclesAlgorithms.values());

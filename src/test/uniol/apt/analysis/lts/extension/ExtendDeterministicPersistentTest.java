@@ -86,7 +86,8 @@ public class ExtendDeterministicPersistentTest {
 				label2 = arc.getLabel();
 				assertThat(label1, not(equalTo(label2)));
 			} else {
-				throw new RuntimeException("I'm looking at the third entry of a collection with two entries");
+				throw new RuntimeException(
+						"I'm looking at the third entry of a collection with two entries");
 			}
 		}
 		assertThat(state1, not(nullValue()));
@@ -191,7 +192,8 @@ public class ExtendDeterministicPersistentTest {
 			"^Arcs "
 			+ "(r2--a->r and s1--fail->l|s1--fail->l and r2--a->r) must lead to the same state\\.$")
 	public void testNonPersistentButActivatedTS() throws Exception {
-		new ExtendDeterministicPersistent().extendTs(TestTSCollection.getNonPersistentButActivatedTS(), Integer.MAX_VALUE);
+		new ExtendDeterministicPersistent().extendTs(TestTSCollection.getNonPersistentButActivatedTS(),
+				Integer.MAX_VALUE);
 	}
 
 	@Test(expectedExceptions = MustLeadToSameStateException.class, expectedExceptionsMessageRegExp =
@@ -270,13 +272,15 @@ public class ExtendDeterministicPersistentTest {
 		assertThat(new ExtendDeterministicPersistent().extendTs(ts, 0), contains(expectedFailure));
 	}
 
-	@Test(expectedExceptions = NoFiniteExtensionPossibleException.class, expectedExceptionsMessageRegExp = "^State f is reachable"
+	@Test(expectedExceptions = NoFiniteExtensionPossibleException.class, expectedExceptionsMessageRegExp =
+			"^State f is reachable"
 			+ " via different, non-Parikh-equivalent firing sequences and needs completion$")
 	public void testAAorBATS1() throws Exception {
 		new ExtendDeterministicPersistent().extendTs(getAAorBATransitionSystem(), 1);
 	}
 
-	@Test(expectedExceptions = NoFiniteExtensionPossibleException.class, expectedExceptionsMessageRegExp = "^State s2 is reachable"
+	@Test(expectedExceptions = NoFiniteExtensionPossibleException.class, expectedExceptionsMessageRegExp =
+			"^State s2 is reachable"
 			+ " via different, non-Parikh-equivalent firing sequences and needs completion$")
 	public void testNotExtendable1() throws Exception {
 		TransitionSystem ts = new TransitionSystem();
@@ -288,7 +292,8 @@ public class ExtendDeterministicPersistentTest {
 		new ExtendDeterministicPersistent().extendTs(ts, 1);
 	}
 
-	@Test(expectedExceptions = NoFiniteExtensionPossibleException.class, expectedExceptionsMessageRegExp = "^State s1 is reachable"
+	@Test(expectedExceptions = NoFiniteExtensionPossibleException.class, expectedExceptionsMessageRegExp =
+			"^State s1 is reachable"
 			+ " via different, non-Parikh-equivalent firing sequences and needs completion$")
 	public void testNotExtendable2() throws Exception {
 		TransitionSystem ts = new TransitionSystem();

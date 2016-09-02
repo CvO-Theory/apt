@@ -207,7 +207,8 @@ public class ComputeSmallestCyclesDFSTest extends AbstractComputeSmallestCyclesT
 	@Test
 	public void testRemovalOfNonSmallCycles() {
 		ComputeSmallestCycles calc = createComputeSmallestCycles();
-		Set<Pair<List<String>, ParikhVector>> c = calc.computePVsOfSmallestCycles(getRemovalOfNonSmallCyclesTS());
+		Set<Pair<List<String>, ParikhVector>> c = calc
+				.computePVsOfSmallestCycles(getRemovalOfNonSmallCyclesTS());
 		assertEquals(c.size(), 1);
 		assertTrue(testCycleAndParikh(c, "[7, 8, 9]", "a", "b", "c"));
 	}

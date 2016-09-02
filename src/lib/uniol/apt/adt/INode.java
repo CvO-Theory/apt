@@ -23,15 +23,23 @@ import java.util.Set;
 import uniol.apt.adt.extension.IExtensible;
 
 /**
- * {@link INode} is an abstract interface to a common node. It is possible to retrieve a view of the pre- and postsets as
- * edge sets as well as node sets.
- * The generic parameter define what types are used for the graph and edges as well as the node itself. This allows to
- * extend any node in a typesafe manner at compiletime. Additionally one may add any data to the node using the
+ * {@link INode} is an abstract interface to a common node. It is possible to
+ * retrieve a view of the pre- and postsets as edge sets as well as node sets.
+ *
+ * <p>The generic parameter define what types are used for the graph and edges as
+ * well as the node itself. This allows to extend any node in a typesafe manner
+ * at compiletime. Additionally one may add any data to the node using the
  * IExtensible interface methods at runtime.
- * For examples have a look at the pn.Place, pn.Transition, ts.Transition or Node classes.
- * @param <G> The type of the graph.
- * @param <E> The type of the edge itself.
- * @param <N> The type of the nodes.
+ *
+ * <p>For examples have a look at the pn.Place, pn.Transition, ts.Transition or
+ * Node classes.
+ *
+ * @param <G>
+ *                The type of the graph.
+ * @param <E>
+ *                The type of the edge itself.
+ * @param <N>
+ *                The type of the nodes.
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public interface INode<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends INode<G, E, N>>

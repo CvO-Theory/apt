@@ -24,7 +24,7 @@ import uniol.apt.io.renderer.AptRenderer;
 import uniol.apt.io.renderer.Renderer;
 
 /**
- * This class renders Petri nets in the dot graph file format
+ * This class renders transition systems as LaTeX tikz graphics.
  * @author vsp
  */
 @AptRenderer

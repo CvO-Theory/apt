@@ -46,27 +46,37 @@ public class SeparationLogic {
 	private SeparationSingleResult result;
 
 	/**
-	 * Class constructor.
+	 * Main idea is to compute reachability graph for net with marking k*M0
+	 * (rg_kM0) and reachability graph with marking M0 (rg_M0).
 	 *
-	 * Note:
-	 *   We check every possible firable sequence -- using Coverabily Class, so unbounded
-	 *   nets will be sorted out.
-	 *   Main idea is to compute reachability graph for net with marking k*M0 (rg_kM0) and
-	 *   reachability graph with marking M0 (rg_M0).
-	 *   Strongly separation: Try to realize every sequence of rg_kM0 with sequences from rg_M0.
-	 *   Sequences from rg_M0 can be used k times. It is allowed to switch between sequences
-	 *   of rg_M0 but the order in a sequence must not be changed.
-	 *   Weakly separation: Same as strongly but here the order in a sequence can be changed.
+	 * <p>Note: We check every possible firable sequence -- using Coverabily
+	 * Class, so unbounded nets will be sorted out.
+	 *
+	 * <p>Strongly separation: Try to realize every sequence of rg_kM0 with
+	 * sequences from rg_M0. Sequences from rg_M0 can be used k times. It is
+	 * allowed to switch between sequences of rg_M0 but the order in a
+	 * sequence must not be changed.
+	 *
+	 * <p>Weakly separation: Same as strongly but here the order in a sequence
+	 * can be changed.
 	 *
 	 *
-	 * @param petriNet Net which will be checked
-	 * @param stronglyCheck check strong or weakly
-	 * @param initK Value for k, k == 0 -&gt; compute the maximum k and use it. k must be "ok" - see separation class
-	 * @param chosenFiringSequence check this given firing sequence - null for unused
-	 * @param maxLength check all sequences up this length - must be greater than 0
-	 *        - unused if chosenFiringSequence was set
-	 * @param fullOutput outputs every firing sequence
-	 * @throws UnboundedException Unbounded exception
+	 * @param petriNet
+	 *                Net which will be checked
+	 * @param stronglyCheck
+	 *                check strong or weakly
+	 * @param initK
+	 *                Value for k, k == 0 -&gt; compute the maximum k and
+	 *                use it. k must be "ok" - see separation class
+	 * @param chosenFiringSequence
+	 *                check this given firing sequence - null for unused
+	 * @param maxLength
+	 *                check all sequences up this length - must be greater
+	 *                than 0 - unused if chosenFiringSequence was set
+	 * @param fullOutput
+	 *                outputs every firing sequence
+	 * @throws UnboundedException
+	 *                 Unbounded exception
 	 */
 	public SeparationLogic(PetriNet petriNet, boolean stronglyCheck, long initK,
 			ArrayList<String> chosenFiringSequence,

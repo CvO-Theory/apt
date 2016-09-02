@@ -44,25 +44,13 @@ public class SeparationStrongTest {
 	public void teardown() {
 	}
 
-	private boolean testNetStrongly(PetriNet pn, int k) {
+	private boolean testNetStrongly(PetriNet pn, int k) throws UnboundedException {
 		// up to length 6 because there are test nets with finite fire sequences with length 6
-		Separation sep = null;
-		try {
-			sep = new Separation(pn, true, k, 6, false);
-		} catch (UnboundedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		if (sep == null) {
-			return false;
-		}
-
-		return sep.isSeparable();
+		return new Separation(pn, true, k, 6, false).isSeparable();
 	}
 
 	@Test
-	public void getStrongSeparableFromLectureWithoutToken() {
+	public void getStrongSeparableFromLectureWithoutToken() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getStrongSeparableFromLectureWithoutToken();
 		int kTo = 0;
 
@@ -70,7 +58,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getStrongSeparableFromLecture() {
+	public void getStrongSeparableFromLecture() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getStrongSeparableFromLecture();
 		int kTo = 0;
 
@@ -78,7 +66,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getNoSeparableFromLecture() {
+	public void getNoSeparableFromLecture() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getNoSeparableFromLecture();
 		int kTo = 0;
 
@@ -86,7 +74,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getNoSeparableLiveRevFC() {
+	public void getNoSeparableLiveRevFC() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getNoSeparableLiveRevFC();
 		int kTo = 0;
 
@@ -94,7 +82,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getSeparableCycle() {
+	public void getSeparableCycle() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getSeparableCycle();
 		int kTo = 0;
 
@@ -102,7 +90,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getSeparableK3Not26k6() {
+	public void getSeparableK3Not26k6() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getSeparableK3Not26();
 		int kTo = 6;
 
@@ -110,7 +98,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getSeparableK3Not26k3() {
+	public void getSeparableK3Not26k3() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getSeparableK3Not26();
 		int kTo = 3;
 
@@ -118,7 +106,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getSeparableK3Not26k2() {
+	public void getSeparableK3Not26k2() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getSeparableK3Not26();
 		int kTo = 2;
 
@@ -126,7 +114,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getSeparableK2Not36First() {
+	public void getSeparableK2Not36First() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getSeparableK2Not36();
 		int kTo = 6;
 
@@ -134,7 +122,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getSeparableK2Not36Second() {
+	public void getSeparableK2Not36Second() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getSeparableK2Not36();
 		int kTo = 3;
 
@@ -142,7 +130,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getSeparableK2Not36Third() {
+	public void getSeparableK2Not36Third() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getSeparableK2Not36();
 		int kTo = 2;
 
@@ -150,7 +138,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getSeparableLine() {
+	public void getSeparableLine() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getSeparableLine();
 		int kTo = 0;
 
@@ -158,7 +146,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getSeparableTrivial() {
+	public void getSeparableTrivial() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getSeparableTrivial();
 		int kTo = 2;
 
@@ -166,7 +154,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getNoSeparable() {
+	public void getNoSeparable() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getNoSeparable();
 		int kTo = 0;
 
@@ -174,7 +162,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getWeakSeparable() {
+	public void getWeakSeparable() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getWeakSeparable();
 		int kTo = 0;
 
@@ -182,7 +170,7 @@ public class SeparationStrongTest {
 	}
 
 	@Test
-	public void getWeakSeparableFromLecture() {
+	public void getWeakSeparableFromLecture() throws UnboundedException {
 		PetriNet pn = TestNetsForSeparation.getWeakSeparableFromLecture();
 		int kTo = 0;
 

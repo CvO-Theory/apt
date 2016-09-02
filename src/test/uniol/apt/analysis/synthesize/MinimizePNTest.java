@@ -52,7 +52,8 @@ public class MinimizePNTest {
 		return result;
 	}
 
-	static private SynthesizePN mockSynthesize(TransitionSystem ts, PNProperties properties, int numRegions, boolean onlyEventSeparation) {
+	static private SynthesizePN mockSynthesize(TransitionSystem ts, PNProperties properties, int numRegions,
+			boolean onlyEventSeparation) {
 		RegionUtility utility = new RegionUtility(ts);
 		SynthesizePN synth = mock(SynthesizePN.class);
 		when(synth.wasSuccessfullySeparated()).thenReturn(true);

@@ -69,7 +69,8 @@ public class AutomatonToRegularExpressionTest {
 
 	@Test
 	public void testConcatenate() {
-		FiniteAutomaton aut = concatenate(getAtomicLanguage(new Symbol("a")), getAtomicLanguage(new Symbol("b")));
+		FiniteAutomaton aut = concatenate(getAtomicLanguage(new Symbol("a")),
+				getAtomicLanguage(new Symbol("b")));
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
 		assertThat(automatonToRegularExpression(aut), is("ab"));
 	}
@@ -124,7 +125,8 @@ public class AutomatonToRegularExpressionTest {
 		// words that end "in the middle" of the expression (similarly (ba)*b) and words which contain aa or bb.
 
 		assertThat(findWordDifference(aut, roundTrip(aut)), is(nullValue()));
-		assertThat(findWordDifference(roundTrip(aut), parse("(ab)*a|(ba)*b|(a|b)*(aa|bb)(a|b)*")), is(nullValue()));
+		assertThat(findWordDifference(roundTrip(aut), parse("(ab)*a|(ba)*b|(a|b)*(aa|bb)(a|b)*")),
+				is(nullValue()));
 		assertThat(automatonToRegularExpression(aut), anyOf(
 					is("b(ab)*(b|aa|(b|aa)(a?|b)+)|a(ba)*(a|bb|(a|bb)(a?|b)+)|b|b(ab)*|a|a(ba)*"),
 					is("a(ba)*(a|bb|(a|bb)(b?|a)+)|b(ab)*(b|aa|(b|aa)(b?|a)+)|a|a(ba)*|b|b(ab)*")));

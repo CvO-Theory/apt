@@ -184,28 +184,32 @@ public class SubGraphTest {
 		assertThat(subGraph.getPostsetNodes("s3"), empty());
 	}
 
-	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp = "^Node 'foobar' does not exist in graph ''$")
+	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp =
+			"^Node 'foobar' does not exist in graph ''$")
 	public void testInvalidNodeConstructor() {
 		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
 		Collection<String> states = Arrays.asList("s0", "foobar", "s3");
 		getSubGraphByNodeIDs(graph, states);
 	}
 
-	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp = "^Node 'foobar' does not exist in graph ''$")
+	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp =
+			"^Node 'foobar' does not exist in graph ''$")
 	public void testInvalidNodeGetNode1() {
 		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
 		Collection<String> states = Arrays.asList("s0", "s1", "s2", "s3");
 		getSubGraphByNodeIDs(graph, states).getNode("foobar");
 	}
 
-	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp = "^Node 's0' does not exist in graph ''$")
+	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp =
+			"^Node 's0' does not exist in graph ''$")
 	public void testInvalidNodeGetNode2() {
 		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
 		Collection<String> states = Arrays.asList("s1", "s2", "s3");
 		getSubGraphByNodeIDs(graph, states).getNode(graph.getInitialState());
 	}
 
-	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp = "^Node 's0' does not exist in graph ''$")
+	@Test(expectedExceptions = NoSuchNodeException.class, expectedExceptionsMessageRegExp =
+			"^Node 's0' does not exist in graph ''$")
 	public void testInvalidNodeGetNode3() {
 		TransitionSystem graph = TestTSCollection.getPlainTNetReachabilityTS();
 		Collection<String> states = Arrays.asList("s0", "s1", "s2", "s3");

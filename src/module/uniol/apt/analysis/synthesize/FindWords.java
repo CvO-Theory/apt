@@ -48,7 +48,12 @@ import uniol.apt.util.Pair;
  * @author Uli Schlachter
  */
 public class FindWords {
-	// Number of Runnables that should always be pending for the thread pool. Must be positive.
+
+	private FindWords() { /* hide constructor */ }
+
+	/**
+	 * Number of Runnables that should always be pending for the thread pool. Must be positive.
+	 */
 	static private final int TARGET_JOB_QUEUE_SIZE = 5;
 
 	static public interface WordCallback {

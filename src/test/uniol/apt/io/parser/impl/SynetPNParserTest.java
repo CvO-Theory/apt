@@ -69,31 +69,36 @@ public class SynetPNParserTest {
 
 	@Test
 	public void testSideCondition() throws Exception {
-		PetriNet pn = new SynetPNParser().parseString("transition t1 place p1 := 1 flow p1 <- 1 -- t1 flow p1 ---> t1");
+		PetriNet pn = new SynetPNParser().parseString(
+				"transition t1 place p1 := 1 flow p1 <- 1 -- t1 flow p1 ---> t1");
 		sideConditionAsserts(pn);
 	}
 
 	@Test
 	public void testSideConditionWithLocation() throws Exception {
-		PetriNet pn = new SynetPNParser().parseString("transition t1 :: l place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
+		PetriNet pn = new SynetPNParser().parseString(
+				"transition t1 :: l place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
 		sideConditionAsserts(pn);
 	}
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 pos 0 Missing Location$")
 	public void testSideConditionWithPartialLocation1() throws Exception {
-		PetriNet pn = new SynetPNParser().parseString("transition t1 place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
+		PetriNet pn = new SynetPNParser().parseString(
+				"transition t1 place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
 		sideConditionAsserts(pn);
 	}
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 pos 19 Missing Location$")
 	public void testSideConditionWithPartialLocation2() throws Exception {
-		PetriNet pn = new SynetPNParser().parseString("transition t1 :: l place p1 := 1 flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
+		PetriNet pn = new SynetPNParser().parseString(
+				"transition t1 :: l place p1 := 1 flow p1 <- 1 -- t1 flow p1 ---> t1 location l");
 		sideConditionAsserts(pn);
 	}
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 pos 17 Unknown Location 'l'$")
 	public void testSideConditionWithUndeclaredLocation() throws Exception {
-		PetriNet pn = new SynetPNParser().parseString("transition t1 :: l place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1");
+		PetriNet pn = new SynetPNParser().parseString(
+				"transition t1 :: l place p1 := 1 :: l flow p1 <- 1 -- t1 flow p1 ---> t1");
 		sideConditionAsserts(pn);
 	}
 

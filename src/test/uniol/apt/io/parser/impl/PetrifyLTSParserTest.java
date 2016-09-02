@@ -46,17 +46,20 @@ public class PetrifyLTSParserTest {
 
 	@Test
 	public void testABCLTS1() throws Exception {
-		verifyAbcLts(new PetrifyLTSParser().parseString(".inputs a b c\n.state graph\ns0 a s1 b s2 c s0\n.marking  {s0} \n.end\n"));
+		verifyAbcLts(new PetrifyLTSParser().parseString(
+				".inputs a b c\n.state graph\ns0 a s1 b s2 c s0\n.marking  {s0} \n.end\n"));
 	}
 
 	@Test
 	public void testABCLTS2() throws Exception {
-		verifyAbcLts(new PetrifyLTSParser().parseString(".inputs a b c\n.state graph\ns0 a s1\ns2 c s0\ns1 b s2\n.marking  {s0} \n.end\n"));
+		verifyAbcLts(new PetrifyLTSParser().parseString(
+				".inputs a b c\n.state graph\ns0 a s1\ns2 c s0\ns1 b s2\n.marking  {s0} \n.end\n"));
 	}
 
 	@Test
 	public void testIsolatedState() throws Exception {
-		TransitionSystem lts = new PetrifyLTSParser().parseString(".state graph\ns0\ns1\n.marking{ s0 }\n.end\n");
+		TransitionSystem lts = new PetrifyLTSParser().parseString(
+				".state graph\ns0\ns1\n.marking{ s0 }\n.end\n");
 		assertThat(lts.getNodes(), contains(nodeWithID("s0"), nodeWithID("s1")));
 		assertThat(lts.getAlphabet(), empty());
 		assertThat(lts.getEdges(), empty());
@@ -65,7 +68,8 @@ public class PetrifyLTSParserTest {
 
 	@Test
 	public void testEmptyLTS() throws Exception {
-		TransitionSystem lts = new PetrifyLTSParser().parseString(" #bar\n.model   a_7-g # foo\n.state graph\ns0\n.marking{ s0 }\n.end\n");
+		TransitionSystem lts = new PetrifyLTSParser().parseString(
+				" #bar\n.model   a_7-g # foo\n.state graph\ns0\n.marking{ s0 }\n.end\n");
 		assertThat(lts.getName(), is("a_7-g"));
 		assertThat(lts.getNodes(), contains(nodeWithID("s0")));
 		assertThat(lts.getAlphabet(), empty());

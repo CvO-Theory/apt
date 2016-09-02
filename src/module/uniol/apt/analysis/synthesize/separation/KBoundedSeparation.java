@@ -60,7 +60,9 @@ class KBoundedSeparation implements Separation {
 	private final Set<Region> regions = new HashSet<>();
 	private final boolean pure;
 
-	/* package-visible constructor used by tests */
+	/**
+	 * package-visible constructor used by tests
+	 */
 	KBoundedSeparation(TransitionSystem ts, PNProperties properties) throws UnsupportedPNPropertiesException {
 		this(new RegionUtility(ts), properties, new String[0]);
 	}
@@ -142,14 +144,16 @@ class KBoundedSeparation implements Separation {
 			// gradient(event) > g. These two cases follow.
 
 			Bag<State> r1 = expandBelowOrEqual(r, event.getFirst(), event.getSecond());
-			debugFormat("for gradient(%s) <= %d, new result is %s", event.getFirst(), event.getSecond(), r1);
+			debugFormat("for gradient(%s) <= %d, new result is %s",
+					event.getFirst(), event.getSecond(), r1);
 			if (shouldExplore(r1, k) && known.add(r1))
 				todo.add(r1);
 			else
 				debug("...which should not be explored");
 
 			Bag<State> r2 = expandAboveOrEqual(r, event.getFirst(), event.getSecond() + 1);
-			debugFormat("for gradient(%s) >= %d, new result is %s", event.getFirst(), event.getSecond() + 1, r2);
+			debugFormat("for gradient(%s) >= %d, new result is %s",
+					event.getFirst(), event.getSecond() + 1, r2);
 			if (shouldExplore(r2, k) && known.add(r2))
 				todo.add(r2);
 			else

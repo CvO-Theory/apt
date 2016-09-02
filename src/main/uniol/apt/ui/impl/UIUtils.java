@@ -42,7 +42,21 @@ public class UIUtils {
 	private UIUtils() {
 	}
 
-	public static String getModuleUsage(Module module, ParametersTransformer parametersTransformer) throws NoSuchTransformationException {
+	/**
+	 * Returns a usage string describing how to use the module.
+	 *
+	 * @param module
+	 *                module in question
+	 * @param parametersTransformer
+	 *                transformer for getting descriptions of the string
+	 *                transformations
+	 * @return usage string
+	 * @throws NoSuchTransformationException
+	 *                 thrown if there is no applicable transformation for a
+	 *                 parameter
+	 */
+	public static String getModuleUsage(Module module, ParametersTransformer parametersTransformer)
+			throws NoSuchTransformationException {
 		List<Parameter> parameters = ModuleUtils.getParameters(module);
 		List<OptionalParameter<?>> optionalParameters = ModuleUtils.getOptionalParameters(module);
 		List<ReturnValue> fileReturnValues = ModuleUtils.getFileReturnValues(module);

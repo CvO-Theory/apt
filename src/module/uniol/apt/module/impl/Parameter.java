@@ -33,6 +33,18 @@ public class Parameter {
 	private final String description;
 	private final String[] properties;
 
+	/**
+	 * Creates a new parameter specification.
+	 *
+	 * @param name
+	 *                name of the parameter
+	 * @param klass
+	 *                type of the parameter
+	 * @param description
+	 *                explanation of the parameter
+	 * @param properties
+	 *                ???
+	 */
 	public Parameter(String name, Class<?> klass, String description, String[] properties) {
 		this.name = name;
 		this.klass = klass;

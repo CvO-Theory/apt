@@ -30,6 +30,22 @@ import uniol.apt.module.exception.ModuleException;
  * @param <T> the type of the object that is transformed into a string
  */
 public interface ReturnValueTransformation<T> {
+
+	/**
+	 * Transforms the given argument into a string and appends it to the
+	 * writer.
+	 *
+	 * @param output
+	 *                writer
+	 * @param arg
+	 *                argument
+	 * @throws ModuleException
+	 *                 exception that could get raised during transformation
+	 *                 of the argument to a string
+	 * @throws IOException
+	 *                 exception that could get raised by
+	 *                 {@link Writer#append(CharSequence)}
+	 */
 	public void transform(Writer output, T arg) throws ModuleException, IOException;
 }
 

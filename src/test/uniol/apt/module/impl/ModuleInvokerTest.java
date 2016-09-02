@@ -102,8 +102,8 @@ public class ModuleInvokerTest {
 	}
 
 	private static class EvenMoreSpecialPN extends PetriNet {
-		public EvenMoreSpecialPN(String Id) {
-			super(Id);
+		public EvenMoreSpecialPN(String id) {
+			super(id);
 		}
 	}
 

@@ -56,7 +56,8 @@ public class MathToolsTest {
 		assertEquals(MathTools.lcm(a, b), product);
 	}
 
-	@Test(expectedExceptions = ArithmeticException.class, expectedExceptionsMessageRegExp = "Cannot represent value as int: 141248176476894629")
+	@Test(expectedExceptions = ArithmeticException.class, expectedExceptionsMessageRegExp =
+			"Cannot represent value as int: 141248176476894629")
 	public void testLCMOverflow() {
 		MathTools.lcm(bigPrime1, bigPrime2);
 	}
