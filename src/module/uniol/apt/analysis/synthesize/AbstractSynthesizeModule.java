@@ -53,7 +53,7 @@ public abstract class AbstractSynthesizeModule extends AbstractModule implements
 		public void configureSynthesizePNBuilder(SynthesizePN.Builder builder);
 	}
 
-	protected final String getOptionsDescription(String extraOptions, String extraOptionsDescriptions) {
+	static String getOptionsDescription(String extraOptions, String extraOptionsDescriptions) {
 		return "Supported options are: none, [k]-bounded, safe, [k]-marking, pure, plain, tnet,"
 			+ " generalized-marked-graph (gmg), marked-graph (mg), generalized-output-nonbranching (gon)"
 			+ " output-nonbranching (on), conflict-free (cf), homogeneous,"
