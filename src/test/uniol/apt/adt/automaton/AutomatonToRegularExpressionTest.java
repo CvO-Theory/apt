@@ -25,6 +25,7 @@ import uniol.apt.TestTSCollection;
 import uniol.apt.io.parser.impl.RegexParser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static uniol.apt.adt.automaton.AutomatonToRegularExpression.automatonToRegularExpression;
 import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
 import static uniol.apt.adt.matcher.Matchers.*;

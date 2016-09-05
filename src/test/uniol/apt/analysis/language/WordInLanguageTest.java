@@ -33,6 +33,7 @@ import org.hamcrest.Matcher;
 import uniol.apt.adt.INode;
 import uniol.apt.adt.pn.Transition;
 
+import static org.hamcrest.Matchers.*;
 import static uniol.apt.TestNetCollection.*;
 import static uniol.apt.adt.matcher.Matchers.*;
 

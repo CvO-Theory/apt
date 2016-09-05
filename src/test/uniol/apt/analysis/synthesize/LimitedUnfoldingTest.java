@@ -21,7 +21,7 @@ package uniol.apt.analysis.synthesize;
 
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uniol.apt.adt.matcher.Matchers.*;
+import static org.hamcrest.Matchers.*;
 
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.State;

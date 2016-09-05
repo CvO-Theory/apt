@@ -24,7 +24,9 @@ import org.testng.annotations.Test;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.adt.ts.TransitionSystem;
 
-import static uniol.apt.adt.matcher.Matchers.*;
+import static org.hamcrest.Matchers.*;
+import static uniol.apt.adt.matcher.Matchers.nodeWithID;
+import static uniol.apt.adt.matcher.Matchers.arcThatConnects;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**

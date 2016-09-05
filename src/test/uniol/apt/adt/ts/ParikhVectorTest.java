@@ -25,7 +25,7 @@ import java.util.HashMap;
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import static uniol.apt.adt.matcher.Matchers.*;
+import static org.hamcrest.Matchers.*;
 
 /** @author Uli Schlachter */
 public class ParikhVectorTest {

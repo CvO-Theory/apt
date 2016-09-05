@@ -34,6 +34,7 @@ import static uniol.apt.TestNetCollection.*;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.INode;
 
+import static org.hamcrest.Matchers.*;
 import static uniol.apt.adt.matcher.Matchers.*;
 
 /**

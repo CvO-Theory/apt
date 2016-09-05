@@ -37,12 +37,15 @@ import uniol.apt.analysis.coverability.CoverabilityGraphNode;
 import uniol.apt.analysis.coverability.CoverabilityGraphEdge;
 import uniol.apt.util.Pair;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+
 /**
  * Matchers to verify that adt classes match given conditions
  *
  * @author vsp, Uli Schlachter
  */
-public class Matchers extends org.hamcrest.Matchers {
+public class Matchers {
 
 	public static <T> Matcher<Arc> edgeNodesMarkingEq(Marking sourceMark, Marking targetMark) {
 		return arcThatConnects(nodeMarkingEq(sourceMark), nodeMarkingEq(targetMark));

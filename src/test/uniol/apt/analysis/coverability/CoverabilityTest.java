@@ -29,6 +29,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Marking;

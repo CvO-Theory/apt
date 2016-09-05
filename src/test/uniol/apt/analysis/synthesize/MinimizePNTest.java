@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uniol.apt.adt.matcher.Matchers.*;
+import static org.hamcrest.Matchers.*;
 
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.TransitionSystem;

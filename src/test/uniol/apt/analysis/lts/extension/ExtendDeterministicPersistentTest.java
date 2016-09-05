@@ -26,6 +26,7 @@ import org.hamcrest.Matcher;
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.testng.Assert.fail;
+import static org.hamcrest.Matchers.*;
 
 import uniol.apt.TestTSCollection;
 import uniol.apt.adt.INode;

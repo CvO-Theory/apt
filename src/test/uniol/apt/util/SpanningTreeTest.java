@@ -32,7 +32,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import org.testng.annotations.Test;
 import uniol.apt.adt.matcher.Matchers;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uniol.apt.adt.matcher.Matchers.*;
+import static org.hamcrest.Matchers.*;
 
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked")

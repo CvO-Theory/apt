@@ -26,8 +26,8 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static uniol.apt.TestNetCollection.*;
-import static uniol.apt.adt.matcher.Matchers.*;
 
 /** @author Uli Schlachter, vsp */
 public class BoundedTest {

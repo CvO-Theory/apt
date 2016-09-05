@@ -27,9 +27,9 @@ import uniol.apt.adt.ts.TransitionSystem;
 
 import org.testng.annotations.Test;
 
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
-import static uniol.apt.adt.matcher.Matchers.*;
 
 /**
  * @author Uli Schlachter

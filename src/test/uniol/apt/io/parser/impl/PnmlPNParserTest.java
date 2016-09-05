@@ -25,7 +25,8 @@ import uniol.apt.adt.pn.PetriNet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uniol.apt.CrashCourseNets.getCCNet2;
-import static uniol.apt.adt.matcher.Matchers.*;
+import static org.hamcrest.Matchers.*;
+import static uniol.apt.adt.matcher.Matchers.netWithSameStructureAs;
 
 /**
  * @author Manuel Gieseking

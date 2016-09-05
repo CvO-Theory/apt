@@ -22,7 +22,8 @@ package uniol.apt.analysis.live;
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import static uniol.apt.adt.matcher.Matchers.*;
+import static org.hamcrest.Matchers.*;
+//import static uniol.apt.adt.matcher.Matchers.*;
 
 import static uniol.apt.TestNetCollection.*;
 import uniol.apt.adt.pn.PetriNet;

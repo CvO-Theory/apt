@@ -37,6 +37,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 
+import static org.hamcrest.Matchers.*;
 import static uniol.apt.adt.matcher.Matchers.*;
 import static uniol.apt.adt.pn.Token.OMEGA;
 

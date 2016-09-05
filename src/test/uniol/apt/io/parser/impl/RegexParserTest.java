@@ -26,6 +26,7 @@ import uniol.apt.io.parser.ParseException;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.nullValue;
 import static uniol.apt.adt.automaton.FiniteAutomatonUtility.*;
 import static uniol.apt.adt.matcher.Matchers.*;
 

@@ -23,7 +23,7 @@ import java.util.Arrays;
 
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uniol.apt.adt.matcher.Matchers.*;
+import static org.hamcrest.Matchers.*;
 
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked") // I hate generics
