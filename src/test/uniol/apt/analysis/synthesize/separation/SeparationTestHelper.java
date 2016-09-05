@@ -82,6 +82,7 @@ public class SeparationTestHelper {
 			pairs.add(new CrashkursCC2Tests(factory));
 			pairs.add(new TestWordCBADCBA(factory));
 			pairs.add(new TestStateSeparation(factory));
+			pairs.add(new TestLocationSSP(factory));
 		}
 		if (includeWord)
 			pairs.add(new TestWordB2AB5AB6AB6(factory));
@@ -425,6 +426,45 @@ public class SeparationTestHelper {
 
 		assertThat(sep.calculateSeparatingRegion(s, t), nullValue());
 		assertThat(sep.calculateSeparatingRegion(s, u), nullValue());
+	}
+
+	static public class TestLocationSSP {
+		final private SeparationFactory factory;
+
+		private TransitionSystem ts;
+		private String[] locationMap;
+
+		public TestLocationSSP(SeparationFactory factory) {
+			this.factory = factory;
+		}
+
+		@BeforeClass
+		public void setup() throws Exception {
+			ts = new TransitionSystem();
+			State[] states = ts.createStates("s0", "s1");
+			ts.setInitialState(states[0]);
+			ts.createArc(states[0], states[1], "a");
+			ts.createArc(states[0], states[1], "b");
+
+			ts.getEvent("a").putExtension("location", "a");
+			ts.getEvent("b").putExtension("location", "b");
+			locationMap = new String[] { "a", "b" };
+		}
+
+		@Test
+		public void testLocations() throws Exception {
+			State s0 = ts.getNode("s0");
+			State s1 = ts.getNode("s1");
+			Separation sep = factory.createSeparation(new RegionUtility(ts), locationMap);
+
+			Region r = sep.calculateSeparatingRegion(s0, s1);
+			assertThat(r, not(nullValue()));
+			assertThat(r.toString(), SeparationUtility.isSeparatingRegion(r, s0, s1), is(true));
+
+			r = sep.calculateSeparatingRegion(s1, s0);
+			assertThat(r, not(nullValue()));
+			assertThat(r.toString(), SeparationUtility.isSeparatingRegion(r, s0, s1), is(true));
+		}
 	}
 }
 
