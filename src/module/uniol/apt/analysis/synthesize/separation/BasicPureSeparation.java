@@ -99,6 +99,14 @@ class BasicPureSeparation implements Separation {
 			// Unreachable states cannot be separated
 			return null;
 
+		Region result = calculateSeparatingRegionInternal(state, otherState);
+		if (result == null && locationMap != null)
+			// With locations, it is not always true that we can strengthen "!=" to ">", so try both.
+			result = calculateSeparatingRegionInternal(otherState, state);
+		return result;
+	}
+
+	private Region calculateSeparatingRegionInternal(State state, State otherState) {
 		final List<Region> basis = utility.getRegionBasis();
 		InequalitySystem system = prepareInequalitySystem();
 
