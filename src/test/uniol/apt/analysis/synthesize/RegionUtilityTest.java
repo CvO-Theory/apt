@@ -33,7 +33,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static uniol.apt.analysis.synthesize.Matchers.*;
+import static uniol.apt.analysis.synthesize.matcher.Matchers.*;
 
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked") // I hate generics

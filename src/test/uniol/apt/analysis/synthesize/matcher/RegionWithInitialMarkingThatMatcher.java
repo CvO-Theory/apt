@@ -17,13 +17,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.synthesize;
+package uniol.apt.analysis.synthesize.matcher;
 
 import java.math.BigInteger;
 
 import org.hamcrest.Factory;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
+
+import uniol.apt.analysis.synthesize.Region;
 
 /**
  * Matcher to verify that a Region has a matching initial marking.

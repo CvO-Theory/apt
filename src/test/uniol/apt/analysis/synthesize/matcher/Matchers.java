@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.synthesize;
+package uniol.apt.analysis.synthesize.matcher;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -28,6 +28,8 @@ import org.hamcrest.Matcher;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
+
+import uniol.apt.analysis.synthesize.Region;
 
 /**
  * Matchers to verify that Synthesize classes match given conditions.

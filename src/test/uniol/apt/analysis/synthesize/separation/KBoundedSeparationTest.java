@@ -34,7 +34,7 @@ import uniol.apt.analysis.synthesize.Region;
 
 import static uniol.apt.TestTSCollection.*;
 import static org.hamcrest.Matchers.*;
-import static uniol.apt.analysis.synthesize.Matchers.*;
+import static uniol.apt.analysis.synthesize.matcher.Matchers.*;
 
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked")

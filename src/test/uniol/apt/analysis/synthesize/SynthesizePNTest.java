@@ -50,7 +50,7 @@ import static org.mockito.Mockito.when;
 import static uniol.apt.adt.matcher.Matchers.flowThatConnects;
 import static uniol.apt.adt.matcher.Matchers.nodeWithID;
 import static uniol.apt.adt.matcher.Matchers.pairWith;
-import static uniol.apt.analysis.synthesize.Matchers.*;
+import static uniol.apt.analysis.synthesize.matcher.Matchers.*;
 import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
 
 /** @author Uli Schlachter */

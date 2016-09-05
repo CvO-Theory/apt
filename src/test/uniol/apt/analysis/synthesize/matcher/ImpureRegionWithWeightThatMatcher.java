@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package uniol.apt.analysis.synthesize;
+package uniol.apt.analysis.synthesize.matcher;
 
 import java.math.BigInteger;
 
@@ -26,59 +26,62 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
+import uniol.apt.analysis.synthesize.Region;
+
 /**
  * Matcher to verify that a region satisfies some constraints.
  * @author Uli Schlachter, vsp
  */
-public class PureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher<Region> {
+public class ImpureRegionWithWeightThatMatcher extends TypeSafeDiagnosingMatcher<Region> {
 
 	private final String event;
-	private final Matcher<? super BigInteger> weightWatcher;
+	private final Matcher<? super BigInteger> backwardMatcher;
+	private final Matcher<? super BigInteger> forwardMatcher;
 
-	private PureRegionWithWeightThatMatcher(String event, Matcher<? super BigInteger> weightWatcher) {
+	private ImpureRegionWithWeightThatMatcher(String event,
+			Matcher<? super BigInteger> backwardMatcher, Matcher<? super BigInteger> forwardMatcher) {
 		this.event = event;
-		this.weightWatcher = weightWatcher;
+		this.backwardMatcher = backwardMatcher;
+		this.forwardMatcher = forwardMatcher;
 	}
 
 	@Override
 	public void describeTo(Description description) {
 		description.appendText("region weight('");
 		description.appendText(event);
-		description.appendText("')=");
-		weightWatcher.describeTo(description);
+		description.appendText("')=(");
+		backwardMatcher.describeTo(description);
+		description.appendText(", ");
+		forwardMatcher.describeTo(description);
+		description.appendText(")");
 	}
 
 	@Override
 	public boolean matchesSafely(Region region, Description description) {
 		boolean matches = true;
 
-		if (!region.getBackwardWeight(event).equals(BigInteger.ZERO) && !region.getForwardWeight(event).equals(BigInteger.ZERO)) {
-			description.appendText("region weight('");
-			description.appendText(event);
-			description.appendText("')=(");
-			description.appendText("" + region.getBackwardWeight(event));
-			description.appendText(", ");
-			description.appendText("" + region.getForwardWeight(event));
-			description.appendText(") and thus being impure");
-			return false;
-		}
+		description.appendText("region weight('");
+		description.appendText(event);
+		description.appendText("')=(");
 
-		if (!weightWatcher.matches(region.getWeight(event))) {
-			description.appendText("region weight('");
-			description.appendText(event);
-			description.appendText("')=");
-			weightWatcher.describeMismatch(region.getWeight(event), description);
-			return false;
-		}
+		backwardMatcher.describeMismatch(region.getBackwardWeight(event), description);
+		if (!backwardMatcher.matches(region.getBackwardWeight(event)))
+			matches = false;
 
-		description.appendText("}");
+		description.appendText(",  ");
+		forwardMatcher.describeMismatch(region.getForwardWeight(event), description);
+		if (!forwardMatcher.matches(region.getForwardWeight(event)))
+			matches = false;
+
+		description.appendText(")");
 
 		return matches;
 	}
 
 	@Factory
-	public static Matcher<Region> pureRegionWithWeightThat(String event, Matcher<? super BigInteger> weight) {
-		return new PureRegionWithWeightThatMatcher(event, weight);
+	public static Matcher<Region> impureRegionWithWeightThat(String event,
+			Matcher<? super BigInteger> backward, Matcher<? super BigInteger> forward) {
+		return new ImpureRegionWithWeightThatMatcher(event, backward, forward);
 	}
 }
 
