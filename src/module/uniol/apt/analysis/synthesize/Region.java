@@ -480,8 +480,10 @@ public class Region {
 		/**
 		 * Create a copy of a region for a different RegionUtility. The given utility and the utility used by
 		 * the given region must have the same event list!
-		 * @param utiltiy The utility to use.
+		 * @param utility The utility to use.
 		 * @param region The region to copy to the given utility.
+		 * @return A new region with the same weights and initial token count as the given region, but refering
+		 * to the given region utility.
 		 * @throws IllegalArgumentException When the event lists are different.
 		 */
 		static public Region copyRegionToUtility(RegionUtility utility, Region region) {
