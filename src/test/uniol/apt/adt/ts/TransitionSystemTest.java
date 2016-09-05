@@ -24,6 +24,8 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
+import static uniol.apt.adt.matcher.Matchers.arcThatConnectsVia;
+import static uniol.apt.adt.matcher.Matchers.nodeWithID;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -256,6 +258,24 @@ public class TransitionSystemTest {
 		// Test: arc rename updates cache
 		preset = ts.getPresetNodesByLabel(s2, "a");
 		assertThat(preset, contains(s1));
+	}
+
+	@Test
+	public void testCopyConstructor() {
+		TransitionSystem ts1 = new TransitionSystem();
+		ts1.createState("state");
+		ts1.setInitialState("state");
+		ts1.createArc("state", "state", "label");
+		ts1.getEvent("label").putExtension("key", "value");
+
+		TransitionSystem ts2 = new TransitionSystem(ts1);
+		assertThat(ts2.getNodes(), contains(nodeWithID("state")));
+		assertThat(ts2.getEdges(), contains(arcThatConnectsVia("state", "state", "label")));
+		assertThat(ts2.getInitialState(), is(nodeWithID("state")));
+		assertThat(ts2.getAlphabetEvents(), hasSize(1));
+		assertThat(ts2.getEvent("label").getExtension("key"), hasToString("value"));
+
+
 	}
 
 }

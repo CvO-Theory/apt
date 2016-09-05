@@ -105,6 +105,9 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 				addArc(entry.getKey(), new Arc(this, entry.getValue()));
 			}
 		}
+		// Copy extensions on the alphabet
+		for (Event event : alphabetSet)
+			event.copyExtensions(ts.getEvent(event.getLabel()));
 		this.initialState = states.get(ts.getInitialState().getId());
 		copyExtensions(ts);
 	}
