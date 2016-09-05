@@ -476,6 +476,21 @@ public class Region {
 			}
 			return result;
 		}
+
+		/**
+		 * Create a copy of a region for a different RegionUtility. The given utility and the utility used by
+		 * the given region must have the same event list!
+		 * @param utiltiy The utility to use.
+		 * @param region The region to copy to the given utility.
+		 * @throws IllegalArgumentException When the event lists are different.
+		 */
+		static public Region copyRegionToUtility(RegionUtility utility, Region region) {
+			if (!utility.getEventList().equals(region.utility.getEventList()))
+				throw new IllegalArgumentException("The given utility does not have the "
+						+ " same event list as the given region's utility");
+			return new Region(utility, region.backwardWeights, region.forwardWeights,
+					region.initialMarking);
+		}
 	}
 }
 

@@ -225,6 +225,40 @@ public class RegionTest {
 	}
 
 	@Test
+	public void testCopyRegion() {
+		TransitionSystem ts = TestTSCollection.getPathTS();
+		RegionUtility utility = new RegionUtility(ts);
+		RegionUtility utility2 = new RegionUtility(ts);
+
+		int a = utility.getEventIndex("a");
+		int b = utility.getEventIndex("b");
+		int c = utility.getEventIndex("c");
+
+		Region region = new Region.Builder(utility, makeVector(a, 2, b, 3, c, 5), makeVector(a, 1, b, 0, c, 3)).withNormalRegionInitialMarking();
+		Region region2 = Region.Builder.copyRegionToUtility(utility2, region);
+
+		assertThat(region.getInitialMarking(), is(equalTo(BigInteger.valueOf(7))));
+		assertThat(region2.getInitialMarking(), is(equalTo(BigInteger.valueOf(7))));
+		assertThat(region, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						asBigIntegerList(2, 1, 3, 0, 5, 3))));
+		assertThat(region2, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						asBigIntegerList(2, 1, 3, 0, 5, 3))));
+		assertThat(region.getTransitionSystem(), sameInstance(ts));
+		assertThat(region2.getTransitionSystem(), sameInstance(ts));
+		assertThat(region2.toString(), equalTo(region.toString()));
+		assertThat(region2, not(equalTo(region)));
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testCopyRegionFailure() {
+		RegionUtility utility = new RegionUtility(TestTSCollection.getPathTS());
+		RegionUtility utility2 = new RegionUtility(TestTSCollection.getSingleStateTS());
+
+		Region region = new Region.Builder(utility).withInitialMarking(ZERO);
+		Region.Builder.copyRegionToUtility(utility2, region);
+	}
+
+	@Test
 	public void testEqualsTrue() {
 		TransitionSystem ts = TestTSCollection.getPathTS();
 		RegionUtility utility = new RegionUtility(ts);
