@@ -34,6 +34,7 @@ import uniol.apt.adt.IGraph;
 import uniol.apt.adt.INode;
 import uniol.apt.adt.StructuralExtensionRemover;
 import uniol.apt.adt.exception.StructureException;
+import uniol.apt.adt.extension.ExtensionProperty;
 
 /**
  * Calculate a spanning tree of a graph based on a breadth-first search.
@@ -139,7 +140,7 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 			map = castedMap;
 		} else {
 			map = new HashMap<>();
-			graph.putExtension(key, map);
+			graph.putExtension(key, map, ExtensionProperty.NOCOPY);
 			// Save this map as an extension, but make sure that it is removed if the structure of
 			// the graph is changed in any way.
 			graph.addListener(new StructuralExtensionRemover<G, E, N>(key));

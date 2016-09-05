@@ -100,6 +100,35 @@ public class SpanningTreeTest {
 	}
 
 	@Test
+	public void testCacheAfterCopy() {
+		TransitionSystem ts = new TransitionSystem();
+		ts.setInitialState(ts.createState());
+
+		SpanningTree<TransitionSystem, Arc, State> tree1f = get(ts);
+		SpanningTree<TransitionSystem, Arc, State> tree1r = getReversed(ts);
+
+		TransitionSystem ts2 = new TransitionSystem(ts);
+
+		SpanningTree<TransitionSystem, Arc, State> tree2f = get(ts2);
+		SpanningTree<TransitionSystem, Arc, State> tree2r = getReversed(ts2);
+		SpanningTree<TransitionSystem, Arc, State> tree3f = get(ts);
+		SpanningTree<TransitionSystem, Arc, State> tree3r = getReversed(ts);
+
+		assertThat(tree3f, sameInstance(tree1f));
+		assertThat(tree3r, sameInstance(tree1r));
+		assertThat(tree2f, not(sameInstance(tree1f)));
+		assertThat(tree2r, not(sameInstance(tree1r)));
+
+		// Now modify ts2 and check that a new spanning tree will be generated
+		ts2.createState();
+		SpanningTree<TransitionSystem, Arc, State> tree4f = get(ts2);
+		SpanningTree<TransitionSystem, Arc, State> tree4r = getReversed(ts2);
+
+		assertThat(tree4f, not(sameInstance(tree2f)));
+		assertThat(tree4r, not(sameInstance(tree2r)));
+	}
+
+	@Test
 	public void testEmptyTS() {
 		TransitionSystem ts = new TransitionSystem();
 
