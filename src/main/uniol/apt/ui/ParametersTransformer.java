@@ -48,17 +48,52 @@ public interface ParametersTransformer {
 	public String getTransformationDescription(Class<?> klass) throws NoSuchTransformationException;
 
 	/**
-	 * Transforms a parameter string to an object of a specific type.
+	 * Transforms a parameter string to an object of a specific type. The
+	 * string argument is either interpreted as a filename or raw parameter
+	 * value depending on the type it is being transformed into.
 	 *
 	 * @param arg
-	 *            the parameter string
+	 *                the parameter string
 	 * @param klass
-	 *            the type of the object the parameter string should be
-	 *            transformed to
+	 *                the type of the object the parameter string should be
+	 *                transformed to
 	 * @return the transformed object
-	 * @throws ModuleException When no suitable transformation is available
+	 * @throws ModuleException
+	 *                 When no suitable transformation is available
+	 * @see AptParameterTransformation#fileSource()
 	 */
 	public Object transform(String arg, Class<?> klass) throws ModuleException;
+
+	/**
+	 * Transforms a parameter string containing the raw parameter value to
+	 * an object of a specific type.
+	 *
+	 * @param arg
+	 *                the parameter string
+	 * @param klass
+	 *                the type of the object the parameter string should be
+	 *                transformed to
+	 * @return the transformed object
+	 * @throws ModuleException
+	 *                 When no suitable transformation is available
+	 */
+	public Object transformString(String arg, Class<?> klass) throws ModuleException;
+
+	/**
+	 * Transforms a parameter string containing a filename to an object of a
+	 * specific type. The file will be read and the contents then passed to
+	 * {@link #transformString(String, Class)}.
+	 *
+	 * @param arg
+	 *                the parameter string
+	 * @param klass
+	 *                the type of the object the parameter string should be
+	 *                transformed to
+	 * @return the transformed object
+	 * @throws ModuleException
+	 *                 When no suitable transformation is available
+	 */
+	public Object transformFile(String arg, Class<?> klass) throws ModuleException;
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

@@ -19,11 +19,16 @@
 
 package uniol.apt.ui.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
+
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.exception.NoSuchTransformationException;
+import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.DescribedParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 import uniol.apt.ui.ParametersTransformer;
@@ -63,11 +68,23 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 			throw new NoSuchTransformationException(klass);
 		if (!(transformation instanceof DescribedParameterTransformation))
 			return "";
-		return ((DescribedParameterTransformation) transformation).getFormatDescription();
+		return ((DescribedParameterTransformation<?>) transformation).getFormatDescription();
 	}
 
 	@Override
 	public Object transform(String arg, Class<?> klass) throws ModuleException {
+		ParameterTransformation<?> transformation = transformations.get(klass);
+		AptParameterTransformation annotation = transformation.getClass()
+				.getAnnotation(AptParameterTransformation.class);
+		if (annotation.fileSource()) {
+			return transformFile(arg, klass);
+		} else {
+			return transformString(arg, klass);
+		}
+	}
+
+	@Override
+	public Object transformString(String arg, Class<?> klass) throws ModuleException {
 		ParameterTransformation<?> transformation = transformations.get(klass);
 		if (transformation == null)
 			throw new NoSuchTransformationException(klass);
@@ -76,6 +93,17 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 			throw new NullPointerException("Parameter transformation for class " + klass + " returned "
 					+ "null when given the argument '" + arg + "'");
 		return obj;
+	}
+
+	@Override
+	public Object transformFile(String arg, Class<?> klass) throws ModuleException {
+		try {
+			File file = new File(arg);
+			String value = FileUtils.readFileToString(file);
+			return transformString(value, klass);
+		} catch (IOException e) {
+			throw new ModuleException("Can't read " + arg + ": " + e.getMessage());
+		}
 	}
 }
 
