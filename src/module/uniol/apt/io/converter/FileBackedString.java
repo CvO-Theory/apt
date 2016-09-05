@@ -22,7 +22,7 @@ package uniol.apt.io.converter;
 /**
  * String wrapper that is used in module parameter declarations to signify that
  * the annotated parameter will be given as a file name and must therefore be
- * read by the {@link ParametersTransformer} before being passed to the module.
+ * read by the {@link uniol.apt.ui.ParametersTransformer} before being passed to the module.
  *
  * @author Jonas Prellberg
  *
