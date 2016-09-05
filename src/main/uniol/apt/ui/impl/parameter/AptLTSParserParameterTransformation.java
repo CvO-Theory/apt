@@ -28,8 +28,8 @@ import uniol.apt.ui.ParameterTransformation;
 /**
  * @author Uli Schlachter
  */
-@AptParameterTransformation(TransitionSystem.class)
-public class AptLTSParserParameterTransformation extends ParserParameterTransformation<TransitionSystem>
+@AptParameterTransformation(value = TransitionSystem.class, fileSource = true)
+public class AptLTSParserParameterTransformation extends AbstractParserParameterTransformation<TransitionSystem>
 		implements ParameterTransformation<TransitionSystem> {
 	public AptLTSParserParameterTransformation() throws ParserNotFoundException {
 		super(LTSParsers.INSTANCE.getParser("apt"), "transition system");

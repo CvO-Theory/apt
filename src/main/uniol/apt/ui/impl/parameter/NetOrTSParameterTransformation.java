@@ -20,20 +20,12 @@
 
 package uniol.apt.ui.impl.parameter;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.ParseException;
-import uniol.apt.io.parser.impl.AptPNParser;
 import uniol.apt.io.parser.impl.AptLTSParser;
+import uniol.apt.io.parser.impl.AptPNParser;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
@@ -43,45 +35,25 @@ import uniol.apt.ui.ParameterTransformation;
  *
  * @author vsp
  */
-@AptParameterTransformation(PetriNetOrTransitionSystem.class)
+@AptParameterTransformation(value = PetriNetOrTransitionSystem.class, fileSource = true)
 public class NetOrTSParameterTransformation implements ParameterTransformation<PetriNetOrTransitionSystem> {
-	/**
-	 * Symbol that signals that a file should be read from the standard input.
-	 */
-	public static final String STANDARD_INPUT_SYMBOL = "-";
 
 	@Override
-	public PetriNetOrTransitionSystem transform(String filename) throws ModuleException {
+	public PetriNetOrTransitionSystem transform(String input) throws ModuleException {
 		PetriNet pn = null;
 		ParseException pnEx = null;
 		TransitionSystem ts = null;
 		ParseException tsEx = null;
 
 		try {
-			InputStream is;
-			if (filename.equals(STANDARD_INPUT_SYMBOL)) {
-				is = System.in;
-			} else {
-				is = FileUtils.openInputStream(new File(filename));
-			}
-			InputStream[] isa = duplicateInputStream(is);
-			if (is != System.in)
-				is.close();
-			try (InputStream is0 = isa[0];
-					InputStream is1 = isa[1]) {
-				try {
-					pn = new AptPNParser().parse(is0);
-				} catch (ParseException ex) {
-					pnEx = ex;
-				}
-				try {
-					ts = new AptLTSParser().parse(is1);
-				} catch (ParseException ex) {
-					tsEx = ex;
-				}
-			}
-		} catch (IOException ex) {
-			throw new ModuleException("Can't read input: " + ex.getMessage());
+			pn = new AptPNParser().parseString(input);
+		} catch (ParseException ex) {
+			pnEx = ex;
+		}
+		try {
+			ts = new AptLTSParser().parseString(input);
+		} catch (ParseException ex) {
+			tsEx = ex;
 		}
 
 		if (pnEx == null && tsEx == null) {
@@ -102,13 +74,5 @@ public class NetOrTSParameterTransformation implements ParameterTransformation<P
 		}
 	}
 
-	private InputStream[] duplicateInputStream(InputStream is) throws IOException {
-		byte[] buf        = IOUtils.toByteArray(is);
-		InputStream[] ret = new InputStream[2];
-		for (int i = 0; i < 2; i++) {
-			ret[i] = new ByteArrayInputStream(buf);
-		}
-		return ret;
-	}
 }
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

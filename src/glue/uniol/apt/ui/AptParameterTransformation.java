@@ -27,16 +27,29 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation marking {@link ParameterTransformation} implementations.
+ *
  * @author Uli Schlachter
+ * @author Jonas Prellberg
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface AptParameterTransformation {
+
 	/**
 	 * @return The type of parameters that is supported.
 	 */
 	Class<?>[] value();
+
+	/**
+	 * Marks {@link ParameterTransformation} implementations that transform
+	 * parameter values typically saved in files. This value will be
+	 * detected by calling code to decide if the parameter value is
+	 * interpreted as a file path and needs to be read first before passing
+	 * the value string to the transformer.
+	 */
+	boolean fileSource() default false;
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

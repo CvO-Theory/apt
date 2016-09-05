@@ -28,8 +28,8 @@ import uniol.apt.ui.ParameterTransformation;
 /**
  * @author Uli Schlachter
  */
-@AptParameterTransformation(PetriNet.class)
-public class AptPNParserParameterTransformation extends ParserParameterTransformation<PetriNet>
+@AptParameterTransformation(value = PetriNet.class, fileSource = true)
+public class AptPNParserParameterTransformation extends AbstractParserParameterTransformation<PetriNet>
 		implements ParameterTransformation<PetriNet> {
 	public AptPNParserParameterTransformation() throws ParserNotFoundException {
 		super(PNParsers.INSTANCE.getParser("apt"), "Petri net");

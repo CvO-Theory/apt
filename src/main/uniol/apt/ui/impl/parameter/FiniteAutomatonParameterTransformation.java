@@ -21,8 +21,6 @@ package uniol.apt.ui.impl.parameter;
 
 import uniol.apt.adt.automaton.FiniteAutomaton;
 import uniol.apt.io.parser.impl.RegexParser;
-import uniol.apt.io.parser.ParseException;
-import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.DescribedParameterTransformation;
 
@@ -30,15 +28,11 @@ import uniol.apt.ui.DescribedParameterTransformation;
  * @author Uli Schlachter
  */
 @AptParameterTransformation(FiniteAutomaton.class)
-public class FiniteAutomatonParameterTransformation implements DescribedParameterTransformation<FiniteAutomaton> {
+public class FiniteAutomatonParameterTransformation extends AbstractParserParameterTransformation<FiniteAutomaton>
+		implements DescribedParameterTransformation<FiniteAutomaton> {
 
-	@Override
-	public FiniteAutomaton transform(String regularExpression) throws ModuleException {
-		try {
-			return new RegexParser().parseString(regularExpression);
-		} catch (ParseException ex) {
-			throw new ModuleException(ex.getMessage(), ex);
-		}
+	public FiniteAutomatonParameterTransformation() {
+		super(new RegexParser(), "regex");
 	}
 
 	@Override

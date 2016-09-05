@@ -28,7 +28,7 @@ import uniol.apt.module.exception.ModuleException;
 /**
  * @author Uli Schlachter
  */
-@AptParameterTransformation(IGraph.class)
+@AptParameterTransformation(value = IGraph.class, fileSource = true)
 public class GraphParameterTransformation implements ParameterTransformation<IGraph<?, ?, ?>> {
 	@Override
 	public IGraph<?, ?, ?> transform(String arg) throws ModuleException {

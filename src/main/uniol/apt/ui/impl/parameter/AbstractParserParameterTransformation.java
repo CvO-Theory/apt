@@ -19,46 +19,38 @@
 
 package uniol.apt.ui.impl.parameter;
 
-import java.io.IOException;
-
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.ParameterTransformation;
 
 /**
+ * Abstract transformation that uses a parser to interpret a given string.
+ *
  * @author Renke Grunwald
+ * @author Jonas Prellberg
  * @param <G>
  *                transformation target type
  */
-public class ParserParameterTransformation<G> implements ParameterTransformation<G> {
-	/**
-	 * Symbol that signals that a file should be read from the standard input.
-	 */
-	public static final String STANDARD_INPUT_SYMBOL = "-";
+public abstract class AbstractParserParameterTransformation<G> implements ParameterTransformation<G> {
 
 	private final Parser<G> parser;
 	private final String objectName;
 
-	public ParserParameterTransformation(Parser<G> parser, String objectName) {
+	public AbstractParserParameterTransformation(Parser<G> parser, String objectName) {
 		this.parser = parser;
 		this.objectName = objectName;
 	}
 
 	@Override
-	public G transform(String filename) throws ModuleException {
+	public G transform(String input) throws ModuleException {
 		try {
-			if (filename.equals(STANDARD_INPUT_SYMBOL)) {
-				return parser.parse(System.in);
-			}
-
-			return parser.parseFile(filename);
-		} catch (IOException ex) {
-			throw new ModuleException("Can't read " + objectName + ": " + ex.getMessage());
+			return parser.parseString(input);
 		} catch (ParseException ex) {
 			throw new ModuleException("Can't parse " + objectName + ": " + ex.getMessage());
 		}
 	}
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
