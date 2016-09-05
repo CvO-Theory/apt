@@ -151,12 +151,13 @@ class InequalitySystemSeparation implements Separation {
 
 		script.push(1);
 		try {
-			// We want r_S(s) != r_S(s'). Since for each region there exists a complementary region (we are
-			// only looking at the bounded case!), we can require r_S(s) < r_S(s')
+			// We want r_S(s) != r_S(s'). Note that we cannot just strengthen this to "<", because e.g.
+			// locations and output-nonbranching mean that for some regions, there might not be a
+			// complementary region and so "!=" could be solvable, but "<" unsolvable.
 			Term term1 = helper.evaluateReachingParikhVector(regionInitialMarking, regionWeights, state);
 			Term term2 = helper.evaluateReachingParikhVector(regionInitialMarking, regionWeights,
 					otherState);
-			script.assertTerm(script.term("<", term1, term2));
+			script.assertTerm(script.term("not", script.term("=", term1, term2)));
 
 			return regionFromSolution();
 		} catch (UnreachableException e) {
