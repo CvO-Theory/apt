@@ -19,13 +19,12 @@
 
 package uniol.apt.io.converter;
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import uniol.apt.io.parser.AbstractParsers;
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.Parser;
-import uniol.apt.io.parser.AbstractParsers;
 import uniol.apt.io.renderer.AbstractRenderers;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
@@ -42,10 +41,6 @@ import uniol.apt.module.exception.ModuleException;
  * @author Uli Schlachter
  */
 public abstract class AbstractConvertModule<T> extends AbstractModule implements Module {
-	/**
-	 * Symbol that signals that a file should be read from the standard input.
-	 */
-	public static final String STANDARD_INPUT_SYMBOL = "-";
 
 	private final AbstractParsers<T> parsers;
 	private final AbstractRenderers<T> renderers;
@@ -97,12 +92,12 @@ public abstract class AbstractConvertModule<T> extends AbstractModule implements
 	final public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("input_format", String.class, "The format of input.");
 		inputSpec.addParameter("output_format", String.class, "The format of output.");
-		inputSpec.addParameter("input_filename", String.class, "The file that should be converted.");
+		inputSpec.addParameter("input", FileBackedString.class, "The input string that should be converted.");
 	}
 
 	@Override
 	final public void provide(ModuleOutputSpec outputSpec) {
-		outputSpec.addReturnValue("output_filename", String.class, ModuleOutputSpec.PROPERTY_FILE,
+		outputSpec.addReturnValue("output", String.class, ModuleOutputSpec.PROPERTY_FILE,
 				ModuleOutputSpec.PROPERTY_RAW);
 	}
 
@@ -110,20 +105,17 @@ public abstract class AbstractConvertModule<T> extends AbstractModule implements
 	final public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		String inputFormat = input.getParameter("input_format", String.class);
 		String outputFormat = input.getParameter("output_format", String.class);
-		String filename = input.getParameter("input_filename", String.class);
+		FileBackedString inputStr = input.getParameter("input", FileBackedString.class);
 
 		T obj;
 		try {
 			Parser<T> parser = parsers.getParser(inputFormat);
-			if (filename.equals(STANDARD_INPUT_SYMBOL))
-				obj = parser.parse(System.in);
-			else
-				obj = parser.parseFile(filename);
-		} catch (ParseException | IOException e) {
-			throw new ModuleException("Cannot parse file " + filename + ": " + e.getMessage(), e);
+			obj = parser.parseString(inputStr.toString());
+		} catch (ParseException e) {
+			throw new ModuleException("Cannot parse input: " + e.getMessage(), e);
 		}
 		String result = renderers.getRenderer(outputFormat).render(obj);
-		output.setReturnValue("output_filename", String.class, result);
+		output.setReturnValue("output", String.class, result);
 	}
 }
 
