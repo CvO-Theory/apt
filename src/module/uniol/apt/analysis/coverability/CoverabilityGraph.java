@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import uniol.apt.adt.StructuralExtensionRemover;
+import uniol.apt.adt.extension.ExtensionProperty;
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.Node;
@@ -110,7 +111,7 @@ public class CoverabilityGraph {
 		CoverabilityGraph result = new CoverabilityGraph(pn, reachabilityGraph);
 		// Save this coverability graph as an extension, but make sure that it is removed if the structure of
 		// the Petri net is changed in any way.
-		pn.putExtension(key, result);
+		pn.putExtension(key, result, ExtensionProperty.NOCOPY);
 		pn.addListener(new StructuralExtensionRemover<PetriNet, Flow, Node>(key));
 		return result;
 	}

@@ -136,6 +136,30 @@ public class CoverabilityGraphTest {
 	}
 
 	@Test
+	public void testCacheAfterCopy() {
+		PetriNet pn = getEmptyNet();
+
+		CoverabilityGraph cov1 = CoverabilityGraph.get(pn);
+		CoverabilityGraph re1 = CoverabilityGraph.getReachabilityGraph(pn);
+
+		PetriNet pn2 = new PetriNet(pn);
+
+		CoverabilityGraph cov2 = CoverabilityGraph.get(pn2);
+		CoverabilityGraph re2 = CoverabilityGraph.getReachabilityGraph(pn2);
+
+		pn2.createPlace();
+		CoverabilityGraph cov3 = CoverabilityGraph.get(pn2);
+		CoverabilityGraph re3 = CoverabilityGraph.getReachabilityGraph(pn2);
+
+		assertThat(cov2, not(sameInstance(cov1)));
+		assertThat(re2, not(sameInstance(re1)));
+		assertThat(cov3, not(sameInstance(cov1)));
+		assertThat(re3, not(sameInstance(re1)));
+		assertThat(cov3, not(sameInstance(cov2)));
+		assertThat(re3, not(sameInstance(re2)));
+	}
+
+	@Test
 	public void testEmptyNet() {
 		PetriNet pn = getEmptyNet();
 		Marking initialMark = new Marking(pn.getInitialMarking());
