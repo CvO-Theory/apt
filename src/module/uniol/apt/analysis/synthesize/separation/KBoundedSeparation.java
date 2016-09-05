@@ -102,6 +102,10 @@ class KBoundedSeparation implements Separation {
 			throw new UnsupportedPNPropertiesException();
 
 		// Ok, we can do it. Now do it.
+		if (properties.getKForKBounded() == 0)
+			// There are no 0-bounded regions that solve any kind of separation problem.
+			// (Except if the alphabet has events that do not occur on any arc, which is not supported)
+			return;
 		generateMinimalRegions(properties.getKForKBounded());
 	}
 
