@@ -33,6 +33,7 @@ import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 
 import static uniol.apt.TestTSCollection.*;
+import static org.hamcrest.Matchers.*;
 import static uniol.apt.analysis.synthesize.Matchers.*;
 
 /** @author Uli Schlachter */

@@ -25,12 +25,16 @@ import java.util.ArrayList;
 
 import org.hamcrest.Matcher;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+
 /**
  * Matchers to verify that Synthesize classes match given conditions.
  *
  * @author Uli Schlachter
  */
-public class Matchers extends org.hamcrest.Matchers {
+public class Matchers {
 	public static Matcher<Region> plainRegion() {
 		return PlainRegionMatcher.plainRegion();
 	}
