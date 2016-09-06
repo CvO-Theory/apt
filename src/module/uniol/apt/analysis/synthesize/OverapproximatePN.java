@@ -23,6 +23,7 @@ import static uniol.apt.analysis.synthesize.separation.SeparationUtility.getLoca
 import static uniol.apt.util.DebugUtil.debug;
 import static uniol.apt.util.DebugUtil.debugFormat;
 
+import java.math.BigInteger;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
@@ -93,7 +94,7 @@ public class OverapproximatePN {
 
 			// Add already-calculated regions so that they do not have to be calculated again
 			if (synthesize != null)
-				copyExistingRegions(builder, synthesize);
+				copyExistingRegions(builder, synthesize, properties);
 
 			synthesize = builder.build();
 			ts = handleSeparationFailures(ts, synthesize.getFailedStateSeparationProblems(),
@@ -139,14 +140,19 @@ public class OverapproximatePN {
 		return result;
 	}
 
-	static private void copyExistingRegions(SynthesizePN.Builder builder, SynthesizePN synthesize) {
+	static private void copyExistingRegions(SynthesizePN.Builder builder, SynthesizePN synthesize,
+			PNProperties properties) {
 		RegionUtility utility = builder.getRegionUtility();
+		boolean newStatesWereAdded = !synthesize.getFailedEventStateSeparationProblems().isEmpty();
+		boolean needToCheckKBoundedness = newStatesWereAdded && properties.isKBounded();
 		for (Region region : synthesize.getSeparatingRegions()) {
 			Region newRegion = Region.Builder.copyRegionToUtility(utility, region);
 			// The only difference should be in the used RegionUtility, which should not influence
 			// the result of toString().
 			assert region.toString().equals(newRegion.toString())
 				: region.toString() + " = " + newRegion.toString();
+			if (needToCheckKBoundedness && !isKBounded(newRegion, properties.getKForKBounded()))
+				continue;
 			try {
 				builder.addRegion(newRegion);
 			} catch (InvalidRegionException e) {
@@ -155,6 +161,22 @@ public class OverapproximatePN {
 				throw new AssertionError(e);
 			}
 		}
+	}
+
+	static private boolean isKBounded(Region region, int k) {
+		TransitionSystem ts = region.getRegionUtility().getTransitionSystem();
+		BigInteger bigK = BigInteger.valueOf(k);
+		for (State state : ts.getNodes()) {
+			try {
+				BigInteger marking = region.getMarkingForState(state);
+				if (marking.compareTo(bigK) > 0)
+					return false;
+			} catch (UnreachableException e) {
+				// Previous steps in the algorithm should already have handled unreachable states!
+				throw new AssertionError(e);
+			}
+		}
+		return true;
 	}
 
 	/**
