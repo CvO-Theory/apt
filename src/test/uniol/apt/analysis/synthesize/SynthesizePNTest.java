@@ -715,6 +715,27 @@ public class SynthesizePNTest {
 		assertThat(synth.getFailedEventStateSeparationProblems().size(), equalTo(size - 1));
 		assertThat(synth.getFailedStateSeparationProblems(), emptyIterable());
 	}
+
+	@Test
+	public void testUnreachableSSP() throws Exception {
+		// This tests for a very specific bug that caused unsolvable SSP instances to be overlooked for
+		// unreachable states.
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("s0", "s1", "s2");
+		ts.setInitialState("s0");
+		ts.createArc("s0", "s1", "a");
+		ts.createArc("s2", "s2", "a");
+
+		RegionUtility utility = new RegionUtility(ts);
+		Region region = new Region.Builder(utility).addWeightOn(0, BigInteger.ONE.negate()).withInitialMarking(BigInteger.ONE);
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(utility)
+			.addRegion(region).build();
+
+		assertThat(synth.getFailedStateSeparationProblems(),
+				contains(containsInAnyOrder(nodeWithID("s0"), nodeWithID("s1"), nodeWithID("s2"))));
+		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
+		assertThat(synth.wasSuccessfullySeparated(), is(false));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

@@ -296,9 +296,8 @@ public class SynthesizePN {
 					try {
 						markings.get(region.getMarkingForState(state)).add(state);
 					} catch (UnreachableException e) {
-						// Unreachable states cannot be separated, so add this to result
-						result.add(state);
-						continue;
+						// SSP with any unreachable state is unsolvable
+						return states;
 					}
 				}
 
