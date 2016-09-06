@@ -40,6 +40,9 @@ public class ReturnValuesTransformerImpl implements ReturnValuesTransformer {
 	/**
 	 * Adds a transformation that handles objects of the given class.
 	 *
+	 * @param <T>
+	 *                type of the value that will be handled by the
+	 *                transformation
 	 * @param klass
 	 *                class that is handles by the transformation
 	 * @param transformation

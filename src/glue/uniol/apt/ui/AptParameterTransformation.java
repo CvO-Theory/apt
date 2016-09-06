@@ -47,6 +47,8 @@ public @interface AptParameterTransformation {
 	 * detected by calling code to decide if the parameter value is
 	 * interpreted as a file path and needs to be read first before passing
 	 * the value string to the transformer.
+	 *
+	 * @return true if this parameter usually is read from a file
 	 */
 	boolean fileSource() default false;
 
