@@ -19,10 +19,13 @@
 
 package uniol.apt.analysis.synthesize;
 
+import static uniol.apt.analysis.synthesize.separation.SeparationUtility.getLocationMap;
 import static uniol.apt.util.DebugUtil.debug;
 import static uniol.apt.util.DebugUtil.debugFormat;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,7 @@ import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.Event;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.synthesize.separation.UnsupportedPNPropertiesException;
 
 /**
  * Calculate the minimal Petri Net over-approximation of a transition system.
@@ -43,15 +47,34 @@ public class OverapproximatePN {
 	private OverapproximatePN() {
 	}
 
+	// For some properties we cannot guarantee that the algorithm always terminates (but if it terminates, its
+	// result should still be correct). This is the list of properties which does work.
+	static private PNProperties supportedProperties = new PNProperties()
+		.requireKBounded(0).setPure(true).setPlain(true).setTNet(true).setMarkedGraph(true);
+
+	static private void checkSupported(TransitionSystem ts, PNProperties properties)
+			throws MissingLocationException, UnsupportedPNPropertiesException {
+		if (!supportedProperties.containsAll(properties))
+			throw new UnsupportedPNPropertiesException("Some of the requested properties "
+					+ "are not supported for over-approximation; requested: "
+					+ properties + "; supported: " + supportedProperties);
+		String[] locationMap = getLocationMap(new RegionUtility(ts), properties);
+		if (Collections.frequency(Arrays.asList(locationMap), null) != locationMap.length)
+			throw new UnsupportedPNPropertiesException("Overapproximation is not possible with locations");
+	}
+
 	/**
 	 * Calculate the minimal Petri Net over-approximation of a transition system.
 	 * @param ts The transition system to over-approximate.
 	 * @param properties The properties that the resulting Petri net should satisfy.
 	 * @return A Petri net being a minimal over-approximation of the input.
 	 * @throws MissingLocationException If some states of the input have a location and others do not.
+	 * @throws UnsupportedPNPropertiesException If overapproximation is not possible for the given input.
 	 */
 	static public PetriNet overapproximate(TransitionSystem ts, PNProperties properties)
-			throws MissingLocationException {
+			throws MissingLocationException, UnsupportedPNPropertiesException {
+		checkSupported(ts, properties);
+
 		// Make a copy which we can modify
 		ts = new TransitionSystem(ts);
 		SynthesizePN synthesize = null;
@@ -147,10 +170,6 @@ public class OverapproximatePN {
 					// have an outgoing edge with the same label.
 				}
 			}
-
-			// Finally, copy locations (and other extensions on events)
-			for (Event event : result.getAlphabetEvents())
-				event.copyExtensions(ts.getEvent(event.getLabel()));
 		}
 
 		if (!failedESSP.isEmpty()) {

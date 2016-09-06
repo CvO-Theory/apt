@@ -23,6 +23,7 @@ import java.util.Collections;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.synthesize.separation.UnsupportedPNPropertiesException;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Module;
@@ -76,8 +77,12 @@ public class SynthesizeOverapproximateModule extends AbstractModule implements M
 		TransitionSystem ts = input.getParameter("lts", TransitionSystem.class);
 		String optionsStr = input.getParameter("options", String.class);
 		AbstractSynthesizeModule.Options options = AbstractSynthesizeModule.Options.parseProperties(optionsStr);
-		PetriNet pn = OverapproximatePN.overapproximate(ts, options.properties);
-		output.setReturnValue("pn", PetriNet.class, pn);
+		try {
+			PetriNet pn = OverapproximatePN.overapproximate(ts, options.properties);
+			output.setReturnValue("pn", PetriNet.class, pn);
+		} catch (UnsupportedPNPropertiesException e) {
+			throw new ModuleException(e);
+		}
 	}
 }
 
