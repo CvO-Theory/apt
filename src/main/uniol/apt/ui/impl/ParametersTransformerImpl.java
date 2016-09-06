@@ -19,12 +19,14 @@
 
 package uniol.apt.ui.impl;
 
-import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.exception.NoSuchTransformationException;
@@ -40,6 +42,13 @@ import uniol.apt.ui.ParametersTransformer;
  * @author Renke Grunwald
  */
 public abstract class ParametersTransformerImpl implements ParametersTransformer {
+
+	/**
+	 * Symbol that signals that a file should be read from the standard
+	 * input.
+	 */
+	public static final String STANDARD_INPUT_SYMBOL = "-";
+
 	private Map<Class<?>, ParameterTransformation<?>> transformations = new HashMap<>();
 
 	/**
@@ -77,7 +86,11 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 		AptParameterTransformation annotation = transformation.getClass()
 				.getAnnotation(AptParameterTransformation.class);
 		if (annotation.fileSource()) {
-			return transformFile(arg, klass);
+			if (STANDARD_INPUT_SYMBOL.equals(arg)) {
+				return transformStream(System.in, klass);
+			} else {
+				return transformFile(arg, klass);
+			}
 		} else {
 			return transformString(arg, klass);
 		}
@@ -96,13 +109,20 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 	}
 
 	@Override
-	public Object transformFile(String arg, Class<?> klass) throws ModuleException {
+	public Object transformStream(InputStream istr, Class<?> klass) throws ModuleException {
 		try {
-			File file = new File(arg);
-			String value = FileUtils.readFileToString(file);
+			String value = IOUtils.toString(istr, "UTF-8");
 			return transformString(value, klass);
 		} catch (IOException e) {
-			throw new ModuleException("Can't read " + arg + ": " + e.getMessage());
+			throw new ModuleException("Can't read stream: " + e.getMessage());
+		}
+	}
+
+	private Object transformFile(String file, Class<?> klass) throws ModuleException {
+		try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+			return transformStream(stream, klass);
+		} catch (IOException e) {
+			throw new ModuleException("Can't read " + file + ": " + e.getMessage());
 		}
 	}
 }

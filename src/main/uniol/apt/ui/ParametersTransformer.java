@@ -19,6 +19,8 @@
 
 package uniol.apt.ui;
 
+import java.io.InputStream;
+
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.module.exception.NoSuchTransformationException;
 
@@ -49,8 +51,9 @@ public interface ParametersTransformer {
 
 	/**
 	 * Transforms a parameter string to an object of a specific type. The
-	 * string argument is either interpreted as a filename or raw parameter
-	 * value depending on the type it is being transformed into.
+	 * string argument is either interpreted as a filename, input stream or
+	 * raw parameter value depending on its value and the type it is being
+	 * transformed into.
 	 *
 	 * @param arg
 	 *                the parameter string
@@ -80,12 +83,12 @@ public interface ParametersTransformer {
 	public Object transformString(String arg, Class<?> klass) throws ModuleException;
 
 	/**
-	 * Transforms a parameter string containing a filename to an object of a
+	 * Transforms the contents read from the given stream to an object of a
 	 * specific type. The file will be read and the contents then passed to
 	 * {@link #transformString(String, Class)}.
 	 *
-	 * @param arg
-	 *                the parameter string
+	 * @param istr
+	 *                input stream to read
 	 * @param klass
 	 *                the type of the object the parameter string should be
 	 *                transformed to
@@ -93,7 +96,7 @@ public interface ParametersTransformer {
 	 * @throws ModuleException
 	 *                 When no suitable transformation is available
 	 */
-	public Object transformFile(String arg, Class<?> klass) throws ModuleException;
+	public Object transformStream(InputStream istr, Class<?> klass) throws ModuleException;
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
