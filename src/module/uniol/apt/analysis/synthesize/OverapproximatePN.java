@@ -23,12 +23,15 @@ import static uniol.apt.analysis.synthesize.separation.SeparationUtility.getLoca
 import static uniol.apt.util.DebugUtil.debug;
 import static uniol.apt.util.DebugUtil.debugFormat;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import uniol.apt.adt.exception.ArcExistsException;
@@ -75,8 +78,7 @@ public class OverapproximatePN {
 			throws MissingLocationException, UnsupportedPNPropertiesException {
 		checkSupported(ts, properties);
 
-		// Make a copy which we can modify
-		ts = new TransitionSystem(ts);
+		ts = getReachablePart(ts);
 		SynthesizePN synthesize = null;
 		int iterations = 0;
 
@@ -99,6 +101,42 @@ public class OverapproximatePN {
 		} while (!synthesize.wasSuccessfullySeparated());
 
 		return synthesize.synthesizePetriNet();
+	}
+
+	static private TransitionSystem getReachablePart(TransitionSystem ts) {
+		TransitionSystem result = new TransitionSystem();
+
+		// First, copy all reachable states
+		Set<State> handled = new HashSet<>();
+		Queue<State> todo = new ArrayDeque<>();
+		State stateToHandle = ts.getInitialState();
+		while (stateToHandle != null) {
+			result.createState(stateToHandle);
+			for (State next : stateToHandle.getPostsetNodes())
+				if (handled.add(next))
+					todo.add(next);
+
+			stateToHandle = todo.poll();
+		}
+
+		// Then, copy all reachable arcs
+		handled = new HashSet<>();
+		todo = new ArrayDeque<>();
+		stateToHandle = ts.getInitialState();
+		while (stateToHandle != null) {
+			for (Arc arc : stateToHandle.getPostsetEdges()) {
+				State next = arc.getTarget();
+				result.createArc(arc);
+				if (handled.add(next))
+					todo.add(next);
+			}
+
+			stateToHandle = todo.poll();
+		}
+
+		result.setInitialState(ts.getInitialState());
+
+		return result;
 	}
 
 	static private void copyExistingRegions(SynthesizePN.Builder builder, SynthesizePN synthesize) {
