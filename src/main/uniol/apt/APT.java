@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -177,16 +178,12 @@ public class APT {
 			ModuleInvoker invoker = new ModuleInvoker();
 			List<Object> values = invoker.invoke(module, transformedArgs);
 
-			String[] fileArgs = new String[moduleArgs.length - numberOfUsedParameters];
-
+			String[] fileArgs = Arrays.copyOfRange(moduleArgs, numberOfUsedParameters, moduleArgs.length);
 
 			boolean hasStandardOutputFileReturnValue = false;
 
 			for (int i = 0; i < fileArgs.length; i++) {
-				String filename = moduleArgs[i + numberOfUsedParameters];
-				fileArgs[i] = filename;
-
-				if (filename.equals(STANDARD_INPUT_SYMBOL)) {
+				if (fileArgs[i].equals(STANDARD_INPUT_SYMBOL)) {
 					hasStandardOutputFileReturnValue = true;
 				}
 			}
