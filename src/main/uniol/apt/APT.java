@@ -179,88 +179,7 @@ public class APT {
 			List<Object> values = invoker.invoke(module, transformedArgs);
 
 			String[] fileArgs = Arrays.copyOfRange(moduleArgs, numberOfUsedParameters, moduleArgs.length);
-
-			boolean hasStandardOutputFileReturnValue = false;
-
-			for (int i = 0; i < fileArgs.length; i++) {
-				if (fileArgs[i].equals(STANDARD_INPUT_SYMBOL)) {
-					hasStandardOutputFileReturnValue = true;
-				}
-			}
-
-			// Handle module output
-			try (CloseableCollection<PrintStream> outputs = new CloseableCollection<>()) {
-				boolean outputWithName[] = new boolean[values.size()];
-
-				// Figure out where the values which the module produced should be printed to
-				int usedFileArgsCount = 0;
-				for (int i = 0; i < values.size(); i++) {
-
-					if (values.get(i) == null) {
-						outputWithName[i] = false;
-						outputs.add(null, false);
-						continue;
-					}
-
-					String returnValueName = returnValues.get(i).getName();
-
-					boolean isRawReturnValue =
-						returnValues.get(i).hasProperty(ModuleOutputSpec.PROPERTY_RAW);
-
-					boolean isFileReturnValue =
-						returnValues.get(i).hasProperty(ModuleOutputSpec.PROPERTY_FILE);
-
-					// Print the return value to file without its name
-					if (isFileReturnValue) {
-						// Check if the user supplied a file name for this return value
-						if (fileArgs.length > usedFileArgsCount) {
-							String filename = fileArgs[usedFileArgsCount];
-
-							if (filename.equals(STANDARD_INPUT_SYMBOL)) {
-								outputs.add(OUT_PRINTER, false);
-							} else {
-								outputs.add(openOutput(filename), true);
-							}
-							outputWithName[i] = false;
-
-							usedFileArgsCount++;
-							continue;
-						}
-					}
-
-					// Only print the file return value when requested; skip the other return values
-					if (hasStandardOutputFileReturnValue) {
-						outputWithName[i] = false;
-						outputs.add(null, false);
-						continue;
-					}
-
-					// Print this ordinary return value, possibly with its name
-					outputs.add(OUT_PRINTER, false);
-					outputWithName[i] = !isRawReturnValue;
-				}
-
-				// Print all return values for which the module produced values
-				for (int i = 0; i < values.size(); i++) {
-					PrintStream out = outputs.get(i);
-					if (out == null)
-						continue;
-
-					if (outputWithName[i])
-						out.print(returnValues.get(i).getName() + ": ");
-
-					OutputStreamWriter writer = new OutputStreamWriter(out, "UTF-8");
-					RETURN_VALUES_TRANSFORMER.transform(writer,
-							values.get(i), returnValues.get(i).getKlass());
-					writer.flush();
-					out.println();
-				}
-			}
-			catch (IOException e) {
-				ERR_PRINTER.println("Error writing to file: " + e.getMessage());
-				ERR_PRINTER.flush();
-				System.exit(ExitStatus.ERROR.getValue());
-			}
+			printModuleOutput(fileArgs, returnValues, values);
 
 			ModuleExitStatusChecker statusChecker = new PropertyModuleExitStatusChecker();
 			ExitStatus status = statusChecker.check(module, values);
@@ -293,6 +212,91 @@ public class APT {
 
 				hasStdInParameter = true;
 			}
+		}
+	}
+
+	private static void printModuleOutput(String[] fileArgs, List<ReturnValue> returnValues, List<Object> values)
+			throws ModuleException {
+		boolean hasStandardOutputFileReturnValue = false;
+
+		for (int i = 0; i < fileArgs.length; i++) {
+			if (fileArgs[i].equals(STANDARD_INPUT_SYMBOL)) {
+				hasStandardOutputFileReturnValue = true;
+			}
+		}
+
+		// Handle module output
+		try (CloseableCollection<PrintStream> outputs = new CloseableCollection<>()) {
+			boolean outputWithName[] = new boolean[values.size()];
+
+			// Figure out where the values which the module produced should be printed to
+			int usedFileArgsCount = 0;
+			for (int i = 0; i < values.size(); i++) {
+
+				if (values.get(i) == null) {
+					outputWithName[i] = false;
+					outputs.add(null, false);
+					continue;
+				}
+
+				String returnValueName = returnValues.get(i).getName();
+
+				boolean isRawReturnValue =
+					returnValues.get(i).hasProperty(ModuleOutputSpec.PROPERTY_RAW);
+
+				boolean isFileReturnValue =
+					returnValues.get(i).hasProperty(ModuleOutputSpec.PROPERTY_FILE);
+
+				// Print the return value to file without its name
+				if (isFileReturnValue) {
+					// Check if the user supplied a file name for this return value
+					if (fileArgs.length > usedFileArgsCount) {
+						String filename = fileArgs[usedFileArgsCount];
+
+						if (filename.equals(STANDARD_INPUT_SYMBOL)) {
+							outputs.add(OUT_PRINTER, false);
+						} else {
+							outputs.add(openOutput(filename), true);
+						}
+						outputWithName[i] = false;
+
+						usedFileArgsCount++;
+						continue;
+					}
+				}
+
+				// Only print the file return value when requested; skip the other return values
+				if (hasStandardOutputFileReturnValue) {
+					outputWithName[i] = false;
+					outputs.add(null, false);
+					continue;
+				}
+
+				// Print this ordinary return value, possibly with its name
+				outputs.add(OUT_PRINTER, false);
+				outputWithName[i] = !isRawReturnValue;
+			}
+
+			// Print all return values for which the module produced values
+			for (int i = 0; i < values.size(); i++) {
+				PrintStream out = outputs.get(i);
+				if (out == null)
+					continue;
+
+				if (outputWithName[i])
+					out.print(returnValues.get(i).getName() + ": ");
+
+				OutputStreamWriter writer = new OutputStreamWriter(out, "UTF-8");
+				RETURN_VALUES_TRANSFORMER.transform(writer,
+						values.get(i), returnValues.get(i).getKlass());
+				writer.flush();
+				out.println();
+			}
+		}
+		catch (IOException e) {
+			ERR_PRINTER.println("Error writing to file: " + e.getMessage());
+			ERR_PRINTER.flush();
+			System.exit(ExitStatus.ERROR.getValue());
 		}
 	}
 
