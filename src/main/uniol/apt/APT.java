@@ -157,28 +157,10 @@ public class APT {
 				numberOfUsedParameters = moduleArgs.length;
 			}
 
-			Object[] transformedArgs = new Object[numberOfUsedParameters];
-
-
-			boolean hasStdInParameter = false;
-
-
 			// First check if multiple parameters are signaled to be read from the standard input
-			for (int i = 0; i < numberOfUsedParameters; i++) {
-				// FIXME: This is hard-coded and could be way more flexible
-				if (moduleArgs[i].equals(STANDARD_INPUT_SYMBOL)
-						&& (IGraph.class.isAssignableFrom(allParameters.get(i).getKlass())
-							|| PetriNetOrTransitionSystem.class.isAssignableFrom(
-								allParameters.get(i).getKlass()))) {
+			checkNoTwoStdinParameters(moduleArgs, numberOfUsedParameters, allParameters);
 
-					if (hasStdInParameter) {
-						printCanOnlyReadOneParameterFromStdInAndExit();
-					}
-
-					hasStdInParameter = true;
-				}
-			}
-
+			Object[] transformedArgs = new Object[numberOfUsedParameters];
 			for (int i = 0; i < numberOfUsedParameters; i++) {
 				transformedArgs[i] = PARAMETERS_TRANSFORMER.transform(moduleArgs[i],
 						allParameters.get(i).getKlass());
@@ -293,6 +275,27 @@ public class APT {
 						module.getName(), e.getMessage()));
 			ERR_PRINTER.flush();
 			System.exit(ExitStatus.ERROR.getValue());
+		}
+	}
+
+	private static void checkNoTwoStdinParameters(String[] moduleArgs, int numberOfUsedParameters,
+			List<Parameter> allParameters) {
+		boolean hasStdInParameter = false;
+
+		// First check if multiple parameters are signaled to be read from the standard input
+		for (int i = 0; i < numberOfUsedParameters; i++) {
+			// FIXME: This is hard-coded and could be way more flexible
+			if (moduleArgs[i].equals(STANDARD_INPUT_SYMBOL)
+					&& (IGraph.class.isAssignableFrom(allParameters.get(i).getKlass())
+						|| PetriNetOrTransitionSystem.class.isAssignableFrom(
+							allParameters.get(i).getKlass()))) {
+
+				if (hasStdInParameter) {
+					printCanOnlyReadOneParameterFromStdInAndExit();
+				}
+
+				hasStdInParameter = true;
+			}
 		}
 	}
 
