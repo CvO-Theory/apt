@@ -1,0 +1,14 @@
+install:
+  - cinst ant
+
+build_script:
+  - ant verify-parsers jar javadoc test
+  - java -jar apt.jar draw nets/crashkurs-cc1-net.apt
+
+notifications:
+  - provider: Email
+    to:
+      - pg-apt-info@informatik.uni-oldenburg.de
+    on_build_failure: true
+    on_build_status_changed: true
+    on_build_success: false
