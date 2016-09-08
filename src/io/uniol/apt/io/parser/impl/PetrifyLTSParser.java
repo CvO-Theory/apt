@@ -37,7 +37,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import uniol.apt.adt.exception.DatastructureException;
-import uniol.apt.adt.exception.NodeExistsException;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.io.parser.AptParser;
 import uniol.apt.io.parser.Parser;
@@ -75,11 +74,8 @@ public class PetrifyLTSParser extends AbstractParser<TransitionSystem> implement
 
 		// Create a state if it does not yet exist
 		private void createState(String id) {
-			try {
+			if (!lts.containsState(id))
 				lts.createState(id);
-			} catch (NodeExistsException e) {
-				// TODO: Add TransitionSystem#containsState()
-			}
 		}
 
 		@Override
