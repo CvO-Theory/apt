@@ -35,8 +35,6 @@ import org.apache.commons.collections4.Trie;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.io.FileUtils;
 
-import uniol.apt.adt.IGraph;
-import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.module.AptModuleRegistry;
 import uniol.apt.module.Category;
 import uniol.apt.module.Module;
@@ -52,6 +50,8 @@ import uniol.apt.module.impl.ModuleUtils;
 import uniol.apt.module.impl.Parameter;
 import uniol.apt.module.impl.ReturnValue;
 import uniol.apt.module.impl.SimpleModulePreconditionsChecker;
+import uniol.apt.ui.AptParameterTransformation;
+import uniol.apt.ui.ParameterTransformation;
 import uniol.apt.ui.ParametersParser;
 import uniol.apt.ui.ParametersTransformer;
 import uniol.apt.ui.ReturnValuesTransformer;
@@ -200,19 +200,26 @@ public class APT {
 
 		// First check if multiple parameters are signaled to be read from the standard input
 		for (int i = 0; i < numberOfUsedParameters; i++) {
-			// FIXME: This is hard-coded and could be way more flexible
 			if (moduleArgs[i].equals(STANDARD_INPUT_SYMBOL)
-					&& (IGraph.class.isAssignableFrom(allParameters.get(i).getKlass())
-						|| PetriNetOrTransitionSystem.class.isAssignableFrom(
-							allParameters.get(i).getKlass()))) {
-
+					&& isFileSourceParameter(allParameters.get(i))) {
 				if (hasStdInParameter) {
 					printCanOnlyReadOneParameterFromStdInAndExit();
 				}
-
 				hasStdInParameter = true;
 			}
 		}
+	}
+
+	private static boolean isFileSourceParameter(Parameter parameter) {
+		Class<?> klass = parameter.getKlass();
+		ParameterTransformation<?> transformation = PARAMETERS_TRANSFORMER.getTransformation(klass);
+		if (transformation == null)
+			return false;
+		AptParameterTransformation annotation = transformation.getClass()
+				.getAnnotation(AptParameterTransformation.class);
+		if (annotation == null)
+			return false;
+		return annotation.fileSource();
 	}
 
 	private static void printModuleOutput(String[] fileArgs, List<ReturnValue> returnValues, List<Object> values)
