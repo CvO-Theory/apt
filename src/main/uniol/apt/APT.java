@@ -21,6 +21,7 @@ package uniol.apt;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -332,6 +334,22 @@ public class APT {
 		return new PrintStream(FileUtils.openOutputStream(file), false, "UTF-8");
 	}
 
+	private static void printVersion() {
+		Properties props = new Properties();
+		try (InputStream in = APT.class.getResourceAsStream("APT.properties")) {
+			if (in != null)
+				props.load(in);
+		} catch (IOException e) {
+			// Ignore the exception and just make sure that the version will be UNKNOWN
+			props = new Properties();
+		}
+		String gitVersion = props.getProperty("git-version", "UNKNOWN");
+		String timestamp = props.getProperty("timestamp", "UNKNOWN");
+
+		OUT_PRINTER.println("APT version " + gitVersion + " built on " + timestamp + ".");
+		OUT_PRINTER.println();
+	}
+
 	private static void printTooManyArgumentsAndExit(Module module) throws ModuleException {
 		ERR_PRINTER.println("Too many arguments");
 		ERR_PRINTER.println();
@@ -376,6 +394,7 @@ public class APT {
 	}
 
 	private static void printUsageAndExit() {
+		printVersion();
 		OUT_PRINTER.println("Usage: apt <module> <arguments>");
 		OUT_PRINTER.println();
 

@@ -148,6 +148,18 @@
 
 	<target name="javac.main" depends="javac.module,javac.compiler">
 		<javac-part name="main" />
+		<exec executable="git" outputproperty="git.version" failifexecutionfails="false" errorproperty="">
+			<arg value="describe" />
+			<arg value="--always" />
+			<arg value="--dirty" />
+		</exec>
+		<tstamp>
+			<format property="timestamp" pattern="yyyy-MM-dd" />
+		</tstamp>
+		<propertyfile file="classes/main/uniol/apt/APT.properties">
+			<entry key="git-version" value="${git.version}" />
+			<entry key="timestamp" value="${timestamp}" />
+		</propertyfile>
 	</target>
 
 	<target name="javac.io" depends="antlr,javac.compiler,javac.lib">
