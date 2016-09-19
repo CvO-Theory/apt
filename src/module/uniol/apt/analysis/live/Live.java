@@ -37,6 +37,7 @@ import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.coverability.CoverabilityGraphEdge;
 import uniol.apt.analysis.coverability.CoverabilityGraphNode;
 import uniol.apt.analysis.exception.UnboundedException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * This class implements various liveness tests for Petri nets.
@@ -69,6 +70,7 @@ public class Live {
 	 */
 	static public List<Transition> checkSimplyLive(PetriNet pn, Transition transition) {
 		for (CoverabilityGraphEdge arc : CoverabilityGraph.get(pn).getEdges()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			Transition trans = arc.getTransition();
 			if (trans.equals(transition)) {
 				// We found an edge which actually fires this transition!
@@ -132,6 +134,8 @@ public class Live {
 		 * infinitely often.
 		 */
 		for (Arc edge : lts.getEdges()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			// Look for edges labeled with our transition...
 			Transition trans = (Transition) edge.getExtension(Transition.class.getName());
 			if (!trans.equals(transition))
@@ -199,6 +203,7 @@ public class Live {
 
 		// Look for edges labeled with our transition...
 		for (Arc edge : lts.getEdges()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			Transition trans = (Transition) edge.getExtension(Transition.class.getName());
 			if (!trans.equals(transition))
 				continue;
@@ -220,6 +225,7 @@ public class Live {
 		Deque<State> toRemove = new ArrayDeque<>();
 		toRemove.add(node);
 		while (!toRemove.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			node = toRemove.remove();
 			if (nodes.remove(node))
 				// Node was not yet handled

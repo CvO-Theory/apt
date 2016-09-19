@@ -19,21 +19,20 @@
 
 package uniol.apt.analysis.live;
 
+import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.pn.Transition;
 import uniol.apt.module.AptModule;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
-
-import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Transition;
 
 /**
  * Provide the weakly live test as a module.
  * @author Uli Schlachter, vsp
  */
 @AptModule
-public class WeaklyLiveModule extends AbstractLiveModule implements Module {
+public class WeaklyLiveModule extends AbstractLiveModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {
