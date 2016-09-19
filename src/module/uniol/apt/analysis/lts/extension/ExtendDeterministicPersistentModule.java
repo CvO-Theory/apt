@@ -22,10 +22,10 @@ package uniol.apt.analysis.lts.extension;
 import java.util.Collection;
 
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -38,7 +38,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author vsp
  */
 @AptModule
-public class ExtendDeterministicPersistentModule extends AbstractModule implements Module {
+public class ExtendDeterministicPersistentModule extends AbstractInterruptibleModule implements InterruptibleModule {
 	@Override
 	public String getName() {
 		return "extend_deterministic_persistent";

@@ -37,6 +37,7 @@ import uniol.apt.analysis.deterministic.Deterministic;
 import uniol.apt.analysis.exception.MustLeadToSameStateException;
 import uniol.apt.analysis.exception.NoFiniteExtensionPossibleException;
 import uniol.apt.analysis.exception.NonDeterministicException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.DifferentPairsIterable;
 import uniol.apt.util.EquivalenceRelation;
 import uniol.apt.util.Pair;
@@ -167,6 +168,7 @@ public class ExtendDeterministicPersistent {
 		EquivalenceRelation<Pair<State, String>> ret = new EquivalenceRelation<>();
 		// Go through all states
 		for (State state : states) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			Map<String, State> postset = getStatePostset(state);
 			Set<String> labels = postset.keySet();
 			// Go through all pairs of enabled labels
@@ -196,6 +198,7 @@ public class ExtendDeterministicPersistent {
 		Collection<Set<Pair<State, String>>> unsolvedClasses = new ArrayList<>();
 		boolean modified = false;
 		for (Set<Pair<State, String>> eqClass : eqClasses) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			Arc succ = null;
 			Pair<State, String> succArc = null;
 			for (Pair<State, String> arcPair : eqClass) {
@@ -226,6 +229,7 @@ public class ExtendDeterministicPersistent {
 	 */
 	private void constructDiamonds(TransitionSystem ts, Collection<Set<Pair<State, String>>> unsolvedClasses) {
 		for (Set<Pair<State, String>> eqClass : unsolvedClasses) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			State succ = ts.createState();
 			mapEqClass(ts, eqClass, succ);
 			debugFormat("Added new State %s as target of %s.", eqClass, succ);

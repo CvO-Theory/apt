@@ -35,6 +35,7 @@ import uniol.apt.adt.INode;
 import uniol.apt.adt.StructuralExtensionRemover;
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.extension.ExtensionProperty;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Calculate a spanning tree of a graph based on a breadth-first search.
@@ -180,6 +181,7 @@ public class SpanningTree<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N
 		N node = startNode;
 
 		while (node != null) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			// For each child of the current node...
 			for (E edge : forwardDirection ? node.getPostsetEdges() : node.getPresetEdges()) {
 				N child;
