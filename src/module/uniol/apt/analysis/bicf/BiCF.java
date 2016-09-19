@@ -24,6 +24,7 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.bcf.BCF;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Tests if a Petri net is binary-conflict-free. A Petri Net is BiCF if
@@ -54,6 +55,8 @@ public class BiCF extends BCF {
 
 			// Find an arc in the other preset that goes to the same place
 			for (Flow a2 : t2.getPresetEdges()) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 				if (!a2.getPlace().equals(place)) {
 					continue;
 				}
