@@ -27,6 +27,7 @@ import java.util.Queue;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
 /**
@@ -100,6 +101,7 @@ public class Product {
 		init();
 
 		while (!workQueue.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			State curr = workQueue.poll();
 
 			// Retrieve states of the operand transition systems.
@@ -131,6 +133,7 @@ public class Product {
 		init();
 
 		while (!workQueue.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			State curr = workQueue.poll();
 
 			// Retrieve states of the operand transition systems.
