@@ -22,6 +22,7 @@ package uniol.apt.analysis.sideconditions;
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Checks a net for side conditions and returns a list of the side conditions.
@@ -50,6 +51,7 @@ public class CheckSideConditions {
 			// we are going to check the edges.
 			for (Flow a : p.getPostsetEdges()) {
 				for (Flow b : p.getPresetEdges()) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 					if (a.getTarget().getId().equals(b.getSource().getId())) {
 						conditions.add(new SideCondition(p, a.getTransition(), a, b));
 					}
