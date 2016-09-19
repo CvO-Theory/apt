@@ -30,6 +30,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.deterministic.Deterministic;
 import uniol.apt.analysis.exception.NonDeterministicException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Calculate a limited unfolding of a transition system, as defined in definition 2.42 in "Petri Net Synthesis" by
@@ -78,6 +79,8 @@ public class LimitedUnfolding  {
 		unfolding.setInitialState(createState(unfolding, stack, ts.getInitialState()));
 
 		while (!stack.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			// Recurse via one element from the current state's postset
 			Arc arc = stack.getFirst().getNextArc();
 			if (arc == null) {
