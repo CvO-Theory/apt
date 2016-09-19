@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Checks whether an LTS for persistance. The system is persistent, if it satisfies the "small diamond property".
@@ -84,6 +85,8 @@ public class PersistentTS {
 				String label1 = unhandledLabels.removeFirst();
 				Set<State> statesAfterLabel1 = postset.get(label1);
 				for (String label2 : unhandledLabels) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 					// Calculate states reached by first following label1 then label2
 					Set<State> statesAfter12 = new HashSet<>();
 					for (State node1 : statesAfterLabel1) {

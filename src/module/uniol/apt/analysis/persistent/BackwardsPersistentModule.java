@@ -20,13 +20,13 @@
 package uniol.apt.analysis.persistent;
 
 import uniol.apt.module.AptModule;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 
 /**
  * @author Uli Schlachter
  */
 @AptModule
-public class BackwardsPersistentModule extends PersistentModule implements Module {
+public class BackwardsPersistentModule extends PersistentModule implements InterruptibleModule {
 
 	public BackwardsPersistentModule() {
 		super(true);
