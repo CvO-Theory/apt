@@ -42,6 +42,7 @@ import uniol.apt.util.Pair;
 import uniol.apt.adt.exception.ArcExistsException;
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.analysis.exception.UnboundedException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * This class represents a coverability graph of a Petri net. Let's first define the reachability graph: The reachable
@@ -135,6 +136,7 @@ public class CoverabilityGraph {
 	 */
 	public int calculateNodes() {
 		while (true) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (!visitNode())
 				return nodes.size();
 		}
@@ -326,6 +328,8 @@ public class CoverabilityGraph {
 		lts.putExtension(PetriNet.class.getName(), this.pn);
 
 		for (CoverabilityGraphNode node : this.getNodes()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			Marking mark = node.getMarking();
 			assert ltsStates.get(mark) == null;
 
@@ -342,6 +346,8 @@ public class CoverabilityGraph {
 		for (CoverabilityGraphNode sourceNode : this.getNodes()) {
 			State source = ltsStates.get(sourceNode.getMarking());
 			for (CoverabilityGraphEdge edge : sourceNode.getPostsetEdges()) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 				State target = ltsStates.get(edge.getTarget().getMarking());
 				Transition transition = edge.getTransition();
 				try {

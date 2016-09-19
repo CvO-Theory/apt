@@ -21,14 +21,14 @@ package uniol.apt.analysis.coverability;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.module.AptModule;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 
 /**
  * Provide the coverability graph as a module.
  * @author Uli Schlachter, vsp
  */
 @AptModule
-public class ReachabilityModule extends CoverabilityModule implements Module {
+public class ReachabilityModule extends CoverabilityModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {
