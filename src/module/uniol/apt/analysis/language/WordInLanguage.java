@@ -28,6 +28,7 @@ import java.util.Set;
 import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Check if a given word is in the prefix language of a given Petri net. Each transition has a label. The set of labels
@@ -98,6 +99,7 @@ public class WordInLanguage {
 
 		// Find a transition with which we can continue
 		for (Transition trans : transitions) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (!trans.isFireable(curMarking)) {
 				continue;
 			}
