@@ -21,6 +21,7 @@ package uniol.apt.analysis.conpres;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * This module tests if a Petri net is concurrency-preserving. That is:
@@ -48,6 +49,7 @@ public class ConcurrencyPreserving {
 	public boolean check() {
 		witness = null;
 		for (Transition t : pn.getTransitions()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (t.getPostset().size() != t.getPreset().size()) {
 				witness = t;
 				return false;
