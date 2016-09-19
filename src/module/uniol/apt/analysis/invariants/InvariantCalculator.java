@@ -29,6 +29,7 @@ import java.util.Set;
 
 import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.MathTools;
 import uniol.apt.util.Pair;
 
@@ -187,6 +188,7 @@ public class InvariantCalculator {
 
 		// Phase 1:
 		while (!matC.isZero()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			// [1.1] if there exists a row h in C such that the sets P+ = {j | c_hj > 0},
 			// P- = {j | c_hj < 0} satisfy P+ == {} or P- == {} and not (P+ == {} and P- == {})
 			// that means it exists a row that all components are positive respectivly negativ
@@ -256,6 +258,7 @@ public class InvariantCalculator {
 		// phase 2
 		Pair<Integer, List<Integer>> pair;
 		while ((pair = matB.getRowWithNegativeElement()) != null) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			PpPm pppm = new PpPm(pair.getSecond());
 			List<Integer> row = pair.getSecond();
 			if (pppm.pPlus.size() > 0) {
@@ -343,6 +346,7 @@ public class InvariantCalculator {
 				for (int j1 = 0; j1 < rows - 1; ++j1) {
 					final List<Integer> z1 = d.get(j1);
 					for (int j2 = j1 + offset; j2 < rows; ++j2) {
+						InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 						final List<Integer> z2 = d.get(j2);
 						// check opposite signum at position i
 						if (Math.signum(z1.get(i)) * Math.signum(z2.get(i)) < 0) {
