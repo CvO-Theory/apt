@@ -27,6 +27,7 @@ import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Provides methods to compute the synchronous or asynchronous sum of two PN.
@@ -148,6 +149,8 @@ public class Sum {
 	 * @throws LabelMismatchException
 	 */
 	private void processFlow(Flow flow, boolean match) throws LabelMismatchException {
+		InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 		Node source = flow.getSource();
 		Node target = flow.getTarget();
 
