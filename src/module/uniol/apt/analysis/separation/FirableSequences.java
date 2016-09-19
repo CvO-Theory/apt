@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import uniol.apt.util.interrupt.InterrupterRegistry;
+
 /**
  * This class provides functionality with firable sequences which are needed by separation.
  *
@@ -154,6 +156,8 @@ public class FirableSequences {
 	public boolean isThereAValidFiringSequence() {
 		boolean isThereAValieFiringSequence = false;
 		for (ArrayList<Integer> firingSequenceWay : this.possibleWaysFiringSequencesArray) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			boolean thisFiringSequenceWayOk = true;
 			for (Integer firingSequencesKey : firingSequenceWay) {
 				boolean thisSequencesOk = false;
@@ -189,6 +193,8 @@ public class FirableSequences {
 			alreadyChecked.clear();
 
 			for (int kTimes = 0; kTimes < k; kTimes++) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 				int hashKeyToCheck = possibleWaysFiringSequencesArray.get(way).get(kTimes);
 
 				ArrayList<Integer> possibleFiringSequences = new ArrayList<Integer>(0);

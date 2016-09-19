@@ -26,8 +26,9 @@ import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
+import uniol.apt.analysis.exception.UnboundedException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * This class computes if a net is strongly or weakly separable with respect to k.
@@ -185,6 +186,7 @@ public class SeparationLogic {
 
 			// check every firable sequence (of k*M0)
 			for (ArrayList<String> firableSequence : firableSequences) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				checkSingleFiringSequence(firableSequence, stronglyCheck, outputSingleFiringSequence);
 
 				// if not strongly (or not weakly) separable, we can stop here.
@@ -306,6 +308,8 @@ public class SeparationLogic {
 	 */
 	private void computeFireableSequencesRecursiv(ArrayList<ArrayList<String>> fireableSequences,
 			Arc edge, ArrayList<String> prefix, boolean onlyLongest, int actualLength) {
+		InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 		// before using recursive got data, copy array, because of call by reference
 		ArrayList<String> prefixCopy = new ArrayList<>(prefix);
 

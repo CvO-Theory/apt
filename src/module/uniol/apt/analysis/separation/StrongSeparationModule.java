@@ -21,10 +21,10 @@ package uniol.apt.analysis.separation;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.analysis.language.Word;
-import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -37,7 +37,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Daniel
  */
 @AptModule
-public class StrongSeparationModule extends AbstractModule implements Module {
+public class StrongSeparationModule extends AbstractInterruptibleModule implements InterruptibleModule {
 
 	@Override
 	public String getName() {

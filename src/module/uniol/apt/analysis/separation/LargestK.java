@@ -23,6 +23,7 @@ import java.util.HashSet;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * This class provides functionality to compute the largest k for which M0 is a k-marking
@@ -100,6 +101,7 @@ public class LargestK {
 		// greatest k is greatest common divisor of all different mark values
 		long k = 0;
 		for (long markValue : markValues) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (k == 0) {
 				k = markValue;
 			} else {
