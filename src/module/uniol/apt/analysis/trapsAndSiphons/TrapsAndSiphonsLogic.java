@@ -38,6 +38,7 @@ import org.sat4j.tools.OptToSatAdapter;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Computes either all minimal traps or all minimal siphons in a Petri net pn by
@@ -88,6 +89,7 @@ public class TrapsAndSiphonsLogic {
 		// SAT Solver
 		ISolver solver;
 		do {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			solver = new OptToSatAdapter(new MinOneDecorator(SolverFactory.newDefault()));
 
 			// Add all clauses to Solver
@@ -145,6 +147,7 @@ public class TrapsAndSiphonsLogic {
 		if (searchForSiphons) {
 			for (int i = 1; i <= placesList.size(); i++) {
 				for (Transition t : placesList.get(i - 1).getPreset()) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 					int[] clausel = new int[t.getPreset().size() + 1];
 					clausel[0] = -i;
 					int j = 1;
@@ -159,6 +162,7 @@ public class TrapsAndSiphonsLogic {
 		} else if (searchForTraps) {
 			for (int i = 1; i <= placesList.size(); i++) {
 				for (Transition t : placesList.get(i - 1).getPostset()) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 					int[] clausel = new int[t.getPostset().size() + 1];
 					clausel[0] = -i;
 					int j = 1;
