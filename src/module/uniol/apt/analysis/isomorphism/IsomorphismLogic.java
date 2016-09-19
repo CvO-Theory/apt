@@ -36,6 +36,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.exception.UnboundedException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
 /**
@@ -168,6 +169,7 @@ public class IsomorphismLogic {
 			boolean goodState = false;
 			s.active = true;
 			for (; node != null; node = computeP(depth, s)) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				n = node.getFirst();
 				m = node.getSecond();
 
