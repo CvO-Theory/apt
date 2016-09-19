@@ -25,6 +25,7 @@ import java.util.Set;
 
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
 /**
@@ -111,6 +112,7 @@ public class GeneralDiamond {
 	 */
 	public static GeneralDiamondResult checkGdiam(TransitionSystem ts, String a, String b) {
 		for (State s : ts.getNodes()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			Set<Pair<State, Boolean>> s1Set = getGenerallyReachable(s, a);
 			Set<Pair<State, Boolean>> s2Set = getGenerallyReachable(s, b);
 			for (Pair<State, Boolean> p1 : s1Set) {

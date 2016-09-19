@@ -27,6 +27,7 @@ import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.connectivity.Connectivity;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.PowerSet;
 
 /**
@@ -90,6 +91,7 @@ public class Factorization {
 	 */
 	private boolean factorize() {
 		for (Collection<String> tPrimeCandidate : PowerSet.powerSet(ts.getAlphabet())) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			// Skip trivial solutions.
 			if (tPrimeCandidate.isEmpty() || tPrimeCandidate.size() == ts.getAlphabet().size()) {
 				continue;

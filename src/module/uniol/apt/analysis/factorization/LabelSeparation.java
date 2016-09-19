@@ -26,6 +26,7 @@ import java.util.Set;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.connectivity.Connectivity;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Provides methods to check if a given LTS is T'-separated for some label set
@@ -87,6 +88,7 @@ public class LabelSeparation {
 		// Iterate over pairs of component ids
 		for (Set<String> ids1 : wcc1Ids) {
 			for (Set<String> ids2 : wcc2Ids) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				// Compute intersection of two components' ids.
 				Set<String> intersection = new HashSet<>(ids1);
 				intersection.retainAll(ids2);
