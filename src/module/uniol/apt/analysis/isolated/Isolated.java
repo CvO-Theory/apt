@@ -21,6 +21,7 @@ package uniol.apt.analysis.isolated;
 
 import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Checks if there are any isolated elements in the Petri net.
@@ -42,7 +43,7 @@ public class Isolated {
 	 */
 	public static boolean checkIsolated(PetriNet pn) {
 		for (Node n : pn.getNodes()) {
-
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			// Checks if the node has no incoming and outgoing edges
 			if (n.getPresetEdges().isEmpty() && n.getPostsetEdges().isEmpty()) {
 				return true;
