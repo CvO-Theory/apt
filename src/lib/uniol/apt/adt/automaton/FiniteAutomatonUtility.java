@@ -39,6 +39,7 @@ import org.apache.commons.collections4.Predicate;
 
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.EquivalenceRelation;
 import uniol.apt.util.IEquivalenceRelation;
 import uniol.apt.util.Pair;
@@ -418,6 +419,7 @@ public class FiniteAutomatonUtility {
 		trace.add(new Pair<>(initial, initial.getDefinedSymbols().iterator()));
 
 		while (!trace.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			Pair<DFAState, Iterator<Symbol>> pair = trace.peekLast();
 			if (!pair.getSecond().hasNext()) {
 				trace.removeLast();
@@ -1045,6 +1047,7 @@ public class FiniteAutomatonUtility {
 			DFAState nonFinalState = null;
 			EquivalenceRelation<DFAState> relation = new EquivalenceRelation<>();
 			for (DFAState state : statesIterable(a)) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				if (state.isFinalState()) {
 					if (finalState == null)
 						finalState = state;
@@ -1065,6 +1068,7 @@ public class FiniteAutomatonUtility {
 			do {
 				lastPartition = partition;
 				for (final Symbol symbol : alphabet) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 					// If there are two states in the same equivalence class and they have a
 					// transition with symbol 'symbol' going to different classes, then this class
 					// must be split.
@@ -1095,6 +1099,7 @@ public class FiniteAutomatonUtility {
 
 			unhandled.add(partition.getClass(initialState));
 			while (!unhandled.isEmpty()) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				Set<DFAState> state = unhandled.removeFirst();
 
 				DFAState representingState = state.iterator().next();
