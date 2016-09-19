@@ -35,6 +35,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.deterministic.Deterministic;
 import uniol.apt.analysis.exception.UnboundedException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
 /**
@@ -141,6 +142,8 @@ public class Bisimulation {
 
 		//Step 3 : execute algorithm
 		while (!stack1.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			List<Pair<Arc, Pair<State, State>>> l = stack1.peek().getSecond();
 			if (!l.isEmpty()) {
 				Pair<Arc, Pair<State, State>> firstOfL = l.remove(0);
@@ -149,6 +152,8 @@ public class Bisimulation {
 					new Pair<>(tuple2, getSuccessors(tuple2));
 				boolean hasFailSuccessor = false;
 				for (Pair<Arc, Pair<State, State>> pair : newElement.getSecond()) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 					if (pair.getFirst().getLabel().equals("phi")
 						&& pair.getSecond().getFirst().getExtension("label").equals("fail")
 						&& pair.getSecond().getSecond() == null) {
@@ -227,6 +232,8 @@ public class Bisimulation {
 
 		//Step 3: execute algorithm
 		while (!stack1.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			stable = true;
 			Pair<Pair<State, State>, List<Pair<Arc, Pair<State, State>>>> topStack1 = stack1.peek();
 			Pair<State, State> testPair = topStack1.getFirst();
@@ -240,6 +247,8 @@ public class Bisimulation {
 						new Pair<>(tuple2, getSuccessors(tuple2));
 					boolean isInStack1 = false;
 					for (Pair<Pair<State, State>, List<Pair<Arc, Pair<State, State>>>> t : stack1) {
+						InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 						if (t.getFirst().equals(tuple2)) {
 							isInStack1 = true;
 						}
@@ -247,6 +256,8 @@ public class Bisimulation {
 					if (!isInStack1) {
 						boolean hasFailSuccessor = false;
 						for (Pair<Arc, Pair<State, State>> pair : newElement.getSecond()) {
+							InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 							if (pair.getFirst().getLabel().equals("phi")
 								&& pair.getSecond().getFirst().getExtension("label").
 								equals("fail")
@@ -294,6 +305,8 @@ public class Bisimulation {
 						List<Pair<Arc, Pair<State, State>>> nonBisimilarElements =
 							getSuccessors(testPair);
 						for (Pair<Arc, Pair<State, State>> pair : nonBisimilarElements) {
+							InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 							if (!(pair.getFirst().getLabel().equals("phi")
 									&& pair.getSecond().getFirst().getExtension("label").equals("fail")
 									&& pair.getSecond().getSecond() == null) &&
@@ -303,6 +316,8 @@ public class Bisimulation {
 								List<Pair<Arc, Pair<State, State>>> testElements =
 									getSuccessors(pair.getSecond());
 								for (Pair<Arc, Pair<State, State>> nodePair : testElements) {
+									InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 									if (nodePair.getFirst().getLabel().equals("phi")
 										&& nodePair.getSecond().getFirst().getExtension("label").equals("fail")
 										&& nodePair.getSecond().getSecond() == null) {
