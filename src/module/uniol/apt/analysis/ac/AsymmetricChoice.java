@@ -25,6 +25,7 @@ import java.util.Collection;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.DifferentPairsIterable;
 import uniol.apt.util.Pair;
 
@@ -46,6 +47,8 @@ public class AsymmetricChoice {
 	 */
 	public Pair<Place, Place> check(PetriNet net) {
 		for (Pair<Place, Place> placePair : new DifferentPairsIterable<>(net.getPlaces())) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			Collection<?> p1Postset = placePair.getFirst().getPostset();
 			Collection<?> p2Postset = placePair.getSecond().getPostset();
 			if (!disjoint(p1Postset, p2Postset) && !p1Postset.containsAll(p2Postset)
