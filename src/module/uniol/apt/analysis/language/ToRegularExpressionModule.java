@@ -19,6 +19,9 @@
 
 package uniol.apt.analysis.language;
 
+import static uniol.apt.adt.automaton.AutomatonToRegularExpression.automatonToRegularExpression;
+import static uniol.apt.adt.automaton.FiniteAutomatonUtility.fromLTS;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -28,26 +31,23 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.connectivity.Connectivity;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
-
-import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
-
-import static uniol.apt.adt.automaton.AutomatonToRegularExpression.automatonToRegularExpression;
-import static uniol.apt.adt.automaton.FiniteAutomatonUtility.fromLTS;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Convert a Petri net or LTS into a language-equivalent regular expression
  * @author Uli Schlachter
  */
 @AptModule
-public class ToRegularExpressionModule extends AbstractModule implements Module {
+public class ToRegularExpressionModule extends AbstractInterruptibleModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {
@@ -89,6 +89,7 @@ public class ToRegularExpressionModule extends AbstractModule implements Module 
 		Set<? extends Set<State>> components = Connectivity.getStronglyConnectedComponents(ts);
 		Iterator<? extends Set<State>> it = components.iterator();
 		while (it.hasNext()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			Set<State> component = it.next();
 			boolean skip = false;
 

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
 import static uniol.apt.adt.automaton.FiniteAutomatonUtility.minimize;
@@ -58,8 +59,10 @@ public class AutomatonToRegularExpression {
 		DeterministicFiniteAutomaton dfa = minimize(automaton);
 
 		List<DFAState> states = new ArrayList<DFAState>();
-		for (DFAState state : statesIterable(dfa))
+		for (DFAState state : statesIterable(dfa)) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			states.add(state);
+		}
 
 		// Try with two different orders
 		String regex1 = automatonToRegularExpression(dfa, states);
@@ -82,6 +85,7 @@ public class AutomatonToRegularExpression {
 
 		RegEx result = EMPTY_REGEX;
 		for (DFAState state : states) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (!state.isFinalState())
 				continue;
 			Pair<DFAState, DFAState> pair = new Pair<>(dfa.getInitialState(), state);
@@ -99,6 +103,7 @@ public class AutomatonToRegularExpression {
 		Map<Pair<DFAState, DFAState>, RegEx> result = new HashMap<>();
 		for (DFAState state1 : statesIterable(dfa)) {
 			for (DFAState state2 : statesIterable(dfa)) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				RegEx regex;
 				if (state1.equals(state2))
 					regex = EPSILON_REGEX;
@@ -108,6 +113,7 @@ public class AutomatonToRegularExpression {
 			}
 		}
 		for (DFAState state : statesIterable(dfa)) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			for (Symbol symbol : dfa.getAlphabet()) {
 				Pair<DFAState, DFAState> pair = new Pair<>(state, state.getFollowingState(symbol));
 				RegEx regex = UnionRegEx.union(result.get(pair), SymbolRegEx.symbol(symbol));
@@ -124,6 +130,8 @@ public class AutomatonToRegularExpression {
 		Map<Pair<DFAState, DFAState>, RegEx> result = new HashMap<>(mapping);
 		for (DFAState state1 : statesIterable(dfa)) {
 			for (DFAState state2 : statesIterable(dfa)) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 				RegEx state1ToNew = mapping.get(new Pair<>(state1, newState));
 				RegEx newToNew = mapping.get(new Pair<>(newState, newState));
 				RegEx newToState2 = mapping.get(new Pair<>(newState, state2));
