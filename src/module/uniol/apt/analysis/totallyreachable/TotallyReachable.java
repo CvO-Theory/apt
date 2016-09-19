@@ -26,6 +26,7 @@ import java.util.Set;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.SpanningTree;
 
 /**
@@ -58,6 +59,8 @@ public class TotallyReachable {
 				unreached.remove(ts.getInitialState());
 
 				while (!stillToVisit.isEmpty()) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 					Iterator<State> iter = stillToVisit.iterator();
 					State state = iter.next();
 					iter.remove();
