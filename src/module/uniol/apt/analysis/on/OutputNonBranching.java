@@ -21,6 +21,7 @@ package uniol.apt.analysis.on;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * This module tests if a Petri net is output-nonbranching. That is:
@@ -46,6 +47,7 @@ public class OutputNonBranching {
 	 */
 	public boolean check() {
 		for (Place place : pn.getPlaces()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (place.getPostset().size() > 1) {
 				return false;
 			}
