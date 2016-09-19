@@ -30,6 +30,7 @@ import java.util.Set;
 
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.INode;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Examine a graph's connectivity
@@ -111,6 +112,7 @@ public class Connectivity {
 		result.add(node);
 
 		while (!unvisited.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			node = unvisited.removeLast();
 
 			// Handle the node's preset. All of those nodes belong to this node's component.
@@ -193,6 +195,8 @@ public class Connectivity {
 
 		counter = visitNode(node, dfsNumbers, minNumbers, counter, stack, stackAsSet);
 		do {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			boolean done = true;
 			for (N current : node.getPostsetNodes()) {
 				if (!dfsNumbers.containsKey(current)) {

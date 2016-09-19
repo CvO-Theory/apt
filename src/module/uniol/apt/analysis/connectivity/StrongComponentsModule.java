@@ -21,25 +21,24 @@ package uniol.apt.analysis.connectivity;
 
 import java.util.Set;
 
-import uniol.apt.module.AbstractModule;
+import uniol.apt.adt.IGraph;
+import uniol.apt.adt.INode;
+import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
 
-import uniol.apt.adt.IGraph;
-import uniol.apt.adt.INode;
-
 /**
  * Provide the strong components test as a module.
  * @author Uli Schlachter, vsp
  */
 @AptModule
-public class StrongComponentsModule extends AbstractModule implements Module {
+public class StrongComponentsModule extends AbstractInterruptibleModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {
