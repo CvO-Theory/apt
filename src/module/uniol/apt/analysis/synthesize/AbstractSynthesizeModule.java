@@ -30,9 +30,9 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
-import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.Category;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -43,7 +43,7 @@ import uniol.apt.module.exception.ModuleException;
  * Base class for different modules provide net synthesis.
  * @author Uli Schlachter, vsp
  */
-public abstract class AbstractSynthesizeModule extends AbstractModule implements Module {
+public abstract class AbstractSynthesizeModule extends AbstractInterruptibleModule implements InterruptibleModule {
 	static protected interface TransitionSystemForOptions {
 		public Collection<String> supportedExtraOptions();
 		public TransitionSystem getTS(Collection<String> enabledOptions);

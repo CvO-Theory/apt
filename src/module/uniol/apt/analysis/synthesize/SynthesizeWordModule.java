@@ -19,6 +19,10 @@
 
 package uniol.apt.analysis.synthesize;
 
+import static uniol.apt.analysis.synthesize.SynthesizeUtils.formatESSPFailure;
+import static uniol.apt.analysis.synthesize.SynthesizeUtils.formatSSPFailure;
+import static uniol.apt.analysis.synthesize.SynthesizeUtils.makeTS;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -28,20 +32,19 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.language.Word;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
-import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
 
 /**
  * Provide the net synthesis from a word as a module.
  * @author Uli Schlachter
  */
 @AptModule
-public class SynthesizeWordModule extends AbstractSynthesizeModule implements Module {
+public class SynthesizeWordModule extends AbstractSynthesizeModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

@@ -63,6 +63,7 @@ import uniol.apt.analysis.synthesize.separation.SeparationUtility;
 import uniol.apt.util.DifferentPairsIterable;
 import uniol.apt.util.EquivalenceRelation;
 import uniol.apt.util.Pair;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Synthesize a Petri Net from a transition system.
@@ -288,6 +289,8 @@ public class SynthesizePN {
 			int discarded = 0;
 			Set<Set<State>> newPartition = new HashSet<>();
 			for (Set<State> family : partition) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 				// Separate this family by the given region: States to which this region assigns
 				// different markings are separated.
 				Map<Integer, Set<State>> markings = LazyMap.lazyMap(new HashMap<Integer, Set<State>>(),
@@ -333,6 +336,8 @@ public class SynthesizePN {
 
 		for (Pair<State, State> problem : new DifferentPairsIterable<State>(
 					calculateUnseparatedStates(ts.getNodes(), regions))) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			State state = problem.getFirst();
 			State otherState = problem.getSecond();
 			debugFormat("Trying to separate %s from %s", state, otherState);
@@ -368,6 +373,8 @@ public class SynthesizePN {
 		Map<String, Set<State>> failedProblems = LazyMap.lazyMap(failedEventStateSeparationProblems,
 				FactoryUtils.prototypeFactory(new HashSet<State>()));
 		for (Pair<State, String> problem : new EventStateSeparationProblems(ts)) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			State state = problem.getFirst();
 			String event = problem.getSecond();
 			debugFormat("Trying to separate %s from event '%s'", state, event);
@@ -413,6 +420,8 @@ public class SynthesizePN {
 		// Event separation
 		problemLoop:
 		for (Pair<State, String> problem : new EventStateSeparationProblems(ts)) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			State state = problem.getFirst();
 			String event = problem.getSecond();
 			// Does one of our required regions already solve ESSP? If so, skip
@@ -445,6 +454,8 @@ public class SynthesizePN {
 					utility.getTransitionSystem().getNodes(), requiredRegions));
 		Iterator<State> iterator = remainingStates.iterator();
 		while (iterator.hasNext()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			State state = iterator.next();
 			iterator.remove();
 
@@ -582,6 +593,8 @@ public class SynthesizePN {
 
 		// All transitions that consume tokens from the same place must have the same location.
 		for (Place p : pn.getPlaces()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			String location = null;
 			debug("Examining preset of place ", p, " for obeying the required distribution");
 			for (Transition t : p.getPostset()) {
