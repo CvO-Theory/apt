@@ -37,6 +37,7 @@ import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
+import uniol.apt.util.interrupt.UncheckedInterruptedException;
 
 import static uniol.apt.util.DebugUtil.debug;
 
@@ -110,8 +111,9 @@ class InequalitySystemSeparation implements Separation {
 	 */
 	private Region regionFromSolution() {
 		LBool isSat = script.checkSat();
-		if (isSat != LBool.SAT) {
-			assert isSat == LBool.UNSAT;
+		if (isSat == LBool.UNKNOWN) {
+			throw new UncheckedInterruptedException();
+		} else if (isSat == LBool.UNSAT) {
 			return null;
 		}
 

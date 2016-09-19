@@ -35,12 +35,13 @@ import de.uni_freiburg.informatik.ultimate.logic.Script;
 import de.uni_freiburg.informatik.ultimate.logic.Term;
 import de.uni_freiburg.informatik.ultimate.logic.TermVariable;
 import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.SMTInterpol;
-
+import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.TerminationRequest;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.DifferentPairsIterable;
 import uniol.apt.util.Pair;
 
@@ -63,7 +64,12 @@ public class SMTInterpolHelper {
 		}
 
 		public Script createScript() {
-			return new SMTInterpol(Logger.getRootLogger(), false);
+			return new SMTInterpol(Logger.getRootLogger(), new TerminationRequest() {
+				@Override
+				public boolean isTerminationRequested() {
+					return InterrupterRegistry.getCurrentThreadInterrupter().isInterruptRequested();
+				}
+			});
 		}
 	}
 
