@@ -21,16 +21,9 @@ package uniol.apt.analysis;
 
 import java.util.HashSet;
 
-import uniol.apt.module.AbstractModule;
-import uniol.apt.module.AptModule;
-import uniol.apt.module.Category;
-import uniol.apt.module.Module;
-import uniol.apt.module.ModuleInput;
-import uniol.apt.module.ModuleInputSpec;
-import uniol.apt.module.ModuleOutput;
-import uniol.apt.module.ModuleOutputSpec;
-import uniol.apt.module.exception.ModuleException;
-
+import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.pn.Place;
+import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.ac.AsymmetricChoice;
 import uniol.apt.analysis.bcf.BCF;
 import uniol.apt.analysis.bicf.BiCF;
@@ -51,17 +44,22 @@ import uniol.apt.analysis.sideconditions.NonPure;
 import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.snet.SNet;
 import uniol.apt.analysis.tnet.TNet;
-
-import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.pn.Place;
-import uniol.apt.adt.pn.Transition;
+import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AptModule;
+import uniol.apt.module.Category;
+import uniol.apt.module.InterruptibleModule;
+import uniol.apt.module.ModuleInput;
+import uniol.apt.module.ModuleInputSpec;
+import uniol.apt.module.ModuleOutput;
+import uniol.apt.module.ModuleOutputSpec;
+import uniol.apt.module.exception.ModuleException;
 
 /**
  * Provide various checks in a single module.
  * @author Uli Schlachter, vsp
  */
 @AptModule
-public class ExaminePNModule extends AbstractModule implements Module {
+public class ExaminePNModule extends AbstractInterruptibleModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {
