@@ -31,6 +31,7 @@ import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.coverability.CoverabilityGraphNode;
 import uniol.apt.analysis.language.FiringSequence;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Tests if a net is (k-)bounded. A net is bounded if no place can get an unlimited number of tokens. A net is k-bounded
@@ -65,6 +66,7 @@ public class Bounded {
 		for (CoverabilityGraphNode n : cover.getNodes()) {
 			Marking mark = n.getMarking();
 			for (Place p : places) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				Token val = mark.getToken(p);
 
 				if (val.isOmega()) {

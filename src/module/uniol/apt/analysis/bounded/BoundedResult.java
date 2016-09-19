@@ -27,6 +27,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Token;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * This class represents results from the {@link Bounded} check.
@@ -119,6 +120,7 @@ public class BoundedResult {
 		// ...and then go through the cycle until we exceed the target bound
 		array = cycle.toArray(new Transition[0]);
 		while (m.getToken(unboundedPlace).compareTo(target) <= 0) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			result.addAll(cycle);
 			m = m.fireTransitions(array);
 		}
