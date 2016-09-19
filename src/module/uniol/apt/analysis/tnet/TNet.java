@@ -23,6 +23,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.plain.Plain;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * This package provides a method to check if a Petri net is a t-net.
@@ -57,6 +58,8 @@ public class TNet {
 		}
 		// over all places
 		for (Place place : petriNet.getPlaces()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			// is here a merge?
 			if (place.getPreset().size() > 1) {
 				result.addMergeID(place.getId());
