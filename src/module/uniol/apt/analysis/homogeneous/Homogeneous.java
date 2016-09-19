@@ -22,6 +22,7 @@ package uniol.apt.analysis.homogeneous;
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
 /**
@@ -41,6 +42,7 @@ public class Homogeneous {
 	 */
 	public Pair<Flow, Flow> check(PetriNet net) {
 		for (Place p : net.getPlaces()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			Flow firstEdge = null;
 			int weight = 0;
 			for (Flow edge : p.getPostsetEdges()) {
