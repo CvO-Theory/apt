@@ -35,8 +35,9 @@ import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.Token;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
-import uniol.apt.analysis.coverability.CoverabilityGraphNode;
 import uniol.apt.analysis.coverability.CoverabilityGraphEdge;
+import uniol.apt.analysis.coverability.CoverabilityGraphNode;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 import static uniol.apt.util.PowerSet.powerSet;
 
@@ -126,6 +127,7 @@ public class GenerateStepNet {
 			Iterator<Marking> iter = result.iterator();
 			boolean skip = false;
 			while (iter.hasNext()) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				Marking mark2 = iter.next();
 				if (isMarkingLessOrEqual(mark, mark2)) {
 					skip = true;
@@ -216,6 +218,8 @@ public class GenerateStepNet {
 		// Every new step can be checked with checkSimplyLive(). The result would be equivalent to this
 		// approach, but (likely) faster.
 		for (Collection<Transition> transitions : powerSet(new ArrayList<>(pn.getTransitions()))) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			if (!isStepReasonable(transitions))
 				continue;
 
