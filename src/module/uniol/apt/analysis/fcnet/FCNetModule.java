@@ -20,10 +20,10 @@
 package uniol.apt.analysis.fcnet;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -39,7 +39,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Manuel Gieseking
  */
 @AptModule
-public class FCNetModule extends AbstractModule implements Module {
+public class FCNetModule extends AbstractInterruptibleModule implements InterruptibleModule {
 
 	private static final String SHORTDESCRIPTION = "Check if a Petri net is restricted-free-choice";
 	private static final String LONGDESCRIPTION = SHORTDESCRIPTION + ". That is:\n"

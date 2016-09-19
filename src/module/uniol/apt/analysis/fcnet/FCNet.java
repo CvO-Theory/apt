@@ -25,6 +25,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.plain.Plain;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Precondition: plain Petri net
@@ -57,6 +58,7 @@ public class FCNet {
 		}
 		for (Transition t1 : pn.getTransitions()) {
 			for (Transition t2 : pn.getTransitions()) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				Collection<?> set1 = t1.getPreset();
 				Collection<?> set2 = t2.getPreset();
 				if (!(Collections.disjoint(set1, set2) || (set1.size() == 1 && set2.size() == 1))) {
