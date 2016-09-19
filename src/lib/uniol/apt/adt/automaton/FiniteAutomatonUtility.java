@@ -496,6 +496,8 @@ public class FiniteAutomatonUtility {
 		// A minimal DFA can have at most one "sink state". All words which cannot be extended into words of the
 		// language will reach that sink state. Let's find that sink state and skip it in our translation.
 		for (DFAState state : statesIterable(dfa)) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			// The sink state is not a final state and all arcs go back to itself
 			if (state.isFinalState())
 				continue;
@@ -527,10 +529,13 @@ public class FiniteAutomatonUtility {
 		Map<DFAState, uniol.apt.adt.ts.State> stateMap = new HashMap<>();
 		TransitionSystem result = new TransitionSystem();
 
-		for (DFAState dfaState : statesIterable(dfa))
+		for (DFAState dfaState : statesIterable(dfa)) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (!dfaState.equals(sinkState))
 				stateMap.put(dfaState, result.createState());
+		}
 		for (DFAState dfaState : statesIterable(dfa)) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (dfaState.equals(sinkState))
 				continue;
 
