@@ -20,10 +20,10 @@
 package uniol.apt.analysis.cf;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -36,7 +36,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Manuel Gieseking
  */
 @AptModule
-public class ConflictFreeModule extends AbstractModule implements Module {
+public class ConflictFreeModule extends AbstractInterruptibleModule implements InterruptibleModule {
 
 	private final static String SHORTDESCRIPTION = "Check if a plain Petri net is conflict-free";
 	private final static String LONGDESCRIPTION = "This module tests if a plain Petri net is conflict-free."

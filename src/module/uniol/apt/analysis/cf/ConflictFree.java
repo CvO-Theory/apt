@@ -23,6 +23,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.plain.Plain;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * This module tests if a plain Petri net is conflict-free. That is:
@@ -53,6 +54,7 @@ public class ConflictFree {
 			throw new PreconditionFailedException("the net is not plain.");
 		}
 		for (Place place : pn.getPlaces()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (!(place.getPostset().size() <= 1 || place.getPreset().containsAll(place.getPostset()))) {
 				return false;
 			}
