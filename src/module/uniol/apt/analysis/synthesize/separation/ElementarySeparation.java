@@ -32,6 +32,8 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
+import uniol.apt.util.interrupt.InterrupterRegistry;
+
 import static uniol.apt.util.DebugUtil.debug;
 import static uniol.apt.util.DebugUtil.debugFormat;
 
@@ -134,6 +136,7 @@ class ElementarySeparation implements Separation {
 		Deque<RoughRegion> unhandled = new ArrayDeque<>();
 		unhandled.add(region);
 		while (!unhandled.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			region = unhandled.remove();
 
 			// Refine the region as long as this is uniquely possible

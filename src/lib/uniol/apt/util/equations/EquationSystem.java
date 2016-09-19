@@ -30,6 +30,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import uniol.apt.util.interrupt.InterrupterRegistry;
+
 import static uniol.apt.util.DebugUtil.debug;
 import static uniol.apt.util.DebugUtil.debugFormat;
 
@@ -73,6 +75,8 @@ public class EquationSystem {
 			debug("============");
 
 			while (!equations2.isEmpty()) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 				debug("New round");
 				debug(equations1);
 				debug(equations2);
@@ -88,6 +92,7 @@ public class EquationSystem {
 				// "Reduce" the equation to a single, non-zero coefficient
 				// TODO: Baaaaad performance
 				while (true) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 					boolean restart = false;
 
 					// Find two coefficients with 0 < lambda_i <= lambda_j

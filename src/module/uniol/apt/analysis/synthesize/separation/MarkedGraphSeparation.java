@@ -37,6 +37,7 @@ import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * This class quickly finds solutions to separation problems for TS satisfying some properties. A marked graph is a
@@ -95,6 +96,8 @@ class MarkedGraphSeparation implements Separation {
 		Map<Integer, List<BigInteger>> result = new HashMap<>();
 		stateLoop:
 		for (State state : utility.getTransitionSystem().getNodes()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			Set<Arc> arcs = state.getPresetEdges();
 			if (arcs.size() != 1)
 				continue;
@@ -128,6 +131,8 @@ class MarkedGraphSeparation implements Separation {
 			int event = utility.getEventIndex(arc.getLabel());
 			// ...look at the postset of that following node (this is s_a)...
 			for (Arc followingArc : arc.getTarget().getPostsetEdges()) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 				int otherEvent = utility.getEventIndex(followingArc.getLabel());
 				// We are looking for sequentializing states: 'state' doesn't enable an event and all
 				// following states do. So skip if this doesn't actually hold.

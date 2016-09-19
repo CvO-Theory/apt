@@ -42,6 +42,7 @@ import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.totallyreachable.TotallyReachable;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
 import static uniol.apt.util.DebugUtil.debug;
@@ -127,6 +128,7 @@ class KBoundedSeparation implements Separation {
 		todo.addAll(known);
 
 		while (!todo.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			Bag<State> r = todo.removeFirst();
 
 			debug();
