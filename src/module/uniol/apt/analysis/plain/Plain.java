@@ -21,6 +21,7 @@ package uniol.apt.analysis.plain;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Check if PN is plain
@@ -36,6 +37,7 @@ public class Plain {
 	public boolean checkPlain(PetriNet pn) {
 		boolean plain = true;
 		for (Flow a : pn.getEdges()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (a.getWeight() != 1) {
 				plain = false;
 				break;
