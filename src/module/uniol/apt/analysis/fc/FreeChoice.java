@@ -26,6 +26,7 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.plain.Plain;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Checks whether a given plain Petri net is a free choice net. That is:
@@ -48,6 +49,7 @@ public class FreeChoice {
 		// for each transition t1, t2 ...
 		for (Transition t1 : net.getTransitions()) {
 			for (Transition t2 : net.getTransitions()) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				// ... get the presets ...
 				Collection<?> set1 = t1.getPreset();
 				Collection<?> set2 = t2.getPreset();
