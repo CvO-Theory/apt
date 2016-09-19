@@ -26,15 +26,16 @@ import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.language.FiringSequence;
 import uniol.apt.analysis.language.Word;
-import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Try to fire a given sequence in a Petri net.
@@ -42,7 +43,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Uli Schlachter
  */
 @AptModule
-public class FireSequenceModule extends AbstractModule implements Module {
+public class FireSequenceModule extends AbstractInterruptibleModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {
@@ -84,6 +85,7 @@ public class FireSequenceModule extends AbstractModule implements Module {
 
 		try {
 			for (String name : sequence) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				Transition trans = pn.getTransition(name);
 				marking = trans.fire(marking);
 				fired.add(trans);
