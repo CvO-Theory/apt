@@ -30,6 +30,7 @@ import java.util.Set;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
 /**
@@ -76,6 +77,8 @@ class ComputeSmallestCyclesFloydWarshall extends AbstractComputeSmallestCycles {
 		for (State nodeK : ts.getNodes()) {
 			for (State nodeI : ts.getNodes()) {
 				for (State nodeJ : ts.getNodes()) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 					Pair<State, State> key = new Pair<>(nodeI, nodeJ);
 					Weight w1 = minDistances.get(new Pair<>(nodeI, nodeK));
 					Weight w2 = minDistances.get(new Pair<>(nodeK, nodeJ));

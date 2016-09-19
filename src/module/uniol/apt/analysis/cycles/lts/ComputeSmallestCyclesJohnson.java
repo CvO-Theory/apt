@@ -32,6 +32,7 @@ import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
 /**
@@ -61,6 +62,7 @@ class ComputeSmallestCyclesJohnson extends AbstractComputeSmallestCycles {
 		int counter = 0;
 		visitNode(node, dfsNums, minNums, counter++, stack);
 		do {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			boolean done = true;
 			for (State curState : states.get(node).getPostsetNodes()) {
 				Integer cur = states.indexOf(curState);
@@ -197,6 +199,7 @@ class ComputeSmallestCyclesJohnson extends AbstractComputeSmallestCycles {
 			blocked[state] = true;
 			sStack.addLast(states.get(state).getId());
 			for (Pair<String, Integer> arc : adjacencies.get(state)) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				lStack.addLast(arc.getFirst());
 				if (arc.getSecond() == s) {
 					// cycle found

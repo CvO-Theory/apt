@@ -30,6 +30,7 @@ import java.util.Stack;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
 /**
@@ -83,6 +84,7 @@ class ComputeSmallestCyclesDFS extends AbstractComputeSmallestCycles {
 	 * @param smallest - flag which tells if really all or just the smallest should be saved. (Storage vs. Time)
 	 */
 	private void dfs(State node, Stack<String> sequence, Stack<String> labels, boolean smallest) {
+		InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 
 		int idx = sequence.search(node.getId());
 		if (idx != -1) {
