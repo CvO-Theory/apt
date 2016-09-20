@@ -168,6 +168,21 @@ public class OverapproximatePNTest {
 					arcThatConnectsVia("1", "s0", "b"), arcThatConnectsVia("s0", "3", "c"),
 					arcThatConnectsVia("0", "4", "b"), arcThatConnectsVia("4", "s0", "a")));
 	}
+
+	@Test
+	public void testAALoop() throws Exception {
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("0", "1");
+		ts.setInitialState("0");
+		ts.createArc("0", "1", "a");
+		ts.createArc("1", "0", "a");
+
+		PNProperties properties = new PNProperties();
+		PetriNet pn = OverapproximatePN.overapproximate(ts, properties);
+
+		assertThat(pn.getTransitions(), contains(nodeWithID("a")));
+		assertThat(pn.getPlaces(), empty());
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

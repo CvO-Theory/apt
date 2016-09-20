@@ -108,9 +108,9 @@ public class OverapproximatePN {
 		TransitionSystem result = new TransitionSystem();
 
 		// First, copy all reachable states
-		Set<State> handled = new HashSet<>();
-		Queue<State> todo = new ArrayDeque<>();
 		State stateToHandle = ts.getInitialState();
+		Set<State> handled = new HashSet<>(Collections.singleton(stateToHandle));
+		Queue<State> todo = new ArrayDeque<>();
 		while (stateToHandle != null) {
 			result.createState(stateToHandle);
 			for (State next : stateToHandle.getPostsetNodes())
@@ -121,9 +121,9 @@ public class OverapproximatePN {
 		}
 
 		// Then, copy all reachable arcs
-		handled = new HashSet<>();
-		todo = new ArrayDeque<>();
 		stateToHandle = ts.getInitialState();
+		handled = new HashSet<>(Collections.singleton(stateToHandle));
+		todo = new ArrayDeque<>();
 		while (stateToHandle != null) {
 			for (Arc arc : stateToHandle.getPostsetEdges()) {
 				State next = arc.getTarget();
