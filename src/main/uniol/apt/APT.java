@@ -71,6 +71,35 @@ public class APT {
 	 */
 	public static final String STANDARD_INPUT_SYMBOL = "-";
 
+	/**
+	 * The exact APT version that is running as seen by "git describe".
+	 */
+	public static final String GIT_VERSION;
+
+	/**
+	 * A timestamp for when this version of APT was built.
+	 */
+	public static final String TIMESTAMP;
+
+	/**
+	 * A human-readable string generated from {@link GIT_VERSION} and {@link TIMESTAMP}.
+	 */
+	public static final String VERSION_STRING;
+
+	static {
+		Properties props = new Properties();
+		try (InputStream in = APT.class.getResourceAsStream("APT.properties")) {
+			if (in != null)
+				props.load(in);
+		} catch (IOException e) {
+			// Ignore the exception and just make sure that the version will be UNKNOWN
+			props = new Properties();
+		}
+		GIT_VERSION = props.getProperty("git-version", "UNKNOWN");
+		TIMESTAMP = props.getProperty("timestamp", "UNKNOWN");
+		VERSION_STRING = "APT version " + GIT_VERSION + " built on " + TIMESTAMP;
+	}
+
 	private static final ParametersParser PARAMETERS_PARSER = new SimpleParametersParser();
 	private static final ParametersTransformer PARAMETERS_TRANSFORMER = AptParametersTransformer.INSTANCE;
 	private static final ReturnValuesTransformer RETURN_VALUES_TRANSFORMER = AptReturnValuesTransformer.INSTANCE;
@@ -335,18 +364,7 @@ public class APT {
 	}
 
 	private static void printVersion() {
-		Properties props = new Properties();
-		try (InputStream in = APT.class.getResourceAsStream("APT.properties")) {
-			if (in != null)
-				props.load(in);
-		} catch (IOException e) {
-			// Ignore the exception and just make sure that the version will be UNKNOWN
-			props = new Properties();
-		}
-		String gitVersion = props.getProperty("git-version", "UNKNOWN");
-		String timestamp = props.getProperty("timestamp", "UNKNOWN");
-
-		OUT_PRINTER.println("APT version " + gitVersion + " built on " + timestamp + ".");
+		OUT_PRINTER.println(VERSION_STRING + ".");
 		OUT_PRINTER.println();
 	}
 
