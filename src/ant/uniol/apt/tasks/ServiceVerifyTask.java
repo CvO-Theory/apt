@@ -68,14 +68,6 @@ public class ServiceVerifyTask {
 					+ "' is broken." + suggestion, e);
 		}
 	}
-
-	static class FailureException extends Exception {
-		private static final long serialVersionUID = 0;
-
-		public FailureException(String message, Throwable cause) {
-			super(message, cause);
-		}
-	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

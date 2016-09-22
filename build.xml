@@ -214,18 +214,15 @@
 	</target>
 
 	<target name="verify-modules" depends="javac" description="Verify the use of parameters in modules.">
-		<taskdef name="module-verify" classname="uniol.apt.tasks.ModuleParameterVerifyTask">
+		<java classname="uniol.apt.tasks.ModuleParameterVerifyTask" failonerror="true">
 			<classpath refid="ant.class.path" />
-		</taskdef>
 
-		<module-verify>
-			<fileset dir="classes/module" >
-				<include name="**/*Module.class" />
-			</fileset>
-			<fileset dir="classes/main" >
-				<include name="**/*Module.class" />
-			</fileset>
-		</module-verify>
+			<arg path="classes/module"/>
+			<arg value="*Module.class"/>
+
+			<arg path="classes/main"/>
+			<arg value="*Module.class"/>
+		</java>
 	</target>
 
 	<target name="xml.test" depends="javac.ant,javac.test">

@@ -19,25 +19,19 @@
 
 package uniol.apt.tasks;
 
-import static org.apache.tools.ant.Project.MSG_ERR;
-import static org.apache.tools.ant.Project.MSG_WARN;
 import static uniol.apt.tasks.modules.ModuleParameterVerifyMethodVisitor.DIFFERENT_TYPES_DETECTED_TYPE;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Location;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.FileSet;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 
@@ -47,51 +41,55 @@ import uniol.apt.tasks.modules.ModuleParameterVerifyClassVisitor;
  * Ant task to verify if the modules parameter use is correct.
  * @author vsp
  */
-public class ModuleParameterVerifyTask extends Task {
-	private final List<FileSet> filesets = new ArrayList<>();
+public class ModuleParameterVerifyTask {
+	public static void main(String[] args) {
+		if (args.length % 2 != 0)
+			throw new IllegalArgumentException(
+					"Need base dir and wildcard pairs as arguments");
 
-	/**
-	 * Method which get called by ant when a nested fileset element is parsed.
-	 * @param fileset the new fileset
-	 */
-	public void addFileset(FileSet fileset) {
-		filesets.add(fileset);
-	}
+		try {
+			Map<String, ModuleParameterVerifyClassVisitor> classes = new HashMap<>();
+			for (int i = 0; i < args.length; i += 2) {
+				String baseDir = args[i];
+				File baseFile = new File(baseDir);
+				String wildcard = args[i + 1];
 
-	/** Execute the task. */
-	public void execute() {
-		if (filesets.isEmpty()) {
-			throw new BuildException("No nested fileset element found.");
-		}
+				Iterator<File> fileIter = FileUtils.iterateFiles(baseFile,
+							new WildcardFileFilter(wildcard),
+							TrueFileFilter.INSTANCE);
+				while (fileIter.hasNext()) {
+					File classFile = fileIter.next();
+					ClassReader reader;
+					try {
+						reader = new ClassReader(FileUtils.openInputStream(classFile));
+					} catch(IOException ex) {
+						throw new FailureException("Error accessing file: " + classFile, ex);
+					}
+					ModuleParameterVerifyClassVisitor cv = new ModuleParameterVerifyClassVisitor();
+					reader.accept(cv, 0);
 
-		Map<String, ModuleParameterVerifyClassVisitor> classes = new HashMap<>();
-		for (FileSet fs : filesets) {
-			DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-			File baseDir        = ds.getBasedir();
-			for (String className : ds.getIncludedFiles()) {
-				File classFile = new File(baseDir, className);
-				ClassReader reader;
-				try {
-					reader = new ClassReader(FileUtils.openInputStream(classFile));
-				} catch(IOException ex) {
-					throw new BuildException("Error accessing class: " + className, ex);
+					cv = classes.put(cv.getClassName(), cv);
+					if (cv != null)
+						throw new FailureException("Multiple definitions for class: " +
+								cv.getClassName());
 				}
-				ModuleParameterVerifyClassVisitor cv = new ModuleParameterVerifyClassVisitor();
-				reader.accept(cv, 0);
-
-				cv = classes.put(cv.getClassName(), cv);
-				if (cv != null)
-					throw new BuildException("Multiple definitions for class: " + cv.getClassName());
 			}
-		}
 
-		for (ModuleParameterVerifyClassVisitor cv : classes.values()) {
-			analyseClass(cv, classes);
+			boolean fail = false;
+			for (ModuleParameterVerifyClassVisitor cv : classes.values()) {
+				fail |= analyseClass(cv, classes);
+			}
+			if (fail) {
+				throw new FailureException("Module parameter or return value use is incorrect; see above messages.");
+			}
+		} catch (FailureException e) {
+			System.err.println(e.getMessage());
+			System.exit(1);
 		}
 	}
 
 	/** Get class information */
-	private void getClassInformation(ModuleParameterVerifyClassVisitor cv,
+	private static void getClassInformation(ModuleParameterVerifyClassVisitor cv,
 			Map<String, ModuleParameterVerifyClassVisitor> classes, Map<String, Type> requestedInputs,
 			Map<String, Type> optionalInputs, Map<String, Type> usedInputs,
 			Map<String, Type> announcedOutputs, Map<String, Type> providedOutputs) {
@@ -108,7 +106,7 @@ public class ModuleParameterVerifyTask extends Task {
 	}
 
 	/** Do the work */
-	private void analyseClass(ModuleParameterVerifyClassVisitor cv, Map<String, ModuleParameterVerifyClassVisitor> classes) {
+	private static boolean analyseClass(ModuleParameterVerifyClassVisitor cv, Map<String, ModuleParameterVerifyClassVisitor> classes) {
 		String className = cv.getClassName();
 
 		Map<String, Type> requestedInputs  = new HashMap<>();
@@ -126,7 +124,7 @@ public class ModuleParameterVerifyTask extends Task {
 		requiredOptionalInputs.retainAll(optionalInputs.keySet());
 
 		for (String parameter : requiredOptionalInputs) {
-			log("error: " + className + ": Parameter specified as required and also as optional: " + parameter, MSG_ERR);
+			System.err.println("error: " + className + ": Parameter specified as required and also as optional: " + parameter);
 			fail = true;
 		}
 
@@ -135,15 +133,15 @@ public class ModuleParameterVerifyTask extends Task {
 			Type requestedClass = requestedInputs.get(parameter);
 
 			if (requestedClass == DIFFERENT_TYPES_DETECTED_TYPE) {
-				log("error: " + className + ": Parameter required with multiple types: " + parameter, MSG_ERR);
+				System.err.println("error: " + className + ": Parameter required with multiple types: " + parameter);
 				fail = true;
 			} else if (usedClass == null) {
-				log("warning: " + className + ": Never used parameter: " + parameter, MSG_WARN);
+				System.err.println("warning: " + className + ": Never used parameter: " + parameter);
 			} else if (usedClass == DIFFERENT_TYPES_DETECTED_TYPE) {
-				log("error: " + className + ": Parameter used with multiple types: " + parameter, MSG_ERR);
+				System.err.println("error: " + className + ": Parameter used with multiple types: " + parameter);
 				fail = true;
 			} else if (!usedClass.equals(requestedClass)) {
-				log("error: " + className + ": Parameter used with other type as requested: " + parameter, MSG_ERR);
+				System.err.println("error: " + className + ": Parameter used with other type as requested: " + parameter);
 				fail = true;
 			}
 		}
@@ -153,15 +151,15 @@ public class ModuleParameterVerifyTask extends Task {
 			Type requestedClass = optionalInputs.get(parameter);
 
 			if (requestedClass == DIFFERENT_TYPES_DETECTED_TYPE) {
-				log("error: " + className + ": Parameter required with multiple types: " + parameter, MSG_ERR);
+				System.err.println("error: " + className + ": Parameter required with multiple types: " + parameter);
 				fail = true;
 			} else if (usedClass == null) {
-				log("warning: " + className + ": Never used parameter: " + parameter, MSG_WARN);
+				System.err.println("warning: " + className + ": Never used parameter: " + parameter);
 			} else if (usedClass == DIFFERENT_TYPES_DETECTED_TYPE) {
-				log("error: " + className + ": Parameter used with multiple types: " + parameter, MSG_ERR);
+				System.err.println("error: " + className + ": Parameter used with multiple types: " + parameter);
 				fail = true;
 			} else if (!usedClass.equals(requestedClass)) {
-				log("error: " + className + ": Parameter used with other type as requested: " + parameter, MSG_ERR);
+				System.err.println("error: " + className + ": Parameter used with other type as requested: " + parameter);
 				fail = true;
 			}
 		}
@@ -170,7 +168,7 @@ public class ModuleParameterVerifyTask extends Task {
 		unknownInputs.removeAll(requestedInputs.keySet());
 		unknownInputs.removeAll(optionalInputs.keySet());
 		for (String parameter : unknownInputs) {
-			log("error: " + className + ": Used but not requested parameter: " + parameter, MSG_ERR);
+			System.err.println("error: " + className + ": Used but not requested parameter: " + parameter);
 			fail = true;
 		}
 
@@ -179,15 +177,15 @@ public class ModuleParameterVerifyTask extends Task {
 			Type announcedClass = announcedOutputs.get(parameter);
 
 			if (announcedClass == DIFFERENT_TYPES_DETECTED_TYPE) {
-				log("error: " + className + ": Return value announced with multiple types: " + parameter, MSG_ERR);
+				System.err.println("error: " + className + ": Return value announced with multiple types: " + parameter);
 				fail = true;
 			} else if (providedClass == null) {
-				log("warning: " + className + ": Return value gets never set: " + parameter, MSG_WARN);
+				System.err.println("warning: " + className + ": Return value gets never set: " + parameter);
 			} else if (providedClass == DIFFERENT_TYPES_DETECTED_TYPE) {
-				log("error: " + className + ": Return value provided with multiple types: " + parameter, MSG_ERR);
+				System.err.println("error: " + className + ": Return value provided with multiple types: " + parameter);
 				fail = true;
 			} else if (!providedClass.equals(announcedClass)) {
-				log("error: " + className + ": Return value gets set with other type as announced: " + parameter, MSG_ERR);
+				System.err.println("error: " + className + ": Return value gets set with other type as announced: " + parameter);
 				fail = true;
 			}
 		}
@@ -195,13 +193,11 @@ public class ModuleParameterVerifyTask extends Task {
 		Set<String> unknownOutputs = new HashSet<>(providedOutputs.keySet());
 		unknownOutputs.removeAll(announcedOutputs.keySet());
 		for (String parameter : unknownOutputs) {
-			log("error: " + className + ": Unannounced return value: " + parameter, MSG_ERR);
+			System.err.println("error: " + className + ": Unannounced return value: " + parameter);
 			fail = true;
 		}
 
-		if (fail) {
-			throw new BuildException("Module parameter or return value use is incorrect; see above messages.", new Location(className));
-		}
+		return fail;
 	}
 }
 
