@@ -98,12 +98,12 @@ public class AptLTSParserTest {
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Node 's1' already exists in graph 'doubleNodes'$")
 	public void testDoubleNodes() throws Exception {
-		new AptLTSParser().parseFile("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-aut.apt");
+		new AptLTSParser().parseFile("nets/not-parsable-test-nets/doubleNodes-aut.apt_unparsable");
 	}
 
 	@Test(expectedExceptions = { ParseException.class })
 	public void testDoubleInitState() throws Exception {
-		new AptLTSParser().parseFile("nets/not-parsable-test-nets/doubleInitialstate_shouldNotBeParsable-aut.apt");
+		new AptLTSParser().parseFile("nets/not-parsable-test-nets/doubleInitialstate.apt_unparsable");
 	}
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 4 col 5: no viable alternative at input '<EOF>'$")

@@ -208,7 +208,7 @@
 				<include name="**/*.pdf" />
 				<include name="**/*.png" />
 				<include name="**/*.dot" />
-				<include name="not-parsable-test-nets/**" />
+				<include name="**/*_unparsable" />
 			</exclude>
 		</parsers-verify>
 	</target>

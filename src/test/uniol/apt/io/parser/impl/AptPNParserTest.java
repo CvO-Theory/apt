@@ -95,7 +95,7 @@ public class AptPNParserTest {
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Node 's1' already exists in graph 'doubleNodes'$")
 	public void testDoubleNodes() throws Exception {
-		new AptPNParser().parseFile("nets/not-parsable-test-nets/doubleNodes_shouldNotBeParsable-net.apt");
+		new AptPNParser().parseFile("nets/not-parsable-test-nets/doubleNodes-net.apt_unparsable");
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class AptPNParserTest {
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: token recognition error at: '\\.u'$")
 	public void testUnknownAttributeNet() throws Exception {
-		new AptPNParser().parseFile("nets/not-parsable-test-nets/unknown-attribute.apt");
+		new AptPNParser().parseFile("nets/not-parsable-test-nets/unknown-attribute.apt_unparsable");
 	}
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 8: token recognition error at: '// Comment without newline after'$")
