@@ -226,15 +226,12 @@
 	</target>
 
 	<target name="xml.test" depends="javac.ant,javac.test">
-		<taskdef name="xml-test" classname="uniol.apt.tasks.WriteTestsXML">
+		<java classname="uniol.apt.tasks.WriteTestsXML" failonerror="true">
 			<classpath refid="ant.class.path" />
-		</taskdef>
-
-		<xml-test output="testng.xml">
-			<classfileset dir="classes/test" >
-				<include name="**/*Test.class" />
-			</classfileset>
-		</xml-test>
+			<arg path="testng.xml" />
+			<arg path="classes/test" />
+			<arg value="*Test.class" />
+		</java>
 	</target>
 
 	<macrodef name="invoke-testng">

@@ -26,57 +26,50 @@ import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.FileSet;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 /**
  * Ant task to prepare a TestNG XML file.
  * @author Uli Schlachter
  */
-public class WriteTestsXML extends Task {
-	private final List<FileSet> classfiles = new ArrayList<>();
-	private File output = null;
+public class WriteTestsXML {
+	public static void main(String[] args) {
+		if (args.length != 3)
+			throw new IllegalArgumentException(
+					"Need exactly three arguments: output file, directory to scan, file name pattern");
 
-	public void addClassfileset(FileSet fileset) {
-		classfiles.add(fileset);
-	}
-
-	public void setOutput(File file) {
-		output = file;
-	}
-
-	/** Execute the task. */
-	@Override
-	public void execute() {
-		if (classfiles.isEmpty()) {
-			throw new BuildException("No nested fileset element found.");
-		}
-		if (output == null) {
-			throw new BuildException("No output file set.");
-		}
+		File outputFile = new File(args[0]);
+		File directoryToScan = new File(args[1]);
+		String namePattern = args[2];
 
 		Worker worker = new Worker();
-		for (FileSet fs : classfiles) {
-			DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-			for (String fileName : ds.getIncludedFiles())
-				try {
-					worker.handleFile(fileName);
-				} catch (UnhandledException e) {
-					throw new BuildException("Could not handle file " + fileName
-							+ " in " + ds.getBasedir() + ": " + e.getMessage(), e);
-				}
+		Iterator<File> fileIter = FileUtils.iterateFiles(directoryToScan,
+					new WildcardFileFilter(namePattern),
+					TrueFileFilter.INSTANCE);
+		while (fileIter.hasNext()) {
+			File file = fileIter.next();
+			// The worker wants a relative path to the base directory
+			String relativeFile = directoryToScan.toURI().relativize(file.toURI()).getPath();
+			try {
+				worker.handleFile(relativeFile);
+			} catch (UnhandledException e) {
+				System.err.println("Could not handle file " + file + ": " + e.getMessage());
+				e.printStackTrace();
+				System.exit(1);
+			}
 		}
 
 		try {
-			worker.write(output);
+			worker.write(outputFile);
 		} catch (FileNotFoundException | UnsupportedEncodingException e) {
-			throw new BuildException(e);
+			throw new RuntimeException(e);
 		}
 	}
 
