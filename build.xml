@@ -196,21 +196,16 @@
 	</target>
 
 	<target name="verify-parsers" depends="javac.ant" description="Verify all of the net collection is parsable.">
-		<taskdef name="parsers-verify" classname="uniol.apt.tasks.ParsableTask">
+		<java classname="uniol.apt.tasks.ParsableTask" failonerror="true">
 			<classpath refid="ant.class.path" />
-		</taskdef>
 
-		<parsers-verify outputdir="reports/parsers">
-			<fileset dir="nets" >
-				<include name="**/*" />
-			</fileset>
-			<exclude dir="nets" >
-				<include name="**/*.pdf" />
-				<include name="**/*.png" />
-				<include name="**/*.dot" />
-				<include name="**/*_unparsable" />
-			</exclude>
-		</parsers-verify>
+			<arg path="reports/parsers"/>
+			<arg path="nets"/>
+			<arg value="!*.pdf" />
+			<arg value="!*.png" />
+			<arg value="!*.dot" />
+			<arg value="!*_unparsable" />
+		</java>
 	</target>
 
 	<target name="verify-modules" depends="javac" description="Verify the use of parameters in modules.">

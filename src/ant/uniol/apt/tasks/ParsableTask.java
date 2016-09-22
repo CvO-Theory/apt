@@ -19,22 +19,20 @@
 
 package uniol.apt.tasks;
 
-import static org.apache.tools.ant.Project.MSG_ERR;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.FileSet;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.AndFileFilter;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import uniol.apt.io.parser.LTSParsers;
 import uniol.apt.io.parser.PNParsers;
@@ -49,74 +47,58 @@ import uniol.apt.tasks.parsers.UnparsableException;
  * Ant task to verify that a list of files is parsable.
  * @author vsp, Uli Schlachter
  */
-public class ParsableTask extends Task {
-	private final List<FileSet> filesets = new ArrayList<>();
-	private final List<FileSet> excludeFilesets = new ArrayList<>();
-	private File outputdir;
+public class ParsableTask {
+	public static void main(String[] args) {
+		if (args.length < 2)
+			throw new IllegalArgumentException("Need at least two arguments: Output directory, directory to scan");
 
-	/**
-	 * Method which get called by ant when a nested fileset element is parsed.
-	 * @param fileset the new fileset
-	 */
-	public void addFileset(FileSet fileset) {
-		filesets.add(fileset);
-	}
-
-	/**
-	 * Method which get called by ant when a nested fileset element is parsed.
-	 * @param fileset the new fileset
-	 */
-	public void addExclude(FileSet fileset) {
-		excludeFilesets.add(fileset);
-	}
-
-	public void setOutputdir(File dir) {
-		outputdir = dir;
-	}
-
-	/** Execute the task. */
-	@Override
-	public void execute() {
-		if (filesets.isEmpty()) {
-			throw new BuildException("No nested fileset element found.");
-		}
-		if (outputdir == null) {
-			throw new BuildException("No output directory set.");
-		}
+		File outputdir = new File(args[0]);
+		File baseFile = new File(args[1]);
 
 		if (!outputdir.exists())
 			outputdir.mkdirs();
-		if (!outputdir.isDirectory())
-			throw new BuildException("Output directory is not a directory: " + outputdir);
-
-		Set<File> excludedFiles = new HashSet<>();
-		for (FileSet fs : excludeFilesets) {
-			DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-			File baseDir        = ds.getBasedir();
-			for (String fileName : ds.getIncludedFiles()) {
-				excludedFiles.add(new File(baseDir, fileName));
-			}
+		if (!outputdir.isDirectory()) {
+			System.err.println("Output directory is not a directory: " + outputdir);
+			System.exit(1);
 		}
 
+		// Parse patterns given on the argument. A leading ! negates the pattern.
+		AndFileFilter filter = new AndFileFilter();
+		IOFileFilter negatedFilter = new NotFileFilter(filter);
+		for (int i = 2; i < args.length; i++) {
+			String arg = args[i];
+			String wildcard = arg;
+			boolean negate = wildcard.startsWith("!");
+
+			if (negate)
+				wildcard = arg.substring(1);
+			IOFileFilter newFilter = new WildcardFileFilter(wildcard);
+			if (negate)
+				newFilter = new NotFileFilter(newFilter);
+			filter.addFileFilter(newFilter);
+		}
+
+		// Get all excluded files
+		Collection<File> excludedFiles = FileUtils.listFiles(baseFile, negatedFilter, TrueFileFilter.INSTANCE);
+
+		// Now do the job
 		boolean fail = false;
 		List<AbstractParserTester> testers = new ArrayList<>();
 		try {
 			try {
 				testers.add(new ParserTester<>(new RegexParser(), outputdir));
-				testers.addAll(constructParserTesters(PNParsers.INSTANCE, "genet"));
-				testers.addAll(constructParserTesters(LTSParsers.INSTANCE));
+				testers.addAll(constructParserTesters(outputdir, PNParsers.INSTANCE, "genet"));
+				testers.addAll(constructParserTesters(outputdir, LTSParsers.INSTANCE));
 			} catch (FileNotFoundException | UnsupportedEncodingException e) {
-				throw new BuildException(e);
+				throw new RuntimeException(e);
 			}
 
-			for (FileSet fs : filesets) {
-				DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-				File baseDir        = ds.getBasedir();
-				for (String fileName : ds.getIncludedFiles()) {
-					File file = new File(baseDir, fileName);
-					if (!parseFile(testers, file, fileName, excludedFiles.contains(file)))
-						fail = true;
-				}
+			for (File file : FileUtils.listFiles(baseFile, TrueFileFilter.INSTANCE,
+						TrueFileFilter.INSTANCE)) {
+				String relativePath = baseFile.toURI().relativize(file.toURI()).getPath();
+				boolean excluded = excludedFiles.contains(file);
+				if (!parseFile(testers, file, relativePath, excluded))
+					fail = true;
 			}
 		} finally {
 			if (testers != null)
@@ -124,11 +106,13 @@ public class ParsableTask extends Task {
 					tester.close();
 		}
 
-		if (fail)
-			throw new BuildException("Errors found; see above messages.");
+		if (!fail)
+			return;
+		System.err.println("Errors found; see above messages.");
+		System.exit(1);
 	}
 
-	private <G> List<AbstractParserTester> constructParserTesters(Parsers<G> parsers, String... skip)
+	private static <G> List<AbstractParserTester> constructParserTesters(File outputdir, Parsers<G> parsers, String... skip)
 			throws FileNotFoundException, UnsupportedEncodingException {
 		List<AbstractParserTester> ret = new ArrayList<>();
 		for (String format : parsers.getSupportedFormats()) {
@@ -137,7 +121,7 @@ public class ParsableTask extends Task {
 			try {
 				ret.add(new ParserTester<>(parsers.getParser(format), outputdir));
 			} catch (ParserNotFoundException ex) {
-				throw new BuildException("Internal error: Parsers class claims to support a format, "
+				throw new RuntimeException("Internal error: Parsers class claims to support a format, "
 						+ "but can't provide a parser for it");
 			}
 		}
@@ -145,7 +129,8 @@ public class ParsableTask extends Task {
 	}
 
 	/** Do the work */
-	private boolean parseFile(Collection<AbstractParserTester> testers, File file, String fileName, boolean expectUnparsable) {
+	private static boolean parseFile(Collection<AbstractParserTester> testers, File file, String fileName,
+			boolean expectUnparsable) {
 		// Try various parsers and hope that one of them works, but always check all parsers to make sure they
 		// can handle unparsable files correctly.
 		boolean fail = false;
@@ -160,25 +145,25 @@ public class ParsableTask extends Task {
 			} catch (Exception e) {
 				fail = true;
 				tester.printException(fileName, e);
-				log("Error while parsing file " + file.getPath(), MSG_ERR);
+				System.err.println("Error while parsing file " + file.getPath());
 				e.printStackTrace();
 			}
 		}
 
 		if (successful.isEmpty() && !expectUnparsable) {
 			fail = true;
-			log("No parser managed to parse " + file.getPath(), MSG_ERR);
+			System.err.println("No parser managed to parse " + file.getPath());
 
 			for (AbstractParserTester tester : testers) {
 				tester.printUnparsable(fileName);
 			}
 		}
 		if (expectUnparsable && !successful.isEmpty()) {
-			log("Some parser unexpectedly managed to parse " + file.getPath(), MSG_ERR);
+			System.err.println("Some parser unexpectedly managed to parse " + file.getPath());
 			fail = true;
 		} else if (successful.size() > 1) {
 			fail = true;
-			log("More than one parser managed to parse " + file.getPath(), MSG_ERR);
+			System.err.println("More than one parser managed to parse " + file.getPath());
 		}
 		for (AbstractParserTester tester : successful) {
 			if (expectUnparsable) {
