@@ -27,73 +27,53 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceConfigurationError;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-import static org.apache.tools.ant.Project.MSG_VERBOSE;
-
 /**
- * Ant task to verify that the apt.jar file works.
+ * Task to verify that the apt.jar file works.
  * @author vsp, Uli Schlachter
  */
-public class ServiceVerifyTask extends Task {
-	private URL classpathURL = null;
-	private final List<LoadElement> toLoad = new ArrayList<>();
+public class ServiceVerifyTask {
+	public static void main(String[] args) {
+		if (args.length != 3)
+			throw new IllegalArgumentException(
+					"Need exactly three arguments: Path to jar, class to load, static member to instantiate");
 
-	public void setJar(File file) throws MalformedURLException {
-		classpathURL = file.toURI().toURL();
-	}
-
-	public void addLoad(LoadElement elem) {
-		toLoad.add(elem);
-	}
-
-	@Override
-	public void execute() {
-		if (toLoad.isEmpty()) {
-			throw new BuildException("No classes to load.");
+		try {
+			load(args[0], args[1], args[2]);
+		} catch (FailureException e) {
+			System.err.println(e.getMessage());
+			System.exit(1);
 		}
+	}
 
-		URLClassLoader loader = new URLClassLoader(new URL[] { classpathURL });
+	private static void load(String classpath, String klass, String member) throws FailureException {
 		String suggestion = " Run 'ant clean' and try again.";
-		for (LoadElement elem : toLoad) {
-			try {
-				elem.load(loader);
-				log("Successfully loaded " + elem.toString(), MSG_VERBOSE);
-			} catch (ClassNotFoundException e) {
-				throw new BuildException("Could not load class '" + elem.klass + "'." + suggestion, e);
-			} catch (NoSuchFieldException e) {
-				throw new BuildException("Could not find '" + elem.toString() + "'." + suggestion, e);
-			} catch (IllegalAccessException e) {
-				throw new BuildException("Could not access '" + elem.toString() + "'." + suggestion, e);
-			} catch (ServiceConfigurationError | ExceptionInInitializerError e) {
-				throw new BuildException("The service configuration for '" + elem.toString()
-						+ "' is broken." + suggestion, e);
-			}
+		URL classpathURL;
+		try {
+			classpathURL = new File(classpath).toURI().toURL();
+		} catch (MalformedURLException e) {
+			throw new FailureException("The path argument is invalid", e);
+		}
+		URLClassLoader loader = new URLClassLoader(new URL[] { classpathURL });
+
+		try {
+			loader.loadClass(klass).getField(member).get(null);
+		} catch (ClassNotFoundException e) {
+			throw new FailureException("Could not load class '" + klass + "'." + suggestion, e);
+		} catch (NoSuchFieldException e) {
+			throw new FailureException("Could not find '" + klass + "#" + member + "'." + suggestion, e);
+		} catch (IllegalAccessException e) {
+			throw new FailureException("Could not access '" + klass + "#" + member + "'." + suggestion, e);
+		} catch (ServiceConfigurationError | ExceptionInInitializerError e) {
+			throw new FailureException("The service configuration for '" + klass + "#" + member
+					+ "' is broken." + suggestion, e);
 		}
 	}
 
-	static public class LoadElement {
-		public String klass;
-		public String member;
+	static class FailureException extends Exception {
+		private static final long serialVersionUID = 0;
 
-		public void setClass(String klass) {
-			this.klass = klass;
-		}
-
-		public void setMember(String member) {
-			this.member = member;
-		}
-
-		public void load(ClassLoader loader)
-				throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
-			// We assume that this causes the field to be constructed and as a side-effect a broken setup
-			// throws an exception / error.
-			loader.loadClass(klass).getField(member).get(null);
-		}
-
-		@Override
-		public String toString() {
-			return klass + "#" + member;
+		public FailureException(String message, Throwable cause) {
+			super(message, cause);
 		}
 	}
 }

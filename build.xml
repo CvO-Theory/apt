@@ -488,19 +488,27 @@
 			</manifest>
 		</jar>
 
-		<taskdef name="service-verify" classname="uniol.apt.tasks.ServiceVerifyTask">
-			<classpath location="classes/ant" />
-		</taskdef>
+		<macrodef name="service-verify">
+			<attribute name="jar" />
+			<attribute name="class" />
+			<attribute name="member" />
+			<sequential>
+				<java classname="uniol.apt.tasks.ServiceVerifyTask" failonerror="true">
+					<classpath path="classes/ant" />
+					<arg path="@{jar}"/>
+					<arg value="@{class}"/>
+					<arg value="@{member}"/>
+				</java>
+			</sequential>
+		</macrodef>
 
-		<service-verify jar="apt.jar">
-			<load class="uniol.apt.io.parser.PNParsers" member="INSTANCE" />
-			<load class="uniol.apt.io.parser.LTSParsers" member="INSTANCE" />
-			<load class="uniol.apt.io.renderer.PNRenderers" member="INSTANCE" />
-			<load class="uniol.apt.io.renderer.LTSRenderers" member="INSTANCE" />
-			<load class="uniol.apt.ui.impl.AptParametersTransformer" member="INSTANCE" />
-			<load class="uniol.apt.ui.impl.AptReturnValuesTransformer" member="INSTANCE" />
-			<load class="uniol.apt.module.AptModuleRegistry" member="INSTANCE" />
-		</service-verify>
+		<service-verify jar="apt.jar" class="uniol.apt.io.parser.PNParsers" member="INSTANCE" />
+		<service-verify jar="apt.jar" class="uniol.apt.io.parser.LTSParsers" member="INSTANCE" />
+		<service-verify jar="apt.jar" class="uniol.apt.io.renderer.PNRenderers" member="INSTANCE" />
+		<service-verify jar="apt.jar" class="uniol.apt.io.renderer.LTSRenderers" member="INSTANCE" />
+		<service-verify jar="apt.jar" class="uniol.apt.ui.impl.AptParametersTransformer" member="INSTANCE" />
+		<service-verify jar="apt.jar" class="uniol.apt.ui.impl.AptReturnValuesTransformer" member="INSTANCE" />
+		<service-verify jar="apt.jar" class="uniol.apt.module.AptModuleRegistry" member="INSTANCE" />
 	</target>
 	<import file="build.local.xml" optional="true"/>
 </project>
