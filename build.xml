@@ -116,7 +116,6 @@
 		<attribute name="name" />
 		<attribute name="src" default="src/@{name}" />
 		<attribute name="generated-src-with-colon" default="" />
-		<attribute name="includeantruntime" default="false" />
 		<element name="extra-javac-args" optional="true" implicit="true" />
 		<sequential>
 			<mkdir dir="classes/@{name}"/>
@@ -127,7 +126,7 @@
 			</depend>
 			<javac includes="**" encoding="utf-8" destdir="classes/@{name}" source="1.7" target="1.7"
 					debug="true" debuglevel="lines,vars,source"
-					includeantruntime="@{includeantruntime}">
+					includeantruntime="false">
 				<src path="@{src}" />
 				<extra-javac-args/>
 				<classpath refid="@{name}.class.path"/>
@@ -178,7 +177,7 @@
 	</target>
 
 	<target name="javac.ant" depends="javac.io">
-		<javac-part name="ant" includeantruntime="true" />
+		<javac-part name="ant"/>
 	</target>
 
 	<target name="javac.compiler" depends="javac.glue">
