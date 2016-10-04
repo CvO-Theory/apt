@@ -1,0 +1,232 @@
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+  <net id="cId-76838737524772522561" type="http://www.pnml.org/version-2009/grammar/ptnet">
+    <page id="page0">
+      <name>
+        <text>DefaultPage</text>
+      </name>
+      <place id="cId-773840572439763225716">
+        <name>
+          <graphics>
+            <offset x="1" y="16"/>
+          </graphics>
+          <text>Cabines</text>
+        </name>
+        <graphics>
+          <position x="251" y="66"/>
+        </graphics>
+        <initialMarking>
+          <graphics>
+            <offset x="234" y="-108"/>
+          </graphics>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="cId-78193774406698601953">
+        <name>
+          <graphics>
+            <offset x="19" y="13"/>
+          </graphics>
+          <text>Attente_P</text>
+        </name>
+        <graphics>
+          <position x="91" y="171"/>
+        </graphics>
+      </place>
+      <place id="cId-777476037234455225817">
+        <name>
+          <graphics>
+            <offset x="-19" y="-9"/>
+          </graphics>
+          <text>Paniers</text>
+        </name>
+        <graphics>
+          <position x="251" y="246"/>
+        </graphics>
+        <initialMarking>
+          <graphics>
+            <offset x="234" y="72"/>
+          </graphics>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="cId-77747603723445522582">
+        <name>
+          <graphics>
+            <offset x="11" y="16"/>
+          </graphics>
+          <text>Entree</text>
+        </name>
+        <graphics>
+          <position x="11" y="171"/>
+        </graphics>
+        <initialMarking>
+          <graphics>
+            <offset x="-6" y="-3"/>
+          </graphics>
+          <text>3</text>
+        </initialMarking>
+      </place>
+      <place id="cId-77747603723445522588">
+        <name>
+          <graphics>
+            <offset x="1" y="21"/>
+          </graphics>
+          <text>Sortie</text>
+        </name>
+        <graphics>
+          <position x="491" y="171"/>
+        </graphics>
+      </place>
+      <place id="cId-77747603723445522587">
+        <name>
+          <graphics>
+            <offset x="11" y="21"/>
+          </graphics>
+          <text>Fini</text>
+        </name>
+        <graphics>
+          <position x="411" y="171"/>
+        </graphics>
+      </place>
+      <place id="cId-77747603723445522586">
+        <name>
+          <graphics>
+            <offset x="12" y="20"/>
+          </graphics>
+          <text>Habillage</text>
+        </name>
+        <graphics>
+          <position x="331" y="171"/>
+        </graphics>
+      </place>
+      <place id="cId-77747603723445522584">
+        <name>
+          <graphics>
+            <offset x="33" y="20"/>
+          </graphics>
+          <text>Deshabillage</text>
+        </name>
+        <graphics>
+          <position x="171" y="171"/>
+        </graphics>
+      </place>
+      <place id="cId-77764128598562036825">
+        <name>
+          <graphics>
+            <offset x="15" y="15"/>
+          </graphics>
+          <text>Baignade</text>
+        </name>
+        <graphics>
+          <position x="251" y="171"/>
+        </graphics>
+      </place>
+      <transition id="cId-777641285985620368215">
+        <name>
+          <graphics>
+            <offset x="40" y="15"/>
+          </graphics>
+          <text>Entrer_Piscine</text>
+        </name>
+        <graphics>
+          <position x="257" y="295"/>
+        </graphics>
+      </transition>
+      <transition id="cId-778302279272294019514">
+        <name>
+          <graphics>
+            <offset x="29" y="-25"/>
+          </graphics>
+          <text>R_Panier</text>
+        </name>
+        <graphics>
+          <position x="457" y="170"/>
+        </graphics>
+      </transition>
+      <transition id="cId-778302279272294019512">
+        <name>
+          <graphics>
+            <offset x="18" y="-25"/>
+          </graphics>
+          <text>P_Cle2</text>
+        </name>
+        <graphics>
+          <position x="297" y="170"/>
+        </graphics>
+      </transition>
+      <transition id="cId-778302279272294019513">
+        <name>
+          <graphics>
+            <offset x="8" y="-26"/>
+          </graphics>
+          <text>R_Cles</text>
+        </name>
+        <graphics>
+          <position x="377" y="170"/>
+        </graphics>
+      </transition>
+      <transition id="cId-77830227927229401959">
+        <name>
+          <graphics>
+            <offset x="12" y="-25"/>
+          </graphics>
+          <text>P_Cle1</text>
+        </name>
+        <graphics>
+          <position x="57" y="170"/>
+        </graphics>
+      </transition>
+      <transition id="cId-778302279272294019511">
+        <name>
+          <graphics>
+            <offset x="20" y="-26"/>
+          </graphics>
+          <text>R_Cle1</text>
+        </name>
+        <graphics>
+          <position x="217" y="170"/>
+        </graphics>
+      </transition>
+      <transition id="cId-778302279272294019510">
+        <name>
+          <graphics>
+            <offset x="39" y="-27"/>
+          </graphics>
+          <text>P_Panier</text>
+        </name>
+        <graphics>
+          <position x="137" y="170"/>
+        </graphics>
+      </transition>
+      <arc id="cId-778302279272294019530" source="cId-77747603723445522588" target="cId-777641285985620368215">
+        <graphics>
+          <position x="497" y="302"/>
+        </graphics>
+      </arc>
+      <arc id="cId-779459017953469638731" source="cId-777641285985620368215" target="cId-77747603723445522582">
+        <graphics>
+          <position x="17" y="302"/>
+        </graphics>
+      </arc>
+      <arc id="cId-779459017953469638734" source="cId-773840572439763225716" target="cId-778302279272294019512"/>      <arc id="cId-779459017953469638729" source="cId-778302279272294019514" target="cId-77747603723445522588"/>      <arc id="cId-779459017953469638727" source="cId-778302279272294019513" target="cId-77747603723445522587"/>      <arc id="cId-779624266704634781128" source="cId-77747603723445522587" target="cId-778302279272294019514"/>      <arc id="cId-779624266704634781123" source="cId-778302279272294019511" target="cId-77764128598562036825"/>      <arc id="cId-779624266704634781135" source="cId-778302279272294019514" target="cId-773840572439763225716">
+        <graphics>
+          <position x="457" y="72"/>
+        </graphics>
+		<inscription>
+			<text>2</text>
+			<graphics>
+			  <offset x="10" y="10"/>
+			</graphics>
+		</inscription>
+      </arc>
+      <arc id="cId-779624266704634781133" source="cId-778302279272294019511" target="cId-773840572439763225716"/>      <arc id="cId-779624266704634781124" source="cId-77764128598562036825" target="cId-778302279272294019512"/>      <arc id="cId-779624266704634781136" source="cId-777476037234455225817" target="cId-778302279272294019510"/>      <arc id="cId-779624266704634781126" source="cId-77747603723445522586" target="cId-778302279272294019513"/>      <arc id="cId-779624266704634781125" source="cId-778302279272294019512" target="cId-77747603723445522586"/>      <arc id="cId-779624266704634781148" source="cId-773840572439763225716" target="cId-77830227927229401959">
+        <graphics>
+          <position x="57" y="72"/>
+        </graphics>
+      </arc>
+      <arc id="cId-779624266704634781118" source="cId-77747603723445522582" target="cId-77830227927229401959"/>      <arc id="cId-779624266704634781137" source="cId-778302279272294019513" target="cId-777476037234455225817"/>      <arc id="cId-779624266704634781122" source="cId-77747603723445522584" target="cId-778302279272294019511"/>      <arc id="cId-779624266704634781121" source="cId-778302279272294019510" target="cId-77747603723445522584"/>      <arc id="cId-779624266704634781119" source="cId-77830227927229401959" target="cId-78193774406698601953"/>      <arc id="cId-779128521310132813120" source="cId-78193774406698601953" target="cId-778302279272294019510"/>    </page>
+    <name>
+      <text>Piscine</text>
+    </name>
+  </net>
+</pnml>

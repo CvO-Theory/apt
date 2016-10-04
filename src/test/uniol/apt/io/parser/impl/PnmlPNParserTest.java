@@ -65,6 +65,15 @@ public class PnmlPNParserTest {
 		assertThat(actual, netWithSameStructureAs(expected));
 		assertThat(actual.getName(), is(""));
 	}
+
+	@Test
+	public void testNetIso() throws Exception {
+		PetriNet actual = new PnmlPNParser().parseFile("nets/pnml-iso/Piscine.pnml");
+		assertThat(actual.getPlaces(), hasSize(9));
+		assertThat(actual.getTransitions(), hasSize(7));
+		assertThat(actual.getEdges(), hasSize(20));
+		assertThat(actual.getName(), is("cId-76838737524772522561"));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
