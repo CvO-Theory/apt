@@ -189,13 +189,13 @@ public final class SeparationUtility {
 
 		try {
 			if (result == null)
-				result = new KBoundedSeparation(utility, properties, locationMap);
+				result = new ElementarySeparation(utility, properties, locationMap);
 		} catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
 		}
 		try {
 			if (result == null)
-				result = new ElementarySeparation(utility, properties, locationMap);
+				result = new KBoundedSeparation(utility, properties, locationMap);
 		} catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
 		}
