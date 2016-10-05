@@ -23,8 +23,6 @@ package uniol.apt.io.parser.impl;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -36,7 +34,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -93,69 +90,89 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 		private int idCounter;
 
 		/**
-		 * Parses PNML that conforms to the standard ISO/IEC 15909.
+		 * Parses multiple variants of PNML:
+		 * <ul>
+		 * <li>ISO/IEC 15909
+		 * <li>LoLa PNML output
+		 * <li>PIPE PNML output
+		 * </ul>
 		 *
 		 * @param is
 		 *                input stream to read PNML from
+		 * @return the parsed petri net
+		 * @throws ParseException
+		 * @throws IOException
+		 */
+		public PetriNet parse(InputStream is) throws ParseException, IOException {
+			Element net = getFirstNetElement(is);
+
+			// Try parser variants one after another
+			Exception exIso, exPipe, exLola;
+			try {
+				return parseIsoPNML(net);
+			} catch (ParseException e) {
+				exIso = e;
+			}
+			try {
+				return parseUnpagedPNML(net, Mode.PIPE);
+			} catch (ParseException e) {
+				exPipe = e;
+			}
+			try {
+				return parseUnpagedPNML(net, Mode.LOLA);
+			} catch (ParseException e) {
+				exLola = e;
+			}
+
+			String msg = String.format(
+					"The PNML format could not be parsed by any variant of the PNML parser.\n"
+							+ "\t(ISO)\t %s\n\t(PIPE)\t %s\n\t(LOLA)\t %s",
+					exIso.getMessage(), exPipe.getMessage(), exLola.getMessage());
+			throw new ParseException(msg);
+		}
+
+		/**
+		 * Parses PNML that conforms to the standard ISO/IEC 15909.
+		 *
+		 * @param net
+		 *                pnml net element
 		 * @return parsed Petri net
 		 * @throws ParseException
 		 * @throws IOException
 		 */
-		public PetriNet parseIsoPNML(InputStream is) throws ParseException, IOException {
-			reset(Mode.ISO);
-
-			Element net = getFirstNetElement(is);
-			pn.setName(getAttribute(net, "id"));
+		private PetriNet parseIsoPNML(Element net) throws ParseException, IOException {
+			init(Mode.ISO, net);
 			parsePagesForNodes(net);
 			parsePagesForEdges(net);
 			return pn;
 		}
 
 		/**
-		 * Parses PNML output by the tool PIPE. They use their own
-		 * non-standard version of PNML.
+		 * Parses PNML output that has no page tags.
 		 *
-		 * @param is
-		 *                input stream to read PNML from
+		 * @param net
+		 *                pnml net element
+		 * @param mode
+		 *                mode that allows to parse different
+		 *                tool-specific versions of PNML
 		 * @return parsed Petri net
 		 * @throws ParseException
 		 * @throws IOException
 		 */
-		public PetriNet parsePipePNML(InputStream is) throws ParseException, IOException {
-			reset(Mode.PIPE);
-
-			Element net = getFirstNetElement(is);
-			pn.setName(getAttribute(net, "id"));
+		private PetriNet parseUnpagedPNML(Element net, Mode mode) throws ParseException, IOException {
+			init(mode, net);
 			createNodes(net);
 			createEdges(net);
 			return pn;
 		}
 
-		/**
-		 * Parses PNML output by the tool LOLA. They use their own
-		 * non-standard version of PNML.
-		 *
-		 * @param is
-		 *                input stream to read PNML from
-		 * @return parsed Petri net
-		 * @throws ParseException
-		 * @throws IOException
-		 */
-		public PetriNet parseLolaPNML(InputStream is) throws ParseException, IOException {
-			reset(Mode.LOLA);
-
-			Element net = getFirstNetElement(is);
-			pn.setName(getAttribute(net, "id"));
-			createNodes(net);
-			createEdges(net);
-			return pn;
-		}
-
-		private void reset(Mode mode) {
-			this.pn = new PetriNet();
+		private void init(Mode mode, Element net) throws ParseException {
+			String pnName = getAttribute(net, "id");
+			this.pn = new PetriNet(pnName);
 			this.safeIdMap = new HashMap<>();
 			this.idCounter = 0;
 			this.mode = mode;
+			checkNetType(net, mode.getNetType());
 		}
 
 		/**
@@ -173,7 +190,6 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 
 			// Only consider the first net that is encountered
 			Element net = getChildElement(root, "net");
-			checkNetType(net, mode.getNetType());
 			return net;
 		}
 
@@ -580,38 +596,8 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 
 	@Override
 	public PetriNet parse(InputStream is) throws ParseException, IOException {
-		// APT can parse several different variants of PNML
-		// Read stream to memory so we can reuse it for the different parsers
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		IOUtils.copy(is, baos);
-
-		// Try parser variants one after another
 		Parser parser = new Parser();
-		Exception exIso, exPipe, exLola;
-		try {
-			is = new ByteArrayInputStream(baos.toByteArray());
-			return parser.parseIsoPNML(is);
-		} catch (ParseException e) {
-			exIso = e;
-		}
-		try {
-			is = new ByteArrayInputStream(baos.toByteArray());
-			return parser.parsePipePNML(is);
-		} catch (ParseException e) {
-			exPipe = e;
-		}
-		try {
-			is = new ByteArrayInputStream(baos.toByteArray());
-			return parser.parseLolaPNML(is);
-		} catch (ParseException e) {
-			exLola = e;
-		}
-
-		String msg = String.format(
-				"The PNML format could not be parsed by any variant of the PNML parser.\n"
-						+ "\t(ISO)\t %s\n\t(PIPE)\t %s\n\t(LOLA)\t %s",
-				exIso.getMessage(), exPipe.getMessage(), exLola.getMessage());
-		throw new ParseException(msg);
+		return parser.parse(is);
 	}
 
 }
