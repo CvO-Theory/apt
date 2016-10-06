@@ -63,9 +63,9 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 	private static class Parser {
 
 		private static enum Mode {
-			ISO("http://www.pnml.org/version-2009/grammar/ptnet", "text"),
-			LOLA("http://www.informatik.hu-berlin.de/top/pntd/ptNetb", "text"),
-			PIPE("P/T net", "value");
+			ISO("http://www.pnml.org/version-2009/grammar/ptnet", "text"), LOLA(
+					"http://www.informatik.hu-berlin.de/top/pntd/ptNetb",
+					"text"), PIPE("P/T net", "value");
 
 			private final String netType;
 			private final String textElementName;
@@ -421,7 +421,7 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 		private void createPlace(Element place) throws ParseException {
 			String id = toSafeIdentifier(getAttribute(place, "id"));
 			String name = parseName(place);
-			int initialMarking = parseInitialMarking(place);
+			long initialMarking = parseInitialMarking(place);
 			Place pnPlace = pn.createPlace(id);
 			pnPlace.setInitialToken(initialMarking);
 			if (name != null) {
@@ -437,14 +437,14 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 		 * @return initial marking or default value of 0
 		 * @throws ParseException
 		 */
-		private int parseInitialMarking(Element place) throws ParseException {
+		private long parseInitialMarking(Element place) throws ParseException {
 			Element initMarkElem = getOptionalChildElement(place, "initialMarking");
 			if (initMarkElem == null) {
 				return 0;
 			}
 			Element textElem = getChildElement(initMarkElem, mode.getTextElementName());
 			String textValue = getText(textElem);
-			int initialMarking = parseInteger(textValue);
+			long initialMarking = parseLong(textValue);
 			if (initialMarking < 0) {
 				throw new ParseException("Negative initial marking");
 			} else {
@@ -505,8 +505,12 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 			if (insc != null) {
 				Element textElem = getChildElement(insc, mode.getTextElementName());
 				String textValue = getText(textElem);
-				int weight = parseInteger(textValue);
-				flow.setWeight(weight);
+				long weight = parseLong(textValue);
+				if (weight > Integer.MAX_VALUE) {
+					throw new ParseException(
+							"Enountered arc weight > 2^31 - 1 which APT does not support");
+				}
+				flow.setWeight((int)weight);
 			}
 		}
 
@@ -530,14 +534,14 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 		}
 
 		/**
-		 * Parses an integer.
+		 * Parses a long.
 		 *
 		 * @param str
 		 *                string to parse
-		 * @return integer value
+		 * @return long value
 		 * @throws ParseException
 		 */
-		private int parseInteger(String str) throws ParseException {
+		private long parseLong(String str) throws ParseException {
 			if (mode == Mode.PIPE) {
 				// PIPE has values like "Default,5"
 				int index = str.indexOf(",");
@@ -546,7 +550,7 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 				}
 			}
 			try {
-				return Integer.parseInt(str);
+				return Long.parseLong(str);
 			} catch (NumberFormatException e) {
 				throw new ParseException("Cannot parse number " + str, e);
 			}
