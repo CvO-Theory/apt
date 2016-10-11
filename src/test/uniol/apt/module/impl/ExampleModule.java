@@ -21,6 +21,7 @@ package uniol.apt.module.impl;
 
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
+import uniol.apt.module.Category;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
@@ -35,7 +36,6 @@ import uniol.apt.module.exception.ModuleException;
  * @author Renke Grunwald
  *
  */
-@AptModule
 public class ExampleModule extends AbstractModule implements Module {
 	@Override
 	public String getName() {
@@ -67,6 +67,11 @@ public class ExampleModule extends AbstractModule implements Module {
 	@Override
 	public String getShortDescription() {
 		return "Lowercase a string";
+	}
+
+	@Override
+	public Category[] getCategories() {
+		return new Category[]{Category.MISC};
 	}
 }
 
