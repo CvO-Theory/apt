@@ -30,14 +30,6 @@ public enum Category {
 
 	MISC("Miscellaneous"), PN("Petri net"), LTS("LTS"), GENERATOR("Generators"), CONVERTER("Converters");
 
-	/**
-	 * Returns the default category of a module.
-	 *
-	 * @return the default category
-	 */
-	public static Category getDefault() {
-		return MISC;
-	}
 	private final String name;
 
 	private Category(String name) {

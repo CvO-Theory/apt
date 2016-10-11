@@ -43,11 +43,6 @@ public abstract class AbstractModule implements Module {
 	public String getLongDescription() {
 		return getShortDescription();
 	}
-
-	@Override
-	public Category[] getCategories() {
-		return new Category[]{Category.getDefault()};
-	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
