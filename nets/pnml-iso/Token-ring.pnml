@@ -1,0 +1,437 @@
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+  <net id="cId30444327769089530511" type="http://www.pnml.org/version-2009/grammar/ptnet">
+    <page id="page0">
+      <name>
+        <text>DefaultPage</text>
+      </name>
+      <place id="cId302956042366382860362">
+        <name>
+          <text>Go</text>
+        </name>
+      </place>
+      <place id="cId302625545293549305179">
+        <name>
+          <text>Relay</text>
+        </name>
+      </place>
+      <place id="cId302625545293549305160">
+        <name>
+          <text>Wait1</text>
+        </name>
+      </place>
+      <place id="cId302625545293549305161">
+        <name>
+          <text>Wait2</text>
+        </name>
+      </place>
+      <place id="cId302460296971880892375">
+        <name>
+          <text>GoRelay</text>
+        </name>
+      </place>
+      <place id="cId30246029697188089233">
+        <name>
+          <text>OutR</text>
+        </name>
+      </place>
+      <place id="cId302460296971880892327">
+        <name>
+          <text>InCS</text>
+        </name>
+      </place>
+      <place id="cId30163405493404209862">
+        <name>
+          <text>InR</text>
+        </name>
+      </place>
+      <place id="cId301634054934042098628">
+        <name>
+          <text>PReq</text>
+        </name>
+      </place>
+      <place id="cId30163405493404209868">
+        <name>
+          <text>CS</text>
+        </name>
+      </place>
+      <place id="cId30163405493404209867">
+        <name>
+          <text>EnterCS</text>
+        </name>
+      </place>
+      <place id="cId30163405493404209869">
+        <name>
+          <text>ExitCS</text>
+        </name>
+      </place>
+      <place id="cId30163405493404209866">
+        <name>
+          <text>Idle</text>
+        </name>
+      </place>
+      <place id="cId30196455200687565394">
+        <name>
+          <text>InT</text>
+        </name>
+      </place>
+      <place id="cId301964552006875653926">
+        <name>
+          <text>CSW</text>
+        </name>
+      </place>
+      <place id="cId301964552006875653925">
+        <name>
+          <text>Token</text>
+        </name>
+      </place>
+      <place id="cId301964552006875653910">
+        <name>
+          <text>GoIdle</text>
+        </name>
+      </place>
+      <place id="cId30196455200687565395">
+        <name>
+          <text>OutT</text>
+        </name>
+      </place>
+      <transition id="cId301964552006875653980"/>      <transition id="cId300807812896203305081"/>      <transition id="cId300807812896203305012"/>      <transition id="cId300807812896203305013"/>      <transition id="cId301303558290705273077"/>      <transition id="cId301303558290705273023"/>      <transition id="cId301303558290705273071"/>      <transition id="cId301303558290705273022"/>      <transition id="cId301303558290705273021"/>      <transition id="cId301303558290705273024"/>      <transition id="cId301303558290705273055"/>      <transition id="cId301303558290705273011"/>      <transition id="cId301303558290705273067"/>      <transition id="cId301303558290705273076"/>      <transition id="cId301138309969036860220"/>      <arc id="cId301138309969036860230" source="cId301964552006875653925" target="cId301138309969036860220">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653731" source="cId301138309969036860220" target="cId301964552006875653925">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653795" source="cId301964552006875653925" target="cId301303558290705273076">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653786" source="cId302625545293549305179" target="cId300807812896203305081">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653759" source="cId301303558290705273055" target="cId30246029697188089233">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653732" source="cId301964552006875653926" target="cId301138309969036860220">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653796" source="cId301303558290705273076" target="cId301964552006875653925">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653785" source="cId301303558290705273076" target="cId302625545293549305179">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653729" source="cId30163405493404209862" target="cId301138309969036860220">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId2946936224174916537100" source="cId301964552006875653925" target="cId301303558290705273024">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653768" source="cId302625545293549305160" target="cId301303558290705273067">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653758" source="cId301303558290705273055" target="cId301964552006875653926">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653782" source="cId302460296971880892375" target="cId301303558290705273076">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294693622417491653763" source="cId301303558290705273055" target="cId302625545293549305160">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294528374095823240964" source="cId301303558290705273055" target="cId302625545293549305161">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294528374095823240938" source="cId301964552006875653925" target="cId301303558290705273021">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294528374095823240957" source="cId301964552006875653926" target="cId301303558290705273055">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294528374095823240994" source="cId301303558290705273076" target="cId301634054934042098628">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294528374095823240987" source="cId302625545293549305179" target="cId301964552006875653980">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294528374095823240935" source="cId30163405493404209862" target="cId301303558290705273021">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294528374095823240954" source="cId301303558290705273023" target="cId30196455200687565395">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294528374095823240953" source="cId301303558290705273024" target="cId301964552006875653926">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294528374095823240965" source="cId302625545293549305161" target="cId301303558290705273024">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294528374095823240933" source="cId301138309969036860220" target="cId301964552006875653926">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294528374095823240993" source="cId301634054934042098628" target="cId301303558290705273076">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293536883736316034436" source="cId30163405493404209862" target="cId301303558290705273022">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293536883736316034445" source="cId302460296971880892327" target="cId301303558290705273022">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293536883736316034474" source="cId301964552006875653926" target="cId301303558290705273071">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293536883736316034446" source="cId301303558290705273022" target="cId302460296971880892327">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293536883736316034456" source="cId30163405493404209867" target="cId301303558290705273055">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272915" source="cId30163405493404209868" target="cId300807812896203305013">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272943" source="cId301303558290705273022" target="cId301634054934042098628">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272916" source="cId300807812896203305013" target="cId30163405493404209869">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272948" source="cId301303558290705273022" target="cId301964552006875653925">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272973" source="cId301303558290705273071" target="cId301964552006875653926">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272941" source="cId301303558290705273021" target="cId302460296971880892327">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272997" source="cId301303558290705273076" target="cId30196455200687565395">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272970" source="cId302956042366382860362" target="cId301303558290705273067">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272914" source="cId301303558290705273011" target="cId30163405493404209867">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272983" source="cId302460296971880892375" target="cId301303558290705273077">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272947" source="cId301964552006875653925" target="cId301303558290705273022">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272918" source="cId300807812896203305012" target="cId30163405493404209866">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272966" source="cId301303558290705273024" target="cId302956042366382860362">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId2940326287013212729103" source="cId300807812896203305081" target="cId301634054934042098628">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272998" source="cId301964552006875653980" target="cId30246029697188089233">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId294032628701321272944" source="cId301634054934042098628" target="cId301303558290705273022">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293867380379652860117" source="cId301964552006875653910" target="cId300807812896203305012">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId2938673803796528601102" source="cId301634054934042098628" target="cId300807812896203305081">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293867380379652860184" source="cId301303558290705273077" target="cId301964552006875653910">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293867380379652860137" source="cId301138309969036860220" target="cId30246029697188089233">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId2938673803796528601101" source="cId300807812896203305081" target="cId301964552006875653910">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293867380379652860151" source="cId301303558290705273023" target="cId301964552006875653926">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293867380379652860140" source="cId302460296971880892327" target="cId301303558290705273021">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293867380379652860199" source="cId301303558290705273024" target="cId301964552006875653925">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293867380379652860172" source="cId30163405493404209869" target="cId301303558290705273071">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293867380379652860149" source="cId30196455200687565394" target="cId301303558290705273023">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293867380379652860178" source="cId301303558290705273071" target="cId302460296971880892375">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293867380379652860152" source="cId301964552006875653926" target="cId301303558290705273024">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293867380379652860142" source="cId301303558290705273021" target="cId30196455200687565395">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293041138341814066490" source="cId301634054934042098628" target="cId301964552006875653980">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293041138341814066419" source="cId30163405493404209866" target="cId301303558290705273011">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293041138341814066450" source="cId301964552006875653926" target="cId301303558290705273023">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293041138341814066491" source="cId301964552006875653980" target="cId301634054934042098628">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293041138341814066439" source="cId301303558290705273021" target="cId301964552006875653925">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293041138341814066492" source="cId30196455200687565394" target="cId301303558290705273024">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293041138341814066489" source="cId301964552006875653980" target="cId302625545293549305179">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="cId293041138341814066469" source="cId301303558290705273067" target="cId30163405493404209868">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+    </page>
+    <name>
+      <text>Token-ring</text>
+    </name>
+  </net>
+</pnml>

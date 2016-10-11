@@ -19,12 +19,14 @@
 
 package uniol.apt.io.renderer.impl;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
@@ -34,11 +36,80 @@ import uniol.apt.io.renderer.AptRenderer;
 import uniol.apt.io.renderer.Renderer;
 
 /**
- * Renderer for the pnml format. It is optimized for the format PIPE http://pipe2.sourceforge.net/ likes to read.
- * @author Manuel Gieseking
+ * Renderer for the ISO/IEC 15909 PNML format.
+ *
+ * @author Manuel Gieseking, Jonas Prellberg
  */
 @AptRenderer
 public class PnmlPNRenderer extends AbstractRenderer<PetriNet> implements Renderer<PetriNet> {
+
+	private static class Renderer {
+		private Map<String, String> uniqueIdMap;
+		private int idCounter;
+
+		public void render(PetriNet pn, Writer writer) throws IOException {
+			uniqueIdMap = new HashMap<>();
+			idCounter = 0;
+
+			writer.append("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
+			writer.append("<pnml xmlns=\"http://www.pnml.org/version-2009/grammar/pnml\">\n");
+			writer.append("<net id=\"").append(toUniqueId(pn.getName()))
+			      .append("\" type=\"http://www.pnml.org/version-2009/grammar/ptnet\">\n");
+			writer.append("<page id=\"single-page\">");
+
+			for (Place place : pn.getPlaces()) {
+				writer.append("<place id=\"").append(place.getId()).append("\">\n");
+				writer.append("<name>\n<text>").append(place.getId()).append("</text>\n</name>\n");
+				writer.append("<initialMarking>\n")
+				      .append("<text>")
+				      .append(place.getInitialToken().toString())
+				      .append("</text>\n")
+				      .append("</initialMarking>\n");
+				writer.append("</place>\n");
+			}
+
+			for (Transition transition : pn.getTransitions()) {
+				writer.append("<transition id=\"").append(toUniqueId(transition.getId())).append("\">\n");
+				writer.append("<name>\n<text>").append(transition.getLabel()).append("</text>\n</name>\n");
+				writer.append("</transition>\n");
+			}
+
+			for (Flow flow : pn.getEdges()) {
+				writer.append("<arc id=\"")
+				      .append(toUniqueId(flow.getSource().getId()))
+				      .append("-")
+				      .append(toUniqueId(flow.getTarget().getId()))
+				      .append("\" source=\"")
+				      .append(toUniqueId(flow.getSource().getId()))
+				      .append("\" target=\"")
+				      .append(toUniqueId(flow.getTarget().getId()))
+				      .append("\">\n");
+				writer.append("<inscription>\n<text>")
+				      .append(Integer.toString(flow.getWeight()))
+				      .append("</text>\n</inscription>\n");
+				writer.append("</arc>\n");
+			}
+
+			writer.append("</page>\n");
+			writer.append("</net>\n");
+			writer.append("</pnml>");
+		}
+
+		private String toUniqueId(String id) {
+			if (uniqueIdMap.containsKey(id)) {
+				return uniqueIdMap.get(id);
+			}
+
+			String unique = id;
+			while (uniqueIdMap.containsValue(unique)) {
+				unique = id + "-" + idCounter;
+				idCounter += 1;
+			}
+			uniqueIdMap.put(id, unique);
+			return unique;
+		}
+	}
+
 	public final static String FORMAT = "pnml";
 
 	@Override
@@ -53,42 +124,10 @@ public class PnmlPNRenderer extends AbstractRenderer<PetriNet> implements Render
 
 	@Override
 	public void render(PetriNet pn, Writer writer) throws IOException {
-		writer.append("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
-		writer.append("<pnml>\n");
-		writer.append("<net id=\"").append(pn.getName()).append("\" type=\"P/T net\">\n");
-
-		// Just for PIPE
-		writer.append("<token id=\"Default\" enabled=\"true\" red=\"0\" green=\"0\" blue=\"0\"/>");
-
-		for (Place place : pn.getPlaces()) {
-			writer.append("<place id=\"").append(place.getId()).append("\">\n");
-			writer.append("<name>\n<value>").append(place.getId()).append("</value>\n</name>\n");
-			writer.append("<initialMarking>\n").append("<value>").
-				append(place.getInitialToken().toString()).append("</value>\n").
-				append("</initialMarking>\n");
-			writer.append("</place>\n");
-		}
-
-		for (Transition transition : pn.getTransitions()) {
-			writer.append("<transition id=\"").append(transition.getId()).append("\">\n");
-			writer.append("<name>\n<value>").append(transition.getLabel()).append("</value>\n</name>\n");
-			writer.append("</transition>\n");
-		}
-
-		for (Flow flow : pn.getEdges()) {
-			writer.append("<arc id=\"").append(flow.getSource().getId()).append(" to ").
-				append(flow.getTarget().getId()).append("\" source=\"").
-				append(flow.getSource().getId()).append("\" target=\"").
-				append(flow.getTarget().getId()).append("\">\n");
-			writer.append("<inscription>\n<value>").
-				append(Integer.toString(flow.getWeight())).
-				append("</value>\n</inscription>\n");
-			writer.append("</arc>\n");
-		}
-
-		writer.append("</net>\n");
-		writer.append("</pnml>");
+		Renderer renderer = new Renderer();
+		renderer.render(pn, writer);
 	}
+
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

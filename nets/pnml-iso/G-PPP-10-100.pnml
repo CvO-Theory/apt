@@ -1,0 +1,802 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+  <net id="GPPP-PT-C0010N0000000100" type="http://www.pnml.org/version-2009/grammar/ptnet">
+    <name>
+      <text>GPPP-PT-C0010N0000000100</text>
+    </name>
+    <page id="page0">
+      <name>
+        <text>DefaultPage</text>
+      </name>
+      <place id="Pi">
+        <name>
+          <text>Pi</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="ATP">
+        <name>
+          <text>ATP</text>
+        </name>
+        <initialMarking>
+          <text>400</text>
+        </initialMarking>
+      </place>
+      <place id="NADplus">
+        <name>
+          <text>NADplus</text>
+        </name>
+        <initialMarking>
+          <text>200</text>
+        </initialMarking>
+      </place>
+      <place id="NADH">
+        <name>
+          <text>NADH</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="NADPplus">
+        <name>
+          <text>NADPplus</text>
+        </name>
+        <initialMarking>
+          <text>200</text>
+        </initialMarking>
+      </place>
+      <place id="NADPH">
+        <name>
+          <text>NADPH</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="GSSG">
+        <name>
+          <text>GSSG</text>
+        </name>
+        <initialMarking>
+          <text>100</text>
+        </initialMarking>
+      </place>
+      <place id="GSH">
+        <name>
+          <text>GSH</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="Ru5P">
+        <name>
+          <text>Ru5P</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="Xu5P">
+        <name>
+          <text>Xu5P</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="R5P">
+        <name>
+          <text>R5P</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="S7P">
+        <name>
+          <text>S7P</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="GAP">
+        <name>
+          <text>GAP</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="E4P">
+        <name>
+          <text>E4P</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="F6P">
+        <name>
+          <text>F6P</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="G6P">
+        <name>
+          <text>G6P</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="FBP">
+        <name>
+          <text>FBP</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="DHAP">
+        <name>
+          <text>DHAP</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="_1_3_BPG">
+        <name>
+          <text>_1_3_BPG</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="ADP">
+        <name>
+          <text>ADP</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="_3PG">
+        <name>
+          <text>_3PG</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="_2PG">
+        <name>
+          <text>_2PG</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="PEP">
+        <name>
+          <text>PEP</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="Pyr">
+        <name>
+          <text>Pyr</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="start">
+        <name>
+          <text>start</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="Lac">
+        <name>
+          <text>Lac</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="Gluc">
+        <name>
+          <text>Gluc</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="b1">
+        <name>
+          <text>b1</text>
+        </name>
+        <initialMarking>
+          <text>30</text>
+        </initialMarking>
+      </place>
+      <place id="b2">
+        <name>
+          <text>b2</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="a1">
+        <name>
+          <text>a1</text>
+        </name>
+        <initialMarking>
+          <text>20</text>
+        </initialMarking>
+      </place>
+      <place id="a2">
+        <name>
+          <text>a2</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <place id="c1">
+        <name>
+          <text>c1</text>
+        </name>
+        <initialMarking>
+          <text>70</text>
+        </initialMarking>
+      </place>
+      <place id="c2">
+        <name>
+          <text>c2</text>
+        </name>
+        <initialMarking>
+          <text>0</text>
+        </initialMarking>
+      </place>
+      <transition id="GAP_dehydrogenase">
+        <name>
+          <text>GAP_dehydrogenase</text>
+        </name>
+      </transition>
+      <transition id="TIM_forward">
+        <name>
+          <text>TIM_forward</text>
+        </name>
+      </transition>
+      <transition id="TIM_backward">
+        <name>
+          <text>TIM_backward</text>
+        </name>
+      </transition>
+      <transition id="Aldolase">
+        <name>
+          <text>Aldolase</text>
+        </name>
+      </transition>
+      <transition id="Phosphofructokinase">
+        <name>
+          <text>Phosphofructokinase</text>
+        </name>
+      </transition>
+      <transition id="Phosphoclucose_isomerase">
+        <name>
+          <text>Phosphoclucose_isomerase</text>
+        </name>
+      </transition>
+      <transition id="Hexokinase">
+        <name>
+          <text>Hexokinase</text>
+        </name>
+      </transition>
+      <transition id="Glutathione_reductose">
+        <name>
+          <text>Glutathione_reductose</text>
+        </name>
+      </transition>
+      <transition id="Glutathione_oxidation">
+        <name>
+          <text>Glutathione_oxidation</text>
+        </name>
+      </transition>
+      <transition id="G6P_dehydrogenase">
+        <name>
+          <text>G6P_dehydrogenase</text>
+        </name>
+      </transition>
+      <transition id="Ru5P_epimerase">
+        <name>
+          <text>Ru5P_epimerase</text>
+        </name>
+      </transition>
+      <transition id="Ru5P_isomerase">
+        <name>
+          <text>Ru5P_isomerase</text>
+        </name>
+      </transition>
+      <transition id="Transaldolase">
+        <name>
+          <text>Transaldolase</text>
+        </name>
+      </transition>
+      <transition id="Transketolase2">
+        <name>
+          <text>Transketolase2</text>
+        </name>
+      </transition>
+      <transition id="Phosphoglycerate_kinase">
+        <name>
+          <text>Phosphoglycerate_kinase</text>
+        </name>
+      </transition>
+      <transition id="Phosphoglycerate_mutase">
+        <name>
+          <text>Phosphoglycerate_mutase</text>
+        </name>
+      </transition>
+      <transition id="Enolase">
+        <name>
+          <text>Enolase</text>
+        </name>
+      </transition>
+      <transition id="Pyruvate_kinase">
+        <name>
+          <text>Pyruvate_kinase</text>
+        </name>
+      </transition>
+      <transition id="Lactate_dehydrogenase">
+        <name>
+          <text>Lactate_dehydrogenase</text>
+        </name>
+      </transition>
+      <transition id="remove">
+        <name>
+          <text>remove</text>
+        </name>
+      </transition>
+      <transition id="generate">
+        <name>
+          <text>generate</text>
+        </name>
+      </transition>
+      <transition id="Transketolase1">
+        <name>
+          <text>Transketolase1</text>
+        </name>
+      </transition>
+      <arc id="a0" source="Pyruvate_kinase" target="Pyr">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a1" source="Pyr" target="Lactate_dehydrogenase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a2" source="Enolase" target="PEP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a3" source="PEP" target="Pyruvate_kinase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a4" source="Phosphoglycerate_mutase" target="_2PG">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a5" source="_2PG" target="Enolase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a6" source="Phosphoglycerate_kinase" target="_3PG">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a7" source="_3PG" target="Phosphoglycerate_mutase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a8" source="GAP" target="GAP_dehydrogenase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a9" source="NADplus" target="GAP_dehydrogenase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a10" source="Pi" target="GAP_dehydrogenase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a11" source="GAP_dehydrogenase" target="_1_3_BPG">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a12" source="GAP_dehydrogenase" target="NADH">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a13" source="ADP" target="Phosphoglycerate_kinase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a14" source="Phosphoglycerate_kinase" target="ATP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a15" source="_1_3_BPG" target="Phosphoglycerate_kinase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a16" source="ADP" target="Pyruvate_kinase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a17" source="Pyruvate_kinase" target="ATP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a18" source="Lactate_dehydrogenase" target="Lac">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a19" source="NADH" target="Lactate_dehydrogenase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a20" source="Lactate_dehydrogenase" target="NADplus">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a21" source="TIM_forward" target="GAP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a22" source="GAP" target="TIM_backward">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a23" source="TIM_backward" target="DHAP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a24" source="DHAP" target="TIM_forward">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a25" source="Aldolase" target="GAP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a26" source="Aldolase" target="DHAP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a27" source="Phosphofructokinase" target="FBP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a28" source="FBP" target="Aldolase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a29" source="G6P" target="Phosphoclucose_isomerase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a30" source="Phosphoclucose_isomerase" target="F6P">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a31" source="F6P" target="Phosphofructokinase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a32" source="ATP" target="Phosphofructokinase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a33" source="ATP" target="Hexokinase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a34" source="Gluc" target="Hexokinase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a35" source="Hexokinase" target="G6P">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a36" source="Glutathione_oxidation" target="GSSG">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a37" source="GSSG" target="Glutathione_reductose">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a38" source="Glutathione_reductose" target="GSH">
+        <inscription>
+          <text>2</text>
+        </inscription>
+      </arc>
+      <arc id="a39" source="GSH" target="Glutathione_oxidation">
+        <inscription>
+          <text>2</text>
+        </inscription>
+      </arc>
+      <arc id="a40" source="NADPH" target="Glutathione_reductose">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a41" source="Glutathione_reductose" target="NADPplus">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a42" source="NADPplus" target="G6P_dehydrogenase">
+        <inscription>
+          <text>2</text>
+        </inscription>
+      </arc>
+      <arc id="a43" source="G6P_dehydrogenase" target="NADPH">
+        <inscription>
+          <text>2</text>
+        </inscription>
+      </arc>
+      <arc id="a44" source="G6P" target="G6P_dehydrogenase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a45" source="G6P_dehydrogenase" target="Ru5P">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a46" source="Ru5P" target="Ru5P_epimerase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a47" source="Ru5P_epimerase" target="Xu5P">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a48" source="Ru5P" target="Ru5P_isomerase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a49" source="Ru5P_isomerase" target="R5P">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a50" source="Xu5P" target="Transketolase1">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a51" source="R5P" target="Transketolase1">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a52" source="Transketolase1" target="S7P">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a53" source="Transketolase1" target="GAP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a54" source="S7P" target="Transaldolase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a55" source="GAP" target="Transaldolase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a56" source="Transaldolase" target="E4P">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a57" source="E4P" target="Transketolase2">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a58" source="Transaldolase" target="F6P">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a59" source="Transketolase2" target="F6P">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a60" source="Xu5P" target="Transketolase2">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a61" source="Transketolase2" target="GAP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a62" source="Hexokinase" target="ADP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a63" source="Phosphofructokinase" target="ADP">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a64" source="ATP" target="remove">
+        <inscription>
+          <text>70</text>
+        </inscription>
+      </arc>
+      <arc id="a65" source="generate" target="ADP">
+        <inscription>
+          <text>70</text>
+        </inscription>
+      </arc>
+      <arc id="a66" source="remove" target="start">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a67" source="start" target="generate">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a68" source="generate" target="Gluc">
+        <inscription>
+          <text>40</text>
+        </inscription>
+      </arc>
+      <arc id="a69" source="generate" target="Pi">
+        <inscription>
+          <text>70</text>
+        </inscription>
+      </arc>
+      <arc id="a70" source="Lac" target="remove">
+        <inscription>
+          <text>70</text>
+        </inscription>
+      </arc>
+      <arc id="a71" source="b1" target="Phosphoclucose_isomerase">
+        <inscription>
+          <text>30</text>
+        </inscription>
+      </arc>
+      <arc id="a72" source="Phosphoclucose_isomerase" target="b2">
+        <inscription>
+          <text>30</text>
+        </inscription>
+      </arc>
+      <arc id="a73" source="b2" target="G6P_dehydrogenase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a74" source="G6P_dehydrogenase" target="b1">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a75" source="a1" target="Ru5P_isomerase">
+        <inscription>
+          <text>20</text>
+        </inscription>
+      </arc>
+      <arc id="a76" source="Ru5P_isomerase" target="a2">
+        <inscription>
+          <text>20</text>
+        </inscription>
+      </arc>
+      <arc id="a77" source="a2" target="Ru5P_epimerase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a78" source="Ru5P_epimerase" target="a1">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a79" source="c1" target="Transaldolase">
+        <inscription>
+          <text>70</text>
+        </inscription>
+      </arc>
+      <arc id="a80" source="Transaldolase" target="c2">
+        <inscription>
+          <text>70</text>
+        </inscription>
+      </arc>
+      <arc id="a81" source="GAP_dehydrogenase" target="c1">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="a82" source="c2" target="GAP_dehydrogenase">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+    </page>
+  </net>
+</pnml>
