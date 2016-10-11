@@ -20,6 +20,7 @@
 package uniol.apt.module.impl;
 
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -62,6 +63,11 @@ public class AdditionalOptionalParameterModule extends AbstractModule {
 
 	public Object getActualValue() {
 		return actualValue;
+	}
+
+	@Override
+	public Category[] getCategories() {
+		return new Category[]{Category.MISC};
 	}
 }
 

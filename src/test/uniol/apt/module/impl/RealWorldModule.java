@@ -22,6 +22,7 @@ package uniol.apt.module.impl;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -69,6 +70,11 @@ public class RealWorldModule extends AbstractModule {
 	public String getShortDescription() {
 		return "A module that uses parameters and return values just like in the real world."
 				+ " It doesn't do anything useful though.";
+	}
+
+	@Override
+	public Category[] getCategories() {
+		return new Category[]{Category.MISC};
 	}
 }
 

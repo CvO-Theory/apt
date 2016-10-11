@@ -26,6 +26,7 @@ import static org.testng.Assert.assertTrue;
 
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AbstractModuleRegistry;
+import uniol.apt.module.Category;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
@@ -104,6 +105,11 @@ public class SimpleModulePreconditionsCheckerTest {
 			output.setReturnValue("unrelated", Boolean.class, false);
 			output.setReturnValue("superfluous", Object.class, new Object());
 		}
+
+		@Override
+		public Category[] getCategories() {
+			return new Category[]{Category.MISC};
+		}
 	}
 
 	static private class CheckedModule extends AbstractModule {
@@ -125,6 +131,11 @@ public class SimpleModulePreconditionsCheckerTest {
 
 		@Override
 		public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
+		}
+
+		@Override
+		public Category[] getCategories() {
+			return new Category[]{Category.MISC};
 		}
 	}
 }

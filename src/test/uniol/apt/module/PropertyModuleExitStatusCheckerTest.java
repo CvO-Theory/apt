@@ -66,6 +66,11 @@ public class PropertyModuleExitStatusCheckerTest {
 		@Override
 		public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		}
+
+		@Override
+		public Category[] getCategories() {
+			return new Category[]{Category.MISC};
+		}
 	}
 
 	@Test
@@ -102,6 +107,11 @@ public class PropertyModuleExitStatusCheckerTest {
 		public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 			output.setReturnValue("something", Object.class, new Object());
 			output.setReturnValue("anything", Object.class, new Object());
+		}
+
+		@Override
+		public Category[] getCategories() {
+			return new Category[]{Category.MISC};
 		}
 	}
 
@@ -148,6 +158,11 @@ public class PropertyModuleExitStatusCheckerTest {
 		public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 			output.setReturnValue("not_so_important", Object.class, new Object());
 			output.setReturnValue("successful", Boolean.class, successful);
+		}
+
+		@Override
+		public Category[] getCategories() {
+			return new Category[]{Category.MISC};
 		}
 	}
 
@@ -203,6 +218,11 @@ public class PropertyModuleExitStatusCheckerTest {
 			output.setReturnValue("first_successful", Boolean.class, firstSuccessful);
 			output.setReturnValue("second_successful", Boolean.class, secondSuccessful);
 		}
+
+		@Override
+		public Category[] getCategories() {
+			return new Category[]{Category.MISC};
+		}
 	}
 
 	@Test
@@ -238,6 +258,11 @@ public class PropertyModuleExitStatusCheckerTest {
 
 		@Override
 		public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
+		}
+
+		@Override
+		public Category[] getCategories() {
+			return new Category[]{Category.MISC};
 		}
 	}
 }

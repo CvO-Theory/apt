@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uniol.apt.module.AbstractModule;
+import uniol.apt.module.Category;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
@@ -70,6 +71,11 @@ public class ReflectionTestModule1 extends AbstractModule {
 	@Override
 	public String getTitle() {
 		return "Title";
+	}
+
+	@Override
+	public Category[] getCategories() {
+		return new Category[]{Category.MISC};
 	}
 }
 
