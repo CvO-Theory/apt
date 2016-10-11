@@ -26,6 +26,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.synthesize.separation.UnsupportedPNPropertiesException;
 import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
+import uniol.apt.module.Category;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
@@ -83,6 +84,11 @@ public class SynthesizeOverapproximateModule extends AbstractModule implements M
 		} catch (UnsupportedPNPropertiesException e) {
 			throw new ModuleException(e);
 		}
+	}
+
+	@Override
+	public Category[] getCategories() {
+		return new Category[]{Category.LTS};
 	}
 }
 
