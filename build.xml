@@ -439,7 +439,10 @@
 		  -->
 		<concat destfile="classes/META-INF/services/uniol.apt.module.Module">
 			<fileset dir="classes">
-				<include name="*/META-INF/services/uniol.apt.module.Module"/>
+				<include name="io/META-INF/services/uniol.apt.module.Module"/>
+				<include name="lib/META-INF/services/uniol.apt.module.Module"/>
+				<include name="main/META-INF/services/uniol.apt.module.Module"/>
+				<include name="module/META-INF/services/uniol.apt.module.Module"/>
 			</fileset>
 		</concat>
 		<jar destfile="apt-lib.jar" duplicate="fail">
