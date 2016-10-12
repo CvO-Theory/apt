@@ -29,6 +29,7 @@ import java.util.Set;
 import de.uni_freiburg.informatik.ultimate.logic.ConstantTerm;
 import de.uni_freiburg.informatik.ultimate.logic.Model;
 import de.uni_freiburg.informatik.ultimate.logic.Rational;
+import de.uni_freiburg.informatik.ultimate.logic.ReasonUnknown;
 import de.uni_freiburg.informatik.ultimate.logic.Script.LBool;
 import de.uni_freiburg.informatik.ultimate.logic.Script;
 import de.uni_freiburg.informatik.ultimate.logic.Sort;
@@ -229,6 +230,7 @@ public class MinimizePN {
 		// Is there a model?
 		LBool isSat = script.checkSat();
 		if (isSat == LBool.UNKNOWN) {
+			assert ReasonUnknown.TIMEOUT.equals(script.getInfo(":reason-unknown")) : script.getInfo(":reason-unknown");
 			throw new UncheckedInterruptedException();
 		} else if (isSat == LBool.UNSAT) {
 			return null;
