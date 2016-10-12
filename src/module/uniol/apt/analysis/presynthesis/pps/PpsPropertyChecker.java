@@ -30,6 +30,7 @@ import java.util.Set;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
 /**
@@ -92,6 +93,8 @@ public class PpsPropertyChecker {
 	private boolean hasPropertyB(State s) {
 		List<Arc> preset = new ArrayList<>(s.getPresetEdges());
 		for (int i = 0; i < preset.size(); i++) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			for (int j = i + 1; j < preset.size(); j++) {
 				Arc a = preset.get(i);
 				Arc b = preset.get(j);
@@ -127,6 +130,8 @@ public class PpsPropertyChecker {
 			labelsToCheck.addAll(getPostsetLabelPairs(s));
 		}
 		for (Pair<String, String> labels : labelsToCheck) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 			List<String> ab = Arrays.asList(labels.getFirst(), labels.getSecond());
 			List<String> ba = Arrays.asList(labels.getSecond(), labels.getFirst());
 			for (State sk : ts.getNodes()) {
@@ -171,6 +176,8 @@ public class PpsPropertyChecker {
 	private boolean hasPropertyF(State s, int maxPathLength) {
 		for (Path w : new DfsPathIterator(s, maxPathLength)) {
 			for (Path v : new DfsPathIterator(s, maxPathLength)) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 				// Check s[vc⟩ and s[wc⟩
 				Set<Arc> postTargetW = new HashSet<>(w.getTarget().getPostsetEdges());
 				Set<Arc> postTargetV = v.getTarget().getPostsetEdges();
