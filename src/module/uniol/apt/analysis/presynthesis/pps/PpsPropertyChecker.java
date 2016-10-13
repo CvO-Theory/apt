@@ -174,8 +174,8 @@ public class PpsPropertyChecker {
 	}
 
 	private boolean hasPropertyF(State s, int maxPathLength) {
-		for (Path w : new DfsPathIterator(s, maxPathLength)) {
-			for (Path v : new DfsPathIterator(s, maxPathLength)) {
+		for (Path w : new DfsPathIterable(s, maxPathLength)) {
+			for (Path v : new DfsPathIterable(s, maxPathLength)) {
 				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 
 				// Check s[vc⟩ and s[wc⟩
