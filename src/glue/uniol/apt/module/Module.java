@@ -25,7 +25,6 @@ import uniol.apt.module.exception.ModuleException;
  * A module.
  *
  * @author Renke Grunwald
- * @see uniol.apt.module.impl.ExampleModule for an example implementation
  */
 public interface Module {
 
@@ -82,7 +81,6 @@ public interface Module {
 	 *            storage of the inputs
 	 * @param output
 	 *            storage of the outputs
-	 * @see uniol.apt.module.impl.ExampleModule#run(ModuleInput, ModuleOutput) for an example implementation
 	 * @throws ModuleException On various kinds of errors that prevent the module from working.
 	 */
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException;

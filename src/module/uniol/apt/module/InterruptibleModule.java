@@ -56,8 +56,6 @@ public interface InterruptibleModule extends Module {
 	 *                callback that will be periodically checked and decides
 	 *                if the module should prematurely abort with an
 	 *                InterruptedException
-	 * @see uniol.apt.module.impl.ExampleModule#run(ModuleInput,
-	 *      ModuleOutput) for an example implementation
 	 * @throws ModuleException
 	 *                 On various kinds of errors that prevent the module
 	 *                 from working.
