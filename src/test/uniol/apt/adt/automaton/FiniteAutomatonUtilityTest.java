@@ -579,6 +579,74 @@ public class FiniteAutomatonUtilityTest {
 	}
 
 	@Test
+	public void testPrefixClosureFullLanguage() {
+		FiniteAutomaton automaton = kleeneStar(union(getAtomicLanguage(new Symbol("a")),
+				getAtomicLanguage(new Symbol("b"))));
+		FiniteAutomaton prefixClosure = prefixClosure(automaton);
+
+		assertThat(languageEquivalent(prefixClosure, automaton), is(true));
+	}
+
+	@Test
+	public void testPrefixEmptyFullLanguage() {
+		FiniteAutomaton automaton = getEmptyLanguage();
+		FiniteAutomaton prefixClosure = prefixClosure(automaton);
+		assertThat(languageEquivalent(prefixClosure, automaton), is(true));
+	}
+
+	void testContainsABBAAAndPrefixes(FiniteAutomaton aut) {
+		wordInLanguage(aut, true);
+		wordInLanguage(aut, true, "a");
+		wordInLanguage(aut, true, "a", "b");
+		wordInLanguage(aut, true, "a", "b", "b");
+		wordInLanguage(aut, true, "a", "b", "b", "a");
+		wordInLanguage(aut, true, "a", "b", "b", "a", "a");
+	}
+
+	@Test
+	public void testPrefixClosureABBAA() {
+		FiniteAutomaton a = getAtomicLanguage(new Symbol("a"));
+		FiniteAutomaton b = getAtomicLanguage(new Symbol("b"));
+		FiniteAutomaton abbaa = concatenate(a, concatenate(b, concatenate(b, concatenate(a, a))));
+		FiniteAutomaton prefixClosure = prefixClosure(abbaa);
+
+		testContainsABBAAAndPrefixes(prefixClosure);
+
+		// Now test some equivalence by constructing the prefix closure by hand
+		FiniteAutomaton secondPrefixClosure = optional(concatenate(a, optional(concatenate(b,
+						optional(concatenate(b, optional(concatenate(a, optional(a)))))))));
+		assertThat(languageEquivalent(prefixClosure, secondPrefixClosure), is(true));
+	}
+
+	@Test
+	public void testPrefixClosureABSigmaStar() {
+		FiniteAutomaton a = getAtomicLanguage(new Symbol("a"));
+		FiniteAutomaton b = getAtomicLanguage(new Symbol("b"));
+		FiniteAutomaton abSigmaStar = concatenate(a, concatenate(b, kleeneStar(union(a, b))));
+		FiniteAutomaton prefixClosure = prefixClosure(abSigmaStar);
+
+		testContainsABBAAAndPrefixes(prefixClosure);
+
+		// Now test some equivalence by constructing the prefix closure by hand
+		FiniteAutomaton secondPrefixClosure = abSigmaStar;
+		secondPrefixClosure = union(secondPrefixClosure, getEmptyLanguage());
+		secondPrefixClosure = union(secondPrefixClosure, a);
+		assertThat(languageEquivalent(prefixClosure, secondPrefixClosure), is(true));
+	}
+
+	@Test
+	public void testPrefixClosureABStar() {
+		FiniteAutomaton a = getAtomicLanguage(new Symbol("a"));
+		FiniteAutomaton b = getAtomicLanguage(new Symbol("b"));
+		FiniteAutomaton abStar = kleeneStar(concatenate(a, b));
+		FiniteAutomaton prefixClosure = prefixClosure(abStar);
+
+		// Now test some equivalence by constructing the prefix closure by hand
+		FiniteAutomaton secondPrefixClosure = union(abStar, concatenate(abStar, a));
+		assertThat(languageEquivalent(prefixClosure, secondPrefixClosure), is(true));
+	}
+
+	@Test
 	public void testLanguageEquivalentStates() {
 		TransitionSystem ts = new TransitionSystem();
 		ts.createState("end");

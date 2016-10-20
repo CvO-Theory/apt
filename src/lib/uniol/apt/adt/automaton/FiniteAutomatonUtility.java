@@ -369,6 +369,18 @@ public class FiniteAutomatonUtility {
 	}
 
 	/**
+	 * Get a finite automaton accepting the prefix closure of the language of the given automaton. A word is in the
+	 * prefix closure if it is the prefix of a word in the language.
+	 * @param a The automaton whose prefix closure should be generated.
+	 * @return An automaton accepting the prefix closure.
+	 */
+	static public DeterministicFiniteAutomaton prefixClosure(FiniteAutomaton a) {
+		if (a instanceof PrefixClosureAutomaton)
+			return (PrefixClosureAutomaton) a;
+		return new PrefixClosureAutomaton(a);
+	}
+
+	/**
 	 * Test if two automaton are language equivalent. Automatons are language equivalent if they accept the same
 	 * language.
 	 * @param a1 The first automaton to test with
@@ -1131,6 +1143,75 @@ public class FiniteAutomatonUtility {
 			return states;
 		}
 	}
+
+	// An automaton representing the prefix closure of a given automaton.
+	/*
+	 * Algorithmic detail: In the minimal automaton there may be a sink state, which is a non-accepting state which
+	 * cannot be left once it is reached. Because of the minimality, this state is unique (if it exists). Thus, a
+	 * word is not in the prefix closure if and only if it reaches this sink state. To construct the prefix closure,
+	 * we just turn all other states into accepting states.
+	 */
+	static private class PrefixClosureAutomaton implements DeterministicFiniteAutomaton {
+		private final MinimalDeterministicFiniteAutomaton dfa;
+		private final DFAState nonAcceptingState; // may be null!
+
+		public PrefixClosureAutomaton(FiniteAutomaton a) {
+			this.dfa = minimizeInternal(a);
+			this.nonAcceptingState = findSinkState(dfa);
+		}
+
+		@Override
+		public DFAState getInitialState() {
+			return new PrefixClosureState(dfa.getInitialState(), nonAcceptingState);
+		}
+
+		@Override
+		public Set<Symbol> getAlphabet() {
+			return dfa.getAlphabet();
+		}
+
+		static private class PrefixClosureState extends DFAState {
+			private final DFAState originalState;
+			private final DFAState nonAcceptingState;
+
+			public PrefixClosureState(DFAState originalState, DFAState nonAcceptingState) {
+				this.originalState = originalState;
+				this.nonAcceptingState = nonAcceptingState;
+			}
+
+			@Override
+			public boolean isFinalState() {
+				return !originalState.equals(nonAcceptingState);
+			}
+
+			@Override
+			public Set<Symbol> getDefinedSymbols() {
+				return originalState.getDefinedSymbols();
+			}
+
+			@Override
+			public DFAState getFollowingState(Symbol atom) {
+				DFAState followingState = originalState.getFollowingState(atom);
+				if (followingState == null)
+					return null;
+				return new PrefixClosureState(followingState, nonAcceptingState);
+			}
+
+			@Override
+			public int hashCode() {
+				return originalState.hashCode();
+			}
+
+			@Override
+			public boolean equals(Object o) {
+				if (!(o instanceof PrefixClosureState))
+					return false;
+				PrefixClosureState other = (PrefixClosureState) o;
+				return originalState.equals(other.originalState);
+			}
+		}
+	}
+
 
 	static private class NegationState extends DFAState {
 		private final Set<Symbol> alphabet;
