@@ -30,15 +30,18 @@ exprAnd    : ex1=exprConcat
 			(AND ex2=exprAnd)?;
 exprConcat : ex1=exprRepeat
 			(ex2=exprConcat)?;
-exprRepeat : exprNegate STAR						# exprRepeatStar
-		| exprNegate OPT					# exprRepeatOpt
-		| exprNegate PLUS					# exprRepeatPlus
-		| exprNegate REPEATOPEN x=INT REPEATCLOSE		# exprRepeatExact
-		| exprNegate REPEATOPEN x=INT COMMA REPEATCLOSE		# exprRepeatLeast
-		| exprNegate REPEATOPEN x=INT COMMA y=INT REPEATCLOSE	# exprRepeatMinmax
-		| exprNegate						# exprRepeatNothing
+exprRepeat : exprNegatePrefix STAR						# exprRepeatStar
+		| exprNegatePrefix OPT						# exprRepeatOpt
+		| exprNegatePrefix PLUS						# exprRepeatPlus
+		| exprNegatePrefix REPEATOPEN x=INT REPEATCLOSE			# exprRepeatExact
+		| exprNegatePrefix REPEATOPEN x=INT COMMA REPEATCLOSE		# exprRepeatLeast
+		| exprNegatePrefix REPEATOPEN x=INT COMMA y=INT REPEATCLOSE	# exprRepeatMinmax
+		| exprNegatePrefix						# exprRepeatNothing
 		;
-exprNegate : NEGATE? exprId ;
+exprNegatePrefix : exprId	# exprNPDirect
+		| NEGATE exprId	# exprNPNegate
+		| PREFIX exprId	# exprNPPrefix
+		;
 exprId     : PAROPEN expr PARCLOSE	# exprIdParentheses
 			| ATOM		# exprIdAtom
 			| ID		# exprIdId

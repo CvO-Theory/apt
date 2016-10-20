@@ -25,6 +25,7 @@ AND		: '&';
 STAR		: '*';
 OPT		: '?';
 NEGATE		: '!';
+PREFIX		: '@';
 PLUS		: '+';
 EPSILON		: '$';
 EMPTY		: '~';

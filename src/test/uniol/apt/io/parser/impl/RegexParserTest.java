@@ -173,6 +173,16 @@ public class RegexParserTest {
 		test("!(!a)", getAtomic("a"));
 	}
 
+	@Test
+	public void testPrefixClosure1() throws Exception {
+		test("@a", optional(getAtomic("a")));
+	}
+
+	@Test
+	public void testPrefixClosure2() throws Exception {
+		test("@(ab(a|b)*)", union(getEmptyLanguage(), union(getAtomic("a"), concatenate(getAtomic("a"), concatenate(getAtomic("b"), kleeneStar(union(getAtomic("a"), getAtomic("b"))))))));
+	}
+
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: no viable alternative at input '\\)'$")
 	public void testClosingParen() throws Exception {
 		new RegexParser().parseString(")");
@@ -188,9 +198,9 @@ public class RegexParserTest {
 		new RegexParser().parseString("(a*|b+");
 	}
 
-	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 3: token recognition error at: '@'$")
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 3: token recognition error at: '%'$")
 	public void testNotAllowedCharacter() throws Exception {
-		new RegexParser().parseString("ab?@d");
+		new RegexParser().parseString("ab?%d");
 	}
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 0: token recognition error at: '<ab'$")

@@ -47,6 +47,8 @@ public class FiniteAutomatonParameterTransformation extends AbstractParserParame
 			+ "Supported operations are:\n"
 			+ " - !a is the negation of 'a', this means any word except a single 'a' is allowed (if the "
 			+ "regex contains other symbols, like 'b' or 'c', then they may also occur in this words)\n"
+			+ " - @a is the prefix closure of 'a', this means that all prefixes of words in the language "
+			+ " are also allowed)\n"
 			+ " - a* is the Kleene closure of 'a', including the empty word. This means any sequence"
 			+ " of 'a' is allowed.\n"
 			+ " - a+ is the Kleene plus of 'a' (without explicitly including the empty word).\n"
