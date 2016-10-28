@@ -127,7 +127,7 @@ public class OverapproximatePNTest {
 		TransitionSystem ts = makeTS(Arrays.asList("a", "b", "b", "a", "a"));
 		PNProperties properties = new PNProperties().requireKBounded(3);
 		PetriNet pn = OverapproximatePN.overapproximate(ts, properties);
-		checkABBAAPure(pn);
+		checkABBAANone(pn);
 	}
 
 	@Test

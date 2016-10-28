@@ -109,7 +109,7 @@ class KBoundedSeparation implements Separation {
 			// There are no 0-bounded regions that solve any kind of separation problem.
 			// (Except if the alphabet has events that do not occur on any arc, which is not supported)
 			return;
-		generateMinimalRegions(properties.getKForKBounded());
+		generateAllRegions(properties.getKForKBounded());
 	}
 
 	/* package-visible getter used by tests */
@@ -117,8 +117,8 @@ class KBoundedSeparation implements Separation {
 		return Collections.unmodifiableSet(regions);
 	}
 
-	// Generate the minimal k-bounded Regions of the input.
-	private void generateMinimalRegions(int k) {
+	// Generate the all k-bounded Regions of the input.
+	private void generateAllRegions(int k) {
 		assert k >= 1;
 
 		Set<Bag<State>> known = new HashSet<>();
@@ -137,7 +137,7 @@ class KBoundedSeparation implements Separation {
 			Pair<Event, Integer> event = findEventWithNonConstantGradient(r);
 			if (event == null) {
 				debug("It is a region!");
-				regionCandidates.add(r);
+				regions.add(convertToRegion(r));
 				continue;
 			}
 
@@ -160,22 +160,6 @@ class KBoundedSeparation implements Separation {
 				todo.add(r2);
 			else
 				debug("...which should not be explored");
-		}
-
-		debugFormat("Known multisets: %s", known);
-
-		// Extract minimal regions
-		candidateLoop:
-		for (Bag<State> candidate : regionCandidates) {
-			for (Bag<State> other : regionCandidates) {
-				if (candidate == other)
-					continue;
-				if (!candidate.containsAll(other))
-					continue;
-				// Skip 'candidate', 'other' is smaller
-				continue candidateLoop;
-			}
-			regions.add(convertToRegion(candidate));
 		}
 
 		debugFormat("Found the following regions: %s", regions);
