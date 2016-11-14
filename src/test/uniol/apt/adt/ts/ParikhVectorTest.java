@@ -19,6 +19,7 @@
 
 package uniol.apt.adt.ts;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -74,6 +75,18 @@ public class ParikhVectorTest {
 		assertThat(pv2.isUncomparableTo(pv), equalTo(false));
 		assertThat(pv.mutuallyDisjoint(pv2), equalTo(false));
 		assertThat(pv.sameOrMutuallyDisjoint(pv2), equalTo(false));
+	}
+
+	@Test
+	public void testAdd() {
+		ParikhVector p = new ParikhVector();
+		ParikhVector pa = new ParikhVector("a");
+		ParikhVector pb = new ParikhVector("b");
+		ParikhVector pab = new ParikhVector("a", "b");
+
+		assertThat(p.add("a"), equalTo(pa));
+		assertThat(p.add("a", "b"), equalTo(pab));
+		assertThat(pa.add(Arrays.asList("b")), equalTo(pab));
 	}
 
 	@Test

@@ -79,6 +79,26 @@ public class ParikhVector {
 	}
 
 	/**
+	 * Combines two Parikh vectors to one new.
+	 * @param sequence the sequence of labels that should be added
+	 * @return the combination of this and the given sequence
+	 */
+	public ParikhVector add(String... sequence) {
+		return add(Arrays.asList(sequence));
+	}
+
+	/**
+	 * Combines two Parikh vectors to one new.
+	 * @param sequence the sequence of labels that should be added
+	 * @return the combination of this and the given sequence
+	 */
+	public ParikhVector add(List<String> sequence) {
+		ParikhVector result = new ParikhVector(this);
+		result.occurrenceBag.addAll(sequence);
+		return result;
+	}
+
+	/**
 	 * Create a new ParikhVector where the given event occurs n times less often.
 	 * @param event Which event should occur less often?
 	 * @param n How many times should it occur less?
