@@ -99,6 +99,17 @@ public class AptPNParser extends AbstractParser<PetriNet> implements Parser<Petr
 		}
 
 		@Override
+		public void enterNetOptions(AptPNFormatParser.NetOptionsContext ctx) {
+			this.curOpts = new HashMap<>();
+		}
+
+		@Override
+		public void exitNetOptions(AptPNFormatParser.NetOptionsContext ctx) {
+			putExtensions(this.pn, curOpts);
+			this.curOpts = null;
+		}
+
+		@Override
 		public void enterPlace(AptPNFormatParser.PlaceContext ctx) {
 			this.curOpts = new HashMap<>();
 		}

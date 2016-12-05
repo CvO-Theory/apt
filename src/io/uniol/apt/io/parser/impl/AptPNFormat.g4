@@ -29,15 +29,17 @@ grammar AptPNFormat;
 	int typeCount = 0;
 }
 
-/* type must occur once; description, name and initialMarking may occur once; places, transitions, flows and
- * finalMakrings may occur arbitrary times */
-pn:	( description | finalMarkings | flows | initialMarking | name | places | transitions | type )* {typeCount == 1}? ;
+/* type must occur once; description, name and initialMarking may occur once; netOptions, places, transitions, flows and
+ * finalMarkings may occur arbitrary times */
+pn:	( description | finalMarkings | flows | initialMarking | name | netOptions | places | transitions | type )* {typeCount == 1}? ;
 
 name: {nameCount == 0}? '.name' STR {nameCount++;};
 
 type : {typeCount == 0}? '.type' ('LPN' | 'PN') {typeCount++;};
 
 description : {descCount == 0}? '.description' (txt=STR | txt=STR_MULTI) {descCount++;};
+
+netOptions : '.options' (option (',' option)*)?;
 
 places     : '.places' place*;
 place      :  (id=ID | id=INT) (opts)? ;

@@ -93,6 +93,32 @@ public class AptPNParserTest {
 		sideConditionAsserts(net);
 	}
 
+	@Test
+	public void testMarkedSideConditionOptions() throws Exception {
+		PetriNet net = new AptPNParser().parseString(
+				".type PN\n.options foo=42\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		sideConditionAsserts(net);
+		assertEquals(net.getExtension("foo"), 42);
+	}
+
+	@Test
+	public void testMarkedSideConditionTwoOptions() throws Exception {
+		PetriNet net = new AptPNParser().parseString(
+				".type PN\n.options foo=42,bar=\"baz\"\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}");
+		sideConditionAsserts(net);
+		assertEquals(net.getExtension("foo"), 42);
+		assertEquals(net.getExtension("bar"), "baz");
+	}
+
+	@Test
+	public void testMarkedSideConditionDoubleOptions() throws Exception {
+		PetriNet net = new AptPNParser().parseString(
+				".type PN\n.options foo=42\n.places p1\n.transitions t1\n.flows t1:{p1}->{p1}\n.initial_marking {p1}\n.options bar=\"baz\"");
+		sideConditionAsserts(net);
+		assertEquals(net.getExtension("foo"), 42);
+		assertEquals(net.getExtension("bar"), "baz");
+	}
+
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Node 's1' already exists in graph 'doubleNodes'$")
 	public void testDoubleNodes() throws Exception {
 		new AptPNParser().parseFile("nets/not-parsable-test-nets/doubleNodes-net.apt_unparsable");
