@@ -27,13 +27,15 @@ grammar AptLTSFormat;
 	int typeCount = 0;
 }
 
-ts		: ( name | type | description | states | labels | arcs )* {typeCount == 1}?;
+ts		: ( name | type | description | ltsOptions | states | labels | arcs )* {typeCount == 1}?;
 
 name		: {nameCount == 0}? '.name' STR {nameCount++;};
 
 type		: {typeCount == 0}? '.type' 'LTS' {typeCount++;};
 
 description	: {descCount == 0}? '.description' (txt=STR | txt=STR_MULTI) {descCount++;};
+
+ltsOptions      : '.options' (option (',' option)*)?;
 
 states		: '.states' state*;
 state		: idi (opts)? ;

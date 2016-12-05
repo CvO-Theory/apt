@@ -100,6 +100,19 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 		}
 
 		@Override
+		public void enterLtsOptions(AptLTSFormatParser.LtsOptionsContext ctx) {
+			this.curOpts = new HashMap<>();
+		}
+
+		@Override
+		public void exitLtsOptions(AptLTSFormatParser.LtsOptionsContext ctx) {
+			for (Map.Entry<String, Object> entry : curOpts.entrySet()) {
+				this.ts.putExtension(entry.getKey(), entry.getValue(), ExtensionProperty.WRITE_TO_FILE);
+			}
+			this.curOpts = null;
+		}
+
+		@Override
 		public void enterOpts(AptLTSFormatParser.OptsContext ctx) {
 			this.curOpts = new HashMap<>();
 		}

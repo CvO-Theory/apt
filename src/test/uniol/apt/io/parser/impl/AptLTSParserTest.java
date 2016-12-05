@@ -96,6 +96,19 @@ public class AptLTSParserTest {
 		loopAsserts(ts);
 	}
 
+	@Test
+	public void testLoopOptions() throws Exception {
+		TransitionSystem ts = new AptLTSParser().parseString(".type LTS\n.name \"42\"\n.options description=\"the answer!\"\n.states s1[initial]\n.labels l1\n.arcs s1 l1 s1");
+		loopAsserts(ts);
+	}
+
+	@Test
+	public void testLoopTwoOptions() throws Exception {
+		TransitionSystem ts = new AptLTSParser().parseString(".type LTS\n.name \"42\"\n.options description=\"the answer!\",fortytwo=42\n.states s1[initial]\n.labels l1\n.arcs s1 l1 s1");
+		loopAsserts(ts);
+		assertEquals(ts.getExtension("fortytwo"), 42);
+	}
+
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Node 's1' already exists in graph 'doubleNodes'$")
 	public void testDoubleNodes() throws Exception {
 		new AptLTSParser().parseFile("nets/not-parsable-test-nets/doubleNodes-aut.apt_unparsable");
