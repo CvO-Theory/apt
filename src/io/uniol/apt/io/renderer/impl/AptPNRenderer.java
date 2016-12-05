@@ -76,6 +76,9 @@ public class AptPNRenderer extends AbstractRenderer<PetriNet> implements Rendere
 			pnTemplate.add("description", pn.getExtension("description"));
 		}
 
+		// Handle extensions
+		pnTemplate.add("extensions", pn.getWriteToFileExtensions());
+
 		// Handle places
 		pnTemplate.add("places", pn.getPlaces());
 

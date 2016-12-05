@@ -25,6 +25,7 @@ import static uniol.apt.io.matcher.StringEqualsIgnoringLineEndings.equalsIgnorin
 
 import org.testng.annotations.Test;
 
+import uniol.apt.adt.extension.ExtensionProperty;
 import uniol.apt.adt.pn.PetriNet;
 
 /** @author vsp */
@@ -93,6 +94,15 @@ public class AptPNRendererTest {
 				"t2: {1*p2, 1*p3} -> {1*p3}\n\n" +
 				".initial_marking {1*p1, 1*p2, 1*p3}";
 		assertThat(render(getConflictingDiamondNet()), equalsIgnoringLineEndings(expected));
+	}
+
+	@Test
+	public void testEmptyNetWithOption() throws Exception {
+		String expected = ".name \"\"\n.type LPN\n.options\nfortytwo=\"42\"\n\n.places\n\n.transitions\n\n" +
+			".flows\n\n.initial_marking {}";
+		PetriNet pn = new PetriNet();
+		pn.putExtension("fortytwo", "42", ExtensionProperty.WRITE_TO_FILE);
+		assertThat(render(pn), equalsIgnoringLineEndings(expected));
 	}
 }
 

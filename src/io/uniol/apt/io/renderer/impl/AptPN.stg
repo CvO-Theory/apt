@@ -26,15 +26,19 @@
  * Main template, the APTRenderer uses this.
  * @param name The name of the net
  * @param description The description of the net
+ * @param extensions The extensions of the net
  * @param places A list of all places in the net (Entries must have an id property)
  * @param marking A list representing the initial marking (Entries are given to place_weight(pw))
  * @param transitions A list of transitions of the net (Entries are given to transition(t))
  * @param have_flow_with_extension True if at least one flow has an extension
  */
-pn(name,description,places,marking,transitions,have_flow_with_extension) ::= <<
+pn(name,description,extensions,places,marking,transitions,have_flow_with_extension) ::= <<
 .name "<name>"
 <if(description)>.description "<description>"<endif>
 .type LPN
+<if(first(extensions))>.options
+<extensions:extension();separator=",\n"><endif>
+
 
 .places
 <places:{p|<p.id><extensions(p)>};separator="\n">
