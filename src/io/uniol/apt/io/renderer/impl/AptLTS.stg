@@ -26,12 +26,14 @@
 /**
  * Main template, the APTLTSRenderer uses this.
  * @param name The name of the lts
+ * @param description The description of the lts
  * @param states A list of all states in the lts (Entries must have an id property)
  * @param arcs A list of all arcs in the lts (Entries must have a source, target and label property)
  * @param events A list of all events in the lts (Entries must have a label property)
  */
-lts(name,states,arcs,events) ::= <<
+lts(name,description,states,arcs,events) ::= <<
 .name "<name>"
+<if(description)>.description "<description>"<endif>
 .type LTS
 
 .states
