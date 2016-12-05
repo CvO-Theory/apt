@@ -72,6 +72,9 @@ public class AptPNRenderer extends AbstractRenderer<PetriNet> implements Rendere
 		STGroup group = new STGroupFile("uniol/apt/io/renderer/impl/AptPN.stg");
 		ST pnTemplate = group.getInstanceOf("pn");
 		pnTemplate.add("name", pn.getName());
+		if (pn.hasExtension("description")) {
+			pnTemplate.add("description", pn.getExtension("description"));
+		}
 
 		// Handle places
 		pnTemplate.add("places", pn.getPlaces());

@@ -33,6 +33,7 @@
  */
 pn(name,description,places,marking,transitions,have_flow_with_extension) ::= <<
 .name "<name>"
+<if(description)>.description "<description>"<endif>
 .type LPN
 
 .places
