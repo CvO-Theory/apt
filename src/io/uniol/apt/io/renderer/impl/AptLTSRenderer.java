@@ -94,6 +94,7 @@ public class AptLTSRenderer extends AbstractRenderer<TransitionSystem> implement
 		if (ts.hasExtension("description")) {
 			ltsTemplate.add("description", ts.getExtension("description"));
 		}
+		ltsTemplate.add("extensions", ts.getWriteToFileExtensions());
 		ltsTemplate.add("states", decorateStates(ts));
 		ltsTemplate.add("arcs", ts.getEdges());
 		ltsTemplate.add("events", ts.getAlphabetEvents());
