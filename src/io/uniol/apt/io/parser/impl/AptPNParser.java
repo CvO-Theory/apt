@@ -95,8 +95,7 @@ public class AptPNParser extends AbstractParser<PetriNet> implements Parser<Petr
 		@Override
 		public void exitDescription(AptPNFormatParser.DescriptionContext ctx) {
 			String str = ctx.txt.getText();
-			this.pn.putExtension("description", str.substring(1, str.length() - 1),
-					ExtensionProperty.WRITE_TO_FILE);
+			this.pn.putExtension("description", str.substring(1, str.length() - 1));
 		}
 
 		@Override

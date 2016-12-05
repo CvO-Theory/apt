@@ -96,8 +96,7 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 		@Override
 		public void exitDescription(AptLTSFormatParser.DescriptionContext ctx) {
 			String str = ctx.txt.getText();
-			this.ts.putExtension("description", str.substring(1, str.length() - 1),
-					ExtensionProperty.WRITE_TO_FILE);
+			this.ts.putExtension("description", str.substring(1, str.length() - 1));
 		}
 
 		@Override
