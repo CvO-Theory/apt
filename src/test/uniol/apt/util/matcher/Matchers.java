@@ -19,6 +19,8 @@
 
 package uniol.apt.util.matcher;
 
+import java.util.List;
+
 import uniol.apt.util.Pair;
 
 import org.hamcrest.Matcher;
@@ -31,6 +33,22 @@ import org.hamcrest.Matcher;
 public class Matchers {
 	public static <T, U> Matcher<? super Pair<? extends T, ? extends U>> pairWith(Matcher<T> t, Matcher<U> u) {
 		return PairWithMatcher.<T, U>pairWith(t, u);
+	}
+
+	public static <T> Matcher<Iterable<? extends T>> containsRotated(List<Matcher<? super T>> expected) {
+		return ContainsRotatedMatcher.<T>containsRotated(expected);
+	}
+
+	@SafeVarargs
+	@SuppressWarnings("varargs")
+	public static <T> Matcher<Iterable<? extends T>> containsRotated(Matcher<? super T>... expected) {
+		return ContainsRotatedMatcher.<T>containsRotated(expected);
+	}
+
+	@SafeVarargs
+	@SuppressWarnings("varargs")
+	public static <T> Matcher<Iterable<? extends T>> containsRotated(T... expected) {
+		return ContainsRotatedMatcher.<T>containsRotated(expected);
 	}
 }
 
