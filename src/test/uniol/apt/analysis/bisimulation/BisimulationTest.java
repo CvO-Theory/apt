@@ -26,6 +26,7 @@ import static org.testng.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static uniol.apt.adt.matcher.Matchers.*;
+import static uniol.apt.util.matcher.Matchers.pairWith;
 import org.hamcrest.Matcher;
 
 import java.io.IOException;

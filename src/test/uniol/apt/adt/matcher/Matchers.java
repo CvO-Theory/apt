@@ -136,10 +136,6 @@ public class Matchers {
 	public static <T> Matcher<Marking> markingThatIs(Marking marking) {
 		return MarkingThatIsMatcher.markingThatIs(marking);
 	}
-
-	public static <T, U> Matcher<? super Pair<? extends T, ? extends U>> pairWith(Matcher<T> t, Matcher<U> u) {
-		return PairWithMatcher.<T, U>pairWith(t, u);
-	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

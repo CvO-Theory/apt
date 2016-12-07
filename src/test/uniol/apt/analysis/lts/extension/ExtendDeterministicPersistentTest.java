@@ -38,6 +38,7 @@ import uniol.apt.analysis.exception.NoFiniteExtensionPossibleException;
 import uniol.apt.analysis.exception.NonDeterministicException;
 import uniol.apt.util.Pair;
 import static uniol.apt.adt.matcher.Matchers.*;
+import static uniol.apt.util.matcher.Matchers.pairWith;
 
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked")

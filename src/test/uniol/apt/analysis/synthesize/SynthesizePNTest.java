@@ -49,7 +49,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uniol.apt.adt.matcher.Matchers.flowThatConnects;
 import static uniol.apt.adt.matcher.Matchers.nodeWithID;
-import static uniol.apt.adt.matcher.Matchers.pairWith;
+import static uniol.apt.util.matcher.Matchers.pairWith;
 import static uniol.apt.analysis.synthesize.matcher.Matchers.*;
 import static uniol.apt.analysis.synthesize.SynthesizeUtils.*;
 
