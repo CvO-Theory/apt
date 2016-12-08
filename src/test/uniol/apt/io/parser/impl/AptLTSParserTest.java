@@ -144,12 +144,12 @@ public class AptLTSParserTest {
 		new AptLTSParser().parseString(".name \"42\"\n.description \"42\"\n.type LTS\n.states foo\n.labels bar\n.arcs");
 	}
 
-	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Multiple states are marked as initial state$")
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^States 'bar' and 'foo' are both marked as initial states$")
 	public void testDoubleInitialState() throws Exception {
 		new AptLTSParser().parseString(".name \"42\"\n.description \"42\"\n.type LTS\n.states foo[initial] bar[initial]\n.labels bar\n.arcs");
 	}
 
-	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Unknown label found$")
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Unknown label found: a$")
 	public void testUnknownLabel() throws Exception {
 		new AptLTSParser().parseString(".type LTS\n.states foo[initial]\n.labels\n.arcs foo a foo\n");
 	}

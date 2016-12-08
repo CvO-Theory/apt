@@ -125,7 +125,8 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 
 		@Override
 		public void exitState(AptLTSFormatParser.StateContext ctx) {
-			State s = this.ts.createState(ctx.idi().getText());
+			String id = ctx.idi().getText();
+			State s   = this.ts.createState(id);
 
 			if (this.curOpts == null)
 				return;
@@ -134,8 +135,9 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 			for (Map.Entry<String, Object> entry : this.curOpts.entrySet()) {
 				if ("initial".equals(entry.getKey())) {
 					if (this.initCount++ > 0) {
-						throw new ParseRuntimeException(
-								"Multiple states are marked as initial state");
+						throw new ParseRuntimeException(String.format("States '%s' and '%s' "
+								+ "are both marked as initial states", id,
+								this.ts.getInitialState().getId()));
 					}
 					this.ts.setInitialState(s);
 				} else {
@@ -179,9 +181,10 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 
 		@Override
 		public void exitArc(AptLTSFormatParser.ArcContext ctx) {
-			Map<String, Object> extensions = this.labelOpts.get(ctx.labell.getText());
+			String label = ctx.labell.getText();
+			Map<String, Object> extensions = this.labelOpts.get(label);
 			if (extensions == null) {
-				throw new ParseRuntimeException("Unknown label found");
+				throw new ParseRuntimeException(String.format("Unknown label found: %s", label));
 			}
 			Arc a = this.ts.createArc(ctx.src.getText(), ctx.dest.getText(), ctx.labell.getText());
 
