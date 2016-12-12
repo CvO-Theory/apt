@@ -13,6 +13,7 @@ Further reading
 * [Obtaining APT](doc/obtaining.md)
 * [Guide for using APT](doc/using.md)
 * [The file format](doc/file_format.md)
+* [Extending APT with own modules](doc/extending.md)
 
 
 Short guide for using APT
@@ -61,10 +62,6 @@ Providing feedback
 More information about APT can be found on our homepage:
 
 http://pg-apt.informatik.uni-oldenburg.de/
-
-The latest Javadoc documentation is always available at:
-
-http://CvO-theory.github.io/apt-javadoc/
 
 This project is supervised by the ParSys group at Oldenburg University:
 
