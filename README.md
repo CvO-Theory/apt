@@ -1,7 +1,7 @@
 APT – Analysis of Petri nets and labeled transition systems
 ===========================================================
 
-![APT logo](data/logo.png)
+![APT logo](doc/logo.png)
 
 Welcome to APT. The purpose of this software is to run various analysis methods
 on Petri nets and labeled transition systems. This guide explains the most
