@@ -25,7 +25,8 @@ transition. These sets are multiset and thus can contain an entry more than
 once.
 
 Altogether, the file formats are, hopefully, simple and easy to read. Just look
-at some of the sample files to get started! For a formal grammar and a more detailed description, take a look into APT.pdf in ./doc/. 
+at some of the sample files in the nets/ directory to get started! For a formal
+grammar and a more detailed description, take a look into APT.pdf in ./doc/.
 
 Of course there are also formal definitions of the properties analyzed in our
 tool. Many of these can be found in the document APT.pdf in ./doc/.
