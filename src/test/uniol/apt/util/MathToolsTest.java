@@ -32,10 +32,17 @@ public class MathToolsTest {
 	private final int bigPrime2 = 284678627;
 
 	@Test
-	public void testGGT() {
+	public void testGCD() {
+		assertEquals(MathTools.gcd(0, 5), 5);
+		assertEquals(MathTools.gcd(5, 0), 5);
+		assertEquals(MathTools.gcd(15, 5), 5);
 		assertEquals(MathTools.gcd(17, 5), 1);
 		assertEquals(MathTools.gcd(-17, 5), 1);
 		assertEquals(MathTools.gcd(-17, -5), 1);
+	}
+
+	@Test
+	public void testMod() {
 		assertEquals(-11 % 5, -1);
 		assertEquals(MathTools.mod(-11, 5), 4);
 	}
