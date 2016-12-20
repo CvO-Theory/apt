@@ -45,7 +45,7 @@ import uniol.apt.util.interrupt.InterrupterRegistry;
  * of Marked Graph Petri Nets" by Eike Best and Raymond Devillers.
  * @author Uli Schlachter
  */
-class MarkedGraphSeparation implements Separation {
+class MarkedGraphSeparation implements SuccessfulSeparation {
 	private final RegionUtility utility;
 	private final List<Region> regions;
 	private final Map<Integer, List<BigInteger>> reachedOnlyByPVs;
@@ -193,6 +193,11 @@ class MarkedGraphSeparation implements Separation {
 
 		assert !utility.getSpanningTree().isReachable(state) || SeparationUtility.isEventEnabled(state, event);
 		return null;
+	}
+
+	@Override
+	public List<Region> getSeparatingRegions() {
+		return Collections.unmodifiableList(regions);
 	}
 }
 

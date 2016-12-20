@@ -60,6 +60,7 @@ import uniol.apt.analysis.separation.LargestK;
 import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.synthesize.separation.Separation;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
+import uniol.apt.analysis.synthesize.separation.SuccessfulSeparation;
 import uniol.apt.util.DifferentPairsIterable;
 import uniol.apt.util.EquivalenceRelation;
 import uniol.apt.util.Pair;
@@ -244,25 +245,32 @@ public class SynthesizePN {
 
 		debug("Input regions: ", regions);
 
-		// ESSP calculates new regions while SSP only choses regions from the basis. Solve ESSP first since the
-		// calculated regions may also solve SSP and thus we get less places in the resulting net.
-		debug();
-		debug("Solving event-state separation");
-		solveEventStateSeparation();
+		if (this.separation instanceof SuccessfulSeparation) {
+			SuccessfulSeparation successfulSeparation = (SuccessfulSeparation) this.separation;
+			debug("Have instance of SuccessfulSeparation, separating regions are given directly:");
+			debug(successfulSeparation.getSeparatingRegions());
+			this.regions.addAll(successfulSeparation.getSeparatingRegions());
+		} else {
+			// ESSP calculates new regions while SSP only choses regions from the basis. Solve ESSP first since the
+			// calculated regions may also solve SSP and thus we get less places in the resulting net.
+			debug();
+			debug("Solving event-state separation");
+			solveEventStateSeparation();
 
-		if (quickFail && !wasSuccessfullySeparated())
-			return;
+			if (quickFail && !wasSuccessfullySeparated())
+				return;
 
-		debug();
-		debug("Solving state separation");
-		solveStateSeparation();
+			debug();
+			debug("Solving state separation");
+			solveStateSeparation();
 
-		if (quickFail && !wasSuccessfullySeparated())
-			return;
+			if (quickFail && !wasSuccessfullySeparated())
+				return;
 
-		debug();
-		debug("Minimizing regions");
-		minimizeRegions(utility, regions, onlyEventSeparation);
+			debug();
+			debug("Minimizing regions");
+			minimizeRegions(utility, regions, onlyEventSeparation);
+		}
 
 		debug();
 	}
