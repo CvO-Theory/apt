@@ -40,21 +40,21 @@ import uniol.apt.module.exception.ModuleException;
  */
 @AptModule
 public class PersistentModule extends AbstractInterruptibleModule implements InterruptibleModule {
-	private final boolean backwards;
+	private final boolean backward;
 
 	/**
-	 * Initializes the {@link PersistentModule} with the backwards-flag set
+	 * Initializes the {@link PersistentModule} with the backward-flag set
 	 * to the given value.
 	 *
-	 * @param backwards
-	 *                true if backwards persistent property is checked
+	 * @param backward
+	 *                true if backward persistent property is checked
 	 */
-	public PersistentModule(boolean backwards) {
-		this.backwards = backwards;
+	public PersistentModule(boolean backward) {
+		this.backward = backward;
 	}
 
 	/**
-	 * Initializes the {@link PersistentModule} with the backwards-flag set
+	 * Initializes the {@link PersistentModule} with the backward-flag set
 	 * to {@code false}.
 	 */
 	public PersistentModule() {
@@ -63,7 +63,7 @@ public class PersistentModule extends AbstractInterruptibleModule implements Int
 
 	@Override
 	public String getName() {
-		return "persistent";
+		return this.backward ? "backward_persistent" : "persistent";
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class PersistentModule extends AbstractInterruptibleModule implements Int
 		output.setReturnValue("state", State.class, null);
 
 		if (pn != null) {
-			PersistentNet persistent = new PersistentNet(pn, backwards);
+			PersistentNet persistent = new PersistentNet(pn, backward);
 			persistent.check();
 
 			output.setReturnValue("persistent", Boolean.class, persistent.isPersistent());
@@ -100,7 +100,7 @@ public class PersistentModule extends AbstractInterruptibleModule implements Int
 			output.setReturnValue("first_label", String.class, persistent.getLabel1());
 			output.setReturnValue("second_label", String.class, persistent.getLabel2());
 		} else {
-			PersistentTS persistent = new PersistentTS(ts, backwards);
+			PersistentTS persistent = new PersistentTS(ts, backward);
 			output.setReturnValue("persistent", Boolean.class, persistent.isPersistent());
 			output.setReturnValue("state", State.class, persistent.getNode());
 			output.setReturnValue("first_label", String.class, persistent.getLabel1());
@@ -110,15 +110,22 @@ public class PersistentModule extends AbstractInterruptibleModule implements Int
 
 	@Override
 	public String getShortDescription() {
-		return "Check if a Petri net or LTS is persistent";
+		return "Check if a Petri net or LTS is " + (this.backward ? "backward " : "") + "persistent";
 	}
 
 	@Override
 	public String getLongDescription() {
 		return getShortDescription() + ".\n\n"
-			+ "A LTS is persistent if for all reachable states s and enabled labels a, b (a≠b),"
-			+ " there is a state r so that both s[ab>r and s[ba>r."
-			+ " A Petri net is persistent if its reachability graph is persistent.";
+			+ "A LTS is" + (this.backward ? " backward" : "")
+			+ " persistent if for all reachable states s and"
+			+ (this.backward ? " backward" : "")
+			+ " enabled labels a, b (a≠b), there is a state r so that both "
+			+ (this.backward ? "r[ab>s and r[ba>s" : "s[ab>r and s[ba>r")
+			+ ". A Petri net is"
+			+ (this.backward ? " backward" : "")
+			+ " persistent if its reachability graph is"
+			+ (this.backward ? " backward" : "")
+			+ " persistent.";
 	}
 
 	@Override

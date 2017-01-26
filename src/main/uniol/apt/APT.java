@@ -125,6 +125,7 @@ public class APT {
 		REMOVED_MODULES.put("pnml2apt",    "Use pn_convert / lts_convert pnml apt instead.");
 		REMOVED_MODULES.put("synet2apt",   "Use pn_convert / lts_convert synet apt instead.");
 		REMOVED_MODULES.put("info",        "Use examine_pn instead.");
+		REMOVED_MODULES.put("backwards_persistent", "Use backward_persistent instead.");
 	}
 
 	/**

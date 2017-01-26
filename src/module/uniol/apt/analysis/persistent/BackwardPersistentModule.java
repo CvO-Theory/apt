@@ -26,15 +26,9 @@ import uniol.apt.module.InterruptibleModule;
  * @author Uli Schlachter
  */
 @AptModule
-public class BackwardsPersistentModule extends PersistentModule implements InterruptibleModule {
-
-	public BackwardsPersistentModule() {
+public class BackwardPersistentModule extends PersistentModule implements InterruptibleModule {
+	public BackwardPersistentModule() {
 		super(true);
-	}
-
-	@Override
-	public String getName() {
-		return "backwards_persistent";
 	}
 }
 
