@@ -80,6 +80,7 @@ public class EquivalenceRelationTest {
 	public void testTwoElements() {
 		EquivalenceRelation<String> relation = new EquivalenceRelation<>();
 		assertThat(relation.joinClasses("a", "b"), containsInAnyOrder("a", "b"));
+		assertThat(relation.joinClasses("c", "c"), containsInAnyOrder("c"));
 
 		assertThat(relation.isEquivalent("a", "b"), is(true));
 		assertThat(relation.isEquivalent("b", "a"), is(true));
@@ -87,8 +88,8 @@ public class EquivalenceRelationTest {
 		assertThat(relation.getClass("a"), containsInAnyOrder("a", "b"));
 		assertThat(relation.getClass("c"), contains("c"));
 		assertThat(relation.getClass("b"), sameInstance(relation.getClass("a")));
-		assertThat(relation, contains(containsInAnyOrder("a", "b")));
 		assertThat(relation, hasSize(1));
+		assertThat(relation, contains(containsInAnyOrder("a", "b")));
 	}
 
 	@Test
