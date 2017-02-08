@@ -21,6 +21,7 @@ package uniol.apt.analysis.synthesize.separation;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -45,7 +46,7 @@ import uniol.apt.util.interrupt.InterrupterRegistry;
  * of Marked Graph Petri Nets" by Eike Best and Raymond Devillers.
  * @author Uli Schlachter
  */
-class MarkedGraphSeparation implements SuccessfulSeparation {
+class MarkedGraphSeparation implements Separation, Synthesizer {
 	private final RegionUtility utility;
 	private final List<Region> regions;
 	private final Map<Integer, List<BigInteger>> reachedOnlyByPVs;
@@ -198,6 +199,16 @@ class MarkedGraphSeparation implements SuccessfulSeparation {
 	@Override
 	public List<Region> getSeparatingRegions() {
 		return Collections.unmodifiableList(regions);
+	}
+
+	@Override
+	public Collection<Set<State>> getUnsolvableStateSeparationProblems() {
+		return Collections.emptySet();
+	}
+
+	@Override
+	public Map<String, Set<State>> getUnsolvableEventStateSeparationProblems() {
+		return Collections.emptyMap();
 	}
 }
 

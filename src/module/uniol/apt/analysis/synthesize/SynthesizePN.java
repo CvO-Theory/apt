@@ -61,7 +61,6 @@ import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.synthesize.separation.Separation;
 import uniol.apt.analysis.synthesize.separation.SeparationSynthesizer;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
-import uniol.apt.analysis.synthesize.separation.SuccessfulSeparation;
 import uniol.apt.analysis.synthesize.separation.Synthesizer;
 import uniol.apt.util.EquivalenceRelation;
 import uniol.apt.util.Pair;
@@ -246,40 +245,39 @@ public class SynthesizePN {
 
 		debug("Input regions: ", regions);
 
-
-		if (this.separation instanceof SuccessfulSeparation) {
-			SuccessfulSeparation successfulSeparation = (SuccessfulSeparation) this.separation;
-			debug("Have instance of SuccessfulSeparation, separating regions are given directly:");
-			debug(successfulSeparation.getSeparatingRegions());
-			this.regions.addAll(successfulSeparation.getSeparatingRegions());
+		Synthesizer synthesizer;
+		if (this.separation instanceof Synthesizer) {
+			synthesizer = (Synthesizer) separation;
+			debug("Have instance of Synthesizer, skipping iteration of separation problems.");
 		} else {
-			Synthesizer synthesizer = new SeparationSynthesizer(ts, separation, onlyEventSeparation, quickFail);
-			regions.addAll(synthesizer.getSeparatingRegions());
+			synthesizer = new SeparationSynthesizer(ts, separation, onlyEventSeparation, quickFail);
+		}
 
-			// Handle unsolvable state separation problems
-			for (Set<State> group : synthesizer.getUnsolvableStateSeparationProblems()) {
-				Iterator<State> iter = group.iterator();
-				if (!iter.hasNext())
-					continue;
-				State first = mapState(iter.next());
-				while (iter.hasNext()) {
-					State next = mapState(iter.next());
-					failedStateSeparationRelation.joinClasses(first, next);
-				}
-			}
+		regions.addAll(synthesizer.getSeparatingRegions());
 
-			// Handle unsolvable event/state separation problems
-			for (Map.Entry<String, Set<State>> entry : synthesizer.getUnsolvableEventStateSeparationProblems()
-					.entrySet()) {
-				Set<State> states = entry.getValue();
-				if (states.isEmpty())
-					continue;
-				Set<State> mappedStates = new HashSet<>();
-				for (State state : states) {
-					mappedStates.add(mapState(state));
-				}
-				failedEventStateSeparationProblems.put(entry.getKey(), mappedStates);
+		// Handle unsolvable state separation problems
+		for (Set<State> group : synthesizer.getUnsolvableStateSeparationProblems()) {
+			Iterator<State> iter = group.iterator();
+			if (!iter.hasNext())
+				continue;
+			State first = mapState(iter.next());
+			while (iter.hasNext()) {
+				State next = mapState(iter.next());
+				failedStateSeparationRelation.joinClasses(first, next);
 			}
+		}
+
+		// Handle unsolvable event/state separation problems
+		for (Map.Entry<String, Set<State>> entry : synthesizer.getUnsolvableEventStateSeparationProblems()
+				.entrySet()) {
+			Set<State> states = entry.getValue();
+			if (states.isEmpty())
+				continue;
+			Set<State> mappedStates = new HashSet<>();
+			for (State state : states) {
+				mappedStates.add(mapState(state));
+			}
+			failedEventStateSeparationProblems.put(entry.getKey(), mappedStates);
 		}
 	}
 
