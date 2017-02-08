@@ -417,6 +417,7 @@
 			</structure>
 
 			<html destdir="reports/jacoco/"/>
+			<xml destfile="reports/jacoco/jacoco.xml"/>
 		</report>
 	</target>
 
