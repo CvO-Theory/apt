@@ -229,6 +229,24 @@ public final class SeparationUtility {
 		debug("Created Separation instance from class ", result.getClass().getName());
 		return result;
 	}
+
+	/**
+	 * Construct a new Synthesizer instance.
+	 * @param utility The region utility to use.
+	 * @param properties Properties that the calculated region should satisfy.
+	 * @param onlyEventSeparation A flag indicating that state separation should be ignored.
+	 * @param quickFail If true, stop the calculation as soon as it is known that it won't be successful. If false,
+	 * try to solve all separation problems. Only if true will the list of failed problems be fully filled.
+	 * @return A suitable Separation instance
+	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
+	 */
+	static public Synthesizer createSynthesizerInstance(RegionUtility utility, PNProperties properties,
+			boolean onlyEventSeparation, boolean quickFail) throws MissingLocationException {
+		Separation result = createSeparationInstance(utility, properties);
+		if (result instanceof Synthesizer)
+			return (Synthesizer) result;
+		return new SeparationSynthesizer(utility.getTransitionSystem(), result, onlyEventSeparation, quickFail);
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

@@ -58,7 +58,6 @@ import uniol.apt.analysis.on.OutputNonBranching;
 import uniol.apt.analysis.plain.Plain;
 import uniol.apt.analysis.separation.LargestK;
 import uniol.apt.analysis.sideconditions.Pure;
-import uniol.apt.analysis.synthesize.separation.Separation;
 import uniol.apt.analysis.synthesize.separation.SeparationSynthesizer;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
 import uniol.apt.analysis.synthesize.separation.Synthesizer;
@@ -78,7 +77,6 @@ public class SynthesizePN {
 	private final EquivalenceRelation<State> failedStateSeparationRelation = new EquivalenceRelation<>();
 	private final Map<String, Set<State>> failedEventStateSeparationProblems = new HashMap<>();
 	private final PNProperties properties;
-	private final Separation separation;
 	private final String stateMappingExtension;
 	private final boolean quickFail;
 
@@ -238,21 +236,14 @@ public class SynthesizePN {
 		this.utility = utility;
 		this.onlyEventSeparation = onlyEventSeparation;
 		this.properties = properties;
-		this.separation = SeparationUtility.createSeparationInstance(utility, properties);
 		this.stateMappingExtension = stateMappingExtension;
 		this.quickFail = quickFail;
 		this.regions = new HashSet<>(extraRegions);
 
 		debug("Input regions: ", regions);
 
-		Synthesizer synthesizer;
-		if (this.separation instanceof Synthesizer) {
-			synthesizer = (Synthesizer) separation;
-			debug("Have instance of Synthesizer, skipping iteration of separation problems.");
-		} else {
-			synthesizer = new SeparationSynthesizer(ts, separation, onlyEventSeparation, quickFail);
-		}
-
+		Synthesizer synthesizer = SeparationUtility.createSynthesizerInstance(utility, properties,
+				onlyEventSeparation, quickFail);
 		regions.addAll(synthesizer.getSeparatingRegions());
 
 		// Handle unsolvable state separation problems
