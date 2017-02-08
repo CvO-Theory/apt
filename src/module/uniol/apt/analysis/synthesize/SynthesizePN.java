@@ -269,7 +269,7 @@ public class SynthesizePN {
 
 			debug();
 			debug("Minimizing regions");
-			minimizeRegions(utility, regions, onlyEventSeparation);
+			minimizeRegions(ts, regions, onlyEventSeparation);
 		}
 
 		debug();
@@ -413,7 +413,7 @@ public class SynthesizePN {
 	/**
 	 * Calculate definitely required regions and for each remaining separation problem all regions which solve this
 	 * problem.
-	 * @param utility The region utility on which this function should work.
+	 * @param ts The transition system that is being solved.
 	 * @param separationProblems For each still unsolved separation problem, the set of all regions that solve it is
 	 * calculated and added to this argument.
 	 * @param requiredRegions Regions which are definitely required will be added to this set.
@@ -421,10 +421,9 @@ public class SynthesizePN {
 	 * requiredRegions.
 	 * @param onlyEventSeparation Should state separation be ignored?
 	 */
-	static private void calculateRequiredRegionsAndProblems(RegionUtility utility,
+	static private void calculateRequiredRegionsAndProblems(TransitionSystem ts,
 			Set<Set<Region>> separationProblems, Set<Region> requiredRegions, Set<Region> remainingRegions,
 			boolean onlyEventSeparation) {
-		TransitionSystem ts = utility.getTransitionSystem();
 		// Event separation
 		problemLoop:
 		for (Pair<State, String> problem : new EventStateSeparationProblems(ts)) {
@@ -458,8 +457,7 @@ public class SynthesizePN {
 		// State separation
 		// All regions which are already separated by our requiredRegions can be skipped, so use
 		// calculateUnseparatedStates() to look at the rest.
-		Set<State> remainingStates = new HashSet<>(calculateUnseparatedStates(
-					utility.getTransitionSystem().getNodes(), requiredRegions));
+		Set<State> remainingStates = new HashSet<>(calculateUnseparatedStates(ts.getNodes(), requiredRegions));
 		Iterator<State> iterator = remainingStates.iterator();
 		while (iterator.hasNext()) {
 			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
@@ -493,11 +491,11 @@ public class SynthesizePN {
 
 	/**
 	 * Try to eliminate redundant regions.
-	 * @param utility The region utility on which this function should work.
+	 * @param ts The transition system that is being solved.
 	 * @param requiredRegions Set of regions to minimize. Redundant regions will be removed.
 	 * @param onlyEventSeparation Should state separation be ignored?
 	 */
-	static public void minimizeRegions(RegionUtility utility, Set<Region> requiredRegions,
+	static public void minimizeRegions(TransitionSystem ts, Set<Region> requiredRegions,
 			boolean onlyEventSeparation) {
 		int numInputRegions = requiredRegions.size();
 		Set<Region> remainingRegions = new HashSet<>(requiredRegions);
@@ -506,7 +504,7 @@ public class SynthesizePN {
 		// Build a list where each entry is generated from a separation problem and contains all regions that
 		// solve this problem.
 		Set<Set<Region>> separationProblems = new HashSet<>();
-		calculateRequiredRegionsAndProblems(utility, separationProblems, requiredRegions, remainingRegions,
+		calculateRequiredRegionsAndProblems(ts, separationProblems, requiredRegions, remainingRegions,
 				onlyEventSeparation);
 
 		debug("Required regions after first pass:");

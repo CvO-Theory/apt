@@ -398,7 +398,7 @@ public class SynthesizePNTest {
 		public void testEmpty() {
 			Set<Region> regions = new HashSet<>();
 
-			SynthesizePN.minimizeRegions(utility, regions, false);
+			SynthesizePN.minimizeRegions(ts, regions, false);
 			assertThat(regions, empty());
 		}
 
@@ -406,7 +406,7 @@ public class SynthesizePNTest {
 		public void testEmptyESSP() {
 			Set<Region> regions = new HashSet<>();
 
-			SynthesizePN.minimizeRegions(utility, regions, true);
+			SynthesizePN.minimizeRegions(ts, regions, true);
 			assertThat(regions, empty());
 		}
 
@@ -416,7 +416,7 @@ public class SynthesizePNTest {
 					.withNormalRegionInitialMarking();
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
-			SynthesizePN.minimizeRegions(utility, regions, false);
+			SynthesizePN.minimizeRegions(ts, regions, false);
 			assertThat(regions, containsInAnyOrder(region));
 		}
 
@@ -426,7 +426,7 @@ public class SynthesizePNTest {
 					.withNormalRegionInitialMarking();
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
-			SynthesizePN.minimizeRegions(utility, regions, true);
+			SynthesizePN.minimizeRegions(ts, regions, true);
 			assertThat(regions, containsInAnyOrder(region));
 		}
 
@@ -436,7 +436,7 @@ public class SynthesizePNTest {
 					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
-			SynthesizePN.minimizeRegions(utility, regions, false);
+			SynthesizePN.minimizeRegions(ts, regions, false);
 			assertThat(regions, empty());
 		}
 
@@ -446,7 +446,7 @@ public class SynthesizePNTest {
 					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region));
 
-			SynthesizePN.minimizeRegions(utility, regions, true);
+			SynthesizePN.minimizeRegions(ts, regions, true);
 			assertThat(regions, empty());
 		}
 
@@ -458,7 +458,7 @@ public class SynthesizePNTest {
 					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
-			SynthesizePN.minimizeRegions(utility, regions, false);
+			SynthesizePN.minimizeRegions(ts, regions, false);
 			assertThat(regions, containsInAnyOrder(region1, region2));
 		}
 
@@ -470,7 +470,7 @@ public class SynthesizePNTest {
 					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
-			SynthesizePN.minimizeRegions(utility, regions, true);
+			SynthesizePN.minimizeRegions(ts, regions, true);
 			assertThat(regions, containsInAnyOrder(region1, region2));
 		}
 
@@ -484,7 +484,7 @@ public class SynthesizePNTest {
 					.withNormalRegionInitialMarking();
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2, region3));
 
-			SynthesizePN.minimizeRegions(utility, regions, false);
+			SynthesizePN.minimizeRegions(ts, regions, false);
 			assertThat(regions, containsInAnyOrder(region1, region2));
 		}
 
@@ -498,7 +498,7 @@ public class SynthesizePNTest {
 					.withNormalRegionInitialMarking();
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2, region3));
 
-			SynthesizePN.minimizeRegions(utility, regions, true);
+			SynthesizePN.minimizeRegions(ts, regions, true);
 			assertThat(regions, containsInAnyOrder(region1, region2));
 		}
 
@@ -510,7 +510,7 @@ public class SynthesizePNTest {
 					.withInitialMarking(BigInteger.valueOf(2));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
-			SynthesizePN.minimizeRegions(utility, regions, false);
+			SynthesizePN.minimizeRegions(ts, regions, false);
 			assertThat(regions, anyOf(contains(region1), contains(region2)));
 		}
 
@@ -522,7 +522,7 @@ public class SynthesizePNTest {
 					.withInitialMarking(BigInteger.valueOf(2));
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
-			SynthesizePN.minimizeRegions(utility, regions, true);
+			SynthesizePN.minimizeRegions(ts, regions, true);
 			assertThat(regions, anyOf(contains(region1), contains(region2)));
 		}
 
@@ -538,7 +538,7 @@ public class SynthesizePNTest {
 					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
-			SynthesizePN.minimizeRegions(utility, regions, false);
+			SynthesizePN.minimizeRegions(ts, regions, false);
 			assertThat(regions, contains(region1));
 		}
 
@@ -554,7 +554,7 @@ public class SynthesizePNTest {
 					.withInitialMarking(BigInteger.ONE);
 			Set<Region> regions = new HashSet<>(Arrays.asList(region1, region2));
 
-			SynthesizePN.minimizeRegions(utility, regions, true);
+			SynthesizePN.minimizeRegions(ts, regions, true);
 			assertThat(regions, contains(region1));
 		}
 	}

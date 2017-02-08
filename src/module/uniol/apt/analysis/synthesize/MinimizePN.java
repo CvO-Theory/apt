@@ -83,7 +83,8 @@ public class MinimizePN {
 					break;
 
 				// minimizeRegions() can often reduce the number of regions even more
-				SynthesizePN.minimizeRegions(utility, newRegions, onlyEventSeparation);
+				SynthesizePN.minimizeRegions(utility.getTransitionSystem(), newRegions,
+						onlyEventSeparation);
 				separatingRegions = newRegions;
 			}
 			debug("Could not reduce number of regions any more");
