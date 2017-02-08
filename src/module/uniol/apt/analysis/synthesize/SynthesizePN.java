@@ -77,8 +77,6 @@ public class SynthesizePN {
 	private final EquivalenceRelation<State> failedStateSeparationRelation = new EquivalenceRelation<>();
 	private final Map<String, Set<State>> failedEventStateSeparationProblems = new HashMap<>();
 	private final PNProperties properties;
-	private final String stateMappingExtension;
-	private final boolean quickFail;
 
 	/**
 	 * Builder class for creating instances of SynthesizePN. You create an instance of this class via {@link
@@ -236,8 +234,6 @@ public class SynthesizePN {
 		this.utility = utility;
 		this.onlyEventSeparation = onlyEventSeparation;
 		this.properties = properties;
-		this.stateMappingExtension = stateMappingExtension;
-		this.quickFail = quickFail;
 		this.regions = new HashSet<>(extraRegions);
 
 		debug("Input regions: ", regions);
@@ -251,9 +247,9 @@ public class SynthesizePN {
 			Iterator<State> iter = group.iterator();
 			if (!iter.hasNext())
 				continue;
-			State first = mapState(iter.next());
+			State first = mapState(stateMappingExtension, iter.next());
 			while (iter.hasNext()) {
-				State next = mapState(iter.next());
+				State next = mapState(stateMappingExtension, iter.next());
 				failedStateSeparationRelation.joinClasses(first, next);
 			}
 		}
@@ -266,13 +262,13 @@ public class SynthesizePN {
 				continue;
 			Set<State> mappedStates = new HashSet<>();
 			for (State state : states) {
-				mappedStates.add(mapState(state));
+				mappedStates.add(mapState(stateMappingExtension, state));
 			}
 			failedEventStateSeparationProblems.put(entry.getKey(), mappedStates);
 		}
 	}
 
-	private State mapState(State state) {
+	private State mapState(String stateMappingExtension, State state) {
 		if (stateMappingExtension == null)
 			return state;
 		return (State) state.getExtension(stateMappingExtension);
