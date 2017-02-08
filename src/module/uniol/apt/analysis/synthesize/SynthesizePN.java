@@ -59,9 +59,10 @@ import uniol.apt.analysis.plain.Plain;
 import uniol.apt.analysis.separation.LargestK;
 import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.synthesize.separation.Separation;
+import uniol.apt.analysis.synthesize.separation.SeparationSynthesizer;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
 import uniol.apt.analysis.synthesize.separation.SuccessfulSeparation;
-import uniol.apt.util.DifferentPairsIterable;
+import uniol.apt.analysis.synthesize.separation.Synthesizer;
 import uniol.apt.util.EquivalenceRelation;
 import uniol.apt.util.Pair;
 import uniol.apt.util.interrupt.InterrupterRegistry;
@@ -245,34 +246,41 @@ public class SynthesizePN {
 
 		debug("Input regions: ", regions);
 
+
 		if (this.separation instanceof SuccessfulSeparation) {
 			SuccessfulSeparation successfulSeparation = (SuccessfulSeparation) this.separation;
 			debug("Have instance of SuccessfulSeparation, separating regions are given directly:");
 			debug(successfulSeparation.getSeparatingRegions());
 			this.regions.addAll(successfulSeparation.getSeparatingRegions());
 		} else {
-			// ESSP calculates new regions while SSP only choses regions from the basis. Solve ESSP first since the
-			// calculated regions may also solve SSP and thus we get less places in the resulting net.
-			debug();
-			debug("Solving event-state separation");
-			solveEventStateSeparation();
+			Synthesizer synthesizer = new SeparationSynthesizer(ts, separation, onlyEventSeparation, quickFail);
+			regions.addAll(synthesizer.getSeparatingRegions());
 
-			if (quickFail && !wasSuccessfullySeparated())
-				return;
+			// Handle unsolvable state separation problems
+			for (Set<State> group : synthesizer.getUnsolvableStateSeparationProblems()) {
+				Iterator<State> iter = group.iterator();
+				if (!iter.hasNext())
+					continue;
+				State first = mapState(iter.next());
+				while (iter.hasNext()) {
+					State next = mapState(iter.next());
+					failedStateSeparationRelation.joinClasses(first, next);
+				}
+			}
 
-			debug();
-			debug("Solving state separation");
-			solveStateSeparation();
-
-			if (quickFail && !wasSuccessfullySeparated())
-				return;
-
-			debug();
-			debug("Minimizing regions");
-			minimizeRegions(ts, regions, onlyEventSeparation);
+			// Handle unsolvable event/state separation problems
+			for (Map.Entry<String, Set<State>> entry : synthesizer.getUnsolvableEventStateSeparationProblems()
+					.entrySet()) {
+				Set<State> states = entry.getValue();
+				if (states.isEmpty())
+					continue;
+				Set<State> mappedStates = new HashSet<>();
+				for (State state : states) {
+					mappedStates.add(mapState(state));
+				}
+				failedEventStateSeparationProblems.put(entry.getKey(), mappedStates);
+			}
 		}
-
-		debug();
 	}
 
 	private State mapState(State state) {
@@ -333,81 +341,6 @@ public class SynthesizePN {
 			result.addAll(family);
 
 		return result;
-	}
-
-	/**
-	 * Solve all instances of the state separation problem (SSP).
-	 */
-	private void solveStateSeparation() {
-		if (onlyEventSeparation)
-			return;
-
-		for (Pair<State, State> problem : new DifferentPairsIterable<State>(
-					calculateUnseparatedStates(ts.getNodes(), regions))) {
-			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
-
-			State state = problem.getFirst();
-			State otherState = problem.getSecond();
-			debugFormat("Trying to separate %s from %s", state, otherState);
-			Region r = null;
-			for (Region region : regions)
-				if (SeparationUtility.isSeparatingRegion(region, state, otherState)) {
-					r = region;
-					break;
-				}
-			if (r != null) {
-				debug("Found region ", r);
-				continue;
-			}
-
-			r = separation.calculateSeparatingRegion(state, otherState);
-			if (r == null) {
-				failedStateSeparationRelation.joinClasses(mapState(state),
-						mapState(otherState));
-				debug("Failure!");
-				if (quickFail)
-					return;
-			} else {
-				debug("Calculated region ", r);
-				regions.add(r);
-			}
-		}
-	}
-
-	/**
-	 * Solve all instances of the event/state separation problem (ESSP).
-	 */
-	private void solveEventStateSeparation() {
-		Map<String, Set<State>> failedProblems = LazyMap.lazyMap(failedEventStateSeparationProblems,
-				FactoryUtils.prototypeFactory(new HashSet<State>()));
-		for (Pair<State, String> problem : new EventStateSeparationProblems(ts)) {
-			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
-
-			State state = problem.getFirst();
-			String event = problem.getSecond();
-			debugFormat("Trying to separate %s from event '%s'", state, event);
-			Region r = null;
-			for (Region region : regions)
-				if (SeparationUtility.isSeparatingRegion(region, state, event)) {
-					r = region;
-					break;
-				}
-			if (r != null) {
-				debug("Found region ", r);
-				continue;
-			}
-
-			r = separation.calculateSeparatingRegion(state, event);
-			if (r == null) {
-				failedProblems.get(event).add(mapState(state));
-				debug("Failure!");
-				if (quickFail)
-					return;
-			} else {
-				debug("Calculated region ", r);
-				regions.add(r);
-			}
-		}
 	}
 
 	/**
