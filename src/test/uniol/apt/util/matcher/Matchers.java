@@ -25,6 +25,8 @@ import uniol.apt.util.Pair;
 
 import org.hamcrest.Matcher;
 
+import static org.hamcrest.Matchers.is;
+
 /**
  * Matchers to verify that utility classes match given conditions.
  *
@@ -33,6 +35,10 @@ import org.hamcrest.Matcher;
 public class Matchers {
 	public static <T, U> Matcher<? super Pair<? extends T, ? extends U>> pairWith(Matcher<T> t, Matcher<U> u) {
 		return PairWithMatcher.<T, U>pairWith(t, u);
+	}
+
+	public static <T, U> Matcher<? super Pair<? extends T, ? extends U>> pairWith(T t, U u) {
+		return pairWith(is(t), is(u));
 	}
 
 	public static <T> Matcher<Iterable<? extends T>> containsRotated(List<Matcher<? super T>> expected) {
