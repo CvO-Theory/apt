@@ -36,23 +36,6 @@ public class MathTools {
 	}
 
 	/**
-	 * Calculates the gcd of a given set of BigIntegers.
-	 * @param set - the BigIntegers to calculate the gcd from.
-	 * @return the gcd of the BigIntegers of the given set.
-	 */
-	public static BigInteger gcdBigInteger(Collection<BigInteger> set) {
-		if (set.isEmpty())
-			return BigInteger.ZERO;
-		Iterator<BigInteger> iter = set.iterator();
-		BigInteger gcd = iter.next();
-		while (iter.hasNext()) {
-			BigInteger b = iter.next();
-			gcd = gcd.compareTo(b) < 0 ? b.gcd(gcd) : gcd.gcd(b);
-		}
-		return gcd;
-	}
-
-	/**
 	 * Calculates the gcd of a given set of integers.
 	 * @param set - the integers to calculate the gcd from.
 	 * @return the gcd of the integers of the given set.
