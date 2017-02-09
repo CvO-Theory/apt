@@ -102,35 +102,6 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 		return targetId;
 	}
 
-	/**
-	 * Compares this flow to another by checking there weight, source- and targetid. Also checking if the belong to
-	 * the same net.
-	 * @param obj - the other object to compare to
-	 * @return true if the label, source- and targetid are equal and the reference of petri net are the same.
-	 */
-	public boolean compare(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final Flow other = (Flow) obj;
-		if (!Objects.equals(this.weight, other.weight)) {
-			return false;
-		}
-		if (!Objects.equals(this.sourceId, other.sourceId)) {
-			return false;
-		}
-		if (!Objects.equals(this.targetId, other.targetId)) {
-			return false;
-		}
-		if (this.graph != other.graph) {
-			return false;
-		}
-		return true;
-	}
-
 	@Override
 	public String toString() {
 		return getSourceId() + "--" + weight + "->" + getTargetId();
