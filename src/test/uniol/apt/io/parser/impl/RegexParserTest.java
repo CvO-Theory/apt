@@ -258,6 +258,11 @@ public class RegexParserTest {
 		new RegexParser().parseString("a{-42}");
 	}
 
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Invalid repetition specification, must satisfy min = 2 <= 1 = max$")
+	public void testBadRepeat9() throws Exception {
+		new RegexParser().parseString("a{2,1}");
+	}
+
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 2: no viable alternative at input '\\*'$")
 	public void testBadIntersection1() throws Exception {
 		new RegexParser().parseString("b&*b");

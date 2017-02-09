@@ -164,7 +164,12 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 			assert automaton != null;
 			int x = Integer.parseInt(ctx.x.getText());
 			int y = Integer.parseInt(ctx.y.getText());
-			this.automatons.put(ctx, repeat(automaton, x, y));
+			try {
+				this.automatons.put(ctx, repeat(automaton, x, y));
+			} catch (IllegalArgumentException e) {
+				throw new ParseRuntimeException("Invalid repetition specification, must satisfy min = "
+						+ x + " <= " + y + " = max", e);
+			}
 		}
 
 		public void exitExprRepeatNothing(RegexFormatParser.ExprRepeatNothingContext ctx) {
@@ -248,7 +253,11 @@ public class RegexParser extends AbstractParser<FiniteAutomaton> implements Pars
 		Set<Symbol> alphabet     = new HashSet<>();
 		walker.walk(new AlphabetListener(alphabet), tree);
 		RegexListener listener = new RegexListener(alphabet);
-		walker.walk(listener, tree);
+		try {
+			walker.walk(listener, tree);
+		} catch (ParseRuntimeException ex) {
+			throw ex.getParseException();
+		}
 
 		return listener.getAutomaton();
 	}
