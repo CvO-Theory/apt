@@ -50,12 +50,16 @@ public class ExampleModule extends AbstractModule implements Module {
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("string", String.class, "Some string");
+		inputSpec.addOptionalParameterWithDefault("error", Boolean.class, false, "false", "If true, the module will fail");
 	}
 
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		String string = input.getParameter("string", String.class);
+		boolean error = input.getParameter("error", Boolean.class);
 		String lowerCaseString = string.toLowerCase();
+		if (error)
+			throw new ModuleException("This module failed: " + string);
 		output.setReturnValue("lower_case_string", String.class, lowerCaseString);
 	}
 
