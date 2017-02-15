@@ -49,8 +49,8 @@ public class ExampleModule extends AbstractModule implements Module {
 
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
-		inputSpec.addParameter("string", String.class, "Some string");
-		inputSpec.addOptionalParameterWithDefault("error", Boolean.class, false, "false", "If true, the module will fail");
+		inputSpec.addParameter("string", String.class, "Some string", "foo");
+		inputSpec.addOptionalParameterWithDefault("error", Boolean.class, false, "false", "If true, the module will fail", "bar");
 	}
 
 	@Override
