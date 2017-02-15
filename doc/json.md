@@ -1,9 +1,9 @@
 JSON interface to APT
 =====================
 
-This document assumes that you [already know how to use APT](doc/using.md). It
-will describe a JSON-based interface to interact with APT. For this, a separate
-JAR file is built: `apt-json.jar`
+This document assumes that you [already know how to use APT](using.md). It will
+describe a JSON-based interface to interact with APT. For this, a separate JAR
+file is built: `apt-json.jar`
 
 When you run `apt-json.jar`, it expects JSON commands on its standard input and
 formats its result as JSON, too. The input can contain a series of commands and
