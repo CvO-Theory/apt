@@ -19,6 +19,18 @@
 
 package uniol.apt.json;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import uniol.apt.module.AptModuleRegistry;
+import uniol.apt.ui.impl.AptParametersTransformer;
+import uniol.apt.ui.impl.AptReturnValuesTransformer;
+
 /**
  * @author Uli Schlachter
  */
@@ -32,9 +44,36 @@ public class Main {
 	/**
 	 * Program entry point.
 	 * @param args command line arguments
+	 * @throws IOException when reading from standard input or writing to standard output fails
 	 */
-	public static void main(String[] args) {
-		throw new RuntimeException();
+	public static void main(String[] args) throws IOException {
+		JSONTokener tokener = new JSONTokener(System.in);
+		JSONExecutor executor = new JSONExecutor(AptModuleRegistry.INSTANCE, AptParametersTransformer.INSTANCE,
+				AptReturnValuesTransformer.INSTANCE);
+		try (Writer writer = new OutputStreamWriter(System.out, "UTF-8")) {
+			// Read commands from the input and execute them until EOF is reached or malformed JSON is read.
+			// The dance with nextClean() and back() is needed so that EOF is detected correctly.
+			boolean exit = false;
+			tokener.nextClean();
+			while (!tokener.end() && !exit) {
+				tokener.back();
+
+				JSONObject result;
+				try {
+					JSONObject obj = new JSONObject(tokener);
+					result = executor.execute(obj);
+				} catch (JSONException e) {
+					// Exception in JSON parsing, abort reading
+					exit = true;
+					result = JSONUtilities.toJSONObject(e);
+				}
+				result.write(writer, 1, 0);
+				writer.write("\n\n");
+				writer.flush();
+
+				tokener.nextClean();
+			}
+		}
 	}
 }
 
