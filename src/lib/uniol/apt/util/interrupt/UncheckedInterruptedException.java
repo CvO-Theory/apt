@@ -30,6 +30,9 @@ public class UncheckedInterruptedException extends RuntimeException {
 
 	private static final long serialVersionUID = 3589054734574902422L;
 
+	public UncheckedInterruptedException() {
+		super("Execution was interrupted");
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
