@@ -12,6 +12,7 @@ Further reading
 
 * [Obtaining APT](doc/obtaining.md)
 * [Guide for using APT](doc/using.md)
+* [JSON-interface for APT](doc/json.md)
 * [The file format](doc/file_format.md)
 * [Extending APT with own modules](doc/extending.md)
 * [Javadoc API documentation](http://CvO-theory.github.io/apt-javadoc/)
