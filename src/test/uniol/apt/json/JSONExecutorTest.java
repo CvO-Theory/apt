@@ -34,6 +34,8 @@ import org.json.JSONWriter;
 
 import uniol.apt.ui.impl.AptParametersTransformer;
 import uniol.apt.ui.impl.AptReturnValuesTransformer;
+import uniol.apt.util.interrupt.InterrupterRegistry;
+import uniol.apt.util.interrupt.NoOpInterrupter;
 
 /** @author Uli Schlachter */
 public class JSONExecutorTest {
@@ -139,11 +141,15 @@ public class JSONExecutorTest {
 
 	@Test
 	public void callModuleSuccess() {
+		assertThat("something else left an interrupter for this thread behind",
+				InterrupterRegistry.getCurrentThreadInterrupter(), instanceOf(NoOpInterrupter.class));
+
 		StringWriter command = new StringWriter();
 		new JSONWriter(command)
 			.object()
 			.key("command").value("run_module")
 			.key("module").value("example")
+			.key("timeout_milliseconds").value(42000)
 			.key("arguments").object()
 				.key("string").value("iNpUt")
 				.endObject()
@@ -155,6 +161,8 @@ public class JSONExecutorTest {
 				.key("lower_case_string").value("input")
 			.endObject().endObject();
 		runTest(command.toString(), result.toString());
+
+		assertThat(InterrupterRegistry.getCurrentThreadInterrupter(), instanceOf(NoOpInterrupter.class));
 	}
 
 	@Test
@@ -199,6 +207,33 @@ public class JSONExecutorTest {
 			.key("type").value("uniol.apt.module.exception.ModuleException")
 			.endObject();
 		runTest(command.toString(), result.toString());
+	}
+
+	@Test
+	public void callModuleWithTimeout() {
+		assertThat("something else left an interrupter for this thread behind",
+				InterrupterRegistry.getCurrentThreadInterrupter(), instanceOf(NoOpInterrupter.class));
+
+		StringWriter command = new StringWriter();
+		new JSONWriter(command)
+			.object()
+			.key("command").value("run_module")
+			.key("module").value("example")
+			.key("timeout_milliseconds").value(0)
+			.key("arguments").object()
+				.key("string").value("iNpUt")
+				.endObject()
+			.endObject();
+
+		StringWriter result = new StringWriter();
+		new JSONWriter(result)
+			.object()
+			.key("error").value("Execution was interrupted")
+			.key("type").value("uniol.apt.util.interrupt.UncheckedInterruptedException")
+			.endObject();
+		runTest(command.toString(), result.toString());
+
+		assertThat(InterrupterRegistry.getCurrentThreadInterrupter(), instanceOf(NoOpInterrupter.class));
 	}
 }
 

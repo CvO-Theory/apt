@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import uniol.apt.module.Category;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleRegistry;
@@ -39,6 +40,11 @@ import uniol.apt.module.impl.Parameter;
 import uniol.apt.module.impl.ReturnValue;
 import uniol.apt.ui.ParametersTransformer;
 import uniol.apt.ui.ReturnValuesTransformer;
+import uniol.apt.util.interrupt.ChainedInterrupter;
+import uniol.apt.util.interrupt.Interrupter;
+import uniol.apt.util.interrupt.InterrupterRegistry;
+import uniol.apt.util.interrupt.TimeoutInterrupter;
+import uniol.apt.util.interrupt.UncheckedInterruptedException;
 
 /**
  * All to interface with modules via JSON commands. This class makes it possible
@@ -47,6 +53,8 @@ import uniol.apt.ui.ReturnValuesTransformer;
  * @author Uli Schlachter
  */
 public class JSONExecutor {
+	static private final long MILLISECONDS_PER_NANOSECOND = 1000l * 1000l;
+
 	private final ModuleRegistry moduleRegistry;
 	private final ParametersTransformer parametersTransformer;
 	private final ReturnValuesTransformer returnValuesTransformer;
@@ -192,13 +200,29 @@ public class JSONExecutor {
 			result.put("error", "No such module");
 			return result;
 		}
+
+		// timeout handling
+		long timeout = arguments.optLong("timeout_milliseconds", -1);
+		Interrupter originalInterrupter = null;
+		if (timeout != -1) {
+			if (!(module instanceof InterruptibleModule)) {
+				result.put("error", "This module does not support timeouts");
+				return result;
+			}
+			originalInterrupter = InterrupterRegistry.getCurrentThreadInterrupter();
+			InterrupterRegistry.setCurrentThreadInterrupter(new ChainedInterrupter(originalInterrupter,
+						new TimeoutInterrupter(timeout * MILLISECONDS_PER_NANOSECOND)));
+		}
 		try {
 			ModuleInput input = transformArguments(module, arguments.getJSONObject("arguments"));
 			ModuleOutputImpl output = ModuleUtils.getModuleOutput(module);
 			module.run(input, output);
 			result.put("return_values", transformReturnValues(module, output));
-		} catch (ModuleException e) {
+		} catch (ModuleException|UncheckedInterruptedException e) {
 			result = JSONUtilities.toJSONObject(e);
+		} finally {
+			if (originalInterrupter != null)
+				InterrupterRegistry.setCurrentThreadInterrupter(originalInterrupter);
 		}
 		return result;
 	}

@@ -46,3 +46,15 @@ this output is produced (some shortening was applied, marked by "[...]"):
     }
     
     {"return_values": {"pn": "[...]"}}
+
+Additionally to what is possible with APT normally, the JSON interface allows to
+specify a timeout for the execution of a module:
+
+    {command:"run_module", "timeout_milliseconds":0, module:"regular_language_to_lts", arguments:{"lang":"a"}}
+
+result in:
+
+    {
+     "error": "Execution was interrupted",
+     "type": "uniol.apt.util.interrupt.UncheckedInterruptedException"
+    }
