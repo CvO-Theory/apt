@@ -19,15 +19,16 @@
 
 package uniol.apt.module.impl;
 
-import uniol.apt.module.AbstractModule;
+import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
-import uniol.apt.module.Module;
+import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
 import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 
 /**
@@ -36,7 +37,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Renke Grunwald
  *
  */
-public class ExampleModule extends AbstractModule implements Module {
+public class ExampleModule extends AbstractInterruptibleModule implements InterruptibleModule {
 	@Override
 	public String getName() {
 		return "example_module";
@@ -60,6 +61,10 @@ public class ExampleModule extends AbstractModule implements Module {
 		String lowerCaseString = string.toLowerCase();
 		if (error)
 			throw new ModuleException("This module failed: " + string);
+
+		// Interruptible modules must regularly call this to check for interruptions
+		InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
 		output.setReturnValue("lower_case_string", String.class, lowerCaseString);
 	}
 
