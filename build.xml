@@ -41,12 +41,22 @@
 		<pathelement location="classes/main" />
 	</path>
 
+	<path id="json.class.path">
+		<pathelement location="lib/json-20160810/json.jar"/>
+		<path refid="lib.class.path" />
+		<path refid="glue.class.path" />
+		<path refid="module.class.path" />
+		<path refid="main.class.path" />
+		<pathelement location="classes/json" />
+	</path>
+
 	<path id="test.class.path">
 		<path refid="glue.class.path" />
 		<path refid="io.class.path" />
 		<path refid="lib.class.path" />
 		<path refid="module.class.path" />
 		<path refid="main.class.path" />
+		<path refid="json.class.path" />
 		<pathelement location="lib/mockito-1.9.5-rc1/mockito-core-1.9.5-rc1.jar" />
 		<pathelement location="lib/objenesis-1.2/objenesis-1.2.jar" />
 		<pathelement location="lib/testng-6.9.9/testng-6.9.9.jar" />
@@ -190,7 +200,11 @@
 		</copy>
 	</target>
 
-	<target name="javac.test" depends="javac.main">
+	<target name="javac.json" depends="javac.main">
+		<javac-part name="json" />
+	</target>
+
+	<target name="javac.test" depends="javac.main,javac.json">
 		<javac-part name="test" src="src/test" />
 	</target>
 
@@ -295,6 +309,7 @@
 			<packageset dir="src/io"/>
 			<packageset dir="src/compiler"/>
 			<packageset dir="src/glue"/>
+			<packageset dir="src/json"/>
 			<!-- Not included: test, ant -->
 			<packageset dir="generated-src/io"/>
 		</javadoc>
@@ -311,6 +326,7 @@
 			<fileset dir="src/io" includes="**/*"/>
 			<fileset dir="src/compiler" includes="**/*"/>
 			<fileset dir="src/glue" includes="**/*"/>
+			<fileset dir="src/json" includes="**/*"/>
 			<fileset dir="src/test" includes="**/*"/>
 			<classpath refid="test.class.path" />
 		</checkstyle>
@@ -367,6 +383,9 @@
 				<include name="**/*.class" />
 			</fileset>
 			<fileset dir="classes/glue">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="classes/json">
 				<include name="**/*.class" />
 			</fileset>
 			<fileset dir="classes/test">
@@ -477,6 +496,14 @@
 			<zipfileset includes="**/*.class" src="lib/smtinterpol-2.1-219-g60cc1b6/smtinterpol.jar"/>
 			<manifest>
 				<attribute name="Main-Class" value="uniol.apt.APT" />
+			</manifest>
+		</jar>
+		<jar destfile="apt-json.jar" duplicate="fail">
+			<zipfileset src="apt.jar"/>
+			<fileset dir="classes/json/"/>
+			<zipfileset includes="**/*.class" src="lib/json-20160810/json.jar"/>
+			<manifest>
+				<attribute name="Main-Class" value="uniol.apt.json.Main" />
 			</manifest>
 		</jar>
 
