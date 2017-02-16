@@ -27,14 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import uniol.apt.adt.PetriNetOrTransitionSystem;
-import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.deterministic.Deterministic;
-import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
@@ -59,39 +55,13 @@ public class Bisimulation {
 	private LinkedList<Pair<State, State>> errorPath;
 
 	/**
-	 * Check,
-	 * 1. if there are two labeled Petri nets -&gt; if the reachability graphs of two labeled Petri nets are bisimilar.
-	 * 2. if there are two transition system -&gt;  if the given transition systems are bisimilar.
-	 * 3. if tthere is a labeled Petri net and a transition system -&gt; if the reachability graph of the Petri net and
-	 *      the transition system are bisimilar.
-	 * @param pnOrLts1 The first labeled Petri net or transition system.
-	 * @param pnOrLts2 The second labeled Petri net or transition system.
+	 * Check, if the given transition systems are bisimilar.
+	 * @param ltsOne The first transition system.
+	 * @param ltsTwo The second transition system.
 	 * @return true, if the graphs are bisimilar. Otherwise return false.
-	 * @throws UnboundedException if one of the given Petri nets is not bounded.
 	 */
-	public Boolean checkBisimulation(PetriNetOrTransitionSystem pnOrLts1, PetriNetOrTransitionSystem pnOrLts2)
-		throws UnboundedException {
-		// Step 0: Check if the two given graphs are lts or pn
-		PetriNet pn1 = pnOrLts1.getNet();
-		PetriNet pn2 = pnOrLts2.getNet();
-		TransitionSystem ltsOne = null;
-		TransitionSystem ltsTwo = null;
-		if (pn1 != null) {
-			// Step 1: Generate the reachability graph. At the same time, we check if Pn is bounded.
-			CoverabilityGraph cover1 = CoverabilityGraph.get(pn1);
-			ltsOne = cover1.toReachabilityLTS();
-		} else {
-			ltsOne = pnOrLts1.getTs();
-		}
-		if (pn2 != null) {
-			// Step 1: Generate the reachability graph. At the same time, we check if Pn is bounded.
-			CoverabilityGraph cover2 = CoverabilityGraph.get(pn2);
-			ltsTwo = cover2.toReachabilityLTS();
-		} else {
-			ltsTwo = pnOrLts2.getTs();
-		}
-
-		//Step 2: Check if the reachability graphs are bisimilar
+	public Boolean checkBisimulation(TransitionSystem ltsOne, TransitionSystem ltsTwo) {
+		//Step 1: Check if the LTS are bisimilar.
 		// if at least one of the LTS is deterministic, we can choose a more simple algorithm
 		this.lts1 = ltsOne;
 		this.lts2 = ltsTwo;

@@ -37,10 +37,10 @@ import java.util.Arrays;
 
 import org.testng.annotations.Test;
 
-import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.adt.ts.State;
+import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.impl.returns.NonBisimilarPathReturnValueTransformation;
@@ -60,16 +60,16 @@ public class BisimulationTest {
 
 	private void testBisimulation(PetriNet pn1, PetriNet pn2) throws UnboundedException {
 		// The Petri nets should be bisimilar
-		assertTrue(new Bisimulation().checkBisimulation(new PetriNetOrTransitionSystem(pn1),
-			new PetriNetOrTransitionSystem(pn2)), "Testing Bisimulation");
+		assertTrue(new Bisimulation().checkBisimulation(CoverabilityGraph.get(pn1).toReachabilityLTS(),
+					CoverabilityGraph.get(pn2).toReachabilityLTS()), "Testing Bisimulation");
 	}
 
 	private void testNoBisimulation(PetriNet pn1, PetriNet pn2, String errorPath)
 			throws ModuleException, IOException {
 		// The Petri nets shouldn't be bisimilar
 		Bisimulation bisimulation = new Bisimulation();
-		assertFalse(bisimulation.checkBisimulation(new PetriNetOrTransitionSystem(pn1),
-			new PetriNetOrTransitionSystem(pn2)), "Testing no Bisimulation");
+		assertFalse(bisimulation.checkBisimulation(CoverabilityGraph.get(pn1).toReachabilityLTS(),
+			CoverabilityGraph.get(pn2).toReachabilityLTS()), "Testing no Bisimulation");
 		assertEquals(transformErrorPath(bisimulation.getErrorPath()), errorPath);
 	}
 
@@ -78,23 +78,21 @@ public class BisimulationTest {
 		throws ModuleException {
 		// The Petri nets shouldn't be bisimilar
 		Bisimulation bisimulation = new Bisimulation();
-		assertFalse(bisimulation.checkBisimulation(new PetriNetOrTransitionSystem(pn1),
-			new PetriNetOrTransitionSystem(pn2)), "Testing no Bisimulation");
+		assertFalse(bisimulation.checkBisimulation(CoverabilityGraph.get(pn1).toReachabilityLTS(),
+			CoverabilityGraph.get(pn2).toReachabilityLTS()), "Testing no Bisimulation");
 		assertThat(bisimulation.getErrorPath(), is(anyOf(matchers)));
 	}
 
 	private void testBisimulationForLTS(TransitionSystem lts1, TransitionSystem lts2) throws UnboundedException {
 		// The LTSs should be bisimilar
-		assertTrue(new Bisimulation().checkBisimulation(new PetriNetOrTransitionSystem(lts1),
-			new PetriNetOrTransitionSystem(lts2)), "Testing Bisimulation");
+		assertTrue(new Bisimulation().checkBisimulation(lts1, lts2), "Testing Bisimulation");
 	}
 
 	private void testNoBisimulationForLTS(TransitionSystem lts1, TransitionSystem lts2, String errorPath)
 		throws ModuleException, IOException {
 		// The LTSs shouldn't be bisimilar
 		Bisimulation bisimulation = new Bisimulation();
-		assertFalse(bisimulation.checkBisimulation(new PetriNetOrTransitionSystem(lts1),
-			new PetriNetOrTransitionSystem(lts2)), "Testing no Bisimulation");
+		assertFalse(bisimulation.checkBisimulation(lts1, lts2), "Testing no Bisimulation");
 		assertEquals(transformErrorPath(bisimulation.getErrorPath()), errorPath);
 	}
 
@@ -103,8 +101,8 @@ public class BisimulationTest {
 		throws ModuleException {
 		// The LTSs shouldn't be bisimilar
 		Bisimulation bisimulation = new Bisimulation();
-		assertFalse(bisimulation.checkBisimulation(new PetriNetOrTransitionSystem(lts1),
-			new PetriNetOrTransitionSystem(pn2)), "Testing no Bisimulation");
+		assertFalse(bisimulation.checkBisimulation(lts1, CoverabilityGraph.get(pn2).toReachabilityLTS()),
+				"Testing no Bisimulation");
 		assertThat(bisimulation.getErrorPath(), is(anyOf(matchers)));
 	}
 
@@ -146,8 +144,7 @@ public class BisimulationTest {
 		String errorPath1 = "(p0,q0);(p1,q1);(p3,q3)";
 		String errorPath2 = "(p0,q0);(p1,q2);(p2,q4)";
 		Bisimulation bisimulation = new Bisimulation();
-		assertFalse(bisimulation.checkBisimulation(new PetriNetOrTransitionSystem(getTestTS4A()),
-			new PetriNetOrTransitionSystem(getTestTS4C())), "Testing no Bisimulation");
+		assertFalse(bisimulation.checkBisimulation(getTestTS4A(), getTestTS4C()), "Testing no Bisimulation");
 		String error = transformErrorPath(bisimulation.getErrorPath());
 		if (!error.equals(errorPath1) && !error.equals(errorPath2)) {
 			fail("Did not found the right error path. Expected: " + errorPath1 + " or " + errorPath2

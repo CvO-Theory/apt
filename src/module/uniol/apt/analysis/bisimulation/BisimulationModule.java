@@ -67,7 +67,7 @@ public class BisimulationModule extends AbstractInterruptibleModule implements I
 		PetriNetOrTransitionSystem pnOrLts1 = input.getParameter("pnOrLts1", PetriNetOrTransitionSystem.class);
 		PetriNetOrTransitionSystem pnOrLts2 = input.getParameter("pnOrLts2", PetriNetOrTransitionSystem.class);
 		Bisimulation bisimulation = new Bisimulation();
-		Boolean bisimilar = bisimulation.checkBisimulation(pnOrLts1, pnOrLts2);
+		Boolean bisimilar = bisimulation.checkBisimulation(pnOrLts1.getReachabilityLTS(), pnOrLts2.getReachabilityLTS());
 		output.setReturnValue("bisimilar_graphs", Boolean.class, bisimilar);
 		output.setReturnValue("non_bisimilar_path", NonBisimilarPath.class, bisimulation.getErrorPath());
 	}
