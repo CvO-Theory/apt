@@ -36,12 +36,12 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import uniol.apt.io.parser.LTSParsers;
 import uniol.apt.io.parser.PNParsers;
+import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.ParserNotFoundException;
 import uniol.apt.io.parser.Parsers;
 import uniol.apt.io.parser.impl.RegexParser;
 import uniol.apt.tasks.parsers.AbstractParserTester;
 import uniol.apt.tasks.parsers.ParserTester;
-import uniol.apt.tasks.parsers.UnparsableException;
 
 /**
  * Ant task to verify that a list of files is parsable.
@@ -147,7 +147,7 @@ public class ParsableTask {
 			try {
 				tester.parse(file);
 				successful.add(tester);
-			} catch (UnparsableException e) {
+			} catch (ParseException e) {
 				// Ignore
 			} catch (Exception e) {
 				fail = true;

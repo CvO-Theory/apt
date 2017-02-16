@@ -24,6 +24,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
+import uniol.apt.io.parser.ParseException;
+
 /**
  * Base class for individual parser tests.
  * @author Uli Schlachter
@@ -131,11 +133,11 @@ public abstract class AbstractParserTester {
 	/**
 	 * Try to parse the given file. This should return normally if the file can be parsed successfully. Otherweise,
 	 * an exception should be thrown.
-	 * @param UnparsableException Thrown when the given file cannot be parsed, because it violates the supported
+	 * @param ParseException Thrown when the given file cannot be parsed, because it violates the supported
 	 * file format.
 	 * @param Exception Any other kind of exception will be considered an error in the implemenetation.
 	 */
-	abstract public void parse(File file) throws Exception, UnparsableException;
+	abstract public void parse(File file) throws Exception, ParseException;
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

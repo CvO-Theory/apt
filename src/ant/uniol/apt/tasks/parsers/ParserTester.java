@@ -47,12 +47,8 @@ public class ParserTester<G> extends AbstractParserTester {
 	}
 
 	@Override
-	public void parse(File file) throws Exception, UnparsableException {
-		try {
-			this.parser.parseFile(file);
-		} catch (ParseException ex) {
-			throw new UnparsableException(ex);
-		}
+	public void parse(File file) throws Exception, ParseException {
+		this.parser.parseFile(file);
 	}
 }
 
