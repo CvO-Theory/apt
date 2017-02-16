@@ -30,12 +30,9 @@ import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import static org.apache.commons.collections4.bidimap.UnmodifiableBidiMap.unmodifiableBidiMap;
 
-import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.coverability.CoverabilityGraph;
-import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.Pair;
 
@@ -108,22 +105,6 @@ public class IsomorphismLogic {
 	}
 
 
-
-	/**
-	 * Constructor that accepts PetriNets and implicitly
-	 * calculates their reachability graphs, or -- if one
-	 * of them is unbounded -- throws an exception.
-	 *
-	 * @param pn1 The first Petri net whose reachability graph is to be tested for isomorphism.
-	 * @param pn2 The second Petri net whose reachability graph is to be tested for isomorphism.
-	 * @param checkLabels see other constructor for information
-	 * @throws UnboundedException If one of the nets is unbounded.
-	 */
-	public IsomorphismLogic(PetriNet pn1, PetriNet pn2, boolean checkLabels) throws UnboundedException {
-		this(CoverabilityGraph.get(pn1).toReachabilityLTS(),
-				CoverabilityGraph.get(pn2).toReachabilityLTS(),
-				checkLabels);
-	}
 
 	/**
 	 * Returns result of algorithm.

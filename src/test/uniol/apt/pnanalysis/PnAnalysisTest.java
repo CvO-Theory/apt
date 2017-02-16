@@ -35,6 +35,7 @@ import org.testng.annotations.Test;
 import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.Place;
 import uniol.apt.adt.pn.Transition;
+import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.module.exception.ModuleException;
 import uniol.tests.dataprovider.IntRangeDataProvider;
@@ -68,7 +69,8 @@ public class PnAnalysisTest {
 	public void testIsomorphism() throws Exception {
 		PetriNet pn1 = ParserTestUtils.getAptPN("nets/ksysT-net-aut-net.apt");
 		PetriNet pn2 = ParserTestUtils.getAptPN("./nets/EB-PhD-Fundamenta.apt");
-		IsomorphismLogic logic = new IsomorphismLogic(pn1, pn2, false);
+		IsomorphismLogic logic = new IsomorphismLogic(CoverabilityGraph.get(pn1).toReachabilityLTS(),
+				CoverabilityGraph.get(pn2).toReachabilityLTS(), false);
 		assertTrue(logic.isIsomorphic());
 	}
 
