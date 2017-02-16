@@ -128,9 +128,10 @@ public class ModuleParameterVerifyTask {
 			fail = true;
 		}
 
-		for (String parameter : requestedInputs.keySet()) {
+		for (Map.Entry<String, Type> entry : requestedInputs.entrySet()) {
+			String parameter    = entry.getKey();
+			Type requestedClass = entry.getValue();
 			Type usedClass      = usedInputs.get(parameter);
-			Type requestedClass = requestedInputs.get(parameter);
 
 			if (requestedClass == DIFFERENT_TYPES_DETECTED_TYPE) {
 				System.err.println("error: " + className + ": Parameter required with multiple types: " + parameter);

@@ -28,8 +28,8 @@ import static org.testng.Assert.assertEquals;
  * @author Manuel Gieseking
  */
 public class MathToolsTest {
-	private final int bigPrime1 = 496167127;
-	private final int bigPrime2 = 284678627;
+	private static final int bigPrime1 = 496167127;
+	private static final int bigPrime2 = 284678627;
 
 	@Test
 	public void testGCD() {

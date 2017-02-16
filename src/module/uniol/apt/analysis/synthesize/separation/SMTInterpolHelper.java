@@ -399,7 +399,6 @@ public class SMTInterpolHelper {
 	 * @return The needed terms.
 	 */
 	private List<Term> requireHomogeneous(Term[] backwardWeight) {
-		final int numberEvents = utility.getNumberOfEvents();
 		List<Term> result = new ArrayList<>();
 		Term zero = script.numeral(BigInteger.ZERO);
 

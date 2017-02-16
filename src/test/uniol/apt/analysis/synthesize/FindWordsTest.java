@@ -100,7 +100,7 @@ public class FindWordsTest {
 		testWords(properties, alphabet, solvableWords);
 	}
 
-	private class TestDoneException extends RuntimeException {
+	static private class TestDoneException extends RuntimeException {
 		public static final long serialVersionUID = 0;
 	}
 

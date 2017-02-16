@@ -81,7 +81,6 @@ public class ParikhVectorTest {
 	public void testAdd() {
 		ParikhVector p = new ParikhVector();
 		ParikhVector pa = new ParikhVector("a");
-		ParikhVector pb = new ParikhVector("b");
 		ParikhVector pab = new ParikhVector("a", "b");
 
 		assertThat(p.add("a"), equalTo(pa));

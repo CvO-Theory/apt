@@ -123,7 +123,6 @@ class KBoundedSeparation implements Separation {
 
 		Set<Bag<State>> known = new HashSet<>();
 		Deque<Bag<State>> todo = new LinkedList<>();
-		Collection<Bag<State>> regionCandidates = new ArrayList<>();
 		addExcitationAndSwitchingRegions(known);
 		todo.addAll(known);
 

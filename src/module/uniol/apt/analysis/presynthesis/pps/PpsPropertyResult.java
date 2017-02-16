@@ -69,20 +69,20 @@ public class PpsPropertyResult {
 		sb.append(System.lineSeparator());
 		sb.append("offendingStates:");
 		sb.append(System.lineSeparator());
-		for (String name : offendingStates.keySet()) {
+		for (Map.Entry<String, State> entry : offendingStates.entrySet()) {
 			sb.append("  ");
-			sb.append(name);
+			sb.append(entry.getKey());
 			sb.append(" = ");
-			sb.append(offendingStates.get(name).getId());
+			sb.append(entry.getValue().getId());
 			sb.append(System.lineSeparator());
 		}
 		sb.append("offendingTransitions:");
 		sb.append(System.lineSeparator());
-		for (String name : transitions.keySet()) {
+		for (Map.Entry<String, String> entry : transitions.entrySet()) {
 			sb.append("  ");
-			sb.append(name);
+			sb.append(entry.getKey());
 			sb.append(" = ");
-			sb.append(transitions.get(name));
+			sb.append(entry.getValue());
 			sb.append(System.lineSeparator());
 		}
 		return sb.toString();
