@@ -350,15 +350,23 @@
 				output="xml:withMessages"
 				outputFile="reports/findbugs.xml" >
 			<auxClasspath>
+				<path refid="ant.class.path" />
 				<path refid="test.class.path" />
 			</auxClasspath>
 			<sourcePath>
+				<pathelement location="src/ant" />
+				<pathelement location="src/compiler" />
+				<pathelement location="src/glue" />
+				<pathelement location="src/json" />
 				<pathelement location="src/module" />
 				<pathelement location="src/lib" />
 				<pathelement location="src/main" />
 				<pathelement location="src/io" />
 				<pathelement location="src/test" />
 			</sourcePath>
+			<fileset dir="classes/ant">
+				<include name="**/*.class" />
+			</fileset>
 			<fileset dir="classes/module">
 				<include name="**/*.class" />
 			</fileset>
