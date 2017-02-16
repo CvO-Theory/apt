@@ -20,7 +20,10 @@
 package uniol.apt.json;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
 
 import org.json.JSONException;
@@ -36,9 +39,37 @@ import uniol.apt.ui.impl.AptReturnValuesTransformer;
  */
 public class Main {
 	/**
-	 * Hidden Constructor.
+	 * Constructor.
+	 * @param input Reader to read JSON input from.
+	 * @param output Output to write JSON results to.
+	 * @param executor Executor used to execute the input received.
+	 * @throws IOException When an I/O error occurs.
 	 */
-	private Main() {
+	Main(Reader input, Writer output, JSONExecutor executor) throws IOException {
+		JSONTokener tokener = new JSONTokener(input);
+
+		// Read commands from the input and execute them until EOF is reached or malformed JSON is read.
+		// The dance with nextClean() and back() is needed so that EOF is detected correctly.
+		boolean exit = false;
+		tokener.nextClean();
+		while (!tokener.end() && !exit) {
+			tokener.back();
+
+			JSONObject result;
+			try {
+				JSONObject obj = new JSONObject(tokener);
+				result = executor.execute(obj);
+			} catch (JSONException e) {
+				// Exception in JSON parsing, abort reading
+				exit = true;
+				result = JSONUtilities.toJSONObject(e);
+			}
+			result.write(output, 1, 0);
+			output.write("\n\n");
+			output.flush();
+
+			tokener.nextClean();
+		}
 	}
 
 	/**
@@ -47,32 +78,10 @@ public class Main {
 	 * @throws IOException when reading from standard input or writing to standard output fails
 	 */
 	public static void main(String[] args) throws IOException {
-		JSONTokener tokener = new JSONTokener(System.in);
 		JSONExecutor executor = new JSONExecutor(AptModuleRegistry.INSTANCE, AptParametersTransformer.INSTANCE,
 				AptReturnValuesTransformer.INSTANCE);
 		try (Writer writer = new OutputStreamWriter(System.out, "UTF-8")) {
-			// Read commands from the input and execute them until EOF is reached or malformed JSON is read.
-			// The dance with nextClean() and back() is needed so that EOF is detected correctly.
-			boolean exit = false;
-			tokener.nextClean();
-			while (!tokener.end() && !exit) {
-				tokener.back();
-
-				JSONObject result;
-				try {
-					JSONObject obj = new JSONObject(tokener);
-					result = executor.execute(obj);
-				} catch (JSONException e) {
-					// Exception in JSON parsing, abort reading
-					exit = true;
-					result = JSONUtilities.toJSONObject(e);
-				}
-				result.write(writer, 1, 0);
-				writer.write("\n\n");
-				writer.flush();
-
-				tokener.nextClean();
-			}
+			new Main(new InputStreamReader(System.in, "UTF-8"), writer, executor);
 		}
 	}
 }
