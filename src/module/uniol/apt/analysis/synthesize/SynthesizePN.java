@@ -58,7 +58,6 @@ import uniol.apt.analysis.on.OutputNonBranching;
 import uniol.apt.analysis.plain.Plain;
 import uniol.apt.analysis.separation.LargestK;
 import uniol.apt.analysis.sideconditions.Pure;
-import uniol.apt.analysis.synthesize.separation.SeparationSynthesizer;
 import uniol.apt.analysis.synthesize.separation.SeparationUtility;
 import uniol.apt.analysis.synthesize.separation.Synthesizer;
 import uniol.apt.util.EquivalenceRelation;

@@ -20,7 +20,6 @@
 package uniol.apt.analysis.cycles.lts;
 
 import uniol.apt.adt.PetriNetOrTransitionSystem;
-import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;

@@ -22,7 +22,6 @@ package uniol.apt.analysis.processmining;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.collections4.Transformer;
 import org.apache.commons.collections4.TransformerUtils;

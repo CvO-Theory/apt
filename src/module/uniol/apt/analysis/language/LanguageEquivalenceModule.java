@@ -21,7 +21,6 @@ package uniol.apt.analysis.language;
 
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;

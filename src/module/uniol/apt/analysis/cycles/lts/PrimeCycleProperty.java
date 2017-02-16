@@ -22,19 +22,8 @@ package uniol.apt.analysis.cycles.lts;
 import java.util.List;
 import java.util.Set;
 
-import uniol.apt.adt.PetriNetOrTransitionSystem;
-import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.AbstractInterruptibleModule;
-import uniol.apt.module.AptModule;
-import uniol.apt.module.Category;
-import uniol.apt.module.InterruptibleModule;
-import uniol.apt.module.ModuleInput;
-import uniol.apt.module.ModuleInputSpec;
-import uniol.apt.module.ModuleOutput;
-import uniol.apt.module.ModuleOutputSpec;
-import uniol.apt.module.exception.ModuleException;
 import uniol.apt.util.Pair;
 import static uniol.apt.util.MathTools.gcd;
 

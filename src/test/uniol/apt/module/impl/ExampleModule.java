@@ -20,7 +20,6 @@
 package uniol.apt.module.impl;
 
 import uniol.apt.module.AbstractInterruptibleModule;
-import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;

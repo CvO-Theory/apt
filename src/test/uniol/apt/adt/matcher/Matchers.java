@@ -35,7 +35,6 @@ import uniol.apt.adt.INode;
 import uniol.apt.adt.pn.Node;
 import uniol.apt.analysis.coverability.CoverabilityGraphNode;
 import uniol.apt.analysis.coverability.CoverabilityGraphEdge;
-import uniol.apt.util.Pair;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;

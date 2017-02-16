@@ -19,7 +19,6 @@
 
 package uniol.apt.adt.pn;
 
-import java.util.Objects;
 import uniol.apt.adt.Edge;
 
 /**

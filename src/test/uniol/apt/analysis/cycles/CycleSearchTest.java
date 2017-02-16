@@ -19,12 +19,10 @@
 
 package uniol.apt.analysis.cycles;
 
-import uniol.apt.adt.ts.ParikhVector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.hamcrest.Matcher;
 import org.testng.annotations.Test;

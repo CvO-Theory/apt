@@ -19,8 +19,6 @@
 
 package uniol.apt.analysis.synthesize;
 
-import java.util.Collections;
-
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.synthesize.separation.UnsupportedPNPropertiesException;

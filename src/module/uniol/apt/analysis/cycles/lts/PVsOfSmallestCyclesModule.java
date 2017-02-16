@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import uniol.apt.adt.PetriNetOrTransitionSystem;
-import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractInterruptibleModule;

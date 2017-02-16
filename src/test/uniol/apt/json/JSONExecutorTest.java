@@ -28,7 +28,6 @@ import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 

@@ -19,11 +19,8 @@
 
 package uniol.apt.analysis.cycles.lts;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -32,9 +29,6 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.impl.ModuleInvoker;
 
 import static uniol.apt.TestTSCollection.*;
-
-import uniol.tests.dataprovider.IntRangeDataProvider;
-import uniol.tests.dataprovider.annotations.IntRangeParameter;
 
 /** @author vsp */
 public class PrimeCyclePropertyTest {
