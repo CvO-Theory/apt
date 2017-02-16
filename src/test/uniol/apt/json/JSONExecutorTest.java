@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import uniol.apt.module.Module;
 import uniol.apt.ui.impl.AptParametersTransformer;
 import uniol.apt.ui.impl.AptReturnValuesTransformer;
 import uniol.apt.util.interrupt.InterrupterRegistry;
@@ -41,10 +42,21 @@ import uniol.apt.util.interrupt.NoOpInterrupter;
 public class JSONExecutorTest {
 	private JSONExecutor executor;
 
+	static private class ExampleExecutor extends JSONExecutor {
+		public ExampleExecutor() {
+			super(new TestModuleRegistry(), AptParametersTransformer.INSTANCE,
+					AptReturnValuesTransformer.INSTANCE);
+		}
+
+		@Override
+		protected boolean isModuleAllowed(Module module) {
+			return super.isModuleAllowed(module) && "example_module".equals(module.getName());
+		}
+	}
+
 	@BeforeMethod
 	public void prepare() {
-		executor = new JSONExecutor(new TestModuleRegistry(), AptParametersTransformer.INSTANCE,
-				AptReturnValuesTransformer.INSTANCE);
+		executor = new ExampleExecutor();
 	}
 
 	private void runTest(String inputString, String outputString) {
@@ -63,6 +75,22 @@ public class JSONExecutorTest {
 			.key("type").value("org.json.JSONException")
 			.endObject();
 		runTest("{}", result.toString());
+	}
+
+	@Test
+	public void testInvalidCommand() {
+		StringWriter command = new StringWriter();
+		new JSONWriter(command)
+			.object()
+			.key("command").value("error, please")
+			.endObject();
+
+		StringWriter result = new StringWriter();
+		new JSONWriter(result)
+			.object()
+			.key("error").value("Unsupported command: error, please")
+			.endObject();
+		runTest(command.toString(), result.toString());
 	}
 
 	@Test
@@ -140,6 +168,40 @@ public class JSONExecutorTest {
 	}
 
 	@Test
+	public void describeForbiddenModule() {
+		StringWriter command = new StringWriter();
+		new JSONWriter(command)
+			.object()
+			.key("command").value("describe_module")
+			.key("module").value("coverability_graph")
+			.endObject();
+
+		StringWriter result = new StringWriter();
+		new JSONWriter(result)
+			.object()
+			.key("error").value("No such module: coverability_graph")
+			.endObject();
+		runTest(command.toString(), result.toString());
+	}
+
+	@Test
+	public void callModuleNoSuchModule() {
+		StringWriter command = new StringWriter();
+		new JSONWriter(command)
+			.object()
+			.key("command").value("run_module")
+			.key("module").value("coverability_graph")
+			.endObject();
+
+		StringWriter result = new StringWriter();
+		new JSONWriter(result)
+			.object()
+			.key("error").value("No such module")
+			.endObject();
+		runTest(command.toString(), result.toString());
+	}
+
+	@Test
 	public void callModuleSuccess() {
 		assertThat("something else left an interrupter for this thread behind",
 				InterrupterRegistry.getCurrentThreadInterrupter(), instanceOf(NoOpInterrupter.class));
@@ -149,7 +211,6 @@ public class JSONExecutorTest {
 			.object()
 			.key("command").value("run_module")
 			.key("module").value("example")
-			.key("timeout_milliseconds").value(42000)
 			.key("arguments").object()
 				.key("string").value("iNpUt")
 				.endObject()
@@ -204,6 +265,27 @@ public class JSONExecutorTest {
 		new JSONWriter(result)
 			.object()
 			.key("error").value("Not a valid boolean: 42")
+			.key("type").value("uniol.apt.module.exception.ModuleException")
+			.endObject();
+		runTest(command.toString(), result.toString());
+	}
+
+	@Test
+	public void callModuleSuccessWithMissingArgument() {
+		StringWriter command = new StringWriter();
+		new JSONWriter(command)
+			.object()
+			.key("command").value("run_module")
+			.key("module").value("example")
+			.key("arguments").object()
+				.key("error").value("true")
+				.endObject()
+			.endObject();
+
+		StringWriter result = new StringWriter();
+		new JSONWriter(result)
+			.object()
+			.key("error").value("Missing module argument: string")
 			.key("type").value("uniol.apt.module.exception.ModuleException")
 			.endObject();
 		runTest(command.toString(), result.toString());

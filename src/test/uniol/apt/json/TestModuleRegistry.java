@@ -19,9 +19,10 @@
 
 package uniol.apt.json;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
+import uniol.apt.analysis.coverability.CoverabilityModule;
 import uniol.apt.module.Module;
 import uniol.apt.module.ModuleRegistry;
 import uniol.apt.module.impl.ExampleModule;
@@ -29,9 +30,11 @@ import uniol.apt.module.impl.ExampleModule;
 public class TestModuleRegistry implements ModuleRegistry {
 	@Override
 	public Module findModule(String name) {
-		if (!"example".equals(name))
-			return null;
-		return new ExampleModule();
+		if ("example".equals(name))
+			return new ExampleModule();
+		if ("coverability_graph".equals(name))
+			return new CoverabilityModule();
+		return null;
 	}
 
 	@Override
@@ -41,7 +44,7 @@ public class TestModuleRegistry implements ModuleRegistry {
 
 	@Override
 	public Collection<Module> getModules() {
-		return Collections.<Module>singleton(new ExampleModule());
+		return Arrays.<Module>asList(new ExampleModule(), new CoverabilityModule());
 	}
 }
 
