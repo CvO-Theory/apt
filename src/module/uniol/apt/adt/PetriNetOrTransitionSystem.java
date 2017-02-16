@@ -21,6 +21,8 @@ package uniol.apt.adt;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.coverability.CoverabilityGraph;
+import uniol.apt.analysis.exception.UnboundedException;
 
 /**
  * A class that stores either a Petri net or a labeled transition system. The purpose of this class is to allow modules
@@ -63,6 +65,29 @@ public class PetriNetOrTransitionSystem {
 	 */
 	public TransitionSystem getTs() {
 		return ts;
+	}
+
+	/**
+	 * Either gets the stored transition system or, if a Petri net is stored, the reachability graph of the stored
+	 * Petri net.
+	 * @return Labeled transition system.
+	 * @throws UnboundedException If the stored Petri net is unbounded.
+	 */
+	public TransitionSystem getReachabilityLTS() throws UnboundedException {
+		if (this.ts != null)
+			return this.ts;
+		return CoverabilityGraph.get(this.net).toReachabilityLTS();
+	}
+
+	/**
+	 * Either gets the stored transition system or, if a Petri net is stored, the coverability graph of the stored
+	 * Petri net.
+	 * @return Labeled transition system.
+	 */
+	public TransitionSystem getCoverabilityLTS() {
+		if (this.ts != null)
+			return this.ts;
+		return CoverabilityGraph.get(this.net).toCoverabilityLTS();
 	}
 }
 
