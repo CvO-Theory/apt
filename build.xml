@@ -422,12 +422,16 @@
 
 			<structure name="APT">
 				<classfiles>
+					<fileset dir="classes/glue/"/>
+					<fileset dir="classes/json/"/>
 					<fileset dir="classes/module/"/>
 					<fileset dir="classes/lib/"/>
 					<fileset dir="classes/main/"/>
 					<fileset dir="classes/io/"/>
 				</classfiles>
 				<sourcefiles>
+					<fileset dir="src/glue/"/>
+					<fileset dir="src/json/"/>
 					<fileset dir="src/module/"/>
 					<fileset dir="src/lib/"/>
 					<fileset dir="src/main/"/>
