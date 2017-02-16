@@ -22,12 +22,10 @@ package uniol.apt.tasks;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,6 +38,13 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
  * @author Uli Schlachter
  */
 public class WriteTestsXML {
+	private WriteTestsXML() {
+	}
+
+	/**
+	 * Program entry point. Arguments are output directory, directory to scan and a file name pattern.
+	 * @param args Program arguments.
+	 */
 	public static void main(String[] args) {
 		if (args.length != 3)
 			throw new IllegalArgumentException(
@@ -73,9 +78,16 @@ public class WriteTestsXML {
 		}
 	}
 
+	/**
+	 * Helper exception that is thrown when some file cannot be handled.
+	 */
 	public static class UnhandledException extends Exception {
 		public static final long serialVersionUID = 0L;
 
+		/**
+		 * Constructor.
+		 * @param message Description of the error.
+		 */
 		public UnhandledException(String message) {
 			super(message);
 		}

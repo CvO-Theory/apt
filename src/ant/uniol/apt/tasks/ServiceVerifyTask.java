@@ -23,8 +23,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ServiceConfigurationError;
 
 /**
@@ -32,6 +30,14 @@ import java.util.ServiceConfigurationError;
  * @author vsp, Uli Schlachter
  */
 public class ServiceVerifyTask {
+	private ServiceVerifyTask() {
+	}
+
+	/**
+	 * Program entry point. Arguments are a path to a JAR file, the class to load from there and the name of a
+	 * static member that should be instantiated.
+	 * @param args Program arguments.
+	 */
 	public static void main(String[] args) {
 		if (args.length != 3)
 			throw new IllegalArgumentException(

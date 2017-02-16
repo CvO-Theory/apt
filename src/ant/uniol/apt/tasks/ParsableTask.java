@@ -48,6 +48,13 @@ import uniol.apt.tasks.parsers.UnparsableException;
  * @author vsp, Uli Schlachter
  */
 public class ParsableTask {
+	private ParsableTask() {
+	}
+
+	/**
+	 * Program entry point. Arguments are output directory and directory to scan.
+	 * @param args Program arguments.
+	 */
 	public static void main(String[] args) {
 		if (args.length < 2)
 			throw new IllegalArgumentException("Need at least two arguments: Output directory, directory to scan");

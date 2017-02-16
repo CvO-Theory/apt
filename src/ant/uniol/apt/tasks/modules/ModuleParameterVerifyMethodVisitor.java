@@ -88,10 +88,10 @@ public class ModuleParameterVerifyMethodVisitor extends MethodVisitor {
 
 		if (cst instanceof String) {
 			// constant is a string constant
-			ldcLastString = (String)cst;
+			ldcLastString = (String) cst;
 		} else if (cst instanceof Type) {
 			// constant doesn't references a basic type
-			Type typeCst = (Type)cst;
+			Type typeCst = (Type) cst;
 			switch (typeCst.getSort()) {
 				case Type.ARRAY:
 				case Type.OBJECT:

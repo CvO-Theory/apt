@@ -36,6 +36,8 @@ public abstract class AbstractParserTester {
 	 * Construct a new ParserTest.
 	 * @param outputDir directory to write output to.
 	 * @param name name of this parser
+	 * @throws FileNotFoundException When the given file does not exist.
+	 * @throws UnsupportedEncodingException If your Java installation is broken and does not support UTF-8.
 	 */
 	public AbstractParserTester(File outputDir, String name) throws FileNotFoundException, UnsupportedEncodingException {
 		this.name = name;
@@ -79,6 +81,7 @@ public abstract class AbstractParserTester {
 	/**
 	 * Print an unsuccessful parse to the file.
 	 * @param file The file that could not be parsed.
+	 * @param e The exception that occurred.
 	 */
 	public void printException(String file, Exception e) {
 		StringBuilder sb = new StringBuilder();
@@ -125,6 +128,13 @@ public abstract class AbstractParserTester {
 		printFailure(file, "MoreThanOneParser", "This file was parsed by more than one parser");
 	}
 
+	/**
+	 * Try to parse the given file. This should return normally if the file can be parsed successfully. Otherweise,
+	 * an exception should be thrown.
+	 * @param UnparsableException Thrown when the given file cannot be parsed, because it violates the supported
+	 * file format.
+	 * @param Exception Any other kind of exception will be considered an error in the implemenetation.
+	 */
 	abstract public void parse(File file) throws Exception, UnparsableException;
 }
 

@@ -320,6 +320,7 @@
 		<checkstyle config="checkstyle.xml" failOnViolation="false">
 			<formatter type="xml" tofile="reports/checkstyle.xml"/>
 			<formatter type="plain" tofile="reports/checkstyle.txt"/>
+			<fileset dir="src/ant" includes="**/*"/>
 			<fileset dir="src/module" includes="**/*"/>
 			<fileset dir="src/lib" includes="**/*"/>
 			<fileset dir="src/main" includes="**/*"/>

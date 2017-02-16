@@ -26,6 +26,10 @@ package uniol.apt.tasks.parsers;
 public class UnparsableException extends Exception {
 	public static final long serialVersionUID = 1L;
 
+	/**
+	 * Constructor.
+	 * @param Exception The exception which indicates unparsability.
+	 */
 	public UnparsableException(Exception e) {
 		super(e);
 	}

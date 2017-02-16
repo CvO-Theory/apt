@@ -19,13 +19,25 @@
 
 package uniol.apt.tasks;
 
+/**
+ * Custom exception that is thrown when some custom Ant task fails.
+ */
 class FailureException extends Exception {
 	private static final long serialVersionUID = 0;
 
+	/**
+	 * Constructor.
+	 * @param message A description of the error that occurred.
+	 * @param cause The throwable which caused this error.
+	 */
 	public FailureException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
+	/**
+	 * Constructor.
+	 * @param message A description of the error that occurred.
+	 */
 	public FailureException(String message) {
 		super(message);
 	}

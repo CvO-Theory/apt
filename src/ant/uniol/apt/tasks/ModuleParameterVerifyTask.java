@@ -42,6 +42,13 @@ import uniol.apt.tasks.modules.ModuleParameterVerifyClassVisitor;
  * @author vsp
  */
 public class ModuleParameterVerifyTask {
+	private ModuleParameterVerifyTask() {
+	}
+
+	/**
+	 * Program entry point. Arguments are a list of base directories and wildcards.
+	 * @param args Program arguments.
+	 */
 	public static void main(String[] args) {
 		if (args.length % 2 != 0)
 			throw new IllegalArgumentException(
@@ -62,7 +69,7 @@ public class ModuleParameterVerifyTask {
 					ClassReader reader;
 					try {
 						reader = new ClassReader(FileUtils.openInputStream(classFile));
-					} catch(IOException ex) {
+					} catch (IOException ex) {
 						throw new FailureException("Error accessing file: " + classFile, ex);
 					}
 					ModuleParameterVerifyClassVisitor cv = new ModuleParameterVerifyClassVisitor();

@@ -3,4 +3,5 @@
 
 <suppressions>
 	<suppress checks="Javadoc(Method|Style|Type)Check" files="src[/\\]test[/\\]"/>
+	<suppress checks="LineLength" files="src[/\\](ant|test)[/\\]"/>
 </suppressions>
