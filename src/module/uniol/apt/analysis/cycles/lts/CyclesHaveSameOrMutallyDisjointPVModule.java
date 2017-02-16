@@ -22,7 +22,6 @@ package uniol.apt.analysis.cycles.lts;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.cycles.CyclesHaveSameOrMutuallyPV;
 import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
@@ -65,18 +64,9 @@ public class CyclesHaveSameOrMutallyDisjointPVModule extends AbstractInterruptib
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
 		ComputeSmallestCycles prog = new ComputeSmallestCycles();
-		TransitionSystem ts = g.getTs();
-		PetriNet pn = g.getNet();
-		boolean ret = false;
-		CycleCounterExample ex = null;
-		if (ts != null) {
-			ret = prog.checkSameOrMutallyDisjointPVs(ts);
-			ex = prog.getCounterExample();
-		} else if (pn != null) {
-			CyclesHaveSameOrMutuallyPV pnProg = new CyclesHaveSameOrMutuallyPV(pn);
-			ret = pnProg.check(prog);
-			ex = pnProg.getCounterExample();
-		}
+		TransitionSystem ts = g.getReachabilityLTS();
+		boolean ret = prog.checkSameOrMutallyDisjointPVs(ts);
+		CycleCounterExample ex = prog.getCounterExample();
 		if (!ret) {
 			output.setReturnValue("counterExamples", CycleCounterExample.class, ex);
 		}

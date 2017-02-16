@@ -26,7 +26,6 @@ import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.cycles.CyclesPVs;
 import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
@@ -70,15 +69,8 @@ public class PVsOfSmallestCyclesModule extends AbstractInterruptibleModule imple
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
 		ComputeSmallestCycles prog = new ComputeSmallestCycles();
-		TransitionSystem ts = g.getTs();
-		PetriNet pn = g.getNet();
-		Set<Pair<List<String>, ParikhVector>> parikhs = null;
-		if (ts != null) {
-			parikhs = prog.computePVsOfSmallestCycles(ts);
-		} else if (pn != null) {
-			CyclesPVs pnProg = new CyclesPVs(prog);
-			parikhs = pnProg.calcCycles(pn);
-		}
+		TransitionSystem ts = g.getReachabilityLTS();
+		Set<Pair<List<String>, ParikhVector>> parikhs = prog.computePVsOfSmallestCycles(ts);
 		output.setReturnValue("output", Set.class, parikhs);
 		output.setReturnValue("output_format", String.class, "[(cycle, parikh vector), ... ]");
 	}

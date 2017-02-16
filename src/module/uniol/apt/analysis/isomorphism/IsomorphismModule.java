@@ -70,14 +70,8 @@ public class IsomorphismModule extends AbstractInterruptibleModule implements In
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem arg1 = input.getParameter("pn_or_ts1", PetriNetOrTransitionSystem.class);
 		PetriNetOrTransitionSystem arg2 = input.getParameter("pn_or_ts2", PetriNetOrTransitionSystem.class);
-		TransitionSystem lts1 = arg1.getTs();
-		TransitionSystem lts2 = arg2.getTs();
-		if (lts1 == null) {
-			lts1 = CoverabilityGraph.get(arg1.getNet()).toReachabilityLTS();
-		}
-		if (lts2 == null) {
-			lts2 = CoverabilityGraph.get(arg2.getNet()).toReachabilityLTS();
-		}
+		TransitionSystem lts1 = arg1.getReachabilityLTS();
+		TransitionSystem lts2 = arg2.getReachabilityLTS();
 
 		boolean checkLabels = true;
 		if (input.getParameter("dontCheckLabels", String.class) != null)

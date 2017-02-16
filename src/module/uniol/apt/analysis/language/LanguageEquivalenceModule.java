@@ -68,14 +68,8 @@ public class LanguageEquivalenceModule extends AbstractInterruptibleModule imple
 		PetriNetOrTransitionSystem arg1 = input.getParameter("pn_or_ts1", PetriNetOrTransitionSystem.class);
 		PetriNetOrTransitionSystem arg2 = input.getParameter("pn_or_ts2", PetriNetOrTransitionSystem.class);
 
-		TransitionSystem lts1 = arg1.getTs();
-		TransitionSystem lts2 = arg2.getTs();
-		if (lts1 == null) {
-			lts1 = CoverabilityGraph.get(arg1.getNet()).toReachabilityLTS();
-		}
-		if (lts2 == null) {
-			lts2 = CoverabilityGraph.get(arg2.getNet()).toReachabilityLTS();
-		}
+		TransitionSystem lts1 = arg1.getReachabilityLTS();
+		TransitionSystem lts2 = arg2.getReachabilityLTS();
 
 		Word word = LanguageEquivalence.checkLanguageEquivalence(lts1, lts2);
 		output.setReturnValue("witness_word", Word.class, word);

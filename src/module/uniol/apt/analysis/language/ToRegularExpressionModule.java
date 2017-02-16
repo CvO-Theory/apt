@@ -73,12 +73,7 @@ public class ToRegularExpressionModule extends AbstractInterruptibleModule imple
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem arg = input.getParameter("pn_or_ts", PetriNetOrTransitionSystem.class);
-
-		TransitionSystem ts = arg.getTs();
-		if (ts == null) {
-			ts = CoverabilityGraph.get(arg.getNet()).toReachabilityLTS();
-		}
-
+		TransitionSystem ts = arg.getReachabilityLTS();
 		output.setReturnValue("regular_expression", String.class, toRegularExpression(ts));
 	}
 

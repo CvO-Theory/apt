@@ -26,7 +26,6 @@ import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.cycles.CyclesPVs;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
@@ -71,15 +70,7 @@ public class PrimeCyclePropertyModule extends AbstractInterruptibleModule implem
 	@Override
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
-		ComputeSmallestCycles prog = new ComputeSmallestCycles();
-		TransitionSystem ts = g.getTs();
-		PetriNet pn = g.getNet();
-		Set<Pair<List<String>, ParikhVector>> parikhs = null;
-		if (ts == null) {
-			assert pn != null;
-			ts = CoverabilityGraph.get(pn).toReachabilityLTS();
-		}
-
+		TransitionSystem ts = g.getReachabilityLTS();
 		ParikhVector pv = new PrimeCycleProperty().check(ts);
 		if (pv != null) {
 			output.setReturnValue("prime_cycle_property", Boolean.class, false);
