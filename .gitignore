@@ -4,8 +4,9 @@
 .settings
 .DS_Store
 apt.jar
-apt-lib.jar
 apt-io.jar
+apt-json.jar
+apt-lib.jar
 apt-module.jar
 bin/
 build.local.xml
