@@ -35,6 +35,7 @@ import uniol.apt.analysis.fc.FreeChoice;
 import uniol.apt.analysis.fcnet.FCNet;
 import uniol.apt.analysis.homogeneous.Homogeneous;
 import uniol.apt.analysis.live.Live;
+import uniol.apt.analysis.mf.MergeFree;
 import uniol.apt.analysis.on.OutputNonBranching;
 import uniol.apt.analysis.persistent.PersistentNet;
 import uniol.apt.analysis.plain.Plain;
@@ -91,6 +92,7 @@ public class ExaminePNModule extends AbstractInterruptibleModule implements Inte
 		outputSpec.addReturnValue("t_net", Boolean.class);
 		outputSpec.addReturnValue("s_net", Boolean.class);
 		outputSpec.addReturnValue("output_nonbranching", Boolean.class);
+		outputSpec.addReturnValue("merge_free", Boolean.class);
 		outputSpec.addReturnValue("conflict_free", Boolean.class);
 		outputSpec.addReturnValue("k-marking", Long.class);
 		outputSpec.addReturnValue("safe", Boolean.class);
@@ -143,6 +145,7 @@ public class ExaminePNModule extends AbstractInterruptibleModule implements Inte
 		}
 		output.setReturnValue("k-marking", Long.class, new LargestK(pn).computeLargestK());
 		output.setReturnValue("output_nonbranching", Boolean.class, new OutputNonBranching(pn).check());
+		output.setReturnValue("merge_free", Boolean.class, new MergeFree().check(pn));
 		output.setReturnValue("safe", Boolean.class, result.isSafe());
 		output.setReturnValue("bounded", Boolean.class, result.isBounded());
 		if (result.isBounded()) {
