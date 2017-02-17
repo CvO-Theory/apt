@@ -95,25 +95,6 @@ public class CrashCourseNets {
 	public static PetriNet getCCNet14() {
 		return getNet("14");
 	}
-
-	public static PetriNet[] get1to14() {
-		return new PetriNet[]{
-				getCCNet1(),
-				getCCNet2(),
-				getCCNet2inf(),
-				getCCNet3(),
-				getCCNet4(),
-				getCCNet5(),
-				getCCNet6(),
-				getCCNet7(),
-				getCCNet8(),
-				getCCNet9(),
-				getCCNet10(),
-				getCCNet11(),
-				getCCNet12(),
-				getCCNet13(),
-				getCCNet14()};
-	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

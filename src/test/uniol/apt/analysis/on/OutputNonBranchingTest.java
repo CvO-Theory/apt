@@ -27,7 +27,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertEquals;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.generator.cycle.CycleGenerator;
@@ -69,43 +68,24 @@ public class OutputNonBranchingTest {
 		quadStatePhilNetGenerator = null;
 	}
 
-	private boolean testNet(PetriNet pn) {
-		try {
-			OutputNonBranchingModule mod = new OutputNonBranchingModule();
-			ModuleInvoker m = new ModuleInvoker();
-			List<Object> objs = m.invoke(mod, pn);
-			Boolean ret = (Boolean) objs.get(0);
-			return ret;
-		} catch (ModuleException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
-
-	@Test
-	public void testCrashkurs() {
-		boolean[] res = {true, true, true, false, false, false, false, false, true, false, false,
-			false, false, true, true};
-		PetriNet[] nets = CrashCourseNets.get1to14();
-		for (int i = 0; i < nets.length; i++) {
-			PetriNet petriNet = nets[i];
-			try {
-				assertTrue(testNet(petriNet) == res[i]);
-			} catch (RuntimeException ex) {
-				assertEquals(ex.getCause().getMessage(), "the net is not plain.");
-			}
-		}
+	private boolean testNet(PetriNet pn) throws ModuleException {
+		OutputNonBranchingModule mod = new OutputNonBranchingModule();
+		ModuleInvoker m = new ModuleInvoker();
+		List<Object> objs = m.invoke(mod, pn);
+		Boolean ret = (Boolean) objs.get(0);
+		return ret;
 	}
 
 	@Test(dataProvider = "IntRange", dataProviderClass = IntRangeDataProvider.class)
 	@IntRangeParameter(start = 1, end = 30)
-	public void testCycle(int size) {
+	public void testCycle(int size) throws ModuleException {
 		PetriNet pn = cycleGenerator.generateNet(size);
 		assertTrue(testNet(pn));
 	}
 
 	@Test(dataProvider = "IntRange", dataProviderClass = IntRangeDataProvider.class)
 	@IntRangeParameter(start = 2, end = 30)
-	public void testBistatePhilNet(int size) {
+	public void testBistatePhilNet(int size) throws ModuleException {
 		PetriNet pn = biStatePhilNetGenerator.generateNet(size);
 
 		assertFalse(testNet(pn));
@@ -113,7 +93,7 @@ public class OutputNonBranchingTest {
 
 	@Test(dataProvider = "IntRange", dataProviderClass = IntRangeDataProvider.class)
 	@IntRangeParameter(start = 2, end = 30)
-	public void testTristatePhilNet(int size) {
+	public void testTristatePhilNet(int size) throws ModuleException {
 		PetriNet pn = triStatePhilNetGenerator.generateNet(size);
 
 		assertFalse(testNet(pn));
@@ -121,7 +101,7 @@ public class OutputNonBranchingTest {
 
 	@Test(dataProvider = "IntRange", dataProviderClass = IntRangeDataProvider.class)
 	@IntRangeParameter(start = 2, end = 30)
-	public void testQuadstatePhilNet(int size) {
+	public void testQuadstatePhilNet(int size) throws ModuleException {
 		PetriNet pn = quadStatePhilNetGenerator.generateNet(size);
 
 		assertFalse(testNet(pn));
@@ -130,6 +110,12 @@ public class OutputNonBranchingTest {
 	@DataProvider(name = "goodNets")
 	private Object[][] createGoodTestNets() {
 		return new Object[][]{
+				{CrashCourseNets.getCCNet1()},
+				{CrashCourseNets.getCCNet2()},
+				{CrashCourseNets.getCCNet2inf()},
+				{CrashCourseNets.getCCNet8()},
+				{CrashCourseNets.getCCNet13()},
+				{CrashCourseNets.getCCNet14()},
 				{getEmptyNet()},
 				{getNoTransitionOnePlaceNet()},
 				{getOneTransitionNoPlaceNet()},
@@ -141,6 +127,15 @@ public class OutputNonBranchingTest {
 	@DataProvider(name = "badNets")
 	private Object[][] createBadTestNets() {
 		return new Object[][]{
+				{CrashCourseNets.getCCNet3()},
+				{CrashCourseNets.getCCNet4()},
+				{CrashCourseNets.getCCNet5()},
+				{CrashCourseNets.getCCNet6()},
+				{CrashCourseNets.getCCNet7()},
+				{CrashCourseNets.getCCNet9()},
+				{CrashCourseNets.getCCNet10()},
+				{CrashCourseNets.getCCNet11()},
+				{CrashCourseNets.getCCNet12()},
 				{getDeadlockNet()},
 				{getNonPersistentNet()},
 				{getPersistentBiCFNet()},
@@ -149,12 +144,12 @@ public class OutputNonBranchingTest {
 	}
 
 	@Test(dataProvider = "goodNets")
-	public void testGoodNet(PetriNet pn) {
+	public void testGoodNet(PetriNet pn) throws ModuleException {
 		assertTrue(testNet(pn), "Examining PN " + pn.getName() + " which should be good");
 	}
 
 	@Test(dataProvider = "badNets")
-	public void testBadNet(PetriNet pn) {
+	public void testBadNet(PetriNet pn) throws ModuleException {
 		assertFalse(testNet(pn), "Examining PN " + pn.getName() + " which should fail");
 	}
 }
