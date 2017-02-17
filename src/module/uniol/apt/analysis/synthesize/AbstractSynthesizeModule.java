@@ -56,7 +56,7 @@ public abstract class AbstractSynthesizeModule extends AbstractInterruptibleModu
 	static String getOptionsDescription(String extraOptions, String extraOptionsDescriptions) {
 		return "Supported options are: none, [k]-bounded, safe, [k]-marking, pure, plain, tnet,"
 			+ " generalized-marked-graph (gmg), marked-graph (mg), generalized-output-nonbranching (gon)"
-			+ " output-nonbranching (on), conflict-free (cf), homogeneous,"
+			+ " output-nonbranching (on), merge-free (mf), conflict-free (cf), homogeneous,"
 			+ " behaviourally-conflict-free (bcf), binary-conflict-free (bicf),"
 			+ " upto-language-equivalence (language, le), " + extraOptions + "minimize (minimal), verbose "
 			+ "and quick-fail.\n\nThe meaning of these options is as follows:\n"
@@ -72,6 +72,7 @@ public abstract class AbstractSynthesizeModule extends AbstractInterruptibleModu
 			+ " - marked-graph: generalized-marked-graph + plain.\n"
 			+ " - generalized-output-nonbranching: Every place's postset contains at most one entry.\n"
 			+ " - output-nonbranching: generalized-output-nonbranching + plain.\n"
+			+ " - merge-free: Every place's pretset contains at most one entry.\n"
 			+ " - conflict-free: The Petri net is plain and every place either has at most one entry in"
 			+ " its postset or its preset is contained in its postset.\n"
 			+ " - homogeneous: All outgoing flows from a place have the same weight.\n"
@@ -301,6 +302,10 @@ public abstract class AbstractSynthesizeModule extends AbstractInterruptibleModu
 					case "output-nonbranching":
 					case "on":
 						result = result.setOutputNonbranching(true).setPlain(true);
+						break;
+					case "merge-free":
+					case "mf":
+						result = result.setMergeFree(true);
 						break;
 					case "conflict-free":
 					case "cf":

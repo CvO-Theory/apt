@@ -108,6 +108,9 @@ public class PNPropertiesTest {
 
 		properties = properties.setBinaryConflictFree(true);
 		assertThat(properties, containsAll(properties2));
+
+		properties = properties.setMergeFree(true);
+		assertThat(properties, containsAll(properties2));
 	}
 
 	@Test
@@ -210,6 +213,10 @@ public class PNPropertiesTest {
 		properties = properties.setBehaviourallyConflictFree(false);
 		properties = properties.setBinaryConflictFree(true);
 		assertThat(properties, hasToString("[safe, 35-marking, marked-graph, output-nonbranching, homogeneous, binary-conflict-free]"));
+
+		properties = properties.setMergeFree(true);
+		properties = properties.setBinaryConflictFree(false);
+		assertThat(properties, hasToString("[safe, 35-marking, marked-graph, output-nonbranching, merge-free, homogeneous]"));
 	}
 }
 

@@ -25,8 +25,12 @@ import java.util.List;
 
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.RegionUtility;
+import uniol.apt.adt.ts.TransitionSystem;
 
+import org.testng.annotations.Test;
 import org.testng.annotations.Factory;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 /** @author Uli Schlachter */
 public class InequalitySystemSeparationTest {
@@ -78,7 +82,36 @@ public class InequalitySystemSeparationTest {
 		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
 						new InequalitySystemSeparationFactory(properties))));
 
+		properties = new PNProperties().setMergeFree(true);
+		tests.addAll(Arrays.asList(SeparationTestHelper.factory(
+						new InequalitySystemSeparationFactory(properties), true, false, true)));
+
 		return tests.toArray(new Object[tests.size()]);
+	}
+
+	/**
+	 * (1) -a-> (2) -c-> (3)
+	 *   \--b----^
+	 */
+	static private TransitionSystem getMergingTS() {
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("1", "2", "3");
+		ts.setInitialState("1");
+		ts.createArc("1", "2", "a");
+		ts.createArc("1", "2", "b");
+		ts.createArc("2", "3", "c");
+		return ts;
+	}
+
+	@Test
+	public void testMergingTSMergeFree() {
+		TransitionSystem ts = getMergingTS();
+		RegionUtility utility = new RegionUtility(ts);
+		String[] locationMap = new String[] { "foo", "bar", "baz" };
+		PNProperties properties = new PNProperties().setMergeFree(true);
+		Separation separation = new InequalitySystemSeparation(utility, properties, locationMap);
+
+		assertThat(separation.calculateSeparatingRegion(ts.getNode("2"), "a"), nullValue());
 	}
 }
 

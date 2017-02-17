@@ -153,6 +153,8 @@ public class SMTInterpolHelper {
 		assert !properties.isOutputNonbranching();
 
 		isRegion.addAll(requireDistributableNet(backwardWeight));
+		if (properties.isMergeFree())
+			isRegion.addAll(requireMergeFree(forwardWeight));
 		if (properties.isConflictFree())
 			isRegion.addAll(requireConflictFree(weight, backwardWeight));
 		if (properties.isTNet() || properties.isMarkedGraph()) {
@@ -357,6 +359,30 @@ public class SMTInterpolHelper {
 		}
 
 		return Collections.singletonList(collectTerms("or", terms, script.term("true")));
+	}
+
+	/**
+	 * Add the needed inequalities to guarantee that a merge-free region is calculated.
+	 * @param forwardWeight Terms representing the forward weights of transitions.
+	 * @return The needed terms.
+	 */
+	private List<Term> requireMergeFree(Term[] forwardWeight) {
+		final int numberEvents = utility.getNumberOfEvents();
+		Term zero = script.numeral(BigInteger.ZERO);
+		Term[] result = new Term[numberEvents];
+
+		for (int event = 0; event < numberEvents; event++) {
+			Term[] sum = new Term[numberEvents - 1];
+			for (int idx = 0; idx < numberEvents; idx++) {
+				if (idx < event)
+					sum[idx] = forwardWeight[idx];
+				else if (idx > event)
+					sum[idx - 1] = forwardWeight[idx];
+			}
+			result[event] = script.term("=", zero, collectTerms("+", sum, zero));
+		}
+
+		return Collections.singletonList(collectTerms("or", result, script.term("true")));
 	}
 
 	/**

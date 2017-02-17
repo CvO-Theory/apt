@@ -55,6 +55,7 @@ import uniol.apt.analysis.exception.UnboundedException;
 import uniol.apt.analysis.homogeneous.Homogeneous;
 import uniol.apt.analysis.isomorphism.IsomorphismLogic;
 import uniol.apt.analysis.language.LanguageEquivalence;
+import uniol.apt.analysis.mf.MergeFree;
 import uniol.apt.analysis.on.OutputNonBranching;
 import uniol.apt.analysis.plain.Plain;
 import uniol.apt.analysis.separation.LargestK;
@@ -624,6 +625,7 @@ public class SynthesizePN {
 		assert !properties.isMarkedGraph() || isGeneralizedMarkedGraph(pn) : regions;
 		assert !properties.isKBounded() || Bounded.checkBounded(pn).k <= properties.getKForKBounded() : regions;
 		assert !properties.isOutputNonbranching() || new OutputNonBranching(pn).check() : regions;
+		assert !properties.isMergeFree() || new MergeFree().check(pn) : regions;
 		try {
 			assert !properties.isConflictFree() || new ConflictFree(pn).check() : regions;
 		} catch (PreconditionFailedException e) {

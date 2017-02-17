@@ -39,6 +39,7 @@ public class PNProperties {
 	private boolean tnet = false;
 	private boolean markedgraph = false;
 	private boolean outputNonbranching = false;
+	private boolean mergeFree = false;
 	private boolean conflictFree = false;
 	private boolean homogeneous = false;
 	private boolean behaviourallyConflictFree = false;
@@ -63,6 +64,7 @@ public class PNProperties {
 		tnet = other.tnet;
 		markedgraph = other.markedgraph;
 		outputNonbranching = other.outputNonbranching;
+		mergeFree = other.mergeFree;
 		conflictFree = other.conflictFree;
 		homogeneous = other.homogeneous;
 		behaviourallyConflictFree = other.behaviourallyConflictFree;
@@ -252,6 +254,25 @@ public class PNProperties {
 	}
 
 	/**
+	 * Return true if this property description requires an merge-free PN.
+	 * @return true if merge-free
+	 */
+	public boolean isMergeFree() {
+		return mergeFree;
+	}
+
+	/**
+	 * Create a new instance which differs from this one in the specified merge-free requirement.
+	 * @param value whether merge-free should be required.
+	 * @return A new PNProperties which expresses the same properties as this instance, plus merge-free.
+	 */
+	public PNProperties setMergeFree(boolean value) {
+		PNProperties result = new PNProperties(this);
+		result.mergeFree = value;
+		return result;
+	}
+
+	/**
 	 * Return true if this property description requires a conflict free PN.
 	 * @return true if conflict free
 	 */
@@ -352,6 +373,8 @@ public class PNProperties {
 			return false;
 		if (other.isOutputNonbranching() && !isOutputNonbranching())
 			return false;
+		if (other.isMergeFree() && !isMergeFree())
+			return false;
 		if (other.isConflictFree() && !isConflictFree())
 			return false;
 		if (other.isHomogeneous() && !isHomogeneous())
@@ -376,18 +399,20 @@ public class PNProperties {
 			hashCode |= 1 << 3;
 		if (outputNonbranching)
 			hashCode |= 1 << 4;
-		if (conflictFree)
+		if (mergeFree)
 			hashCode |= 1 << 5;
-		if (homogeneous)
+		if (conflictFree)
 			hashCode |= 1 << 6;
-		if (behaviourallyConflictFree)
+		if (homogeneous)
 			hashCode |= 1 << 7;
-		if (binaryConflictFree)
+		if (behaviourallyConflictFree)
 			hashCode |= 1 << 8;
+		if (binaryConflictFree)
+			hashCode |= 1 << 9;
 		if (isKBounded())
-			hashCode |= getKForKBounded() << 9;
+			hashCode |= getKForKBounded() << 10;
 		if (isKMarking())
-			hashCode ^= getKForKMarking() << 10;
+			hashCode ^= getKForKMarking() << 11;
 		return hashCode;
 	}
 
@@ -409,6 +434,8 @@ public class PNProperties {
 		if (markedgraph != other.markedgraph)
 			return false;
 		if (outputNonbranching != other.outputNonbranching)
+			return false;
+		if (mergeFree != other.mergeFree)
 			return false;
 		if (conflictFree != other.conflictFree)
 			return false;
@@ -441,6 +468,8 @@ public class PNProperties {
 			tmpList.add("marked-graph");
 		if (isOutputNonbranching())
 			tmpList.add("output-nonbranching");
+		if (isMergeFree())
+			tmpList.add("merge-free");
 		if (isConflictFree())
 			tmpList.add("conflict-free");
 		if (isHomogeneous())
