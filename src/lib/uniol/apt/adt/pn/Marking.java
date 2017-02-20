@@ -59,7 +59,8 @@ public class Marking {
 	 */
 	public Marking(Marking m) {
 		this.net = m.net;
-		this.setMarking(m);
+		this.placesList = m.placesList;
+		this.tokenList = new ArrayList<>(m.tokenList);
 	}
 
 	/**
@@ -164,8 +165,8 @@ public class Marking {
 	public Marking fire(Transition... t) {
 		ensureConsistency();
 		Marking result = fireTransitions(t);
-		if (result != this)
-			setMarking(result);
+		this.placesList = result.placesList;
+		this.tokenList = result.tokenList;
 		return this;
 	}
 
