@@ -71,7 +71,17 @@ public class Marking {
 	 */
 	public Marking(PetriNet net, Marking m) {
 		this.net = net;
-		this.setMarking(m);
+		if (this.net == m.net) {
+			this.placesList = m.placesList;
+			this.tokenList = new ArrayList<>(m.tokenList);
+		} else {
+			this.placesList = this.net.getPlacesList();
+			this.tokenList = new ArrayList<>(Collections.nCopies(this.placesList.size(), Token.ZERO));
+			for (int idx = 0; idx < m.placesList.size(); idx++) {
+				int ownIdx = placesList.indexOf(net.getPlace(m.placesList.get(idx).getId()));
+				this.tokenList.set(ownIdx, m.tokenList.get(idx));
+			}
+		}
 	}
 
 	/**
@@ -112,25 +122,6 @@ public class Marking {
 		}
 		for (int i = 0; i < orderedTokenCounts.length; i++)
 			this.tokenList.add(Token.valueOf(orderedTokenCounts[i]));
-	}
-
-	/**
-	 * Copies the marking in the instance.
-	 * @param m The marking that serves as template for copying the marking.
-	 */
-	private void setMarking(Marking m) {
-		assert this != m;
-		if (this.net == m.net) {
-			this.placesList = m.placesList;
-			this.tokenList = new ArrayList<>(m.tokenList);
-		} else {
-			this.placesList = this.net.getPlacesList();
-			this.tokenList = new ArrayList<>(Collections.nCopies(this.placesList.size(), Token.ZERO));
-			for (int idx = 0; idx < m.placesList.size(); idx++) {
-				int ownIdx = placesList.indexOf(net.getPlace(m.placesList.get(idx).getId()));
-				this.tokenList.set(ownIdx, m.tokenList.get(idx));
-			}
-		}
 	}
 
 	/**
