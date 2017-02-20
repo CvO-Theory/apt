@@ -162,7 +162,7 @@ public class CoverabilityGraphTest {
 	@Test
 	public void testEmptyNet() {
 		PetriNet pn = getEmptyNet();
-		Marking initialMark = new Marking(pn.getInitialMarking());
+		Marking initialMark = pn.getInitialMarking();
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
@@ -177,7 +177,7 @@ public class CoverabilityGraphTest {
 	@Test
 	public void testNoTransitionOnePlaceNet() {
 		PetriNet pn = getNoTransitionOnePlaceNet();
-		Marking initialMark = new Marking(pn.getInitialMarking());
+		Marking initialMark = pn.getInitialMarking();
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
@@ -192,7 +192,7 @@ public class CoverabilityGraphTest {
 	@Test
 	public void testOneTransitionNoPlaceNet() {
 		PetriNet pn = getOneTransitionNoPlaceNet();
-		Marking initialMark = new Marking(pn.getInitialMarking());
+		Marking initialMark = pn.getInitialMarking();
 
 		CoverabilityGraph cov = CoverabilityGraph.get(pn);
 
