@@ -59,7 +59,6 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	private String name;
 	private long nextPlaceId = 0;
 	private long nextTransitionId = 0;
-	private long placeRev = 0;
 	private final SortedMap<String, Node> nodes = new TreeMap<>();
 	private final SortedMap<String, Place> places = new TreeMap<>();
 	private List<Place> placesList = Collections.emptyList();
@@ -110,7 +109,6 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		for (Marking m : pn.finalMarkings) {
 			this.finalMarkings.add(new Marking(this, m));
 		}
-		this.placeRev = pn.placeRev;
 		this.initialMarking = new Marking(this, pn.initialMarking);
 		copyExtensions(pn);
 	}
@@ -268,7 +266,6 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		postsetNodes.put(id, new HashSet<Node>());
 		presetEdges.put(id, new HashMap<EdgeKey, Flow>());
 		postsetEdges.put(id, new HashMap<EdgeKey, Flow>());
-		++placeRev;
 		invokeListeners();
 		return p;
 	}
@@ -662,7 +659,6 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		this.placesList.remove(places.get(id));
 		rmNode(id);
 		places.remove(id);
-		++placeRev;
 		invokeListeners();
 	}
 
@@ -938,15 +934,6 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 */
 	public Set<Marking> getFinalMarkings() {
 		return Collections.unmodifiableSet(this.finalMarkings);
-	}
-
-	/**
-	 * Gets the place revision counter. It's the counter which gets everytime incremented if a place is created or
-	 * removed. It's mainly used for the consistency of the marking.
-	 * @return the revision counter for place changes.
-	 */
-	long getPlaceRev() {
-		return placeRev;
 	}
 
 	/**

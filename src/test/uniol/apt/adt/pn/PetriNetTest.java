@@ -120,15 +120,11 @@ public class PetriNetTest {
 	@Test
 	public void testCopying() {
 		PetriNet pn = new PetriNet("testCopying");
-		assertEquals(0, pn.getPlaceRev());
 		Place s0 = pn.createPlace("s0");
-		assertEquals(1, pn.getPlaceRev());
 		s0.putExtension("extension", "peterPan");
 		pn.removePlace(s0);
-		assertEquals(2, pn.getPlaceRev());
 		assertEquals(0, pn.getPlaces().size());
 		pn.createPlace(s0);
-		assertEquals(3, pn.getPlaceRev());
 		assertEquals(1, pn.getPlaces().size());
 		Place s0Copy = pn.getPlace("s0");
 		assertEquals("peterPan", s0Copy.getExtension("extension"));
@@ -172,7 +168,6 @@ public class PetriNetTest {
 
 	static void petriNetEquals(PetriNet pn1, PetriNet pn2) {
 		assertEquals(pn1.getName(), pn2.getName());
-		assertEquals(pn1.getPlaceRev(), pn2.getPlaceRev());
 		assertNotEquals(pn1.getInitialMarkingCopy(), pn2.getInitialMarkingCopy());
 		Set<Marking> finalMarkings1 = pn1.getFinalMarkings();
 		Set<Marking> finalMarkings2 = pn2.getFinalMarkings();

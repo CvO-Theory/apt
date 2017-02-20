@@ -40,7 +40,6 @@ public class Marking {
 	private final PetriNet net;
 	private List<Place> placesList;
 	private List<Token> tokenList = new ArrayList<>();
-	private long rev = -1;
 
 	/**
 	 * Constructor. Sets the tokencount of every place of the given petri net to zero.
@@ -52,7 +51,6 @@ public class Marking {
 		for (Place place : placesList) {
 			tokenList.add(Token.ZERO);
 		}
-		this.rev = net.getPlaceRev();
 	}
 
 	/**
@@ -97,7 +95,6 @@ public class Marking {
 	public Marking(PetriNet net, int... orderedTokenCounts) {
 		this.net = net;
 		this.placesList = this.net.getPlacesList();
-		this.rev = this.net.getPlaceRev();
 		if (orderedTokenCounts.length != this.placesList.size()) {
 			throw new StructureException("Count of tokencounts does not match the count of"
 				+ "places in graph '" + this.net.getName() + "'.");
@@ -115,7 +112,6 @@ public class Marking {
 		if (this.net == m.net) {
 			this.placesList = m.placesList;
 			this.tokenList = new ArrayList<>(m.tokenList);
-			this.rev = m.rev;
 		} else {
 			this.placesList = this.net.getPlacesList();
 			this.tokenList = new ArrayList<>(Collections.nCopies(this.placesList.size(), Token.ZERO));
@@ -123,7 +119,6 @@ public class Marking {
 				int ownIdx = placesList.indexOf(net.getPlace(m.placesList.get(idx).getId()));
 				this.tokenList.set(ownIdx, m.tokenList.get(idx));
 			}
-			this.rev = this.net.getPlaceRev();
 		}
 	}
 
@@ -451,7 +446,7 @@ public class Marking {
 	 * and incase the marking has an earlier revision, the hashmap of the marking gets updated.
 	 */
 	final void ensureConsistency() {
-		if (rev != net.getPlaceRev()) {
+		if (placesList != net.getPlacesList()) {
 			List<Place> oldPlacesList = placesList;
 			List<Token> oldTokenList = tokenList;
 			this.placesList = this.net.getPlacesList();
@@ -463,7 +458,6 @@ public class Marking {
 				else
 					this.tokenList.add(oldTokenList.get(idx));
 			}
-			rev = net.getPlaceRev();
 		}
 	}
 
