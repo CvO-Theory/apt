@@ -81,7 +81,17 @@ public class Marking {
 	 */
 	public Marking(PetriNet net, Map<String, Integer> m) {
 		this.net = net;
-		this.setMarking(m);
+		this.placesList = net.getPlacesList();
+		this.tokenList = new ArrayList<>(Collections.nCopies(this.placesList.size(), Token.ZERO));
+		for (Map.Entry<String, Integer> entry : m.entrySet()) {
+			int idx = this.placesList.indexOf(this.net.getPlace(entry.getKey()));
+			if (idx == -1) {
+				throw new StructureException("place '" + entry.getKey() + "' does not belong to net '"
+					+ this.net.getName() + "'.");
+			}
+			this.tokenList.set(idx, Token.valueOf(entry.getValue()));
+		}
+		ensureConsistency();
 	}
 
 	/**
@@ -120,25 +130,6 @@ public class Marking {
 				this.tokenList.set(ownIdx, m.tokenList.get(idx));
 			}
 		}
-	}
-
-	/**
-	 * Sets the marking of this instance according to the given mapping.
-	 * @param m a mapping of how many tokens are on the places.
-	 * @throws StructureException if the places of the given net and tokenmap do not fit.
-	 */
-	private void setMarking(Map<String, Integer> m) {
-		this.placesList = net.getPlacesList();
-		this.tokenList = new ArrayList<>(Collections.nCopies(this.placesList.size(), Token.ZERO));
-		for (Map.Entry<String, Integer> entry : m.entrySet()) {
-			int idx = this.placesList.indexOf(this.net.getPlace(entry.getKey()));
-			if (idx == -1) {
-				throw new StructureException("place '" + entry.getKey() + "' does not belong to net '"
-					+ this.net.getName() + "'.");
-			}
-			this.tokenList.set(idx, Token.valueOf(entry.getValue()));
-		}
-		ensureConsistency();
 	}
 
 	/**
