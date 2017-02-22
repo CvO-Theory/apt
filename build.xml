@@ -235,13 +235,20 @@
 
 	<target name="test" depends="test.unit,test.integration" description="Run tests" />
 
-	<target name="test.integration" depends="jar,javac.ant" description="Run integration tests">
-		<java classname="uniol.apt.tasks.IntegrationTestTask" failonerror="true">
-			<classpath refid="ant.class.path" />
+	<macrodef name="invoke-integration">
+		<attribute name="jvmarg" default="" />
+		<sequential>
+			<java classname="uniol.apt.tasks.IntegrationTestTask" failonerror="true">
+				<classpath refid="ant.class.path" />
 
-			<arg value="java -jar apt.jar"/>
-			<arg path="src/test/integration"/>
-		</java>
+				<arg value="java @{jvmarg} -jar apt.jar"/>
+				<arg path="src/test/integration"/>
+			</java>
+		</sequential>
+	</macrodef>
+
+	<target name="test.integration" depends="jar,javac.ant" description="Run integration tests">
+		<invoke-integration/>
 	</target>
 
 	<target name="xml.test" depends="javac.ant,javac.test">
@@ -434,6 +441,8 @@
 				<xmlfileset file="testng.xml" />
 			</testng>
 		</coverage>
+		<agent property="agentvmparam" destfile="reports/jacoco/jacoco.exec" />
+		<invoke-integration jvmarg="${agentvmparam}"/>
 
 		<report>
 			<executiondata>
