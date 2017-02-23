@@ -47,6 +47,9 @@ this output is produced (some shortening was applied, marked by "[...]"):
     
     {"return_values": {"pn": "[...]"}}
 
+Timeouts
+--------
+
 Additionally to what is possible with APT normally, the JSON interface allows to
 specify a timeout for the execution of a module:
 
@@ -58,3 +61,23 @@ result in:
      "error": "Execution was interrupted",
      "type": "uniol.apt.util.interrupt.UncheckedInterruptedException"
     }
+
+Chained module calls
+--------------------
+
+This also adds support for chained module calls. This means that the result of
+one module is used as the input to another module. To use this feature, instead
+of providing a module argument as a string, it is provided as a JSON object
+describing another module invocation. A special key "use" describes which result
+of the module should be passed on.
+
+For example, this input:
+
+    {command:"run_module",module:"bounded",arguments:{pn:{module:bitnet_generator,arguments:{n:"2"},use:"pn"}}}
+
+results in:
+
+    {"return_values": {
+     "bounded": "Yes",
+     "smallest_K": "1"
+    }}
