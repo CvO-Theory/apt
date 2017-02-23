@@ -11,9 +11,16 @@ these are executed one after another.
 
 For example, with the following input
 
-    {command:"list_modules"}
-    {command:"describe_module", module:"bitnet_generator"}
-    {command:"run_module", module:"bitnet_generator", arguments:{"n":"1"}}
+    {"command":"list_modules"}
+    {
+     "command": "describe_module",
+     "module": "bitnet_generator"
+    }
+    {
+     "command": "run_module",
+     "module": "bitnet_generator",
+     "arguments": {"n": "1"}
+    }
 
 this output is produced (some shortening was applied, marked by "[...]"):
 
@@ -53,7 +60,12 @@ Timeouts
 Additionally to what is possible with APT normally, the JSON interface allows to
 specify a timeout for the execution of a module:
 
-    {command:"run_module", "timeout_milliseconds":0, module:"regular_language_to_lts", arguments:{"lang":"a"}}
+    {
+     "command": "run_module",
+     "timeout_milliseconds": 0,
+     "module": "regular_language_to_lts",
+     "arguments": {"lang": "a"}
+    }
 
 result in:
 
@@ -73,7 +85,15 @@ of the module should be passed on.
 
 For example, this input:
 
-    {command:"run_module",module:"bounded",arguments:{pn:{module:bitnet_generator,arguments:{n:"2"},use:"pn"}}}
+    {
+     "command": "run_module",
+     "module": "bounded",
+     "arguments": {
+      "pn": {
+       "module": "bitnet_generator",
+       "use": "pn",
+       "arguments": {"n": "2"}
+    }}}
 
 results in:
 
@@ -81,3 +101,6 @@ results in:
      "bounded": "Yes",
      "smallest_K": "1"
     }}
+
+What happens is that the "bitnet_generator" is invoked and its return value with
+name "pn" is then given to the "bounded" module.
