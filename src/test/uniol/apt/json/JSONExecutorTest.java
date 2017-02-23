@@ -226,6 +226,66 @@ public class JSONExecutorTest {
 	}
 
 	@Test
+	public void callModuleNested() {
+		assertThat("something else left an interrupter for this thread behind",
+				InterrupterRegistry.getCurrentThreadInterrupter(), instanceOf(NoOpInterrupter.class));
+
+		StringWriter command = new StringWriter();
+		new JSONWriter(command)
+			.object()
+			.key("command").value("run_module")
+			.key("module").value("example")
+			.key("arguments").object()
+				.key("string").object()
+					.key("module").value("example")
+					.key("use").value("lower_case_string")
+					.key("arguments").object()
+						.key("string").value("iNpUt")
+						.endObject()
+					.endObject()
+				.endObject()
+			.endObject();
+
+		StringWriter result = new StringWriter();
+		new JSONWriter(result)
+			.object().key("return_values").object()
+				.key("lower_case_string").value("input")
+			.endObject().endObject();
+		runTest(command.toString(), result.toString());
+
+		assertThat(InterrupterRegistry.getCurrentThreadInterrupter(), instanceOf(NoOpInterrupter.class));
+	}
+
+	@Test
+	public void callModuleNestedInvalidUse() {
+		StringWriter command = new StringWriter();
+		new JSONWriter(command)
+			.object()
+			.key("command").value("run_module")
+			.key("module").value("example")
+			.key("arguments").object()
+				.key("string").object()
+					.key("module").value("example")
+					.key("use").value("this_does_not_exist")
+					.key("arguments").object()
+						.key("string").value("iNpUt")
+						.endObject()
+					.endObject()
+				.endObject()
+			.endObject();
+
+		StringWriter result = new StringWriter();
+		new JSONWriter(result)
+			.object()
+			.key("error").value("Module did not produce a return value with name this_does_not_exist")
+			.key("type").value("uniol.apt.module.exception.ModuleException")
+			.endObject();
+		runTest(command.toString(), result.toString());
+
+		assertThat(InterrupterRegistry.getCurrentThreadInterrupter(), instanceOf(NoOpInterrupter.class));
+	}
+
+	@Test
 	public void callModuleSuccessWithError() {
 		StringWriter command = new StringWriter();
 		new JSONWriter(command)

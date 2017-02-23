@@ -201,13 +201,22 @@ public class JSONExecutor {
 			return result;
 		}
 
+		try {
+			ModuleOutputImpl output = callModule(module, arguments);
+			result.put("return_values", transformReturnValues(module, output));
+			return result;
+		} catch (ModuleException|UncheckedInterruptedException e) {
+			return JSONUtilities.toJSONObject(e);
+		}
+	}
+
+	private ModuleOutputImpl callModule(Module module, JSONObject arguments) throws ModuleException {
 		// timeout handling
 		long timeout = arguments.optLong("timeout_milliseconds", -1);
 		Interrupter originalInterrupter = null;
 		if (timeout != -1) {
 			if (!(module instanceof InterruptibleModule)) {
-				result.put("error", "This module does not support timeouts");
-				return result;
+				throw new ModuleException("This module does not support timeouts");
 			}
 			originalInterrupter = InterrupterRegistry.getCurrentThreadInterrupter();
 			InterrupterRegistry.setCurrentThreadInterrupter(new ChainedInterrupter(originalInterrupter,
@@ -217,14 +226,11 @@ public class JSONExecutor {
 			ModuleInput input = transformArguments(module, arguments.getJSONObject("arguments"));
 			ModuleOutputImpl output = ModuleUtils.getModuleOutput(module);
 			module.run(input, output);
-			result.put("return_values", transformReturnValues(module, output));
-		} catch (ModuleException|UncheckedInterruptedException e) {
-			result = JSONUtilities.toJSONObject(e);
+			return output;
 		} finally {
 			if (originalInterrupter != null)
 				InterrupterRegistry.setCurrentThreadInterrupter(originalInterrupter);
 		}
-		return result;
 	}
 
 	private ModuleInput transformArguments(Module module, JSONObject arguments) throws ModuleException {
@@ -247,9 +253,34 @@ public class JSONExecutor {
 		return input;
 	}
 
-	private Object getArgument(JSONObject arguments, String parameterName, Class<?> klass) throws ModuleException {
-		String argString = arguments.getString(parameterName);
-		return parametersTransformer.transformString(argString, klass);
+	private Object getArgument(JSONObject outerArguments, String parameterName, Class<?> klass) throws ModuleException {
+		JSONObject argument = outerArguments.optJSONObject(parameterName);
+		if (argument == null) {
+			// Argument is given directly as a string
+			String argString = outerArguments.getString(parameterName);
+			return parametersTransformer.transformString(argString, klass);
+		}
+
+		// Argument is given as a nested module call
+		String returnValue = argument.getString("use");
+		Module module = findModule(argument.getString("module"));
+		if (module == null) {
+			throw new ModuleException("No such module: " + argument.getString("module"));
+		}
+		ModuleOutputImpl output;
+		try {
+			output = callModule(module, argument);
+		} catch (UncheckedInterruptedException e) {
+			throw new ModuleException("Module " + module + " timed out", e);
+		}
+		Object result = output.getValue(returnValue);
+		if (result == null)
+			throw new ModuleException("Module did not produce a return value with name " + returnValue);
+		if (!klass.isInstance(result))
+			throw new ModuleException(String.format("Module did produced a return value with type %s, "
+						+ "but %s was expected", result.getClass().getName(),
+						klass.getName()));
+		return result;
 	}
 
 	private JSONObject transformReturnValues(Module module, ModuleOutputImpl output) throws ModuleException {
