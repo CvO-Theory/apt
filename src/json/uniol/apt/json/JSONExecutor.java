@@ -240,12 +240,16 @@ public class JSONExecutor {
 					throw new ModuleException("Missing module argument: " + parameter.getName());
 				}
 			} else {
-				String argString = arguments.getString(parameter.getName());
-				arg = parametersTransformer.transformString(argString, parameter.getKlass());
+				arg = getArgument(arguments, parameter.getName(), parameter.getKlass());
 			}
 			input.setParameter(parameter.getName(), arg);
 		}
 		return input;
+	}
+
+	private Object getArgument(JSONObject arguments, String parameterName, Class<?> klass) throws ModuleException {
+		String argString = arguments.getString(parameterName);
+		return parametersTransformer.transformString(argString, klass);
 	}
 
 	private JSONObject transformReturnValues(Module module, ModuleOutputImpl output) throws ModuleException {
