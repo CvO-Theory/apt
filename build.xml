@@ -233,6 +233,17 @@
 		</java>
 	</target>
 
+	<target name="test" depends="test.unit,test.integration" description="Run tests" />
+
+	<target name="test.integration" depends="jar,javac.ant" description="Run integration tests">
+		<java classname="uniol.apt.tasks.IntegrationTestTask" failonerror="true">
+			<classpath refid="ant.class.path" />
+
+			<arg value="java -jar apt.jar"/>
+			<arg path="src/test/integration"/>
+		</java>
+	</target>
+
 	<target name="xml.test" depends="javac.ant,javac.test">
 		<java classname="uniol.apt.tasks.WriteTestsXML" failonerror="true">
 			<classpath refid="ant.class.path" />
@@ -254,7 +265,7 @@
 		</sequential>
 	</macrodef>
 
-	<target name="test" depends="javac.test,xml.test" description="Run tests">
+	<target name="test.unit" depends="javac.test,xml.test" description="Run unit tests">
 		<invoke-testng outputdir="testng"/>
 	</target>
 
