@@ -1,0 +1,24 @@
+digraph PN {
+	node [fontsize=20,shape=circle,height=0.5,width=0.5,fixedsize=true];
+	s1[label="1", xlabel="s1"];
+	s2[label="0", xlabel="s2"];
+	s3[label="1", xlabel="s3"];
+	s4[label="0", xlabel="s4"];
+
+	node [fontsize=20,shape=rect,height=0.5,width=0.5,fixedsize=true];
+	t1[label="t1", xlabel="t1"];
+	t2[label="t2", xlabel="t2"];
+	t3[label="t3", xlabel="t3"];
+	t4[label="t4", xlabel="t4"];
+
+	edge [fontsize=20]
+	s3 -> t4 [xlabel="1"];
+	t4 -> s4 [xlabel="1"];
+	s4 -> t3 [xlabel="1"];
+	t1 -> s1 [xlabel="1"];
+	s1 -> t2 [xlabel="1"];
+	t2 -> s2 [xlabel="1"];
+	s2 -> t1 [xlabel="1"];
+	t3 -> s3 [xlabel="1"];
+}
+
