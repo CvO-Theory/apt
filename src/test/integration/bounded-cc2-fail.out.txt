@@ -1,0 +1,4 @@
+bounded: No
+witness_place: p3
+witness_firing_sequence: [t2]
+smallest_K: 4

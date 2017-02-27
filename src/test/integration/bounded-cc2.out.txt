@@ -1,0 +1,2 @@
+bounded: Yes
+smallest_K: 4
