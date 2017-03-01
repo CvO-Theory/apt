@@ -76,7 +76,7 @@ public class UIUtils {
 		for (ReturnValue fileReturnValue : fileReturnValues) {
 			formatter.format(" [<%s>]", fileReturnValue.getName());
 		}
-		sb.append("\n");
+		formatter.format("%n");
 
 		for (Parameter parameter : parameters) {
 			formatter.format("  %-10s %s%n", parameter.getName(), parameter.getDescription());
@@ -92,7 +92,7 @@ public class UIUtils {
 			formatter.format("  %-10s Optional file name for writing the output to%n", value.getName());
 		}
 
-		formatter.format("\n%s", module.getLongDescription());
+		formatter.format("%n%s", module.getLongDescription());
 
 		boolean printedHeader = false;
 		for (Parameter parameter : union(parameters, optionalParameters)) {
