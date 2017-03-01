@@ -123,7 +123,7 @@ public class IntegrationTestTask {
 		File targetFile = new File(parent, name);
 		if (!targetFile.exists())
 			return "";
-		return FileUtils.readFileToString(targetFile, "UTF-8");
+		return FileUtils.readFileToString(targetFile, "UTF-8").replace("\n", System.lineSeparator());
 	}
 
 	private static int toInteger(String str) {
