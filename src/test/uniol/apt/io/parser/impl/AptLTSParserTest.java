@@ -114,7 +114,7 @@ public class AptLTSParserTest {
 		new AptLTSParser().parseFile("nets/not-parsable-test-nets/doubleNodes-aut.apt_unparsable");
 	}
 
-	@Test(expectedExceptions = { ParseException.class })
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^States 's2' and 's0' are both marked as initial states$")
 	public void testDoubleInitState() throws Exception {
 		new AptLTSParser().parseFile("nets/not-parsable-test-nets/doubleInitialstate.apt_unparsable");
 	}
