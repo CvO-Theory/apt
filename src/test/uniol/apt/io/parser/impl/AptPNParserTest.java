@@ -165,10 +165,10 @@ public class AptPNParserTest {
 				".type PN\n.description \"foo\"\n.places foo\n.transitions bar\n.description \"bar\"");
 	}
 
-	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 2 col 0: token recognition error at: '\\.initialM'$")
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 5 col 0: no viable alternative at input '\\.initial_marking'$")
 	public void testInitialMarkingTwice() throws Exception {
 		new AptPNParser().parseString(
-				".type PN\n.initialMarking {foo}\n.places foo\n.transitions bar\n.initialMarking");
+				".type PN\n.initial_marking {foo}\n.places foo\n.transitions bar\n.initial_marking");
 	}
 }
 
