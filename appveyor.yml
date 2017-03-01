@@ -1,5 +1,6 @@
 install:
   - cinst ant
+  - refreshenv
 
 build_script:
   - ant verify-parsers jar javadoc test
