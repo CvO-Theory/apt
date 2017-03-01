@@ -139,7 +139,7 @@ public class AptPNParserTest {
 		new AptPNParser().parseFile("nets/not-parsable-test-nets/unknown-attribute.apt_unparsable");
 	}
 
-	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^line 1 col 8: token recognition error at: '// Comment without newline after'$")
+	@Test
 	public void testMissingNewlineAfterComment() throws Exception {
 		new AptPNParser().parseString(".type PN// Comment without newline after");
 	}

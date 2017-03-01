@@ -153,6 +153,11 @@ public class AptLTSParserTest {
 	public void testUnknownLabel() throws Exception {
 		new AptLTSParser().parseString(".type LTS\n.states foo[initial]\n.labels\n.arcs foo a foo\n");
 	}
+
+	@Test
+	public void testMissingNewlineAfterComment() throws Exception {
+		new AptLTSParser().parseString(".type LTS.statess[initial]// Comment without newline after");
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
