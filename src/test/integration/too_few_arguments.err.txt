@@ -1,8 +1,6 @@
 Too few arguments
 
-Usage: apt persistent <pn_or_ts>
-  pn_or_ts   The Petri net or LTS that should be examined
+Usage: apt deterministic <lts>
+  lts        The LTS that should be examined
 
-Check if a Petri net or LTS is persistent.
-
-A LTS is persistent if for all reachable states s and enabled labels a, b (a≠b), there is a state r so that both s[ab>r and s[ba>r. A Petri net is persistent if its reachability graph is persistent.
+Check if a LTS is deterministic
