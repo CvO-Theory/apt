@@ -7,6 +7,14 @@ Welcome to APT. The purpose of this software is to run various analysis methods
 on Petri nets and labeled transition systems. This guide explains the most
 important aspects for getting started with APT.
 
+For citing APT, we recommend the following publications:
+* General: [Eike Best, Uli Schlachter: Analysis of Petri Nets and Transition
+  Systems](http://dx.doi.org/10.4204/EPTCS.189.6). In [ICE
+  2015](http://dx.doi.org/10.4204/EPTCS.189): 53-67
+* Synthesis: [Uli Schlachter: Petri Net Synthesis for Restricted Classes of
+  Nets](http://dx.doi.org/10.1007/978-3-319-39086-4_6). In [Petri Nets
+  2016](http://dx.doi.org/10.1007/978-3-319-39086-4): 79-97
+
 Further reading
 ---------------
 
