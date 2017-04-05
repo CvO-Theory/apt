@@ -270,7 +270,8 @@ public class InvariantCalculator {
 		}
 		
 		Set<List<Integer>> treated = new HashSet<>();
-		while (colsB.size() < 2000) {
+		// loop breaks if the set of remaining columns is empty : no more negative values to consider
+		while (true) {
 			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			
 			// columns which are positive on target row
