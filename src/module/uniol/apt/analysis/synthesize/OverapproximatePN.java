@@ -141,16 +141,19 @@ public class OverapproximatePN {
 	static private void copyExistingRegions(SynthesizePN.Builder builder, SynthesizePN synthesize,
 			PNProperties properties) {
 		RegionUtility utility = builder.getRegionUtility();
-		boolean newStatesWereAdded = !synthesize.getFailedEventStateSeparationProblems().isEmpty();
-		boolean needToCheckKBoundedness = newStatesWereAdded && properties.isKBounded();
 		for (Region region : synthesize.getSeparatingRegions()) {
 			Region newRegion = Region.Builder.copyRegionToUtility(utility, region);
+
 			// The only difference should be in the used RegionUtility, which should not influence
 			// the result of toString().
 			assert region.toString().equals(newRegion.toString())
 				: region.toString() + " = " + newRegion.toString();
-			if (needToCheckKBoundedness && !isKBounded(newRegion, properties.getKForKBounded()))
-				continue;
+
+			// For every k-bounded region there is a complementary region. If this region exceeds the bound
+			// k, then the complementary region necessarily has a negative token count in the same state.
+			// Thus, this cannot happen (tm).
+			assert !properties.isKBounded() || isKBounded(newRegion, properties.getKForKBounded()) : region;
+
 			try {
 				builder.addRegion(newRegion);
 			} catch (InvalidRegionException e) {
