@@ -1262,7 +1262,22 @@ public class FiniteAutomatonUtility {
 		private final DFAState state2;
 		private final Mode mode;
 
-		static public enum Mode { UNION, INTERSECTION };
+		static public enum Mode {
+			UNION {
+				@Override
+				public boolean isFinal(boolean state1Final, boolean state2Final) {
+					return state1Final || state2Final;
+				}
+			},
+			INTERSECTION {
+				@Override
+				public boolean isFinal(boolean state1Final, boolean state2Final) {
+					return state1Final && state2Final;
+				}
+			};
+
+			abstract public boolean isFinal(boolean state1Final, boolean state2Final);
+		};
 
 		public SynchronousParallelComposition(Set<Symbol> alphabet, DFAState state1, DFAState state2,
 				Mode mode) {
@@ -1274,16 +1289,7 @@ public class FiniteAutomatonUtility {
 
 		@Override
 		public boolean isFinalState() {
-			boolean state1Final = state1 != null && state1.isFinalState();
-			boolean state2Final = state2 != null && state2.isFinalState();
-			switch (mode) {
-				case INTERSECTION:
-					return state1Final && state2Final;
-				case UNION:
-					return state1Final || state2Final;
-				default:
-					throw new AssertionError("Unknown mode for SynchronousParallelComposition");
-			}
+			return mode.isFinal(state1 != null && state1.isFinalState(), state2 != null && state2.isFinalState());
 		}
 
 		@Override
