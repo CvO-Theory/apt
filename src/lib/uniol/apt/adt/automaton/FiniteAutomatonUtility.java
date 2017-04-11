@@ -122,6 +122,9 @@ public class FiniteAutomatonUtility {
 	 * @return An automaton accepting the union.
 	 */
 	static public FiniteAutomaton union(FiniteAutomaton a1, FiniteAutomaton a2) {
+		if (a1 instanceof DeterministicFiniteAutomaton && a2 instanceof DeterministicFiniteAutomaton)
+			return union((DeterministicFiniteAutomaton) a1, (DeterministicFiniteAutomaton) a2);
+
 		final Set<State> initialStates = new HashSet<>();
 		initialStates.add(a1.getInitialState());
 		initialStates.add(a2.getInitialState());
