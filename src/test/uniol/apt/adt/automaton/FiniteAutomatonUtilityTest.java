@@ -223,6 +223,12 @@ public class FiniteAutomatonUtilityTest {
 		assertThat(automaton.getInitialState(), equalTo(automaton.getInitialState()));
 	}
 
+	@Test
+	public void testOptionalOptimises() {
+		FiniteAutomaton automaton = optional(getAtomicLanguage(Symbol.EPSILON));
+		assertThat(optional(automaton), sameInstance(automaton));
+	}
+
 	private DeterministicFiniteAutomaton getTestDFA() {
 		// Construct the minimal dfa for ((ab)^* | (ba)^* | (ab)^+)
 		FiniteAutomaton ab = concatenate(getAtomicLanguage(new Symbol("a")),

@@ -285,6 +285,9 @@ public class FiniteAutomatonUtility {
 	 */
 	static public FiniteAutomaton optional(FiniteAutomaton a) {
 		final State initial = a.getInitialState();
+		if (initial.isFinalState())
+			return a;
+
 		return getAutomaton(new StateWithoutArcs(true) {
 			@Override
 			public Set<State> getFollowingStates(Symbol atom) {
