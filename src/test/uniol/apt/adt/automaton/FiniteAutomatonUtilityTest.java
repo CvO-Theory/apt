@@ -229,6 +229,33 @@ public class FiniteAutomatonUtilityTest {
 		assertThat(optional(automaton), sameInstance(automaton));
 	}
 
+	@Test
+	public void testOptionalDFA() {
+		Symbol a = new Symbol("a");
+		DeterministicFiniteAutomaton orig = constructDFA(getAtomicLanguage(a));
+		DeterministicFiniteAutomaton automaton = optional(orig);
+		assertThat(optional((FiniteAutomaton) orig), instanceOf(DeterministicFiniteAutomaton.class));
+
+		wordInLanguage(automaton, true);
+		wordInLanguage(automaton, true, "a");
+		wordInLanguage(automaton, false, "a", "a");
+		wordInLanguage(automaton, false, "c");
+		wordInLanguage(automaton, false, "a", "b");
+
+		DFAState initial = automaton.getInitialState();
+		assertThat(initial, equalTo(initial));
+		assertThat(initial, not(equalTo(orig.getInitialState())));
+		assertThat(orig.getInitialState().isFinalState(), is(false));
+		assertThat(initial.isFinalState(), is(true));
+		assertThat(initial.getFollowingState(a), equalTo(orig.getInitialState().getFollowingState(a)));
+	}
+
+	@Test
+	public void testOptionalDFAOptimises() {
+		DeterministicFiniteAutomaton automaton = optional(constructDFA(getAtomicLanguage(Symbol.EPSILON)));
+		assertThat(optional(automaton), sameInstance(automaton));
+	}
+
 	private DeterministicFiniteAutomaton getTestDFA() {
 		// Construct the minimal dfa for ((ab)^* | (ba)^* | (ab)^+)
 		FiniteAutomaton ab = concatenate(getAtomicLanguage(new Symbol("a")),

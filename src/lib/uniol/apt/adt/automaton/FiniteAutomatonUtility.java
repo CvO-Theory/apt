@@ -284,6 +284,9 @@ public class FiniteAutomatonUtility {
 	 * @return An automaton accepting the empty word or a word accepted by the given automaton.
 	 */
 	static public FiniteAutomaton optional(FiniteAutomaton a) {
+		if (a instanceof DeterministicFiniteAutomaton)
+			return optional((DeterministicFiniteAutomaton) a);
+
 		final State initial = a.getInitialState();
 		if (initial.isFinalState())
 			return a;
@@ -295,6 +298,38 @@ public class FiniteAutomatonUtility {
 					return Collections.singleton(initial);
 				return Collections.emptySet();
 			}
+		});
+	}
+
+	/**
+	 * Get a finite automaton accepting a word accepted by the given automaton or the empty word.
+	 * @param a The automaton
+	 * @return An automaton accepting the empty word or a word accepted by the given automaton.
+	 */
+	static public DeterministicFiniteAutomaton optional(DeterministicFiniteAutomaton a) {
+		final DFAState initial = a.getInitialState();
+		if (initial.isFinalState())
+			return a;
+
+		// Create a new state which behaves just as the initial state but is accepting. It leads to the
+		// "normal" states of the DFA.
+		return getAutomaton(new DFAState() {
+			@Override
+			public boolean isFinalState() {
+				return true;
+			}
+
+			@Override
+			public Set<Symbol> getDefinedSymbols() {
+				return initial.getDefinedSymbols();
+			}
+
+			@Override
+			public DFAState getFollowingState(Symbol atom) {
+				return initial.getFollowingState(atom);
+			}
+
+			// equals() and hashCode() are not needed: This state can not be reached again
 		});
 	}
 
