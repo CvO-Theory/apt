@@ -225,7 +225,11 @@ public class FiniteAutomatonUtilityTest {
 
 	@Test
 	public void testOptionalOptimises() {
-		FiniteAutomaton automaton = optional(getAtomicLanguage(Symbol.EPSILON));
+		FiniteAutomaton automaton = union(getAtomicLanguage(Symbol.EPSILON),
+					getAtomicLanguage(new Symbol("a")));
+		// We want to test the non-DFA version of the function
+		assert !(automaton instanceof DeterministicFiniteAutomaton);
+		automaton = optional(automaton);
 		assertThat(optional(automaton), sameInstance(automaton));
 	}
 

@@ -94,7 +94,7 @@ public class FiniteAutomatonUtility {
 	 */
 	static public FiniteAutomaton getAtomicLanguage(Symbol atom) {
 		if (atom.isEpsilon())
-			return getAutomaton(new StateWithoutArcs(true));
+			return getAutomaton(new EpsilonState());
 		// Since we do not implement equals(), we must always return the same state and make use of equals() by
 		// object identity.
 		final State endState = new StateWithoutArcs(true);
@@ -112,6 +112,23 @@ public class FiniteAutomatonUtility {
 				return Collections.emptySet();
 			}
 		});
+	}
+
+	static private class EpsilonState extends DFAState {
+		@Override
+		public boolean isFinalState() {
+			return true;
+		}
+
+		@Override
+		public Set<Symbol> getDefinedSymbols() {
+			return Collections.emptySet();
+		}
+
+		@Override
+		public DFAState getFollowingState(Symbol arg) {
+			return null;
+		}
 	}
 
 	/**
