@@ -30,9 +30,22 @@ import static org.hamcrest.Matchers.*;
 
 /** @author Uli Schlachter */
 public class ParikhVectorTest {
-	static private void compare(ParikhVector p1, ParikhVector p2, int result) {
-		assertThat(p1.tryCompareTo(p2), equalTo(result));
-		assertThat(p2.tryCompareTo(p1), equalTo(-result));
+	static private void compare(ParikhVector p1, ParikhVector p2, ParikhVector.Comparison result) {
+		assertThat(p1.compare(p2), equalTo(result));
+
+		// Swap the two vectors and compare again
+		switch (result) {
+			case GREATER_THAN:
+				result = ParikhVector.Comparison.LESS_THAN;
+				break;
+			case LESS_THAN:
+				result = ParikhVector.Comparison.GREATER_THAN;
+				break;
+			default:
+				// EQUAL and INCOMPARABLE are symmetric
+				break;
+		}
+		assertThat(p2.compare(p1), equalTo(result));
 	}
 
 	@Test
@@ -47,7 +60,7 @@ public class ParikhVectorTest {
 		ParikhVector pv = new ParikhVector();
 		assertThat(pv, equalTo(pv));
 		assertThat(pv.add(pv), equalTo(pv));
-		assertThat(pv.tryCompareTo(pv), equalTo(0));
+		assertThat(pv.compare(pv), equalTo(ParikhVector.Comparison.EQUAL));
 		assertThat(pv.isUncomparableTo(pv), equalTo(false));
 		assertThat(pv.mutuallyDisjoint(pv), equalTo(true));
 		assertThat(pv.sameOrMutuallyDisjoint(pv), equalTo(true));
@@ -70,7 +83,7 @@ public class ParikhVectorTest {
 		assertThat(pv.getLabels(), contains("a"));
 		assertThat(pv, hasToString("{a=1}"));
 		assertThat(pv2, hasToString("{a=2}"));
-		compare(pv, pv2, -1);
+		compare(pv, pv2, ParikhVector.Comparison.LESS_THAN);
 		assertThat(pv.isUncomparableTo(pv2), equalTo(false));
 		assertThat(pv2.isUncomparableTo(pv), equalTo(false));
 		assertThat(pv.mutuallyDisjoint(pv2), equalTo(false));
@@ -100,7 +113,7 @@ public class ParikhVectorTest {
 		assertThat(pv2.getLabels(), contains("a", "b", "c"));
 		assertThat(pv1, hasToString("{a=1, b=2}"));
 		assertThat(pv2, hasToString("{a=1, b=1, c=1}"));
-		compare(pv1, pv2, 0);
+		compare(pv1, pv2, ParikhVector.Comparison.INCOMPARABLE);
 		assertThat(pv1.isUncomparableTo(pv2), equalTo(true));
 		assertThat(pv1.mutuallyDisjoint(pv2), equalTo(false));
 		assertThat(pv1.sameOrMutuallyDisjoint(pv2), equalTo(false));
@@ -115,7 +128,7 @@ public class ParikhVectorTest {
 		assertThat(pv2.getLabels(), contains("c", "d", "e"));
 		assertThat(pv1, hasToString("{a=2, b=2}"));
 		assertThat(pv2, hasToString("{c=1, d=1, e=1}"));
-		compare(pv1, pv2, 0);
+		compare(pv1, pv2, ParikhVector.Comparison.INCOMPARABLE);
 		assertThat(pv1.isUncomparableTo(pv2), equalTo(true));
 		assertThat(pv1.mutuallyDisjoint(pv2), equalTo(true));
 		assertThat(pv1.sameOrMutuallyDisjoint(pv2), equalTo(true));
@@ -134,11 +147,11 @@ public class ParikhVectorTest {
 
 		map.put("a", 4);
 		map.put("b", 4);
-		compare(pv1, new ParikhVector(map), 0);
+		compare(pv1, new ParikhVector(map), ParikhVector.Comparison.INCOMPARABLE);
 
 		map.put("a", 3);
 		map.put("b", 4);
-		compare(pv1, new ParikhVector(map), 1);
+		compare(pv1, new ParikhVector(map), ParikhVector.Comparison.GREATER_THAN);
 	}
 
 	@Test

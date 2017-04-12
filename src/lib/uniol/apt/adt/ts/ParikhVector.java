@@ -115,23 +115,63 @@ public class ParikhVector {
 	}
 
 	/**
-	 * Compare this Parikh vector with the given Parikh vector. Returns a negative integer, zero, or a positive
-	 * integer if this object is less than, equal to, or greater than the specified object, just as {@link
-	 * Comparable#compareTo} does. However, if the Parikh vectors are incomparable, zero is also returned.
-	 * Thus, this does not define a total order and does not satisfy the contract of the {@link Comparable}
-	 * interface!
-	 * @param pv2 The Parikh vector to compare to.
-	 * @return A negative integer, zero, a positive integer or null as this Parikh vector is less than, equal to,
-	 * greater than or incomparable to the given Parikh vector.
+	 * This enum represents the result of comparing two Parikh vectors.
 	 */
-	public int tryCompareTo(ParikhVector pv2) {
-		boolean lessThan = this.occurrenceBag.containsAll(pv2.occurrenceBag);
-		boolean greaterThan = pv2.occurrenceBag.containsAll(this.occurrenceBag);
+	public enum Comparison {
+		/**
+		 * The first vector was smaller than the second vector.
+		 */
+		LESS_THAN(-1),
+
+		/**
+		 * The first vector was larger than the second vector.
+		 */
+		GREATER_THAN(1),
+
+		/**
+		 * The two vectors were equal.
+		 */
+		EQUAL(0),
+
+		/**
+		 * The two vectors were incomparable. This means there is some component were the first vector is larger
+		 * than the second and another component were the first vector is smaller than the second.
+		 */
+		INCOMPARABLE(0);
+
+		private final int value;
+
+		private Comparison(int value) {
+			this.value = value;
+		}
+
+		/**
+		 * Convert this comparison result to a value that is mostly compatible with {@link
+		 * Comparable#compareTo}. If the two vectors were incomparable, which is not allowed by the {@link
+		 * Comparable} interface, zero is also returned.
+		 * @return A value smaller than, equal to, equal to, or greater than zero depending on if the same
+		 * vector was smaller than, equal to, incomparable to, greater than the second vector.
+		 */
+		public int asInt() {
+			return value;
+		}
+	}
+
+	/**
+	 * Compare this Parikh vector with the given Parikh vector.
+	 * @param pv2 The Parikh vector to compare to.
+	 * @return The result of the comparison.
+	 */
+	public Comparison compare(ParikhVector pv2) {
+		boolean greaterThan = this.occurrenceBag.containsAll(pv2.occurrenceBag);
+		boolean lessThan = pv2.occurrenceBag.containsAll(this.occurrenceBag);
 		if (!lessThan && greaterThan)
-			return -1;
+			return Comparison.GREATER_THAN;
 		if (lessThan && !greaterThan)
-			return 1;
-		return 0;
+			return Comparison.LESS_THAN;
+		if (lessThan && greaterThan)
+			return Comparison.EQUAL;
+		return Comparison.INCOMPARABLE;
 	}
 
 	/**

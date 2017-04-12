@@ -94,7 +94,7 @@ public class ComputeSmallestCycles {
 					Iterator<Pair<List<String>, ParikhVector>> iter = cycles.iterator();
 					while (iter.hasNext()) {
 						Pair<List<String>, ParikhVector> pair2 = iter.next();
-						int comp = pair2.getSecond().tryCompareTo(pv);
+						int comp = pair2.getSecond().compare(pv).asInt();
 						if (comp < 0) {
 							// pairs2 has a smaller Parikh vector
 							return;
