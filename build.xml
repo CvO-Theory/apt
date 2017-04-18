@@ -481,6 +481,7 @@
 		<delete file="apt.jar" failonerror="false" />
 		<delete file="apt-lib.jar" failonerror="false" />
 		<delete file="apt-io.jar" failonerror="false" />
+		<delete file="apt-json.jar" failonerror="false" />
 		<delete file="apt-module.jar" failonerror="false" />
 		<delete file="testng.xml" failonerror="false" />
 	</target>
