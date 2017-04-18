@@ -90,4 +90,8 @@ The following assumes that your source code is in a folder called src.
 
 3. Run the new module
 
-        java -cp  apt.jar:classes uniol.apt.APT your_module_name example_argument
+        java -cp apt.jar:classes uniol.apt.APT your_module_name example_argument
+
+The above example is for unixoid systems. On Windows, Java uses `;` instead of
+`:` as separator in the class path argument. This means you have to use `-cp
+apt.jar;classes` instead on Windows.
