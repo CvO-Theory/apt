@@ -431,7 +431,7 @@
 		<fail message="JaCoCo was not found. Try -Djacoco.jar=/path/to/jacocoant.jar."/>
 	</target>
 
-	<target name="jacoco.run" depends="javac,xml.test" if="jacoco.present">
+	<target name="jacoco.run" depends="javac,jar,xml.test" if="jacoco.present">
 		<taskdef resource="org/jacoco/ant/antlib.xml" classpath="${jacoco.jar}"/>
 
 		<delete file="reports/jacoco/jacoco.exec"/>
