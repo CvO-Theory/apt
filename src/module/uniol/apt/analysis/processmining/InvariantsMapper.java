@@ -47,6 +47,8 @@ public class InvariantsMapper implements Transformer<ParikhVector, List<Integer>
 	 * Define an invariant mapper over the given alphabet with the given words being invariant. All {@link
 	 * ParikhVector}s that should later be mapped must be over the given alphabet. For example, with the only
 	 * invariant being "a","b", the words "c" and "a","c","b" will be mapped to the equal results.
+	 * @param alphabet The alphabet over which Parikh vectors will be given.
+	 * @param InvariantsMapper A collection of words which should be invariant.
 	 */
 	public InvariantsMapper(Set<String> alphabet, Collection<List<String>> invariantWords) {
 		alphabetList = new ArrayList<>(alphabet);
@@ -88,8 +90,10 @@ public class InvariantsMapper implements Transformer<ParikhVector, List<Integer>
 			SmithNormalForm nf = new SmithNormalForm(matrix);
 			transformation = nf.getLeftHandMatrixInverse();
 			diagonals = nf.getDiagonalEntries();
-			debugFormat("Calculated smith normal form: %s*(%s)*%s", nf.getLeftHandMatrix(), diagonals, nf.getRightHandMatrix());
-			debugFormat("Inverse matrices are %s and %s", nf.getLeftHandMatrixInverse(), nf.getRightHandMatrixInverse());
+			debugFormat("Calculated smith normal form: %s*(%s)*%s",
+					nf.getLeftHandMatrix(), diagonals, nf.getRightHandMatrix());
+			debugFormat("Inverse matrices are %s and %s",
+					nf.getLeftHandMatrixInverse(), nf.getRightHandMatrixInverse());
 		}
 
 		// Each non-zero diagonal entry corresponds to a "vanishing dimension", i.e. some new-event who will be

@@ -105,7 +105,7 @@ public class ToRegularExpressionModule extends AbstractInterruptibleModule imple
 		return result;
 	}
 
-	public static String toRegularExpression(TransitionSystem ts) {
+	private static String toRegularExpression(TransitionSystem ts) {
 		Set<State> finalStates = chooseFinalNodes(ts);
 		return "@(" + automatonToRegularExpression(fromLTS(ts, finalStates)) + ")";
 	}

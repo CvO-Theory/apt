@@ -80,9 +80,8 @@ public class SmithNormalForm {
 
 				assert entry >= 0 : entry;
 
-				/* Either this is the first entry (no last), or we already reached "all the zeros" or things are
-				 * dividing each other.
-				 */
+				// Either this is the first entry (no last), or we already reached "all the zeros" or
+				// things are dividing each other.
 				assert i == 0 || (last == 0 && entry == 0) || (last != 0 && entry % last == 0) : matrix;
 				last = entry;
 			}
@@ -129,7 +128,7 @@ public class SmithNormalForm {
 				testInvariants();
 
 				if (i > 0) {
-					int previousEntry = matrix.get(i-1, i-1);
+					int previousEntry = matrix.get(i - 1, i - 1);
 					int thisEntry = matrix.get(i, i);
 					if (previousEntry != 0 && thisEntry % previousEntry != 0) {
 						// We have to swap this value further up in the diagonal
@@ -158,7 +157,8 @@ public class SmithNormalForm {
 				int entry = matrix.get(i, i);
 				int nextEntry = matrix.get(i + 1, i + 1);
 
-				debugFormat("Entry (%d,%d) = %d and next one is (%d,%d)=%d", i, i, entry, i+1, i+1, nextEntry);
+				debugFormat("Entry (%d,%d) = %d and next one is (%d,%d)=%d",
+						i, i, entry, i + 1, i + 1, nextEntry);
 
 				// If next one is smaller, swap the diagonal entries
 				if (nextEntry != 0 && Math.abs(nextEntry) < Math.abs(entry)) {
@@ -167,8 +167,8 @@ public class SmithNormalForm {
 					nextEntry = tmp;
 
 					debug("Swapping (absolutely) smaller value up");
-					swapRows(i, i+1);
-					swapColumns(i, i+1);
+					swapRows(i, i + 1);
+					swapColumns(i, i + 1);
 				}
 
 				// If they are not suitably dividing, do something to improve this
@@ -178,7 +178,7 @@ public class SmithNormalForm {
 				debug("Trying to construct GCD/LCM of these entries");
 
 				// For this, first bring the value at (i+1,i+1) to (i+1,i).
-				addMultipleToRow(i+1, i, 1);
+				addMultipleToRow(i + 1, i, 1);
 
 				// Then re-establish diagonal form (this could be optimised: reduce() will scan the
 				// whole row/column, but we already know that there are at most two non-zero entries

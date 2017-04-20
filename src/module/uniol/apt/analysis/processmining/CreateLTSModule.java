@@ -59,7 +59,8 @@ public class CreateLTSModule extends AbstractInterruptibleModule implements Inte
 	@Override
 	public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("words", WordList.class, "The list of words that should be possible");
-		inputSpec.addOptionalParameterWithoutDefault("invariants", WordList.class, "The list of invariants that should be honored");
+		inputSpec.addOptionalParameterWithoutDefault("invariants", WordList.class,
+				"The list of invariants that should be honored");
 	}
 
 	@Override
