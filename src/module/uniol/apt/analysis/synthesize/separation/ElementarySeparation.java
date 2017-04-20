@@ -43,6 +43,9 @@ import static uniol.apt.util.DebugUtil.debugFormat;
  * @author Uli Schlachter
  */
 class ElementarySeparation implements Separation {
+	static private final BigInteger ONE = BigInteger.valueOf(1);
+	static private final BigInteger MINUS_ONE = BigInteger.valueOf(-1);
+
 	private final RegionUtility utility;
 	private final Map<String, Set<Arc>> arcsWithlabel = new HashMap<>();
 	private final boolean pure;
@@ -193,6 +196,11 @@ class ElementarySeparation implements Separation {
 				region.setState(arc.getSource(), false);
 				region.setState(arc.getTarget(), true);
 			}
+
+			@Override
+			public void setupRegion(Region.Builder builder, int eventIndex) {
+				builder.addWeightOn(eventIndex, ONE);
+			}
 		},
 		// Arcs for our label leave the region
 		EXIT {
@@ -200,6 +208,11 @@ class ElementarySeparation implements Separation {
 			public void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion) {
 				region.setState(arc.getSource(), true);
 				region.setState(arc.getTarget(), false);
+			}
+
+			@Override
+			public void setupRegion(Region.Builder builder, int eventIndex) {
+				builder.addWeightOn(eventIndex, MINUS_ONE);
 			}
 		},
 		// Arcs for our label do not cross the border of the region
@@ -216,6 +229,11 @@ class ElementarySeparation implements Separation {
 						region.setState(arc.getSource(), bool);
 				}
 			}
+
+			@Override
+			public void setupRegion(Region.Builder builder, int eventIndex) {
+				// Nothing to do
+			}
 		},
 		// Arcs for our label are inside of the region
 		INSIDE {
@@ -224,9 +242,16 @@ class ElementarySeparation implements Separation {
 				region.setState(arc.getSource(), true);
 				region.setState(arc.getTarget(), true);
 			}
+
+			@Override
+			public void setupRegion(Region.Builder builder, int eventIndex) {
+				builder.addWeightOn(eventIndex, ONE);
+				builder.addWeightOn(eventIndex, MINUS_ONE);
+			}
 		};
 
 		public abstract void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion);
+		public abstract void setupRegion(Region.Builder builder, int eventIndex);
 	}
 
 	/**
@@ -406,24 +431,8 @@ class ElementarySeparation implements Separation {
 
 			// Everything is ok, now build a region
 			Region.Builder builder = new Region.Builder(utility);
-			BigInteger one = BigInteger.ONE;
-			BigInteger minusOne = one.negate();
 			for (int i = 0; i < utility.getNumberOfEvents(); i++) {
-				switch (labelOperations.get(utility.getEventList().get(i))) {
-					case ENTER:
-						builder.addWeightOn(i, one);
-						break;
-					case EXIT:
-						builder.addWeightOn(i, minusOne);
-						break;
-					case INSIDE:
-						builder.addWeightOn(i, one);
-						builder.addWeightOn(i, minusOne);
-						break;
-					default:
-						// Nothing to do for DONT_CROSS
-						break;
-				}
+				labelOperations.get(utility.getEventList().get(i)).setupRegion(builder, i);
 			}
 			BigInteger initialMarking = statesInRegion.get(utility.getTransitionSystem().getInitialState())
 				? BigInteger.ONE : BigInteger.ZERO;
