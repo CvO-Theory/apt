@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ivy-module version="2.0">
+	<info organisation="uniol.apt" module="apt"/>
+	<dependencies>
+		<dependency org="org.jacoco" name="org.jacoco.ant" rev="0.7.9" />
+	</dependencies>
+</ivy-module>

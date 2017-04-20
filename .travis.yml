@@ -8,9 +8,6 @@ notifications:
     recipients: pg-apt-info@informatik.uni-oldenburg.de
   on_failure: always
   on_success: change
-install:
-  - travis_retry wget http://search.maven.org/remotecontent?filepath=org/jacoco/jacoco/0.7.9/jacoco-0.7.9.zip -O /tmp/jacoco.zip
-  - (cd /tmp && unzip /tmp/jacoco.zip)
 script:
   - ant verify-parsers
   - ant clean
@@ -21,7 +18,7 @@ script:
   - ant clean
   - ant javadoc
   - ant jar
-  - ant jacoco -Djacoco.jar=/tmp/lib/jacocoant.jar
+  - ant jacoco
 after_success:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ]; then ./publish-api-doc.sh; fi
   - bash <(curl -s https://codecov.io/bash)

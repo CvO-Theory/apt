@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project name="apt" default="javac" basedir=".">
+<project name="apt" default="javac" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 	<path id="lib.class.path">
 		<pathelement location="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
 		<pathelement location="lib/smtinterpol-2.1-335-g4c543a5/smtinterpol.jar"/>
@@ -422,17 +422,9 @@
 	</target>
 
 	<!-- JaCoCo -->
-	<!-- Set a sane default which can be overwritten via -Djacoco.jar=... -->
-	<property name="jacoco.jar" location="/usr/share/java/jacoco/org.jacoco.ant.jar"/>
-	<available file="${jacoco.jar}" type="file" property="jacoco.present"/>
-
-	<target name="jacoco" depends="jacoco.fail,jacoco.run" description="Run tests under JaCoCo"/>
-	<target name="jacoco.fail" unless="jacoco.present">
-		<fail message="JaCoCo was not found. Try -Djacoco.jar=/path/to/jacocoant.jar."/>
-	</target>
-
-	<target name="jacoco.run" depends="javac,jar,xml.test" if="jacoco.present">
-		<taskdef resource="org/jacoco/ant/antlib.xml" classpath="${jacoco.jar}"/>
+	<target name="jacoco" depends="javac,jar,xml.test" description="Run tests under JaCoCo">
+		<ivy:cachepath pathid="jacoco.classpath"/>
+		<taskdef resource="org/jacoco/ant/antlib.xml" classpathref="jacoco.classpath"/>
 
 		<delete file="reports/jacoco/jacoco.exec"/>
 		<coverage destfile="reports/jacoco/jacoco.exec">
