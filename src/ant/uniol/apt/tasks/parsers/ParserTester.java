@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 
-import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.Parser;
 
 /**
@@ -47,7 +46,7 @@ public class ParserTester<G> extends AbstractParserTester {
 	}
 
 	@Override
-	public void parse(File file) throws Exception, ParseException {
+	public void parse(File file) throws Exception {
 		this.parser.parseFile(file);
 	}
 }

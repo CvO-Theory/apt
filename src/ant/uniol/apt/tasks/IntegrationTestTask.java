@@ -45,6 +45,7 @@ public class IntegrationTestTask {
 	/**
 	 * Program entry point. Arguments are program to run and directory to scan.
 	 * @param args Program arguments.
+	 * @throws Exception In case something goes wrong.
 	 */
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2)

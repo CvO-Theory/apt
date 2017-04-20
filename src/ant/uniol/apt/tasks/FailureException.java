@@ -21,6 +21,7 @@ package uniol.apt.tasks;
 
 /**
  * Custom exception that is thrown when some custom Ant task fails.
+ * @author Uli Schlachter
  */
 class FailureException extends Exception {
 	private static final long serialVersionUID = 0;
