@@ -352,22 +352,13 @@
 	</target>
 
 	<!-- Findbugs -->
-	<!-- Set a sane default which can be overwritten via -Dfindbugs.home=... -->
-	<property name="findbugs.home" location="/usr/share/findbugs"/>
-	<available file="${findbugs.home}" type="dir" property="findbugs.present"/>
-
-	<target name="findbugs" depends="findbugs.fail,findbugs.run" description="Run FindBugs on the source code"/>
-	<target name="findbugs.fail" unless="findbugs.present">
-		<fail message="FindBugs was not found. Try -Dfindbugs.home=/path/to/findbugs."/>
-	</target>
-
-	<target name="findbugs.run" depends="javac" if="findbugs.present">
+	<target name="findbugs" depends="javac" description="Run FindBugs on the source code">
+		<ivy:cachepath pathid="findbugs.classpath" conf="findbugs"/>
 		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
-			classpath="${findbugs.home}/lib/findbugs-ant.jar" />
+			classpathref="findbugs.classpath" />
 		<mkdir dir="reports" />
-		<findbugs home="${findbugs.home}"
-				output="xml:withMessages"
-				outputFile="reports/findbugs.xml" >
+		<findbugs output="xml:withMessages" outputFile="reports/findbugs.xml" >
+			<classpath refid="findbugs.classpath"/>
 			<auxClasspath>
 				<path refid="ant.class.path" />
 				<path refid="test.class.path" />
@@ -423,7 +414,7 @@
 
 	<!-- JaCoCo -->
 	<target name="jacoco" depends="javac,jar,xml.test" description="Run tests under JaCoCo">
-		<ivy:cachepath pathid="jacoco.classpath"/>
+		<ivy:cachepath pathid="jacoco.classpath" conf="jacoco"/>
 		<taskdef resource="org/jacoco/ant/antlib.xml" classpathref="jacoco.classpath"/>
 
 		<delete file="reports/jacoco/jacoco.exec"/>

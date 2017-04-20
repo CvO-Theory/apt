@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ivy-module version="2.0">
 	<info organisation="uniol.apt" module="apt"/>
+	<configurations>
+		<conf name="findbugs"/>
+		<conf name="jacoco"/>
+	</configurations>
 	<dependencies>
-		<dependency org="org.jacoco" name="org.jacoco.ant" rev="0.7.9" />
+		<dependency org="org.jacoco" name="org.jacoco.ant" rev="0.7.9" conf="jacoco->default"/>
+		<dependency org="com.google.code.findbugs" name="findbugs-ant" rev="3.0.0" conf="findbugs->default"/>
 	</dependencies>
 </ivy-module>
