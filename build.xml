@@ -82,9 +82,9 @@
 		<pathelement location="lib/antlr-4.5.1/antlr-4.5.1-complete.jar" />
 	</path>
 
-	<taskdef name="testng" classname="org.testng.TestNGAntTask" classpathref="test.class.path" />
-	<taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
-		classpath="lib/checkstyle-6.1.1/checkstyle-6.1.1-all.jar" />
+	<target name="resolve.test">
+		<taskdef name="testng" classname="org.testng.TestNGAntTask" classpathref="test.class.path" />
+	</target>
 
 	<!-- Only run the antlr target if some .g file is newer than generated-src/antlr.stamp (which the antlr target touches) -->
 	<target name="antlr.checkforchanges">
@@ -272,11 +272,11 @@
 		</sequential>
 	</macrodef>
 
-	<target name="test.unit" depends="javac.test,xml.test" description="Run unit tests">
+	<target name="test.unit" depends="resolve.test,javac.test,xml.test" description="Run unit tests">
 		<invoke-testng outputdir="testng"/>
 	</target>
 
-	<target name="test-class" depends="javac.test"
+	<target name="test-class" depends="resolve.test,javac.test"
 		description="run a specific test class. Requires class.name property set to fully qualified name of test class">
 		<condition property="propsSpecified">
 			<and>
@@ -294,7 +294,7 @@
 		<invoke-testng outputdir="testng-single-class-${class.name}" />
 	</target>
 
-	<target name="test-method" depends="javac.test"
+	<target name="test-method" depends="resolve.test,javac.test"
 		description="run a specific test method. Requires class.name property set to fully qualified name of test class and test.name property set to method name">
 		<condition property="propsSpecified">
 			<and>
@@ -334,6 +334,8 @@
 	</target>
 
 	<target name="checkstyle" depends="javac">
+		<taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
+			classpath="lib/checkstyle-6.1.1/checkstyle-6.1.1-all.jar" />
 		<mkdir dir="reports" />
 		<checkstyle config="checkstyle.xml" failOnViolation="false">
 			<formatter type="xml" tofile="reports/checkstyle.xml"/>
@@ -413,7 +415,7 @@
 	</target>
 
 	<!-- JaCoCo -->
-	<target name="jacoco" depends="javac,jar,xml.test" description="Run tests under JaCoCo">
+	<target name="jacoco" depends="resolve.test,javac,jar,xml.test" description="Run tests under JaCoCo">
 		<ivy:cachepath pathid="jacoco.classpath" conf="jacoco"/>
 		<taskdef resource="org/jacoco/ant/antlib.xml" classpathref="jacoco.classpath"/>
 
