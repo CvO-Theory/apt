@@ -187,13 +187,46 @@ class ElementarySeparation implements Separation {
 	// The different kind of operations that a label can do to a region
 	private static enum Operation {
 		// Arcs for our label enter the region
-		ENTER,
+		ENTER {
+			@Override
+			public void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion) {
+				region.setState(arc.getSource(), false);
+				region.setState(arc.getTarget(), true);
+			}
+		},
 		// Arcs for our label leave the region
-		EXIT,
+		EXIT {
+			@Override
+			public void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion) {
+				region.setState(arc.getSource(), true);
+				region.setState(arc.getTarget(), false);
+			}
+		},
 		// Arcs for our label do not cross the border of the region
-		DONT_CROSS,
+		DONT_CROSS {
+			@Override
+			public void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion) {
+				// If one of the two states is assigned, assign the other one
+				Boolean bool = statesInRegion.get(arc.getSource());
+				if (bool != null) {
+					region.setState(arc.getTarget(), bool);
+				} else {
+					bool = statesInRegion.get(arc.getTarget());
+					if (bool != null)
+						region.setState(arc.getSource(), bool);
+				}
+			}
+		},
 		// Arcs for our label are inside of the region
-		INSIDE;
+		INSIDE {
+			@Override
+			public void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion) {
+				region.setState(arc.getSource(), true);
+				region.setState(arc.getTarget(), true);
+			}
+		};
+
+		public abstract void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion);
 	}
 
 	/**
@@ -314,31 +347,7 @@ class ElementarySeparation implements Separation {
 
 			assert op != null;
 			for (Arc arc : arcsWithlabel.get(label)) {
-				switch (op) {
-					case ENTER:
-						setState(arc.getSource(), false);
-						setState(arc.getTarget(), true);
-						break;
-					case EXIT:
-						setState(arc.getSource(), true);
-						setState(arc.getTarget(), false);
-						break;
-					case DONT_CROSS:
-						// If one of the two states is assigned, assign the other one
-						Boolean bool = statesInRegion.get(arc.getSource());
-						if (bool != null) {
-							setState(arc.getTarget(), bool);
-						} else {
-							bool = statesInRegion.get(arc.getTarget());
-							if (bool != null)
-								setState(arc.getSource(), bool);
-						}
-						break;
-					case INSIDE:
-						setState(arc.getSource(), true);
-						setState(arc.getTarget(), true);
-						break;
-				}
+				op.refineStates(this, arc, statesInRegion);
 			}
 			return true;
 		}
