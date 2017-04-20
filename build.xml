@@ -1,88 +1,90 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="apt" default="javac" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-	<path id="lib.class.path">
-		<pathelement location="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
-		<pathelement location="lib/smtinterpol-2.1-335-g4c543a5/smtinterpol.jar"/>
-		<pathelement location="classes/lib" />
-	</path>
+	<target name="resolve">
+		<path id="lib.class.path">
+			<pathelement location="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
+			<pathelement location="lib/smtinterpol-2.1-335-g4c543a5/smtinterpol.jar"/>
+			<pathelement location="classes/lib" />
+		</path>
 
-	<path id="glue.class.path">
-		<pathelement location="classes/glue" />
-	</path>
+		<path id="glue.class.path">
+			<pathelement location="classes/glue" />
+		</path>
 
-	<path id="io.class.path">
-		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
-		<pathelement location="lib/antlr-4.5.1/antlr-runtime-4.5.1.jar" />
-		<pathelement location="lib/stringtemplate-4.0.8/ST-4.0.8.jar" />
-		<path refid="lib.class.path" />
-		<path refid="glue.class.path" />
-		<!-- Needed so that the annotation processor is run -->
-		<pathelement location="classes/compiler" />
-		<pathelement location="classes/io" />
-	</path>
+		<path id="io.class.path">
+			<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
+			<pathelement location="lib/antlr-4.5.1/antlr-runtime-4.5.1.jar" />
+			<pathelement location="lib/stringtemplate-4.0.8/ST-4.0.8.jar" />
+			<path refid="lib.class.path" />
+			<path refid="glue.class.path" />
+			<!-- Needed so that the annotation processor is run -->
+			<pathelement location="classes/compiler" />
+			<pathelement location="classes/io" />
+		</path>
 
-	<path id="module.class.path">
-		<path refid="lib.class.path" />
-		<path refid="io.class.path" />
-		<path refid="glue.class.path" />
-		<pathelement location="lib/sat4j-2.3.2/org.sat4j.core.jar"/>
-		<!-- Needed so that the annotation processor is run -->
-		<pathelement location="classes/compiler" />
-		<pathelement location="classes/module" />
-	</path>
+		<path id="module.class.path">
+			<path refid="lib.class.path" />
+			<path refid="io.class.path" />
+			<path refid="glue.class.path" />
+			<pathelement location="lib/sat4j-2.3.2/org.sat4j.core.jar"/>
+			<!-- Needed so that the annotation processor is run -->
+			<pathelement location="classes/compiler" />
+			<pathelement location="classes/module" />
+		</path>
 
-	<path id="main.class.path">
-		<path refid="lib.class.path" />
-		<path refid="io.class.path" />
-		<path refid="glue.class.path" />
-		<path refid="module.class.path" />
-		<!-- Needed so that the annotation processor is run -->
-		<pathelement location="classes/compiler" />
-		<pathelement location="classes/main" />
-	</path>
+		<path id="main.class.path">
+			<path refid="lib.class.path" />
+			<path refid="io.class.path" />
+			<path refid="glue.class.path" />
+			<path refid="module.class.path" />
+			<!-- Needed so that the annotation processor is run -->
+			<pathelement location="classes/compiler" />
+			<pathelement location="classes/main" />
+		</path>
 
-	<path id="json.class.path">
-		<pathelement location="lib/json-20160810/json.jar"/>
-		<path refid="lib.class.path" />
-		<path refid="glue.class.path" />
-		<path refid="module.class.path" />
-		<path refid="main.class.path" />
-		<pathelement location="classes/json" />
-	</path>
+		<path id="json.class.path">
+			<pathelement location="lib/json-20160810/json.jar"/>
+			<path refid="lib.class.path" />
+			<path refid="glue.class.path" />
+			<path refid="module.class.path" />
+			<path refid="main.class.path" />
+			<pathelement location="classes/json" />
+		</path>
 
-	<path id="test.class.path">
-		<path refid="glue.class.path" />
-		<path refid="io.class.path" />
-		<path refid="lib.class.path" />
-		<path refid="module.class.path" />
-		<path refid="main.class.path" />
-		<path refid="json.class.path" />
-		<pathelement location="lib/mockito-1.9.5-rc1/mockito-core-1.9.5-rc1.jar" />
-		<pathelement location="lib/objenesis-1.2/objenesis-1.2.jar" />
-		<pathelement location="lib/testng-6.9.9/testng-6.9.9.jar" />
-		<pathelement location="lib/testng-6.9.9/jcommander-1.48.jar" />
-		<pathelement location="lib/hamcrest-1.3/hamcrest-core-1.3.jar" />
-		<pathelement location="lib/hamcrest-1.3/hamcrest-library-1.3.jar" />
-		<pathelement location="classes/test" />
-	</path>
+		<path id="ant.class.path">
+			<path refid="lib.class.path" />
+			<path refid="io.class.path" />
+			<pathelement location="lib/asm-4.1/asm-4.1.jar" />
+			<pathelement location="classes/ant" />
+		</path>
 
-	<path id="ant.class.path">
-		<path refid="lib.class.path" />
-		<path refid="io.class.path" />
-		<pathelement location="lib/asm-4.1/asm-4.1.jar" />
-		<pathelement location="classes/ant" />
-	</path>
+		<path id="compiler.class.path">
+			<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
+			<pathelement location="classes/glue" />
+		</path>
 
-	<path id="compiler.class.path">
-		<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
-		<pathelement location="classes/glue" />
-	</path>
+		<path id="antlr.class.path">
+			<pathelement location="lib/antlr-4.5.1/antlr-4.5.1-complete.jar" />
+		</path>
+	</target>
 
-	<path id="antlr.class.path">
-		<pathelement location="lib/antlr-4.5.1/antlr-4.5.1-complete.jar" />
-	</path>
+	<target name="resolve.test" depends="resolve">
+		<path id="test.class.path">
+			<path refid="glue.class.path" />
+			<path refid="io.class.path" />
+			<path refid="lib.class.path" />
+			<path refid="module.class.path" />
+			<path refid="main.class.path" />
+			<path refid="json.class.path" />
+			<pathelement location="lib/mockito-1.9.5-rc1/mockito-core-1.9.5-rc1.jar" />
+			<pathelement location="lib/objenesis-1.2/objenesis-1.2.jar" />
+			<pathelement location="lib/testng-6.9.9/testng-6.9.9.jar" />
+			<pathelement location="lib/testng-6.9.9/jcommander-1.48.jar" />
+			<pathelement location="lib/hamcrest-1.3/hamcrest-core-1.3.jar" />
+			<pathelement location="lib/hamcrest-1.3/hamcrest-library-1.3.jar" />
+			<pathelement location="classes/test" />
+		</path>
 
-	<target name="resolve.test">
 		<taskdef name="testng" classname="org.testng.TestNGAntTask" classpathref="test.class.path" />
 	</target>
 
@@ -94,7 +96,7 @@
 	</target>
 
 	<!-- Antlr4 is called here -->
-	<target name="antlr" depends="antlr.checkforchanges" unless="antlr.nochanges">
+	<target name="antlr" depends="resolve,antlr.checkforchanges" unless="antlr.nochanges">
 		<macrodef name="call-antlr">
 			<attribute name="name" />
 			<sequential>
@@ -147,15 +149,15 @@
 
 	<target name="javac" description="Compile java source to bytecode" depends="javac.test,javac.ant" />
 
-	<target name="javac.module" depends="javac.compiler,javac.io">
+	<target name="javac.module" depends="resolve,javac.compiler,javac.io">
 		<javac-part name="module" />
 	</target>
 
-	<target name="javac.lib">
+	<target name="javac.lib" depends="resolve">
 		<javac-part name="lib" />
 	</target>
 
-	<target name="javac.main" depends="javac.module,javac.compiler">
+	<target name="javac.main" depends="resolve,javac.module,javac.compiler">
 		<javac-part name="main" />
 		<exec executable="git" outputproperty="git.version" failifexecutionfails="false" errorproperty="">
 			<arg value="describe" />
@@ -171,7 +173,7 @@
 		</propertyfile>
 	</target>
 
-	<target name="javac.io" depends="antlr,javac.compiler,javac.lib">
+	<target name="javac.io" depends="resolve,antlr,javac.compiler,javac.lib">
 		<javac-part name="io" generated-src-with-colon=":generated-src/io">
 			<src path="generated-src/io" />
 		</javac-part>
@@ -182,15 +184,15 @@
 		</copy>
 	</target>
 
-	<target name="javac.glue">
+	<target name="javac.glue" depends="resolve">
 		<javac-part name="glue" />
 	</target>
 
-	<target name="javac.ant" depends="javac.io">
+	<target name="javac.ant" depends="resolve,javac.io">
 		<javac-part name="ant"/>
 	</target>
 
-	<target name="javac.compiler" depends="javac.glue">
+	<target name="javac.compiler" depends="resolve,javac.glue">
 		<delete dir="classes/compiler/META-INF" failonerror="false" />
 		<javac-part name="compiler" />
 		<copy todir="classes/compiler">
@@ -200,15 +202,15 @@
 		</copy>
 	</target>
 
-	<target name="javac.json" depends="javac.main">
+	<target name="javac.json" depends="resolve,javac.main">
 		<javac-part name="json" />
 	</target>
 
-	<target name="javac.test" depends="javac.main,javac.json">
+	<target name="javac.test" depends="resolve.test,javac.main,javac.json">
 		<javac-part name="test" src="src/test" />
 	</target>
 
-	<target name="verify-parsers" depends="javac.ant" description="Verify all of the net collection is parsable.">
+	<target name="verify-parsers" depends="resolve,javac.ant" description="Verify all of the net collection is parsable.">
 		<java classname="uniol.apt.tasks.ParsableTask" failonerror="true">
 			<classpath refid="ant.class.path" />
 
@@ -221,7 +223,7 @@
 		</java>
 	</target>
 
-	<target name="verify-modules" depends="javac" description="Verify the use of parameters in modules.">
+	<target name="verify-modules" depends="resolve,javac" description="Verify the use of parameters in modules.">
 		<java classname="uniol.apt.tasks.ModuleParameterVerifyTask" failonerror="true">
 			<classpath refid="ant.class.path" />
 
@@ -247,11 +249,11 @@
 		</sequential>
 	</macrodef>
 
-	<target name="test.integration" depends="jar,javac.ant" description="Run integration tests">
+	<target name="test.integration" depends="resolve,jar,javac.ant" description="Run integration tests">
 		<invoke-integration/>
 	</target>
 
-	<target name="xml.test" depends="javac.ant,javac.test">
+	<target name="xml.test" depends="resolve,javac.ant,javac.test">
 		<java classname="uniol.apt.tasks.WriteTestsXML" failonerror="true">
 			<classpath refid="ant.class.path" />
 			<arg path="testng.xml" />
@@ -314,7 +316,7 @@
 		<invoke-testng outputdir="testng-single-class-${class.name}-${test.name}" />
 	</target>
 
-	<target name="javadoc" depends="antlr" description="Generate documentation from java source">
+	<target name="javadoc" depends="resolve.test,antlr" description="Generate documentation from java source">
 		<mkdir dir="./doc/javadoc"/>
 		<javadoc encoding="utf-8" destdir="./doc/javadoc" author="true"
 				version="true" use="true" charset="UTF-8"
@@ -333,7 +335,7 @@
 		</javadoc>
 	</target>
 
-	<target name="checkstyle" depends="javac">
+	<target name="checkstyle" depends="resolve.test,javac">
 		<taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
 			classpath="lib/checkstyle-6.1.1/checkstyle-6.1.1-all.jar" />
 		<mkdir dir="reports" />
@@ -354,7 +356,7 @@
 	</target>
 
 	<!-- Findbugs -->
-	<target name="findbugs" depends="javac" description="Run FindBugs on the source code">
+	<target name="findbugs" depends="resolve.test,javac" description="Run FindBugs on the source code">
 		<ivy:cachepath pathid="findbugs.classpath" conf="findbugs"/>
 		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
 			classpathref="findbugs.classpath" />
