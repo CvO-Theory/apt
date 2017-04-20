@@ -201,6 +201,12 @@ class ElementarySeparation implements Separation {
 			public void setupRegion(Region.Builder builder, int eventIndex) {
 				builder.addWeightOn(eventIndex, ONE);
 			}
+
+			@Override
+			public void toStringHelper(String entry, Set<String> enter, Set<String> exit,
+					Set<String> dontCross, Set<String> inside) {
+				enter.add(entry);
+			}
 		},
 		// Arcs for our label leave the region
 		EXIT {
@@ -213,6 +219,12 @@ class ElementarySeparation implements Separation {
 			@Override
 			public void setupRegion(Region.Builder builder, int eventIndex) {
 				builder.addWeightOn(eventIndex, MINUS_ONE);
+			}
+
+			@Override
+			public void toStringHelper(String entry, Set<String> enter, Set<String> exit,
+					Set<String> dontCross, Set<String> inside) {
+				exit.add(entry);
 			}
 		},
 		// Arcs for our label do not cross the border of the region
@@ -234,6 +246,12 @@ class ElementarySeparation implements Separation {
 			public void setupRegion(Region.Builder builder, int eventIndex) {
 				// Nothing to do
 			}
+
+			@Override
+			public void toStringHelper(String entry, Set<String> enter, Set<String> exit,
+					Set<String> dontCross, Set<String> inside) {
+				dontCross.add(entry);
+			}
 		},
 		// Arcs for our label are inside of the region
 		INSIDE {
@@ -248,10 +266,18 @@ class ElementarySeparation implements Separation {
 				builder.addWeightOn(eventIndex, ONE);
 				builder.addWeightOn(eventIndex, MINUS_ONE);
 			}
+
+			@Override
+			public void toStringHelper(String entry, Set<String> enter, Set<String> exit,
+					Set<String> dontCross, Set<String> inside) {
+				inside.add(entry);
+			}
 		};
 
 		public abstract void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion);
 		public abstract void setupRegion(Region.Builder builder, int eventIndex);
+		public abstract void toStringHelper(String entry, Set<String> enter, Set<String> exit,
+				Set<String> dontCross, Set<String> inside);
 	}
 
 	/**
@@ -454,20 +480,7 @@ class ElementarySeparation implements Separation {
 			Set<String> dontCross = new HashSet<>();
 			Set<String> inside = new HashSet<>();
 			for (Map.Entry<String, Operation> entry : labelOperations.entrySet()) {
-				switch (entry.getValue()) {
-					case ENTER:
-						enter.add(entry.getKey());
-						break;
-					case EXIT:
-						exit.add(entry.getKey());
-						break;
-					case DONT_CROSS:
-						dontCross.add(entry.getKey());
-						break;
-					case INSIDE:
-						inside.add(entry.getKey());
-						break;
-				}
+				entry.getValue().toStringHelper(entry.getKey(), enter, exit, dontCross, inside);
 			}
 
 			return String.format("RoughRegion[%sin=%s, out=%s, enter=%s, exit=%s, dontCross=%s, inside=%s]",
