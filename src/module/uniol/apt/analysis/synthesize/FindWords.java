@@ -81,6 +81,14 @@ public class FindWords {
 		}
 	}
 
+	/**
+	 * Generate Petri net solvable words with the given characteristics.
+	 * @param properties The properties that should be considered.
+	 * @param alphabet The alphabet from which words should be generated.
+	 * @param quickFail Should quick-fail synthesis be done or should full synthesis be attempted?
+	 * @param wordCallback Callback that should be called for each word that is found.
+	 * @param lengthDoneCallback Callback that should be called when all words of a given length were handled.
+	 */
 	static public void generateList(PNProperties properties, SortedSet<Character> alphabet, boolean quickFail,
 			WordCallback wordCallback, LengthDoneCallback lengthDoneCallback)
 			throws PreconditionFailedException {

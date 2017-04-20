@@ -41,6 +41,12 @@ public class InvalidRegionException extends ModuleException {
 					event, state.getId()));
 	}
 
+	/**
+	 * Constructor creates an InvalidRegionException because the region is not consistent for the given arc. This
+	 * means that the number of tokens assigned to the source of the arc plus the effect of the label of the arc
+	 * does not equal the number of tokens assigned to the target of the arc.
+	 * @param arc The arc that is not handled correctly
+	 */
 	public InvalidRegionException(Arc arc) {
 		super(String.format("With the given region, the arc %s does not lead to the expected state", arc));
 	}

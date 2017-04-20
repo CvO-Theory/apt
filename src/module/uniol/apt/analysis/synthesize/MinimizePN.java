@@ -231,7 +231,8 @@ public class MinimizePN {
 		// Is there a model?
 		LBool isSat = script.checkSat();
 		if (isSat == LBool.UNKNOWN) {
-			assert ReasonUnknown.TIMEOUT.equals(script.getInfo(":reason-unknown")) : script.getInfo(":reason-unknown");
+			assert ReasonUnknown.TIMEOUT.equals(script.getInfo(":reason-unknown"))
+				: script.getInfo(":reason-unknown");
 			throw new UncheckedInterruptedException();
 		} else if (isSat == LBool.UNSAT) {
 			return null;

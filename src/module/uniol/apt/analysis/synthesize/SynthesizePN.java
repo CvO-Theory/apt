@@ -316,7 +316,8 @@ public class SynthesizePN {
 			}
 
 			partition = newPartition;
-			debugFormat("After region %s, still have %d families (%d resulting singular families discarded)",
+			debugFormat("After region %s, still have %d families "
+					+ "(%d resulting singular families discarded)",
 					region, partition.size(), discarded);
 			if (partition.isEmpty())
 				break;
@@ -440,7 +441,8 @@ public class SynthesizePN {
 
 		debug("List of required regions:");
 		debug(requiredRegions);
-		debugFormat("Picked %d required regions out of %d input regions", requiredRegions.size(), numInputRegions);
+		debugFormat("Picked %d required regions out of %d input regions",
+				requiredRegions.size(), numInputRegions);
 	}
 
 	/**
