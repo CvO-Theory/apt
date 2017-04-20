@@ -535,7 +535,7 @@ public class AutomatonToRegularExpression {
 		public RegEx union(RegEx other) {
 			other = simplifyForUs(other);
 
-			// a{n,m}|a{x,y} is the same as a{min{n,x},max{m,y}} (if both ranges overlap and UNLIMITED is handled)
+			// a{n,m}|a{x,y} is the same as a{min{n,x},max{m,y}} (if ranges overlap and UNLIMITED is handled)
 			if (other instanceof RepetitionRegEx) {
 				RepetitionRegEx o = (RepetitionRegEx) other;
 				if (!regex.equals(o.regex))

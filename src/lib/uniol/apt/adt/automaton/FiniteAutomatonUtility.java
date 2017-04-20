@@ -910,17 +910,17 @@ public class FiniteAutomatonUtility {
 			this.finalStates = finalStates;
 			this.currentState = state;
 
-			Map<Symbol, Set<uniol.apt.adt.ts.State>> transitions = new HashMap<>();
+			Map<Symbol, Set<uniol.apt.adt.ts.State>> trans = new HashMap<>();
 			for (Arc arc : state.getPostsetEdges()) {
 				Symbol symbol = new Symbol(arc.getLabel());
-				Set<uniol.apt.adt.ts.State> states = transitions.get(symbol);
+				Set<uniol.apt.adt.ts.State> states = trans.get(symbol);
 				if (states == null) {
 					states = new HashSet<>();
-					transitions.put(symbol, states);
+					trans.put(symbol, states);
 				}
 				states.add(arc.getTarget());
 			}
-			this.transitions = Collections.unmodifiableMap(transitions);
+			this.transitions = Collections.unmodifiableMap(trans);
 		}
 
 		@Override
@@ -985,13 +985,13 @@ public class FiniteAutomatonUtility {
 
 		PowerSetConstruction(FiniteAutomaton a) {
 			// Calculate some alphabet
-			Set<Symbol> alphabet = new HashSet<>();
+			Set<Symbol> alph = new HashSet<>();
 			for (State state : statesIterable(a))
-				alphabet.addAll(state.getDefinedSymbols());
-			assert !alphabet.contains(Symbol.EPSILON);
+				alph.addAll(state.getDefinedSymbols());
+			assert !alph.contains(Symbol.EPSILON);
 
 			// Remember the alphabet for later and construct an initial state
-			this.alphabet = Collections.unmodifiableSet(alphabet);
+			this.alphabet = Collections.unmodifiableSet(alph);
 			this.initialState = getState(Collections.singleton(a.getInitialState()));
 		}
 
@@ -1194,11 +1194,11 @@ public class FiniteAutomatonUtility {
 			}
 
 			int numStates = nextIndex;
-			MinimalState[] states = new MinimalState[numStates];
+			MinimalState[] result = new MinimalState[numStates];
 			for (int i = 0; i < numStates; i++)
-				states[i] = new MinimalState(this, transitions.get(i), isFinalState.get(i));
+				result[i] = new MinimalState(this, transitions.get(i), isFinalState.get(i));
 
-			return states;
+			return result;
 		}
 	}
 
@@ -1347,7 +1347,8 @@ public class FiniteAutomatonUtility {
 
 		@Override
 		public boolean isFinalState() {
-			return mode.isFinal(state1 != null && state1.isFinalState(), state2 != null && state2.isFinalState());
+			return mode.isFinal(state1 != null && state1.isFinalState(),
+					state2 != null && state2.isFinalState());
 		}
 
 		@Override

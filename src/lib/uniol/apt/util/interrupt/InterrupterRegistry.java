@@ -27,15 +27,15 @@ package uniol.apt.util.interrupt;
  */
 public class InterrupterRegistry {
 
-	private static final ThreadLocal<Interrupter> threadLocalInterrupter = new ThreadLocal<>();
-	private static final Interrupter noOpInterrupter = new NoOpInterrupter();
+	private static final ThreadLocal<Interrupter> THREAD_LOCAL_INTERRUPTER = new ThreadLocal<>();
+	private static final Interrupter NO_OP_INTERRUPTER = new NoOpInterrupter();
 
 	/**
 	 * Clear the interrupter that was set for the currently executing
 	 * (calling) thread.
 	 */
 	public static void clearCurrentThreadInterrupter() {
-		threadLocalInterrupter.remove();
+		THREAD_LOCAL_INTERRUPTER.remove();
 	}
 
 	/**
@@ -45,18 +45,19 @@ public class InterrupterRegistry {
 	 *                interrupter that will be used for the current thread
 	 */
 	public static void setCurrentThreadInterrupter(Interrupter interrupter) {
-		threadLocalInterrupter.set(interrupter);
+		THREAD_LOCAL_INTERRUPTER.set(interrupter);
 	}
 
 	/**
 	 * Returns the interrupter for the currently executing (calling) thread.
+	 * @return The interrupter for the current thread.
 	 */
 	public static Interrupter getCurrentThreadInterrupter() {
-		Interrupter res = threadLocalInterrupter.get();
+		Interrupter res = THREAD_LOCAL_INTERRUPTER.get();
 		if (res != null) {
 			return res;
 		} else {
-			return noOpInterrupter;
+			return NO_OP_INTERRUPTER;
 		}
 	}
 
@@ -64,10 +65,9 @@ public class InterrupterRegistry {
 	 * Throws an exception if the interrupter for the currently executing
 	 * (calling) thread determines that a task should be aborted.
 	 *
-	 * @throws UncheckedInterruptedException
-	 *                 on interruption
+	 * @throws UncheckedInterruptedException on interruption
 	 */
-	public static void throwIfInterruptRequestedForCurrentThread() throws UncheckedInterruptedException {
+	public static void throwIfInterruptRequestedForCurrentThread() {
 		if (getCurrentThreadInterrupter().isInterruptRequested()) {
 			throw new UncheckedInterruptedException();
 		}
