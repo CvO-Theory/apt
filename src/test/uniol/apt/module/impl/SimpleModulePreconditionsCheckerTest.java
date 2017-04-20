@@ -47,9 +47,11 @@ public class SimpleModulePreconditionsCheckerTest {
 		final Module checkedModule = new CheckedModule();
 
 		SimpleModulePreconditionsChecker checker = new SimpleModulePreconditionsChecker();
-		ModuleRegistry registry = new AbstractModuleRegistry() {{
-			registerModules(checkedModule, checkingModule);
-		}};
+		ModuleRegistry registry = new AbstractModuleRegistry() {
+			{
+				registerModules(checkedModule, checkingModule);
+			}
+		};
 
 		Something something = new Something();
 		assertTrue(checker.check(registry, checkedModule, something).isEmpty());
@@ -61,9 +63,11 @@ public class SimpleModulePreconditionsCheckerTest {
 		final Module checkedModule = new CheckedModule();
 
 		SimpleModulePreconditionsChecker checker = new SimpleModulePreconditionsChecker();
-		ModuleRegistry registry = new AbstractModuleRegistry() {{
-			registerModules(checkedModule, checkingModule);
-		}};
+		ModuleRegistry registry = new AbstractModuleRegistry() {
+			{
+				registerModules(checkedModule, checkingModule);
+			}
+		};
 
 		Something something = new Something();
 

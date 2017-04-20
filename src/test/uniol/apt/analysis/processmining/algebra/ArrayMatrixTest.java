@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.*;
 /** @author Uli Schlachter */
 public class ArrayMatrixTest {
 	@Test
-	public void testIdentitiyMatrix1_1() {
+	public void testIdentitiyMatrix1x1() {
 		Matrix matrix = ArrayMatrix.createIdentityMatrix(1, 1);
 		assertThat(matrix.getRows(), equalTo(1));
 		assertThat(matrix.getColumns(), equalTo(1));
@@ -34,7 +34,7 @@ public class ArrayMatrixTest {
 	}
 
 	@Test
-	public void testIdentitiyMatrix2_3() {
+	public void testIdentitiyMatrix2x3() {
 		Matrix matrix = ArrayMatrix.createIdentityMatrix(2, 3);
 		assertThat(matrix.getRows(), equalTo(2));
 		assertThat(matrix.getColumns(), equalTo(3));

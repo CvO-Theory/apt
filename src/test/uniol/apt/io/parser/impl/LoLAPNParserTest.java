@@ -41,7 +41,7 @@ public class LoLAPNParserTest {
 	public void simpleTest() {
 		String file = "nets/lola/phils3.llnet";
 		PetriNet pn;
-		
+
 		try {
 			pn = new LoLAPNParser().parseFile(file);
 		} catch (IOException | ParseException e) {

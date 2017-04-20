@@ -205,7 +205,7 @@ public class JSONExecutor {
 			ModuleOutputImpl output = callModule(module, arguments);
 			result.put("return_values", transformReturnValues(module, output));
 			return result;
-		} catch (ModuleException|UncheckedInterruptedException e) {
+		} catch (ModuleException | UncheckedInterruptedException e) {
 			return JSONUtilities.toJSONObject(e);
 		}
 	}
@@ -253,7 +253,8 @@ public class JSONExecutor {
 		return input;
 	}
 
-	private Object getArgument(JSONObject outerArguments, String parameterName, Class<?> klass) throws ModuleException {
+	private Object getArgument(JSONObject outerArguments, String parameterName, Class<?> klass)
+			throws ModuleException {
 		JSONObject argument = outerArguments.optJSONObject(parameterName);
 		if (argument == null) {
 			// Argument is given directly as a string

@@ -81,7 +81,7 @@ public class MatrixMultiplicationTest {
 	public void testLinearExample() {
 		Matrix mA = new MatrixFromArray(new int[][] { new int[] { 1, 3, 5 } });
 		Matrix mB = new MatrixFromArray(new int[][] { new int[] { 3 }, new int[] { 2 }, new int[] { 1 } });
-		Matrix mResult = new MatrixFromArray(new int[][] { new int[] { 1*3+3*2+5*1 } });
+		Matrix mResult = new MatrixFromArray(new int[][] { new int[] { 1 * 3 + 3 * 2 + 5 * 1 } });
 
 		assertThat(MatrixMultiplication.multiply(mA, mB), equalTo(mResult));
 	}

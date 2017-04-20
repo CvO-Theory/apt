@@ -69,8 +69,10 @@ public class PnmlPNRenderer extends AbstractRenderer<PetriNet> implements Render
 			}
 
 			for (Transition transition : pn.getTransitions()) {
-				writer.append("<transition id=\"").append(toUniqueId(transition.getId())).append("\">\n");
-				writer.append("<name>\n<text>").append(transition.getLabel()).append("</text>\n</name>\n");
+				writer.append("<transition id=\"").append(toUniqueId(transition.getId()))
+					.append("\">\n");
+				writer.append("<name>\n<text>").append(transition.getLabel())
+					.append("</text>\n</name>\n");
 				writer.append("</transition>\n");
 			}
 

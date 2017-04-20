@@ -28,8 +28,8 @@ import static org.testng.Assert.assertEquals;
  * @author Manuel Gieseking
  */
 public class MathToolsTest {
-	private static final int bigPrime1 = 496167127;
-	private static final int bigPrime2 = 284678627;
+	private static final int BIG_PRIME1 = 496167127;
+	private static final int BIG_PRIME2 = 284678627;
 
 	@Test
 	public void testGCD() {
@@ -57,8 +57,8 @@ public class MathToolsTest {
 
 	@Test
 	public void testLCMBig() {
-		BigInteger a = BigInteger.valueOf(bigPrime1);
-		BigInteger b = BigInteger.valueOf(bigPrime2);
+		BigInteger a = BigInteger.valueOf(BIG_PRIME1);
+		BigInteger b = BigInteger.valueOf(BIG_PRIME2);
 		BigInteger product = a.multiply(b);
 		assertEquals(MathTools.lcm(a, b), product);
 	}
@@ -66,7 +66,7 @@ public class MathToolsTest {
 	@Test(expectedExceptions = ArithmeticException.class, expectedExceptionsMessageRegExp =
 			"Cannot represent value as int: 141248176476894629")
 	public void testLCMOverflow() {
-		MathTools.lcm(bigPrime1, bigPrime2);
+		MathTools.lcm(BIG_PRIME1, BIG_PRIME2);
 	}
 }
 
