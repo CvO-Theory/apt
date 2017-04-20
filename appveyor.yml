@@ -1,5 +1,6 @@
 install:
   - cinst ant
+  - cinst ivy
   - refreshenv
 
 build_script:
