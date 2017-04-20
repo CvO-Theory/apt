@@ -8,6 +8,9 @@ notifications:
     recipients: pg-apt-info@informatik.uni-oldenburg.de
   on_failure: always
   on_success: change
+install:
+  - mkdir -p ~/.ant/lib/
+  - travis_retry wget -O ~/.ant/lib/ivy.jar https://repo1.maven.org/maven2/org/apache/ivy/ivy/2.4.0/ivy-2.4.0.jar
 script:
   - ant verify-parsers
   - ant clean
