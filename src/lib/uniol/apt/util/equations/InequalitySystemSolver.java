@@ -28,9 +28,6 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.varia.NullAppender;
-
 import de.uni_freiburg.informatik.ultimate.logic.ConstantTerm;
 import de.uni_freiburg.informatik.ultimate.logic.Logics;
 import de.uni_freiburg.informatik.ultimate.logic.Model;
@@ -40,6 +37,7 @@ import de.uni_freiburg.informatik.ultimate.logic.Script.LBool;
 import de.uni_freiburg.informatik.ultimate.logic.Script;
 import de.uni_freiburg.informatik.ultimate.logic.Sort;
 import de.uni_freiburg.informatik.ultimate.logic.Term;
+import de.uni_freiburg.informatik.ultimate.smtinterpol.DefaultLogger;
 import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.SMTInterpol;
 import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.TerminationRequest;
 
@@ -54,16 +52,6 @@ import static uniol.apt.util.DebugUtil.debug;
  * @author Uli Schlachter
  */
 public class InequalitySystemSolver {
-	private static class Log4JInitializationHelper {
-		public static final Log4JInitializationHelper INSTANCE = new Log4JInitializationHelper();
-		public final Logger logger = Logger.getRootLogger();
-
-		private Log4JInitializationHelper() {
-			// Set up SMTInterpol in a way that it doesn't produce debug output
-			logger.addAppender(new NullAppender());
-		}
-	}
-
 	private final Script script;
 	private final List<InequalitySystem[]> systems = new LinkedList<>();
 	private final Deque<Integer> systemsLengthStack = new LinkedList<>();
@@ -73,14 +61,14 @@ public class InequalitySystemSolver {
 	 * Constructor. Yes, it's that simple.
 	 */
 	public InequalitySystemSolver() {
-		// Java lazily initializes classes, so the helper will only be created on first use
-		Logger logger = Log4JInitializationHelper.INSTANCE.logger;
+		DefaultLogger logger = new DefaultLogger();
 		script = new SMTInterpol(logger, new TerminationRequest() {
 			@Override
 			public boolean isTerminationRequested() {
 				return InterrupterRegistry.getCurrentThreadInterrupter().isInterruptRequested();
 			}
 		});
+		logger.setLoglevel(DefaultLogger.LOGLEVEL_OFF);
 		script.setLogic(Logics.QF_LIA);
 		systemsLengthStack.addLast(0);
 		variablesStack.addLast(0);

@@ -27,13 +27,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.varia.NullAppender;
-
 import de.uni_freiburg.informatik.ultimate.logic.Logics;
 import de.uni_freiburg.informatik.ultimate.logic.Script;
 import de.uni_freiburg.informatik.ultimate.logic.Term;
 import de.uni_freiburg.informatik.ultimate.logic.TermVariable;
+import de.uni_freiburg.informatik.ultimate.smtinterpol.DefaultLogger;
 import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.SMTInterpol;
 import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.TerminationRequest;
 import uniol.apt.adt.ts.Arc;
@@ -50,28 +48,10 @@ import uniol.apt.util.Pair;
  * @author Uli Schlachter
  */
 public class SMTInterpolHelper {
-	private final Script script = Log4JInitializationHelper.INSTANCE.createScript();
+	private final Script script;
 	private final RegionUtility utility;
 	private final PNProperties properties;
 	private final String[] locationMap;
-
-	private static class Log4JInitializationHelper {
-		public static final Log4JInitializationHelper INSTANCE = new Log4JInitializationHelper();
-
-		private Log4JInitializationHelper() {
-			// Set up SMTInterpol in a way that it doesn't produce debug output
-			Logger.getRootLogger().addAppender(new NullAppender());
-		}
-
-		public Script createScript() {
-			return new SMTInterpol(Logger.getRootLogger(), new TerminationRequest() {
-				@Override
-				public boolean isTerminationRequested() {
-					return InterrupterRegistry.getCurrentThreadInterrupter().isInterruptRequested();
-				}
-			});
-		}
-	}
 
 	/**
 	 * Create a new instance of this class. This prepares an SMTInterpol instance so that Petri nets can be
@@ -82,6 +62,14 @@ public class SMTInterpolHelper {
 	 * @see getScript
 	 */
 	public SMTInterpolHelper(RegionUtility utility, PNProperties properties, String[] locationMap) {
+		DefaultLogger logger = new DefaultLogger();
+		this.script = new SMTInterpol(logger, new TerminationRequest() {
+			@Override
+			public boolean isTerminationRequested() {
+				return InterrupterRegistry.getCurrentThreadInterrupter().isInterruptRequested();
+			}
+		});
+		logger.setLoglevel(DefaultLogger.LOGLEVEL_OFF);
 		this.utility = utility;
 		this.properties = properties;
 		this.locationMap = locationMap;
