@@ -28,6 +28,9 @@ import uniol.apt.adt.INode;
 /**
  * Callback which gets used by the {@link CycleSearch} class to notify the
  * caller about cycles.
+ * @param <G> The type of the graph.
+ * @param <E> The type of edges of the graph.
+ * @param <N> The type of nodes of the graph.
  *
  * @author vsp
  */

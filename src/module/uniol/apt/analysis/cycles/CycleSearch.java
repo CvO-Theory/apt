@@ -55,7 +55,8 @@ public class CycleSearch {
 		while (!componentSubgraphs.isEmpty()) {
 			SubGraph<G, E, N> subgraph = componentSubgraphs.removeLast();
 			Set<SubNode<G, E, N>> nodes = subgraph.getNodes();
-			Iterator<SubNode<G, E, N>> it = nodes.iterator(); // misuse an iterator to get a random node and to remove it
+			// misuse an iterator to get and remove a random node
+			Iterator<SubNode<G, E, N>> it = nodes.iterator();
 			SubNode<G, E, N> start = it.next();
 			new DoDfs<G, E, N>(start, subgraph, cycleCb);
 			it.remove();

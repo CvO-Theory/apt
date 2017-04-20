@@ -36,7 +36,8 @@ import uniol.apt.module.exception.ModuleException;
  * @author Manuel Gieseking
  */
 @AptModule
-public class CyclesHaveSameOrMutallyDisjointPVModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class CyclesHaveSameOrMutallyDisjointPVModule extends AbstractInterruptibleModule
+		implements InterruptibleModule {
 
 	private final static String SHORTDESCRIPTION = "Check if the smallest cycles of a Petri net or LTS"
 		+ " have the same or mutually disjoint parikh vectors";
