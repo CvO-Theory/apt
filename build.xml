@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="apt" default="javac" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 	<target name="resolve">
+		<ivy:cachepath pathid="lib.cachepath" conf="lib"/>
+		<ivy:report todir="reports/ivy" graph="true" xml="false"/>
 		<path id="lib.class.path">
-			<pathelement location="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
-			<pathelement location="lib/smtinterpol-2.1-335-g4c543a5/smtinterpol.jar"/>
+			<path refid="lib.cachepath" />
 			<pathelement location="classes/lib" />
 		</path>
 
@@ -11,10 +12,10 @@
 			<pathelement location="classes/glue" />
 		</path>
 
+		<ivy:cachepath pathid="io.cachepath" conf="io"/>
+		<ivy:report todir="reports/ivy" graph="true" xml="false"/>
 		<path id="io.class.path">
-			<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
-			<pathelement location="lib/antlr-4.5.1/antlr-runtime-4.5.1.jar" />
-			<pathelement location="lib/stringtemplate-4.0.8/ST-4.0.8.jar" />
+			<path refid="io.cachepath" />
 			<path refid="lib.class.path" />
 			<path refid="glue.class.path" />
 			<!-- Needed so that the annotation processor is run -->
@@ -22,11 +23,13 @@
 			<pathelement location="classes/io" />
 		</path>
 
+		<ivy:cachepath pathid="module.cachepath" conf="module"/>
+		<ivy:report todir="reports/ivy" graph="true" xml="false"/>
 		<path id="module.class.path">
+			<path refid="module.cachepath" />
 			<path refid="lib.class.path" />
 			<path refid="io.class.path" />
 			<path refid="glue.class.path" />
-			<pathelement location="lib/sat4j-2.3.2/org.sat4j.core.jar"/>
 			<!-- Needed so that the annotation processor is run -->
 			<pathelement location="classes/compiler" />
 			<pathelement location="classes/module" />
@@ -42,8 +45,10 @@
 			<pathelement location="classes/main" />
 		</path>
 
+		<ivy:cachepath pathid="json.cachepath" conf="json"/>
+		<ivy:report todir="reports/ivy" graph="true" xml="false"/>
 		<path id="json.class.path">
-			<pathelement location="lib/json-20160810/json.jar"/>
+			<path refid="json.cachepath" />
 			<path refid="lib.class.path" />
 			<path refid="glue.class.path" />
 			<path refid="module.class.path" />
@@ -51,37 +56,37 @@
 			<pathelement location="classes/json" />
 		</path>
 
+		<ivy:cachepath pathid="ant.cachepath" conf="ant"/>
+		<ivy:report todir="reports/ivy" graph="true" xml="false"/>
 		<path id="ant.class.path">
+			<path refid="ant.cachepath" />
 			<path refid="lib.class.path" />
 			<path refid="io.class.path" />
-			<pathelement location="lib/asm-4.1/asm-4.1.jar" />
 			<pathelement location="classes/ant" />
 		</path>
 
+		<ivy:cachepath pathid="compiler.cachepath" conf="compiler"/>
+		<ivy:report todir="reports/ivy" graph="true" xml="false"/>
 		<path id="compiler.class.path">
-			<pathelement location="lib/commons-io-2.4/commons-io-2.4.jar" />
+			<path refid="compiler.cachepath" />
 			<pathelement location="classes/glue" />
 		</path>
 
-		<path id="antlr.class.path">
-			<pathelement location="lib/antlr-4.5.1/antlr-4.5.1-complete.jar" />
-		</path>
+		<ivy:cachepath pathid="antlr.class.path" conf="antlr"/>
+		<ivy:report todir="reports/ivy" graph="true" xml="false"/>
 	</target>
 
 	<target name="resolve.test" depends="resolve">
+		<ivy:cachepath pathid="test.cachepath" conf="test"/>
+		<ivy:report todir="reports/ivy" graph="true" xml="false"/>
 		<path id="test.class.path">
+			<path refid="test.cachepath" />
 			<path refid="glue.class.path" />
 			<path refid="io.class.path" />
 			<path refid="lib.class.path" />
 			<path refid="module.class.path" />
 			<path refid="main.class.path" />
 			<path refid="json.class.path" />
-			<pathelement location="lib/mockito-1.9.5-rc1/mockito-core-1.9.5-rc1.jar" />
-			<pathelement location="lib/objenesis-1.2/objenesis-1.2.jar" />
-			<pathelement location="lib/testng-6.9.9/testng-6.9.9.jar" />
-			<pathelement location="lib/testng-6.9.9/jcommander-1.48.jar" />
-			<pathelement location="lib/hamcrest-1.3/hamcrest-core-1.3.jar" />
-			<pathelement location="lib/hamcrest-1.3/hamcrest-library-1.3.jar" />
 			<pathelement location="classes/test" />
 		</path>
 
@@ -336,8 +341,10 @@
 	</target>
 
 	<target name="checkstyle" depends="resolve.test,javac">
+		<ivy:cachepath pathid="checkstyle.cachepath" conf="checkstyle"/>
+		<ivy:report todir="reports/ivy" graph="true" xml="false"/>
 		<taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
-			classpath="lib/checkstyle-6.1.1/checkstyle-6.1.1-all.jar" />
+			classpathref="checkstyle.cachepath" />
 		<mkdir dir="reports" />
 		<checkstyle config="checkstyle.xml" failOnViolation="false">
 			<formatter type="xml" tofile="reports/checkstyle.xml"/>
@@ -358,6 +365,7 @@
 	<!-- Findbugs -->
 	<target name="findbugs" depends="resolve.test,javac" description="Run FindBugs on the source code">
 		<ivy:cachepath pathid="findbugs.classpath" conf="findbugs"/>
+		<ivy:report todir="reports/ivy" graph="true" xml="false"/>
 		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
 			classpathref="findbugs.classpath" />
 		<mkdir dir="reports" />
@@ -419,6 +427,7 @@
 	<!-- JaCoCo -->
 	<target name="jacoco" depends="resolve.test,javac,jar,xml.test" description="Run tests under JaCoCo">
 		<ivy:cachepath pathid="jacoco.classpath" conf="jacoco"/>
+		<ivy:report todir="reports/ivy" graph="true" xml="false"/>
 		<taskdef resource="org/jacoco/ant/antlib.xml" classpathref="jacoco.classpath"/>
 
 		<delete file="reports/jacoco/jacoco.exec"/>
@@ -496,6 +505,7 @@
 		<jar destfile="apt-module.jar" duplicate="fail">
 			<fileset dir="classes/module/" />
 		</jar>
+		<ivy:cachefileset setid="dependencies.fileset" conf="io,lib,module"/>
 		<jar destfile="apt.jar" duplicate="fail">
 			<fileset dir="classes">
 				<include name="META-INF/services/uniol.apt.module.Module"/>
@@ -509,20 +519,30 @@
 				<exclude name="META-INF/services/uniol.apt.module.Module"/>
 			</fileset>
 			<fileset dir="classes/compiler/" />
-			<zipfileset includes="**/*.class" src="lib/commons-io-2.4/commons-io-2.4.jar" />
-			<zipfileset includes="**/*.class" src="lib/commons-collections4-4.0/commons-collections4-4.0.jar" />
-			<zipfileset includes="**/*.class" src="lib/antlr-4.5.1/antlr-runtime-4.5.1.jar" />
-			<zipfileset includes="**/*.class" src="lib/stringtemplate-4.0.8/ST-4.0.8.jar" />
-			<zipfileset includes="**/*.class" src="lib/sat4j-2.3.2/org.sat4j.core.jar" />
-			<zipfileset includes="**/*.class" src="lib/smtinterpol-2.1-335-g4c543a5/smtinterpol.jar"/>
+			<restrict>
+				<archives>
+					<zips>
+						<fileset refid="dependencies.fileset"/>
+					</zips>
+				</archives>
+				<name name="**/*.class"/>
+			</restrict>
 			<manifest>
 				<attribute name="Main-Class" value="uniol.apt.APT" />
 			</manifest>
 		</jar>
+		<ivy:cachefileset setid="dependencies-json.fileset" conf="json"/>
 		<jar destfile="apt-json.jar" duplicate="fail">
 			<zipfileset src="apt.jar"/>
 			<fileset dir="classes/json/"/>
-			<zipfileset includes="**/*.class" src="lib/json-20160810/json.jar"/>
+			<restrict>
+				<archives>
+					<zips>
+						<fileset refid="dependencies-json.fileset"/>
+					</zips>
+				</archives>
+				<name name="**/*.class"/>
+			</restrict>
 			<manifest>
 				<attribute name="Main-Class" value="uniol.apt.json.Main" />
 			</manifest>
