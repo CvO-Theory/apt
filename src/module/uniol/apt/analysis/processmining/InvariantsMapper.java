@@ -48,7 +48,7 @@ public class InvariantsMapper implements Transformer<ParikhVector, List<Integer>
 	 * ParikhVector}s that should later be mapped must be over the given alphabet. For example, with the only
 	 * invariant being "a","b", the words "c" and "a","c","b" will be mapped to the equal results.
 	 * @param alphabet The alphabet over which Parikh vectors will be given.
-	 * @param InvariantsMapper A collection of words which should be invariant.
+	 * @param invariantWords A collection of words which should be invariant.
 	 */
 	public InvariantsMapper(Set<String> alphabet, Collection<List<String>> invariantWords) {
 		alphabetList = new ArrayList<>(alphabet);
