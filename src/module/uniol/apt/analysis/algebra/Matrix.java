@@ -32,12 +32,8 @@ import uniol.apt.adt.pn.Transition;
  */
 public class Matrix {
 
-	private String[][] matrix;
-	private String[][] stringIncidence;
-	private String[][] stringBackward;
-	private String[][] stringForward;
-	private PetriNet pn;
-	private Set<Flow> arcs;
+	final private String[][] matrix;
+	final private PetriNet pn;
 
 	/**
 	 * Constructor
@@ -59,8 +55,6 @@ public class Matrix {
 			this.matrix[0][transStart] = t.getId();
 			transStart++;
 		}
-
-		this.arcs = this.pn.getEdges();
 	}
 
 	/**
@@ -69,35 +63,33 @@ public class Matrix {
 	 */
 	public String[][] getStringForward() {
 		// create forward matrix
-		this.stringForward = new String[this.pn.getPlaces().size() + 1][this.pn
-			.getTransitions().size() + 1];
+		String[][] result = new String[this.pn.getPlaces().size() + 1][this.pn.getTransitions().size() + 1];
 		for (int i = 0; i < this.matrix.length; i++) {
 			for (int j = 0; j < this.matrix[0].length; j++) {
 				String value = this.matrix[i][j];
-				this.stringForward[i][j] = value;
+				result[i][j] = value;
 			}
 		}
-		this.stringForward[0][0] = "F";
+		result[0][0] = "F";
 		for (int i = 1; i < this.matrix.length; i++) {
 			for (int j = 1; j < this.matrix[0].length; j++) {
 				String place = matrix[i][0];
 				String transition = matrix[0][j];
 				// fill forward matrix with 0
-				// this.stringForward[i - 1][j - 1] = "0";
-				this.stringForward[i][j] = "0";
+				// result[i - 1][j - 1] = "0";
+				result[i][j] = "0";
 				// run through arcs and look up for matching places &
 				// transitions
-				for (Flow arc : this.arcs) {
-					if (place == arc.getTarget().getId()
-						&& transition == arc.getSource().getId()) {
-						this.stringForward[i][j] = String.valueOf(arc
-							.getWeight());
+				for (Flow arc : this.pn.getEdges()) {
+					if (place.equals(arc.getTarget().getId())
+						&& transition.equals(arc.getSource().getId())) {
+						result[i][j] = String.valueOf(arc.getWeight());
 					}
 				}
 
 			}
 		}
-		return this.stringForward;
+		return result;
 	}
 
 	/**
@@ -105,32 +97,31 @@ public class Matrix {
 	 * @return backwardmatrix
 	 */
 	public String[][] getStringBackward() {
-		this.stringBackward = new String[this.pn.getPlaces().size() + 1][this.pn
-			.getTransitions().size() + 1];
+		String[][] result = new String[this.pn.getPlaces().size() + 1][this.pn.getTransitions().size() + 1];
 		for (int i = 0; i < this.matrix.length; i++) {
 			for (int j = 0; j < this.matrix[0].length; j++) {
 				String value = this.matrix[i][j];
-				this.stringBackward[i][j] = value;
+				result[i][j] = value;
 			}
 		}
-		this.stringBackward[0][0] = "B";
+		result[0][0] = "B";
 		for (int i = 1; i < this.matrix.length; i++) {
 			for (int j = 1; j < this.matrix[0].length; j++) {
 				String place = matrix[i][0];
 				String transition = matrix[0][j];
 				// fill forward matrix with 0
-				this.stringBackward[i][j] = "0";
+				result[i][j] = "0";
 				// run through arcs and look up for matching places &
 				// transitions
-				for (Flow arc : this.arcs) {
-					if (place == arc.getSource().getId()
-						&& transition == arc.getTarget().getId()) {
-						this.stringBackward[i][j] = String.valueOf(arc.getWeight());
+				for (Flow arc : this.pn.getEdges()) {
+					if (place.equals(arc.getSource().getId())
+						&& transition.equals(arc.getTarget().getId())) {
+						result[i][j] = String.valueOf(arc.getWeight());
 					}
 				}
 			}
 		}
-		return this.stringBackward;
+		return result;
 	}
 
 	/**
@@ -138,27 +129,25 @@ public class Matrix {
 	 * @return incidencematirx
 	 */
 	public String[][] getStringIncidence() {
-		this.stringIncidence = new String[this.pn.getPlaces().size() + 1][this.pn
-			.getTransitions().size() + 1];
+		String[][] result = new String[this.pn.getPlaces().size() + 1][this.pn.getTransitions().size() + 1];
 		for (int i = 0; i < this.matrix.length; i++) {
 			for (int j = 0; j < this.matrix[0].length; j++) {
 				String value = this.matrix[i][j];
-				this.stringIncidence[i][j] = value;
+				result[i][j] = value;
 			}
 		}
+		result[0][0] = "C";
 		// compute forward & backward
-		getStringBackward();
-		getStringForward();
-		for (int i = 1; i < this.stringIncidence.length; i++) {
-			for (int j = 1; j < this.stringIncidence[0].length; j++) {
+		String[][] backward = getStringBackward();
+		String[][]forward = getStringForward();
+		for (int i = 1; i < result.length; i++) {
+			for (int j = 1; j < result[0].length; j++) {
 				// C = (F-B)*1
-				this.stringIncidence[i][j] = String.valueOf(Integer
-					.parseInt(this.stringForward[i][j]) - Integer
-					.parseInt(this.stringBackward[i][j]));
+				result[i][j] = String.valueOf(Integer.parseInt(forward[i][j])
+						- Integer.parseInt(backward[i][j]));
 			}
 		}
-		this.stringIncidence[0][0] = "C";
-		return this.stringIncidence;
+		return result;
 	}
 
 	/**
@@ -166,52 +155,36 @@ public class Matrix {
 	 * @return Matrix as String
 	 */
 	public String getRMatrices() {
-		String matr = "";
+		StringBuilder result = new StringBuilder();
 
-		/*
-		 * regard all the three types of matrices and prepare console output for
-		 * inserting in R
-		 */
-		for (int i = 0; i < 3; i++) {
-			// forward
-			if (i == 0) {
-				matr += getRMatricesHelper(getStringForward(), "forward");
-			}
-			// backward
-			if (i == 1) {
-				matr += getRMatricesHelper(getStringBackward(), "backward");
-			}
-			// incidence
-			if (i == 2) {
-				matr += getRMatricesHelper(getStringIncidence(), "incidence");
-			}
-		}
-		return matr;
+		getRMatricesHelper(result, getStringForward(), "forward");
+		getRMatricesHelper(result, getStringBackward(), "backward");
+		getRMatricesHelper(result, getStringIncidence(), "incidence");
+		return result.toString();
 	}
 
-	private String getRMatricesHelper(String[][] matrix, String typ) {
-		String returner = "";
+	static private void getRMatricesHelper(StringBuilder result, String[][] matrix, String typ) {
 		// fill each row with values
 		for (int i = 1; i < matrix.length; i++) {
-			returner += "row" + typ + i + " <- c(";
+			result.append("row").append(typ).append(i).append(" <- c(");
 			for (int j = 1; j < matrix[0].length; j++) {
 				if (j != matrix[0].length - 1) {
-					returner += matrix[i][j] + ",";
+					result.append(matrix[i][j]).append(",");
 				} else {
-					returner += matrix[i][j] + ")";
+					result.append(matrix[i][j]).append(")");
 				}
 
 			}
-			returner += "\n";
+			result.append("\n");
 		}
 		// combine rows to matrix
-		returner += typ + " <- matrix(c(";
+		result.append(typ).append(" <- matrix(c(");
 		for (int i = 1; i < matrix.length; i++) {
 			if (i != matrix.length - 1) {
-				returner += "row" + typ + i + ",";
+				result.append("row").append(typ).append(i).append(",");
 			} else {
-				returner += "row" + typ + i + "),";
-				returner += matrix.length - 1 + ") \n";
+				result.append("row").append(i).append("),");
+				result.append(matrix.length - 1).append(") \n");
 			}
 		}
 
@@ -229,28 +202,26 @@ public class Matrix {
 		}
 
 		// set names of columns
-		returner += "colnames(" + typ + ") <- c(";
+		result.append("colnames(").append(typ).append(") <- c(");
 		for (int i = 0; i < colnames.size(); i++) {
 			if (i != colnames.size() - 1) {
-				returner += "\"" + colnames.get(i) + "\", ";
+				result.append("\"").append(colnames.get(i)).append("\", ");
 			} else {
-				returner += "\"" + colnames.get(i) + "\"";
+				result.append("\"").append(colnames.get(i)).append("\"");
 			}
 		}
-		returner += ") \n";
+		result.append(") \n");
 
 		// set names of dimension
-		returner += "dimnames(" + typ + ") <- list(c(";
+		result.append("dimnames(").append(typ).append(") <- list(c(");
 		for (int i = 0; i < dimnames.size(); i++) {
 			if (i != dimnames.size() - 1) {
-				returner += "\"" + dimnames.get(i) + "\", ";
+				result.append("\"").append(dimnames.get(i)).append("\", ");
 			} else {
-				returner += "\"" + dimnames.get(i) + "\"";
+				result.append("\"").append(dimnames.get(i)).append("\"");
 			}
 		}
-		returner += ")) \n \n";
-
-		return returner;
+		result.append(")) \n \n");
 	}
 
 	/*
@@ -261,7 +232,7 @@ public class Matrix {
 	 * @return Matrix as String
 	 */
 	public String getMatLabMatrices() {
-		String matr = null;
+		StringBuilder result = new StringBuilder();
 		for (int h = 0; h < 3; h++) {
 			String tmp[][] = null;
 			// prepare each type of matrix
@@ -269,30 +240,30 @@ public class Matrix {
 			// forward
 			if (h == 0) {
 				tmp = getStringForward();
-				matr = "forward=[";
+				result.append("forward=[");
 			}
 			// backward
 			if (h == 1) {
 				tmp = getStringBackward();
-				matr += "\nbackward=[";
+				result.append("\nbackward=[");
 			}
 			// incidence
 			if (h == 2) {
 				tmp = getStringIncidence();
-				matr += "\nincidence=[";
+				result.append("\nincidence=[");
 			}
 			for (int i = 0; i < tmp.length; i++) { // i = 1
 				for (int j = 0; j < tmp[0].length; j++) { // j = 1
 					if (j == tmp[0].length - 1) {
-						matr += tmp[i][j] + "; ";
+						result.append(tmp[i][j]).append("; ");
 					} else {
-						matr += tmp[i][j] + ", ";
+						result.append(tmp[i][j]).append(", ");
 					}
 				}
 			}
-			matr += "]";
+			result.append("]");
 		}
-		return matr;
+		return result.toString();
 	}
 }
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
