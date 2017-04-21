@@ -88,6 +88,8 @@ public class FindWords {
 	 * @param quickFail Should quick-fail synthesis be done or should full synthesis be attempted?
 	 * @param wordCallback Callback that should be called for each word that is found.
 	 * @param lengthDoneCallback Callback that should be called when all words of a given length were handled.
+	 * @throws PreconditionFailedException If a combination of properties is specified for which there is no
+	 * sensible definition of 'minimally unsolvable word', i.e. plain+k-marking.
 	 */
 	static public void generateList(PNProperties properties, SortedSet<Character> alphabet, boolean quickFail,
 			WordCallback wordCallback, LengthDoneCallback lengthDoneCallback)
