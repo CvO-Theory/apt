@@ -49,7 +49,7 @@ public class Parameter {
 		this.name = name;
 		this.klass = klass;
 		this.description = description;
-		this.properties = properties;
+		this.properties = Arrays.copyOf(properties, properties.length);
 	}
 
 	public String getName() {
@@ -65,7 +65,7 @@ public class Parameter {
 	}
 
 	public String[] getProperties() {
-		return properties;
+		return Arrays.copyOf(properties, properties.length);
 	}
 
 	@Override

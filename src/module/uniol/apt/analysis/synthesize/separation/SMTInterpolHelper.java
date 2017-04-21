@@ -72,7 +72,7 @@ public class SMTInterpolHelper {
 		logger.setLoglevel(DefaultLogger.LOGLEVEL_OFF);
 		this.utility = utility;
 		this.properties = properties;
-		this.locationMap = locationMap;
+		this.locationMap = Arrays.copyOf(locationMap, locationMap.length);
 
 		script.setLogic(Logics.QF_LIA);
 

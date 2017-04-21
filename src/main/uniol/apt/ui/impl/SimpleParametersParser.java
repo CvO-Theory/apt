@@ -39,7 +39,7 @@ public class SimpleParametersParser implements ParametersParser {
 
 	@Override
 	public void parse(String[] args) {
-		args_ = args;
+		args_ = Arrays.copyOf(args, args.length);
 	}
 
 	@Override

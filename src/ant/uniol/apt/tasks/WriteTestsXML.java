@@ -94,14 +94,14 @@ public class WriteTestsXML {
 	}
 
 	private static class Worker {
-		private static final String FILE_HEADER = "<!DOCTYPE suite SYSTEM \"http://testng.org/testng-1.0.dtd\">\n"
-			+ "<suite name=\"Suite\">\n";
-		private static final String FILE_FOOTER = "</suite>\n";
-		private static final String TEST_HEADER_FORMAT = "    <test name=\"%s\">\n"
-			+ "        <classes>\n";
-		private static final String TEST_FOOTER = "        </classes>\n"
-			+ "    </test>\n";
-		private static final String CLASS_TEMPLATE = "            <class name=\"%s\" />\n";
+		private static final String FILE_HEADER = "<!DOCTYPE suite SYSTEM \"http://testng.org/testng-1.0.dtd\">%n"
+			+ "<suite name=\"Suite\">%n";
+		private static final String FILE_FOOTER = "</suite>%n";
+		private static final String TEST_HEADER_FORMAT = "    <test name=\"%s\">%n"
+			+ "        <classes>%n";
+		private static final String TEST_FOOTER = "        </classes>%n"
+			+ "    </test>%n";
+		private static final String CLASS_TEMPLATE = "            <class name=\"%s\" />%n";
 		private static final String ENDING = ".class";
 
 		private final Map<String, Set<String>> testsToClasses = new HashMap<>();

@@ -45,7 +45,7 @@ public class ReturnValue {
 	public ReturnValue(String name, Class<?> klass, String[] properties) {
 		this.name = name;
 		this.klass = klass;
-		this.properties = properties;
+		this.properties = Arrays.copyOf(properties, properties.length);
 	}
 
 	public String getName() {

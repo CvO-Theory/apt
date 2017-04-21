@@ -154,9 +154,10 @@ public class ModuleParameterVerifyTask {
 			}
 		}
 
-		for (String parameter : optionalInputs.keySet()) {
+		for (Map.Entry<String, Type> entry : optionalInputs.entrySet()) {
+			String parameter    = entry.getKey();
 			Type usedClass      = usedInputs.get(parameter);
-			Type requestedClass = optionalInputs.get(parameter);
+			Type requestedClass = entry.getValue();
 
 			if (requestedClass == DIFFERENT_TYPES_DETECTED_TYPE) {
 				System.err.println("error: " + className + ": Parameter required with multiple types: " + parameter);
@@ -180,9 +181,10 @@ public class ModuleParameterVerifyTask {
 			fail = true;
 		}
 
-		for (String parameter : announcedOutputs.keySet()) {
+		for (Map.Entry<String, Type> entry : announcedOutputs.entrySet()) {
+			String parameter = entry.getKey();
 			Type providedClass = providedOutputs.get(parameter);
-			Type announcedClass = announcedOutputs.get(parameter);
+			Type announcedClass = entry.getValue();
 
 			if (announcedClass == DIFFERENT_TYPES_DETECTED_TYPE) {
 				System.err.println("error: " + className + ": Return value announced with multiple types: " + parameter);
