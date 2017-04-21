@@ -68,6 +68,46 @@ public class MathToolsTest {
 	public void testLCMOverflow() {
 		MathTools.lcm(BIG_PRIME1, BIG_PRIME2);
 	}
+
+	static private void checkMean(int a, int b, int expected) {
+		assertEquals(MathTools.meanTowardsMinusInfinity(a, b), expected);
+		assertEquals(MathTools.meanTowardsMinusInfinity(b, a), expected);
+	}
+
+	@Test
+	public void testMeanTowardsMinusInfinity() {
+		// Some tests where both arguments are the same
+		checkMean(0, 0, 0);
+		checkMean(1, 1, 1);
+		checkMean(-1, -1, -1);
+		checkMean(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+		checkMean(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+
+		// Some tests close to integer limits
+		checkMean(Integer.MAX_VALUE, Integer.MIN_VALUE, -1);
+		checkMean(Integer.MAX_VALUE - 1, Integer.MIN_VALUE, -1);
+
+		// Even/even
+		checkMean(4, 42, 23); // first argument chosen by fair dice roll
+		checkMean(-256, 42, -107);
+		checkMean(-27970, -30340, -29155);
+		checkMean(-42, 42, 0);
+		checkMean(-42, 0, -21);
+		checkMean(0, 42, 21);
+
+		// Even/odd
+		checkMean(0, 1, 0);
+		checkMean(0, -1, -1);
+		checkMean(6045, 19786, 12915);
+		checkMean(572, -22357, -10893);
+		checkMean(-8759, -13658, -11209);
+
+		// Odd/odd
+		checkMean(1, 3, 2);
+		checkMean(-9, 3, -3);
+		checkMean(-9, -3, -6);
+		checkMean(-343, -26009, -13176);
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

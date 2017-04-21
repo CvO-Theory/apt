@@ -41,8 +41,9 @@ import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.totallyreachable.TotallyReachable;
-import uniol.apt.util.interrupt.InterrupterRegistry;
+import uniol.apt.util.MathTools;
 import uniol.apt.util.Pair;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 import static uniol.apt.util.DebugUtil.debug;
 import static uniol.apt.util.DebugUtil.debugFormat;
@@ -250,7 +251,7 @@ class KBoundedSeparation implements Separation {
 			return null;
 
 		// Yup, this should round down
-		int average = (minGradient + maxGradient) >> 1;
+		int average = MathTools.meanTowardsMinusInfinity(minGradient, maxGradient);
 		debugFormat("For %s: average %d, max gradient is %d and min gradient is %d for multiset %s",
 				nonConstantGradientEvent, average, maxGradient, minGradient, r);
 		return new Pair<Event, Integer>(nonConstantGradientEvent, average);

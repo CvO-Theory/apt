@@ -102,6 +102,17 @@ public class MathTools {
 	public static int mod(int a, int b) {
 		return BigInteger.valueOf(a).mod(BigInteger.valueOf(b)).intValue();
 	}
+
+	/**
+	 * Calculate the average of two numbers, rounding towards minus infinity. This does the equivalent of
+	 * <pre>(x+y)&gt;&gt;1</pre>, but handles integer over- and underflow correctly.
+	 * @param x First number
+	 * @param y Second number
+	 * @return The average.
+	 */
+	public static int meanTowardsMinusInfinity(int x, int y) {
+		return ((x ^ y) >> 1) + (x & y);
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
