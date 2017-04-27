@@ -41,24 +41,21 @@ public class AllSmallCyclesHavePVOneTest {
 		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
 		assertThat(check.smallCyclesHavePVOne(), is(true));
 		assertThat(check.noPV1CycleFound(), is(false));
-		assertThat(check.incomparableCycleFound(), is(false));
-		assertThat(check.getCounterExample(), empty());
+		assertThat(check.nonMultipleOfPV1CycleFound(), is(false));
 	}
 
 	static void checkCyclesLargerPV1(TransitionSystem ts) throws PreconditionFailedException {
 		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
 		assertThat(check.smallCyclesHavePVOne(), is(false));
 		assertThat(check.noPV1CycleFound(), is(true));
-		assertThat(check.incomparableCycleFound(), is(false));
-		assertThat(check.getCounterExample(), empty());
+		assertThat(check.nonMultipleOfPV1CycleFound(), is(false));
 	}
 
-	static List<Arc> checkCyclesSmallerPV1(TransitionSystem ts) throws PreconditionFailedException {
+	static void checkCyclesSmallerOrIncomparablePV1(TransitionSystem ts) throws PreconditionFailedException {
 		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
 		assertThat(check.smallCyclesHavePVOne(), is(false));
-		assertThat(check.noPV1CycleFound(), is(true));
-		assertThat(check.incomparableCycleFound(), is(false));
-		return check.getCounterExample();
+		// We cannot check noPV1CycleFound() since such a cycle might have been found or not - non-determinism!
+		assertThat(check.nonMultipleOfPV1CycleFound(), is(true));
 	}
 
 	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp =
@@ -128,12 +125,7 @@ public class AllSmallCyclesHavePVOneTest {
 	@Test
 	public void testSmallerCycle() throws Exception {
 		TransitionSystem ts = TestTSCollection.getDifferentCyclesTS();
-		assertThat(checkCyclesSmallerPV1(ts), anyOf(
-					contains(arcThatConnects("s11", "s12"), arcThatConnects("s12", "s11")),
-					contains(arcThatConnects("s11", "s10"), arcThatConnects("s10", "s11")),
-					contains(arcThatConnects("s11", "s21"), arcThatConnects("s21", "s11")),
-					contains(arcThatConnects("s11", "s01"), arcThatConnects("s01", "s11"))
-					));
+		checkCyclesSmallerOrIncomparablePV1(ts);
 	}
 
 	@Test
@@ -149,10 +141,7 @@ public class AllSmallCyclesHavePVOneTest {
 
 		// This lts has three small cycles: a,b; a,a and b,b; obviously the last two don't have a Parikh-vector
 		// of all ones. However, the special thing is that they are incomparable to a PV of (1,1).
-		AllSmallCyclesHavePVOne check = new AllSmallCyclesHavePVOne(ts);
-		assertThat(check.smallCyclesHavePVOne(), is(false));
-		assertThat(check.noPV1CycleFound(), is(false));
-		assertThat(check.incomparableCycleFound(), is(true));
+		checkCyclesSmallerOrIncomparablePV1(ts);
 	}
 
 	@Test

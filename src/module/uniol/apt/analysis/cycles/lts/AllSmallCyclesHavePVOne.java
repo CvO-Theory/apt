@@ -21,6 +21,7 @@ package uniol.apt.analysis.cycles.lts;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
+import static uniol.apt.util.DebugUtil.debug;
 import static uniol.apt.util.DebugUtil.debugFormat;
 
 import java.util.HashSet;
@@ -49,9 +50,8 @@ import uniol.apt.util.SpanningTree;
  * @author Uli Schlachter
  */
 public class AllSmallCyclesHavePVOne {
-	private final List<Arc> counterExample;
+	private final boolean onlyMultipleOfPV1Found;
 	private final boolean cycleWithPV1Found;
-	private final boolean foundIncomparableCycle;
 
 	/**
 	 * Check if each event occurs exactly once in each small cycle.
@@ -76,9 +76,8 @@ public class AllSmallCyclesHavePVOne {
 			// Special case: We have a totally reachable TS with an empty alphabet. This means that it only
 			// consists of the initial state and there are no other state. The code below doesn't handle
 			// this correctly (it expects to follow at least one edge), so this is needed.
+			this.onlyMultipleOfPV1Found = true;
 			this.cycleWithPV1Found = true;
-			this.counterExample = null;
-			this.foundIncomparableCycle = false;
 			return;
 		}
 
@@ -97,84 +96,6 @@ public class AllSmallCyclesHavePVOne {
 			throw new PreconditionFailedException("TS " + ts.getName() + " is not backwards persistent");
 		debugFormat("input is backward persistent");
 
-		// By totally reachability and reversibility, every state is a home state, so s0 is a home state. By
-		// corollary 4 of [1], deterministicity and persistency imply that for every cycle, there is a
-		// Parikh-equivalent cycle around a home state. Thus, we are only looking at small cycles around the
-		// initial state and can be sure to "see" every existing cycle. We will do this in two phases.
-		// [1]: A decomposition theorem for finite persistent transition systems. Eike Best and Philippe
-		// Darondeau. Acta Informatica (2009). DOI 10.1007/s00236-009-0095-6.
-
-		// In phase one we check that (a) we find a cycle around the initial state in which every event occurs
-		// exactly once, and (b) no smaller cycle exists around the initial state.
-		Pair<Boolean, List<Arc>> result = checkPhase1(ts, ts.getInitialState(), new HashSet<String>(),
-				new LinkedList<Arc>());
-		this.cycleWithPV1Found = result.getFirst();
-		this.counterExample = result.getSecond();
-		debugFormat("Phase 1 found cycle with PV1: %b, found counter example: %s",
-				cycleWithPV1Found, counterExample);
-		if (cycleWithPV1Found && counterExample == null) {
-			// Phase one succeeded. In Phase two we check if there are any small cycles with Parikh vectors
-			// incomparable to the all-ones PV. An example for such a cycle would be a TS with a cycle (1,1)
-			// and another cycle (0,2).
-			this.foundIncomparableCycle = checkPhase2(ts);
-			debugFormat("Phase 2 found incomparable cycle: %b", foundIncomparableCycle);
-		} else {
-			this.foundIncomparableCycle = false;
-		}
-	}
-
-	/**
-	 * Recursive implementation of the depth-first search that looks for cycles with a Parikh vector of at most all
-	 * ones.
-	 * @param ts The transition system to examine
-	 * @param state The next state that should be followed.
-	 * @param firedEvents Set of events which were already fired on the path from the initial state.
-	 * @param arcsFollowed List of arcs that were followed from the initial state to this state.
-	 * @return A pair were the first element is true if a cycle with Parikh vector 1 was found and the second
-	 * element is either null or a cycle with a smaller Parikh vector.
-	 */
-	static private Pair<Boolean, List<Arc>> checkPhase1(TransitionSystem ts, State state, Set<String> firedEvents,
-			LinkedList<Arc> arcsFollowed) {
-		boolean success = false;
-		for (Arc arc : state.getPostsetEdges()) {
-			if (firedEvents.contains(arc.getLabel()))
-				continue;
-
-			firedEvents.add(arc.getLabel());
-			arcsFollowed.addLast(arc);
-
-			State target = arc.getTarget();
-			if (target.equals(ts.getInitialState())) {
-				if (firedEvents.containsAll(ts.getAlphabet())) {
-					// Found a suitable cycle!
-					success = true;
-				} else {
-					// Found a counter-example
-					return new Pair<Boolean, List<Arc>>(false, arcsFollowed);
-				}
-			} else {
-				// Recurse to this new state
-				Pair<Boolean, List<Arc>> result = checkPhase1(ts, target, firedEvents, arcsFollowed);
-				if (result.getSecond() != null)
-					return result;
-				success = success || result.getFirst();
-			}
-
-			// Undo the modifications done above
-			boolean r = firedEvents.remove(arc.getLabel());
-			assert r == true;
-			Arc last = arcsFollowed.removeLast();
-			assert last == arc;
-		}
-		return new Pair<>(success, null);
-	}
-
-	/**
-	 * Check if a cycle exists whose Parikh vector is incomparable to (1, ..., 1).
-	 * @param ts The transition system to examine
-	 * @return true if an incomparable cycle was found, else false.
-	 */
-	static private boolean checkPhase2(TransitionSystem ts) {
 		/*
 		 * Proof that the Parikh vector of generalised cycles is a linear combination of the Parikh vectors of
 		 * chords:
@@ -252,7 +173,20 @@ public class AllSmallCyclesHavePVOne {
 		 * be violated.
 		 */
 
+		/*
+		 * Combining the above (Preconditions: determinism, persistence, reversibility, total reachability, P1):
+		 *
+		 * (1) We know that the Parikh vector of any cycle is a combination of the Parikh vector of chords.
+		 * (2) For any chord s[t>s' we have P(s)+1_t >= P(s').
+		 * (3) For any chord, all entries must be the same.
+		 *
+		 * By (1) and P1, some chord must have a Parikh vector containing only ones.
+		 *
+		 * (Thanks to Harro Wimmel for this insight)
+		 */
+
 		SpanningTree<TransitionSystem, Arc, State> tree = SpanningTree.get(ts, ts.getInitialState());
+		boolean pv1Seen = false;
 		for (Arc chord : tree.getChords()) {
 			State source = chord.getSource();
 			State target = chord.getTarget();
@@ -261,8 +195,10 @@ public class AllSmallCyclesHavePVOne {
 			pSource.add(chord.getLabel());
 
 			int expected = -1;
+
 			for (String event : ts.getAlphabet()) {
 				int val = pSource.getCount(event) - pTarget.getCount(event);
+				pv1Seen |= val == 1;
 
 				if (expected == -1)
 					// First arc: We will expect this value for other arcs
@@ -270,26 +206,36 @@ public class AllSmallCyclesHavePVOne {
 
 				if (val < 0 || val != expected) {
 					debugFormat("Chord %s shows that P1 is not satisfied, because %s+%s-%s has "
-							+ "either a negative entry or not all entries have the same "
-							+ " number of occurrences",
-							chord, tree.getEdgePathFromStart(source),
-							chord.getLabel(), tree.getEdgePathFromStart(target));
-					return true;
+							+ "entry %d for event %s, but should have %d",
+							chord, tree.getEdgePathFromStart(source), chord.getLabel(),
+							tree.getEdgePathFromStart(target), val, event, expected);
+					this.cycleWithPV1Found = pv1Seen;
+					this.onlyMultipleOfPV1Found = false;
+					return;
 				}
 			}
+		}
+
+		this.onlyMultipleOfPV1Found = true;
+		this.cycleWithPV1Found = pv1Seen;
+		if (!pv1Seen) {
+			debug("No cycle with Parikh vector all-ones seen");
+			return;
 		}
 
 		/*
 		 * If we get here, then we know:
 		 *
-		 * - The Parikh vector of any cycle is a linear combination of the Parikh vectors of chords
-		 * - All chords have constant (all entries the same) Parikh vectors
-		 * - All chords have Parikh vectors >= 0
-		 * => All cycles must have Parikh vectors of the form (m, ..., m)
-		 * => There can be no cycle with a Parikh vector incomparable to (1, ..., 1)
+		 * - There is a chord with Parikh vector all-ones
+		 * - All other chords have a multiple of this Parikh vector.
+		 *
+		 * We can now construct a small cycle with Parikh vector 1 by taking the corresponding chord s[t>s' and
+		 * applying Keller's theorem on the path i-to-s + s[t>s' and the path i-to-s'. This will yield an empty
+		 * path and a cycle around s' with Parikh vector all ones. Since all chords are a multiple of this, any
+		 * cycle (which is a linear combination of chords) must have a larger or equal Parikh vector.
+		 *
+		 * (Thanks to Harro Wimmel for this insight)
 		 */
-
-		return false;
 	}
 
 	static private Bag<String> getParikhVectorReaching(SpanningTree<TransitionSystem, Arc, State> tree,
@@ -304,16 +250,6 @@ public class AllSmallCyclesHavePVOne {
 	}
 
 	/**
-	 * Get the counter example that proves that smaller cycles than with Parikh vector 1 exists.
-	 * @return Either an empty list or an ordered list of arcs that form a cycle around the initial state.
-	 */
-	public List<Arc> getCounterExample() {
-		if (counterExample == null)
-			return emptyList();
-		return unmodifiableList(counterExample);
-	}
-
-	/**
 	 * Check if a cycle with Parikh vector 1 was found.
 	 * @return true if no such cycle was found.
 	 */
@@ -322,20 +258,19 @@ public class AllSmallCyclesHavePVOne {
 	}
 
 	/**
-	 * Check if a cycle was found whose Parikh vector is incomparable to the all-ones-vector.
+	 * Check if a cycle with Parikh vector not a multiple of 1 was found.
 	 * @return true if such a cycle was found.
 	 */
-	public boolean incomparableCycleFound() {
-		return foundIncomparableCycle;
+	public boolean nonMultipleOfPV1CycleFound() {
+		return !onlyMultipleOfPV1Found;
 	}
 
 	/**
-	 * Check if all small cycles have Parikh vector 1. This is equivalent to !noPV1CycleFound() &amp;&amp;
-	 * getCounterExample().isEmpty().
+	 * Check if all small cycles have Parikh vector 1.
 	 * @return True if all small cycles have Parikh vector 1.
 	 */
 	public boolean smallCyclesHavePVOne() {
-		return cycleWithPV1Found && counterExample == null && !foundIncomparableCycle;
+		return cycleWithPV1Found && onlyMultipleOfPV1Found;
 	}
 }
 
