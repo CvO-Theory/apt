@@ -168,6 +168,12 @@ public class AllSmallCyclesHavePVOneTest {
 
 		checkCyclesHavePV1(ts);
 	}
+
+	@Test
+	public void testPlainTNetReachabilityTS() throws Exception {
+		TransitionSystem ts = TestTSCollection.getPlainTNetReachabilityTS();
+		checkCyclesHavePV1(ts);
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
