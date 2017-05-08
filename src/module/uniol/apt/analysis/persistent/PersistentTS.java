@@ -52,9 +52,7 @@ import uniol.apt.util.interrupt.InterrupterRegistry;
  * @author Vincent Göbel, Uli Schlachter
  */
 public class PersistentTS {
-	private final TransitionSystem ts;
-	private final boolean backwards;
-	private final Map<State, Map<String, Set<State>>> statePostsetsCache = new HashMap<>();
+	private final TSWrapper wrapper;
 
 	private boolean persistent = true;
 	private State node_ = null;
@@ -62,8 +60,10 @@ public class PersistentTS {
 	private String label2_ = null;
 
 	public PersistentTS(TransitionSystem ts, boolean backwards) {
-		this.backwards = backwards;
-		this.ts = ts;
+		if (!backwards)
+			this.wrapper = new ForwardTSWrapper(ts);
+		else
+			this.wrapper = new BackwardTSWrapper(ts);
 		check();
 	}
 
@@ -77,8 +77,8 @@ public class PersistentTS {
 	 */
 	private void check() {
 		// Go through all states
-		for (State node : ts.getNodes()) {
-			Map<String, Set<State>> postset = getStatePostset(node);
+		for (State node : wrapper.getNodes()) {
+			Map<String, Set<State>> postset = wrapper.getStatePostset(node);
 			Deque<String> unhandledLabels = new LinkedList<>(postset.keySet());
 			// Go through all pairs of (enabled) labels
 			while (!unhandledLabels.isEmpty()) {
@@ -90,14 +90,14 @@ public class PersistentTS {
 					// Calculate states reached by first following label1 then label2
 					Set<State> statesAfter12 = new HashSet<>();
 					for (State node1 : statesAfterLabel1) {
-						statesAfter12.addAll(getStatePostsetViaLabel(node1, label2));
+						statesAfter12.addAll(wrapper.getStatePostsetViaLabel(node1, label2));
 					}
 
 					// Check if any of these is also reached by label2, then label1
 					boolean foundSharedState = false;
 					for (State node2 : postset.get(label2)) {
 						if (!Collections.disjoint(statesAfter12,
-									getStatePostsetViaLabel(node2, label1))) {
+									wrapper.getStatePostsetViaLabel(node2, label1))) {
 							foundSharedState = true;
 							break;
 						}
@@ -113,50 +113,6 @@ public class PersistentTS {
 				}
 			}
 		}
-	}
-
-	// Get the postset of a state as a Map which maps a label to a set of states
-	private Map<String, Set<State>> getStatePostset(State node) {
-		Map<String, Set<State>> result = statePostsetsCache.get(node);
-		if (result != null)
-			return result;
-
-		result = new HashMap<>();
-		for (Arc arc : getPostsetEdges(node)) {
-			Set<State> set = result.get(arc.getLabel());
-			if (set == null) {
-				set = new HashSet<>();
-				result.put(arc.getLabel(), set);
-			}
-			set.add(getTarget(arc));
-		}
-		result = Collections.unmodifiableMap(result);
-		statePostsetsCache.put(node, result);
-		return result;
-	}
-
-	// Get the set of states that is reached via "label" from "state"
-	private Set<State> getStatePostsetViaLabel(State node, String label) {
-		Set<State> result = getStatePostset(node).get(label);
-		if (result == null)
-			return Collections.emptySet();
-		return result;
-	}
-
-	// Get the postset or the preset of an arc, depending on the "backwards" variable
-	private Set<Arc> getPostsetEdges(State n) {
-		if (!backwards)
-			return n.getPostsetEdges();
-		else
-			return n.getPresetEdges();
-	}
-
-	// Get the target or the source of an arc, depending on the "backwards" variable
-	private State getTarget(Arc arc) {
-		if (!backwards)
-			return arc.getTarget();
-		else
-			return arc.getSource();
 	}
 
 	public boolean isPersistent() {
@@ -181,6 +137,80 @@ public class PersistentTS {
 
 	public String getLabel2() {
 		return label2_;
+	}
+
+	private abstract class TSWrapper {
+		private final TransitionSystem ts;
+		private final Map<State, Map<String, Set<State>>> statePostsetsCache = new HashMap<>();
+
+		private TSWrapper (TransitionSystem ts) {
+			this.ts = ts;
+		}
+
+		private Set<State> getNodes() {
+			return ts.getNodes();
+		}
+
+		private Map<String, Set<State>> getStatePostset(State node) {
+			Map<String, Set<State>> result = statePostsetsCache.get(node);
+			if (result != null)
+				return result;
+
+			result = new HashMap<>();
+			for (Arc arc : getPostsetEdges(node)) {
+				Set<State> set = result.get(arc.getLabel());
+				if (set == null) {
+					set = new HashSet<>();
+					result.put(arc.getLabel(), set);
+				}
+				set.add(getTarget(arc));
+			}
+			result = Collections.unmodifiableMap(result);
+			statePostsetsCache.put(node, result);
+			return result;
+		}
+
+		private Set<State> getStatePostsetViaLabel(State node, String label) {
+			Set<State> result = getStatePostset(node).get(label);
+			if (result == null)
+				return Collections.emptySet();
+			return result;
+		}
+
+		abstract protected Set<Arc> getPostsetEdges(State n);
+		abstract protected State getTarget(Arc arc);
+	}
+
+	private class ForwardTSWrapper extends TSWrapper {
+		private ForwardTSWrapper(TransitionSystem ts) {
+			super(ts);
+		}
+
+		@Override
+		protected Set<Arc> getPostsetEdges(State n) {
+			return n.getPostsetEdges();
+		}
+
+		@Override
+		protected State getTarget(Arc arc) {
+			return arc.getTarget();
+		}
+	}
+
+	private class BackwardTSWrapper extends TSWrapper {
+		private BackwardTSWrapper(TransitionSystem ts) {
+			super(ts);
+		}
+
+		@Override
+		protected Set<Arc> getPostsetEdges(State n) {
+			return n.getPresetEdges();
+		}
+
+		@Override
+		protected State getTarget(Arc arc) {
+			return arc.getSource();
+		}
 	}
 }
 
