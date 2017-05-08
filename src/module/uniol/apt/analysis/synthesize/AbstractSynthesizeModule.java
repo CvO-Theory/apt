@@ -288,6 +288,7 @@ public abstract class AbstractSynthesizeModule extends AbstractInterruptibleModu
 						result = result.setTNet(true);
 						break;
 					case "generalized-marked-graph":
+					case "generalised-marked-graph":
 					case "gmg":
 						result = result.setMarkedGraph(true);
 						break;
@@ -296,6 +297,7 @@ public abstract class AbstractSynthesizeModule extends AbstractInterruptibleModu
 						result = result.setMarkedGraph(true).setPlain(true);
 						break;
 					case "generalized-output-nonbranching":
+					case "generalised-output-nonbranching":
 					case "gon":
 						result = result.setOutputNonbranching(true);
 						break;

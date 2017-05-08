@@ -99,6 +99,12 @@ public class AbstractSynthesizeModuleTest {
 	}
 
 	@Test
+	public void testMarkedGraph3_en_GB() throws Exception {
+		PNProperties properties = new PNProperties().setMarkedGraph(true);
+		assertThat(parse("generalIsed-marked-graph"), equalTo(properties));
+	}
+
+	@Test
 	public void testMarkedGraph4() throws Exception {
 		PNProperties properties = new PNProperties().setMarkedGraph(true);
 		assertThat(parse("gmg"), equalTo(properties));
@@ -120,6 +126,12 @@ public class AbstractSynthesizeModuleTest {
 	public void testOutputNonbranching() throws Exception {
 		PNProperties properties = new PNProperties().setOutputNonbranching(true);
 		assertThat(parse("generalized-output-nonbranching"), equalTo(properties));
+	}
+
+	@Test
+	public void testOutputNonbranching_en_GB() throws Exception {
+		PNProperties properties = new PNProperties().setOutputNonbranching(true);
+		assertThat(parse("generalised-output-nonbranching"), equalTo(properties));
 	}
 
 	@Test
