@@ -278,7 +278,7 @@ public class JSONExecutor {
 		if (result == null)
 			throw new ModuleException("Module did not produce a return value with name " + returnValue);
 		if (!klass.isInstance(result))
-			throw new ModuleException(String.format("Module did produced a return value with type %s, "
+			throw new ModuleException(String.format("Module produced a return value with type %s, "
 						+ "but %s was expected", result.getClass().getName(),
 						klass.getName()));
 		return result;
