@@ -66,7 +66,7 @@ public class PVsOfSmallestCyclesModule extends AbstractInterruptibleModule imple
 		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
 		ComputeSmallestCycles prog = new ComputeSmallestCycles();
 		TransitionSystem ts = g.getReachabilityLTS();
-		Set<Cycle> parikhs = prog.computePVsOfSmallestCycles(ts);
+		Set<? extends CyclePV> parikhs = prog.computePVsOfSmallestCycles(ts);
 		output.setReturnValue("output", Set.class, parikhs);
 		output.setReturnValue("output_format", String.class, "[(cycle, parikh vector), ... ]");
 	}

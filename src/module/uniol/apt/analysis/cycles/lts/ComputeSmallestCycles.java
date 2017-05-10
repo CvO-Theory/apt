@@ -33,6 +33,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 
 import uniol.apt.analysis.cycles.CycleCallback;
 import uniol.apt.analysis.cycles.CycleSearch;
+import uniol.apt.analysis.exception.PreconditionFailedException;
 
 /**
  * This class computes smallest cycles and parikh vectors, checking if all smallest cycles having the same parikh
@@ -48,8 +49,17 @@ public class ComputeSmallestCycles {
 	 * @param ts   - the transitionsystem to compute the cycles from.
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 */
-	public Set<Cycle> computePVsOfSmallestCycles(TransitionSystem ts) {
+	public Set<? extends CyclePV> computePVsOfSmallestCycles(TransitionSystem ts) {
 		return computePVsOfSmallestCycles(ts, true);
+	}
+
+	/**
+	 * Computes the parikh vectors of all smallest cycles of an labeled transition system. (Requirement A10)
+	 * @param ts   - the transitionsystem to compute the cycles from.
+	 * @return a list of the smallest cycles and their parikh vectors.
+	 */
+	public Set<Cycle> computePVsOfSmallestCyclesViaCycleSearch(TransitionSystem ts) {
+		return computePVsOfSmallestCyclesViaCycleSearch(ts, true);
 	}
 
 	/**
@@ -79,7 +89,25 @@ public class ComputeSmallestCycles {
 	 *                 (Storage vs. Time)
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 */
-	public Set<Cycle> computePVsOfSmallestCycles(TransitionSystem ts,
+	public Set<? extends CyclePV> computePVsOfSmallestCycles(TransitionSystem ts, final boolean smallest) {
+		if (smallest) {
+			try {
+				return computePVsOfSmallestCyclesViaChords(ts);
+			} catch (PreconditionFailedException e) {
+				// The specialised algorithm is not applicable. Fall back to the general one.
+			}
+		}
+		return computePVsOfSmallestCyclesViaCycleSearch(ts, smallest);
+	}
+
+	/**
+	 * Computes the parikh vectors of all smallest cycles of an labeled transition system. (Requirement A10)
+	 * @param ts       - the transitionsystem to compute the cycles from.
+	 * @param smallest - Flag which tells if all or just the smallest should be saved.
+	 *                 (Storage vs. Time)
+	 * @return a list of the smallest cycles and their parikh vectors.
+	 */
+	public Set<Cycle> computePVsOfSmallestCyclesViaCycleSearch(TransitionSystem ts,
 			final boolean smallest) {
 		final Set<Cycle> cycles = new HashSet<>();
 		new CycleSearch().searchCycles(ts, new CycleCallback<TransitionSystem, Arc, State>() {
@@ -109,6 +137,21 @@ public class ComputeSmallestCycles {
 			}
 		});
 		return cycles;
+	}
+
+	/**
+	 * Computes the parikh vectors of all smallest cycles of a finite, totally reachable, deterministic and
+	 * persistent transition system.
+	 * @param ts       - the transitionsystem to compute the cycles from.
+	 * @param smallest - Flag which tells if all or just the smallest should be saved.
+	 *                 (Storage vs. Time)
+	 * @return a list of the smallest cycles and their parikh vectors.
+	 * @throws PreconditionFailedException if the given lts is not totally reachable, deterministic, persistent, or
+	 * does not have the disjoint small cycles property.
+	 */
+	public Set<CyclePV> computePVsOfSmallestCyclesViaChords(TransitionSystem ts)
+			throws PreconditionFailedException {
+		throw new UnsupportedOperationException("unimplemented");
 	}
 
 

@@ -31,9 +31,9 @@ import static uniol.apt.util.MathTools.gcd;
  */
 public class PrimeCycleProperty {
 	public ParikhVector check(TransitionSystem ts) {
-		Set<Cycle> parikhs = new ComputeSmallestCycles().computePVsOfSmallestCycles(ts);
+		Set<? extends CyclePV> parikhs = new ComputeSmallestCycles().computePVsOfSmallestCycles(ts);
 
-		for (Cycle cycle : parikhs) {
+		for (CyclePV cycle : parikhs) {
 			ParikhVector pv = cycle.getParikhVector();
 			if (! isPrimeCyclePV(pv)) {
 				return pv;

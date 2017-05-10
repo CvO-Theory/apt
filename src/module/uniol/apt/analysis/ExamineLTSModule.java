@@ -26,7 +26,7 @@ import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.connectivity.Connectivity;
 import uniol.apt.analysis.cycles.lts.ComputeSmallestCycles;
-import uniol.apt.analysis.cycles.lts.Cycle;
+import uniol.apt.analysis.cycles.lts.CyclePV;
 import uniol.apt.analysis.deterministic.Deterministic;
 import uniol.apt.analysis.persistent.PersistentTS;
 import uniol.apt.analysis.reversible.ReversibleTS;
@@ -103,7 +103,7 @@ public class ExamineLTSModule extends AbstractInterruptibleModule implements Int
 		output.setReturnValue("strongly_connected", Boolean.class, Connectivity.isStronglyConnected(lts));
 		output.setReturnValue("weakly_connected", Boolean.class, Connectivity.isWeaklyConnected(lts));
 		ComputeSmallestCycles csc = new ComputeSmallestCycles();
-		Set<Cycle> vecs = csc.computePVsOfSmallestCycles(lts);
+		Set<? extends CyclePV> vecs = csc.computePVsOfSmallestCycles(lts);
 		output.setReturnValue("same_parikh_vectors", Boolean.class, csc.checkSamePVs(vecs));
 		output.setReturnValue("same_or_mutually_disjoint_pv", Boolean.class,
 			csc.checkSameOrMutallyDisjointPVs(vecs));

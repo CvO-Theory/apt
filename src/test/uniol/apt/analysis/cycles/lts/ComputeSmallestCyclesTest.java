@@ -66,23 +66,12 @@ public class ComputeSmallestCyclesTest {
 				cycleWithPV(equalTo(new ParikhVector(pv))));
 	}
 
-	@Test
-	public void testEmptyTS() {
-		ComputeSmallestCycles calc = new ComputeSmallestCycles();
-		TransitionSystem ts = new TransitionSystem();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
-		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
-		assertThat(calc.checkSamePVs(ts), equalTo(true));
-		assertThat(c, empty());
-
-	}
-
 	// TESTTSCOLLECTION
 	@Test
 	public void testNonDeterministicTS() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = TestTSCollection.getNonDeterministicTS();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, empty());
@@ -92,7 +81,7 @@ public class ComputeSmallestCyclesTest {
 	public void testNonPersistentTS() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = TestTSCollection.getNonPersistentTS();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, empty());
@@ -102,7 +91,7 @@ public class ComputeSmallestCyclesTest {
 	public void testNotTotallyReachableTS() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = TestTSCollection.getNotTotallyReachableTS();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, empty());
@@ -112,7 +101,7 @@ public class ComputeSmallestCyclesTest {
 	public void testPersistentTS() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = TestTSCollection.getPersistentTS();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, empty());
@@ -122,7 +111,7 @@ public class ComputeSmallestCyclesTest {
 	public void testSingleStateTS() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = TestTSCollection.getSingleStateTS();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, empty());
@@ -132,7 +121,7 @@ public class ComputeSmallestCyclesTest {
 	public void testThreeStatesTwoEdgesTS() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = TestTSCollection.getThreeStatesTwoEdgesTS();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, empty());
@@ -142,7 +131,7 @@ public class ComputeSmallestCyclesTest {
 	public void testNoCycle() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = getAptLTS("./nets/cycles/NoCycle-aut.apt");
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, empty());
@@ -152,7 +141,7 @@ public class ComputeSmallestCyclesTest {
 	public void testReversibleTS() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = TestTSCollection.getReversibleTS();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, contains(cycle(Arrays.asList("s0", "s1", "s2"), "a", "b", "c")));
@@ -162,7 +151,7 @@ public class ComputeSmallestCyclesTest {
 	public void testSingleStateLoop() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = TestTSCollection.getSingleStateLoop();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, contains(cycle(Arrays.asList("s"), "a")));
@@ -172,7 +161,7 @@ public class ComputeSmallestCyclesTest {
 	public void testSingleStateSingleTransitionTS() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = TestTSCollection.getSingleStateSingleTransitionTS();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, contains(cycle(Arrays.asList("s0"), "NotA")));
@@ -182,7 +171,7 @@ public class ComputeSmallestCyclesTest {
 	public void testSingleStateWithUnreachableTS() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = TestTSCollection.getSingleStateWithUnreachableTS();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, contains(cycle(Arrays.asList("s1"), "NotA")));
@@ -192,7 +181,7 @@ public class ComputeSmallestCyclesTest {
 	public void testTwoStateCycleSameLabelTS() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = TestTSCollection.getTwoStateCycleSameLabelTS();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, contains(cycle(Arrays.asList("s", "t"), "a", "a")));
@@ -202,7 +191,7 @@ public class ComputeSmallestCyclesTest {
 	public void testOneCycle() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = getAptLTS("./nets/cycles/OneCycle-aut.apt");
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, contains(cycle(Arrays.asList("s0", "s1", "s2", "s3"), "a", "b", "c", "d")));
@@ -212,7 +201,7 @@ public class ComputeSmallestCyclesTest {
 	public void testOneCycle1() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = getAptLTS("./nets/cycles/OneCycle1-aut.apt");
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, contains(cycle(Arrays.asList("s1", "s2", "s3"), "a", "a", "d")));
@@ -222,7 +211,7 @@ public class ComputeSmallestCyclesTest {
 	public void testTwoCycles() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = getAptLTS("./nets/cycles/TwoCycles-aut.apt");
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(false));
 		assertThat(calc.checkSamePVs(ts), equalTo(false));
 		assertThat(c, containsInAnyOrder(
@@ -235,7 +224,7 @@ public class ComputeSmallestCyclesTest {
 	public void testTwoIntersectingCycles() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = getAptLTS("./nets/cycles/TwoIntersectingCycles-aut.apt");
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, contains(cycle(Arrays.asList("s1", "s3", "s4", "s5"), "b", "b", "b", "d")));
@@ -245,7 +234,7 @@ public class ComputeSmallestCyclesTest {
 	public void testCyclesWithSameParikhVector() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = getAptLTS("./nets/cycles/CyclesWithSameParikhVector-aut.apt");
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, containsInAnyOrder(
@@ -258,7 +247,7 @@ public class ComputeSmallestCyclesTest {
 	public void testCyclesWithDisjunktParikhVector() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = getAptLTS("./nets/cycles/CyclesWithDisjunktParikhVector-aut.apt");
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(false));
 		assertThat(c, containsInAnyOrder(
@@ -273,7 +262,7 @@ public class ComputeSmallestCyclesTest {
 	public void testCyclesWithSameParikhVector1() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = getAptLTS("./nets/cycles/CyclesWithSameParikhVector1-aut.apt");
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(false));
 		assertThat(calc.checkSamePVs(ts), equalTo(false));
 		assertThat(c, containsInAnyOrder(
@@ -288,7 +277,7 @@ public class ComputeSmallestCyclesTest {
 	public void testFullyConnected() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = getAptLTS("./nets/cycles/FullyConnected-aut.apt");
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(false));
 		assertThat(calc.checkSamePVs(ts), equalTo(false));
 		assertThat(c, containsInAnyOrder(
@@ -302,7 +291,7 @@ public class ComputeSmallestCyclesTest {
 	public void testRemovalOfNonSmallCycles() {
 		ComputeSmallestCycles calc = new ComputeSmallestCycles();
 		TransitionSystem ts = getRemovalOfNonSmallCyclesTS();
-		Set<Cycle> c = calc.computePVsOfSmallestCycles(ts);
+		Set<Cycle> c = calc.computePVsOfSmallestCyclesViaCycleSearch(ts);
 		assertThat(calc.checkSameOrMutallyDisjointPVs(ts), equalTo(true));
 		assertThat(calc.checkSamePVs(ts), equalTo(true));
 		assertThat(c, contains(cycle(Arrays.asList("7", "8", "9"), "a", "b", "c")));
