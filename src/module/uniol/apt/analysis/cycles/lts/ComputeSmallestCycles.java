@@ -20,6 +20,7 @@
 package uniol.apt.analysis.cycles.lts;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +30,6 @@ import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.util.Pair;
 
 import uniol.apt.analysis.cycles.CycleCallback;
 import uniol.apt.analysis.cycles.CycleSearch;
@@ -48,7 +48,7 @@ public class ComputeSmallestCycles {
 	 * @param ts   - the transitionsystem to compute the cycles from.
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 */
-	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts) {
+	public Set<Cycle> computePVsOfSmallestCycles(TransitionSystem ts) {
 		return computePVsOfSmallestCycles(ts, true);
 	}
 
@@ -79,9 +79,9 @@ public class ComputeSmallestCycles {
 	 *                 (Storage vs. Time)
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 */
-	public Set<Pair<List<String>, ParikhVector>> computePVsOfSmallestCycles(TransitionSystem ts,
+	public Set<Cycle> computePVsOfSmallestCycles(TransitionSystem ts,
 			final boolean smallest) {
-		final Set<Pair<List<String>, ParikhVector>> cycles = new HashSet<>();
+		final Set<Cycle> cycles = new HashSet<>();
 		new CycleSearch().searchCycles(ts, new CycleCallback<TransitionSystem, Arc, State>() {
 			@Override
 			public void cycleFound(List<State> nodes, List<Arc> edges) {
@@ -91,25 +91,21 @@ public class ComputeSmallestCycles {
 				}
 				ParikhVector pv = new ParikhVector(edgeLabels);
 				if (smallest) {
-					Iterator<Pair<List<String>, ParikhVector>> iter = cycles.iterator();
+					Iterator<Cycle> iter = cycles.iterator();
 					while (iter.hasNext()) {
-						Pair<List<String>, ParikhVector> pair2 = iter.next();
-						int comp = pair2.getSecond().compare(pv).asInt();
+						Cycle cycle = iter.next();
+						int comp = cycle.getParikhVector().compare(pv).asInt();
 						if (comp < 0) {
-							// pairs2 has a smaller Parikh vector
+							// cycle has a smaller Parikh vector
 							return;
 						}
 						if (comp > 0) {
-							// This vector is smaller than pair2.
+							// This vector is smaller than cycle.
 							iter.remove();
 						}
 					}
 				}
-				List<String> nodeIds = new ArrayList<>();
-				for (State node : nodes) {
-					nodeIds.add(node.getId());
-				}
-				cycles.add(new Pair<>(nodeIds, pv));
+				cycles.add(new Cycle(nodes, pv));
 			}
 		});
 		return cycles;
@@ -146,13 +142,13 @@ public class ComputeSmallestCycles {
 	 * @param cycles - a list of cycles and parikh vectors which should be examined.
 	 * @return true if the cycles have the same or mutally disjoint parikh vectors.
 	 */
-	public boolean checkSameOrMutallyDisjointPVs(Set<Pair<List<String>, ParikhVector>> cycles) {
+	public boolean checkSameOrMutallyDisjointPVs(Collection<? extends CyclePV> cycles) {
 		counterExample = null;
-		for (Pair<List<String>, ParikhVector> pair : cycles) {
-			for (Pair<List<String>, ParikhVector> pair1 : cycles) {
-				if (pair1 != pair) {
-					if (!pair.getSecond().sameOrMutuallyDisjoint(pair1.getSecond())) {
-						counterExample = new CycleCounterExample(pair, pair1);
+		for (CyclePV cycle1 : cycles) {
+			for (CyclePV cycle2 : cycles) {
+				if (cycle1 != cycle2) {
+					if (!cycle1.getParikhVector().sameOrMutuallyDisjoint(cycle2.getParikhVector())) {
+						counterExample = new CycleCounterExample(cycle1, cycle2);
 						return false;
 					}
 				}
@@ -166,13 +162,13 @@ public class ComputeSmallestCycles {
 	 * @param cycles - a list of cycles and parikh vectors which should be examined.
 	 * @return true if the cycles have the same parikh vectors.
 	 */
-	public boolean checkSamePVs(Set<Pair<List<String>, ParikhVector>> cycles) {
+	public boolean checkSamePVs(Collection<? extends CyclePV> cycles) {
 		counterExample = null;
-		for (Pair<List<String>, ParikhVector> pair : cycles) {
-			for (Pair<List<String>, ParikhVector> pair1 : cycles) {
-				if (pair1 != pair) {
-					if (!pair.getSecond().equals(pair1.getSecond())) {
-						counterExample = new CycleCounterExample(pair, pair1);
+		for (CyclePV cycle1 : cycles) {
+			for (CyclePV cycle2 : cycles) {
+				if (cycle1 != cycle2) {
+					if (!cycle1.getParikhVector().equals(cycle2.getParikhVector())) {
+						counterExample = new CycleCounterExample(cycle1, cycle2);
 						return false;
 					}
 				}

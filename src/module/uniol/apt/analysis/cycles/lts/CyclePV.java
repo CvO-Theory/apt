@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2016       vsp
+ * Copyright (C) 2017 Uli Schlachter
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,35 +19,46 @@
 
 package uniol.apt.analysis.cycles.lts;
 
-import java.util.Set;
-
 import uniol.apt.adt.ts.ParikhVector;
-import uniol.apt.adt.ts.TransitionSystem;
-import static uniol.apt.util.MathTools.gcd;
 
 /**
- * This class checks if the given lts fulfills the prime cycles property.
- * @author vsp
+ * Representation of a cycle as its Parikh vector.
+ * @author Uli Schlachter
  */
-public class PrimeCycleProperty {
-	public ParikhVector check(TransitionSystem ts) {
-		Set<Cycle> parikhs = new ComputeSmallestCycles().computePVsOfSmallestCycles(ts);
+public class CyclePV {
+	private final ParikhVector pv;
 
-		for (Cycle cycle : parikhs) {
-			ParikhVector pv = cycle.getParikhVector();
-			if (! isPrimeCyclePV(pv)) {
-				return pv;
-			}
-		}
-		return null;
+	/**
+	 * Construct a new cycle for the given Parikh vector.
+	 * @param pv The Parikh vector to use.
+	 */
+	public CyclePV(ParikhVector pv) {
+		this.pv = pv;
 	}
 
-	private boolean isPrimeCyclePV(ParikhVector pv) {
-		int gcd = 0;
-		for (String event: pv.getLabels()) {
-			gcd = gcd(gcd, pv.get(event));
-		}
-		return gcd == 1;
+	/**
+	 * Get the Parikh vector underlying this cycle.
+	 * @return This cycle's Parikh vector.
+	 */
+	public ParikhVector getParikhVector() {
+		return pv;
+	}
+
+	@Override
+	public int hashCode() {
+		return pv.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof CyclePV))
+			return false;
+		return pv.equals(((CyclePV) o).pv);
+	}
+
+	@Override
+	public String toString() {
+		return pv.toString();
 	}
 }
 

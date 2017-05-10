@@ -19,11 +19,9 @@
 
 package uniol.apt.analysis.cycles.lts;
 
-import java.util.List;
 import java.util.Set;
 
 import uniol.apt.adt.PetriNetOrTransitionSystem;
-import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
@@ -34,7 +32,6 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
-import uniol.apt.util.Pair;
 
 /**
  * This module computes Parikh vectors of smallest cycles of a lts.
@@ -69,7 +66,7 @@ public class PVsOfSmallestCyclesModule extends AbstractInterruptibleModule imple
 		PetriNetOrTransitionSystem g = input.getParameter("graph", PetriNetOrTransitionSystem.class);
 		ComputeSmallestCycles prog = new ComputeSmallestCycles();
 		TransitionSystem ts = g.getReachabilityLTS();
-		Set<Pair<List<String>, ParikhVector>> parikhs = prog.computePVsOfSmallestCycles(ts);
+		Set<Cycle> parikhs = prog.computePVsOfSmallestCycles(ts);
 		output.setReturnValue("output", Set.class, parikhs);
 		output.setReturnValue("output_format", String.class, "[(cycle, parikh vector), ... ]");
 	}

@@ -19,14 +19,13 @@
 
 package uniol.apt.analysis.cycles;
 
-import java.util.List;
 import java.util.Set;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.cycles.lts.ComputeSmallestCycles;
+import uniol.apt.analysis.cycles.lts.Cycle;
 import uniol.apt.analysis.cycles.lts.CycleCounterExample;
 import uniol.apt.module.AbstractInterruptibleModule;
 import uniol.apt.module.AptModule;
@@ -37,7 +36,6 @@ import uniol.apt.module.ModuleInputSpec;
 import uniol.apt.module.ModuleOutput;
 import uniol.apt.module.ModuleOutputSpec;
 import uniol.apt.module.exception.ModuleException;
-import uniol.apt.util.Pair;
 
 /**
  * Checks if all smallest cycles have same Parikh vectors, if all smallest
@@ -79,7 +77,7 @@ public class CheckAllCyclePropertiesModule extends AbstractInterruptibleModule i
 
 		// Compute Parikh vectors of smallest cycles
 		ComputeSmallestCycles small = new ComputeSmallestCycles();
-		Set<Pair<List<String>, ParikhVector>> parikhs = small.computePVsOfSmallestCycles(ts);
+		Set<Cycle> parikhs = small.computePVsOfSmallestCycles(ts);
 		output.setReturnValue("parikh_vectors", Set.class, parikhs);
 		// all smallest cycles have same Parikh vectors
 		boolean b = small.checkSamePVs(parikhs);

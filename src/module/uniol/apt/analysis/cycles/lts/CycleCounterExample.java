@@ -19,45 +19,35 @@
 
 package uniol.apt.analysis.cycles.lts;
 
-import java.util.List;
-
-import uniol.apt.adt.ts.ParikhVector;
-import uniol.apt.util.Pair;
-
 /**
  * Datastructure for storing two counterexamples for the module.
  * @author Manuel Gieseking
  */
 public class CycleCounterExample {
 
-	private Pair<List<String>, ParikhVector> first;
-	private Pair<List<String>, ParikhVector> second;
+	private CyclePV first;
+	private CyclePV second;
 
 	/**
 	 * Constructor for creating a new counter example for the cycles.
-	 * @param first  - the cycle and the belonging parikhvector.
-	 * @param second - the cycle and the belonging parikhvector.
+	 * @param first  - the first Cycle.
+	 * @param second - the second Cycle.
 	 */
-	public CycleCounterExample(Pair<List<String>, ParikhVector> first, Pair<List<String>, ParikhVector> second) {
+	public CycleCounterExample(CyclePV first, CyclePV second) {
 		this.first = first;
 		this.second = second;
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("Counter-example: \n");
-		sb.append("Cycle: ").append(first.getFirst().toString()).append(" ");
-		sb.append("Parikhvector: ").append(first.getSecond().toString()).append("\nversus:\n");
-		sb.append("Cycle: ").append(second.getFirst().toString()).append(" ");
-		sb.append("Parikhvector: ").append(second.getSecond().toString());
-		return sb.toString();
+		return "Counter-example: \n" + first + "\nversus:\n" + second;
 	}
 
 	/**
 	 * Returns the first counter example.
 	 * @return the first counter example.
 	 */
-	public Pair<List<String>, ParikhVector> getFirst() {
+	public CyclePV getFirst() {
 		return first;
 	}
 
@@ -65,7 +55,7 @@ public class CycleCounterExample {
 	 * Sets the first counter example.
 	 * @param first - the first counter example to set.
 	 */
-	public void setFirst(Pair<List<String>, ParikhVector> first) {
+	public void setFirst(CyclePV first) {
 		this.first = first;
 	}
 
@@ -73,7 +63,7 @@ public class CycleCounterExample {
 	 * Returns the second counter example.
 	 * @return the second counter example.
 	 */
-	public Pair<List<String>, ParikhVector> getSecond() {
+	public CyclePV getSecond() {
 		return second;
 	}
 
@@ -81,7 +71,7 @@ public class CycleCounterExample {
 	 * Sets the first counter example.
 	 * @param second - the second counter example to set.
 	 */
-	public void setSecond(Pair<List<String>, ParikhVector> second) {
+	public void setSecond(CyclePV second) {
 		this.second = second;
 	}
 }
