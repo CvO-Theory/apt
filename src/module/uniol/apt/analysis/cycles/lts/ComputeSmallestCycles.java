@@ -33,6 +33,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 
 import uniol.apt.analysis.cycles.CycleCallback;
 import uniol.apt.analysis.cycles.CycleSearch;
+import uniol.apt.analysis.cycles.CycleSearchViaChords;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 
 /**
@@ -151,7 +152,10 @@ public class ComputeSmallestCycles {
 	 */
 	public Set<CyclePV> computePVsOfSmallestCyclesViaChords(TransitionSystem ts)
 			throws PreconditionFailedException {
-		throw new UnsupportedOperationException("unimplemented");
+		Set<CyclePV> result = new HashSet<>();
+		for (ParikhVector pv : new CycleSearchViaChords().searchCycles(ts))
+			result.add(new CyclePV(pv));
+		return result;
 	}
 
 

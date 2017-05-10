@@ -718,6 +718,18 @@ public class TestTSCollection {
 
 		return ts;
 	}
+
+	public static TransitionSystem getDetPersButNotDisjointSmallCyclesTS() {
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("s", "t");
+		ts.setInitialState("s");
+
+		ts.createArc("s", "t", "a");
+		ts.createArc("s", "t", "b");
+		ts.createArc("t", "s", "a");
+		ts.createArc("t", "s", "b");
+		return ts;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
