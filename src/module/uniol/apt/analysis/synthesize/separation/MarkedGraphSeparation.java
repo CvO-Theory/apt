@@ -30,10 +30,13 @@ import java.util.Map;
 import java.util.Set;
 
 import uniol.apt.adt.ts.Arc;
+import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.cycles.lts.AllSmallCyclesHavePVOne;
+import uniol.apt.analysis.cycles.CycleSearchViaChords;
 import uniol.apt.analysis.exception.PreconditionFailedException;
+import uniol.apt.analysis.persistent.PersistentTS;
+import uniol.apt.analysis.reversible.ReversibleTS;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
@@ -75,14 +78,26 @@ class MarkedGraphSeparation implements Separation, Synthesizer {
 		if (!supported.containsAll(properties))
 			throw new UnsupportedPNPropertiesException();
 
+		// Check all of our preconditions:
+		// reversible, deterministic, totally reachable, persistent, backward persistent.
+
+		// The following also checks: Deterministic, totally reachable, persistent.
+		// Check if all small cycles have a Parikh vector of all ones.
 		try {
-			// Check if all small cycles have a Parikh vector of all ones. This also checks our
-			// preconditions: reversible, deterministic, totally reachable, persistent, backward persistent.
-			if (!new AllSmallCyclesHavePVOne(ts).smallCyclesHavePVOne())
-				throw new UnsupportedPNPropertiesException();
+			for (ParikhVector pv : new CycleSearchViaChords().searchCycles(ts)) {
+				for (String label : ts.getAlphabet())
+					if (pv.get(label) != 1)
+						throw new UnsupportedPNPropertiesException(
+								"Not all small cycles satisfy P1, e.g. " + pv);
+			}
 		} catch (PreconditionFailedException e) {
 			throw new UnsupportedPNPropertiesException(e);
 		}
+		// Check remaining preconditions
+		if (!new ReversibleTS(ts).isReversible())
+			throw new UnsupportedPNPropertiesException("TS " + ts.getName() + " is not reversible");
+		if (!new PersistentTS(ts, true).isPersistent())
+			throw new UnsupportedPNPropertiesException("TS " + ts.getName() + " is not backwards persistent");
 
 		reachedOnlyByPVs = calculateParikhVectorOfUniqueReachedState(utility);
 		regions = calculateRegions();
