@@ -67,6 +67,12 @@ public class CycleSearchViaChordsTest {
 		getCycles(ts);
 	}
 
+	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp = ".*is not persistent.*")
+	public void testDeterministicReachableReversibleNonPersistentTS() throws Exception {
+		TransitionSystem ts = TestTSCollection.getDeterministicReachableReversibleNonPersistentTS();
+		getCycles(ts);
+	}
+
 	@Test(expectedExceptions = PreconditionFailedException.class, expectedExceptionsMessageRegExp = ".*is not totally reachable.*")
 	public void testNotTotallyReachableTS() throws Exception {
 		TransitionSystem ts = TestTSCollection.getNotTotallyReachableTS();
@@ -132,6 +138,16 @@ public class CycleSearchViaChordsTest {
 		Collection<ParikhVector> c = getCycles(ts);
 		assertThat(c, contains(
 			new ParikhVector(Arrays.asList("a", "a"))
+		));
+	}
+
+	@Test
+	public void testDifferentCyclesTS() throws Exception {
+		TransitionSystem ts = TestTSCollection.getDifferentCyclesTS();
+		Collection<ParikhVector> c = getCycles(ts);
+		assertThat(c, containsInAnyOrder(
+			new ParikhVector(Arrays.asList("a", "b")),
+			new ParikhVector(Arrays.asList("c", "d"))
 		));
 	}
 
@@ -233,6 +249,32 @@ public class CycleSearchViaChordsTest {
 	public void testFullyConnected() throws Exception {
 		TransitionSystem ts = getAptLTS("./nets/cycles/FullyConnected-aut.apt");
 		getCycles(ts);
+	}
+
+	@Test
+	public void testWithDoubleCycle() throws Exception {
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("s0", "s1", "s2");
+		ts.setInitialState("s0");
+
+		ts.createArc("s0", "s1", "a");
+		ts.createArc("s1", "s2", "a");
+		ts.createArc("s2", "s1", "b");
+		ts.createArc("s1", "s0", "b");
+
+		Collection<ParikhVector> c = getCycles(ts);
+		assertThat(c, contains(
+			new ParikhVector(Arrays.asList("a", "b"))
+		));
+	}
+
+	@Test
+	public void testPlainTNetReachabilityTS() throws Exception {
+		TransitionSystem ts = TestTSCollection.getPlainTNetReachabilityTS();
+		Collection<ParikhVector> c = getCycles(ts);
+		assertThat(c, contains(
+			new ParikhVector(Arrays.asList("a", "b", "c"))
+		));
 	}
 }
 

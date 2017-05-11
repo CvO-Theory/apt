@@ -93,6 +93,16 @@ public class CycleSearchTest {
 	}
 
 	@Test
+	public void testDeterministicReachableReversibleNonPersistentTS() throws Exception {
+		TransitionSystem ts = TestTSCollection.getDeterministicReachableReversibleNonPersistentTS();
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
+		assertThat(c, containsInAnyOrder(
+			cycle(Arrays.asList("s0", "s1"), Arrays.asList("a", "a")),
+			cycle(Arrays.asList("s0", "s2"), Arrays.asList("b", "a"))
+		));
+	}
+
+	@Test
 	public void testNotTotallyReachableTS() {
 		TransitionSystem ts = TestTSCollection.getNotTotallyReachableTS();
 		List<List<Pair<State, Arc>>> c = getCycles(ts);
@@ -162,6 +172,18 @@ public class CycleSearchTest {
 		List<List<Pair<State, Arc>>> c = getCycles(ts);
 		assertThat(c, contains(
 			cycle(Arrays.asList("s", "t"), Arrays.asList("a", "a"))
+		));
+	}
+
+	@Test
+	public void testDetPersButNotDisjointSmallCyclesTS() throws Exception {
+		TransitionSystem ts = TestTSCollection.getDetPersButNotDisjointSmallCyclesTS();
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
+		assertThat(c, containsInAnyOrder(
+			cycle(Arrays.asList("s", "t"), Arrays.asList("a", "a")),
+			cycle(Arrays.asList("s", "t"), Arrays.asList("a", "b")),
+			cycle(Arrays.asList("s", "t"), Arrays.asList("b", "a")),
+			cycle(Arrays.asList("s", "t"), Arrays.asList("b", "b"))
 		));
 	}
 
@@ -256,6 +278,24 @@ public class CycleSearchTest {
 			cycle(Arrays.asList("s1", "s2"), Arrays.asList("b", "c")),
 			cycle(Arrays.asList("s0", "s1", "s2"), Arrays.asList("a", "b", "c")),
 			cycle(Arrays.asList("s0", "s2", "s1"), Arrays.asList("a", "c", "b"))
+		));
+	}
+
+	@Test
+	public void testWithDoubleCycle() throws Exception {
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("s0", "s1", "s2");
+		ts.setInitialState("s0");
+
+		ts.createArc("s0", "s1", "a");
+		ts.createArc("s1", "s2", "a");
+		ts.createArc("s2", "s1", "b");
+		ts.createArc("s1", "s0", "b");
+
+		List<List<Pair<State, Arc>>> c = getCycles(ts);
+		assertThat(c, containsInAnyOrder(
+			cycle(Arrays.asList("s0", "s1"), Arrays.asList("a", "b")),
+			cycle(Arrays.asList("s1", "s2"), Arrays.asList("a", "b"))
 		));
 	}
 }
