@@ -730,6 +730,26 @@ public class TestTSCollection {
 		ts.createArc("t", "s", "b");
 		return ts;
 	}
+
+	public static TransitionSystem getNonDisjointCyclesTS() {
+		// There are two cycles, each has three 'a' transitions. 'b' goes from the outer to the inner cycle
+		// while 'c' goes from the inner to the outer cycle.
+		// The TS is deterministic, persistent, backward persistent, totally reachable, reversible, but its
+		// smallest cycles have non-disjoint Parikh vectors (aaa and aabc and abcbc and bcbcbc; any pair except
+		// the first and the last are not equal and not disjoint).
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("i0", "i1", "i2", "o0", "o1", "o2");
+		ts.setInitialState("o0");
+		for (int source = 0; source < 3; source++) {
+			int target = (source + 1) % 3;
+			ts.createArc("i" + source, "i" + target, "a");
+			ts.createArc("o" + source, "o" + target, "a");
+			ts.createArc("o" + source, "i" + source, "b");
+			ts.createArc("i" + source, "o" + target, "c");
+		}
+
+		return ts;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

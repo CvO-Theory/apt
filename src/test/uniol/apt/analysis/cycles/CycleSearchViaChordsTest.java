@@ -32,6 +32,7 @@ import uniol.apt.TestTSCollection;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.exception.NonDeterministicException;
+import uniol.apt.analysis.exception.NonDisjointCyclesException;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import static uniol.apt.io.parser.ParserTestUtils.getAptLTS;
 
@@ -134,11 +135,42 @@ public class CycleSearchViaChordsTest {
 		));
 	}
 
-	@Test(expectedExceptions = PreconditionFailedException.class,
-		expectedExceptionsMessageRegExp = "The given ts does not have the disjoint small cycle property")
+	@Test
 	public void testDetPersButNotDisjointSmallCyclesTS() throws Exception {
 		TransitionSystem ts = TestTSCollection.getDetPersButNotDisjointSmallCyclesTS();
-		getCycles(ts);
+		try {
+			getCycles(ts);
+			throw new Exception("An exception should have been thrown");
+		} catch (NonDisjointCyclesException e) {
+			ParikhVector pv1 = new ParikhVector("a", "b");
+			ParikhVector pv2 = new ParikhVector("a", "a");
+			ParikhVector pv3 = new ParikhVector("b", "b");
+			assertThat(Arrays.asList(e.getPV1(), e.getPV2()), containsInAnyOrder(is(pv1),
+						either(is(pv2)).or(is(pv3))));
+		}
+	}
+
+	@Test
+	public void testNonDisjointCyclesTS() throws Exception {
+		TransitionSystem ts = TestTSCollection.getNonDisjointCyclesTS();
+		try {
+			getCycles(ts);
+			throw new Exception("An exception should have been thrown");
+		} catch (NonDisjointCyclesException e) {
+			System.out.println(e.getPV1().toString() + e.getPV2());
+			ParikhVector pv3a = new ParikhVector("a", "a", "a");
+			ParikhVector pv2a = new ParikhVector("a", "a", "b", "c");
+			ParikhVector pv1a = new ParikhVector("a", "b", "c", "b", "c");
+			ParikhVector pv0a = new ParikhVector("b", "c", "b", "c", "b", "c");
+			assertThat(Arrays.asList(e.getPV1(), e.getPV2()), anyOf(
+						// These two are disjoint!
+						//containsInAnyOrder(pv3a, pv0a),
+						containsInAnyOrder(pv3a, pv1a),
+						containsInAnyOrder(pv3a, pv2a),
+						containsInAnyOrder(pv2a, pv0a),
+						containsInAnyOrder(pv2a, pv1a),
+						containsInAnyOrder(pv1a, pv0a)));
+		}
 	}
 
 	@Test

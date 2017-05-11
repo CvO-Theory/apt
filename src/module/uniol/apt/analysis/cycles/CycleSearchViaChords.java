@@ -32,6 +32,7 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.deterministic.Deterministic;
 import uniol.apt.analysis.exception.NonDeterministicException;
+import uniol.apt.analysis.exception.NonDisjointCyclesException;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.persistent.PersistentTS;
 import uniol.apt.analysis.totallyreachable.TotallyReachable;
@@ -144,16 +145,60 @@ public class CycleSearchViaChords {
 	// state is the Parikh vector of its reaching path according to the spanning tree.
 	private ParikhVector getPV(SpanningTree<TransitionSystem, Arc, State> tree, Arc chord)
 			throws PreconditionFailedException {
-		ParikhVector result = new ParikhVector(chord.getLabel());
-		for (Arc arc : tree.getEdgePathFromStart(chord.getSource()))
-			result = result.add(arc.getLabel());
-		for (Arc arc : tree.getEdgePathFromStart(chord.getTarget())) {
-			result = result.tryRemove(arc.getLabel(), 1);
-			if (result == null)
-				throw new PreconditionFailedException(
-						"The given ts does not have the disjoint small cycle property");
+		ParikhVector pv1 = getPV(tree, chord.getSource()).add(chord.getLabel());
+		ParikhVector pv2 = getPV(tree, chord.getTarget());
+		// Check that pv1 >= pv2, i.e. no negative entries would occur in pv1 - pv2
+		ParikhVector.Comparison comp = pv1.compare(pv2);
+		if (!comp.equals(ParikhVector.Comparison.GREATER_THAN) &&
+				!comp.equals(ParikhVector.Comparison.EQUAL)) {
+			// There must be at least one x so that pv1(x) < pv2(x). Thus, pv2-pv1 is non-empty.
+			// Also, our spanning tree computes shortest paths. Thus, we have |pv1-t| <= |pv2|.
+			// Thus, since there is some event that occurs more often in pv2 as in pv1, there must be
+			// another event that occurs less often in pv2 as in pv1 and pv1-pv2 is non-empty.
+			// This motivates the following assert:
+			assert comp.equals(ParikhVector.Comparison.INCOMPARABLE);
+			// By definition of the residual, these two residuals have disjoint support. We can now use
+			// Keller's theorem to find a state s reached from chord.getTarget() via both residuals. We
+			// complete this into a cycle by finding any path back to chord.getTarget().
+			// TODO: Is such a cycle necessarily small? I don't know, but some hint at the correct
+			// counter-example is better than no counter-example at all.
+			ParikhVector residual1 = pv1.residual(pv2);
+			ParikhVector residual2 = pv2.residual(pv1);
+			State residualsTarget = followPV(chord.getTarget(), residual1);
+			ParikhVector restOfCycle = findPath(residualsTarget, chord.getTarget());
+			throw new NonDisjointCyclesException(chord.getGraph(),
+					residual1.add(restOfCycle),
+					residual2.add(restOfCycle));
 		}
+		return pv1.residual(pv2);
+	}
+
+	// Get the Parikh vector that reaches the given state in the given tree.
+	private ParikhVector getPV(SpanningTree<TransitionSystem, Arc, State> tree, State state) {
+		ParikhVector result = new ParikhVector();
+		for (Arc arc : tree.getEdgePathFromStart(state))
+			result = result.add(arc.getLabel());
 		return result;
+	}
+
+	// Find the state reached by 'firing' the given Parikh vector. This assumes that such a state exists!
+	private State followPV(State state, ParikhVector pv) {
+		// By determinism and persistency, we can follow things in an arbitrary order and are still guaranteed
+		// to find the state we are looking for
+		for (String t : pv.getLabels()) {
+			Set<State> targets = state.getPostsetNodesByLabel(t);
+			for (State target : targets)
+				return followPV(target, pv.tryRemove(t, 1));
+		}
+		// We are assuming that the path is possible. Thus, we can only get here when we are done.
+		assert new ParikhVector().equals(pv) : pv;
+		return state;
+	}
+
+	private ParikhVector findPath(State from, State to) {
+		SpanningTree<TransitionSystem, Arc, State> tree = SpanningTree.get(from.getGraph(), from);
+		assert tree.isReachable(to);
+		return getPV(tree, to);
 	}
 }
 
