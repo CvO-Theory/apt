@@ -34,6 +34,7 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.cycles.CycleCallback;
 import uniol.apt.analysis.cycles.CycleSearch;
 import uniol.apt.analysis.cycles.CycleSearchViaChords;
+import uniol.apt.analysis.exception.NonDisjointCyclesException;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 
 /**
@@ -156,7 +157,17 @@ public class ComputeSmallestCycles {
 	 *         vectors.
 	 */
 	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts) {
-		return checkSameOrMutallyDisjointPVs(computePVsOfSmallestCycles(ts, true));
+		try {
+			computePVsOfSmallestCyclesViaChords(ts);
+			// The above algorithm only succeeds if the property is satisfied
+			return true;
+		} catch (NonDisjointCyclesException e) {
+			counterExample = new CycleCounterExample(new CyclePV(e.getPV1()), new CyclePV(e.getPV2()));
+			return false;
+		} catch (PreconditionFailedException e) {
+			// The specialised algorithm is not applicable. Fall back to the general one.
+			return checkSameOrMutallyDisjointPVs(computePVsOfSmallestCyclesViaCycleSearch(ts, true));
+		}
 	}
 
 	/**
