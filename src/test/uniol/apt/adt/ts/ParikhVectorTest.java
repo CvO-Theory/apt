@@ -198,6 +198,42 @@ public class ParikhVectorTest {
 
 		assertThat(pv, nullValue());
 	}
+
+	@Test
+	public void testResidualMoreEntries() {
+		ParikhVector pv = new ParikhVector("a", "b", "a", "a");
+		pv = pv.residual(new ParikhVector("a", "a"));
+
+		assertThat(pv, hasToString("{a=1, b=1}"));
+		assertThat(pv.getLabels(), contains("a", "b"));
+	}
+
+	@Test
+	public void testResidualExactEntries() {
+		ParikhVector pv = new ParikhVector("a", "b", "a");
+		pv = pv.residual(new ParikhVector("a", "a"));
+
+		assertThat(pv, hasToString("{b=1}"));
+		assertThat(pv.getLabels(), contains("b"));
+	}
+
+	@Test
+	public void testResidualTooFewEntries() {
+		ParikhVector pv = new ParikhVector("a", "b");
+		pv = pv.residual(new ParikhVector("a", "a"));
+
+		assertThat(pv, hasToString("{b=1}"));
+		assertThat(pv.getLabels(), contains("b"));
+	}
+
+	@Test
+	public void testResidualMissingEntry() {
+		ParikhVector pv = new ParikhVector("b");
+		pv = pv.residual(new ParikhVector("a", "a"));
+
+		assertThat(pv, hasToString("{b=1}"));
+		assertThat(pv.getLabels(), contains("b"));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

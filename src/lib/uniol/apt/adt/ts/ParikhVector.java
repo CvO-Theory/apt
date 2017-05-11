@@ -115,6 +115,20 @@ public class ParikhVector {
 	}
 
 	/**
+	 * Compute the residual of this Parikh vector with another Parikh vector. For each event <pre>t</pre>, the
+	 * resulting Parikh vector will contain <pre>t</pre> exactly <pre>max{ 0, this.get(t)-other.get(t) }</pre>
+	 * times. In other words, this computes the difference between the two Parikh vector, but subtraction saturates
+	 * at zero.
+	 * @param other The Parikh vector to subtract.
+	 * @return The residual.
+	 */
+	public ParikhVector residual(ParikhVector other) {
+		ParikhVector result = new ParikhVector(this);
+		result.occurrenceBag.removeAll(other.occurrenceBag);
+		return result;
+	}
+
+	/**
 	 * This enum represents the result of comparing two Parikh vectors.
 	 */
 	public enum Comparison {
