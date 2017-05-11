@@ -64,17 +64,6 @@ public class ComputeSmallestCycles {
 	}
 
 	/**
-	 * Checks a labeled transition system if all smallest cycles have the same or mutally disjoint parikh vectors.
-	 * (Requirement A8b)
-	 * @param ts   - the transition system to examine.
-	 * @return true if the smallest cycles of the given transitionsystem have the same or mutally disjoint parikh
-	 *         vectors.
-	 */
-	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts) {
-		return checkSameOrMutallyDisjointPVs(ts, true);
-	}
-
-	/**
 	 * Checks a labeled transition system if all smallest cycles have the same parikh vector. (Requirement A8a)
 	 * @param ts   - the transition system to examine.
 	 * @return true if the smallest cycles of the given transitionsystem have the same parikh vectors.
@@ -162,14 +151,12 @@ public class ComputeSmallestCycles {
 	/**
 	 * Checks a labeled transition system if all smallest cycles have the same or mutally disjoint parikh vectors.
 	 * (Requirement A8b)
-	 * @param ts       - the transition system to examine.
-	 * @param smallest - Flag which tells if all or just the smallest should be saved.
-	 *                 (Storage vs. Time)
+	 * @param ts   - the transition system to examine.
 	 * @return true if the smallest cycles of the given transitionsystem have the same or mutally disjoint parikh
 	 *         vectors.
 	 */
-	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts, boolean smallest) {
-		return checkSameOrMutallyDisjointPVs(computePVsOfSmallestCycles(ts, smallest));
+	public boolean checkSameOrMutallyDisjointPVs(TransitionSystem ts) {
+		return checkSameOrMutallyDisjointPVs(computePVsOfSmallestCycles(ts, true));
 	}
 
 	/**
