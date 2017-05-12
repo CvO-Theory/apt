@@ -134,8 +134,6 @@ public class ComputeSmallestCycles {
 	 * Computes the parikh vectors of all smallest cycles of a finite, totally reachable, deterministic and
 	 * persistent transition system.
 	 * @param ts       - the transitionsystem to compute the cycles from.
-	 * @param smallest - Flag which tells if all or just the smallest should be saved.
-	 *                 (Storage vs. Time)
 	 * @return a list of the smallest cycles and their parikh vectors.
 	 * @throws PreconditionFailedException if the given lts is not totally reachable, deterministic, persistent, or
 	 * does not have the disjoint small cycles property.
