@@ -36,6 +36,8 @@ public class NonDisjointCyclesException extends PreconditionFailedException {
 	/**
 	 * Constructor creates a new NonDisjointCyclesException for the given TransitionSystem.
 	 * @param ts A transition system with non-disjoint small cycles.
+	 * @param pv1 The Parikh vector of a cycle with non-disjoint support to the second cycle.
+	 * @param pv2 The Parikh vector of a cycle with non-disjoint support to the first cycle.
 	 */
 	public NonDisjointCyclesException(TransitionSystem ts, ParikhVector pv1, ParikhVector pv2) {
 		super("Transition system " + ts.getName()
