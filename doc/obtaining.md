@@ -33,3 +33,24 @@ file called "apt.jar". You can run this file via "java -jar apt.jar".
 
 If Ant complains "javac: invalid target release: 1.7", you are not using a
 Java 7 JDK. Please update your Java installation.
+
+APT as a library
+----------------
+
+When you execute the "jar" target via Ant, not only a file `apt.jar` is
+generated. The following files can be found in the `artifacts/` directory:
+
+- `apt-lib.jar`: This contains the data structures that APT uses and some
+  fundamental algorithms and interfaces. This JAR file is build from the
+  contents of `src/glue` and `src/lib`.
+- `apt-io.jar`: This JAR file contains the parsers and renderers. Thus, via this
+  JAR file you can read and write files based on the data structures from
+  `apt-lib.jar`.
+- `apt-module.jar`: This provides all the actual algorithms and modules of APT.
+- `apt.jar`: This is the main executable of APT. It contains the contents of
+  `apt-lib.jar`, `apt-io.jar`, and `apt-module.jar`. Additionally, this contains
+  the annotation processor built from `src/compiler` needed for building your
+  own modules. Finally, this also contains the libraries that APT depends on.
+- `apt-json.jar`: In addition to the contents of `apt.jar`, this also contains
+  the JSON-interface to APT which is built from `src/json`, and the JSON-library
+  used by that code.
