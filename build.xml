@@ -461,6 +461,7 @@
 		<delete dir="reports" failonerror="false" />
 		<delete dir="./doc/javadoc" failonerror="false" />
 		<delete dir="generated-src" failonerror="false" />
+		<delete dir="artifacts" failonerror="false" />
 		<delete file="apt.jar" failonerror="false" />
 		<delete file="apt-lib.jar" failonerror="false" />
 		<delete file="apt-io.jar" failonerror="false" />
@@ -471,6 +472,7 @@
 
 	<target name="jar" depends="verify-modules"
 		description="Build a jar file containing all the needed stuff to run the apt tool.">
+		<mkdir dir="artifacts"/>
 		<!-- Our annotation processing creates files under META-INF that
 		     needs to be merged, do so.
 		  -->
@@ -482,23 +484,23 @@
 				<include name="module/META-INF/services/uniol.apt.module.Module"/>
 			</fileset>
 		</concat>
-		<jar destfile="apt-lib.jar" duplicate="fail">
+		<jar destfile="artifacts/apt-lib.jar" duplicate="fail">
 			<fileset dir="classes/glue/" />
 			<fileset dir="classes/lib/" />
 		</jar>
-		<jar destfile="apt-io.jar" duplicate="fail">
+		<jar destfile="artifacts/apt-io.jar" duplicate="fail">
 			<fileset dir="classes/io/" />
 		</jar>
-		<jar destfile="apt-module.jar" duplicate="fail">
+		<jar destfile="artifacts/apt-module.jar" duplicate="fail">
 			<fileset dir="classes/module/" />
 		</jar>
-		<jar destfile="apt.jar" duplicate="fail">
+		<jar destfile="artifacts/apt.jar" duplicate="fail">
 			<fileset dir="classes">
 				<include name="META-INF/services/uniol.apt.module.Module"/>
 			</fileset>
-			<zipfileset src="apt-lib.jar" />
-			<zipfileset src="apt-io.jar" />
-			<zipfileset src="apt-module.jar">
+			<zipfileset src="artifacts/apt-lib.jar" />
+			<zipfileset src="artifacts/apt-io.jar" />
+			<zipfileset src="artifacts/apt-module.jar">
 				<exclude name="META-INF/services/uniol.apt.module.Module"/>
 			</zipfileset>
 			<fileset dir="classes/main/">
@@ -515,8 +517,8 @@
 				<attribute name="Main-Class" value="uniol.apt.APT" />
 			</manifest>
 		</jar>
-		<jar destfile="apt-json.jar" duplicate="fail">
-			<zipfileset src="apt.jar"/>
+		<jar destfile="artifacts/apt-json.jar" duplicate="fail">
+			<zipfileset src="artifacts/apt.jar"/>
 			<fileset dir="classes/json/"/>
 			<zipfileset includes="**/*.class" src="lib/json-20160810/json.jar"/>
 			<manifest>
@@ -538,13 +540,15 @@
 			</sequential>
 		</macrodef>
 
-		<service-verify jar="apt.jar" class="uniol.apt.io.parser.PNParsers" member="INSTANCE" />
-		<service-verify jar="apt.jar" class="uniol.apt.io.parser.LTSParsers" member="INSTANCE" />
-		<service-verify jar="apt.jar" class="uniol.apt.io.renderer.PNRenderers" member="INSTANCE" />
-		<service-verify jar="apt.jar" class="uniol.apt.io.renderer.LTSRenderers" member="INSTANCE" />
-		<service-verify jar="apt.jar" class="uniol.apt.ui.impl.AptParametersTransformer" member="INSTANCE" />
-		<service-verify jar="apt.jar" class="uniol.apt.ui.impl.AptReturnValuesTransformer" member="INSTANCE" />
-		<service-verify jar="apt.jar" class="uniol.apt.module.AptModuleRegistry" member="INSTANCE" />
+		<service-verify jar="artifacts/apt.jar" class="uniol.apt.io.parser.PNParsers" member="INSTANCE" />
+		<service-verify jar="artifacts/apt.jar" class="uniol.apt.io.parser.LTSParsers" member="INSTANCE" />
+		<service-verify jar="artifacts/apt.jar" class="uniol.apt.io.renderer.PNRenderers" member="INSTANCE" />
+		<service-verify jar="artifacts/apt.jar" class="uniol.apt.io.renderer.LTSRenderers" member="INSTANCE" />
+		<service-verify jar="artifacts/apt.jar" class="uniol.apt.ui.impl.AptParametersTransformer" member="INSTANCE" />
+		<service-verify jar="artifacts/apt.jar" class="uniol.apt.ui.impl.AptReturnValuesTransformer" member="INSTANCE" />
+		<service-verify jar="artifacts/apt.jar" class="uniol.apt.module.AptModuleRegistry" member="INSTANCE" />
+		<copy file="artifacts/apt.jar" tofile="apt.jar"/>
+		<copy file="artifacts/apt-json.jar" tofile="apt-json.jar"/>
 	</target>
 	<import file="build.local.xml" optional="true"/>
 </project>
