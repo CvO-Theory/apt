@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2015  Uli Schlachter
+ * Copyright (C) 2017  Uli Schlachter
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +19,26 @@
 
 package uniol.apt.util;
 
+import java.util.Arrays;
+
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 /** @author Uli Schlachter */
 @SuppressWarnings("unchecked") // I hate generics
-public class EquivalenceRelationTest extends AbstractEquivalenceRelationTest {
+public class DomainEquivalenceRelationTest extends AbstractEquivalenceRelationTest {
 	@Override
 	<E> AbstractEquivalenceRelation<E> createRelation(E... domain) {
-		return new EquivalenceRelation<E>();
+		return new DomainEquivalenceRelation<E>(Arrays.asList(domain));
 	}
 
 	@Test
 	public void testEmptyRelation() {
 		AbstractEquivalenceRelation<String> relation = createRelation("a", "b", "c", "d");
 
-		assertThat(relation, emptyIterable());
-		assertThat(relation, hasSize(0));
+		assertThat(relation, containsInAnyOrder(contains("a"), contains("b"), contains("c"), contains("d")));
+		assertThat(relation, hasSize(4));
 		assertThat(relation.isEquivalent("a", "b"), is(false));
 		assertThat(relation.getClass("a"), contains("a"));
 	}
@@ -50,8 +52,8 @@ public class EquivalenceRelationTest extends AbstractEquivalenceRelationTest {
 		assertThat(relation.getClass("a"), contains("a"));
 		assertThat(relation.getClass("c"), contains("c"));
 
-		assertThat(relation, emptyIterable());
-		assertThat(relation, hasSize(0));
+		assertThat(relation, containsInAnyOrder(contains("a"), contains("b"), contains("c"), contains("d")));
+		assertThat(relation, hasSize(4));
 	}
 
 	@Test
@@ -66,8 +68,8 @@ public class EquivalenceRelationTest extends AbstractEquivalenceRelationTest {
 		assertThat(relation.getClass("a"), containsInAnyOrder("a", "b"));
 		assertThat(relation.getClass("c"), contains("c"));
 		assertThat(relation.getClass("b"), sameInstance(relation.getClass("a")));
-		assertThat(relation, hasSize(1));
-		assertThat(relation, contains(containsInAnyOrder("a", "b")));
+		assertThat(relation, hasSize(3));
+		assertThat(relation, containsInAnyOrder(containsInAnyOrder("a", "b"), contains("c"), contains("d")));
 	}
 
 	@Test
@@ -78,9 +80,15 @@ public class EquivalenceRelationTest extends AbstractEquivalenceRelationTest {
 
 		assertThat(relation.isEquivalent("c", "b"), is(true));
 		assertThat(relation.getClass("a"), containsInAnyOrder("a", "b", "c"));
-		assertThat(relation, contains(containsInAnyOrder("a", "b", "c")));
-		assertThat(relation, hasSize(1));
+		assertThat(relation, containsInAnyOrder(containsInAnyOrder("a", "b", "c"), contains("d")));
+		assertThat(relation, hasSize(2));
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testDomain() {
+		new DomainEquivalenceRelation<Integer>(Arrays.asList(1)).getClass(2);
 	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
+
