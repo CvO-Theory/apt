@@ -53,7 +53,102 @@ public class IsomorphismLogic {
 	 *                    Otherwise labels are ignored.
 	 */
 	public IsomorphismLogic(TransitionSystem lts1, TransitionSystem lts2, boolean checkLabels) {
-		isomorphism = new IsomorphismLogicComplex(lts1, lts2, checkLabels).getIsomorphism();
+		isomorphism = construct(lts1, lts2, checkLabels);
+	}
+
+	private static BidiMap<State, State> construct(TransitionSystem lts1, TransitionSystem lts2, boolean checkLabels) {
+		// Check trivial case
+		if (lts1.getNodes().size() != lts2.getNodes().size()) {
+			return new DualHashBidiMap<>();
+		}
+
+		if (checkLabels) {
+			boolean precond1 = checkPreconditions(lts1);
+			boolean precond2 = checkPreconditions(lts2);
+			if (precond1 != precond2)
+				// Not isomorphic
+				return new DualHashBidiMap<>();
+
+			if (precond1 && precond2)
+				// Both lts are totally reachable and deterministic. We can apply a special algorithm.
+				return checkViaDepthSearch(lts1, lts2);
+		}
+
+		return new IsomorphismLogicComplex(lts1, lts2, checkLabels).getIsomorphism();
+	}
+
+	private static boolean checkPreconditions(TransitionSystem lts) {
+		return new Deterministic(lts).isDeterministic() && new TotallyReachable(lts).isTotallyReachable();
+	}
+
+	private static BidiMap<State, State> checkViaDepthSearch(TransitionSystem lts1, TransitionSystem lts2) {
+		BidiMap<State, State> result = new DualHashBidiMap<>();
+		Set<String> alphabet = lts1.getAlphabet();
+		if (!alphabet.equals(lts2.getAlphabet()))
+			// Not isomorphic, there is an arc with a label not occurring in the other lts
+			return result;
+
+		Queue<Pair<State, State>> unhandled = new ArrayDeque<>();
+		visit(result, unhandled, lts1.getInitialState(), lts2.getInitialState());
+
+		while (!unhandled.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
+
+			Pair<State, State> pair = unhandled.remove();
+			State state1 = pair.getFirst();
+			State state2 = pair.getSecond();
+
+			for (String label : alphabet) {
+				State follow1 = follow(state1, label);
+				State follow2 = follow(state2, label);
+
+				if (!visit(result, unhandled, follow1, follow2))
+					// Not isomorphic
+					return new DualHashBidiMap<>();
+			}
+		}
+
+		return result;
+	}
+
+	private static State follow(State state, String label) {
+		Set<Arc> postset = state.getPostsetEdgesByLabel(label);
+		assert postset.isEmpty() || postset.size() == 1 : "A deterministic LTS is not deterministic?";
+		for (Arc arc : postset)
+			return arc.getTarget();
+		return null;
+	}
+
+	private static boolean visit(BidiMap<State, State> partialIsomorphism, Queue<Pair<State, State>> unhandled,
+			State state1, State state2) {
+		if (state1 == null && state2 == null)
+			// Nothing to do
+			return true;
+
+		if (state1 == null || state2 == null)
+			// Not isomorphic
+			return false;
+
+		State oldState1 = partialIsomorphism.getKey(state2);
+		if (state1.equals(oldState1))
+			// This mapping was already known
+			return true;
+		if (oldState1 != null)
+			// We have a conflicting mapping!
+			return false;
+
+		State oldState2 = partialIsomorphism.put(state1, state2);
+		if (oldState2 != null) {
+			// If this assert fails, then state1 was already mapped to state2 before. However, we already
+			// checked for this case above.
+			assert !state2.equals(oldState2);
+
+			// We have a conflicting mapping!
+			return false;
+		}
+
+		unhandled.add(new Pair<State, State>(state1, state2));
+		return true;
 	}
 
 	/**
