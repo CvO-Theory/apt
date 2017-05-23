@@ -218,11 +218,11 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (label == null) {
 			throw new IllegalArgumentException("label == null");
 		}
-		Arc a = new Arc(this, sourceId, targetId, addEvent(label));
 		ArcKey key = createArcKey(sourceId, targetId, label);
 		if (postsetEdges.get(sourceId).containsKey(key)) {
 			throw new ArcExistsException(this, key);
 		}
+		Arc a = new Arc(this, getNode(sourceId), getNode(targetId), addEvent(label));
 		return addArc(key, a);
 	}
 

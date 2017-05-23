@@ -33,18 +33,19 @@ public class Edge<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends
 	extends Extensible implements IEdge<G, E, N> {
 
 	protected final G graph;
-	protected final String sourceId, targetId;
+	protected final N source;
+	protected final N target;
 
 	/**
 	 * Constructor for creating an arc with the sourceId and targetId in the given graph.
-	 * @param graph    The graph this Edge belongs to.
-	 * @param sourceId the source node's id.
-	 * @param targetId the target node's id.
+	 * @param graph  The graph this Edge belongs to.
+	 * @param source the source node.
+	 * @param target the target node.
 	 */
-	protected Edge(G graph, String sourceId, String targetId) {
+	protected Edge(G graph, N source, N target) {
 		this.graph = graph;
-		this.sourceId = sourceId;
-		this.targetId = targetId;
+		this.source = source;
+		this.target = target;
 	}
 
 	/**
@@ -53,7 +54,7 @@ public class Edge<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends
 	 * @param e     the edge that should get copied.
 	 */
 	protected Edge(G graph, Edge<G, E, N> e) {
-		this(graph, e.sourceId, e.targetId);
+		this(graph, graph.getNode(e.source.getId()), graph.getNode(e.target.getId()));
 		copyExtensions(e);
 	}
 
@@ -64,17 +65,17 @@ public class Edge<G extends IGraph<G, E, N>, E extends IEdge<G, E, N>, N extends
 
 	@Override
 	public N getSource() {
-		return this.graph.getNode(this.sourceId);
+		return this.source;
 	}
 
 	@Override
 	public N getTarget() {
-		return this.graph.getNode(this.targetId);
+		return this.target;
 	}
 
 	@Override
 	public String toString() {
-		return sourceId + "->" + targetId;
+		return source.getId() + "->" + target.getId();
 	}
 }
 

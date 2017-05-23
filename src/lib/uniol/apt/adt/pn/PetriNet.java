@@ -186,7 +186,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 		if (!hasPlace || !hasTransition) {
 			throw new IllegalFlowException(this, key);
 		}
-		Flow f = new Flow(this, sourceId, targetId, weight);
+		Flow f = new Flow(this, getNode(sourceId), getNode(targetId), weight);
 		if (weight > 0) {
 			addFlow(key, f);
 		}

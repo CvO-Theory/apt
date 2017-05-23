@@ -31,13 +31,13 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 
 	/**
 	 * Constructor.
-	 * @param ts       the TransitionSystem this arc belongs to.
-	 * @param sourceId the id of the source node.
-	 * @param targetId the id of the target node.
-	 * @param label    the label this arc has.
+	 * @param ts     the TransitionSystem this arc belongs to.
+	 * @param source the source node.
+	 * @param target the target node.
+	 * @param label  the label this arc has.
 	 */
-	Arc(TransitionSystem ts, String sourceId, String targetId, Event label) {
-		super(ts, sourceId, targetId);
+	Arc(TransitionSystem ts, State source, State target, Event label) {
+		super(ts, source, target);
 		this.label = label;
 	}
 
@@ -73,7 +73,7 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 	 * @param label the label to set.
 	 */
 	public void setLabel(String label) {
-		graph.setArcLabel(sourceId, targetId, this.label, label);
+		graph.setArcLabel(source.getId(), target.getId(), this.label, label);
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 	 * @return the source node's id
 	 */
 	public String getSourceId() {
-		return sourceId;
+		return source.getId();
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class Arc extends Edge<TransitionSystem, Arc, State> {
 	 * @return the target node's id
 	 */
 	public String getTargetId() {
-		return targetId;
+		return target.getId();
 	}
 
 	@Override

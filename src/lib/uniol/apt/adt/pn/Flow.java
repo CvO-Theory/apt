@@ -32,13 +32,13 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 
 	/**
 	 * Constructor to create a new Flow with given sourceId, targetId and weight.
-	 * @param net      the net this flow belongs to.
-	 * @param sourceId the source node's id.
-	 * @param targetId the target node's id.
-	 * @param weight   the weight for this flow.
+	 * @param net    the net this flow belongs to.
+	 * @param source the source node.
+	 * @param target the target node.
+	 * @param weight the weight for this flow.
 	 */
-	Flow(PetriNet net, String sourceId, String targetId, int weight) {
-		super(net, sourceId, targetId);
+	Flow(PetriNet net, Node source, Node target, int weight) {
+		super(net, source, target);
 		this.weight = weight;
 	}
 
@@ -58,7 +58,7 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 	 * @param w the weight to set.
 	 */
 	public void setWeight(int w) {
-		this.graph.setFlowWeight(this.sourceId, this.targetId, w);
+		this.graph.setFlowWeight(this.source.getId(), this.target.getId(), w);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 	 * @return the place of the flow.
 	 */
 	public Place getPlace() {
-		return this.graph.getFlowPlace(this.sourceId, this.targetId);
+		return this.graph.getFlowPlace(this.source.getId(), this.target.getId());
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 	 * @return the transition of the flow.
 	 */
 	public Transition getTransition() {
-		return this.graph.getFlowTransition(this.sourceId, this.targetId);
+		return this.graph.getFlowTransition(this.source.getId(), this.target.getId());
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 	 * @return the source node's id of this flow.
 	 */
 	String getSourceId() {
-		return sourceId;
+		return source.getId();
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class Flow extends Edge<PetriNet, Flow, Node> {
 	 * @return the target node's id of this flow.
 	 */
 	String getTargetId() {
-		return targetId;
+		return target.getId();
 	}
 
 	@Override
