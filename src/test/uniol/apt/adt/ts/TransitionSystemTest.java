@@ -275,7 +275,14 @@ public class TransitionSystemTest {
 		assertThat(ts2.getAlphabetEvents(), hasSize(1));
 		assertThat(ts2.getEvent("label").getExtension("key"), hasToString("value"));
 
-
+		for (State node : ts2.getNodes()) {
+			assertThat(node.getGraph(), sameInstance(ts2));
+		}
+		for (Arc arc : ts2.getEdges()) {
+			assertThat(arc.getGraph(), sameInstance(ts2));
+			assertThat(arc.getSource().getGraph(), sameInstance(ts2));
+			assertThat(arc.getTarget().getGraph(), sameInstance(ts2));
+		}
 	}
 
 }
