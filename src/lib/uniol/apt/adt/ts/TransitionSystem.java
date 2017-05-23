@@ -83,8 +83,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	public TransitionSystem(TransitionSystem ts) {
 		this.name = ts.name;
 		this.nextStateId = ts.nextStateId;
-		for (String key : ts.states.keySet()) {
-			addState(key, new State(this, ts.states.get(key)));
+		for (Map.Entry<String, State> entry : ts.states.entrySet()) {
+			addState(entry.getKey(), new State(this, entry.getValue()));
 		}
 		// Iterate over all ArcKey instances
 		for (State source : ts.states.values()) {
