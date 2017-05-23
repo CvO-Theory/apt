@@ -35,8 +35,8 @@ import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.exception.PreconditionFailedException;
 import uniol.apt.analysis.exception.UnboundedException;
-import uniol.apt.analysis.isomorphism.IsomorphismLogic;
-import uniol.apt.analysis.isomorphism.IsomorphismLogic.ExtendedState;
+import uniol.apt.analysis.isomorphism.IsomorphismLogicComplex;
+import uniol.apt.analysis.isomorphism.IsomorphismLogicComplex.ExtendedState;
 import uniol.apt.analysis.persistent.PersistentTS;
 import uniol.apt.analysis.plain.Plain;
 import uniol.apt.analysis.cycles.lts.ComputeSmallestCycles;
@@ -160,7 +160,7 @@ public class PnAnalysis {
 		} catch (UnboundedException e) {
 			return false;
 		}
-		IsomorphismLogic iso = new IsomorphismLogic(t1, reachabilitylts2, false);
+		IsomorphismLogicComplex iso = new IsomorphismLogicComplex(t1, reachabilitylts2, false);
 		if (iso.isIsomorphic()) {
 			// Adjust Labels of T-System, to check if strong isomorphic solution
 			// exists
