@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import uniol.apt.adt.CollectionToUnmodifiableSetAdapter;
 import uniol.apt.adt.Node;
 
 /**
@@ -31,6 +32,9 @@ import uniol.apt.adt.Node;
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class State extends Node<TransitionSystem, Arc, State> {
+	final Map<ArcKey, Arc> presetEdges = new HashMap<>();
+	final Map<ArcKey, Arc> postsetEdges = new HashMap<>();
+
 	final Map<String, Set<Arc>> postsetEdgesByLabel = new HashMap<>();
 	final Map<String, Set<Arc>> presetEdgesByLabel = new HashMap<>();
 
@@ -109,6 +113,28 @@ public class State extends Node<TransitionSystem, Arc, State> {
 		if (result == null)
 			return Collections.emptySet();
 		return Collections.unmodifiableSet(result);
+	}
+
+	@Override
+	public Set<State> getPresetNodes() {
+		return this.graph.getPresetNodes(this);
+	}
+
+	@Override
+	public Set<State> getPostsetNodes() {
+		return this.graph.getPostsetNodes(this);
+	}
+
+	@Override
+	public Set<Arc> getPresetEdges() {
+		// This really behaves like a Set, but the Map doesn't know that its values are unique
+		return new CollectionToUnmodifiableSetAdapter<>(presetEdges.values());
+	}
+
+	@Override
+	public Set<Arc> getPostsetEdges() {
+		// This really behaves like a Set, but the Map doesn't know that its values are unique
+		return new CollectionToUnmodifiableSetAdapter<>(postsetEdges.values());
 	}
 
 }
