@@ -64,16 +64,6 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	private State initialState = null;
 
 	/**
-	 * A cache for getting preset arcs by label. The mapping is <code>nodeId → (label → arcPreset)</code>.
-	 */
-	private final Map<String, Map<String, Set<Arc>>> presetEdgesByLabel = new HashMap<>();
-
-	/**
-	 * A cache for getting postset arcs by label. The mapping is <code>nodeId → (label → arcPostset)</code>.
-	 */
-	private final Map<String, Map<String, Set<Arc>>> postsetEdgesByLabel = new HashMap<>();
-
-	/**
 	 * Creates a new TransitionSystem with no name (e.g. "").
 	 */
 	public TransitionSystem() {
@@ -466,7 +456,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		if (id == null) {
 			throw new IllegalArgumentException("id == null");
 		}
-		if (!states.containsKey(id)) {
+		State state = this.states.get(id);
+		if (state == null) {
 			throw new NoSuchNodeException(this, id);
 		}
 
@@ -487,7 +478,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		postsetEdges.remove(id);
 
 		// Update postsetByLabel cache.
-		postsetEdgesByLabel.remove(id);
+		state.postsetEdgesByLabel.clear();
+		state.presetEdgesByLabel.clear();
 
 		if (initialState != null && initialState.getId().equals(id)) {
 			initialState = null;
@@ -995,27 +987,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 *         have the given label
 	 */
 	public Set<Arc> getPresetEdgesByLabel(State node, String label) {
-		Set<Arc> arcs = getPresetEdgesByLabelCache(node.getId()).get(label);
-		if (arcs == null) {
-			return Collections.emptySet();
-		}
-		return Collections.unmodifiableSet(arcs);
-	}
-
-	/**
-	 * Returns a map of labels to arc presets for the given node.
-	 *
-	 * @param targetNodeId
-	 *                all arc's source node id
-	 * @return a map of labels to sets of arcs
-	 */
-	private Map<String, Set<Arc>> getPresetEdgesByLabelCache(String targetNodeId) {
-		Map<String, Set<Arc>> result = presetEdgesByLabel.get(targetNodeId);
-		if (result == null) {
-			result = new HashMap<>();
-			presetEdgesByLabel.put(targetNodeId, result);
-		}
-		return result;
+		return node.getPresetEdgesByLabel(label);
 	}
 
 	/**
@@ -1050,27 +1022,7 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 *         have the given label
 	 */
 	public Set<Arc> getPostsetEdgesByLabel(State node, String label) {
-		Set<Arc> arcs = getPostsetEdgesByLabelCache(node.getId()).get(label);
-		if (arcs == null) {
-			return Collections.emptySet();
-		}
-		return Collections.unmodifiableSet(arcs);
-	}
-
-	/**
-	 * Returns a map of labels to arc sets for the given node.
-	 *
-	 * @param sourceNodeId
-	 *                all arc's source node id
-	 * @return a map of labels to sets of arcs
-	 */
-	private Map<String, Set<Arc>> getPostsetEdgesByLabelCache(String sourceNodeId) {
-		Map<String, Set<Arc>> result = postsetEdgesByLabel.get(sourceNodeId);
-		if (result == null) {
-			result = new HashMap<>();
-			postsetEdgesByLabel.put(sourceNodeId, result);
-		}
-		return result;
+		return node.getPostsetEdgesByLabel(label);
 	}
 
 	/**
@@ -1081,23 +1033,21 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 */
 	private void onArcAddedUpdateByLabelCache(Arc arc) {
 		// Update postset arc by label cache.
-		Map<String, Set<Arc>> postsetsByLabel = getPostsetEdgesByLabelCache(arc.getSourceId());
+		Map<String, Set<Arc>> postsetsByLabel = arc.getSource().postsetEdgesByLabel;
 		Set<Arc> postset = postsetsByLabel.get(arc.getLabel());
 		if (postset == null) {
 			postset = new HashSet<>();
 		}
 		postset.add(arc);
 		postsetsByLabel.put(arc.getLabel(), postset);
-		postsetEdgesByLabel.put(arc.getSourceId(), postsetsByLabel);
 		// Update preset arc by label cache.
-		Map<String, Set<Arc>> presetsByLabel = getPresetEdgesByLabelCache(arc.getTargetId());
+		Map<String, Set<Arc>> presetsByLabel = arc.getTarget().presetEdgesByLabel;
 		Set<Arc> preset = presetsByLabel.get(arc.getLabel());
 		if (preset == null) {
 			preset = new HashSet<>();
 		}
 		preset.add(arc);
 		presetsByLabel.put(arc.getLabel(), preset);
-		presetEdgesByLabel.put(arc.getTargetId(), presetsByLabel);
 	}
 
 	/**
@@ -1108,23 +1058,17 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 */
 	private void onArcRemovedUpdateByLabelCache(Arc arc) {
 		// Update postset arc by label cache.
-		Map<String, Set<Arc>> postsetsByLabel = getPostsetEdgesByLabelCache(arc.getSourceId());
+		Map<String, Set<Arc>> postsetsByLabel = arc.getSource().postsetEdgesByLabel;
 		Set<Arc> postset = postsetsByLabel.get(arc.getLabel());
-		if (postset == null) {
-			postset = new HashSet<>();
+		if (postset != null) {
+			postset.remove(arc);
 		}
-		postset.remove(arc);
-		postsetsByLabel.put(arc.getLabel(), postset);
-		postsetEdgesByLabel.put(arc.getSourceId(), postsetsByLabel);
 		// Update preset arc by label cache.
-		Map<String, Set<Arc>> presetsByLabel = getPresetEdgesByLabelCache(arc.getTargetId());
+		Map<String, Set<Arc>> presetsByLabel = arc.getTarget().presetEdgesByLabel;
 		Set<Arc> preset = presetsByLabel.get(arc.getLabel());
-		if (preset == null) {
-			preset = new HashSet<>();
+		if (preset != null) {
+			preset.remove(arc);
 		}
-		preset.remove(arc);
-		presetsByLabel.put(arc.getLabel(), preset);
-		presetEdgesByLabel.put(arc.getTargetId(), presetsByLabel);
 	}
 
 	/**

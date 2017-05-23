@@ -19,6 +19,9 @@
 
 package uniol.apt.adt.ts;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import uniol.apt.adt.Node;
@@ -28,6 +31,8 @@ import uniol.apt.adt.Node;
  * @author Dennis-Michael Borde, Manuel Gieseking
  */
 public class State extends Node<TransitionSystem, Arc, State> {
+	final Map<String, Set<Arc>> postsetEdgesByLabel = new HashMap<>();
+	final Map<String, Set<Arc>> presetEdgesByLabel = new HashMap<>();
 
 	/**
 	 * Constructor.
@@ -71,7 +76,10 @@ public class State extends Node<TransitionSystem, Arc, State> {
 	 *         have the given label
 	 */
 	public Set<Arc> getPresetEdgesByLabel(String label) {
-		return graph.getPresetEdgesByLabel(this, label);
+		Set<Arc> result = presetEdgesByLabel.get(label);
+		if (result == null)
+			return Collections.emptySet();
+		return Collections.unmodifiableSet(result);
 	}
 
 	/**
@@ -97,7 +105,10 @@ public class State extends Node<TransitionSystem, Arc, State> {
 	 *         label
 	 */
 	public Set<Arc> getPostsetEdgesByLabel(String label) {
-		return graph.getPostsetEdgesByLabel(this, label);
+		Set<Arc> result = postsetEdgesByLabel.get(label);
+		if (result == null)
+			return Collections.emptySet();
+		return Collections.unmodifiableSet(result);
 	}
 
 }
