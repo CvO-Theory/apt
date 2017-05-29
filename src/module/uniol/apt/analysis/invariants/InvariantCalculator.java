@@ -20,6 +20,7 @@
 package uniol.apt.analysis.invariants;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -256,50 +257,127 @@ public class InvariantCalculator {
 		}
 
 		// phase 2
-		Pair<Integer, List<Integer>> pair;
-		while ((pair = matB.getRowWithNegativeElement()) != null) {
+		// int iter=0; // debug/trace counter
+		// We want to work with columns in this part of the algorithm
+		// We add and remove columns all day => we want to switch to a column based representation
+		// order of rows is really irrelevant + columns which are identical up to scaling factor are useless
+		// let's use a set of columns.
+		Set<List<Integer>> colsB = new HashSet<>(2*matB.getColumnCount());
+		for (int i=0; i < matB.getColumnCount() ; i++) {
+			List<Integer> col = matB.getColumn(i);
+			normalize(col);
+			colsB.add(col);
+		}
+		
+		Set<List<Integer>> treated = new HashSet<>();
+		// loop breaks if the set of remaining columns is empty : no more negative values to consider
+		while (! colsB.isEmpty()) {
 			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
-			PpPm pppm = new PpPm(pair.getSecond());
-			List<Integer> row = pair.getSecond();
-			if (pppm.pPlus.size() > 0) {
-				for (Integer j : pppm.pPlus) {
-					for (Integer k : pppm.pMinus) {
+			
+			// columns which are positive on target row
+			List<List<Integer>> ppmPlus = null;
+			// columns which are neg on target row
+			List<List<Integer>> ppmMinus = null;
+			
+			BitSet negRows = new BitSet(matB.getRowCount());
+			
+			int minRow = -1 ;
+			int minRowWeight = -1;
+			int rowsize = colsB.iterator().next().size();
+			for (int row = 0; row < rowsize; ++row) {
+				int weight = 0;
+				List<List<Integer>> tmpMinus = new ArrayList<>();
+				List<List<Integer>> tmpPlus = new ArrayList<>();
+				
+				for (List<Integer> col : colsB) {
+					int val = col.get(row);
+					if (val < 0) {
+						tmpMinus.add(col);
+						weight++;
+						negRows.set(row);
+					} else if (val > 0) {
+						tmpPlus.add(col);
+						weight++;
+					}
+				}
+				if (! tmpMinus.isEmpty()) {
+					if (minRow == -1 || minRowWeight > weight) {
+						minRow = row;
+						minRowWeight = weight;
+						ppmMinus = tmpMinus;
+						ppmPlus = tmpPlus;
+					}
+				}
+			}
+			
+			int targetRow = minRow;
+			if (targetRow == -1) {
+				// no more negative rows to treat
+				break;
+			}
+			// cleanup
+			// int useless = 0; // debug/trace counter
+			for (List<Integer> col : colsB) {
+				boolean isok = true;
+				for (int negRow = negRows.nextSetBit(0) ; negRow >=0 ; negRow = negRows.nextSetBit(negRow+1)) {
+					if (col.get(negRow) != 0) {
+						isok = false;
+						break;
+					}
+				}
+				if (isok) {
+					treated.add(col);
+					// useless++;
+				}
+			}
+			// System.out.println("Removed "+useless+ " treated columns.");
+			colsB.removeAll(treated);
+						
+			for (List<Integer> col : colsB) {
+				int val = col.get(targetRow); 
+				if (val > 0) {
+					ppmPlus.add(col);
+				} else if (val <0) {
+					ppmMinus.add(col);
+				}
+			}
+			
+			if (! ppmPlus.isEmpty()) {
+				for (List<Integer> colj : ppmPlus) {
+					for (List<Integer> colk : ppmMinus) {
 						// operate a linear combination on the columns of indices j and k
 						// in order to geta  new column having the pair.getFirst element equal
 						// to zero
-						List<Integer> column = new ArrayList<>(row.size());
-						int a = -row.get(k);
-						int b = row.get(j);
-						List<Integer> ck = matB.getColumn(k);
-						List<Integer> cj = matB.getColumn(j);
-						for (int i = 0; i < ck.size(); i++) {
-							column.add(a * cj.get(i) + b * ck.get(i));
+						List<Integer> column = new ArrayList<>(colj.size());
+						int a = -colk.get(targetRow);
+						int b = colj.get(targetRow);
+						for (int i = 0; i < matB.getRowCount(); i++) {
+							column.add(a * colj.get(i) + b * colk.get(i));
 						}
+						// add normalization step : we don't need scalar scaling of each other
+						normalize(column);
 						// append column to matrix B
-						matB.appendColumn(column);
+						// tests existence 
+						colsB.add(column);
 					}
 				}
 				// Delete from B all the columns of index k \in P-
-				for (Integer idx : pppm.pMinus) {
-					matB.deleteColumn(idx);
-				}
+				colsB.removeAll(ppmMinus);
 			}
+			// System.out.println("Phase iter "+ (iter++) + " rows : " + colsB.iterator().next().size() + " cols " + colsB.size());
 		}
+		colsB.addAll(treated);
+		// System.out.println("Found "+ colsB.size() + " different invariants out of " + matB.getColumnCount());
+		return colsB;
+	}
 
-		// Phase 3: Retrieve Invariants (the columns)
-		Set<List<Integer>> result = new HashSet<>();
-		for (int i = 0; i < matB.getColumnCount(); ++i) {
-			List<Integer> invariants = matB.getColumn(i);
-			// Phase 4: Make them minimal
-			int gcd = MathTools.gcd(invariants);
-			if (gcd > 1) {
-				for (int j = 0; j < invariants.size(); ++j) {
-					invariants.set(j, invariants.get(j) / gcd);
-				}
+	private static void normalize(List<Integer> invariants) {
+		int gcd = MathTools.gcd(invariants);
+		if (gcd > 1) {
+			for (int j = 0; j < invariants.size(); ++j) {
+				invariants.set(j, invariants.get(j) / gcd);
 			}
-			result.add(invariants);
 		}
-		return result;
 	}
 
 	/**
