@@ -34,7 +34,7 @@ import uniol.apt.module.ModuleOutputSpec;
  *
  */
 public class ModuleOutputSpecImpl implements ModuleOutputSpec {
-	private final Map<String, ReturnValue> nameReturnValues = new LinkedHashMap<>();
+	public final Map<String, ReturnValue> nameReturnValues = new LinkedHashMap<>();
 
 	@Override
 	public void addReturnValue(String name, Class<?> klass,

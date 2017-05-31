@@ -32,8 +32,8 @@ import uniol.apt.module.exception.ModuleException;
  *
  */
 public class ModuleOutputImpl implements ModuleOutput {
-	private final Map<String, Object> nameReturnValues = new HashMap<>();
-	private final ModuleOutputSpecImpl spec;
+	public final Map<String, Object> nameReturnValues = new HashMap<>();
+	public final ModuleOutputSpecImpl spec;
 
 	public ModuleOutputImpl(ModuleOutputSpecImpl spec) {
 		this.spec = spec;
