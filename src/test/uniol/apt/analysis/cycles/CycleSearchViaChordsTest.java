@@ -173,7 +173,6 @@ public class CycleSearchViaChordsTest {
 			getCycles(ts);
 			throw new Exception("An exception should have been thrown");
 		} catch (NonDisjointCyclesException e) {
-			System.out.println(e.getPV1().toString() + e.getPV2());
 			ParikhVector pv3a = new ParikhVector("a", "a", "a");
 			ParikhVector pv2a = new ParikhVector("a", "a", "b", "c");
 			ParikhVector pv1a = new ParikhVector("a", "b", "c", "b", "c");
