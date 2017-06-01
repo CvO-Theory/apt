@@ -312,6 +312,13 @@ public class MarkingTest {
 		assertThat(pn.getInitialMarkingCopy(),
 				hasToString("[ [a:0] [b:1] [j:2] [k:3] [p1:OMEGA] [p42:42] [y:4] [z:5] ]"));
 	}
+
+	@Test
+	public void testValues() {
+		Marking m = createMarking(1, 43, OMEGA, 2);
+		assertThat(m.values(), containsInAnyOrder(
+					Token.valueOf(1), Token.valueOf(43), Token.OMEGA, Token.valueOf(2)));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

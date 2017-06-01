@@ -20,6 +20,7 @@
 package uniol.apt.adt.pn;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -422,6 +423,15 @@ public class Marking {
 			throw new NoSuchNodeException(net, p.getId());
 		}
 		return this.tokenList.get(idx);
+	}
+
+	/**
+	 * Return the tokens that appear in this marking.
+	 * @return A collection containing at least once each {@link Token} that appears as a value in this marking.
+	 */
+	public Collection<Token> values() {
+		ensureConsistency();
+		return Collections.unmodifiableList(tokenList);
 	}
 
 	/**
