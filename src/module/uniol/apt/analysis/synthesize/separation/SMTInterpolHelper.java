@@ -159,6 +159,8 @@ public class SMTInterpolHelper {
 			isRegion.addAll(requireBehaviourallyConflictFree(backwardWeight));
 		if (properties.isBinaryConflictFree())
 			isRegion.addAll(requireBinaryConflictFree(initialMarking, weight, backwardWeight));
+		if (properties.isEqualConflict())
+			isRegion.addAll(requireEqualConflict(utility.getTransitionSystem(), backwardWeight));
 
 		// Now we can define the "isRegion" function
 		Term isRegionTerm = collectTerms("and", isRegion.toArray(new Term[isRegion.size()]),
@@ -514,6 +516,19 @@ public class SMTInterpolHelper {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Add the necessary constraints to produce an equal-conflict (EC) Petri net. A Petri net is EC if is
+	 * homogeneous (all transitions consuming tokens from a place do so with the same weight) and transitions with
+	 * non-disjoint presets have the same preset.
+	 * @param ts The transition system that should be solved.
+	 * @param backwardWeight Terms representing the backwards weights of transitions.
+	 * @return The needed terms.
+	 */
+	private List<Term> requireEqualConflict(TransitionSystem ts, Term[] backwardWeight) {
+		/* XXX implement */
+		throw new AssertionError("unimplemented");
 	}
 
 	private Term collectTerms(String operation, Term[] terms, Term def) {

@@ -57,7 +57,7 @@ public abstract class AbstractSynthesizeModule extends AbstractInterruptibleModu
 		return "Supported options are: none, [k]-bounded, safe, [k]-marking, pure, plain, tnet,"
 			+ " generalized-marked-graph (gmg), marked-graph (mg), generalized-output-nonbranching (gon)"
 			+ " output-nonbranching (on), merge-free (mf), conflict-free (cf), homogeneous,"
-			+ " behaviourally-conflict-free (bcf), binary-conflict-free (bicf),"
+			+ " behaviourally-conflict-free (bcf), binary-conflict-free (bicf), equal-conflict (ec),"
 			+ " upto-language-equivalence (language, le), " + extraOptions + "minimize (minimal), verbose "
 			+ "and quick-fail.\n\nThe meaning of these options is as follows:\n"
 			+ " - none: No further requirements are made.\n"
@@ -80,6 +80,8 @@ public abstract class AbstractSynthesizeModule extends AbstractInterruptibleModu
 			+ " transitions is disjoint.\n"
 			+ " - binary-conflict-free: For every reachable marking and pair of activated transitions,"
 			+ " enough tokens for both transitions are present.\n"
+			+ " - equal-conflict: The Petri net is homogeneous and two transitions with non-disjoint"
+			+ " presets have equal presets.\n"
 			+ " - minimize: The Petri net has as few places as possible.\n"
 			+ extraOptionsDescriptions
 			+ "The following options only affect the output, but not the produced Petri net:\n"
@@ -323,6 +325,10 @@ public abstract class AbstractSynthesizeModule extends AbstractInterruptibleModu
 					case "binary-conflict-free":
 					case "bicf":
 						result = result.setBinaryConflictFree(true);
+						break;
+					case "equal-conflict":
+					case "ec":
+						result = result.setEqualConflict(true);
 						break;
 					default:
 						if (prop.endsWith("-bounded")) {

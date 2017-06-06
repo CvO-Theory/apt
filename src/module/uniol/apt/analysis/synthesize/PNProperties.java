@@ -44,6 +44,7 @@ public class PNProperties {
 	private boolean homogeneous = false;
 	private boolean behaviourallyConflictFree = false;
 	private boolean binaryConflictFree = false;
+	private boolean equalConflict = false;
 
 	/**
 	 * Create a new, empty Petri net properties instance.
@@ -69,6 +70,7 @@ public class PNProperties {
 		homogeneous = other.homogeneous;
 		behaviourallyConflictFree = other.behaviourallyConflictFree;
 		binaryConflictFree = other.binaryConflictFree;
+		equalConflict = other.equalConflict;
 	}
 
 	/**
@@ -350,6 +352,25 @@ public class PNProperties {
 	}
 
 	/**
+	 * Return true if this properties description requires an equal-conflict PN.
+	 * @return true if EC.
+	 */
+	public boolean isEqualConflict() {
+		return equalConflict;
+	}
+
+	/**
+	 * Create a new instance which differs from this one in the specified equal-conflictness requirement.
+	 * @param value whether EC should be required.
+	 * @return A new PNProperties which expresses the same properties as this instance, plus EC.
+	 */
+	public PNProperties setEqualConflict(boolean value) {
+		PNProperties result = new PNProperties(this);
+		result.equalConflict = value;
+		return result;
+	}
+
+	/**
 	 * Test if this properties instance a superset of another instance.
 	 * @param other The PNProperties instance to compare with.
 	 * @return True if all requirements done by the other instance are also enforced by this.
@@ -409,10 +430,12 @@ public class PNProperties {
 			hashCode |= 1 << 8;
 		if (binaryConflictFree)
 			hashCode |= 1 << 9;
+		if (equalConflict)
+			hashCode |= 1 << 10;
 		if (isKBounded())
-			hashCode |= getKForKBounded() << 10;
+			hashCode |= getKForKBounded() << 11;
 		if (isKMarking())
-			hashCode ^= getKForKMarking() << 11;
+			hashCode ^= getKForKMarking() << 12;
 		return hashCode;
 	}
 
@@ -444,6 +467,8 @@ public class PNProperties {
 		if (behaviourallyConflictFree != other.behaviourallyConflictFree)
 			return false;
 		if (binaryConflictFree != other.binaryConflictFree)
+			return false;
+		if (equalConflict != other.equalConflict)
 			return false;
 		return true;
 	}
