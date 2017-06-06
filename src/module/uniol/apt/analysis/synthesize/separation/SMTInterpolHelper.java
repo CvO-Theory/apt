@@ -27,6 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections4.collection.CompositeCollection;
+
 import de.uni_freiburg.informatik.ultimate.logic.Logics;
 import de.uni_freiburg.informatik.ultimate.logic.Script;
 import de.uni_freiburg.informatik.ultimate.logic.Term;
@@ -36,12 +38,16 @@ import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.SMTInterpol;
 import de.uni_freiburg.informatik.ultimate.smtinterpol.smtlib2.TerminationRequest;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
+import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
-import uniol.apt.util.interrupt.InterrupterRegistry;
 import uniol.apt.util.DifferentPairsIterable;
+import uniol.apt.util.DomainEquivalenceRelation;
+import uniol.apt.util.IEquivalenceRelation;
 import uniol.apt.util.Pair;
+import uniol.apt.util.interrupt.InterrupterRegistry;
+import static uniol.apt.util.DebugUtil.debug;
 
 /**
  * Helper class for solving separation problems.
@@ -160,7 +166,7 @@ public class SMTInterpolHelper {
 		if (properties.isBinaryConflictFree())
 			isRegion.addAll(requireBinaryConflictFree(initialMarking, weight, backwardWeight));
 		if (properties.isEqualConflict())
-			isRegion.addAll(requireEqualConflict(utility.getTransitionSystem(), backwardWeight));
+			isRegion.addAll(requireEqualConflict(utility, backwardWeight));
 
 		// Now we can define the "isRegion" function
 		Term isRegionTerm = collectTerms("and", isRegion.toArray(new Term[isRegion.size()]),
@@ -522,13 +528,60 @@ public class SMTInterpolHelper {
 	 * Add the necessary constraints to produce an equal-conflict (EC) Petri net. A Petri net is EC if is
 	 * homogeneous (all transitions consuming tokens from a place do so with the same weight) and transitions with
 	 * non-disjoint presets have the same preset.
-	 * @param ts The transition system that should be solved.
+	 * @param utility The region utility.
 	 * @param backwardWeight Terms representing the backwards weights of transitions.
 	 * @return The needed terms.
 	 */
-	private List<Term> requireEqualConflict(TransitionSystem ts, Term[] backwardWeight) {
-		/* XXX implement */
-		throw new AssertionError("unimplemented");
+	private List<Term> requireEqualConflict(RegionUtility utility, Term[] backwardWeight) {
+		if (backwardWeight.length == 0)
+			return Collections.emptyList();
+
+		TransitionSystem ts = utility.getTransitionSystem();
+		DomainEquivalenceRelation<String> relation = new DomainEquivalenceRelation<>(ts.getAlphabet());
+
+		// Begin with assuming that all events are equivalent
+		String someEvent = ts.getAlphabet().iterator().next();
+		for (String otherEvent : ts.getAlphabet())
+			relation.joinClasses(someEvent, otherEvent);
+
+		// Then refine this so that in the end only events are equivalent which are always enabled together
+		for (final State state : ts.getNodes()) {
+			relation = relation.refine(new IEquivalenceRelation<String>() {
+				@Override
+				public boolean isEquivalent(String event1, String event2) {
+					Set<State> postset1 = state.getPostsetNodesByLabel(event1);
+					Set<State> postset2 = state.getPostsetNodesByLabel(event2);
+					return postset1.isEmpty() == postset2.isEmpty();
+				}
+			});
+		}
+		debug("Enabling-equivalent transitions: ", relation);
+
+		// The postset of the region must be an equivalence class (or the empty set)
+		List<Term> result = new ArrayList<>();
+		List<String> eventList = utility.getEventList();
+		for (Set<String> equivalenceClass : new CompositeCollection<Set<String>>(relation,
+					Collections.singleton(Collections.<String>emptySet()))) {
+			Term[] current = new Term[eventList.size()];
+			Term pivot = null;
+			for (int index = 0; index < backwardWeight.length; index++) {
+				if (equivalenceClass.contains(utility.getEventList().get(index))) {
+					if (pivot == null) {
+						// The first event in the class must have non-zero backward weight
+						pivot = backwardWeight[index];
+						current[index] = script.term("<", script.numeral(BigInteger.ZERO), pivot);
+					} else {
+						// All other events in the class must have the same weight as pivot
+						current[index] = script.term("=", pivot, backwardWeight[index]);
+					}
+				} else {
+					// Events outside the class must have weight zero
+					current[index] = script.term("=", script.numeral(BigInteger.ZERO), backwardWeight[index]);
+				}
+			}
+			result.add(collectTerms("and", current, script.term("true")));
+		}
+		return Arrays.asList(collectTerms("or", result.toArray(new Term[0]), script.term("false")));
 	}
 
 	private Term collectTerms(String operation, Term[] terms, Term def) {
