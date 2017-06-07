@@ -32,6 +32,7 @@ import uniol.apt.analysis.bounded.BoundedResult;
 import uniol.apt.analysis.cf.ConflictFree;
 import uniol.apt.analysis.connectivity.Connectivity;
 import uniol.apt.analysis.fc.FreeChoice;
+import uniol.apt.analysis.fc.WeightedFreeChoice;
 import uniol.apt.analysis.fcnet.FCNet;
 import uniol.apt.analysis.homogeneous.Homogeneous;
 import uniol.apt.analysis.live.Live;
@@ -88,6 +89,7 @@ public class ExaminePNModule extends AbstractInterruptibleModule implements Inte
 		outputSpec.addReturnValue("pure", Boolean.class);
 		outputSpec.addReturnValue("nonpure_only_simple_side_conditions", Boolean.class);
 		outputSpec.addReturnValue("free_choice", Boolean.class);
+		outputSpec.addReturnValue("weighted_free_choice", Boolean.class);
 		outputSpec.addReturnValue("restricted_free_choice", Boolean.class);
 		outputSpec.addReturnValue("t_net", Boolean.class);
 		outputSpec.addReturnValue("s_net", Boolean.class);
@@ -136,6 +138,7 @@ public class ExaminePNModule extends AbstractInterruptibleModule implements Inte
 		output.setReturnValue("plain", Boolean.class, plain);
 		output.setReturnValue("pure", Boolean.class, Pure.checkPure(pn));
 		output.setReturnValue("nonpure_only_simple_side_conditions", Boolean.class, NonPure.checkNonPure(pn));
+		output.setReturnValue("weighted_free_choice", Boolean.class, new WeightedFreeChoice().check(pn));
 		if (plain) {
 			output.setReturnValue("free_choice", Boolean.class, new FreeChoice().check(pn));
 			output.setReturnValue("restricted_free_choice", Boolean.class, new FCNet(pn).check());
