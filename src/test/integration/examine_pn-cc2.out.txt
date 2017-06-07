@@ -6,6 +6,7 @@ num_tokens: 3
 plain: No
 pure: Yes
 nonpure_only_simple_side_conditions: No
+weighted_free_choice: Yes
 output_nonbranching: Yes
 merge_free: No
 k-marking: 1
