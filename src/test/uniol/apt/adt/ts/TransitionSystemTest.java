@@ -285,6 +285,27 @@ public class TransitionSystemTest {
 		}
 	}
 
+	@Test
+	public void testPostsetAfterEdgeRemoval() {
+		TransitionSystem ts = new TransitionSystem();
+		State states[] = ts.createStates("s", "t");
+		ts.createArc("s", "t", "a");
+		ts.createArc("s", "t", "b");
+
+		assertThat(states[0].getPostsetNodes(), contains(states[1]));
+		assertThat(states[1].getPresetNodes(), contains(states[0]));
+
+		ts.removeArc("s", "t", "a");
+
+		assertThat(states[0].getPostsetNodes(), contains(states[1]));
+		assertThat(states[1].getPresetNodes(), contains(states[0]));
+
+		ts.removeArc("s", "t", "b");
+
+		assertThat(states[0].getPostsetNodes(), emptyIterable());
+		assertThat(states[1].getPostsetNodes(), emptyIterable());
+	}
+
 }
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
 
