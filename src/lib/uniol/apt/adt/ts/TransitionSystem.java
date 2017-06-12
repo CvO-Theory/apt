@@ -33,6 +33,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.collections4.Bag;
+import org.apache.commons.collections4.bag.HashBag;
+
 import uniol.apt.adt.AbstractGraph;
 import uniol.apt.adt.CollectionToUnmodifiableSetAdapter;
 import uniol.apt.adt.IGraph;
@@ -56,8 +59,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	private final SortedMap<String, State> states = new TreeMap<>();
 	private final Map<String, InternalEvent> alphabet = new HashMap<>();
 	private final Set<Event> alphabetSet = new TreeSet<>();
-	private final Map<String, Set<State>> presetNodes = new SoftMap<>();
-	private final Map<String, Set<State>> postsetNodes = new SoftMap<>();
+	private final Map<String, Bag<State>> presetNodes = new SoftMap<>();
+	private final Map<String, Bag<State>> postsetNodes = new SoftMap<>();
 	private int numArcs = 0;
 	private State initialState = null;
 
@@ -155,11 +158,11 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 		source.postsetEdges.put(key, arc);
 		this.numArcs++;
 		//update pre- and postsets
-		Set<State> preNodes = presetNodes.get(target.getId());
+		Bag<State> preNodes = presetNodes.get(target.getId());
 		if (preNodes != null) {
 			preNodes.add(arc.getSource());
 		}
-		Set<State> postNodes = postsetNodes.get(source.getId());
+		Bag<State> postNodes = postsetNodes.get(source.getId());
 		if (postNodes != null) {
 			postNodes.add(arc.getTarget());
 		}
@@ -264,8 +267,8 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	private State addState(String id, State state) {
 		states.put(id, state);
 		// update pre- and postsets
-		presetNodes.put(id, new HashSet<State>());
-		postsetNodes.put(id, new HashSet<State>());
+		presetNodes.put(id, new HashBag<State>());
+		postsetNodes.put(id, new HashBag<State>());
 		invokeListeners();
 		return state;
 	}
@@ -397,13 +400,13 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 			throw new NoSuchEdgeException(this, sourceId, targetId);
 		}
 		// update pre- and postsets
-		Set<State> preNodes = presetNodes.get(targetId);
+		Bag<State> preNodes = presetNodes.get(targetId);
 		if (preNodes != null) {
-			preNodes.remove(states.get(sourceId));
+			preNodes.remove(states.get(sourceId), 1);
 		}
-		Set<State> postNodes = postsetNodes.get(sourceId);
+		Bag<State> postNodes = postsetNodes.get(sourceId);
 		if (postNodes != null) {
-			postNodes.remove(states.get(targetId));
+			postNodes.remove(states.get(targetId), 1);
 		}
 
 		// Update postsetByLabel cache.
@@ -769,15 +772,15 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 * @return the preset nodes of the given node.
 	 */
 	private Set<State> calcPresetNodes(String id) {
-		Set<State> pre = presetNodes.get(id);
+		Bag<State> pre = presetNodes.get(id);
 		if (pre == null) {
-			pre = new HashSet<>();
+			pre = new HashBag<>();
 			for (Arc a : this.getPresetEdges(id)) {
 				pre.add(a.getSource());
 			}
 			presetNodes.put(id, pre);
 		}
-		return pre;
+		return pre.uniqueSet();
 	}
 
 	/**
@@ -786,15 +789,15 @@ public class TransitionSystem extends AbstractGraph<TransitionSystem, Arc, State
 	 * @return the postset nodes of the given node.
 	 */
 	private Set<State> calcPostsetNodes(String id) {
-		Set<State> post = postsetNodes.get(id);
+		Bag<State> post = postsetNodes.get(id);
 		if (post == null) {
-			post = new HashSet<>();
+			post = new HashBag<>();
 			for (Arc a : this.getPostsetEdges(id)) {
 				post.add(a.getTarget());
 			}
 			postsetNodes.put(id, post);
 		}
-		return post;
+		return post.uniqueSet();
 	}
 
 	/**
