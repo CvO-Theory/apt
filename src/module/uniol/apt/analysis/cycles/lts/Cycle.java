@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2017 Uli Schlachter
+ * Copyright (C) 2017 Uli Schlachter, vsp
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.State;
+import uniol.apt.analysis.presynthesis.pps.Path;
 
 /**
  * Representation of a cycle as a list of nodes and the Parikh vector of the edges.
- * @author Uli Schlachter
+ * @author Uli Schlachter, vsp
  */
 public class Cycle extends CyclePV {
+	private final List<Arc> arcs;
 	private final List<State> nodes;
 
 	/**
@@ -38,9 +41,18 @@ public class Cycle extends CyclePV {
 	 * @param nodes The nodes that are on the cycle.
 	 * @param pv The Parikh vector of the cycle.
 	 */
-	public Cycle(List<State> nodes, ParikhVector pv) {
-		super(pv);
+	public Cycle(List<State> nodes, List<Arc> arcs) {
+		super(new ParikhVector(new Path(arcs).getLabels()));
+		this.arcs  = Collections.unmodifiableList(new ArrayList<>(arcs));
 		this.nodes = Collections.unmodifiableList(new ArrayList<>(nodes));
+	}
+
+	/**
+	 * Get the arcs which build this cycle.
+	 * @return The arcs which build this cycle.
+	 */
+	public List<Arc> getArcs() {
+		return arcs;
 	}
 
 	/**

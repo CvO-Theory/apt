@@ -41,7 +41,7 @@ import uniol.apt.analysis.exception.PreconditionFailedException;
  * This class computes smallest cycles and parikh vectors, checking if all smallest cycles having the same parikh
  * vector, or having the same or mutually disjoint parikh vectors.
  *
- * @author Chris, Manuel
+ * @author Chris, Manuel, vsp
  */
 public class ComputeSmallestCycles {
 	private CycleCounterExample counterExample; // Stored countercycles
@@ -104,12 +104,9 @@ public class ComputeSmallestCycles {
 		new CycleSearch().searchCycles(ts, new CycleCallback<TransitionSystem, Arc, State>() {
 			@Override
 			public void cycleFound(List<State> nodes, List<Arc> edges) {
-				List<String> edgeLabels = new ArrayList<>();
-				for (Arc edge : edges) {
-					edgeLabels.add(edge.getLabel());
-				}
-				ParikhVector pv = new ParikhVector(edgeLabels);
+				Cycle newCycle = new Cycle(nodes, edges);
 				if (smallest) {
+					ParikhVector pv = newCycle.getParikhVector();
 					Iterator<Cycle> iter = cycles.iterator();
 					while (iter.hasNext()) {
 						Cycle cycle = iter.next();
@@ -124,7 +121,7 @@ public class ComputeSmallestCycles {
 						}
 					}
 				}
-				cycles.add(new Cycle(nodes, pv));
+				cycles.add(newCycle);
 			}
 		});
 		return cycles;
