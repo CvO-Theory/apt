@@ -303,7 +303,7 @@ public class TestNetCollection {
 	}
 
 	/**
-	 * Construct a Petri net producing a concurrent diamond
+	 * Construct a Petri net producing a conflicting diamond
 	 *
 	 * @return PN:
 	 * <pre>

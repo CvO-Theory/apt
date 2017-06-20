@@ -57,7 +57,7 @@ public class TestTSCollection {
 
 	/**
 	 *
-	 * The transitions system:
+	 * The transition system:
 	 * <pre>
 	 * {@code
 	 *   [s]
@@ -86,7 +86,7 @@ public class TestTSCollection {
 
 	/**
 	 *
-	 * The transitions system:
+	 * The transition system:
 	 * <pre>
 	 * {@code
 	 *       a
@@ -113,7 +113,7 @@ public class TestTSCollection {
 
 	/**
 	 *
-	 * The transitions system:
+	 * The transition system:
 	 * <pre>
 	 * {@code
 	 * [s]-\
@@ -392,7 +392,7 @@ public class TestTSCollection {
 	}
 
 	/**
-	 * The transitions system:
+	 * The transition system:
 	 * <pre>
 	 * {@code
 	 *      a        b        c        a
@@ -421,7 +421,7 @@ public class TestTSCollection {
 	}
 
 	/**
-	 * The transitions system:
+	 * The transition system:
 	 * <pre>
 	 * {@code
 	 *      a        c        a        c
@@ -464,7 +464,7 @@ public class TestTSCollection {
 	}
 
 	/**
-	 * The transitions system:
+	 * The transition system:
 	 * <pre>
 	 * {@code
 	 *      a        c        a        c
@@ -500,7 +500,7 @@ public class TestTSCollection {
 	}
 
 	/**
-	 * The transitions system:
+	 * The transition system:
 	 * <pre>
 	 * {@code
 	 *      b
@@ -533,7 +533,7 @@ public class TestTSCollection {
 	}
 
 	/**
-	 * The transitions system:
+	 * The transition system:
 	 * <pre>
 	 * {@code
 	 *      a
@@ -562,7 +562,7 @@ public class TestTSCollection {
 	}
 
 	/**
-	 * The transitions system:
+	 * The transition system:
 	 * <pre>
 	 * {@code
 	 *      b
@@ -591,7 +591,7 @@ public class TestTSCollection {
 	}
 
 	/**
-	 * The transitions system:
+	 * The transition system:
 	 * <pre>
 	 * {@code
 	 *      b
@@ -621,7 +621,7 @@ public class TestTSCollection {
 	}
 
 	/**
-	 * The transitions system:
+	 * The transition system:
 	 * <pre>
 	 * {@code
 	 *      b
