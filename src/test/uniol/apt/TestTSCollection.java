@@ -764,6 +764,38 @@ public class TestTSCollection {
 
 		return ts;
 	}
+
+	/**
+	 * The transition system:
+	 * <pre>
+	 * {@code
+	 *      a
+	 * [0] ---> [1]
+	 *  ^ ^----/
+	 *  |   b
+	 * x|
+	 *  |   a
+	 * [2] ---> [3]
+	 * u| ^----/
+	 *  v   b
+	 * [4]
+	 * }
+	 * </pre>
+	 * @return The above TS
+	 */
+	public static TransitionSystem getFairWithUnreachableUnfairStateTS() {
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("s0", "s1", "s2", "s3", "s4");
+		ts.setInitialState("s0");
+
+		ts.createArc("s0", "s1", "a");
+		ts.createArc("s1", "s0", "b");
+		ts.createArc("s2", "s3", "a");
+		ts.createArc("s3", "s2", "b");
+		ts.createArc("s2", "s0", "x");
+		ts.createArc("s2", "s4", "u");
+		return ts;
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
