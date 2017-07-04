@@ -40,6 +40,7 @@ import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.synthesize.separation.UnsupportedPNPropertiesException;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * Calculate the minimal Petri Net over-approximation of a transition system.
@@ -85,6 +86,8 @@ public class OverapproximatePN {
 			iterations++;
 			debug();
 			debugFormat("Beginning iteration %d", iterations);
+
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 
 			SynthesizePN.Builder builder = SynthesizePN.Builder
 				.createForIsomorphicBehaviour(ts)
