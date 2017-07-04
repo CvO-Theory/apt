@@ -145,24 +145,6 @@ public class Matrix implements Iterable<List<Integer>> {
 	}
 
 	/**
-	 * Returns a row and it's index in this matrix which has at least one negative component. If such a row does not
-	 * exists, than null.
-	 * @return the index of row and the row itself, which has at least one negative component or null if not
-	 *         existent.
-	 */
-	public Pair<Integer, List<Integer>> getRowWithNegativeElement() {
-		for (int i = 0; i < lRows.size(); ++i) {
-			List<Integer> row = lRows.get(i);
-			for (Integer val : row) {
-				if (val < 0) {
-					return new Pair<>(i, row);
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Deletes the column with the given index from this matrix.
 	 * @param j - the index of the column which should be deleted.
 	 */
@@ -171,18 +153,6 @@ public class Matrix implements Iterable<List<Integer>> {
 			row.remove(j);
 		}
 		this.iCols -= 1;
-	}
-
-	/**
-	 * Appends a given column to this matrix. That means adding the given column from the right side to this matrix.
-	 * @param column - the column to append.
-	 */
-	public void appendColumn(List<Integer> column) {
-		assert iRows == column.size();
-		for (int i = 0; i < iRows; ++i) {
-			lRows.get(i).add(column.get(i));
-		}
-		this.iCols++;
 	}
 
 	/**
@@ -207,7 +177,7 @@ public class Matrix implements Iterable<List<Integer>> {
 
 	@Override
 	public String toString() {
-		return "Matrix{" + "lRows=" + lRows + '}';
+		return "Matrix{lRows=" + lRows + '}';
 	}
 }
 
