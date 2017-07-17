@@ -24,6 +24,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.output.FileWriterWithEncoding;
 
@@ -76,21 +78,20 @@ public class PetrifyLTSSynthesize {
 			}
 
 			Process p;
-			try {
-				if (sndParameter_ != null) {
-					if (sndParameter_.equals("dead")) {
-						p = new ProcessBuilder("petrify", "-nolog", "-p",
-								tmpAutFile.getAbsolutePath(), "-" + sndParameter_)
-							.start();
-					} else {
-						throw new FalseParameterException();
-					}
+			List<String> parameters = new ArrayList<>();
+			parameters.add("petrify");
+			parameters.add("-nolog");
+			parameters.add("-p");
+			parameters.add(tmpAutFile.getAbsolutePath());
+			if (sndParameter_ != null) {
+				if (sndParameter_.equals("dead")) {
+					parameters.add("-" + sndParameter_);
 				} else {
-					p = new ProcessBuilder("petrify", "-nolog", "-p", tmpAutFile.getAbsolutePath())
-						.start();
+					throw new FalseParameterException();
 				}
-			} catch (FalseParameterException e) {
-				throw new FalseParameterException();
+			}
+			try {
+				p = new ProcessBuilder(parameters).start();
 			} catch (Exception e) {
 				throw new PetrifyNotFoundException();
 			}
