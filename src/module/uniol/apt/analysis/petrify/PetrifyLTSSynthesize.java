@@ -93,7 +93,7 @@ public class PetrifyLTSSynthesize {
 			try {
 				p = new ProcessBuilder(parameters).start();
 			} catch (Exception e) {
-				throw new PetrifyNotFoundException();
+				throw new PetrifyNotFoundException(e);
 			}
 
 			try (InputStreamReader errorStream = new InputStreamReader(p.getErrorStream(), "UTF-8");

@@ -31,8 +31,8 @@ public class PetrifyNotFoundException extends ModuleException {
 	/**
 	 * Return exception if Petrify is not found
 	 */
-	public PetrifyNotFoundException() {
-		super("Petrify not found");
+	public PetrifyNotFoundException(Exception e) {
+		super("Petrify not found", e);
 	}
 }
 
