@@ -22,6 +22,7 @@ package uniol.apt.adt.matcher;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.FeatureMatcher;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.Marking;
@@ -30,6 +31,7 @@ import uniol.apt.adt.subgraph.SubEdge;
 import uniol.apt.adt.subgraph.SubNode;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
+import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.adt.INode;
 
 import uniol.apt.adt.pn.Node;
@@ -142,6 +144,28 @@ public class Matchers {
 
 	public static <T> Matcher<Marking> markingThatIs(Marking marking) {
 		return MarkingThatIsMatcher.markingThatIs(marking);
+	}
+
+	public static Matcher<TransitionSystem> tsWithInitialState(Matcher<? super State> matcher) {
+		return new FeatureMatcher<TransitionSystem, State>(matcher, "initial state", "initial state") {
+			@Override
+			protected State featureValueOf(TransitionSystem ts) {
+				return ts.getInitialState();
+			}
+		};
+	}
+
+	public static Matcher<TransitionSystem> tsWithInitialState(String id) {
+		return tsWithInitialState(nodeWithID(id));
+	}
+
+	public static Matcher<TransitionSystem> tsWith(Matcher<Iterable<? extends Arc>> matcher) {
+		return new FeatureMatcher<TransitionSystem, Iterable<Arc>>(matcher, "arcs", "arcs") {
+			@Override
+			protected Iterable<Arc> featureValueOf(TransitionSystem ts) {
+				return ts.getEdges();
+			}
+		};
 	}
 }
 

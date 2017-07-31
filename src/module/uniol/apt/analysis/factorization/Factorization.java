@@ -118,23 +118,23 @@ public class Factorization {
 		Set<String> t2 = new HashSet<>(ts.getAlphabet());
 		t2.removeAll(tPrime);
 
-		factor1 = createFactor(t1);
-		factor2 = createFactor(t2);
+		factor1 = createFactor(ts, t1);
+		factor2 = createFactor(ts, t2);
 	}
 
 	/**
 	 * Creates and returns a single factor with the given label set.
 	 *
-	 * @param labels
-	 *                the label set for this factor
+	 * @param ts the transition system whose factor should be computed
+	 * @param labels the label set for this factor
 	 * @return the factor TS
 	 */
-	private TransitionSystem createFactor(Set<String> labels) {
+	static TransitionSystem createFactor(TransitionSystem ts, Set<String> labels) {
 		String initId = ts.getInitialState().getId();
 		TransitionSystem result = new TransitionSystem();
 		// Copy states that are generally reachable from the initial
 		// state with the label set.
-		for (State state : getGenerallyReachableFromInitialStateByLabels(labels)) {
+		for (State state : getGenerallyReachableFromInitialStateByLabels(ts, labels)) {
 			result.createState(state.getId());
 		}
 		// Set initial state.
@@ -150,7 +150,7 @@ public class Factorization {
 		return result;
 	}
 
-	private Set<State> getGenerallyReachableFromInitialStateByLabels(Set<String> labels) {
+	static private Set<State> getGenerallyReachableFromInitialStateByLabels(TransitionSystem ts, Set<String> labels) {
 		TransitionSystem modTs = TransitionSystemFilter.retainArcsByLabel(ts, labels);
 		return Connectivity.getWeaklyConnectedComponent(modTs.getInitialState());
 	}
