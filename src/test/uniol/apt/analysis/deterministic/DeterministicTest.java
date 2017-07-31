@@ -34,49 +34,38 @@ import uniol.apt.adt.ts.TransitionSystem;
  *
  */
 public class DeterministicTest {
+	private static void assertDeterministic(Deterministic deterministic) {
+		assertTrue(deterministic.isDeterministic());
+		assertNull(deterministic.getNode());
+		assertNull(deterministic.getLabel());
+	}
 
 	@Test
 	public void testSingleStateTS() {
 		TransitionSystem ts = TestTSCollection.getSingleStateTS();
 
-		Deterministic deterministic = new Deterministic(ts);
-
-		assertTrue(deterministic.isDeterministic());
-		assertNull(deterministic.getNode());
-		assertNull(deterministic.getLabel());
+		assertDeterministic(new Deterministic(ts));
 	}
 
 	@Test
 	public void testThreeStatesTwoEdgesTS() {
 		TransitionSystem ts = TestTSCollection.getThreeStatesTwoEdgesTS();
 
-		Deterministic deterministic = new Deterministic(ts);
-
-		assertTrue(deterministic.isDeterministic());
-		assertNull(deterministic.getNode());
-		assertNull(deterministic.getLabel());
+		assertDeterministic(new Deterministic(ts));
 	}
 
 	@Test
 	public void testTwoStateCycleSameLabelTS() {
 		TransitionSystem ts = TestTSCollection.getTwoStateCycleSameLabelTS();
 
-		Deterministic deterministic = new Deterministic(ts);
-
-		assertTrue(deterministic.isDeterministic());
-		assertNull(deterministic.getNode());
-		assertNull(deterministic.getLabel());
+		assertDeterministic(new Deterministic(ts));
 	}
 
 	@Test
 	public void testSingleStateLoopTS() {
 		TransitionSystem ts = TestTSCollection.getSingleStateLoop();
 
-		Deterministic deterministic = new Deterministic(ts);
-
-		assertTrue(deterministic.isDeterministic());
-		assertNull(deterministic.getNode());
-		assertNull(deterministic.getLabel());
+		assertDeterministic(new Deterministic(ts));
 	}
 
 	@Test
