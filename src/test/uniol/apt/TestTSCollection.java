@@ -170,6 +170,20 @@ public class TestTSCollection {
 		return ts;
 	}
 
+	public static TransitionSystem getNonBackwardsDeterministicTS() {
+		TransitionSystem ts = new TransitionSystem();
+
+		State s0 = ts.createState("s0");
+		State s1 = ts.createState("s1");
+		State s2 = ts.createState("s2");
+
+		ts.setInitialState(s0);
+
+		ts.createArc(s1, s0, "a");
+		ts.createArc(s2, s0, "a");
+		return ts;
+	}
+
 	public static TransitionSystem getPersistentTS() {
 		TransitionSystem ts = new TransitionSystem();
 

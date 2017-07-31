@@ -71,6 +71,7 @@ public class ExamineLTSModule extends AbstractInterruptibleModule implements Int
 		outputSpec.addReturnValue("num_arcs", Integer.class);
 		outputSpec.addReturnValue("num_labels", Integer.class);
 		outputSpec.addReturnValue("deterministic", Boolean.class);
+		outputSpec.addReturnValue("backwards_deterministic", Boolean.class);
 		outputSpec.addReturnValue("persistent", Boolean.class);
 		outputSpec.addReturnValue("backwards_persistent", Boolean.class);
 		outputSpec.addReturnValue("totally_reachable", Boolean.class);
@@ -86,6 +87,7 @@ public class ExamineLTSModule extends AbstractInterruptibleModule implements Int
 	public void run(ModuleInput input, ModuleOutput output) throws ModuleException {
 		TransitionSystem lts = input.getParameter("lts", TransitionSystem.class);
 		Deterministic det = new Deterministic(lts);
+		Deterministic bDet = new Deterministic(lts, false);
 		PersistentTS per = new PersistentTS(lts);
 		PersistentTS backwardsPer = new PersistentTS(lts, true);
 		TotallyReachable tot = new TotallyReachable(lts);
@@ -94,6 +96,7 @@ public class ExamineLTSModule extends AbstractInterruptibleModule implements Int
 		output.setReturnValue("num_arcs", Integer.class, lts.getEdges().size());
 		output.setReturnValue("num_labels", Integer.class, lts.getAlphabet().size());
 		output.setReturnValue("deterministic", Boolean.class, det.isDeterministic());
+		output.setReturnValue("backwards_deterministic", Boolean.class, bDet.isDeterministic());
 		output.setReturnValue("persistent", Boolean.class, per.isPersistent());
 		output.setReturnValue("backwards_persistent", Boolean.class, backwardsPer.isPersistent());
 		output.setReturnValue("totally_reachable", Boolean.class, tot.isTotallyReachable());

@@ -45,6 +45,7 @@ public class DeterministicTest {
 		TransitionSystem ts = TestTSCollection.getSingleStateTS();
 
 		assertDeterministic(new Deterministic(ts));
+		assertDeterministic(new Deterministic(ts, false));
 	}
 
 	@Test
@@ -52,6 +53,7 @@ public class DeterministicTest {
 		TransitionSystem ts = TestTSCollection.getThreeStatesTwoEdgesTS();
 
 		assertDeterministic(new Deterministic(ts));
+		assertDeterministic(new Deterministic(ts, false));
 	}
 
 	@Test
@@ -59,6 +61,7 @@ public class DeterministicTest {
 		TransitionSystem ts = TestTSCollection.getTwoStateCycleSameLabelTS();
 
 		assertDeterministic(new Deterministic(ts));
+		assertDeterministic(new Deterministic(ts, false));
 	}
 
 	@Test
@@ -66,6 +69,7 @@ public class DeterministicTest {
 		TransitionSystem ts = TestTSCollection.getSingleStateLoop();
 
 		assertDeterministic(new Deterministic(ts));
+		assertDeterministic(new Deterministic(ts, false));
 	}
 
 	@Test
@@ -73,6 +77,25 @@ public class DeterministicTest {
 		TransitionSystem ts = TestTSCollection.getNonDeterministicTS();
 
 		Deterministic deterministic = new Deterministic(ts);
+
+		assertFalse(deterministic.isDeterministic());
+
+		assertNotNull(deterministic.getNode());
+		assertEquals(deterministic.getNode().getId(), "s0");
+
+		assertNotNull(deterministic.getLabel());
+		assertEquals(deterministic.getLabel(), "a");
+
+		assertDeterministic(new Deterministic(ts, false));
+	}
+
+	@Test
+	public void testNonBackwardsDeterministicTS() {
+		TransitionSystem ts = TestTSCollection.getNonBackwardsDeterministicTS();
+
+		assertDeterministic(new Deterministic(ts));
+
+		Deterministic deterministic = new Deterministic(ts, false);
 
 		assertFalse(deterministic.isDeterministic());
 

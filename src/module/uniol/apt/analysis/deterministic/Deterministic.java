@@ -48,8 +48,19 @@ public class Deterministic {
 	 *                transition system to check
 	 */
 	public Deterministic(TransitionSystem ts) {
+		this(ts, true);
+	}
+
+	/**
+	 * Creates a new {@link Deterministic} instance that operates on the
+	 * given transition system.
+	 *
+	 * @param ts transition system to check
+	 * @param forward If true, forward determinism is checked, else backward determinism.
+	 */
+	public Deterministic(TransitionSystem ts, boolean forward) {
 		this.ts = ts;
-		check();
+		check(forward);
 	}
 
 	static private class StateNameWithLabel {
@@ -93,17 +104,18 @@ public class Deterministic {
 	/**
 	 * Compute the values deterministic, label and node.
 	 */
-	private void check() {
+	private void check(boolean forward) {
 		Set<StateNameWithLabel> statesLabels = new HashSet<StateNameWithLabel>();
 
 		for (Arc arc : ts.getEdges()) {
 			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
-			StateNameWithLabel stateLabel = new StateNameWithLabel(arc.getSourceId(), arc.getLabel());
+			String state = forward ? arc.getSourceId() : arc.getTargetId();
+			StateNameWithLabel stateLabel = new StateNameWithLabel(state, arc.getLabel());
 
 			if (statesLabels.contains(stateLabel)) {
 				deterministic = false;
 				label = stateLabel.label;
-				node = arc.getSource();
+				node = forward ? arc.getSource() : arc.getTarget();
 				return;
 			}
 
