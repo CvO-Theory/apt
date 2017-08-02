@@ -1,6 +1,7 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
  * Copyright (C) 2016 Jonas Prellberg
+ * Copyright (C) 2017 Uli Schlachter, vsp
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +20,21 @@
 
 package uniol.apt.analysis.factorization;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.connectivity.Connectivity;
-import uniol.apt.util.interrupt.InterrupterRegistry;
+import uniol.apt.util.Pair;
 import uniol.apt.util.PowerSet;
+import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
  * A class to test if a LTS is a product. It allows to compute the factors as
@@ -130,29 +136,48 @@ public class Factorization {
 	 * @return the factor TS
 	 */
 	static TransitionSystem createFactor(TransitionSystem ts, Set<String> labels) {
-		String initId = ts.getInitialState().getId();
-		TransitionSystem result = new TransitionSystem();
-		// Copy states that are generally reachable from the initial
-		// state with the label set.
-		for (State state : getGenerallyReachableFromInitialStateByLabels(ts, labels)) {
-			result.createState(state.getId());
-		}
-		// Set initial state.
-		result.setInitialState(initId);
-		// Copy arcs that start and end in the correct state set and
-		// have the correct label.
-		for (Arc arc : ts.getEdges()) {
-			if (labels.contains(arc.getLabel()) && result.containsState(arc.getSourceId())
-					&& result.containsState(arc.getTargetId())) {
-				result.createArc(arc.getSourceId(), arc.getTargetId(), arc.getLabel());
-			}
-		}
-		return result;
+		return new TSFactor(ts, labels).factor;
 	}
 
-	static private Set<State> getGenerallyReachableFromInitialStateByLabels(TransitionSystem ts, Set<String> labels) {
-		TransitionSystem modTs = TransitionSystemFilter.retainArcsByLabel(ts, labels);
-		return Connectivity.getWeaklyConnectedComponent(modTs.getInitialState());
+	static private class TSFactor {
+		private final TransitionSystem factor = new TransitionSystem();
+		private final Deque<Pair<State, State>> queue = new ArrayDeque<>();
+		private final Map<State, State> mapped = new HashMap<>();
+
+		private TSFactor(TransitionSystem ts, Set<String> labels) {
+			this.factor.setInitialState(addState(ts.getInitialState()));
+
+			while (!queue.isEmpty()) {
+				Pair<State, State> pair = queue.pop();
+				State originalState = pair.getFirst();
+				State newState = pair.getSecond();
+
+				for (Arc a : originalState.getPostsetEdges()) {
+					if (labels.contains(a.getLabel())) {
+						Arc newArc = factor.createArc(newState, addState(a.getTarget()),
+								a.getLabel());
+						newArc.copyExtensions(a);
+					}
+				}
+				for (Arc a : originalState.getPresetEdges()) {
+					if (labels.contains(a.getLabel())) {
+						// If this state is already known, do nothing. If this state is new, we
+						// will eventually follow its arcs in forward direction.
+						addState(a.getSource());
+					}
+				}
+			}
+		}
+
+		private State addState(State originalState) {
+			State newState = mapped.get(originalState);
+			if (newState == null) {
+				newState = factor.createState(originalState);
+				mapped.put(originalState, newState);
+				queue.push(new Pair<>(originalState, newState));
+			}
+			return newState;
+		}
 	}
 
 	private boolean isGdiamAndSeparated(Collection<String> tPrime) {
