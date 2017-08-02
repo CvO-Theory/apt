@@ -242,6 +242,30 @@ public final class SeparationUtility {
 	 */
 	static public Synthesizer createSynthesizerInstance(RegionUtility utility, PNProperties properties,
 			boolean onlyEventSeparation, boolean quickFail) throws MissingLocationException {
+		return createSynthesizerInstance(utility, properties, onlyEventSeparation, quickFail, true);
+	}
+
+	/**
+	 * Construct a new Synthesizer instance.
+	 * @param utility The region utility to use.
+	 * @param properties Properties that the calculated region should satisfy.
+	 * @param onlyEventSeparation A flag indicating that state separation should be ignored.
+	 * @param quickFail If true, stop the calculation as soon as it is known that it won't be successful. If false,
+	 * try to solve all separation problems. Only if true will the list of failed problems be fully filled.
+	 * @param tryToFactorize Try to factorize the input before actual synthesis begins.
+	 * @return A suitable Separation instance
+	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
+	 */
+	static public Synthesizer createSynthesizerInstance(RegionUtility utility, PNProperties properties,
+			boolean onlyEventSeparation, boolean quickFail, boolean tryToFactorize)
+			throws MissingLocationException {
+		if (quickFail && tryToFactorize) {
+			// Try to factorize the input
+			Synthesizer result = new FactorisationSynthesizer().createSynthesizer(utility,
+					properties, onlyEventSeparation);
+			if (result != null)
+				return result;
+		}
 		Separation result = createSeparationInstance(utility, properties);
 		if (result instanceof Synthesizer)
 			return (Synthesizer) result;

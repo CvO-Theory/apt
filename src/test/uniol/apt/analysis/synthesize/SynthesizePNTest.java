@@ -736,6 +736,22 @@ public class SynthesizePNTest {
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 		assertThat(synth.wasSuccessfullySeparated(), is(false));
 	}
+
+	@Test
+	public void testFactorisable() throws Exception {
+		TransitionSystem ts = new TransitionSystem();
+		ts.setInitialState(ts.createState("s"));
+		ts.createArc("s", "s", "a");
+		ts.createArc("s", "s", "b");
+
+		SynthesizePN synth = new SynthesizePN(new RegionUtility(ts), new PNProperties(), false, null, true,
+				Collections.<Region>emptySet());
+
+		assertThat(synth.wasSuccessfullySeparated(), is(true));
+		assertThat(synth.getSeparatingRegions(), empty());
+		assertThat(synth.getFailedStateSeparationProblems(), empty());
+		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
