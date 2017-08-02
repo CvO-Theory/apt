@@ -23,12 +23,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.analysis.exception.PreconditionFailedException;
+import uniol.apt.analysis.exception.NonDeterministicException;
 import uniol.apt.analysis.factorization.SynthesisFactorisation;
 import uniol.apt.analysis.synthesize.MissingLocationException;
 import uniol.apt.analysis.synthesize.PNProperties;
@@ -89,12 +90,9 @@ class FactorisationSynthesizer {
 		Set<TransitionSystem> factors;
 		try {
 			factors = new SynthesisFactorisation().factorize(utility.getTransitionSystem());
-		} catch (PreconditionFailedException e) {
+		} catch (NonDeterministicException e) {
 			// Definitely not PN-synthesisable; might be factorisable, who knows?
-			// TODO: The only precondition that can fail here are backward/forward determinism. This
-			// immediately gives us a failed SSP instance. Since we are doing quick-fail synthesis, that is
-			// enough to conclude that the input is not synthesisable.
-			return null;
+			return new NonDeterministicSynthesizer(e);
 		}
 
 		if (factors.size() <= 1)
@@ -195,6 +193,47 @@ class FactorisationSynthesizer {
 		@Override
 		public Collection<Set<State>> getUnsolvableStateSeparationProblems() {
 			return unsolvableSSP;
+		}
+	}
+
+	static private class NonDeterministicSynthesizer implements Synthesizer {
+		private final State state1;
+		private final State state2;
+
+		public NonDeterministicSynthesizer(NonDeterministicException e) {
+			Set<State> set;
+			if (e.isForwardsCounterExample())
+				set = e.getNode().getPostsetNodesByLabel(e.getLabel());
+			else
+				set = e.getNode().getPresetNodesByLabel(e.getLabel());
+
+			Iterator<State> it = set.iterator();
+
+			assert it.hasNext();
+			state1 = it.next();
+
+			assert it.hasNext();
+			state2 = it.next();
+
+			assert !state1.equals(state2);
+		}
+
+		@Override
+		public Collection<Region> getSeparatingRegions() {
+			return Collections.emptySet();
+		}
+
+		@Override
+		public Map<String, Set<State>> getUnsolvableEventStateSeparationProblems() {
+			return Collections.emptyMap();
+		}
+
+		@Override
+		public Collection<Set<State>> getUnsolvableStateSeparationProblems() {
+			Set<State> result = new HashSet<>();
+			result.add(state1);
+			result.add(state2);
+			return Collections.singleton(result);
 		}
 	}
 }

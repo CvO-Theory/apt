@@ -28,7 +28,7 @@ import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.deterministic.Deterministic;
-import uniol.apt.analysis.exception.PreconditionFailedException;
+import uniol.apt.analysis.exception.NonDeterministicException;
 import uniol.apt.util.DifferentPairsIterable;
 import uniol.apt.util.DomainEquivalenceRelation;
 import uniol.apt.util.Pair;
@@ -86,14 +86,12 @@ public class SynthesisFactorisation {
 		}
 	}
 
-	public Set<TransitionSystem> factorize(TransitionSystem ts) throws PreconditionFailedException {
+	public Set<TransitionSystem> factorize(TransitionSystem ts) throws NonDeterministicException {
 		DomainEquivalenceRelation<String> eq = new DomainEquivalenceRelation<>(ts.getAlphabet());
 
 		// Step 0: Check preconditions
-		if (!new Deterministic(ts, true).isDeterministic())
-			throw new PreconditionFailedException("input is not deterministic");
-		if (!new Deterministic(ts, false).isDeterministic())
-			throw new PreconditionFailedException("input is not backward deterministic");
+		new Deterministic(ts, true).throwIfNonDeterministic();
+		new Deterministic(ts, false).throwIfNonDeterministic();
 
 		// Step 1: Use gdiam and local separation to construct an equivalence relation
 		for (State s : ts.getNodes()) {

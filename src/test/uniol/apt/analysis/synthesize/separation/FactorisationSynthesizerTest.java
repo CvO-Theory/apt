@@ -56,11 +56,30 @@ public class FactorisationSynthesizerTest {
 
 	@Test
 	public void testNonDeterministic() throws Exception {
-		// This fails already early: Factorisation throws a PreconditionFailedException
+		// This fails already early: Factorisation throws a NonDeterministicException
 		TransitionSystem ts = TestTSCollection.getNonDeterministicTS();
 		RegionUtility utility = new RegionUtility(ts);
-		assertThat(new FactorisationSynthesizer(null).createSynthesizer(utility, properties, false),
-				nullValue());
+		FactorisationSynthesizer synthesizer = new FactorisationSynthesizer(null);
+		Synthesizer result = synthesizer.createSynthesizer(utility, properties, true);
+
+		assertThat(result.getSeparatingRegions(), empty());
+		assertThat(result.getUnsolvableEventStateSeparationProblems().entrySet(), emptyIterable());
+		assertThat(result.getUnsolvableStateSeparationProblems(),
+				contains(containsInAnyOrder(ts.getNode("s1"), ts.getNode("s2"))));
+	}
+
+	@Test
+	public void testNonBackwardsDeterministic() throws Exception {
+		// This fails already early: Factorisation throws a NonDeterministicException
+		TransitionSystem ts = TestTSCollection.getNonBackwardsDeterministicTS();
+		RegionUtility utility = new RegionUtility(ts);
+		FactorisationSynthesizer synthesizer = new FactorisationSynthesizer(null);
+		Synthesizer result = synthesizer.createSynthesizer(utility, properties, true);
+
+		assertThat(result.getSeparatingRegions(), empty());
+		assertThat(result.getUnsolvableEventStateSeparationProblems().entrySet(), emptyIterable());
+		assertThat(result.getUnsolvableStateSeparationProblems(),
+				contains(containsInAnyOrder(ts.getNode("s1"), ts.getNode("s2"))));
 	}
 
 	class SuccessfulSynthesizerFactory implements FactorisationSynthesizer.SynthesizerFactory {
