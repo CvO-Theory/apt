@@ -242,7 +242,8 @@ public final class SeparationUtility {
 	 */
 	static public Synthesizer createSynthesizerInstance(RegionUtility utility, PNProperties properties,
 			boolean onlyEventSeparation, boolean quickFail) throws MissingLocationException {
-		return createSynthesizerInstance(utility, properties, onlyEventSeparation, quickFail, true);
+		boolean tryToFactorize = !Boolean.getBoolean("apt.separation.skipFactorisation");
+		return createSynthesizerInstance(utility, properties, onlyEventSeparation, quickFail, tryToFactorize);
 	}
 
 	/**
