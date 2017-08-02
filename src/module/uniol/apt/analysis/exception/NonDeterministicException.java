@@ -19,6 +19,7 @@
 
 package uniol.apt.analysis.exception;
 
+import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 
 /**
@@ -29,14 +30,66 @@ import uniol.apt.adt.ts.TransitionSystem;
 public class NonDeterministicException extends PreconditionFailedException {
 	public static final long serialVersionUID = 1L;
 
+	private final TransitionSystem ts;
+	private final State node;
+	private final String label;
+	private final boolean direction;
+
 	/**
 	 * Constructor creates a new NonDeterministicException saying that the given TransitionSystem is
 	 * non-deterministic.
 	 * @param ts A non-deterministic transition system.
+	 * @param node The node where the transition system is not deterministic.
+	 * @param label The label where the transition system is not deterministic.
+	 * @param direction True if forward determinism does not hold, else false.
 	 */
-	public NonDeterministicException(TransitionSystem ts) {
+	public NonDeterministicException(TransitionSystem ts, State node, String label, boolean direction) {
 		super("Transition system " + ts.getName() + " is non-deterministic, only deterministic inputs are"
 				+ "(currently) supported.");
+		this.ts = ts;
+		this.node = node;
+		this.label = label;
+		this.direction = direction;
+	}
+
+	/**
+	 * Get the transition system which was not deterministic.
+	 * @return The transition system
+	 */
+	public TransitionSystem getTS() {
+		return ts;
+	}
+
+	/**
+	 * Get the node where the transition system was not deterministic.
+	 * @return The node
+	 */
+	public State getNode() {
+		return node;
+	}
+
+	/**
+	 * Get the label where the transition system was not deterministic.
+	 * @return The label.
+	 */
+	public String getLabel() {
+		return label;
+	}
+
+	/**
+	 * Was a counter-example to forward-determinism found?
+	 * @return true if yes
+	 */
+	public boolean isForwardsCounterExample() {
+		return direction;
+	}
+
+	/**
+	 * Was a counter-example to backward-determinism found?
+	 * @return true if yes
+	 */
+	public boolean isBackwardsCounterExample() {
+		return direction;
 	}
 }
 

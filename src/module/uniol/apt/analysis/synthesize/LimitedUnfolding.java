@@ -71,8 +71,7 @@ public class LimitedUnfolding  {
 	 * @throws NonDeterministicException When the input ts is non-deterministic.
 	 */
 	static public TransitionSystem calculateLimitedUnfolding(TransitionSystem ts) throws NonDeterministicException {
-		if (!new Deterministic(ts).isDeterministic())
-			throw new NonDeterministicException(ts);
+		new Deterministic(ts).throwIfNonDeterministic();
 
 		TransitionSystem unfolding = new TransitionSystem("Limited unfolding of " + ts.getName());
 		Deque<DFSState> stack = new LinkedList<>();

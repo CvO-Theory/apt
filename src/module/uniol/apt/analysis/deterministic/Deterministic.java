@@ -25,6 +25,7 @@ import java.util.Set;
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
+import uniol.apt.analysis.exception.NonDeterministicException;
 import uniol.apt.util.interrupt.InterrupterRegistry;
 
 /**
@@ -39,6 +40,7 @@ public class Deterministic {
 	private boolean deterministic = false;
 	private String label = null;
 	private State node = null;
+	private boolean forward;
 
 	/**
 	 * Creates a new {@link Deterministic} instance that operates on the
@@ -60,7 +62,8 @@ public class Deterministic {
 	 */
 	public Deterministic(TransitionSystem ts, boolean forward) {
 		this.ts = ts;
-		check(forward);
+		this.forward = forward;
+		check();
 	}
 
 	static private class StateNameWithLabel {
@@ -104,7 +107,7 @@ public class Deterministic {
 	/**
 	 * Compute the values deterministic, label and node.
 	 */
-	private void check(boolean forward) {
+	private void check() {
 		Set<StateNameWithLabel> statesLabels = new HashSet<StateNameWithLabel>();
 
 		for (Arc arc : ts.getEdges()) {
@@ -125,6 +128,17 @@ public class Deterministic {
 		deterministic = true;
 		label = null;
 		node = null;
+	}
+
+	/**
+	 * Throw a {@link NonDeterministicException} if the labeled transition system is not deterministic, else do
+	 * nothing.
+	 * @throws NonDeterministicException If the transition system is not deterministic.
+	 */
+	public void throwIfNonDeterministic() throws NonDeterministicException {
+		if (deterministic)
+			return;
+		throw new NonDeterministicException(ts, node, label, forward);
 	}
 
 	/**

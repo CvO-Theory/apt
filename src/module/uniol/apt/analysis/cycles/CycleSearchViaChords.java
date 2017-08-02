@@ -49,8 +49,7 @@ import uniol.apt.util.interrupt.InterrupterRegistry;
  */
 public class CycleSearchViaChords {
 	public Set<ParikhVector> searchCycles(TransitionSystem ts) throws PreconditionFailedException {
-		if (!new Deterministic(ts).isDeterministic())
-			throw new NonDeterministicException(ts);
+		new Deterministic(ts).throwIfNonDeterministic();
 		if (!new TotallyReachable(ts).isTotallyReachable())
 			throw new PreconditionFailedException("Transition system " + ts.getName() +
 					" is not totally reachable, only totally reachable inputs are allowed");

@@ -97,9 +97,8 @@ public class ExtendDeterministicPersistent {
 	 */
 	public Collection<Set<Pair<State, String>>> extendTs(TransitionSystem ts, int maxPhase2Rounds) throws
 			NoFiniteExtensionPossibleException, NonDeterministicException, MustLeadToSameStateException {
-		Deterministic deterministic = new Deterministic(ts);
-		if (!deterministic.isDeterministic())
-			throw new NonDeterministicException(ts);
+		new Deterministic(ts).throwIfNonDeterministic();
+
 		int rounds    = 0;
 		int phase2Ctr = 0;
 		Collection<Set<Pair<State, String>>> eqRel;
