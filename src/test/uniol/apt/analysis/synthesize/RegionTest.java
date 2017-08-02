@@ -261,6 +261,29 @@ public class RegionTest {
 		assertThat(region2, not(equalTo(region)));
 	}
 
+	@Test
+	public void testCopyRegionDifferentEventList() {
+		TransitionSystem ts1 = TestTSCollection.getThreeStatesTwoEdgesTS();
+		TransitionSystem ts2 = TestTSCollection.getPathTS();
+
+		RegionUtility utility1 = new RegionUtility(ts1);
+		RegionUtility utility2 = new RegionUtility(ts2);
+
+		int a = utility1.getEventIndex("a");
+		int b = utility1.getEventIndex("b");
+
+		Region region1 = new Region.Builder(utility1, makeVector(a, 0, b, 1), makeVector(a, 7, b, 1)).withInitialMarking(BigInteger.ONE);
+		Region region2 = Region.Builder.copyRegionToUtility(utility2, region1);
+
+		assertThat(region1.getRegionUtility(), is(utility1));
+		assertThat(region2.getRegionUtility(), is(utility2));
+		assertThat(region2.getInitialMarking(), is(equalTo(BigInteger.ONE)));
+		assertThat(region1, is(impureRegionWithWeights(Arrays.asList("a", "b"),
+						asBigIntegerList(0, 7, 1, 1))));
+		assertThat(region2, is(impureRegionWithWeights(Arrays.asList("a", "b", "c"),
+						asBigIntegerList(0, 7, 1, 1, 0, 0))));
+	}
+
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testCopyRegionFailure() {
 		RegionUtility utility = new RegionUtility(TestTSCollection.getPathTS());

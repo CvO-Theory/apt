@@ -478,20 +478,30 @@ public class Region {
 		}
 
 		/**
-		 * Create a copy of a region for a different RegionUtility. The given utility and the utility used by
-		 * the given region must have the same event list!
+		 * Create a copy of a region for a different RegionUtility. Every event used by the given region's
+		 * utility must be available in the given utility!
 		 * @param utility The utility to use.
 		 * @param region The region to copy to the given utility.
-		 * @return A new region with the same weights and initial token count as the given region, but refering
+		 * @return A new region with the same weights and initial token count as the given region, but referring
 		 * to the given region utility.
-		 * @throws IllegalArgumentException When the event lists are different.
+		 * @throws IllegalArgumentException When the event lists are incompatible.
 		 */
 		static public Region copyRegionToUtility(RegionUtility utility, Region region) {
-			if (!utility.getEventList().equals(region.utility.getEventList()))
-				throw new IllegalArgumentException("The given utility does not have the "
-						+ " same event list as the given region's utility");
-			return new Region(utility, region.backwardWeights, region.forwardWeights,
-					region.initialMarking);
+			if (utility.getEventList().equals(region.utility.getEventList()))
+				return new Region(utility, region.backwardWeights, region.forwardWeights,
+						region.initialMarking);
+
+			Builder builder = new Builder(utility);
+			List<String> regionEventList = region.utility.getEventList();
+			for (int index = 0; index < regionEventList.size(); index++) {
+				int newIndex = utility.getEventIndex(regionEventList.get(index));
+				if (newIndex < 0)
+					throw new IllegalArgumentException("The given region utility does not have "
+							+ "event '" + regionEventList.get(index) + "'");
+				builder.forwardList.set(newIndex, region.forwardWeights.get(index));
+				builder.backwardList.set(newIndex, region.backwardWeights.get(index));
+			}
+			return builder.withInitialMarking(region.initialMarking);
 		}
 	}
 }
