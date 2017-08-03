@@ -201,9 +201,16 @@ public final class SeparationUtility {
 			// Ignore, try the other implementations
 		}
 		try {
-			if (result == null)
+			if (result == null && false)
 				result = new MarkedGraphSeparation(utility, properties, locationMap);
 		} catch (UnsupportedPNPropertiesException e) {
+			// Ignore, try the other implementations
+		}
+		try {
+			if (result == null)
+				result = new OutputNonbranchingSeparation(utility, properties, locationMap);
+		} catch (UnsupportedPNPropertiesException e) {
+			System.err.println("ON separation threw exception");
 			// Ignore, try the other implementations
 		}
 		try {
