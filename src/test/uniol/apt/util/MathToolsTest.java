@@ -42,6 +42,48 @@ public class MathToolsTest {
 	}
 
 	@Test
+	public void testGCDArray() {
+		assertEquals(MathTools.gcd(), 0);
+		assertEquals(MathTools.gcd(0), 0);
+		assertEquals(MathTools.gcd(-42), 42);
+		assertEquals(MathTools.gcd(2*3*5*7*11, 2, 3, 5, 7, 11), 1);
+		assertEquals(MathTools.gcd(10, 20, 25), 5);
+
+		// Make sure we really call the array version
+		int[] array = new int[2];
+		array[0] = array[1] = -42;
+		assertEquals(MathTools.gcd(array), 42);
+
+		array[0] = 0;
+		array[1] = -42;
+		assertEquals(MathTools.gcd(array), 42);
+
+		array[0] = -42;
+		array[1] = 0;
+		assertEquals(MathTools.gcd(array), 42);
+
+		array[0] = 15;
+		array[1] = 5;
+		assertEquals(MathTools.gcd(array), 5);
+
+		array[0] = 17;
+		array[1] = 5;
+		assertEquals(MathTools.gcd(array), 1);
+
+		array[0] = -17;
+		array[1] = 5;
+		assertEquals(MathTools.gcd(array), 1);
+
+		array[0] = 17;
+		array[1] = -5;
+		assertEquals(MathTools.gcd(array), 1);
+
+		array[0] = -17;
+		array[1] = -5;
+		assertEquals(MathTools.gcd(array), 1);
+	}
+
+	@Test
 	public void testMod() {
 		assertEquals(-11 % 5, -1);
 		assertEquals(MathTools.mod(-11, 5), 4);

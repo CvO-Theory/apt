@@ -53,6 +53,20 @@ public class MathTools {
 	}
 
 	/**
+	 * Calculates the gcd of a given list of integers.
+	 * @param set the integers to calculate the gcd from.
+	 * @return the gcd of the integers of the given set.
+	 */
+	public static int gcd(int... set) {
+		if (set.length == 0)
+			return 0;
+		int gcd = Math.abs(set[0]);
+		for (int i = 1; i < set.length; i++)
+			gcd = gcd(gcd, set[i]);
+		return gcd;
+	}
+
+	/**
 	 * Calculates the gcd of two integers.
 	 * @param a - first integer for calculating the gcd.
 	 * @param b - second integer for calculating the gcd.
