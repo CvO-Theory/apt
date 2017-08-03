@@ -59,11 +59,14 @@ public class MathTools {
 	 * @return the gcd of the two given integers.
 	 */
 	public static int gcd(int a, int b) {
-		if (a < b) {
-			return BigInteger.valueOf(b).gcd(BigInteger.valueOf(a)).intValue();
-		} else {
-			return BigInteger.valueOf(a).gcd(BigInteger.valueOf(b)).intValue();
+		a = Math.abs(a);
+		b = Math.abs(b);
+		while (a != 0) {
+			int tmp = a;
+			a = b % a;
+			b = tmp;
 		}
+		return b;
 	}
 
 	/**
