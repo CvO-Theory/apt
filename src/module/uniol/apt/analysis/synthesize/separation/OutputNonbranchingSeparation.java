@@ -69,6 +69,7 @@ import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.util.MathTools;
+import uniol.apt.util.Pair;
 import uniol.apt.util.SpanningTree;
 import uniol.apt.util.interrupt.InterrupterRegistry;
 
@@ -84,8 +85,13 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 	private final RegionUtility utility;
 	private final TransitionSystem ts;
 
+	// The Parikh vectors of small cycles (but entry 0 is null)
 	private final List<ParikhVector> smallCyclesPVs = new ArrayList<>();
+
+	// The labels of small cycles (but entry 0 contains labels not appearing on cycles)
 	private final List<Set<String>> cycleLabels = new ArrayList<>();
+
+	private final Map<State, ParikhVector> distanceCache = new HashMap<>();
 
 	private final List<Region> regions = new ArrayList<>();
 
@@ -176,12 +182,33 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 	}
 
 	private ParikhVector getDistance(State state) {
-		// TODO: Cache?
-		try {
-			return toParikhVector(utility.getEventList(), utility.getReachingParikhVector(state));
-		} catch (UnreachableException e) {
-			throw new RuntimeException("Found an unreachable state in a totally reachable lts?!");
+		ParikhVector result = distanceCache.get(state);
+		if (result != null)
+			return result;
+
+		SpanningTree<TransitionSystem, Arc, State> tree = utility.getSpanningTree();
+		Deque<Pair<State, String>> pending = new ArrayDeque<>();
+		State current = state;
+		while (result == null) {
+			Arc predecessor = tree.getPredecessorEdge(current);
+			if (predecessor == null) {
+				// Reached the initial state
+				result = new ParikhVector();
+				distanceCache.put(current, result);
+				break;
+			}
+
+			pending.addLast(new Pair<State, String>(current, predecessor.getLabel()));
+			current = predecessor.getSource();
+			result = distanceCache.get(state);
 		}
+		while (!pending.isEmpty()) {
+			Pair<State, String> pair = pending.removeLast();
+			result = result.add(pair.getSecond());
+			distanceCache.put(pair.getFirst(), result);
+		}
+		distanceCache.put(state, result);
+		return result;
 	}
 
 	static private ParikhVector toParikhVector(List<String> events, List<BigInteger> vector) {
