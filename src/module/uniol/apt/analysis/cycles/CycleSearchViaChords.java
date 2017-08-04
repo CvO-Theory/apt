@@ -144,8 +144,9 @@ public class CycleSearchViaChords {
 	// state is the Parikh vector of its reaching path according to the spanning tree.
 	private ParikhVector getPV(SpanningTree<TransitionSystem, Arc, State> tree, Arc chord)
 			throws PreconditionFailedException {
-		ParikhVector pv1 = getPV(tree, chord.getSource()).add(chord.getLabel());
-		ParikhVector pv2 = getPV(tree, chord.getTarget());
+		State commonAncestor = findCommonAncestor(tree, chord.getSource(), chord.getTarget());
+		ParikhVector pv1 = getPV(tree, chord.getSource(), commonAncestor).add(chord.getLabel());
+		ParikhVector pv2 = getPV(tree, chord.getTarget(), commonAncestor);
 		// Check that pv1 >= pv2, i.e. no negative entries would occur in pv1 - pv2
 		ParikhVector.Comparison comp = pv1.compare(pv2);
 		if (!comp.equals(ParikhVector.Comparison.GREATER_THAN) &&
@@ -172,18 +173,50 @@ public class CycleSearchViaChords {
 		return pv1.residual(pv2);
 	}
 
+	// Find the last common ancestor of the given states in the spanning tree
+	private State findCommonAncestor(SpanningTree<TransitionSystem, Arc, State> tree, State state1, State state2) {
+		Set<State> predecessors1 = new HashSet<>();
+		Set<State> predecessors2 = new HashSet<>();
+		predecessors1.add(state1);
+		predecessors2.add(state2);
+
+		while (true) {
+			if (state1 != null) {
+				state1 = tree.getPredecessor(state1);
+				if (predecessors2.contains(state1))
+					return state1;
+				predecessors1.add(state1);
+			}
+
+			if (state2 != null) {
+				state2 = tree.getPredecessor(state2);
+				if (predecessors1.contains(state2))
+					return state2;
+				predecessors2.add(state2);
+			}
+		}
+	}
+
 	// Get the Parikh vector that reaches the given state in the given tree.
 	private ParikhVector getPV(SpanningTree<TransitionSystem, Arc, State> tree, State state) {
+		return getPV(tree, state, null);
+	}
+
+	// Get the Parikh vector that goes from upTo to state in the given tree.
+	// This function assumes that such a path exists!
+	private ParikhVector getPV(SpanningTree<TransitionSystem, Arc, State> tree, State state, State upTo) {
 		Map<String, Integer> result = new HashMap<>();
 		Arc arc = tree.getPredecessorEdge(state);
-		while (arc != null) {
+		// Since we already checked total reachability: arc == null means we reached the initial state
+		while (arc != null && !state.equals(upTo)) {
 			String label = arc.getLabel();
 			Integer value = result.get(label);
 			if (value == null)
 				result.put(label, 1);
 			else
 				result.put(label, value + 1);
-			arc = tree.getPredecessorEdge(arc.getSource());
+			state = arc.getSource();
+			arc = tree.getPredecessorEdge(state);
 		}
 		return new ParikhVector(result);
 	}
