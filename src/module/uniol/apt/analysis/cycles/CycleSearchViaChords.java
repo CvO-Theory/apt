@@ -174,10 +174,18 @@ public class CycleSearchViaChords {
 
 	// Get the Parikh vector that reaches the given state in the given tree.
 	private ParikhVector getPV(SpanningTree<TransitionSystem, Arc, State> tree, State state) {
-		ParikhVector result = new ParikhVector();
-		for (Arc arc : tree.getEdgePathFromStart(state))
-			result = result.add(arc.getLabel());
-		return result;
+		Map<String, Integer> result = new HashMap<>();
+		Arc arc = tree.getPredecessorEdge(state);
+		while (arc != null) {
+			String label = arc.getLabel();
+			Integer value = result.get(label);
+			if (value == null)
+				result.put(label, 1);
+			else
+				result.put(label, value + 1);
+			arc = tree.getPredecessorEdge(arc.getSource());
+		}
+		return new ParikhVector(result);
 	}
 
 	// Find the state reached by 'firing' the given Parikh vector. This assumes that such a state exists!
