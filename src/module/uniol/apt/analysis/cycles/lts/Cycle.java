@@ -39,7 +39,7 @@ public class Cycle extends CyclePV {
 	/**
 	 * Construct a new instance of this class from the given data.
 	 * @param nodes The nodes that are on the cycle.
-	 * @param pv The Parikh vector of the cycle.
+	 * @param arcs The arcs of the cycle.
 	 */
 	public Cycle(List<State> nodes, List<Arc> arcs) {
 		super(new ParikhVector(new Path(arcs).getLabels()));

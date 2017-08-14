@@ -96,7 +96,7 @@ public class Fairness {
 	private final Set<Cycle> cycles;
 
 	/**
-	 * Construct an instance to check fairness on a given {@Link TransitionSystem}
+	 * Construct an instance to check fairness on a given {@link TransitionSystem}
 	 *
 	 * @param ts The transition system on which fairness should be checked.
 	 */
