@@ -175,6 +175,18 @@ public class MinimizePNTest {
 		when(synth.wasSuccessfullySeparated()).thenReturn(false);
 		new MinimizePN(synth);
 	}
+
+	@Test
+	public void testON() throws Exception {
+		PNProperties properties = new PNProperties().setOutputNonbranching(true);
+		TransitionSystem ts = makeTS(Arrays.asList("a"));
+		SynthesizePN synth = mockSynthesize(ts, properties, 2);
+		MinimizePN min = new MinimizePN(synth);
+
+		// This tests the code for a solution with 0 regions
+		assertThat(min.getSeparatingRegions(), hasSize(1));
+		testSolution(properties, synth, min);
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
