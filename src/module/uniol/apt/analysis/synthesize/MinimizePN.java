@@ -146,7 +146,8 @@ public class MinimizePN {
 		SMTInterpolHelper helper;
 
 		try {
-			helper = new SMTInterpolHelper(utility, properties,
+			// getLocationMap() handles output-nonbranching
+			helper = new SMTInterpolHelper(utility, properties.setOutputNonbranching(false),
 					SeparationUtility.getLocationMap(utility, properties));
 		} catch (MissingLocationException e) {
 			throw new RuntimeException("Previous synthesis was successful "
