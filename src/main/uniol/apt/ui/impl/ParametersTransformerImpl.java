@@ -83,6 +83,8 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 	@Override
 	public Object transform(String arg, Class<?> klass) throws ModuleException {
 		ParameterTransformation<?> transformation = transformations.get(klass);
+		if (transformation == null)
+			throw new NoSuchTransformationException(klass);
 		AptParameterTransformation annotation = transformation.getClass()
 				.getAnnotation(AptParameterTransformation.class);
 		if (annotation.fileSource()) {
