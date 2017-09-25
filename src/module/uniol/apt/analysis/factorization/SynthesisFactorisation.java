@@ -93,7 +93,7 @@ public class SynthesisFactorisation {
 		new Deterministic(ts, true).throwIfNonDeterministic();
 		new Deterministic(ts, false).throwIfNonDeterministic();
 
-		// Step 1: Use gdiam and local separation to construct an equivalence relation
+		// Step 1: Use gdiam to construct an equivalence relation
 		for (State s : ts.getNodes()) {
 			for (Pair<IntermediateState, IntermediateState> arcPair : new DifferentPairsIterable<>(getArcsWithDirection(s))) {
 				IntermediateState imState1 = arcPair.getFirst();
@@ -103,16 +103,10 @@ public class SynthesisFactorisation {
 				if (eq.isEquivalent(imState1.getLabel(), imState2.getLabel()))
 					continue;
 
-				// check local separation
-				if (imState1.getState().equals(imState2.getState()) && !s.equals(imState1.getState())) {
+				State state1 = imState1.getSuccessorOfState(imState2.getState());
+				State state2 = imState2.getSuccessorOfState(imState1.getState());
+				if (state1 == null || !state1.equals(state2)) {
 					eq.joinClasses(imState1.getLabel(), imState2.getLabel());
-				} else {
-					// Local separation holds; next check gdiam
-					State state1 = imState1.getSuccessorOfState(imState2.getState());
-					State state2 = imState2.getSuccessorOfState(imState1.getState());
-					if (state1 == null || !state1.equals(state2)) {
-						eq.joinClasses(imState1.getLabel(), imState2.getLabel());
-					}
 				}
 			}
 
