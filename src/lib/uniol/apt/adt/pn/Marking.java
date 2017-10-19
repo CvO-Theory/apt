@@ -76,6 +76,7 @@ public class Marking {
 			this.placesList = m.placesList;
 			this.tokenList = new ArrayList<>(m.tokenList);
 		} else {
+			m.ensureConsistency();
 			this.placesList = this.net.getPlacesList();
 			this.tokenList = new ArrayList<>(Collections.nCopies(this.placesList.size(), Token.ZERO));
 			for (int idx = 0; idx < m.placesList.size(); idx++) {
