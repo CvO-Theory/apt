@@ -291,6 +291,19 @@ public class PetriNetTest {
 		pn.createTransitions("t0", "t1");
 		pn.createFlow("t0", "t1");
 	}
+
+	@Test
+	public void testCopyAfterDelete() {
+		PetriNet pn = new PetriNet();
+		pn.createPlace("p").setInitialToken(42);
+		pn.removePlace("p");
+
+		// At this point, the initial marking of pn still contains "p". The next call to ensureConsistency()
+		// would clean that up, but let's instead copy the Petri net, which threw an exception at some point.
+
+		PetriNet copy = new PetriNet(pn);
+		assertTrue(copy.getNodes().isEmpty());
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
