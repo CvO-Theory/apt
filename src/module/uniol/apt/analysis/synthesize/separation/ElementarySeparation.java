@@ -39,7 +39,6 @@ import uniol.apt.analysis.synthesize.RegionUtility;
 import uniol.apt.util.interrupt.InterrupterRegistry;
 
 import static uniol.apt.util.DebugUtil.debug;
-import static uniol.apt.util.DebugUtil.debugFormat;
 
 /**
  * This class solves separation problems producing elementary Petri nets (plain, pure, safe). The algorithm is based on
@@ -162,12 +161,12 @@ class ElementarySeparation implements Separation {
 				// No unassigned label found, do we have a solution?
 				Region result = region.extractValidRegion();
 				if (result != null) {
-					debugFormat("Extracted region %s from %s", result, region);
+					debug("Extracted region ", result, " from ", region);
 					return result;
 				}
-				debug("No unassigned label found, skipping this rough region");
+				debug("No unassigned label found, skipping rough region ", region);
 			} else {
-				debugFormat("Splitting the rough region on label %s", label);
+				debug("Splitting the rough region on label ", label);
 				RoughRegion enter = new RoughRegion(region);
 				RoughRegion exit = new RoughRegion(region);
 				RoughRegion inside = null;
@@ -399,7 +398,7 @@ class ElementarySeparation implements Separation {
 				return false;
 
 			Operation op = labelOperations.get(label);
-			debugFormat("Refining %s on label %s with operation %s", this, utility.getEventList().get(label), op);
+			debug("Refining ", this, " on label ", utility.getEventList().get(label), " with operation ", op);
 
 			assert op != null;
 			for (Arc arc : arcsWithLabel.get(label)) {
@@ -413,7 +412,7 @@ class ElementarySeparation implements Separation {
 			if (state == null)
 				return false;
 
-			debugFormat("Refining %s on state %s which is in=%s", this, state, statesInRegion.get(state));
+			debug("Refining ", this, " on state ", state, " which is in=", statesInRegion.get(state));
 			for (Arc arc : state.getNeighboringEdges()) {
 				Boolean sourceInRegion = statesInRegion.get(arc.getSource());
 				Boolean targetInRegion = statesInRegion.get(arc.getTarget());
