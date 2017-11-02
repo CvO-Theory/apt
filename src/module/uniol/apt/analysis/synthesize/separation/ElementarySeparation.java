@@ -54,6 +54,11 @@ class ElementarySeparation implements Separation {
 	private final boolean pure;
 	private final String[] locationMap;
 
+	// This array contains all event indices, but in an "optimised" order. The heuristic here is that it is bad if
+	// we assign operations to labels which are not near to each other in the lts. To avoid that, we assign
+	// operations to events based on the order in this array, where "nearby" events are close to each other.
+	private final int[] eventOrder;
+
 	/**
 	 * Construct a new instance for solving separation problems.
 	 * @param utility The region utility to use.
@@ -92,6 +97,41 @@ class ElementarySeparation implements Separation {
 			int index = utility.getEventIndex(arc.getLabel());
 			arcsWithLabel.get(index).add(arc);
 		}
+
+		eventOrder = new int[utility.getNumberOfEvents()];
+		assignEventOrder();
+	}
+
+	// Do a depth-first-search through the lts to produce a good(?) event order.
+	private void assignEventOrder() {
+		Set<State> seen = new HashSet<>();
+		Deque<State> toDo = new ArrayDeque<>();
+		Set<String> assigned = new HashSet<>();
+
+		int nextIndex = 0;
+		toDo.add(utility.getTransitionSystem().getInitialState());
+		while (!toDo.isEmpty()) {
+			State state = toDo.peekFirst();
+			boolean found = false;
+			for (Arc arc : state.getPostsetEdges()) {
+				// Was this event assigned yet?
+				if (assigned.add(arc.getLabel())) {
+					eventOrder[nextIndex++] = utility.getEventIndex(arc.getLabel());
+				}
+				// Was the target of this arc visited yet?
+				if (seen.add(arc.getTarget())) {
+					toDo.addFirst(arc.getTarget());
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				State otherState = toDo.removeFirst();
+				assert state == otherState;
+			}
+		}
+		// All events should appear in the eventOrder
+		assert nextIndex == eventOrder.length;
 	}
 
 	@Override
@@ -341,7 +381,7 @@ class ElementarySeparation implements Separation {
 		 * @return An unassigned label
 		 */
 		public String getUnassignedLabel() {
-			for (int i = 0; i < utility.getNumberOfEvents(); i++)
+			for (int i : eventOrder)
 				if (labelOperations.get(i) == null)
 					return utility.getEventList().get(i);
 			return null;
