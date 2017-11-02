@@ -21,9 +21,12 @@ package uniol.apt.analysis.synthesize.separation;
 
 import java.math.BigInteger;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,7 +50,7 @@ class ElementarySeparation implements Separation {
 	static private final BigInteger MINUS_ONE = BigInteger.valueOf(-1);
 
 	private final RegionUtility utility;
-	private final Map<String, Set<Arc>> arcsWithlabel = new HashMap<>();
+	private final List<Set<Arc>> arcsWithLabel = new ArrayList<>();
 	private final boolean pure;
 	private final String[] locationMap;
 
@@ -81,14 +84,13 @@ class ElementarySeparation implements Separation {
 			throw new UnsupportedPNPropertiesException();
 		}
 
-		// Compute arcsWithlabel for quickly accessing all arcs with some label
+		// Compute arcsWithLabel for quickly accessing all arcs with some label
+		for (int i = 0; i < utility.getNumberOfEvents(); i++) {
+			arcsWithLabel.add(new HashSet<Arc>());
+		}
 		for (Arc arc : utility.getTransitionSystem().getEdges()) {
-			Set<Arc> set = arcsWithlabel.get(arc.getLabel());
-			if (set == null) {
-				set = new HashSet<>();
-				arcsWithlabel.put(arc.getLabel(), set);
-			}
-			set.add(arc);
+			int index = utility.getEventIndex(arc.getLabel());
+			arcsWithLabel.get(index).add(arc);
 		}
 	}
 
@@ -288,13 +290,13 @@ class ElementarySeparation implements Separation {
 		private final Map<State, Boolean> statesInRegion;
 
 		// Maps labels to the operation that they do on this region
-		private final Map<String, Operation> labelOperations;
+		private final List<Operation> labelOperations;
 
 		// States which were assigned in statesInRegion and which might cause further changes
 		private final Deque<State> statesToHandle = new ArrayDeque<>();
 
 		// Labels which were assigned in labelOperations and which might cause further changes
-		private final Deque<String> labelsToHandle = new ArrayDeque<>();
+		private final Deque<Integer> labelsToHandle = new ArrayDeque<>();
 
 		// If this is not null, at least one event exits from this region, this is the location of this event
 		// If another event with another location wants to leave this region, the region becomes inconsistent
@@ -308,7 +310,8 @@ class ElementarySeparation implements Separation {
 		 */
 		public RoughRegion() {
 			statesInRegion = new HashMap<>();
-			labelOperations = new HashMap<>();
+			labelOperations = new ArrayList<>(
+					Collections.<Operation>nCopies(utility.getEventList().size(), null));
 		}
 
 		/**
@@ -317,7 +320,7 @@ class ElementarySeparation implements Separation {
 		 */
 		public RoughRegion(RoughRegion other) {
 			statesInRegion = new HashMap<>(other.statesInRegion);
-			labelOperations = new HashMap<>(other.labelOperations);
+			labelOperations = new ArrayList<>(other.labelOperations);
 			statesToHandle.addAll(other.statesToHandle);
 			labelsToHandle.addAll(other.labelsToHandle);
 			location = other.location;
@@ -338,9 +341,9 @@ class ElementarySeparation implements Separation {
 		 * @return An unassigned label
 		 */
 		public String getUnassignedLabel() {
-			for (String label : utility.getTransitionSystem().getAlphabet())
-				if (!labelOperations.containsKey(label))
-					return label;
+			for (int i = 0; i < utility.getNumberOfEvents(); i++)
+				if (labelOperations.get(i) == null)
+					return utility.getEventList().get(i);
 			return null;
 		}
 
@@ -366,13 +369,14 @@ class ElementarySeparation implements Separation {
 		 * @param op The operation to assign to the label
 		 */
 		public void setLabelOperation(String label, Operation op) {
-			Operation oldOp = labelOperations.put(label, op);
+			int index = utility.getEventIndex(label);
+			Operation oldOp = labelOperations.set(index, op);
 			if (oldOp == null)
-				labelsToHandle.add(label);
+				labelsToHandle.add(index);
 			else if (!oldOp.equals(op))
 				inconsistent = true;
 			if (op.equals(Operation.EXIT) || op.equals(Operation.INSIDE)) {
-				String newLocation = locationMap[utility.getEventIndex(label)];
+				String newLocation = locationMap[index];
 				if (location == null)
 					location = newLocation;
 				else if (!location.equals(newLocation))
@@ -389,15 +393,15 @@ class ElementarySeparation implements Separation {
 		}
 
 		private boolean refineOnLabel() {
-			String label = labelsToHandle.poll();
+			Integer label = labelsToHandle.poll();
 			if (label == null)
 				return false;
 
 			Operation op = labelOperations.get(label);
-			debugFormat("Refining %s on label %s with operation %s", this, label, op);
+			debugFormat("Refining %s on label %s with operation %s", this, utility.getEventList().get(label), op);
 
 			assert op != null;
-			for (Arc arc : arcsWithlabel.get(label)) {
+			for (Arc arc : arcsWithLabel.get(label)) {
 				op.refineStates(this, arc, statesInRegion);
 			}
 			return true;
@@ -415,7 +419,8 @@ class ElementarySeparation implements Separation {
 				if (targetInRegion == null || sourceInRegion == null) {
 					// Perhaps we can now assign based on DONT_CROSS?
 					assert targetInRegion != null || sourceInRegion != null;
-					if (Operation.DONT_CROSS.equals(labelOperations.get(arc.getLabel()))) {
+					int index = utility.getEventIndex(arc.getLabel());
+					if (Operation.DONT_CROSS.equals(labelOperations.get(index))) {
 						boolean val = targetInRegion != null ? targetInRegion : sourceInRegion;
 						setState(arc.getSource(), val);
 						setState(arc.getTarget(), val);
@@ -452,13 +457,13 @@ class ElementarySeparation implements Separation {
 				return null;
 
 			// All labels must have an assigned operation
-			if (!labelOperations.keySet().equals(utility.getTransitionSystem().getAlphabet()))
+			if (labelOperations.contains(null))
 				return null;
 
 			// Everything is ok, now build a region
 			Region.Builder builder = new Region.Builder(utility);
 			for (int i = 0; i < utility.getNumberOfEvents(); i++) {
-				labelOperations.get(utility.getEventList().get(i)).setupRegion(builder, i);
+				labelOperations.get(i).setupRegion(builder, i);
 			}
 			BigInteger initialMarking = statesInRegion.get(utility.getTransitionSystem().getInitialState())
 				? BigInteger.ONE : BigInteger.ZERO;
@@ -479,8 +484,12 @@ class ElementarySeparation implements Separation {
 			Set<String> exit = new HashSet<>();
 			Set<String> dontCross = new HashSet<>();
 			Set<String> inside = new HashSet<>();
-			for (Map.Entry<String, Operation> entry : labelOperations.entrySet()) {
-				entry.getValue().toStringHelper(entry.getKey(), enter, exit, dontCross, inside);
+			for (int i = 0; i < utility.getNumberOfEvents(); i++) {
+				Operation op = labelOperations.get(i);
+				if (op == null)
+					continue;
+				String label = utility.getEventList().get(i);
+				op.toStringHelper(label, enter, exit, dontCross, inside);
 			}
 
 			return String.format("RoughRegion[%sin=%s, out=%s, enter=%s, exit=%s, dontCross=%s, inside=%s]",
