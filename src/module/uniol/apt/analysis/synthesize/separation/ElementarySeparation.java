@@ -499,31 +499,37 @@ class ElementarySeparation implements Separation {
 		}
 	}
 
+	static private final String EXTENSION = StatesInRegion.class.toString() + "-index";
 	private class StatesInRegion {
+
 		private final State[] states;
 		private final Boolean[] values;
-		private int size = 0;
 
 		public StatesInRegion() {
 			states = utility.getTransitionSystem().getNodes().toArray(new State[0]);
 			values = new Boolean[states.length];
 
-			Arrays.sort(states, StatesComparator.INSTANCE);
+			for (int i = 0; i < states.length; i++)
+				states[i].putExtension(EXTENSION, i);
 		}
 
 		public StatesInRegion(StatesInRegion other) {
 			this.states = other.states;
 			this.values = Arrays.copyOf(other.values, other.values.length);
-			this.size = other.size;
+		}
+
+		private int getIndex(State key) {
+			int result = (int) key.getExtension(EXTENSION);
+			assert key.equals(states[result]);
+			return result;
 		}
 
 		public Boolean get(State key) {
-			int index = Arrays.binarySearch(states, key, StatesComparator.INSTANCE);
-			return values[index];
+			return values[getIndex(key)];
 		}
 
 		public Boolean put(State key, Boolean value) {
-			int index = Arrays.binarySearch(states, key, StatesComparator.INSTANCE);
+			int index = getIndex(key);
 			Boolean old = values[index];
 			values[index] = value;
 			return old;
@@ -531,15 +537,6 @@ class ElementarySeparation implements Separation {
 
 		public boolean allStatesMapped() {
 			return !Arrays.asList(values).contains(null);
-		}
-	}
-
-	static private class StatesComparator implements Comparator<State> {
-		static public StatesComparator INSTANCE = new StatesComparator();
-
-		@Override
-		public int compare(State s1, State s2) {
-			return s1.getId().compareTo(s2.getId());
 		}
 	}
 }
