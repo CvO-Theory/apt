@@ -22,10 +22,11 @@ package uniol.apt.analysis.synthesize.separation;
 import java.math.BigInteger;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -194,7 +195,7 @@ class ElementarySeparation implements Separation {
 		// Arcs for our label enter the region
 		ENTER {
 			@Override
-			public void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion) {
+			public void refineStates(RoughRegion region, Arc arc, StatesInRegion statesInRegion) {
 				region.setState(arc.getSource(), false);
 				region.setState(arc.getTarget(), true);
 			}
@@ -213,7 +214,7 @@ class ElementarySeparation implements Separation {
 		// Arcs for our label leave the region
 		EXIT {
 			@Override
-			public void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion) {
+			public void refineStates(RoughRegion region, Arc arc, StatesInRegion statesInRegion) {
 				region.setState(arc.getSource(), true);
 				region.setState(arc.getTarget(), false);
 			}
@@ -232,7 +233,7 @@ class ElementarySeparation implements Separation {
 		// Arcs for our label do not cross the border of the region
 		DONT_CROSS {
 			@Override
-			public void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion) {
+			public void refineStates(RoughRegion region, Arc arc, StatesInRegion statesInRegion) {
 				// If one of the two states is assigned, assign the other one
 				Boolean bool = statesInRegion.get(arc.getSource());
 				if (bool != null) {
@@ -258,7 +259,7 @@ class ElementarySeparation implements Separation {
 		// Arcs for our label are inside of the region
 		INSIDE {
 			@Override
-			public void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion) {
+			public void refineStates(RoughRegion region, Arc arc, StatesInRegion statesInRegion) {
 				region.setState(arc.getSource(), true);
 				region.setState(arc.getTarget(), true);
 			}
@@ -276,7 +277,7 @@ class ElementarySeparation implements Separation {
 			}
 		};
 
-		public abstract void refineStates(RoughRegion region, Arc arc, Map<State, Boolean> statesInRegion);
+		public abstract void refineStates(RoughRegion region, Arc arc, StatesInRegion statesInRegion);
 		public abstract void setupRegion(Region.Builder builder, int eventIndex);
 		public abstract void toStringHelper(String entry, Set<String> enter, Set<String> exit,
 				Set<String> dontCross, Set<String> inside);
@@ -287,7 +288,7 @@ class ElementarySeparation implements Separation {
 	 */
 	private class RoughRegion {
 		// Maps states to whether they are inside or outside of this region
-		private final Map<State, Boolean> statesInRegion;
+		private final StatesInRegion statesInRegion;
 
 		// Maps labels to the operation that they do on this region
 		private final List<Operation> labelOperations;
@@ -309,7 +310,7 @@ class ElementarySeparation implements Separation {
 		 * Constructor
 		 */
 		public RoughRegion() {
-			statesInRegion = new HashMap<>();
+			statesInRegion = new StatesInRegion();
 			labelOperations = new ArrayList<>(
 					Collections.<Operation>nCopies(utility.getEventList().size(), null));
 		}
@@ -319,7 +320,7 @@ class ElementarySeparation implements Separation {
 		 * @other The RoughRegion to copy
 		 */
 		public RoughRegion(RoughRegion other) {
-			statesInRegion = new HashMap<>(other.statesInRegion);
+			statesInRegion = new StatesInRegion(other.statesInRegion);
 			labelOperations = new ArrayList<>(other.labelOperations);
 			statesToHandle.addAll(other.statesToHandle);
 			labelsToHandle.addAll(other.labelsToHandle);
@@ -453,7 +454,7 @@ class ElementarySeparation implements Separation {
 				return null;
 
 			// All states must be mapped
-			if (!statesInRegion.keySet().equals(utility.getTransitionSystem().getNodes()))
+			if (!statesInRegion.allStatesMapped())
 				return null;
 
 			// All labels must have an assigned operation
@@ -474,11 +475,12 @@ class ElementarySeparation implements Separation {
 		public String toString() {
 			Set<String> in = new HashSet<>();
 			Set<String> out = new HashSet<>();
-			for (Map.Entry<State, Boolean> entry : statesInRegion.entrySet()) {
-				if (entry.getValue())
-					in.add(entry.getKey().getId());
-				else
-					out.add(entry.getKey().getId());
+			for (State state : utility.getTransitionSystem().getNodes()) {
+				Boolean value = statesInRegion.get(state);
+				if (Boolean.TRUE.equals(value))
+					in.add(state.getId());
+				else if (Boolean.FALSE.equals(value))
+					out.add(state.getId());
 			}
 			Set<String> enter = new HashSet<>();
 			Set<String> exit = new HashSet<>();
@@ -497,6 +499,49 @@ class ElementarySeparation implements Separation {
 		}
 	}
 
+	private class StatesInRegion {
+		private final State[] states;
+		private final Boolean[] values;
+		private int size = 0;
+
+		public StatesInRegion() {
+			states = utility.getTransitionSystem().getNodes().toArray(new State[0]);
+			values = new Boolean[states.length];
+
+			Arrays.sort(states, StatesComparator.INSTANCE);
+		}
+
+		public StatesInRegion(StatesInRegion other) {
+			this.states = other.states;
+			this.values = Arrays.copyOf(other.values, other.values.length);
+			this.size = other.size;
+		}
+
+		public Boolean get(State key) {
+			int index = Arrays.binarySearch(states, key, StatesComparator.INSTANCE);
+			return values[index];
+		}
+
+		public Boolean put(State key, Boolean value) {
+			int index = Arrays.binarySearch(states, key, StatesComparator.INSTANCE);
+			Boolean old = values[index];
+			values[index] = value;
+			return old;
+		}
+
+		public boolean allStatesMapped() {
+			return !Arrays.asList(values).contains(null);
+		}
+	}
+
+	static private class StatesComparator implements Comparator<State> {
+		static public StatesComparator INSTANCE = new StatesComparator();
+
+		@Override
+		public int compare(State s1, State s2) {
+			return s1.getId().compareTo(s2.getId());
+		}
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
