@@ -190,6 +190,76 @@ final public class DebugUtil {
 	 * Generate a debug message. This is equivalent to:
 	 * <pre>
 	 * {@code
+	 * debug(Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3)
+	 *     + Objects.toString(obj4) + Objects.toString(obj5) + Objects.toString(obj6));
+	 * }
+	 * </pre>
+	 * @param obj1 The first object to print
+	 * @param obj2 The second object to print
+	 * @param obj3 The third object to print
+	 * @param obj4 The fourth object to print
+	 * @param obj5 The fifth object to print
+	 * @param obj6 The sixth object to print
+	 */
+	static public void debug(Object obj1, Object obj2, Object obj3, Object obj4, Object obj5, Object obj6) {
+		if (OUTPUT_ENABLED)
+			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3)
+					+ Objects.toString(obj4) + Objects.toString(obj5) + Objects.toString(obj6));
+	}
+
+	/**
+	 * Generate a debug message. This is equivalent to:
+	 * <pre>
+	 * {@code
+	 * debug(Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3)
+	 *     + Objects.toString(obj4) + Objects.toString(obj5) + Objects.toString(obj6) + Objects.toString(obj7));
+	 * }
+	 * </pre>
+	 * @param obj1 The first object to print
+	 * @param obj2 The second object to print
+	 * @param obj3 The third object to print
+	 * @param obj4 The fourth object to print
+	 * @param obj5 The fifth object to print
+	 * @param obj6 The sixth object to print
+	 * @param obj7 The seventh object to print
+	 */
+	static public void debug(Object obj1, Object obj2, Object obj3, Object obj4, Object obj5,
+			Object obj6, Object obj7) {
+		if (OUTPUT_ENABLED)
+			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3)
+					+ Objects.toString(obj4) + Objects.toString(obj5) + Objects.toString(obj6)
+					+ Objects.toString(obj7));
+	}
+
+	/**
+	 * Generate a debug message. This is equivalent to:
+	 * <pre>
+	 * {@code
+	 * debug(Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3) + Objects.toString(obj4)
+	 *     + Objects.toString(obj5) + Objects.toString(obj6) + Objects.toString(obj7) + Objects.toString(obj8));
+	 * }
+	 * </pre>
+	 * @param obj1 The first object to print
+	 * @param obj2 The second object to print
+	 * @param obj3 The third object to print
+	 * @param obj4 The fourth object to print
+	 * @param obj5 The fifth object to print
+	 * @param obj6 The sixth object to print
+	 * @param obj7 The seventh object to print
+	 * @param obj8 The eight object to print
+	 */
+	static public void debug(Object obj1, Object obj2, Object obj3, Object obj4, Object obj5, Object obj6,
+			Object obj7, Object obj8) {
+		if (OUTPUT_ENABLED)
+			printDebug(getCaller(), Objects.toString(obj1) + Objects.toString(obj2) + Objects.toString(obj3)
+					+ Objects.toString(obj4) + Objects.toString(obj5) + Objects.toString(obj6)
+					+ Objects.toString(obj7) + Objects.toString(obj8));
+	}
+
+	/**
+	 * Generate a debug message. This is equivalent to:
+	 * <pre>
+	 * {@code
 	 * StringBuilder sb = new StringBuilder();
 	 * for (Object o : objs)
 	 *         sb.append(java.util.Objects.toString(o));
