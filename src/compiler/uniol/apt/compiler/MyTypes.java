@@ -21,7 +21,7 @@ package uniol.apt.compiler;
 
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.SimpleTypeVisitor6;
+import javax.lang.model.util.SimpleTypeVisitor7;
 
 /**
  * An additional function to work with TypeMirrors
@@ -39,7 +39,7 @@ public class MyTypes {
 	 * @throws IllegalArgumentException if the TypeMirror doesn't represent an DeclaredType
 	 */
 	public static DeclaredType asDeclaredType(TypeMirror typeM) {
-		return typeM.accept(new SimpleTypeVisitor6<DeclaredType, Void>() {
+		return typeM.accept(new SimpleTypeVisitor7<DeclaredType, Void>() {
 			@Override
 			protected DeclaredType defaultAction(TypeMirror e, Void p) {
 				throw new IllegalArgumentException(e + " does not represent a declared type.");
