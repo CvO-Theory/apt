@@ -72,10 +72,9 @@ public class AbstractRenderers<T> implements Renderers<T> {
 						}
 						Renderer<T> renderer;
 						try {
-							renderer = rendererClass.newInstance();
+							renderer = rendererClass.getDeclaredConstructor().newInstance();
 						} catch (ClassCastException
-								| IllegalAccessException
-								| InstantiationException ex) {
+								| ReflectiveOperationException ex) {
 							throw new RuntimeException(String.format(
 									"Could not instantiate %s",
 									rendererName), ex);

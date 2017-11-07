@@ -72,10 +72,9 @@ public class AbstractParsers<T> implements Parsers<T> {
 						}
 						Parser<T> parser;
 						try {
-							parser = parserClass.newInstance();
+							parser = parserClass.getDeclaredConstructor().newInstance();
 						} catch (ClassCastException
-								| IllegalAccessException
-								| InstantiationException ex) {
+								| ReflectiveOperationException ex) {
 							throw new RuntimeException(String.format(
 									"Could not instantiate %s",
 									parserName), ex);
