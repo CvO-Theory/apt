@@ -31,18 +31,10 @@ import uniol.apt.util.interrupt.UncheckedInterruptedException;
  * interrupter registry and clears it after the module is finished.
  *
  * @author Jonas Prellberg
+ * @deprecated Just use {@link AbstractModule}.
  */
+@Deprecated
 public abstract class AbstractInterruptibleModule extends AbstractModule implements InterruptibleModule {
-	@Override
-	public void run(ModuleInput input, ModuleOutput output, Interrupter interrupter)
-			throws ModuleException, UncheckedInterruptedException {
-		try {
-			InterrupterRegistry.setCurrentThreadInterrupter(interrupter);
-			run(input, output);
-		} finally {
-			InterrupterRegistry.clearCurrentThreadInterrupter();
-		}
-	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
