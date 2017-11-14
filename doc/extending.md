@@ -1,14 +1,13 @@
-Extending APT with own modules
-==============================
+# Extending APT with own modules
 
-Overview
---------
+## Overview
 
 If you want to implement your own module, you have to implement the
-Module-interface that is available in APT. Additionally, your class should be
-have the @AptModule annotation so that it is automatically registered with APT.
-To make this work, `apt.jar` contains an annotation processor that must be run
-by your Java compiler. How to ensure this is explained below.
+`uniol.apt.module.Module`-interface that is available in APT. Additionally, your
+class should be have the @`uniol.apt.module.AptModule` annotation so that it is
+automatically registered with APT. To make this work, `apt.jar` contains an
+annotation processor that must be run by your Java compiler. How to ensure this
+is explained below.
 
 As an example for a module, you can look at the module that provides the
 coverability graph. Its source code is available in
@@ -18,8 +17,21 @@ The latest Javadoc documentation is always available at:
 
 http://CvO-theory.github.io/apt-javadoc/
 
-Own modules with Eclipse
-------------------------
+### Interruptible Modules
+
+Some functionalities need to abort a module after it was already started. For
+example, the [graphical user interface](https://github.com/CvO-Theory/apt-gui)
+offers an abort button and the [JSON-interface](json.md) supports timeouts on
+modules. To support this, your module needs to be specially prepared.
+
+If you want to support this, your module has to implement the
+`InterruptibleModule`-interface instead of the `Module`-interface. This marker
+interface indicates that your module will regularly call
+`uniol.apt.util.interrupt.InterrupterRegistry.throwIfInterruptRequestedForCurrentThread()`.
+In turn, this method will throw an unchecked exception if your module was
+aborted.
+
+## Own modules with Eclipse
 
 To develop a module with Eclipse, follow these steps:
 
@@ -49,8 +61,7 @@ It is not recommended to build APT directly from Eclipse, because of problems
 with the project structure. You can however compile APT from Eclipse by
 opening APT's `build.xml` file and running the `jar` target via Ant.
 
-Own modules with IntelliJ IDEA
-------------------------------
+## Own modules with IntelliJ IDEA
 
 1. Create a new Java project.
 2. Enable annotation processing
@@ -76,8 +87,7 @@ sure that your module has the `@AptModule` annotation!
 It is not recommended to build APT directly from IDEA. You can however compile
 APT by executing the `jar` target of APT's `build.xml` via Ant.
 
-Own modules from the command line
----------------------------------
+## Own modules from the command line
 
 The following assumes that your source code is in a folder called src.
 
