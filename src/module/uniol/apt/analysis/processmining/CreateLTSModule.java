@@ -28,7 +28,7 @@ import java.util.Set;
 import uniol.apt.analysis.language.WordList;
 import uniol.apt.analysis.language.Word;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -44,7 +44,7 @@ import uniol.apt.util.interrupt.InterrupterRegistry;
  * @author Uli Schlachter
  */
 @AptModule
-public class CreateLTSModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class CreateLTSModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

@@ -24,7 +24,7 @@ import java.util.Set;
 
 import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -39,7 +39,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Dennis Borde, Manuel Gieseking
  */
 @AptModule
-public class CoveredByInvariantModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class CoveredByInvariantModule extends AbstractModule implements InterruptibleModule {
 
 	private final static String DESCRIPTION = "Check if a Petri net is covered by an S-invariant or a T-invariant";
 	private final static String TITLE = "covered by invariant";

@@ -46,7 +46,7 @@ import uniol.apt.analysis.sideconditions.NonPure;
 import uniol.apt.analysis.sideconditions.Pure;
 import uniol.apt.analysis.snet.SNet;
 import uniol.apt.analysis.tnet.TNet;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -61,7 +61,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Uli Schlachter, vsp
  */
 @AptModule
-public class ExaminePNModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class ExaminePNModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

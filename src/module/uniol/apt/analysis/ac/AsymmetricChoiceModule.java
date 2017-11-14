@@ -21,7 +21,7 @@ package uniol.apt.analysis.ac;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Place;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -37,7 +37,7 @@ import uniol.apt.util.Pair;
  * @author vsp
  */
 @AptModule
-public class AsymmetricChoiceModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class AsymmetricChoiceModule extends AbstractModule implements InterruptibleModule {
 	@Override
 	public String getName() {
 		return "ac";

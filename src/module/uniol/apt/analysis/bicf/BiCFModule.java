@@ -23,7 +23,7 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.language.FiringSequence;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -38,7 +38,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Uli Schlachter, vsp
  */
 @AptModule
-public class BiCFModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class BiCFModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

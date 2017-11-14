@@ -19,7 +19,7 @@
 
 package uniol.apt.module.impl;
 
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
@@ -36,7 +36,7 @@ import uniol.apt.util.interrupt.InterrupterRegistry;
  * @author Renke Grunwald
  *
  */
-public class ExampleModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class ExampleModule extends AbstractModule implements InterruptibleModule {
 	@Override
 	public String getName() {
 		return "example_module";

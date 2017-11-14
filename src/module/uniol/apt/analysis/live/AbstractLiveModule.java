@@ -23,7 +23,7 @@ import uniol.apt.adt.exception.NoSuchNodeException;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.pn.Transition;
 import uniol.apt.analysis.exception.NoSuchTransitionException;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
 import uniol.apt.module.ModuleInput;
@@ -35,7 +35,7 @@ import uniol.apt.module.exception.ModuleException;
  * Base class used by the various liveness testing modules
  * @author Uli Schlachter, vsp
  */
-abstract public class AbstractLiveModule extends AbstractInterruptibleModule implements InterruptibleModule {
+abstract public class AbstractLiveModule extends AbstractModule implements InterruptibleModule {
 	@Override
 	final public void require(ModuleInputSpec inputSpec) {
 		inputSpec.addParameter("pn", PetriNet.class, "The Petri net that should be examined");

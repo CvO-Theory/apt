@@ -30,7 +30,7 @@ import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.connectivity.Connectivity;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -46,7 +46,7 @@ import uniol.apt.util.interrupt.InterrupterRegistry;
  * @author Uli Schlachter
  */
 @AptModule
-public class ToRegularExpressionModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class ToRegularExpressionModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

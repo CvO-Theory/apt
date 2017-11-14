@@ -21,7 +21,7 @@ package uniol.apt.analysis.isomorphism;
 
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -36,7 +36,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Maike Schwammberger, Uli Schlachter
  */
 @AptModule
-public class IsomorphismModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class IsomorphismModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

@@ -26,7 +26,7 @@ import java.util.Set;
 
 import uniol.apt.adt.pn.Node;
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -41,7 +41,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Manuel Gieseking
  */
 @AptModule
-public class ComputeMinSemiPosInvariantsModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class ComputeMinSemiPosInvariantsModule extends AbstractModule implements InterruptibleModule {
 
 	private final static String DESCRIPTION = "Compute a generator set of S- or T-invariants";
 	private final static String TITLE = "invariants";

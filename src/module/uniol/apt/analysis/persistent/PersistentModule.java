@@ -24,7 +24,7 @@ import uniol.apt.adt.pn.Marking;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -39,7 +39,7 @@ import uniol.apt.module.exception.ModuleException;
  *
  */
 @AptModule
-public class PersistentModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class PersistentModule extends AbstractModule implements InterruptibleModule {
 	private final boolean backward;
 
 	/**

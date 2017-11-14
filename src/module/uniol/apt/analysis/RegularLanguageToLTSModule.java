@@ -22,7 +22,7 @@ package uniol.apt.analysis;
 import uniol.apt.adt.automaton.FiniteAutomaton;
 import uniol.apt.adt.automaton.FiniteAutomatonUtility;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -37,7 +37,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Uli Schlachter
  */
 @AptModule
-public class RegularLanguageToLTSModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class RegularLanguageToLTSModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

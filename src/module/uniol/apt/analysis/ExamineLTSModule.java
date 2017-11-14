@@ -31,7 +31,7 @@ import uniol.apt.analysis.deterministic.Deterministic;
 import uniol.apt.analysis.persistent.PersistentTS;
 import uniol.apt.analysis.reversible.ReversibleTS;
 import uniol.apt.analysis.totallyreachable.TotallyReachable;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -47,7 +47,7 @@ import uniol.apt.util.Pair;
  * @author Uli Schlachter, vsp
  */
 @AptModule
-public class ExamineLTSModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class ExamineLTSModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

@@ -21,7 +21,7 @@ package uniol.apt.analysis.totallyreachable;
 
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -37,7 +37,7 @@ import uniol.apt.module.exception.ModuleException;
  *
  */
 @AptModule
-public class TotallyReachableModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class TotallyReachableModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getName() {

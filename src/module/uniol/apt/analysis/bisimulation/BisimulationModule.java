@@ -20,7 +20,7 @@
 package uniol.apt.analysis.bisimulation;
 
 import uniol.apt.adt.PetriNetOrTransitionSystem;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -35,7 +35,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Raffaela Ferrari
  */
 @AptModule
-public class BisimulationModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class BisimulationModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getName() {

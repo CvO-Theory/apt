@@ -23,7 +23,7 @@ import java.util.Set;
 
 import uniol.apt.adt.IGraph;
 import uniol.apt.adt.INode;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -38,7 +38,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Uli Schlachter, vsp
  */
 @AptModule
-public class StrongComponentsModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class StrongComponentsModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

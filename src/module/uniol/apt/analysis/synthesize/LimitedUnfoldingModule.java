@@ -20,7 +20,7 @@
 package uniol.apt.analysis.synthesize;
 
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -35,7 +35,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Uli Schlachter
  */
 @AptModule
-public class LimitedUnfoldingModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class LimitedUnfoldingModule extends AbstractModule implements InterruptibleModule {
 	@Override
 	public String getShortDescription() {
 		return "Calculate the limited unfolding of a lts";

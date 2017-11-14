@@ -23,7 +23,7 @@ import java.util.Set;
 
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -38,7 +38,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Manuel Gieseking
  */
 @AptModule
-public class PVsOfSmallestCyclesModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class PVsOfSmallestCyclesModule extends AbstractModule implements InterruptibleModule {
 
 	private final static String DESCRIPTION = "Compute parikh vectors of smallest cycles of a Petri net or"
 		+ " LTS";

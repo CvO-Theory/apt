@@ -23,7 +23,7 @@ import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.presynthesis.pps.Path;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -38,7 +38,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author vsp
  */
 @AptModule
-public class FairnessModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class FairnessModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

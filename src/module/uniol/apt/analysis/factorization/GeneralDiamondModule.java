@@ -25,7 +25,7 @@ import java.util.Set;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.language.Word;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -42,7 +42,7 @@ import uniol.apt.module.exception.ModuleException;
  *
  */
 @AptModule
-public class GeneralDiamondModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class GeneralDiamondModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getName() {

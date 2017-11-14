@@ -23,7 +23,7 @@ import uniol.apt.adt.extension.ExtensionProperty;
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -38,7 +38,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Uli Schlachter, vsp
  */
 @AptModule
-public class CoverabilityModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class CoverabilityModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

@@ -22,7 +22,7 @@ package uniol.apt.analysis.cycles.lts;
 import uniol.apt.adt.PetriNetOrTransitionSystem;
 import uniol.apt.adt.ts.ParikhVector;
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -37,7 +37,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author vsp
  */
 @AptModule
-public class PrimeCyclePropertyModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class PrimeCyclePropertyModule extends AbstractModule implements InterruptibleModule {
 
 	private final static String DESCRIPTION = "Check if the give Petri net or"
 		+ " LTS fulfills the prime cycle property.";

@@ -21,7 +21,7 @@ package uniol.apt.analysis.factorization;
 
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.connectivity.Connectivity;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -37,7 +37,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Jonas Prellberg
  */
 @AptModule
-public class FactorizationModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class FactorizationModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getName() {

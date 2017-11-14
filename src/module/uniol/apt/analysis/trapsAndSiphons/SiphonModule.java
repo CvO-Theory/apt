@@ -20,7 +20,7 @@
 package uniol.apt.analysis.trapsAndSiphons;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -36,7 +36,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Maike Schwammberger
  */
 @AptModule
-public class SiphonModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class SiphonModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getShortDescription() {

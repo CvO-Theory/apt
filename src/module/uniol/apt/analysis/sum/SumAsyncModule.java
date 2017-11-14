@@ -20,7 +20,7 @@
 package uniol.apt.analysis.sum;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -37,7 +37,7 @@ import uniol.apt.module.exception.ModuleException;
  *
  */
 @AptModule
-public class SumAsyncModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class SumAsyncModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getName() {

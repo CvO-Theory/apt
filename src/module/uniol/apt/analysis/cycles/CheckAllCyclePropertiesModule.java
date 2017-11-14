@@ -27,7 +27,7 @@ import uniol.apt.analysis.coverability.CoverabilityGraph;
 import uniol.apt.analysis.cycles.lts.ComputeSmallestCycles;
 import uniol.apt.analysis.cycles.lts.CyclePV;
 import uniol.apt.analysis.cycles.lts.CycleCounterExample;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -46,7 +46,7 @@ import uniol.apt.module.exception.ModuleException;
  *
  */
 @AptModule
-public class CheckAllCyclePropertiesModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class CheckAllCyclePropertiesModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getName() {

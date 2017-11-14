@@ -20,7 +20,7 @@
 package uniol.apt.analysis.on;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -36,7 +36,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Manuel Gieseking
  */
 @AptModule
-public class OutputNonBranchingModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class OutputNonBranchingModule extends AbstractModule implements InterruptibleModule {
 
 	private final static String SHORTDESCRIPTION = "Check if a Petri net is output-nonbranching";
 	private final static String LONGDESCRIPTION = "This module checks if a Petri net is output-nonbranching. "

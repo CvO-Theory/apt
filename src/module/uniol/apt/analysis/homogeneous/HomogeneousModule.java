@@ -21,7 +21,7 @@ package uniol.apt.analysis.homogeneous;
 
 import uniol.apt.adt.pn.Flow;
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -37,7 +37,7 @@ import uniol.apt.util.Pair;
  * @author vsp
  */
 @AptModule
-public class HomogeneousModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class HomogeneousModule extends AbstractModule implements InterruptibleModule {
 	@Override
 	public String getName() {
 		return "homogeneous";

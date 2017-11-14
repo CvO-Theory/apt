@@ -21,7 +21,7 @@ package uniol.apt.analysis.separation;
 
 import uniol.apt.adt.pn.PetriNet;
 import uniol.apt.analysis.language.Word;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -37,7 +37,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Daniel
  */
 @AptModule
-public class WeakSeparationModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class WeakSeparationModule extends AbstractModule implements InterruptibleModule {
 
 	@Override
 	public String getName() {

@@ -20,7 +20,7 @@
 package uniol.apt.analysis.conpres;
 
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.module.AbstractInterruptibleModule;
+import uniol.apt.module.AbstractModule;
 import uniol.apt.module.AptModule;
 import uniol.apt.module.Category;
 import uniol.apt.module.InterruptibleModule;
@@ -36,7 +36,7 @@ import uniol.apt.module.exception.ModuleException;
  * @author Manuel Gieseking
  */
 @AptModule
-public class ConcurrencyPreservingModule extends AbstractInterruptibleModule implements InterruptibleModule {
+public class ConcurrencyPreservingModule extends AbstractModule implements InterruptibleModule {
 
 	private final static String SHORTDESCRIPTION = "Check if a Petri net is concurrency-preserving";
 	private final static String LONGDESCRIPTION = "This module checks if a Petri net is concurrency-preserving."
