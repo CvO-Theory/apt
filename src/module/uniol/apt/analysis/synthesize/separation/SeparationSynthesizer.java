@@ -56,8 +56,10 @@ public class SeparationSynthesizer implements Synthesizer {
 	 * try to solve all separation problems. Only if true will the list of failed problems be fully filled.
 	 */
 	public SeparationSynthesizer(TransitionSystem ts, Separation separation,
-			boolean onlyEventSeparation, boolean quickFail) {
+			boolean onlyEventSeparation, boolean quickFail, Collection<Region> knownRegions) {
 		Set<Region> regions = new HashSet<>();
+		if (knownRegions != null)
+			regions.addAll(knownRegions);
 		Map<String, Set<State>> essp = new HashMap<>();
 		EquivalenceRelation<State> ssp = new EquivalenceRelation<>();
 

@@ -241,7 +241,7 @@ public class SynthesizePN {
 		debug("Input regions: ", regions);
 
 		Synthesizer synthesizer = SeparationUtility.createSynthesizerInstance(utility, properties,
-				onlyEventSeparation, quickFail);
+				onlyEventSeparation, quickFail, regions);
 		regions.addAll(synthesizer.getSeparatingRegions());
 
 		// Handle unsolvable state separation problems

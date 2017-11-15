@@ -26,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Collection;
 
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Event;
@@ -241,9 +242,9 @@ public final class SeparationUtility {
 	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
 	static public Synthesizer createSynthesizerInstance(RegionUtility utility, PNProperties properties,
-			boolean onlyEventSeparation, boolean quickFail) throws MissingLocationException {
+			boolean onlyEventSeparation, boolean quickFail, Collection<Region> regions) throws MissingLocationException {
 		boolean tryToFactorize = !Boolean.getBoolean("apt.separation.skipFactorisation");
-		return createSynthesizerInstance(utility, properties, onlyEventSeparation, quickFail, tryToFactorize);
+		return createSynthesizerInstance(utility, properties, onlyEventSeparation, quickFail, regions, tryToFactorize);
 	}
 
 	/**
@@ -258,7 +259,7 @@ public final class SeparationUtility {
 	 * @throws MissingLocationException if the transition system for the utility has locations for only some events
 	 */
 	static public Synthesizer createSynthesizerInstance(RegionUtility utility, PNProperties properties,
-			boolean onlyEventSeparation, boolean quickFail, boolean tryToFactorize)
+			boolean onlyEventSeparation, boolean quickFail, Collection<Region> regions, boolean tryToFactorize)
 			throws MissingLocationException {
 		if (quickFail && tryToFactorize) {
 			// Try to factorize the input
@@ -270,7 +271,7 @@ public final class SeparationUtility {
 		Separation result = createSeparationInstance(utility, properties);
 		if (result instanceof Synthesizer)
 			return (Synthesizer) result;
-		return new SeparationSynthesizer(utility.getTransitionSystem(), result, onlyEventSeparation, quickFail);
+		return new SeparationSynthesizer(utility.getTransitionSystem(), result, onlyEventSeparation, quickFail, regions);
 	}
 }
 

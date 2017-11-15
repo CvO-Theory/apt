@@ -53,7 +53,7 @@ class FactorisationSynthesizer {
 		public Synthesizer create(RegionUtility utility, PNProperties properties, boolean onlyEventSeparation)
 				throws MissingLocationException {
 			return SeparationUtility.createSynthesizerInstance(utility, properties, onlyEventSeparation,
-					true, false);
+					true, null, false);
 		}
 	}
 
