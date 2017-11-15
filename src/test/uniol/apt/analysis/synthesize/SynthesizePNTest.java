@@ -752,6 +752,27 @@ public class SynthesizePNTest {
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}
+
+	@Test
+	public void testInputRegions() throws Exception {
+		// Make sure that when existing regions are given then they really are used.
+		// Do so by feeding in a "weird" region and testing that the result contains it.
+		TransitionSystem ts = new TransitionSystem();
+		ts.createStates("s0", "s1", "s2");
+		ts.setInitialState("s0");
+		ts.createArc("s0", "s1", "a");
+		ts.createArc("s1", "s2", "a");
+
+		RegionUtility utility = new RegionUtility(ts);
+		Region region = new Region.Builder(utility).addWeightOn(0, BigInteger.valueOf(-4)).withInitialMarking(BigInteger.valueOf(9));
+		SynthesizePN synth = SynthesizePN.Builder.createForIsomorphicBehaviour(utility)
+			.addRegion(region).build();
+
+		assertThat(synth.getFailedStateSeparationProblems(), empty());
+		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
+		assertThat(synth.wasSuccessfullySeparated(), is(true));
+		assertThat(synth.getSeparatingRegions(), contains(sameInstance(region)));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
