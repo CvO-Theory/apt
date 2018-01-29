@@ -42,33 +42,36 @@ description : {descCount == 0}? '.description' (txt=STR | txt=STR_MULTI) {descCo
 netOptions : '.options' (option (',' option)*)?;
 
 places     : '.places' place*;
-place      :  (id=ID | id=INT) (opts)? ;
+place      :  (id=ID | id=NAT) (opts)? ;
 
 transitions : '.transitions' transition*;
-transition  : (id=ID | id=INT) (opts)? ;
+transition  : (id=ID | id=NAT) (opts)? ;
 
 /* options for places or transitions */
 opts : '[' option (',' option)* ']';
 option :	ID '=' STR
-		| ID '=' INT
+		| ID '=' NAT
+		| ID '=' NEGNAT
+		| ID '=' DOUBLE
 		| ID
 		;
 
 flows : '.flows' flow*;
-flow  : (id=ID | id=INT) ':'  preset=set '->' postset=set (opts)?;
+flow  : (id=ID | id=NAT) ':'  preset=set '->' postset=set (opts)?;
 
 /* sets for flow description and markings */
 set   : '{' ( | obj (',' obj)*) '}';
-obj   : mult=INT '*' (id=ID | id=INT)
-	| (id=ID | id=INT) ;
+obj   : mult=NAT '*' (id=ID | id=NAT)
+	| (id=ID | id=NAT) ;
 
 initialMarking : {markCount == 0}? '.initial_marking' (set)? {markCount++;};
 
 finalMarkings : '.final_markings' set*;
 
 /* Lexer symbols */
-
-INT: '0'..'9'+;
+NAT: ('0'..'9')+;
+NEGNAT: '-' ('0'..'9')+;
+DOUBLE: '-'? ('0'..'9')+ '.' ('0'..'9')+;
 ID  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*;
 
 COMMENT: (

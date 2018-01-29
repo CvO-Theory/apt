@@ -41,7 +41,7 @@ states		: '.states' state*;
 state		: idi (opts)? ;
 
 opts		: '[' option (',' option)* ']';
-option		: ID '=' STR | ID | ID '=' INT ;
+option		: ID '=' STR | ID | ID '=' NAT | ID '=' NEGNAT | ID '=' DOUBLE;
 
 labels		: '.labels' label*;
 label		: idi (opts)? ;
@@ -49,9 +49,11 @@ label		: idi (opts)? ;
 arcs		: '.arcs' arc*;
 arc		: src=idi labell=idi dest=idi (opts)?;
 
-idi		: ID | INT;
+idi		: ID | NAT;
 
-INT		: '0'..'9'+;
+NAT             : '0'..'9'+;
+NEGNAT          : '-' ('0'..'9')+;
+DOUBLE          : '-'? ('0'..'9')+ '.' ('0'..'9')+;
 ID		: ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*;
 
 COMMENT		: (

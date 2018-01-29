@@ -60,8 +60,12 @@ public class AptPNParser extends AbstractParser<PetriNet> implements Parser<Petr
 		if (ctx.STR() != null) {
 			String str = ctx.STR().getText();
 			val = str.substring(1, str.length() - 1);
-		} else if (ctx.INT() != null) {
-			val = Integer.parseInt(ctx.INT().getText());
+		} else if (ctx.NAT()!= null) {
+			val = Integer.parseInt(ctx.NAT().getText());		
+		} else if (ctx.NEGNAT()!= null) {
+			val = Integer.parseInt(ctx.NEGNAT().getText());
+		} else if (ctx.DOUBLE()!= null) {
+			val = Double.parseDouble(ctx.DOUBLE().getText());
 		}
 
 		curOpts.put(ctx.ID().getText(), val);

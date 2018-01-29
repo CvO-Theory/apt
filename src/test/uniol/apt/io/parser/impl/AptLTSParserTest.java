@@ -24,6 +24,9 @@ import java.util.Set;
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
+import uniol.apt.adt.pn.PetriNet;
+import uniol.apt.adt.pn.Place;
+import uniol.apt.adt.pn.Transition;
 
 import uniol.apt.adt.ts.Arc;
 import uniol.apt.adt.ts.State;
@@ -108,6 +111,29 @@ public class AptLTSParserTest {
 		loopAsserts(ts);
 		assertEquals(ts.getExtension("fortytwo"), 42);
 	}
+     
+        @Test
+        public void testDoubleAndIntegerOptionValues() throws Exception {
+                TransitionSystem ts = new AptLTSParser().parseString(
+                        ".type LTS\n.options foo=42,bar=\"baz\"\n.states s1[a=42,b=3.141,c=\"asdf\",x=-42,y=-3.141, initial]\n.labels\n l\n.arcs s1 l s1");
+                State s = ts.getNode("s1");
+                int a = (Integer) s.getExtension("a");
+                double b = (Double) s.getExtension("b");
+                String c = (String) s.getExtension("c");
+                int x = (Integer) s.getExtension("x");
+                double y = (Double) s.getExtension("y");
+                assertEquals(a, 42);
+                assertEquals(b, 3.141);
+                assertEquals(c, "asdf");
+                assertEquals(x, -42);
+                assertEquals(y, -3.141);
+        }
+        
+        @Test(expectedExceptions = {ParseException.class}, expectedExceptionsMessageRegExp = "^line 3 col 26: no viable alternative at input 'c=asdf'$")
+        public void testNotAllowedOptionValues() throws Exception {
+             new AptLTSParser().parseString(
+                        ".type LTS\n.options foo=42,bar=\"baz\"\n.states s1[a=42,b=3.141,c=asdf,x=-42,y=-3.141, initial]\n.labels\n l\n.arcs s1 l s1");
+        }
 
 	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Node 's1' already exists in graph 'doubleNodes'$")
 	public void testDoubleNodes() throws Exception {
