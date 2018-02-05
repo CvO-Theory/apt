@@ -19,10 +19,13 @@
 
 package uniol.apt.ui.impl.parameter;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import uniol.apt.io.parser.ParseException;
 import uniol.apt.io.parser.Parser;
 import uniol.apt.module.exception.ModuleException;
-import uniol.apt.ui.ParameterTransformation;
+import uniol.apt.ui.StreamParameterTransformation;
 
 /**
  * Abstract transformation that uses a parser to interpret a given string.
@@ -32,7 +35,7 @@ import uniol.apt.ui.ParameterTransformation;
  * @param <G>
  *                transformation target type
  */
-public abstract class AbstractParserParameterTransformation<G> implements ParameterTransformation<G> {
+public abstract class AbstractParserParameterTransformation<G> extends StreamParameterTransformation<G> {
 
 	private final Parser<G> parser;
 	private final String objectName;
@@ -43,9 +46,9 @@ public abstract class AbstractParserParameterTransformation<G> implements Parame
 	}
 
 	@Override
-	public G transform(String input) throws ModuleException {
+	public G transform(InputStream input) throws ModuleException, IOException {
 		try {
-			return parser.parseString(input);
+			return parser.parse(input);
 		} catch (ParseException ex) {
 			throw new ModuleException("Can't parse " + objectName + ": " + ex.getMessage());
 		}

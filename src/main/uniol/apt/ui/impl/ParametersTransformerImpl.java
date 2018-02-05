@@ -34,6 +34,7 @@ import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.DescribedParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 import uniol.apt.ui.ParametersTransformer;
+import uniol.apt.ui.StreamParameterTransformation;
 
 /**
  * This class manages a bunch of parameter transformations and uses them to
@@ -112,9 +113,21 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 
 	@Override
 	public Object transformStream(InputStream istr, Class<?> klass) throws ModuleException {
+		ParameterTransformation<?> transformation = transformations.get(klass);
+		if (transformation == null)
+			throw new NoSuchTransformationException(klass);
 		try {
-			String value = IOUtils.toString(istr, "UTF-8");
-			return transformString(value, klass);
+			if (transformation instanceof StreamParameterTransformation) {
+				StreamParameterTransformation<?> streamTrans = (StreamParameterTransformation<?>) transformation;
+				Object obj = streamTrans.transform(istr);
+				if (obj == null)
+					throw new NullPointerException("Parameter transformation for class "
+							+ klass + " returned null");
+				return obj;
+			} else {
+				String value = IOUtils.toString(istr, "UTF-8");
+				return transformString(value, klass);
+			}
 		} catch (IOException e) {
 			throw new ModuleException("Can't read stream: " + e.getMessage());
 		}
