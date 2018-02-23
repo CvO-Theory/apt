@@ -51,6 +51,7 @@ public class InequalitySystem extends AbstractCollection<InequalitySystem.Inequa
 		LESS_THAN_OR_EQUAL("<="),
 		LESS_THAN("<"),
 		EQUAL("="),
+		UNEQUAL("!="),
 		GREATER_THAN(">"),
 		GREATER_THAN_OR_EQUAL(">=");
 
@@ -82,6 +83,8 @@ public class InequalitySystem extends AbstractCollection<InequalitySystem.Inequa
 					return result < 0;
 				case EQUAL:
 					return result == 0;
+				case UNEQUAL:
+					return result != 0;
 				case GREATER_THAN:
 					return result > 0;
 				case GREATER_THAN_OR_EQUAL:
@@ -94,7 +97,7 @@ public class InequalitySystem extends AbstractCollection<InequalitySystem.Inequa
 
 		/**
 		 * Return the comparator which is described by the given string. Must be one of "&lt;=", "&lt;", "=",
-		 * "&gt;", "&gt;=".
+		 * "!=", "&gt;", "&gt;=".
 		 * @param str String representation of comparator.
 		 * @return The matching comparator.
 		 */

@@ -105,8 +105,15 @@ public class InequalitySystemSolver {
 				rhs = script.term("+", Arrays.copyOf(terms, nextEntry));
 
 			Term lhs = script.numeral(inequality.getLeftHandSide());
-			String comparator = inequality.getComparator().toString();
-			system[nextSystemEntry++] = script.term(comparator, lhs, rhs);
+			switch (inequality.getComparator()) {
+				case UNEQUAL:
+					system[nextSystemEntry++] = script.term("not", script.term("=", lhs, rhs));
+					break;
+				default:
+					String comparator = inequality.getComparator().toString();
+					system[nextSystemEntry++] = script.term(comparator, lhs, rhs);
+					break;
+			}
 		}
 
 		if (nextSystemEntry == 1)

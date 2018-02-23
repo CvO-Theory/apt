@@ -112,6 +112,14 @@ public class InequalitySystemTest {
 
 		assertThat(system.getNumberOfVariables(), equalTo(3));
 	}
+
+	@Test
+	public void testInequality() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(1, "!=", Arrays.asList(BigInteger.ONE));
+
+		assertThat(system, hasToString("[\n1 != 1*x[0]\n]"));
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

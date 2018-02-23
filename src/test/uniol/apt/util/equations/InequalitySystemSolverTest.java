@@ -159,6 +159,28 @@ public class InequalitySystemSolverTest {
 	}
 
 	@Test
+	public void testSimpleSystemWithInequality0() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(0, "!=", 1);
+
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		assertThat(solution, hasSize(1));
+		BigInteger x = solution.get(0);
+		assertThat(x, is(not(bi(0))));
+	}
+
+	@Test
+	public void testSimpleSystemWithInequality1() {
+		InequalitySystem system = new InequalitySystem();
+		system.addInequality(41, "<", 1);
+		system.addInequality(43, ">", 1);
+		system.addInequality(42, "!=", 1);
+
+		List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+		assertThat(solution, empty());
+	}
+
+	@Test
 	public void testEmptySystem1() {
 		InequalitySystem system = new InequalitySystem();
 		system.addInequality(0, ">=");
