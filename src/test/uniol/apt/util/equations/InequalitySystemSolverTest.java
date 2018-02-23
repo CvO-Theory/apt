@@ -22,6 +22,10 @@ package uniol.apt.util.equations;
 import java.math.BigInteger;
 import java.util.List;
 
+import uniol.apt.util.interrupt.Interrupter;
+import uniol.apt.util.interrupt.InterrupterRegistry;
+import uniol.apt.util.interrupt.UncheckedInterruptedException;
+
 import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -347,6 +351,25 @@ public class InequalitySystemSolverTest {
 		system.addInequality(0, "=", 2, -1);
 		solver.assertDisjunction(system);
 		assertThat(solver.findSolution(), contains(bi(42), bi(84)));
+	}
+
+	@Test(expectedExceptions = UncheckedInterruptedException.class)
+	public void testInterruption() {
+		InterrupterRegistry.setCurrentThreadInterrupter(new Interrupter() {
+			@Override
+			public boolean isInterruptRequested() {
+				return true;
+			}
+		});
+		try {
+			InequalitySystem system = new InequalitySystem();
+			system.addInequality(0, ">=", 0, 0);
+
+			new InequalitySystemSolver().assertDisjunction(system).findSolution();
+			throw new AssertionError("This line should be unreachable");
+		} finally {
+			InterrupterRegistry.clearCurrentThreadInterrupter();
+		}
 	}
 }
 
