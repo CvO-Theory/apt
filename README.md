@@ -24,6 +24,7 @@ Further reading
 * [The file format](doc/file_format.md)
 * [Extending APT with own modules](doc/extending.md)
 * [Javadoc API documentation](http://CvO-theory.github.io/apt-javadoc/)
+* [Internal structure of APT](doc/internals.md)
 * [A Graphical user interface for APT](https://github.com/CvO-Theory/apt-gui)
 
 
