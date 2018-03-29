@@ -105,3 +105,16 @@ The following assumes that your source code is in a folder called src.
 The above example is for unixoid systems. On Windows, Java uses `;` instead of
 `:` as separator in the class path argument. This means you have to use `-cp
 apt.jar;classes` instead on Windows.
+
+## Building JAR files with own modules
+
+A JAR file can be built with any of the usual methods. The generated files has
+to include the `META-INF` directory that is automatically generated next to the
+`.class` files so that modules can be found. The entry point of the command line
+utility should be `uniol.apt.APT`.
+
+If you want to use ANT to build your code and generate a JAR file, then the
+[build.xml
+file](https://github.com/CvO-Theory/apt-extremal/blob/master/build.xml) of
+[apt-extremal](https://github.com/CvO-Theory/apt-extremal) can be a good
+starting point.
