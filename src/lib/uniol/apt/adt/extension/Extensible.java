@@ -180,8 +180,11 @@ public class Extensible implements IExtensible {
 	 * @param e The Extensible to copy from.
 	 */
 	public final void copyExtensions(Extensible e) {
-		for (Pair<String, Object> pair : e.getCopyExtensions()) {
-			putExtension(pair.getFirst(), pair.getSecond());
+		for (Map.Entry<String, Extension> entry : e.extensions.entrySet()) {
+			Extension ext = entry.getValue();
+			if (!ext.properties.contains(ExtensionProperty.NOCOPY))
+				// This shares the Extension instance!
+				this.extensions.put(entry.getKey(), ext);
 		}
 	}
 }
