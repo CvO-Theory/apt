@@ -35,7 +35,7 @@ public class BooleanParameterTransformation implements ParameterTransformation<B
 		if (arg.equalsIgnoreCase("true"))
 			return true;
 		if (arg.equalsIgnoreCase("false"))
-			return true;
+			return false;
 		throw new ModuleException("Not a valid boolean: " + arg);
 	}
 }
