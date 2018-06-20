@@ -388,21 +388,15 @@ public class SMTInterpolHelper {
 	 * @return The needed terms.
 	 */
 	private List<Term> requireConflictFree(Term[] weight, Term[] backwardWeight) {
-		Term[] result = new Term[utility.getNumberOfEvents() + 1];
 		Term zero = script.numeral(BigInteger.ZERO);
+		Term one = script.numeral(BigInteger.ONE);
 
-		// Conflict free: Either there is just a single transition consuming token...
-		// (And thus this automatically satisfies any distribution)
-		for (int event = 0; event < utility.getNumberOfEvents(); event++) {
-			Term[] sum = new Term[utility.getNumberOfEvents() - 1];
-			for (int idx = 0; idx < utility.getNumberOfEvents(); idx++) {
-				if (idx < event)
-					sum[idx] = backwardWeight[idx];
-				else if (idx > event)
-					sum[idx - 1] = backwardWeight[idx];
-			}
-			result[event] = script.term("=", zero, collectTerms("+", sum, zero));
-		}
+		// Sigh. The caller creates TermVariable[], we really, really need Term[]
+		backwardWeight = Arrays.copyOf(backwardWeight, backwardWeight.length, Term[].class);
+
+		// Conflict free: Either there is at most a single transition consuming token...
+		// (requirePlainness() was already called and the following line make use of this)
+		Term result = script.term(">=", one, collectTerms("+", backwardWeight, zero));
 
 		// ...or the preset is contained in the postset
 		// (Note that this only works because we require plainness)
@@ -410,9 +404,8 @@ public class SMTInterpolHelper {
 		for (int event = 0; event < utility.getNumberOfEvents(); event++) {
 			presetPostset[event] = script.term("<=", zero, weight[event]);
 		}
-		result[utility.getNumberOfEvents()] = collectTerms("and", presetPostset, script.term("false"));
-
-		return Collections.singletonList(collectTerms("or", result, script.term("true")));
+		return Collections.singletonList(script.term("or", result,
+			collectTerms("and", presetPostset, script.term("false"))));
 	}
 
 	/**
