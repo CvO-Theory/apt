@@ -50,7 +50,7 @@ public abstract class AbstractParserParameterTransformation<G> extends StreamPar
 		try {
 			return parser.parse(input);
 		} catch (ParseException ex) {
-			throw new ModuleException("Can't parse " + objectName + ": " + ex.getMessage());
+			throw new ModuleException("Can't parse " + objectName + ": " + ex.getMessage(), ex);
 		}
 	}
 
