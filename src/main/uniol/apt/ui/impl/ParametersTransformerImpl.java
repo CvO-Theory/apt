@@ -35,6 +35,7 @@ import uniol.apt.ui.DescribedParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 import uniol.apt.ui.ParametersTransformer;
 import uniol.apt.ui.StreamParameterTransformation;
+import uniol.apt.ui.StreamWithOptionsParameterTransformation;
 
 /**
  * This class manages a bunch of parameter transformations and uses them to
@@ -89,10 +90,16 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 		AptParameterTransformation annotation = transformation.getClass()
 				.getAnnotation(AptParameterTransformation.class);
 		if (annotation.fileSource()) {
-			if (STANDARD_INPUT_SYMBOL.equals(arg)) {
-				return transformStream(System.in, klass);
+			String[] parts = new String[] { "", arg };
+			if (transformation instanceof StreamWithOptionsParameterTransformation) {
+				String[] tmpParts = arg.split(":", 2);
+				if (tmpParts.length == 2)
+					parts = tmpParts;
+			}
+			if (STANDARD_INPUT_SYMBOL.equals(parts[1])) {
+				return transformStream(System.in, klass, parts[0]);
 			} else {
-				return transformFile(arg, klass);
+				return transformFile(parts[1], klass, parts[0]);
 			}
 		} else {
 			return transformString(arg, klass);
@@ -113,29 +120,36 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 
 	@Override
 	public Object transformStream(InputStream istr, Class<?> klass) throws ModuleException {
+		return transformStream(istr, klass, "");
+	}
+
+	private Object transformStream(InputStream istr, Class<?> klass, String options) throws ModuleException {
 		ParameterTransformation<?> transformation = transformations.get(klass);
 		if (transformation == null)
 			throw new NoSuchTransformationException(klass);
 		try {
-			if (transformation instanceof StreamParameterTransformation) {
+			Object obj;
+			if (transformation instanceof StreamWithOptionsParameterTransformation) {
+				StreamWithOptionsParameterTransformation<?> streamTrans = (StreamWithOptionsParameterTransformation<?>) transformation;
+				obj = streamTrans.transform(istr, options);
+			} else if (transformation instanceof StreamParameterTransformation) {
 				StreamParameterTransformation<?> streamTrans = (StreamParameterTransformation<?>) transformation;
-				Object obj = streamTrans.transform(istr);
-				if (obj == null)
-					throw new NullPointerException("Parameter transformation for class "
-							+ klass + " returned null");
-				return obj;
+				obj = streamTrans.transform(istr);
 			} else {
-				String value = IOUtils.toString(istr, "UTF-8");
-				return transformString(value, klass);
+				obj = transformation.transform(IOUtils.toString(istr, "UTF-8"));
 			}
+			if (obj == null)
+				throw new NullPointerException("Parameter transformation for class "
+						+ klass + " returned null");
+			return obj;
 		} catch (IOException e) {
 			throw new ModuleException("Can't read stream: " + e.getMessage());
 		}
 	}
 
-	private Object transformFile(String file, Class<?> klass) throws ModuleException {
+	private Object transformFile(String file, Class<?> klass, String options) throws ModuleException {
 		try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
-			return transformStream(stream, klass);
+			return transformStream(stream, klass, options);
 		} catch (IOException e) {
 			throw new ModuleException("Can't read " + file + ": " + e.getMessage());
 		}
