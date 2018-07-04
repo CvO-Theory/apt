@@ -38,6 +38,16 @@ public class ParserNotFoundException extends ModuleException {
 	public ParserNotFoundException(String message) {
 		super(message);
 	}
+
+	/**
+	 * Constructor
+	 *
+	 * @param message The message
+	 * @param cause A throwable causing this exception
+	 */
+	public ParserNotFoundException(String message, Throwable throwable) {
+		super(message, throwable);
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
