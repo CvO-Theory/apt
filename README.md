@@ -66,6 +66,11 @@ This module can be used as follows:
     witness_place: s2
     witness_firing_sequence: "a;b"
 
+If you have a file in e.g. the LoLA file format, you can call APT directly on
+this file:
+
+    $ java -jar apt.jar bounded lola:some_file.lola
+
 The [guide for using APT](doc/using.md) provides more explanations and examples.
 
 Providing feedback

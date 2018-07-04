@@ -144,6 +144,25 @@ case is directed to /dev/null/ to hide it from the user) the user
 is presented with the phrase "The Petri net is bounded" if the Petri
 net is indeed bounded or "The Petri net is not bounded" otherwise.
 
+Besides its own file format for Petri nets and labelled transition systems, APT
+also supports a number of other file formats. For example, to calculate the
+reachability graph of a file in the LoLA file format, you can use:
+
+    $ java -jar apt.jar coverab lola:input.lola
+
+To get a list of supported file formats, just specify an invalid file format as
+input:
+
+    $ java -jar apt.jar coverab foo:apt.jar
+    Error while invoking module 'coverability_graph':
+      Parser for format foo not found.
+    Supported parsers: petrify apt genet pnml lola synet
+
+    $ java -jar apt.jar synth none foo:apt.jar
+    Error while invoking module 'synthesize':
+      Parser for format foo not found.
+    Supported parsers: petrify apt synet
+
 There are two modules which use external programs. These are the "use-synet" and
 "use-petrify" modules.  If you want to use these modules, you need to make sure
 that your PATH variable contains the directory where those programs are located.
