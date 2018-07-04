@@ -155,7 +155,9 @@ public class AptLTSParser extends AbstractParser<TransitionSystem> implements Pa
 
 		@Override
 		public void exitLabel(AptLTSFormatParser.LabelContext ctx) {
-			this.labelOpts.put(ctx.idi().getText(), MapUtils.emptyIfNull(this.curOpts));
+			Object old = this.labelOpts.put(ctx.idi().getText(), MapUtils.emptyIfNull(this.curOpts));
+			if (old != null)
+				throw new ParseRuntimeException("Duplicate label found: " + ctx.idi().getText());
 			this.curOpts = null;
 		}
 	}

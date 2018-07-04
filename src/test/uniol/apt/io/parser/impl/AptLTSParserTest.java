@@ -180,6 +180,11 @@ public class AptLTSParserTest {
 		new AptLTSParser().parseString(".type LTS\n.states foo[initial]\n.labels\n.arcs foo a foo\n");
 	}
 
+	@Test(expectedExceptions = { ParseException.class }, expectedExceptionsMessageRegExp = "^Duplicate label found: a$")
+	public void testDuplicateLabel() throws Exception {
+		new AptLTSParser().parseString(".type LTS\n.states foo[initial]\n.labels a a\n");
+	}
+
 	@Test
 	public void testMissingNewlineAfterComment() throws Exception {
 		new AptLTSParser().parseString(".type LTS.statess[initial]// Comment without newline after");
