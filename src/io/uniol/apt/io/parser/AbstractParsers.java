@@ -108,7 +108,7 @@ public class AbstractParsers<T> implements Parsers<T> {
 	public Parser<T> getParser(String format) throws ParserNotFoundException {
 		Parser<T> parser = this.parsers.get(format.toLowerCase());
 		if (parser == null) {
-			throw new ParserNotFoundException(String.format("Parser for format %s not found", format));
+			throw new ParserNotFoundException(String.format("Parser for format %s not found.", format));
 		}
 		return parser;
 	}
