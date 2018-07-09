@@ -38,6 +38,16 @@ public class RendererNotFoundException extends ModuleException {
 	public RendererNotFoundException(String message) {
 		super(message);
 	}
+
+	/**
+	 * Constructor
+	 *
+	 * @param message The message
+	 * @param cause A throwable causing this exception
+	 */
+	public RendererNotFoundException(String message, Throwable throwable) {
+		super(message, throwable);
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
