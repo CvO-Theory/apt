@@ -109,7 +109,7 @@ public class AbstractRenderers<T> implements Renderers<T> {
 	public Renderer<T> getRenderer(String format) throws RendererNotFoundException {
 		Renderer<T> renderer = this.renderers.get(format.toLowerCase());
 		if (renderer == null) {
-			throw new RendererNotFoundException(String.format("Renderer for format %s not found", format));
+			throw new RendererNotFoundException(String.format("Renderer for format %s not found.", format));
 		}
 		return renderer;
 	}
