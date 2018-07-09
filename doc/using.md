@@ -163,6 +163,10 @@ input:
       Parser for format foo not found.
     Supported parsers: petrify apt synet
 
+Of course, it is also possible to generate file output in another file format:
+
+    $ java -jar apt.jar coverab lola:input.lola synet:output.g
+
 There are two modules which use external programs. These are the "use-synet" and
 "use-petrify" modules.  If you want to use these modules, you need to make sure
 that your PATH variable contains the directory where those programs are located.
