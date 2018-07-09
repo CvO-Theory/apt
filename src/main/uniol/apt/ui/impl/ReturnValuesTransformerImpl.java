@@ -26,6 +26,7 @@ import java.util.Map;
 
 import uniol.apt.module.exception.ModuleException;
 import uniol.apt.ui.ReturnValueTransformation;
+import uniol.apt.ui.ReturnValueTransformationWithOptions;
 import uniol.apt.ui.ReturnValuesTransformer;
 
 /**
@@ -69,6 +70,22 @@ public class ReturnValuesTransformerImpl implements ReturnValuesTransformer {
 			output.write(arg.toString());
 		else
 			transformation.transform(output, klass.cast(arg));
+	}
+
+	@Override
+	public <T> void transform(Writer output, Object arg, Class<T> klass, String extraOptions) throws ModuleException, IOException {
+		ReturnValueTransformation<T> transformation = getTransformation(klass);
+		if (transformation == null)
+			output.write(arg.toString());
+		else {
+			if (transformation instanceof ReturnValueTransformationWithOptions) {
+				ReturnValueTransformationWithOptions<T> trans
+					= (ReturnValueTransformationWithOptions<T>) transformation;
+				trans.transform(output, klass.cast(arg), extraOptions);
+			} else {
+				transformation.transform(output, klass.cast(arg));
+			}
+		}
 	}
 }
 

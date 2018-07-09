@@ -56,6 +56,7 @@ import uniol.apt.ui.AptParameterTransformation;
 import uniol.apt.ui.ParameterTransformation;
 import uniol.apt.ui.ParametersParser;
 import uniol.apt.ui.ParametersTransformer;
+import uniol.apt.ui.ReturnValueTransformationWithOptions;
 import uniol.apt.ui.ReturnValuesTransformer;
 import uniol.apt.ui.impl.AptParametersTransformer;
 import uniol.apt.ui.impl.AptReturnValuesTransformer;
@@ -267,6 +268,7 @@ public class APT {
 		// Handle module output
 		try (CloseableCollection<PrintStream> outputs = new CloseableCollection<>()) {
 			boolean outputWithName[] = new boolean[values.size()];
+			String extraOptions[] = new String[values.size()];
 
 			// Figure out where the values which the module produced should be printed to
 			int usedFileArgsCount = 0;
@@ -291,6 +293,16 @@ public class APT {
 					// Check if the user supplied a file name for this return value
 					if (fileArgs.length > usedFileArgsCount) {
 						String filename = fileArgs[usedFileArgsCount];
+
+						Class<?> klass = returnValues.get(i).getKlass();
+						if (RETURN_VALUES_TRANSFORMER.getTransformation(klass)
+								instanceof ReturnValueTransformationWithOptions) {
+							String[] parts = filename.split(":", 2);
+							if (parts.length == 2) {
+								extraOptions[i] = parts[0];
+								filename = parts[1];
+							}
+						}
 
 						if (filename.equals(STANDARD_INPUT_SYMBOL)) {
 							outputs.add(OUT_PRINTER, false);
@@ -326,8 +338,13 @@ public class APT {
 					out.print(returnValues.get(i).getName() + ": ");
 
 				OutputStreamWriter writer = new OutputStreamWriter(out, "UTF-8");
-				RETURN_VALUES_TRANSFORMER.transform(writer,
-						values.get(i), returnValues.get(i).getKlass());
+				if (extraOptions[i] == null) {
+					RETURN_VALUES_TRANSFORMER.transform(writer,
+							values.get(i), returnValues.get(i).getKlass());
+				} else {
+					RETURN_VALUES_TRANSFORMER.transform(writer,
+							values.get(i), returnValues.get(i).getKlass(), extraOptions[i]);
+				}
 				writer.flush();
 				out.println();
 			}

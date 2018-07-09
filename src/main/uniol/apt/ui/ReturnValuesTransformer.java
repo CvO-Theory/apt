@@ -61,6 +61,20 @@ public interface ReturnValuesTransformer {
 	 *                 thrown when the append to the writer fails
 	 */
 	public <T> void transform(Writer output, Object arg, Class<T> klass) throws ModuleException, IOException;
+
+	/**
+	 * Transforms the given argument to a string and appends it to the given
+	 * writer.
+	 *
+	 * @param <T> source type that will be transformed to a string
+	 * @param output writer
+	 * @param arg argument of class {@code klass}
+	 * @param klass type of given argument
+	 * @param extraOptions extra options given to the transformation
+	 * @throws ModuleException thrown when the transformation fails
+	 * @throws IOException thrown when the append to the writer fails
+	 */
+	public <T> void transform(Writer output, Object arg, Class<T> klass, String extraOptions) throws ModuleException, IOException;
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
