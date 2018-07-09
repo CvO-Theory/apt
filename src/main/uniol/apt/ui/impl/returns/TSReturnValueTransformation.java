@@ -19,30 +19,23 @@
 
 package uniol.apt.ui.impl.returns;
 
-import java.io.IOException;
-import java.io.Writer;
-
 import uniol.apt.adt.ts.TransitionSystem;
-import uniol.apt.io.renderer.impl.AptLTSRenderer;
+import uniol.apt.io.renderer.LTSRenderers;
 import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
-import uniol.apt.module.exception.ModuleException;
 
 /**
  * Transforms a TransitionSystem into a String-description that uses the syntax
  * of the .apt file format.
  *
  * @author Vincent Göbel
- *
  */
 @AptReturnValueTransformation(TransitionSystem.class)
-public class TSReturnValueTransformation implements ReturnValueTransformation<TransitionSystem> {
-
-	@Override
-	public void transform(Writer output, TransitionSystem arg) throws ModuleException, IOException {
-		new AptLTSRenderer().render(arg, output);
+public class TSReturnValueTransformation extends AbstractRenderersReturnValueTransformation<TransitionSystem>
+		implements ReturnValueTransformation<TransitionSystem> {
+	public TSReturnValueTransformation() {
+		super(LTSRenderers.INSTANCE, "apt");
 	}
-
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

@@ -19,14 +19,10 @@
 
 package uniol.apt.ui.impl.returns;
 
-import java.io.IOException;
-import java.io.Writer;
-
 import uniol.apt.adt.pn.PetriNet;
-import uniol.apt.io.renderer.impl.AptPNRenderer;
+import uniol.apt.io.renderer.PNRenderers;
 import uniol.apt.ui.AptReturnValueTransformation;
 import uniol.apt.ui.ReturnValueTransformation;
-import uniol.apt.module.exception.ModuleException;
 
 /**
  * Transforms a PetriNet into a String-description that uses the syntax of the
@@ -36,13 +32,11 @@ import uniol.apt.module.exception.ModuleException;
  *
  */
 @AptReturnValueTransformation(PetriNet.class)
-public class NetReturnValueTransformation implements ReturnValueTransformation<PetriNet> {
-
-	@Override
-	public void transform(Writer output, PetriNet arg) throws ModuleException, IOException {
-		new AptPNRenderer().render(arg, output);
+public class NetReturnValueTransformation extends AbstractRenderersReturnValueTransformation<PetriNet>
+		implements ReturnValueTransformation<PetriNet> {
+	public NetReturnValueTransformation() {
+		super(PNRenderers.INSTANCE, "apt");
 	}
-
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
