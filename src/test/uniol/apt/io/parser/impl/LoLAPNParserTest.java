@@ -105,6 +105,16 @@ public class LoLAPNParserTest {
 					flowThatConnects("satt.[p=3]", "gabel.1"),
 					flowThatConnects("satt.[p=3]", "denkend.3")));
 	}
+
+	@Test
+	public void testIsolated() throws Exception {
+		// This input was tested against LoLA 2.0 and works fine
+		PetriNet pn = new LoLAPNParser().parseString("PLACE a;MARKING;TRANSITION b CONSUME;PRODUCE;");
+
+		assertThat(pn.getPlaces(), contains(nodeWithID("a")));
+		assertThat(pn.getTransitions(), contains(nodeWithID("b")));
+		assertThat(pn.getEdges(), emptyIterable());
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120

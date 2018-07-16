@@ -41,7 +41,7 @@ transitionPreset:	'CONSUME' pwList ;
 transitionPostset:	'PRODUCE' pwList ;
 
 // list of weighted places
-pwList:	pw (',' pw)* ';' ;
+pwList:	( pw (',' pw)* )? ';' ;
 
 // a weighted place
 pw:		ID ':' INT ;
