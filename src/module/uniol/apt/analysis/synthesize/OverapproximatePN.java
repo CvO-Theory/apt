@@ -51,19 +51,28 @@ public class OverapproximatePN {
 	}
 
 	// For some properties we cannot guarantee that the algorithm always terminates (but if it terminates, its
-	// result should still be correct). This is the list of properties which does work.
+	// result should still be correct). This is the list of properties which do work.
 	static private PNProperties supportedProperties = new PNProperties()
 		.requireKBounded(0).setPure(true).setPlain(true).setTNet(true).setMarkedGraph(true);
 
 	static private void checkSupported(TransitionSystem ts, PNProperties properties)
 			throws MissingLocationException, UnsupportedPNPropertiesException {
+		// For the algorithm to terminate, the minimal over-approximation has to be finite. For the supported
+		// properties, we can show finiteness, because these properties allow to complement regions, so that
+		// only finitely many number of tokens are possible.
+		// However, for k-bounded this result follows directly: At most k tokens are possible. Thus, anything
+		// combined with k-bounded has a finite minimal over-approximation.
+		if (properties.isKBounded())
+			return;
 		if (!supportedProperties.containsAll(properties))
 			throw new UnsupportedPNPropertiesException("Some of the requested properties "
 					+ "are not supported for over-approximation; requested: "
-					+ properties + "; supported: " + supportedProperties);
+					+ properties + "; supported: " + supportedProperties
+					+ " (plus anything combined with k-bounded)");
 		String[] locationMap = getLocationMap(new RegionUtility(ts), properties);
 		if (Collections.frequency(Arrays.asList(locationMap), null) != locationMap.length)
-			throw new UnsupportedPNPropertiesException("Overapproximation is not possible with locations");
+			throw new UnsupportedPNPropertiesException("Overapproximation is not possible with locations"
+					+ " and without k-bounded");
 	}
 
 	/**
