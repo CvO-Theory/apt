@@ -54,6 +54,7 @@ public class SeparationSynthesizer implements Synthesizer {
 	 * @param onlyEventSeparation A flag indicating that state separation should be ignored.
 	 * @param quickFail If true, stop the calculation as soon as it is known that it won't be successful. If false,
 	 * try to solve all separation problems. Only if true will the list of failed problems be fully filled.
+	 * @param knownRegions Already known regions that can be used to speed up synthesis.
 	 */
 	public SeparationSynthesizer(TransitionSystem ts, Separation separation,
 			boolean onlyEventSeparation, boolean quickFail, Collection<Region> knownRegions) {
