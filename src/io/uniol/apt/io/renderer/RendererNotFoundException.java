@@ -45,8 +45,8 @@ public class RendererNotFoundException extends ModuleException {
 	 * @param message The message
 	 * @param cause A throwable causing this exception
 	 */
-	public RendererNotFoundException(String message, Throwable throwable) {
-		super(message, throwable);
+	public RendererNotFoundException(String message, Throwable cause) {
+		super(message, cause);
 	}
 }
 

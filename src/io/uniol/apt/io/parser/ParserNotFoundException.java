@@ -45,8 +45,8 @@ public class ParserNotFoundException extends ModuleException {
 	 * @param message The message
 	 * @param cause A throwable causing this exception
 	 */
-	public ParserNotFoundException(String message, Throwable throwable) {
-		super(message, throwable);
+	public ParserNotFoundException(String message, Throwable cause) {
+		super(message, cause);
 	}
 }
 
