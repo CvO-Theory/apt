@@ -1,6 +1,6 @@
 /*-
  * APT - Analysis of Petri Nets and labeled Transition systems
- * Copyright (C) 2017  Uli Schlachter
+ * Copyright (C) 2017-2018  Uli Schlachter
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,8 @@ import static uniol.apt.util.DebugUtil.debugFormat;
 
 /**
  * This class quickly synthesises TS into output-nonbranching Petri net. This implementation is based on the theory
- * presented in "Bounded Choice-Free Petri Net Synthesis" by Eike Best, Raymond Devillers, and Uli Schlachter.
+ * presented in "Bounded Choice-Free Petri Net Synthesis" by Eike Best, Raymond Devillers, and Uli Schlachter,
+ * doi: 10.1007/s00236-017-0310-9.
  * @author Uli Schlachter
  */
 class OutputNonbranchingSeparation implements Separation, Synthesizer {
@@ -147,7 +148,6 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 		}
 
 		// Now check each maximal state for the needed property
-		List<String> events = utility.getEventList();
 		for (State state : maximalStates) {
 			ParikhVector pv = getDistance(state);
 			for (ParikhVector smallCycle : smallCyclesPVs) {
@@ -162,6 +162,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 		return true;
 	}
 
+	// Get the distance \Delta_{state} from the initial state to state
 	private ParikhVector getDistance(State state) {
 		ParikhVector result = distanceCache.get(state);
 		if (result != null)
@@ -194,22 +195,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 		return result;
 	}
 
-	static private ParikhVector toParikhVector(List<String> events, List<BigInteger> vector) {
-		Map<String, Integer> map = new HashMap<>();
-		assert events.size() == vector.size();
-		BigInteger max = BigInteger.valueOf(Integer.MAX_VALUE);
-		for (int i = 0; i < events.size(); i++) {
-			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
-			BigInteger value = vector.get(i);
-			if (value.equals(BigInteger.ZERO))
-				continue;
-			if (value.compareTo(max) > 0)
-				throw new ArithmeticException("Cannot represent value as int: " + value);
-			map.put(events.get(i), value.intValue());
-		}
-		return new ParikhVector(map);
-	}
-
+	// Do proper synthesis and actually compute regions
 	private void synthesis() throws UnsupportedPNPropertiesException {
 		Set<String> tZero = this.cycleLabels.get(0);
 		for (int l = 0; l < this.cycleLabels.size(); l++) {
@@ -224,13 +210,24 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 		}
 	}
 
+	// Member class for actually computing regions. This has a fixed transition x and computes the necessary places
+	// in its preset. This is a member class so that some constants can easily be access everywhere without having
+	// to be passed around all the time.
 	private class ComputeRegions {
+		// Index into cycleLabels that we are working on
 		private final int l;
+
+		// The event that we are solving for (and entry of cycleLabels.get(l))
 		private final String x;
+
+		// Events that can possibly produce tokens on the place that we are computing
 		private final Set<String> tZeroAndL;
+
+		// The small cycle that x belongs to (or null if x does not belong to a small cycle)
 		private final ParikhVector smallCycle;
 
-		private ComputeRegions(int l, String x, Set<String> tZeroAndL, ParikhVector smallCycle) throws UnsupportedPNPropertiesException {
+		private ComputeRegions(int l, String x, Set<String> tZeroAndL, ParikhVector smallCycle)
+				throws UnsupportedPNPropertiesException {
 			this.l = l;
 			this.x = x;
 			this.tZeroAndL = tZeroAndL;
@@ -240,6 +237,8 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			Set<State> xnx = new HashSet<>();
 			Set<State> nx = new HashSet<>();
 			if (l > 0 && cycleLabels.get(l).size() == 1) {
+				// Special case: x only loops on states, i.e. does not change the state.
+				// nx contains states where x is not enabled, xnx where x is enabled
 				for (State state : ts.getNodes()) {
 					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 					if (state.getPostsetEdgesByLabel(x).isEmpty())
@@ -248,6 +247,8 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 						xnx.add(state);
 				}
 			} else {
+				// General case:
+				// nx contains states not enabling x, xnx contains states where x becomes disabled
 				for (State state : ts.getNodes()) {
 					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 					if (state.getPostsetEdgesByLabel(x).isEmpty()) {
@@ -261,7 +262,9 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			debugFormat("XNX(%s) = %s", x, xnx);
 			debugFormat("NX(%s) = %s", x, nx);
 
-			// Compute mXNX and mNX
+			// Compute mXNX and mNX. This is a representative system of the sets above where we use
+			// knowledge about the number of tokens for some states being smaller than for others. Details
+			// are in the paper.
 			Set<State> mXNX = computeRepresentives(xnx, true);
 			debugFormat("mXNX(%s) = %s", x, mXNX);
 			Set<State> mNX = computeRepresentives(nx, false);
@@ -271,6 +274,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 				solve(state, mXNX);
 		}
 
+		// Compute the maximal / minimal elements of the given set for the order \leq defined in the paper.
 		private Set<State> computeRepresentives(Set<State> states, boolean maximal) {
 			Set<State> result = new HashSet<>();
 			for (State candidate : states) {
@@ -298,6 +302,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			return isLessOrEqual(a, b);
 		}
 
+		// Implementation of the weak order from definition 15 on page 24 in the paper.
 		public boolean isLessOrEqual(State a, State b) {
 			ParikhVector pva = getDistance(a);
 			ParikhVector pvb = getDistance(b);
@@ -327,6 +332,8 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			return true;
 		}
 
+		// Compute a region that prevents "x" at state "state" while allowing all "x" that lead to states from
+		// "mXNX". This solves system (10) / (11) from the paper.
 		private void solve(State state, Set<State> mXNX) throws UnsupportedPNPropertiesException {
 			debugFormat("solve(%s, %s) called", state, mXNX);
 
@@ -339,19 +346,19 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			}
 
 			InequalitySystem system = new InequalitySystem();
-			requireNonNegativeSolution(system, 1+variables.size());
+			requireNonNegativeSolution(system, 1 + variables.size());
 
 			ParikhVector distanceState = getDistance(state);
 			if (l == 0) {
 				debugFormat("Variables order will be initial marking, then %s", variables);
 				for (State other : mXNX) {
 					ParikhVector distanceOther = getDistance(other);
-					int[] coefficients = new int[1+variables.size()];
+					int[] coefficients = new int[1 + variables.size()];
 					coefficients[0] = 1 + distanceState.get(x) - distanceOther.get(x);
 					for (int index = 0; index < variables.size(); index++) {
 						InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 						String j = variables.get(index);
-						coefficients[index+1] = distanceOther.get(j) - distanceState.get(j);
+						coefficients[index + 1] = distanceOther.get(j) - distanceState.get(j);
 					}
 					system.addInequality(0, "<", coefficients, "Inequality for state " + other);
 				}
@@ -359,25 +366,30 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 				debugFormat("Variables order will be %s", variables);
 				for (State other : mXNX) {
 					ParikhVector distanceOther = getDistance(other);
-					int[] coefficients = new int[1+variables.size()];
+					int[] coefficients = new int[1 + variables.size()];
 					int smallCycleX = smallCycle.get(x);
 					for (int index = 0; index < variables.size(); index++) {
 						InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 						String j = variables.get(index);
-						coefficients[index+1]
-							= smallCycle.get(j) * (1 + distanceState.get(x) - distanceOther.get(x))
-							- smallCycle.get(x) * (distanceState.get(j) - distanceOther.get(j));
+						coefficients[index + 1] = 0;
+						coefficients[index + 1] += smallCycle.get(j) *
+								(1 + distanceState.get(x) - distanceOther.get(x));
+						coefficients[index + 1] -= smallCycle.get(x) *
+								(distanceState.get(j) - distanceOther.get(j));
 					}
 					system.addInequality(0, "<", coefficients, "Inequality for state " + other);
 				}
 			}
 
-			List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system).findSolution();
+			List<BigInteger> solution = new InequalitySystemSolver().assertDisjunction(system)
+				.findSolution();
 			debugFormat("Got solution: %s", solution);
 			if (solution.isEmpty())
 				// TODO: Can we instead come up with an unsolvable separation problem?
-				// For example, on state 'state', event x cannot be prevented
-				throw new UnsupportedPNPropertiesException("Failure for x=" + x + " and state=" + state);
+				// For example, on state 'state', event x cannot be prevented.
+				// Indeed we can, but this does not really help us here (we are not doing quick-fail)
+				throw new UnsupportedPNPropertiesException("Failure for x=" + x
+						+ " and state=" + state);
 
 			// Find the weight k with which x consumes from the place
 			BigInteger k;
@@ -390,7 +402,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 				// which is equivalent to (1/smallCycle.get(x)) * sum k_j * smallCycle.get(j) = k
 				BigInteger lhs = BigInteger.ZERO;
 				for (int index = 0; index < variables.size(); index++) {
-					// lhs += solution.get(index+1) * smallCycle.get(j)
+					// lhs += solution.get(index + 1) * smallCycle.get(j)
 					BigInteger f = solution.get(index + 1);
 					int f2 = smallCycle.get(variables.get(index));
 					lhs = lhs.add(f.multiply(BigInteger.valueOf(f2)));
@@ -410,8 +422,9 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 				BigInteger value = k.multiply(BigInteger.valueOf(distance.get(x)));
 				for (int index = 0; index < variables.size(); index++) {
 					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
-					BigInteger subtract = factor.multiply(solution.get(index+1));
-					subtract = subtract.multiply(BigInteger.valueOf(distance.get(variables.get(index))));
+					BigInteger subtract = factor.multiply(solution.get(index + 1));
+					subtract = subtract.multiply(BigInteger.valueOf(
+								distance.get(variables.get(index))));
 					value = value.subtract(subtract);
 				}
 				if (mu == null || mu.compareTo(value) < 0)
@@ -430,7 +443,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			builder.addLoopAround(x, h);
 			for (int index = 0; index < variables.size(); index++) {
 				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
-				builder.addWeightOn(variables.get(index), factor.multiply(solution.get(index+1)));
+				builder.addWeightOn(variables.get(index), factor.multiply(solution.get(index + 1)));
 			}
 			Region r = builder.withInitialMarking(mu);
 			debugFormat("Constructed region %s", r);
