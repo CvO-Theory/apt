@@ -159,13 +159,22 @@ public class SynthesizePNTest {
 
 		assertThat(synth.wasSuccessfullySeparated(), is(true));
 		// We know that there is a solution with three regions. Test that this really found an ON feasible set.
-		assertThat(synth.getSeparatingRegions(), containsInAnyOrder(
-				allOf(pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO)),
-						pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
-				allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)),
-						pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
-				allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)),
-						pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO)))));
+		assertThat(synth.getSeparatingRegions(), anyOf(containsInAnyOrder(
+					allOf(pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO)),
+							pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
+					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)),
+							pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
+					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)),
+							pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO)))),
+				// The following matches a solution found by OutputNonbranchingSeparation
+				containsInAnyOrder(allOf(pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO)),
+							pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
+					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)),
+							pureRegionWithWeightThat("c", greaterThanOrEqualTo(ZERO))),
+					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)),
+							pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO))),
+					allOf(pureRegionWithWeightThat("a", greaterThanOrEqualTo(ZERO)),
+							pureRegionWithWeightThat("b", greaterThanOrEqualTo(ZERO))))));
 		assertThat(synth.getFailedStateSeparationProblems(), empty());
 		assertThat(synth.getFailedEventStateSeparationProblems().entrySet(), empty());
 	}

@@ -20,26 +20,6 @@
 package uniol.apt.analysis.synthesize.separation;
 
 import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -49,7 +29,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,14 +39,11 @@ import uniol.apt.adt.ts.State;
 import uniol.apt.adt.ts.TransitionSystem;
 import uniol.apt.analysis.cycles.CycleSearchViaChords;
 import uniol.apt.analysis.exception.PreconditionFailedException;
-import uniol.apt.analysis.persistent.PersistentTS;
 import uniol.apt.util.equations.InequalitySystem;
 import uniol.apt.util.equations.InequalitySystemSolver;
-import uniol.apt.analysis.reversible.ReversibleTS;
 import uniol.apt.analysis.synthesize.PNProperties;
 import uniol.apt.analysis.synthesize.Region;
 import uniol.apt.analysis.synthesize.RegionUtility;
-import uniol.apt.analysis.synthesize.UnreachableException;
 import uniol.apt.util.MathTools;
 import uniol.apt.util.Pair;
 import uniol.apt.util.SpanningTree;
@@ -140,6 +116,8 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 
 			remainingLabels.removeAll(pv.getLabels());
 			this.cycleLabels.add(pv.getLabels());
+
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 		}
 
 		// Check short path property
@@ -165,6 +143,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			State prev = tree.getPredecessor(state);
 			if (prev != null)
 				maximalStates.remove(prev);
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 		}
 
 		// Now check each maximal state for the needed property
@@ -176,6 +155,8 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 				if (comp.equals(ParikhVector.Comparison.EQUAL) ||
 						comp.equals(ParikhVector.Comparison.GREATER_THAN))
 					return false;
+
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			}
 		}
 		return true;
@@ -190,6 +171,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 		Deque<Pair<State, String>> pending = new ArrayDeque<>();
 		State current = state;
 		while (result == null) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			Arc predecessor = tree.getPredecessorEdge(current);
 			if (predecessor == null) {
 				// Reached the initial state
@@ -203,6 +185,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			result = distanceCache.get(state);
 		}
 		while (!pending.isEmpty()) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			Pair<State, String> pair = pending.removeLast();
 			result = result.add(pair.getSecond());
 			distanceCache.put(pair.getFirst(), result);
@@ -216,6 +199,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 		assert events.size() == vector.size();
 		BigInteger max = BigInteger.valueOf(Integer.MAX_VALUE);
 		for (int i = 0; i < events.size(); i++) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			BigInteger value = vector.get(i);
 			if (value.equals(BigInteger.ZERO))
 				continue;
@@ -234,6 +218,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			if (l != 0)
 				tZeroAndL.addAll(tZero);
 			for (String x : labels) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				new ComputeRegions(l, x, tZeroAndL, smallCyclesPVs.get(l));
 			}
 		}
@@ -256,6 +241,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			Set<State> nx = new HashSet<>();
 			if (l > 0 && cycleLabels.get(l).size() == 1) {
 				for (State state : ts.getNodes()) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 					if (state.getPostsetEdgesByLabel(x).isEmpty())
 						nx.add(state);
 					else
@@ -263,6 +249,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 				}
 			} else {
 				for (State state : ts.getNodes()) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 					if (state.getPostsetEdgesByLabel(x).isEmpty()) {
 						nx.add(state);
 						if (!state.getPresetEdgesByLabel(x).isEmpty())
@@ -290,6 +277,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 				Iterator<State> iter = result.iterator();
 				boolean add = true;
 				while (iter.hasNext()) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 					State other = iter.next();
 					if (isLessOrEqual(candidate, other, maximal)) {
 						add = false;
@@ -314,9 +302,11 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			ParikhVector pva = getDistance(a);
 			ParikhVector pvb = getDistance(b);
 
-			for (String j : cycleLabels.get(0))
+			for (String j : cycleLabels.get(0)) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				if (!j.equals(x) && pva.get(j) > pvb.get(j))
 					return false;
+			}
 
 			if (l == 0) {
 				if (pva.get(x) < pvb.get(x))
@@ -326,6 +316,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 
 			ParikhVector cycle = smallCyclesPVs.get(l);
 			for (String j : cycleLabels.get(l)) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				if (j.equals(x))
 					continue;
 				int lhs = cycle.get(x) * pva.get(j) - cycle.get(j) * pva.get(x);
@@ -341,9 +332,11 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 
 			// Assign an order to the variables, x implicitly gets index 0
 			List<String> variables = new ArrayList<>();
-			for (String var : tZeroAndL)
+			for (String var : tZeroAndL) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				if (!var.equals(x))
 					variables.add(var);
+			}
 
 			InequalitySystem system = new InequalitySystem();
 			requireNonNegativeSolution(system, 1+variables.size());
@@ -356,6 +349,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 					int[] coefficients = new int[1+variables.size()];
 					coefficients[0] = 1 + distanceState.get(x) - distanceOther.get(x);
 					for (int index = 0; index < variables.size(); index++) {
+						InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 						String j = variables.get(index);
 						coefficients[index+1] = distanceOther.get(j) - distanceState.get(j);
 					}
@@ -368,6 +362,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 					int[] coefficients = new int[1+variables.size()];
 					int smallCycleX = smallCycle.get(x);
 					for (int index = 0; index < variables.size(); index++) {
+						InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 						String j = variables.get(index);
 						coefficients[index+1]
 							= smallCycle.get(j) * (1 + distanceState.get(x) - distanceOther.get(x))
@@ -414,6 +409,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 				ParikhVector distance = getDistance(r);
 				BigInteger value = k.multiply(BigInteger.valueOf(distance.get(x)));
 				for (int index = 0; index < variables.size(); index++) {
+					InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 					BigInteger subtract = factor.multiply(solution.get(index+1));
 					subtract = subtract.multiply(BigInteger.valueOf(distance.get(variables.get(index))));
 					value = value.subtract(subtract);
@@ -433,6 +429,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 			builder.addWeightOn(x, k.negate());
 			builder.addLoopAround(x, h);
 			for (int index = 0; index < variables.size(); index++) {
+				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				builder.addWeightOn(variables.get(index), factor.multiply(solution.get(index+1)));
 			}
 			Region r = builder.withInitialMarking(mu);
@@ -445,6 +442,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 	static private void requireNonNegativeSolution(InequalitySystem system, int numVariables) {
 		int[] inequality = new int[numVariables];
 		for (int i = 0; i < numVariables; i++) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			inequality[i] = 1;
 			system.addInequality(0, "<=", inequality, "Variable should be non-negative");
 			inequality[i] = 0;
@@ -459,12 +457,13 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 	 */
 	@Override
 	public Region calculateSeparatingRegion(State state, State otherState) {
-		for (Region region : regions)
+		for (Region region : regions) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (SeparationUtility.isSeparatingRegion(region, state, otherState))
 				return region;
+		}
 
-		assert !utility.getSpanningTree().isReachable(state)
-			|| !utility.getSpanningTree().isReachable(otherState);
+		assert state.equals(otherState);
 		return null;
 	}
 
@@ -476,11 +475,13 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 	 */
 	@Override
 	public Region calculateSeparatingRegion(State state, String event) {
-		for (Region region : regions)
+		for (Region region : regions) {
+			InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 			if (SeparationUtility.isSeparatingRegion(region, state, event))
 				return region;
+		}
 
-		assert !utility.getSpanningTree().isReachable(state) || SeparationUtility.isEventEnabled(state, event);
+		assert SeparationUtility.isEventEnabled(state, event);
 		return null;
 	}
 
