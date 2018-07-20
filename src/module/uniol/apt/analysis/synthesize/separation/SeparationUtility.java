@@ -159,10 +159,14 @@ public final class SeparationUtility {
 	static public Separation createSeparationInstance(RegionUtility utility, PNProperties properties)
 			throws MissingLocationException {
 		String[] locationMap = getLocationMap(utility, properties);
-		Separation result = null;
-
 		// getLocationMap() handled ON
 		properties = properties.setOutputNonbranching(false);
+		return createSeparationInstanceInternal(utility, properties, locationMap);
+	}
+
+	static private Separation createSeparationInstanceInternal(RegionUtility utility, PNProperties properties,
+			String[] locationMap) {
+		Separation result = null;
 
 		// Should a specific implementation of Separation be used?
 		String forcedSeparationImplementation = System.getProperty("apt.separationImplementation");
@@ -197,18 +201,6 @@ public final class SeparationUtility {
 		try {
 			if (result == null)
 				result = new KBoundedSeparation(utility, properties, locationMap);
-		} catch (UnsupportedPNPropertiesException e) {
-			// Ignore, try the other implementations
-		}
-		try {
-			if (result == null)
-				result = new MarkedGraphSeparation(utility, properties, locationMap);
-		} catch (UnsupportedPNPropertiesException e) {
-			// Ignore, try the other implementations
-		}
-		try {
-			if (result == null)
-				result = new OutputNonbranchingSeparation(utility, properties, locationMap);
 		} catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
 		}
@@ -276,10 +268,32 @@ public final class SeparationUtility {
 			if (result != null)
 				return result;
 		}
-		Separation result = createSeparationInstance(utility, properties);
-		if (result instanceof Synthesizer)
-			return (Synthesizer) result;
-		return new SeparationSynthesizer(utility.getTransitionSystem(), result, onlyEventSeparation, quickFail, regions);
+
+		String[] locationMap = getLocationMap(utility, properties);
+		// getLocationMap() handled ON
+		properties = properties.setOutputNonbranching(false);
+
+		Synthesizer result = null;
+		try {
+			if (result == null)
+				result = new MarkedGraphSeparation(utility, properties, locationMap);
+		} catch (UnsupportedPNPropertiesException e) {
+			// Ignore, try the other implementations
+		}
+		try {
+			if (result == null)
+				result = new OutputNonbranchingSeparation(utility, properties, locationMap);
+		} catch (UnsupportedPNPropertiesException e) {
+			// Ignore, try the other implementations
+		}
+		if (result != null) {
+			debug("Created Synthesizer instance from class ", result.getClass().getName());
+			return result;
+		}
+		Separation sep = createSeparationInstanceInternal(utility, properties, locationMap);
+		if (sep instanceof Synthesizer)
+			return (Synthesizer) sep;
+		return new SeparationSynthesizer(utility.getTransitionSystem(), sep, onlyEventSeparation, quickFail, regions);
 	}
 }
 
