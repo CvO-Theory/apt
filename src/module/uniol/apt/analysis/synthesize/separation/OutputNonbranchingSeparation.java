@@ -385,11 +385,7 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 				.findSolution();
 			debugFormat("Got solution: %s", solution);
 			if (solution.isEmpty())
-				// TODO: Can we instead come up with an unsolvable separation problem?
-				// For example, on state 'state', event x cannot be prevented.
-				// Indeed we can, but this does not really help us here (we are not doing quick-fail)
-				throw new UnsupportedPNPropertiesException("Failure for x=" + x
-						+ " and state=" + state);
+				throw new UnsolvableESSPInstanceException(state, x);
 
 			// Find the weight k with which x consumes from the place
 			BigInteger k;
@@ -511,6 +507,27 @@ class OutputNonbranchingSeparation implements Separation, Synthesizer {
 	@Override
 	public Map<String, Set<State>> getUnsolvableEventStateSeparationProblems() {
 		return Collections.emptyMap();
+	}
+
+	public static class UnsolvableESSPInstanceException extends UnsupportedPNPropertiesException {
+		public static final long serialVersionUID = 0x1l;
+
+		private final State state;
+		private final String event;
+
+		private UnsolvableESSPInstanceException(State state, String event) {
+			super("ESSP failure for x=" + event + " and state=" + state);
+			this.state = state;
+			this.event = event;
+		}
+
+		public State getState() {
+			return state;
+		}
+
+		public String getEvent() {
+			return event;
+		}
 	}
 }
 

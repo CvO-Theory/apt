@@ -27,6 +27,8 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import uniol.apt.adt.exception.StructureException;
 import uniol.apt.adt.ts.Event;
@@ -273,6 +275,12 @@ public final class SeparationUtility {
 		try {
 			if (result == null)
 				result = new OutputNonbranchingSeparation(utility, properties, locationMap);
+		} catch (OutputNonbranchingSeparation.UnsolvableESSPInstanceException e) {
+			if (quickFail) {
+				result = new UnsolvableESSPInstanceSynthesizer(e.getState(), e.getEvent());
+			} else {
+				// Ignore, try the other implementations
+			}
 		} catch (UnsupportedPNPropertiesException e) {
 			// Ignore, try the other implementations
 		}
@@ -305,6 +313,31 @@ public final class SeparationUtility {
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to instantiate " + klassName +
 					" as an implementation of " + interfac, e);
+		}
+	}
+
+	static private class UnsolvableESSPInstanceSynthesizer implements Synthesizer {
+		private final State state;
+		private final String event;
+
+		private UnsolvableESSPInstanceSynthesizer(State state, String event) {
+			this.state = state;
+			this.event = event;
+		}
+
+		@Override
+		public Collection<Region> getSeparatingRegions() {
+			return Collections.emptySet();
+		}
+
+		@Override
+		public Map<String, Set<State>> getUnsolvableEventStateSeparationProblems() {
+			return Collections.singletonMap(event, Collections.singleton(state));
+		}
+
+		@Override
+		public Collection<Set<State>> getUnsolvableStateSeparationProblems() {
+			return Collections.emptySet();
 		}
 	}
 }
