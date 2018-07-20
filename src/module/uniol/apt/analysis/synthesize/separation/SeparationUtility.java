@@ -171,26 +171,9 @@ public final class SeparationUtility {
 		// Should a specific implementation of Separation be used?
 		String forcedSeparationImplementation = System.getProperty("apt.separationImplementation");
 		if (forcedSeparationImplementation != null)
-			try {
-				// Find the class to use
-				Class<?> klass;
-				String pkg = SeparationUtility.class.getPackage().getName();
-				try {
-					klass = Class.forName(pkg + "." + forcedSeparationImplementation);
-				} catch (ClassNotFoundException e) {
-					klass = Class.forName(forcedSeparationImplementation);
-				}
-				// Construct an instance
-				Constructor<?> constructor = klass.getConstructor(RegionUtility.class,
-						PNProperties.class, String[].class);
-				return (Separation) constructor.newInstance(utility, properties, locationMap);
-			} catch (InvocationTargetException e) {
-				throw new RuntimeException("Failed to instantiate " + forcedSeparationImplementation +
-						" as an implementation of " + Separation.class, e.getTargetException());
-			} catch (Exception e) {
-				throw new RuntimeException("Failed to instantiate " + forcedSeparationImplementation +
-						" as an implementation of " + Separation.class, e);
-			}
+			result = createInstance(Separation.class, forcedSeparationImplementation,
+					new Object[] { utility, properties, locationMap },
+					new Class<?>[] { RegionUtility.class, PNProperties.class, String[].class });
 
 		try {
 			if (result == null)
@@ -294,6 +277,28 @@ public final class SeparationUtility {
 		if (sep instanceof Synthesizer)
 			return (Synthesizer) sep;
 		return new SeparationSynthesizer(utility.getTransitionSystem(), sep, onlyEventSeparation, quickFail, regions);
+	}
+
+	static private <T> T createInstance(Class<T> interfac, String klassName, Object[] parameters, Class<?>[] parameterTypes) {
+		try {
+			// Find the class to use
+			Class<?> klass;
+			String pkg = SeparationUtility.class.getPackage().getName();
+			try {
+				klass = Class.forName(pkg + "." + klassName);
+			} catch (ClassNotFoundException e) {
+				klass = Class.forName(klassName);
+			}
+			// Construct an instance
+			Constructor<?> constructor = klass.getConstructor(parameterTypes);
+			return interfac.cast(constructor.newInstance(parameters));
+		} catch (InvocationTargetException e) {
+			throw new RuntimeException("Failed to instantiate " + klassName +
+					" as an implementation of " + interfac, e.getTargetException());
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to instantiate " + klassName +
+					" as an implementation of " + interfac, e);
+		}
 	}
 }
 
