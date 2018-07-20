@@ -257,6 +257,13 @@ public final class SeparationUtility {
 		properties = properties.setOutputNonbranching(false);
 
 		Synthesizer result = null;
+		// Should a specific implementation of Separation be used?
+		String forcedSynthesizerImplementation = System.getProperty("apt.synthesizerImplementation");
+		if (forcedSynthesizerImplementation != null)
+			result = createInstance(Synthesizer.class, forcedSynthesizerImplementation,
+					new Object[] { utility, properties, locationMap },
+					new Class<?>[] { RegionUtility.class, PNProperties.class, String[].class });
+
 		try {
 			if (result == null)
 				result = new MarkedGraphSeparation(utility, properties, locationMap);
