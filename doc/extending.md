@@ -51,8 +51,8 @@ To develop a module with Eclipse, follow these steps:
    3. Check that `uniol.apt.compiler.ModuleProcessor` is listed under "Advanced".
 5. Create a new run configuration of the type "Java Application" and set
    `uniol.apt.APT` as the main class. Here you can also provide command line
-   arguments (for example, the name of your module should be the first
-   argument).
+   arguments (for example, the name of your module as returned by getName()
+   should be the first argument).
 
 The above ensures that APT's annotation processor is run by Eclipse. It creates
 the needed files so that APT will automatically find your module.
@@ -100,7 +100,7 @@ The following assumes that your source code is in a folder called src.
 
 3. Run the new module
 
-        java -cp apt.jar:classes uniol.apt.APT your_module_name example_argument
+        java -cp apt.jar:classes uniol.apt.APT your_module_name_as_returned_by_getName() example_argument
 
 The above example is for unixoid systems. On Windows, Java uses `;` instead of
 `:` as separator in the class path argument. This means you have to use `-cp
