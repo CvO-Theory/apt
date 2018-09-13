@@ -134,7 +134,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * @param f the flow to add
 	 * @return the flow
 	 */
-	private Flow addFlow(EdgeKey key, Flow f) {
+	protected Flow addFlow(EdgeKey key, Flow f) {
 		String targetId = key.getTargetId();
 		String sourceId = key.getSourceId();
 		this.presetEdges.get(targetId).put(key, f);
@@ -256,7 +256,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * @param p the place to add
 	 * @return the place
 	 */
-	private Place addPlace(String id, Place p) {
+	protected Place addPlace(String id, Place p) {
 		this.places.put(id, p);
 		this.nodes.put(id, p);
 		this.placesList = new ArrayList<>(this.placesList);
@@ -386,7 +386,7 @@ public class PetriNet extends AbstractGraph<PetriNet, Flow, Node> implements IGr
 	 * @param t the transition to add
 	 * @return the transition
 	 */
-	private Transition addTransition(String id, Transition t) {
+	protected Transition addTransition(String id, Transition t) {
 		this.transitions.put(id, t);
 		this.nodes.put(id, t);
 		// update pre- and postsets
