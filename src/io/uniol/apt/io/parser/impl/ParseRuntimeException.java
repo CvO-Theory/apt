@@ -27,7 +27,7 @@ import uniol.apt.io.parser.ParseException;
  * caught at a suitable place and the result of {@link #getParseException()} should be thrown.
  * @author Uli Schlachter
  */
-class ParseRuntimeException extends RuntimeException {
+public class ParseRuntimeException extends RuntimeException {
 	public static final long serialVersionUID = 0;
 
 	public ParseRuntimeException(ParseException cause) {
