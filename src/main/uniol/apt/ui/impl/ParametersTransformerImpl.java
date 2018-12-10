@@ -93,7 +93,7 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 			String[] parts = new String[] { "", arg };
 			if (transformation instanceof StreamWithOptionsParameterTransformation) {
 				String[] tmpParts = arg.split(":", 2);
-				if (tmpParts.length == 2)
+				if (tmpParts.length == 2 && !ignoreParts(tmpParts[0], tmpParts[1]))
 					parts = tmpParts;
 			}
 			if (STANDARD_INPUT_SYMBOL.equals(parts[1])) {
@@ -104,6 +104,19 @@ public abstract class ParametersTransformerImpl implements ParametersTransformer
 		} else {
 			return transformString(arg, klass);
 		}
+	}
+
+	static private boolean ignoreParts(String first, String second) {
+		// Only one character before the ':'?
+		if (first.length() != 1)
+			return false;
+
+		// A backslash right after the ':'?
+		if (second.isEmpty() || second.charAt(0) != '\\')
+			return false;
+
+		// This is an absolute path like d:\whatever, not an option
+		return true;
 	}
 
 	@Override
