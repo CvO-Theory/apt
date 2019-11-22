@@ -7,7 +7,13 @@ Welcome to APT. The purpose of this software is to run various analysis methods
 on Petri nets and labeled transition systems. This guide explains the most
 important aspects for getting started with APT.
 
-For citing APT, we recommend the following publications:
+This tool emerged of a student project group at the University of Oldenburg.
+
+Participants of the project group:
+Dennis Borde, Sören Dierkes, Raffaela Ferrari, Manuel Gieseking, Vincent Göbel, Renke Grunwald,
+Björn von der Linde, Daniel Lückehe, Chris Schierholz, Uli Schlachter, Maike Schwammberger, V. Spreckels.
+
+Recommended publications:
 * General: [Eike Best, Uli Schlachter: Analysis of Petri Nets and Transition
   Systems](http://dx.doi.org/10.4204/EPTCS.189.6). In [ICE
   2015](http://dx.doi.org/10.4204/EPTCS.189): 53-67
@@ -79,13 +85,13 @@ Providing feedback
 
 More information about APT can be found on our homepage:
 
-http://pg-apt.informatik.uni-oldenburg.de/
+https://uol.de/parsys/projekte/pg-apt/
 
 This project is supervised by the ParSys group at Oldenburg University:
 
-http://www.uni-oldenburg.de/informatik/parsys/
+https://uol.de/parsys
 
-http://www.uni-oldenburg.de/informatik/parsys/projekte/
+https://uol.de/parsys/projekte
 
 If you have any problems when using this software, if you think that you found a
 bug or if you want to suggest improvements, don't hesitate to contact us. You
