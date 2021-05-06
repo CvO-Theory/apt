@@ -79,24 +79,3 @@ this file:
     $ java -jar apt.jar bounded lola:some_file.lola
 
 The [guide for using APT](doc/using.md) provides more explanations and examples.
-
-Providing feedback
-------------------
-
-More information about APT can be found on our homepage:
-
-https://uol.de/parsys/projekte/pg-apt/
-
-This project is supervised by the ParSys group at Oldenburg University:
-
-https://uol.de/parsys
-
-https://uol.de/parsys/projekte
-
-If you have any problems when using this software, if you think that you found a
-bug or if you want to suggest improvements, don't hesitate to contact us. You
-can reach us under the following mail address:
-
-pg-apt-info@informatik.uni-oldenburg.de
-
-We want to thank you for any feedback that you will provide.
