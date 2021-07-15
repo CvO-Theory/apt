@@ -88,6 +88,16 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 		private PetriNet pn;
 		private Map<String, String> safeIdMap;
 		private int idCounter;
+		private boolean convertIDsToSaveIDs;
+		
+		public Parser() {
+			this.convertIDsToSaveIDs = true;
+		}
+
+		public Parser(boolean convertIDsToSaveIDs) {
+			this.convertIDsToSaveIDs = convertIDsToSaveIDs;
+		}
+
 
 		/**
 		 * Parses multiple variants of PNML:
@@ -566,6 +576,9 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 		 *         "_"
 		 */
 		private String toSafeIdentifier(String input) {
+			if (!convertIDsToSaveIDs) {
+				return input;
+			}
 			if (safeIdMap.containsKey(input)) {
 				return safeIdMap.get(input);
 			}
@@ -604,6 +617,10 @@ public class PnmlPNParser extends AbstractParser<PetriNet> implements Parser<Pet
 		return parser.parse(is);
 	}
 
+	public PetriNet parse(InputStream is, boolean convertIDsToSaveIDs) throws ParseException, IOException {
+		Parser parser = new Parser(convertIDsToSaveIDs);
+		return parser.parse(is);
+	}
 }
 
 // vim: ft=java:noet:sw=8:sts=8:ts=8:tw=120
