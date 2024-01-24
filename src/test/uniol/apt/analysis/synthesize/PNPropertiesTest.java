@@ -114,6 +114,14 @@ public class PNPropertiesTest {
 	}
 
 	@Test
+	public void testContainsEqualConflict() {
+		PNProperties properties = new PNProperties();
+		PNProperties properties2 = new PNProperties().setEqualConflict(true);
+		assertThat(properties, not(containsAll(properties2)));
+		assertThat(properties2, containsAll(properties));
+	}
+
+	@Test
 	public void testContainsAllKMarking() {
 		PNProperties properties = new PNProperties();
 		PNProperties properties2 = new PNProperties();

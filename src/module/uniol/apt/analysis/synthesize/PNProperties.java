@@ -404,6 +404,8 @@ public class PNProperties {
 			return false;
 		if (other.isBinaryConflictFree() && !isBinaryConflictFree())
 			return false;
+		if (other.isEqualConflict() && !isEqualConflict())
+			return false;
 		return true;
 	}
 
