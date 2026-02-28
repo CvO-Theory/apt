@@ -122,7 +122,8 @@ public class FCNetTest {
 				{getDeadlockNet()},
 				{getNonPersistentNet()},
 				{getConcurrentDiamondNet()},
-				{getDeadTransitionNet()}};
+				{getDeadTransitionNet()},
+				{getOneTransitionFireOnceTwoPlaces()}};
 	}
 
 	@DataProvider(name = "badNets")

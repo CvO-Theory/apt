@@ -125,6 +125,33 @@ public class TestNetCollection {
 	}
 
 	/**
+	 * Construct a Petri net with one transition that can only fire once, because *two* places are empty
+	 *
+	 * @return PN:
+	 * <pre>
+	 * {@code
+	 * 1 -> [] <- 1
+	 * }
+	 * </pre>
+	 */
+	public static PetriNet getOneTransitionFireOnceTwoPlaces() {
+		PetriNet pn = new PetriNet("OneTransitionFireOnceTwoPlaces");
+
+		Place p1 = pn.createPlace("p1");
+		Place p2 = pn.createPlace("p2");
+
+		p1.setInitialToken(1);
+		p2.setInitialToken(1);
+
+		Transition t = pn.createTransition("t");
+
+		pn.createFlow(p1, t);
+		pn.createFlow(p2, t);
+
+		return pn;
+	}
+
+	/**
 	 * Construct a non persistent Petri net
 	 *
 	 * @return PN:

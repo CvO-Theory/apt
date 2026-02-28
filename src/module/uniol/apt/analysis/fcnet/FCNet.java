@@ -30,7 +30,7 @@ import uniol.apt.util.interrupt.InterrupterRegistry;
 /**
  * Precondition: plain Petri net
  * Testing if a plain Petri net is restricted-free-choice. That is:
- * \forall t_1,t_2\in T\colon {}^\bullet t_1\cap{}^\bullet t_2\neq\es \impl |{}^\bullet t_1|=|{}^\bullet t_2|=1
+ * \forall t_1,t_2\in T with t_1 != t_2 \colon {}^\bullet t_1\cap{}^\bullet t_2\neq\es \impl |{}^\bullet t_1|=|{}^\bullet t_2|=1
  * @author Manuel Gieseking
  */
 public class FCNet {
@@ -48,7 +48,7 @@ public class FCNet {
 	/**
 	 * Precondition: plain Petri net
 	 * Testing if a plain Petri net is restricted-free-choice. That is:
-	 * \forall t_1,t_2\in T\colon {}^\bullet t_1\cap{}^\bullet t_2\neq\es \impl |{}^\bullet t_1|=|{}^\bullet t_2|=1
+	 * \forall t_1,t_2\in T with t_1 != t_2 \colon {}^\bullet t_1\cap{}^\bullet t_2\neq\es \impl |{}^\bullet t_1|=|{}^\bullet t_2|=1
 	 * @return true if the Petri net is free-choice
 	 * @throws PreconditionFailedException thrown if the given petri net is not plain.
 	 */
@@ -58,6 +58,9 @@ public class FCNet {
 		}
 		for (Transition t1 : pn.getTransitions()) {
 			for (Transition t2 : pn.getTransitions()) {
+				if (t1 == t2) {
+					continue;
+				}
 				InterrupterRegistry.throwIfInterruptRequestedForCurrentThread();
 				Collection<?> set1 = t1.getPreset();
 				Collection<?> set2 = t2.getPreset();
