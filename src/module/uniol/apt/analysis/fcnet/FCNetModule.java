@@ -33,7 +33,7 @@ import uniol.apt.module.exception.ModuleException;
 /**
  * This module tests if a plain Petri net ist restricted-free-choice. That is:
  * <code>
- *              \forall t_1,t_s\in T\colon{}^\bullet t_1\cap{}^\bullet t_2\neq\es\impl|{}^\bullet t_1|=
+ *              \forall t_1,t_2\in T\colon{}^\bullet t_1\cap{}^\bullet t_2\neq\es\impl|{}^\bullet t_1|=
  *              |{}^\bullet t_2|=1
  * </code>
  * @author Manuel Gieseking
@@ -43,7 +43,7 @@ public class FCNetModule extends AbstractModule implements InterruptibleModule {
 
 	private static final String SHORTDESCRIPTION = "Check if a Petri net is restricted-free-choice";
 	private static final String LONGDESCRIPTION = SHORTDESCRIPTION + ". That is:\n"
-		+ "\\forall t_1,t_s\\in T\\colon{}^\\bullet t_1\\cap{}^\\bullet t_2\\neq\\es\n"
+		+ "\\forall t_1,t_2\\in T\\colon{}^\\bullet t_1\\cap{}^\\bullet t_2\\neq\\es\n"
 		+ "\\impl|{}^\\bullet t_1|=|{}^\\bullet t_2|=1";
 	private static final String TITLE = "restricted-free-choice";
 	private static final String NAME = "rfc";

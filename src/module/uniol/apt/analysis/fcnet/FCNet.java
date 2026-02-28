@@ -48,7 +48,7 @@ public class FCNet {
 	/**
 	 * Precondition: plain Petri net
 	 * Testing if a plain Petri net ist restricted-free-choice. That is:
-	 * \forall t_1,t_s\in T\colon{}^\bullet t_1\cap{}^\bullet t_2\neq\es\impl|{}^\bullet t_1|=|{}^\bullet t_2|=1
+	 * \forall t_1,t_2\in T\colon{}^\bullet t_1\cap{}^\bullet t_2\neq\es\impl|{}^\bullet t_1|=|{}^\bullet t_2|=1
 	 * @return true if the Petri net ist free-choice
 	 * @throws PreconditionFailedException thrown if the given petri net is not plain.
 	 */
